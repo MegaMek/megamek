@@ -27,7 +27,6 @@ import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -79,15 +78,5 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         }
 
         return new JScrollPane(pane);
-    }
-
-    @Override
-    protected void finalizeInitialization() throws Exception {
-        super.finalizeInitialization();
-        adaptToGUIScale();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

@@ -61,7 +61,6 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
@@ -565,8 +564,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         panTabs.add(Messages.getString("CommonSettingsDialog.buttonOrder"), getButtonOrderPanel());
         panTabs.add(Messages.getString("CommonSettingsDialog.autoDisplay"), autoDisplayPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.advanced"), advancedSettingsPane);
-
-        adaptToGUIScale();
 
         return panTabs;
     }
@@ -2081,8 +2078,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             }
 
             markDuplicateBinds();
-
-            adaptToGUIScale();
         }
 
         super.setVisible(visible);
@@ -3439,10 +3434,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             logger.warn(e, "Error while reading " + fileEnding + " files from " + path);
             return new ArrayList<>();
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
     /**

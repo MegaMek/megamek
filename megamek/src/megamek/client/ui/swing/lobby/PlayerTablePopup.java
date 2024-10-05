@@ -21,8 +21,7 @@ package megamek.client.ui.swing.lobby;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.*;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.ScalingPopup;
@@ -46,10 +45,10 @@ class PlayerTablePopup {
     static final String PTP_DEPLOY = "DEPLOY";
     static final String PTP_REPLACE = "REPLACE";
 
-    static ScalingPopup playerTablePopup(ClientGUI clientGui, ActionListener listener,
-            Collection<Player> players, Board currentBoard) {
+    static JPopupMenu playerTablePopup(ClientGUI clientGui, ActionListener listener,
+                                       Collection<Player> players, Board currentBoard) {
 
-        ScalingPopup popup = new ScalingPopup();
+        JPopupMenu popup = new ScalingPopup();
 
         var cl = clientGui.getClient();
         var isOnePlayer = players.size() == 1;
@@ -90,12 +89,12 @@ class PlayerTablePopup {
             JMenuItem item = menuItem(IStartingPositions.START_LOCATION_NAMES[i], PTP_DEPLOY + "|" + i, enabled, listener);
             menu.add(item);
         }
-        
+
         for (int i : currentBoard.getCustomDeploymentZones()) {
             JMenuItem item = menuItem("Zone " + i, PTP_DEPLOY + "|" + Board.encodeCustomDeploymentZoneID(i), enabled, listener);
             menu.add(item);
         }
-        
+
         menu.setEnabled(enabled);
         return menu;
     }

@@ -51,9 +51,6 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
     @Override
     public void setVisible(boolean b) {
         alphaStrikeTab.saveValues();
-        if (b) {
-            adaptToGUIScale();
-        }
         super.setVisible(b);
     }
 
@@ -95,10 +92,5 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     public TWAdvancedSearchPanel getTWAdvancedSearch() {
         return totalWarTab;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        totalWarTab.adaptToGUIScale();
     }
 }

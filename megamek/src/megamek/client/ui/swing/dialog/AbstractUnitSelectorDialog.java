@@ -33,13 +33,10 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableColumnModelEvent;
-import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -52,7 +49,6 @@ import megamek.client.ui.models.XTableColumnModel;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.MekFileParser;
@@ -260,10 +256,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
-
-        unitModel.addTableModelListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
-        sorter.addRowSorterListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
-        unitColumnModel.addColumnModelListener(columnModelListener);
 
         gridBagConstraints.insets = new Insets(5, 0, 0, 0);
         gridBagConstraints.gridx = 0;
@@ -782,10 +774,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         buttonResetSearch.setEnabled(false);
         filterUnits();
 
-        if (visible) {
-            adaptToGUIScale();
-        }
-
         validate();
         repaint();
         super.setVisible(visible);
@@ -1146,40 +1134,4 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
     }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        setMinimumSize(UIUtil.scaleForGUI(new Dimension(700, 500)));
-        textFilter.setMinimumSize(UIUtil.scaleForGUI(new Dimension(200, 28)));
-        textFilter.setPreferredSize(UIUtil.scaleForGUI(new Dimension(200, 28)));
-        techLevelScroll.setMinimumSize(UIUtil.scaleForGUI(new Dimension(300, 100)));
-        techLevelScroll.setPreferredSize(UIUtil.scaleForGUI(new Dimension(300, 100)));
-    }
-
-    TableColumnModelListener columnModelListener = new TableColumnModelListener() {
-
-        @Override
-        public void columnAdded(TableColumnModelEvent e) {
-        }
-
-        @Override
-        public void columnRemoved(TableColumnModelEvent e) {
-        }
-
-        @Override
-        public void columnMoved(TableColumnModelEvent e) {
-            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
-        }
-
-        @Override
-        public void columnMarginChanged(ChangeEvent e) {
-            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
-        }
-
-        @Override
-        public void columnSelectionChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting())
-                UIUtil.updateRowHeightsForEqualHeights(tableUnits);
-        }
-    };
 }

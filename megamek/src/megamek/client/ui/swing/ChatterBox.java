@@ -18,8 +18,6 @@ import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
@@ -34,7 +32,7 @@ import java.util.LinkedList;
  * ChatterBox keeps track of a player list and a (chat) message buffer. Although
  * it is not an AWT component, it keeps one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener, IPreferenceChangeListener {
+public class ChatterBox implements KeyListener {
     public static final int MAX_HISTORY = 10;
     Client client;
     private final ClientGUI clientGUI;
@@ -180,9 +178,6 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
-
-        adaptToGUIScale();
-        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -288,20 +283,5 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     public void setChatterBox2(ChatterBox2 cb2) {
         this.cb2 = cb2;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(chatPanel, UIUtil.FONT_SCALE1);
-        UIUtil.adjustContainer(butDone, UIUtil.FONT_SCALE1);
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        switch (e.getName()) {
-            case GUIPreferences.GUI_SCALE:
-                adaptToGUIScale();
-                break;
-
-        }
     }
 }

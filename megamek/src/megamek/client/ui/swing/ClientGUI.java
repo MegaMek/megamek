@@ -1246,7 +1246,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case STARTING_SCENARIO:
                 component = new StartingScenarioPanel();
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);
                 panMain.add(component, main);
@@ -1254,7 +1253,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             case EXCHANGE:
                 chatlounge.killPreviewBV();
                 component = new ReceivingGameDataPanel();
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
                 panMain.add(component, main);
@@ -1822,7 +1820,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        UIUtil.adjustContainer(scrollPane, UIUtil.FONT_SCALE1);
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
                 (int) (clientGuiPanel.getSize().getWidth() / 1.5), (int) (clientGuiPanel.getSize().getHeight() / 1.5)));

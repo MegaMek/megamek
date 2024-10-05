@@ -43,7 +43,6 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.ASCardDisplayable;
 
@@ -136,7 +135,6 @@ public class ASCardPrinter implements Printable {
             add(new JLabel("Printing Alpha Strike Cards...", JLabel.CENTER));
             add(progressBar);
 
-            UIUtil.adjustDialog(ProgressPopup.this, UIUtil.FONT_SCALE1);
             setLocationRelativeTo(null);
             pack();
         }

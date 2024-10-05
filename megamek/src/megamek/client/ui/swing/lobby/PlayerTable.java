@@ -18,12 +18,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.WARNING_SIGN;
-import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-import static megamek.client.ui.swing.util.UIUtil.uiGreen;
-import static megamek.client.ui.swing.util.UIUtil.uiYellow;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -40,6 +35,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -56,7 +52,6 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 class PlayerTable extends JTable {
-    private static final long serialVersionUID = 6252953920509362407L;
 
     private static final int PLAYERTABLE_ROWHEIGHT = 45;
 
@@ -71,12 +66,19 @@ class PlayerTable extends JTable {
         getTableHeader().setReorderingAllowed(false);
         setDefaultRenderer(Player.class, new PlayerRenderer());
         TableColumn column = getColumnModel().getColumn(0);
-        String msg_players = Messages.getString("ChatLounge.Players");
-        column.setHeaderValue(msg_players);
+        column.setHeaderValue(Messages.getString("ChatLounge.Players"));
+        setRowHeights();
+        pm.addTableModelListener(e -> setRowHeights());
     }
 
-    void rescale() {
+    void setRowHeights() {
         setRowHeight(UIUtil.scaleForGUI(PLAYERTABLE_ROWHEIGHT));
+    }
+
+    @Override
+    public void columnMarginChanged(ChangeEvent e) {
+        setRowHeights();
+        super.columnMarginChanged(e);
     }
 
     @Override
@@ -87,11 +89,11 @@ class PlayerTable extends JTable {
             return null;
         }
 
-        StringBuilder result = new StringBuilder("<HTML>");
-        result.append(guiScaledFontHTML(player.getColour().getColour()));
-        result.append(player.getName() + "</FONT>");
+        StringBuilder result = new StringBuilder("<HTML><BODY>");
+        result.append("<FONT").append(UIUtil.colorString(player.getColour().getColour())).append(">");
+        result.append(player.getName());
+        result.append("</FONT>");
 
-        result.append(guiScaledFontHTML());
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
             String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
@@ -123,8 +125,6 @@ class PlayerTable extends JTable {
 
     public static class PlayerTableModel extends AbstractTableModel {
 
-        private static final long serialVersionUID = -1372393680232901923L;
-
         static final int COL_PLAYER = 0;
         static final int N_COL = 1;
 
@@ -152,7 +152,7 @@ class PlayerTable extends JTable {
 
         @Override
         public String getColumnName(int column) {
-            return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString("ChatLounge.colPlayer");
+            return Messages.getString("ChatLounge.colPlayer");
         }
 
         @Override
@@ -163,7 +163,6 @@ class PlayerTable extends JTable {
         @Override
         public Object getValueAt(int row, int col) {
             return getPlayerAt(row);
-
         }
 
         Player getPlayerAt(int row) {
@@ -172,7 +171,6 @@ class PlayerTable extends JTable {
     }
 
     class PlayerRenderer extends DefaultTableCellRenderer {
-        private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {
             setLayout(new GridLayout(1, 1, 5, 0));
@@ -189,7 +187,7 @@ class PlayerTable extends JTable {
 
             Player player = (Player) value;
 
-            StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
+            StringBuilder result = new StringBuilder("<HTML><NOBR>");
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
                     || lobby.client().getBots().containsKey(player.getName())) {
@@ -201,13 +199,12 @@ class PlayerTable extends JTable {
             // Second Line - Team
             boolean isEnemy = lobby.localPlayer().isEnemyOf(player);
             Color color = isEnemy ? GUIPreferences.getInstance().getWarningColor() : uiGreen();
-            result.append(guiScaledFontHTML(color));
+            result.append("<FONT").append(UIUtil.colorString(color)).append(">");
             result.append(Player.TEAM_NAMES[player.getTeam()]);
             result.append("</FONT>");
 
             // Deployment Position
             result.append(UIUtil.DOT_SPACER);
-            result.append(guiScaledFontHTML());
 
             String msg_start = Messages.getString("ChatLounge.Start");
 
@@ -241,50 +238,46 @@ class PlayerTable extends JTable {
             } else if (player.getStartingPos() > IStartingPositions.START_LOCATION_NAMES.length) {
                 result.append(msg_start + ": " + "Zone " + Board.decodeCustomDeploymentZoneID(player.getStartingPos()));
             }
-            result.append("</FONT>");
 
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
-                result.append(guiScaledFontHTML(uiYellow()));
-                result.append(WARNING_SIGN + "</FONT>");
+                result.append("<FONT").append(UIUtil.colorString(uiYellow())).append(">");
+                result.append(WARNING_SIGN);
+                result.append("</FONT>");
             }
 
             // Player BV
             result.append(UIUtil.DOT_SPACER);
-            result.append(guiScaledFontHTML());
             String msg_bvplain = Messages.getString("ChatLounge.BVplain");
             result.append(msg_bvplain + ": ");
             NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
-            result.append("</FONT>");
 
             // Initiative Mod
             if (player.getConstantInitBonus() != 0) {
                 result.append(UIUtil.DOT_SPACER);
-                result.append(guiScaledFontHTML());
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
                 String msg_init = Messages.getString("ChatLounge.Init");
                 result.append(msg_init + ": ").append(sign);
                 result.append(player.getConstantInitBonus());
-                result.append("</FONT>");
             }
 
             if (player.getSingleBlind()) {
                 result.append(UIUtil.DOT_SPACER);
-                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("<FONT").append(UIUtil.colorString(uiGreen())).append(">");
                 result.append("\uD83D\uDC41");
                 result.append("</FONT>");
             }
 
             if (player.getGameMaster()) {
                 result.append(UIUtil.DOT_SPACER);
-                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("<FONT").append(UIUtil.colorString(uiGreen())).append(">");
                 result.append("\uD83D\uDD2E  GM");
                 result.append("</FONT>");
             }
 
             setText(result.toString());
 
-            setIconTextGap(scaleForGUI(10));
+            setIconTextGap(10);
             Image camo = player.getCamouflage().getImage();
             int size = scaleForGUI(PLAYERTABLE_ROWHEIGHT) / 2;
             setImage(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH));

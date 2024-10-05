@@ -31,7 +31,6 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.logging.MMLogger;
 
 /**
@@ -77,7 +76,6 @@ public class HelpDialog extends JDialog {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(scrollPane);
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
 
         // Escape keypress
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);

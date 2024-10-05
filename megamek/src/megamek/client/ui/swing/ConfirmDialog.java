@@ -37,7 +37,6 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.UIUtil;
 
 /**
  * A simple yes/no confirmation dialog.
@@ -127,7 +126,6 @@ public class ConfirmDialog extends JDialog{
             defaultButton = butYes;
         }
 
-        adaptToGUIScale();
         finishSetup(p);
     }
 
@@ -268,9 +266,5 @@ public class ConfirmDialog extends JDialog{
             return true;
         }
         return !botherCheckbox.isSelected();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

@@ -464,7 +464,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         this.add(splitPane);
 
         addListeners();
-        adaptToGUIScale();
         GUIP.addPreferenceChangeListener(this);
 
         setBackGround();
@@ -2777,16 +2776,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         this.prevTarget = prevTarget;
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
+        if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
             tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.revalidate();

@@ -369,7 +369,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         initMenuItem(helpAbout, menu, HELP_ABOUT);
 
-        adaptToGUIScale();
         setKeyBinds();
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
@@ -599,8 +598,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewTurnDetailsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
@@ -618,11 +615,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
         }
-    }
-
-    /** Adapts the menu (the font size) to the current GUI scale. */
-    private void adaptToGUIScale() {
-        UIUtil.scaleMenu(this);
     }
 
     /** Removes this as listener. */
@@ -656,6 +648,5 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
         }
         boardRecent.setEnabled(!recentBoards.isEmpty());
-        adaptToGUIScale();
     }
 }

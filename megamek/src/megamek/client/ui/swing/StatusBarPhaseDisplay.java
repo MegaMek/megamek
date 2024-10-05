@@ -19,7 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 import java.awt.Color;
@@ -185,12 +184,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            toolTip = guiScaledFontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip = UIUtil.fontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
             toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {
             String msg_key = Messages.getString(ttKey);
-            toolTip += guiScaledFontHTML() + msg_key + "</FONT>";
+            toolTip += msg_key;
         }
         if (!toolTip.isEmpty()) {
             String b = "<BODY>" + toolTip + "</BODY>";
@@ -246,7 +245,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
-        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -286,12 +284,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
-        UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
-        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {
@@ -301,8 +293,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
-
-        adaptToGUIScale();
     }
 
     @Override

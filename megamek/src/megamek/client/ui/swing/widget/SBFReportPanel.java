@@ -131,7 +131,6 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         add(panelMain, BorderLayout.CENTER);
 
         doLayout();
-        adaptToGUIScale();
 
         GUIP.addPreferenceChangeListener(this);
         CP.addPreferenceChangeListener(this);
@@ -406,41 +405,10 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
         }
     };
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
-
-        for (int i = 0; i < tabs.getTabCount(); i++) {
-            Component cp = tabs.getComponentAt(i);
-            if (cp instanceof JScrollPane) {
-                Component pane = ((JScrollPane) cp).getViewport().getView();
-                if (pane instanceof JTextPane) {
-                    JTextPane tp = (JTextPane) pane;
-                    Report.setupStylesheet(tp);
-                    tp.setText(tp.getText());
-                }
-            }
-        }
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(ClientPreferences.REPORT_KEYWORDS)) {
+        if (e.getName().equals(ClientPreferences.REPORT_KEYWORDS)) {
             updateQuickChoice();
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_COLOR_LINK)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_COLOR_SUCCESS)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_COLOR_MISS)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_COLOR_INFO)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.WARNING_COLOR)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_FONT_TYPE)) {
-            adaptToGUIScale();
         }
     }
 }

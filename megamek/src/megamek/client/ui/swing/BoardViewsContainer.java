@@ -100,7 +100,7 @@ public class BoardViewsContainer {
 //            tooltip += "<BR>Located at " + enclosingBoard.embeddedBoardPosition(boardId).getBoardNum() +
 //                    " in " + enclosingBoard;
 //        }
-        return "<HTML><BODY>" + UIUtil.guiScaledFontHTML() + board(boardId).getMapName() + "</HTML>";
+        return board(boardId).getMapName();
     }
 
     private Board board(int id) {

@@ -20,7 +20,6 @@ package megamek.client.ui.swing.lobby;
 
 import static megamek.client.ui.swing.lobby.LobbyUtility.cleanBoardName;
 import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
-import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -124,7 +123,7 @@ public class MapPreviewButton extends JButton {
     }
 
     private void generateTooltip() {
-        setToolTipText(scaleStringForGUI(lobby.createBoardTooltip(boardName)));
+        setToolTipText(lobby.createBoardTooltip(boardName));
     }
 
     /**

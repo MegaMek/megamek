@@ -65,8 +65,6 @@ public class TurnTimer {
         display.add(remaining);
         display.add(progressBar);
 
-        UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
-
         BasicGameOptions options = client.getGame().getOptions();
         allowExtension = options.getOption(OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION).booleanValue();
 
@@ -83,8 +81,6 @@ public class TurnTimer {
                 Color c = counter  >= 10 ? GUIP.getCautionColor() : GUIP.getWarningColor();
                 progressBar.setForeground(c);
                 progressBar.setValue(counter);
-
-                UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
 
                 if (counter < 2 && extendTimer && allowExtension) {
                     timer.restart();

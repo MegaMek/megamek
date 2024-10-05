@@ -18,8 +18,11 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.common.annotations.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * This builder class is used to assign fonts and font styles to JComponents in the Swing GUI using FlatLaf's typography system. When
@@ -27,41 +30,47 @@ import java.awt.*;
  */
 public final class FlatLafStyleBuilder {
 
-    private final JComponent component;
     private String fontName = "";
     private double size = 1;
     private boolean bold = false;
 
     /**
-     * Creates a style builder for the given component. Add styles by chaining calls to the other methods. Apply the style using the
-     * finalizer method {@link #set()}.
+     * Creates an empty style builder. Add styles by chaining calls to the other methods. Apply the style using the finalizer method
+     * {@link #apply(JComponent)}.
      */
-    public FlatLafStyleBuilder(JComponent component) {
-        this.component = component;
+    public FlatLafStyleBuilder() {
     }
 
     /**
-     * Adds the given font (only the font name, not its style nor size) to the style builder.
+     * Creates a style builder, initializing it with the given font. Add styles by chaining calls to the other methods. Apply the style
+     * using the finalizer method {@link #apply(JComponent)}.
+     */
+    public FlatLafStyleBuilder(Font font) {
+        font(font);
+    }
+
+    /**
+     * Adds the given font (only the font name, not its style nor size) to the style builder. Note that multiple calls to this method simply
+     * overwrite previous values.
      *
      * @param font The font to use
      */
-    public FlatLafStyleBuilder font(Font font) {
-        fontName = font.getFontName();
-        return this;
+    public FlatLafStyleBuilder font(@Nullable Font font) {
+        return font((font == null) ? "" : font.getFontName());
     }
 
     /**
-     * Adds the given font name to the style builder.
+     * Adds the given font name to the style builder. Note that multiple calls to this method simply overwrite previous values.
      *
      * @param fontName The font to use
      */
-    public FlatLafStyleBuilder font(String fontName) {
-        this.fontName = fontName;
+    public FlatLafStyleBuilder font(@Nullable String fontName) {
+        this.fontName = Objects.requireNonNullElse(fontName, "");
         return this;
     }
 
     /**
-     * Sets the style to use bold text.
+     * Sets the style to use bold text. Note that multiple calls to this method have no further effect.
      */
     public FlatLafStyleBuilder bold() {
         bold = true;
@@ -70,7 +79,9 @@ public final class FlatLafStyleBuilder {
 
     /**
      * Adds the given relative size to the style builder. The default value is 1, meaning default font size. Values above 1 increase font
-     * size with, for example, 1.2 resulting in a font size of 120% of the default font size. Size values of 0 or less are ignored.
+     * size with, for example, 1.2 resulting in a font size of 120% of the default font size. Size values of 0 or less are ignored. Not that
+     * the resulting font size is affected by GUI scaling automatically, there is no need to scale using this method. Note that multiple
+     * calls to this method simply overwrite previous values.
      *
      * @param size The relative font size to use
      */
@@ -82,10 +93,9 @@ public final class FlatLafStyleBuilder {
     }
 
     /**
-     * Sets the JComponent of this style builder to use the given style. Note that when not using a FlatLaf look-and-feel, this method
-     * simply has no effect.
+     * Sets the given JComponent use the given style. Note that when not using a FlatLaf look-and-feel, this method simply has no effect.
      */
-    public void set() {
+    public void apply(JComponent component) {
         String styleText = "font:";
         if ((size != 1) && (size > 0)) {
             styleText += " " + (int) (100 * size) + "%";
@@ -93,7 +103,7 @@ public final class FlatLafStyleBuilder {
         if (bold) {
             styleText += " bold";
         }
-        if (fontName != null && !fontName.isBlank()) {
+        if ((fontName != null) && !fontName.isBlank()) {
             styleText += " \"" + fontName + "\"";
         }
         component.putClientProperty("FlatLaf.style", styleText);

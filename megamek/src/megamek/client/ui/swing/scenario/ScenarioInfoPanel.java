@@ -48,13 +48,13 @@ public class ScenarioInfoPanel extends JPanel {
         lblTitle.setName("lblTitle");
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTitle.setForeground(UIUtil.uiLightGreen());
-        new FlatLafStyleBuilder(lblTitle).font("Exo 2").bold().size(1.4).set();
+        new FlatLafStyleBuilder().font("Exo 2").bold().size(1.4).apply(lblTitle);
         add(lblTitle);
         add(Box.createVerticalStrut(10));
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));
         add(Box.createVerticalStrut(10));
 
-        new FlatLafStyleBuilder(textDescription2).font(FontHandler.notoFont()).set();
+        new FlatLafStyleBuilder().font(FontHandler.notoFont()).apply(textDescription2);
         textDescription2.setAlignmentX(0.5f);
         textDescription2.setVerticalAlignment(SwingConstants.TOP);
         textDescription2.setBorder(new EmptyBorder(0, 10, 0, 10));

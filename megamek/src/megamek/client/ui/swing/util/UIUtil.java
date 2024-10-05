@@ -401,6 +401,17 @@ public final class UIUtil {
     }
 
     /**
+     * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the automatic scaling
+     * doesn't affect, e.g. images.
+     *
+     * @param width  the width of the Dimension
+     * @param height the height of the Dimension
+     */
+    public static Dimension scaleForGUI(int width, int height) {
+        return new Dimension(scaleForGUI(width), scaleForGUI(height));
+    }
+
+    /**
      * Returns the given value multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't affect,
      * e.g. images. Note that the given int value is scaled as a float and then rounded.
      *
@@ -1120,9 +1131,7 @@ public final class UIUtil {
     }
 
     /**
-     * Returns a Font object using the "Dialog" logic font. The font size is based
-     * on
-     * size 14 and scaled with the current gui scaling.
+     * Returns a Font object using the "Dialog" logic font. The font size 14. legacy from manual gui scaling. This method should eventually be removed
      */
     @Deprecated
     public static Font getScaledFont() {

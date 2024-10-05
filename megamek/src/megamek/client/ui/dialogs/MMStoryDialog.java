@@ -19,7 +19,10 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.util.ImageUtil;
 import megamek.server.scriptedevent.NarrativeDisplayProvider;
 
 import javax.swing.*;
@@ -28,6 +31,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * This is the base class for MM dialogs that have a similar look to Story Arc dialogs. Instead of the
@@ -116,9 +120,16 @@ public abstract class MMStoryDialog extends JDialog {
         }
 
         if (null != img) {
+
             ImageIcon icon = new ImageIcon(img);
             imgWidth = icon.getIconWidth();
             imgHeight = icon.getIconHeight();
+            if (GUIPreferences.getInstance().getGUIScale() != 1) {
+                imgWidth = UIUtil.scaleForGUI(imgWidth);
+                imgHeight = UIUtil.scaleForGUI(imgHeight);
+                BufferedImage image = ImageUtil.getScaledImage(img, imgWidth, imgHeight);
+                icon = new ImageIcon(image);
+            }
             JLabel imgLbl = new JLabel();
             imgLbl.setIcon(icon);
             imagePanel.add(imgLbl, BorderLayout.CENTER);

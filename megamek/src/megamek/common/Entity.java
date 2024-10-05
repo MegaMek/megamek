@@ -84,6 +84,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
+import static megamek.common.EquipmentTypeLookup.TSM;
+
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
@@ -9926,6 +9928,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
         if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()) {
+            return false;
+        }
+
+        if (moved == EntityMovementType.MOVE_SPRINT
+            || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
+            if(isMek()) {
+                return getMisc().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_TSM));
+            }
             return false;
         }
 

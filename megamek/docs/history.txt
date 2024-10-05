@@ -40,6 +40,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6017: Zweihander prompt when only one arm available
 + Fix #6049: Fixing missing Text string for Mechanical Jump Fall Damage
 + PR #6063: Enhance wordWrap with HTML Tags for Line Breaks
++ Fix #1486: Add option to skip firing turn for mechs/vees that sprint
++ PR #6068: Replace Manual GUI scaling with FlatLaf Scaling
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

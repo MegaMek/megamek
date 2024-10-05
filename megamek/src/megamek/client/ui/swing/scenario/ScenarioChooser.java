@@ -18,9 +18,7 @@
  */
 package megamek.client.ui.swing.scenario;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
@@ -81,7 +79,7 @@ public class ScenarioChooser extends AbstractButtonDialog {
         super(parentFrame, "ScenarioChooser", "ScenarioChooser.title");
         initialize();
         setMinimumSize(
-                UIUtil.scaleForGUI(ScenarioInfoPanel.BASE_MINIMUM_WIDTH, ScenarioInfoPanel.BASE_MINIMUM_HEIGHT * 3));
+                new Dimension(ScenarioInfoPanel.BASE_MINIMUM_WIDTH, ScenarioInfoPanel.BASE_MINIMUM_HEIGHT * 3));
     }
 
     /**

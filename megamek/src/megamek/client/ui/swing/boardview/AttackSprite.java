@@ -245,7 +245,7 @@ class AttackSprite extends Sprite {
         String sAttacherDesc = "";
 
         sAttacherDesc = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
-        result = UIUtil.colorHTML(attackColor) + sAttacherDesc + "</FONT>";
+        result = UIUtil.fontHTML(attackColor) + sAttacherDesc + "</FONT>";
         String sAttacks = "";
         if ((phase.isFiring()) || (phase.isPhysical())) {
             for (String wpD : attacks.getDescriptions()) {

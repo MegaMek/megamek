@@ -72,12 +72,12 @@ public class MekTableASUnitEntry {
         // First line
 
         // Unit Name
-        result.append(colorHTML(uiLightGreen()));
+        result.append(UIUtil.fontHTML(uiLightGreen()));
         result.append("<B>").append(element.getName()).append("</B></FONT>");
 
         // ID
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            result.append(colorHTML(uiGray()));
+            result.append(UIUtil.fontHTML(uiGray()));
             result.append(" [ID: ").append(element.getId()).append("]</FONT>");
         }
         if (!forceView && !compactView) {
@@ -115,7 +115,7 @@ public class MekTableASUnitEntry {
 
         // ECM
         if (element.hasAnySUAOf(ECM, LECM, AECM)) {
-            result.append(DOT_SPACER).append(colorHTML(uiC3Color()));
+            result.append(DOT_SPACER).append(UIUtil.fontHTML(uiC3Color()));
             result.append(ECM_SIGN + " ");
             result.append(Messages.getString("BoardView1.ecmSource"));
             result.append("</FONT>");

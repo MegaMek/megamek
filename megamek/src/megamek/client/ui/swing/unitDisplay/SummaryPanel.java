@@ -176,7 +176,7 @@ public class SummaryPanel extends PicMap {
     }
 
     private String padLeft(String html) {
-        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
+        int dist = 5;
         String col = "";
         String row = "";
         String tbody = "";

@@ -19,7 +19,7 @@ import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.util.UIUtil.DOT_SPACER;
 import static megamek.client.ui.swing.util.UIUtil.ECM_SIGN;
 import static megamek.client.ui.swing.util.UIUtil.addGray;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.repeat;
 
 import java.awt.Color;
@@ -244,8 +244,8 @@ public final class UnitToolTip {
             result += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
             result += "<BR>" + ownerName;
             String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
-            result += UIUtil.colorHTML(GUIP.getUnitToolTipFGColor()) + msg_id + "</FONT>";
-            result = UIUtil.colorHTML(ownerColor) + result + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getUnitToolTipFGColor()) + msg_id + "</FONT>";
+            result = UIUtil.fontHTML(ownerColor) + result + "</FONT>";
         }
 
         return result;
@@ -280,7 +280,7 @@ public final class UnitToolTip {
                 }
             }
 
-            return guiScaledFontHTML(GUIP.getUnitToolTipQuirkColor(), TT_SMALLFONT_DELTA) + sQuirks + "</FONT>";
+            return UIUtil.fontHTML(GUIP.getUnitToolTipQuirkColor(), TT_SMALLFONT_DELTA) + sQuirks + "</FONT>";
         }
 
         return "";
@@ -292,7 +292,7 @@ public final class UnitToolTip {
                 grp -> entity.countPartialRepairs(), details);
 
         if (!partialList.isEmpty()) {
-            result += guiScaledFontHTML(GUIP.getPrecautionColor(), TT_SMALLFONT_DELTA) + partialList + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getPrecautionColor(), TT_SMALLFONT_DELTA) + partialList + "</FONT>";
         }
 
         return result;
@@ -319,7 +319,7 @@ public final class UnitToolTip {
 
         if ((good + hits) > 0) {
             locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-            result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+            result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
             result += systemBar(good, hits, bad);
         }
 
@@ -334,7 +334,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -348,7 +348,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -362,7 +362,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -376,7 +376,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -390,7 +390,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -404,7 +404,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -418,7 +418,7 @@ public final class UnitToolTip {
         boolean bad = hits > 0;
 
         locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
-        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result = fontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
         result += systemBar(good, hits, bad);
 
         return new StringBuilder().append(result);
@@ -474,24 +474,24 @@ public final class UnitToolTip {
                 // Destroyed location
                 col1 = "";
                 String sLocHeader = "&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;";
-                col2 = guiScaledFontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
+                col2 = fontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
                 col2 += destroyedLocBar(entity.getOArmor(loc, true)).toString();
             } else {
                 // Rear armor
                 if (entity.hasRearArmor(loc)) {
                     String msg_abbr_rear = Messages.getString("BoardView1.Tooltip.AbbreviationRear");
                     String sLocHeader = "&nbsp;&nbsp;" + locationHeader(entity, loc) + msg_abbr_rear + "&nbsp;";
-                    col1 = guiScaledFontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
+                    col1 = fontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
                     col1 += intactLocBar(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar).toString();
                 } else {
                     // No rear armor: empty table cells instead
                     // At small font sizes, writing one character at the correct font size is
                     // necessary to prevent the table rows from being spaced non-beautifully
-                    col1 = guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;" + "</FONT>";
+                    col1 = fontHTML(TT_SMALLFONT_DELTA) + "&nbsp;" + "</FONT>";
                 }
                 // Front armor
                 String sLocHeader = "&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;";
-                col2 = guiScaledFontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
+                col2 = fontHTML(TT_SMALLFONT_DELTA) + sLocHeader + "</FONT>";
                 col2 += intactLocBar(entity.getOInternal(loc), entity.getInternal(loc), internalChar).toString();
                 col2 += intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar).toString();
             }
@@ -711,15 +711,15 @@ public final class UnitToolTip {
                 String msg_x = Messages.getString("BoardView1.Tooltip.X");
                 String sIntact = dChar + msg_x + tensIntact * 10;
                 sIntact += repeat(dChar, numIntact - 10 * tensIntact);
-                result += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
+                result += UIUtil.fontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
             } else {
                 String sIntact = repeat(dChar, numIntact);
-                result += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
+                result += UIUtil.fontHTML(colorIntact, TT_SMALLFONT_DELTA) + sIntact + "</FONT>";
             }
         }
         if (numPartial > 0) {
             String sPartial = repeat(dChar, numPartial);
-            result += guiScaledFontHTML(colorPartialDmg, TT_SMALLFONT_DELTA) + sPartial + "</FONT>";
+            result += UIUtil.fontHTML(colorPartialDmg, TT_SMALLFONT_DELTA) + sPartial + "</FONT>";
         }
         if (numDmgd > 0) {
             if (numDmgd > 15 && numIntact + numDmgd > 30) {
@@ -727,10 +727,10 @@ public final class UnitToolTip {
                 String msg_x = Messages.getString("BoardView1.Tooltip.X");
                 String sDamage = dChar + msg_x + tensDmgd * 10;
                 sDamage += repeat(dChar, numDmgd - 10 * tensDmgd);
-                result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
+                result += UIUtil.fontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
             } else {
                 String sDamage = repeat(dChar, numDmgd);
-                result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
+                result += UIUtil.fontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sDamage + "</FONT>";
             }
         }
         return new StringBuilder().append(result);
@@ -751,15 +751,15 @@ public final class UnitToolTip {
         if (good > 0) {
             if (!destroyed) {
                 String sGood = repeat(iChar, good);
-                result = guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + sGood + "</FONT>";
+                result = UIUtil.fontHTML(colorIntact, TT_SMALLFONT_DELTA) + sGood + "</FONT>";
             } else {
                 String sGood = repeat(iChar, good);
-                result = guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sGood + "</FONT>";
+                result = UIUtil.fontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sGood + "</FONT>";
             }
         }
         if (bad > 0) {
             String sBad = repeat(dChar, bad);
-            result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
+            result += UIUtil.fontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
         }
         return new StringBuilder().append(result);
     }
@@ -1052,9 +1052,9 @@ public final class UnitToolTip {
                 }
                 ;
 
-                col1 = UIUtil.colorHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
+                col1 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
                 col1 = "<TD>" + col1 + "</TD>";
-                col2 = UIUtil.colorHTML(GUIP.getUnitToolTipWeaponColor()) + col2 + "</FONT>";
+                col2 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col2 + "</FONT>";
                 col2 = "<TD>" + col2 + "</TD>";
                 row = "<TR>" + col1 + col2 + "</TR>";
             }
@@ -1092,11 +1092,11 @@ public final class UnitToolTip {
                     col2 = "&nbsp;x&nbsp;";
                     col3 = BombType.getBombName(i);
 
-                    col1 = UIUtil.colorHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
+                    col1 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
                     col1 = "<TD>" + col1 + "</TD>";
-                    col2 = UIUtil.colorHTML(GUIP.getUnitToolTipWeaponColor()) + col2 + "</FONT>";
+                    col2 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col2 + "</FONT>";
                     col2 = "<TD>" + col2 + "</TD>";
-                    col3 = UIUtil.colorHTML(GUIP.getUnitToolTipWeaponColor()) + col3 + "</FONT>";
+                    col3 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col3 + "</FONT>";
                     col3 = "<TD>" + col3 + "</TD>";
                     row = "<TR>" + col1 + col2 + col3 + "</TR>";
                 } else {
@@ -1141,7 +1141,7 @@ public final class UnitToolTip {
             String msg_outofammo = Messages.getString("BoardView1.Tooltip.OutOfAmmo");
             col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
             col1 = "<TD>" + col1 + "</TD>";
-            col2 = guiScaledFontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
+            col2 = UIUtil.fontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
             col2 = "<TD>" + col2 + "</TD>";
             row = "<TR>" + col1 + col2 + "</TR>";
             rows += row;
@@ -1169,7 +1169,7 @@ public final class UnitToolTip {
                 }
 
                 col1 = "<TD>" + col1 + "</TD>";
-                col2 = guiScaledFontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
+                col2 = UIUtil.fontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
                 col2 = "<TD>" + col2 + "</TD>";
                 row = "<TR>" + col1 + col2 + "</TR>";
                 rows += row;
@@ -1192,8 +1192,8 @@ public final class UnitToolTip {
             sECMInfo += ECM_SIGN + " " + msg_eccmsource;
         }
 
-        result = guiScaledFontHTML() + sECMInfo + "</FONT>";
-        result = guiScaledFontHTML() + result + "</FONT>";
+        result = UIUtil.fontHTML() + sECMInfo + "</FONT>";
+        result = UIUtil.fontHTML() + result + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -1263,13 +1263,13 @@ public final class UnitToolTip {
         result += ' ' + getDamageLevelDesc(entity, true);
 
         if (!isGunEmplacement && entity.isImmobile()) {
-            result += ' ' + UIUtil.colorHTML(GUIP.getWarningColor())
+            result += ' ' + UIUtil.fontHTML(GUIP.getWarningColor())
                     + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
         }
 
         // Unit Prone
         if (!isGunEmplacement && entity.isProne()) {
-            result += ' ' + UIUtil.colorHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone")
+            result += ' ' + UIUtil.fontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone")
                     + "</FONT>";
         }
 
@@ -1298,17 +1298,17 @@ public final class UnitToolTip {
 
         if (entity.isDoomed() || entity.isDestroyed()) {
             String msg_destroyed = Messages.getString("BoardView1.Tooltip.Destroyed");
-            return useHtml ? UIUtil.colorHTML(GUIP.getWarningColor()) + msg_destroyed + "</FONT>" : msg_destroyed;
+            return useHtml ? UIUtil.fontHTML(GUIP.getWarningColor()) + msg_destroyed + "</FONT>" : msg_destroyed;
         }
 
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 String msg_crippled = Messages.getString("BoardView1.Tooltip.Crippled");
-                result = useHtml ? UIUtil.colorHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>" : msg_crippled;
+                result = useHtml ? UIUtil.fontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>" : msg_crippled;
                 break;
             case Entity.DMG_HEAVY:
                 String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
-                result = useHtml ? UIUtil.colorHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>" : msg_heavydmg;
+                result = useHtml ? UIUtil.fontHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>" : msg_heavydmg;
                 break;
             case Entity.DMG_MODERATE:
                 String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
@@ -1363,7 +1363,7 @@ public final class UnitToolTip {
             if (!entity.isDone() && game.getPhase().isMovement()) {
                 String sNotYetMoved = addToTT("NotYetMoved", BR).toString();
                 sNotYetMoved = "<I>" + sNotYetMoved + "</I>";
-                result += UIUtil.colorHTML(GUIP.getColorForMovement(entity.moved)) + sNotYetMoved + "</FONT>";
+                result += UIUtil.fontHTML(GUIP.getColorForMovement(entity.moved)) + sNotYetMoved + "</FONT>";
             } else if ((entity.isDone() && game.getPhase().isMovement())
                     || (game.getPhase().isMovementReport())
                     || (game.getPhase().isFiring())
@@ -1386,14 +1386,14 @@ public final class UnitToolTip {
                 if (entity.isEvading()) {
                     String sSpecialMove = addToTT("Evade", BR).toString();
                     sSpecialMove = "<I>" + sSpecialMove + "</I>";
-                    sSpecialMove = UIUtil.colorHTML(GUIP.getPrecautionColor()) + sSpecialMove + "</FONT>";
+                    sSpecialMove = UIUtil.fontHTML(GUIP.getPrecautionColor()) + sSpecialMove + "</FONT>";
                     sMove += sSpecialMove;
                 }
 
                 if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) {
                     String sTakingCover = addToTT("TakingCover", BR).toString();
                     sTakingCover = "<I>" + sTakingCover + "</I>";
-                    sTakingCover = UIUtil.colorHTML(GUIP.getPrecautionColor()) + sTakingCover + "</FONT>";
+                    sTakingCover = UIUtil.fontHTML(GUIP.getPrecautionColor()) + sTakingCover + "</FONT>";
                     sMove += sTakingCover;
                 }
 
@@ -1404,7 +1404,7 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) {
                     String sDFA = addToTT("DFA", BR).toString();
                     sDFA = "<I>" + sDFA + "</I>";
-                    sDFA = UIUtil.colorHTML(GUIP.getWarningColor()) + sDFA + "</FONT>";
+                    sDFA = UIUtil.fontHTML(GUIP.getWarningColor()) + sDFA + "</FONT>";
                     sMove += sDFA;
                 }
 
@@ -1419,7 +1419,7 @@ public final class UnitToolTip {
                     sMove += sUnJamming;
                 }
 
-                result += UIUtil.colorHTML(GUIP.getColorForMovement(entity.moved)) + sMove + "</FONT>";
+                result += UIUtil.fontHTML(GUIP.getColorForMovement(entity.moved)) + sMove + "</FONT>";
             }
         }
 
@@ -1429,7 +1429,7 @@ public final class UnitToolTip {
                 String uw = "<br/>"
                         + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds).toString();
                 if (entity.underwaterRounds >= mount.getUWEndurance()) {
-                    uw = UIUtil.colorHTML(GUIP.getWarningColor()) + uw + "</font>";
+                    uw = UIUtil.fontHTML(GUIP.getWarningColor()) + uw + "</font>";
                 }
                 result += uw;
             }
@@ -1447,7 +1447,7 @@ public final class UnitToolTip {
             sAeroInfo = addToTT("Elev", BR, entity.getElevation()).toString();
         }
         sAeroInfo = "<I>" + sAeroInfo + "</I>";
-        result += UIUtil.colorHTML(GUIP.getUnitToolTipHighlightColor()) + sAeroInfo + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + sAeroInfo + "</FONT>";
 
         result += "<BR>";
         String msg_facing = Messages.getString("BoardView1.Tooltip.Facing");
@@ -1456,7 +1456,7 @@ public final class UnitToolTip {
             String msg_twist = Messages.getString("BoardView1.Tooltip.Twist");
             sFacingTwist += "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + entity.getFacingName(entity.getSecondaryFacing());
         }
-        result += guiScaledFontHTML() + sFacingTwist + "</FONT>";
+        result += UIUtil.fontHTML() + sFacingTwist + "</FONT>";
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
@@ -1469,25 +1469,25 @@ public final class UnitToolTip {
             }
             HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
             sHeat += " / " + hdh.heatCapacityStr;
-            result += UIUtil.colorHTML(GUIP.getColorForHeat(heat, GUIP.getUnitToolTipFGColor())) + sHeat + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getColorForHeat(heat, GUIP.getUnitToolTipFGColor())) + sHeat + "</FONT>";
 
             if (entity instanceof Mek && ((Mek) entity).hasActiveTSM()) {
                 result += DOT_SPACER;
                 String sTSM = "TSM";
-                result += UIUtil.colorHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
+                result += UIUtil.fontHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
             }
         }
 
         String illuminated = entity.isIlluminated() ? DOT_SPACER + "\uD83D\uDCA1" : "";
-        result += UIUtil.colorHTML(GUIP.getCautionColor()) + illuminated + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getCautionColor()) + illuminated + "</FONT>";
 
         if (entity.hasSearchlight()) {
             String searchLight = entity.isUsingSearchlight() ? DOT_SPACER + "\uD83D\uDD26" : "";
             searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
-            result += UIUtil.colorHTML(GUIP.getCautionColor()) + searchLight + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getCautionColor()) + searchLight + "</FONT>";
         } else {
             String searchLight = "\uD83D\uDD26";
-            result += UIUtil.colorHTML(GUIP.getWarningColor()) + DOT_SPACER + searchLight + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getWarningColor()) + DOT_SPACER + searchLight + "</FONT>";
         }
 
         // Gun Emplacement Status
@@ -1496,20 +1496,20 @@ public final class UnitToolTip {
             if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
                 String sTurretLocked = addToTT("TurretLocked", BR).toString();
                 sTurretLocked = "<I>" + sTurretLocked + "</I>";
-                result += UIUtil.colorHTML(GUIP.getWarningColor()) + sTurretLocked + "</FONT>";
+                result += UIUtil.fontHTML(GUIP.getWarningColor()) + sTurretLocked + "</FONT>";
             }
         }
 
         // Unit Immobile
         if (!isGunEmplacement && entity.isImmobile()) {
             String sImmobile = addToTT("Immobile", BR).toString();
-            result += UIUtil.colorHTML(GUIP.getWarningColor()) + sImmobile + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getWarningColor()) + sImmobile + "</FONT>";
         }
 
         // Unit Prone
         if (!isGunEmplacement && entity.isProne()) {
             String sUnitProne = addToTT("Prone", BR).toString();
-            result += UIUtil.colorHTML(GUIP.getCautionColor()) + sUnitProne + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getCautionColor()) + sUnitProne + "</FONT>";
         }
 
         if (!entity.getHiddenActivationPhase().isUnknown()) {
@@ -1534,14 +1534,14 @@ public final class UnitToolTip {
             String msg_error = Messages.getString("ERROR");
             String sa = (swarmAttacker == null) ? msg_error : swarmAttacker.getDisplayName();
             String sSwarmed = addToTT("Swarmed", BR, sa).toString();
-            result += UIUtil.colorHTML(GUIP.getWarningColor()) + sSwarmed + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getWarningColor()) + sSwarmed + "</FONT>";
         }
 
         // Spotting
         if (entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
             String sSpotting = addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName())
                     .toString();
-            result += guiScaledFontHTML() + sSpotting + "</FONT>";
+            result += UIUtil.fontHTML() + sSpotting + "</FONT>";
         }
 
         if (showSeenBy) {
@@ -1583,7 +1583,7 @@ public final class UnitToolTip {
                 if (tempList.length() > 1) {
                     tempList.delete(tempList.length() - 2, tempList.length());
                     String sSeenBy = addToTT("SeenBy", BR, tempList.toString()).toString();
-                    result += guiScaledFontHTML() + sSeenBy + "</FONT>";
+                    result += UIUtil.fontHTML() + sSeenBy + "</FONT>";
                 }
             }
         }
@@ -1612,7 +1612,7 @@ public final class UnitToolTip {
 
         if (entity.hasAnyTypeNarcPodsAttached()) {
             String sNarced = addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", BR).toString();
-            result += UIUtil.colorHTML(GUIP.getPrecautionColor()) + sNarced + "</FONT>";
+            result += UIUtil.fontHTML(GUIP.getPrecautionColor()) + sNarced + "</FONT>";
         }
 
         // Towing
@@ -1626,7 +1626,7 @@ public final class UnitToolTip {
         }
 
         // Coloring to make these transient entries stand out
-        result = UIUtil.colorHTML(GUIP.getUnitToolTipHighlightColor()) + result + "</FONT>";
+        result = UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor()) + result + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -1745,14 +1745,14 @@ public final class UnitToolTip {
                 if (entity.getGame().getPlanetaryConditions().getGravity() != 1.0) {
                     sMove += DOT_SPACER;
                     String sGravity = entity.getGame().getPlanetaryConditions().getGravity() + "g";
-                    sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sGravity + "</FONT>";
+                    sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sGravity + "</FONT>";
                 }
                 int walkMPNoHeat = entity.getWalkMP(MPCalculationSetting.NO_HEAT);
                 int runMPNoHeat = entity.getRunMP(MPCalculationSetting.NO_HEAT);
                 if ((walkMPNoHeat != walkMPModified) || (runMPNoHeat != runMPModified)) {
                     sMove += DOT_SPACER;
                     String sHeat = "\uD83D\uDD25";
-                    sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sHeat + "</FONT>";
+                    sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sHeat + "</FONT>";
                 }
             }
 
@@ -1762,7 +1762,7 @@ public final class UnitToolTip {
                 if (bombMod != walkMP) {
                     sMove += DOT_SPACER;
                     String sBomb = "\uD83D\uDCA3";
-                    sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sBomb + "</FONT>";
+                    sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sBomb + "</FONT>";
                 }
             }
 
@@ -1771,7 +1771,7 @@ public final class UnitToolTip {
             if ((weatherMod != 0) || (partialWingWeaterMod != 0)) {
                 sMove += DOT_SPACER;
                 String sWeather = "\u2602";
-                sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sWeather + "</FONT>";
+                sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sWeather + "</FONT>";
             }
 
             if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0)
@@ -1779,7 +1779,7 @@ public final class UnitToolTip {
                     || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
                 sMove += DOT_SPACER;
                 String sDamage = "\uD83D\uDD27";
-                sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sDamage + "</FONT>";
+                sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sDamage + "</FONT>";
             }
 
             if ((entity instanceof BipedMek) || (entity instanceof TripodMek)) {
@@ -1792,14 +1792,14 @@ public final class UnitToolTip {
                 if (shieldMod != 0) {
                     sMove += DOT_SPACER;
                     String sShield = "\u26E8";
-                    sMove += UIUtil.colorHTML(GUIP.getWarningColor()) + sShield + "</FONT>";
+                    sMove += UIUtil.fontHTML(GUIP.getWarningColor()) + sShield + "</FONT>";
                 }
             }
 
             if (entity.hasModularArmor()) {
                 sMove += DOT_SPACER;
                 String sArmor = "\u27EC\u25AE";
-                sMove += DOT_SPACER + UIUtil.colorHTML(GUIP.getWarningColor()) + sArmor + "</FONT>";
+                sMove += DOT_SPACER + UIUtil.fontHTML(GUIP.getWarningColor()) + sArmor + "</FONT>";
             }
 
             l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0; width: 300px;\">"
@@ -1840,7 +1840,7 @@ public final class UnitToolTip {
 
         String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1 + l2
                 + l3 + "</UL>";
-        result = guiScaledFontHTML() + ul + "</FONT>";
+        result = UIUtil.fontHTML() + ul + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -1874,7 +1874,7 @@ public final class UnitToolTip {
 
         String ul = "<UL style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + l1
                 + "</UL>";
-        result = guiScaledFontHTML() + ul + "</FONT>";
+        result = UIUtil.fontHTML() + ul + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -1906,7 +1906,7 @@ public final class UnitToolTip {
             String msg_cannotsurvivespace = Messages.getString("BoardView1.Tooltip.CannotSurviveSpace");
             sWarnings += "<BR>" + msg_cannotsurvivespace;
         }
-        result += UIUtil.colorHTML(GUIP.getWarningColor()) + sWarnings + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getWarningColor()) + sWarnings + "</FONT>";
 
         String sNoncritial = "";
         // Non-critical (yellow) warnings
@@ -1923,7 +1923,7 @@ public final class UnitToolTip {
             sNoncritial += "<BR>" + msg_fightersquadronempty;
         }
 
-        result += UIUtil.colorHTML(GUIP.getCautionColor()) + sNoncritial + "</FONT>" + "<BR>";
+        result += UIUtil.fontHTML(GUIP.getCautionColor()) + sNoncritial + "</FONT>" + "<BR>";
 
         return new StringBuilder().append(result);
     }
@@ -1949,7 +1949,7 @@ public final class UnitToolTip {
                 }
             }
 
-            result = guiScaledFontHTML() + sCarriedUnits + "</FONT>";
+            result = UIUtil.fontHTML() + sCarriedUnits + "</FONT>";
         }
 
         return new StringBuilder().append(result);
@@ -1960,7 +1960,7 @@ public final class UnitToolTip {
         List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
 
         if (!cargoList.isEmpty()) {
-            sb.append(guiScaledFontHTML());
+            sb.append(UIUtil.fontHTML());
             sb.append(Messages.getString("MissionRole.cargo"));
             sb.append(":<br/>&nbsp;&nbsp;");
 
@@ -1994,7 +1994,7 @@ public final class UnitToolTip {
                 sForceEntry += forceChain.get(i).getName();
                 sForceEntry += i != 0 ? ", " : "";
             }
-            result = UIUtil.colorHTML(color) + sForceEntry + "</FONT>";
+            result = UIUtil.fontHTML(color) + sForceEntry + "</FONT>";
         }
 
         return new StringBuilder().append(result);
@@ -2025,7 +2025,7 @@ public final class UnitToolTip {
                 sC3Info += "<BR>";
             }
 
-            result = guiScaledFontHTML(GUIP.getUnitToolTipHighlightColor(), -0.2f) + sC3Info + "</FONT>";
+            result = UIUtil.fontHTML(GUIP.getUnitToolTipHighlightColor(), -0.2f) + sC3Info + "</FONT>";
 
         }
 
@@ -2047,13 +2047,13 @@ public final class UnitToolTip {
         }
 
         sC3UnitName += "<I>" + msg_c3 + "</I>";
-        result += guiScaledFontHTML(GUIP.getUnitToolTipFGColor(), -0.2f) + sC3UnitName + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getUnitToolTipFGColor(), -0.2f) + sC3UnitName + "</FONT>";
         result += c3member.getShortNameRaw();
 
         String msg_thisunit = " (" + Messages.getString("BoardView1.Tooltip.ThisUnit") + ")";
         tmp = "<I>" + msg_thisunit + "</I>";
         String sC3Member = c3member.equals(entity) ? tmp : "";
-        result += guiScaledFontHTML(GUIP.getUnitToolTipFGColor(), -0.2f) + sC3Member + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getUnitToolTipFGColor(), -0.2f) + sC3Member + "</FONT>";
 
         return result;
     }

@@ -2467,7 +2467,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (tablePlayers.getSelectedRowCount() == 0) {
                 return;
             }
-            ScalingPopup popup = PlayerTablePopup.playerTablePopup(clientgui,
+            JPopupMenu popup = PlayerTablePopup.playerTablePopup(clientgui,
                     playerTableActionListener,
                     getSelectedPlayers(),
                     ServerBoardHelper.getPossibleGameBoard(mapSettings, true));
@@ -3046,7 +3046,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String headerText = mekModel.getColumnName(i);
             // Add info about the current sorting
             if (activeSorter.getColumnIndex() == i) {
-                headerText += "&nbsp;&nbsp;&nbsp;" + colorHTML(uiGray());
+                headerText += "&nbsp;&nbsp;&nbsp;" + UIUtil.fontHTML(uiGray());
                 if (activeSorter.getSortingDirection() == MekTableSorter.Sorting.ASCENDING) {
                     headerText += "\u25B4 ";
                 } else {

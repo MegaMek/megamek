@@ -75,7 +75,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         int padding = UIUtil.scaleForGUI(BASE_PADDING);
 
         StringBuilder result = new StringBuilder();
-        result.append(UIUtil.colorHTML(GUIP.getUnitToolTipTerrainFGColor()));
+        result.append(UIUtil.fontHTML(GUIP.getUnitToolTipTerrainFGColor()));
         result.append("<FONT FACE=" + FontHandler.notoFont().getName() + ">");
 
         // Coordinates and level
@@ -124,7 +124,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         List<String> errors = new ArrayList<>();
         if (!hex.isValid(errors)) {
             result.append(paragraphHTMLOpen(padding))
-                    .append(UIUtil.colorHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                    .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
                     .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
                     .append(String.join("<BR>", errors))
                     .append("</p>");

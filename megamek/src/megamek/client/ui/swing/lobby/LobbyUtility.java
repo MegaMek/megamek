@@ -176,7 +176,7 @@ public class LobbyUtility {
      * invalid.
      */
     static String invalidBoardTip() {
-        return UIUtil.colorHTML(GUIPreferences.getInstance().getWarningColor())
+        return UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor())
                 + Messages.getString("ChatLounge.map.invalidTip") + "</FONT>";
     }
 

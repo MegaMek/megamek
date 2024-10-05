@@ -148,7 +148,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             String tt = cmd.getHotKeyDesc();
             if (!tt.isEmpty()) {
                 String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
-                tt = UIUtil.colorHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt = UIUtil.fontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
                 tt += "<BR>";
             }
             if (Messages.keyExists(ttKey)) {

@@ -14,8 +14,8 @@
 package megamek.client.ui.swing.tooltip;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
-import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.tooltip.TipUtil.htmlSpacer;
+import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 import java.awt.Image;
@@ -106,7 +106,7 @@ public final class PilotToolTip {
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";
         } else {
-            result += scaledHTMLSpacer(3);
+            result += htmlSpacer(3);
         }
 
         return new StringBuilder().append(result);
@@ -115,7 +115,7 @@ public final class PilotToolTip {
     /** The crew advantages and MD */
     public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
         String sCrewAdvs = crewAdvs(entity, detailed).toString();
-        String result = scaledHTMLSpacer(3) + sCrewAdvs + "</FONT>";
+        String result = htmlSpacer(3) + sCrewAdvs + "</FONT>";
 
         return new StringBuilder().append(result);
     }
@@ -145,7 +145,7 @@ public final class PilotToolTip {
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 String sNickName = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
-                sCrew += UIUtil.colorHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
+                sCrew += UIUtil.fontHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 sCrew += crew.getName(i);
             } else {
@@ -157,7 +157,7 @@ public final class PilotToolTip {
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
-                sCrew += UIUtil.colorHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
+                sCrew += UIUtil.fontHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
             result += sCrew + "<BR>";
         }
@@ -183,7 +183,7 @@ public final class PilotToolTip {
         String col = "";
 
         if (!pickedUp.isEmpty()) {
-            pickedUp = UIUtil.colorHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
+            pickedUp = UIUtil.fontHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
                     + pickedUp + "</FONT>";
             col = "<TD>" + pickedUp + "</TD>";
         }
@@ -246,7 +246,7 @@ public final class PilotToolTip {
         String sOptionList = "";
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
-        result = guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + sOptionList + "</FONT>";
+        result = UIUtil.fontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + sOptionList + "</FONT>";
 
         return new StringBuilder().append(result);
     }

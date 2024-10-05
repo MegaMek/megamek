@@ -102,12 +102,12 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         entityImage = new EntityImagePanel(null, null);
 
         JPanel rotationPanel = new JPanel();
-        rotationPanel.add(UIUtil.scaledHorizontalSpacer(20));
+        rotationPanel.add(Box.createHorizontalStrut(20));
         rotationPanel.add(new JLabel(Messages.getString("CamoChoiceDialog.rotation") + ":"));
         rotationPanel.add(rotationSlider);
 
         JPanel scalePanel = new JPanel();
-        scalePanel.add(UIUtil.scaledHorizontalSpacer(30));
+        scalePanel.add(Box.createHorizontalStrut(30));
         scalePanel.add(new JLabel(Messages.getString("CamoChoiceDialog.scale") + ":"));
         scalePanel.add(scaleSlider);
 
@@ -142,7 +142,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         buttonPanel.setName("buttonPanel");
         buttonPanel.add(parentCamoButton);
         buttonPanel.add(refreshButton);
-        buttonPanel.add(UIUtil.scaledHorizontalSpacer(30));
+        buttonPanel.add(Box.createHorizontalStrut(30));
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
 

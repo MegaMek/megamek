@@ -83,11 +83,11 @@ public class CommonAboutDialog extends JDialog {
         contentPanel.setBorder(new EmptyBorder(35, 50, 0, 50));
         titleImageLabel.setAlignmentX(0.5f);
         contentPanel.add(titleImageLabel);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(35), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(35));
         contentPanel.add(lblVersion);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(15), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(lblCopyright);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(15), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(lblAbout);
 
         add(contentPanel, BorderLayout.CENTER);

@@ -57,7 +57,7 @@ public final class HexTooltip {
                         bldg.getMagnitude());
             }
 
-            sFuelTank = UIUtil.colorHTML(GUIP.getUnitToolTipBuildingFGColor()) + sFuelTank + "</FONT>";
+            sFuelTank = UIUtil.fontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sFuelTank + "</FONT>";
             String col = "<TD>" + sFuelTank + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor())
@@ -77,7 +77,7 @@ public final class HexTooltip {
                         mhex.terrainLevel(Terrains.BLDG_CF),
                         Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                         BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
-                sBuilding = UIUtil.colorHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
+                sBuilding = UIUtil.fontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor())
@@ -95,7 +95,7 @@ public final class HexTooltip {
                 if (bldg.getBasementCollapsed(mcoords)) {
                     sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
                 }
-                sBuilding = UIUtil.colorHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
+                sBuilding = UIUtil.fontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor())
@@ -121,7 +121,7 @@ public final class HexTooltip {
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords));
             }
-            sBridge = UIUtil.colorHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBridge + "</FONT>";
+            sBridge = UIUtil.fontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBridge + "</FONT>";
             String col = "<TD>" + sBridge + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor())
@@ -155,7 +155,7 @@ public final class HexTooltip {
                         break;
                 }
 
-                sMinefield = UIUtil.colorHTML(UIUtil.uiWhite()) + sMinefield + "</FONT>";
+                sMinefield = UIUtil.fontHTML(UIUtil.uiWhite()) + sMinefield + "</FONT>";
                 result.append(sMinefield);
                 result.append("<BR>");
             }
@@ -164,7 +164,7 @@ public final class HexTooltip {
         if ((game != null) && game.getGroundObjects(mcoords).size() > 0) {
         	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
         		result.append("&nbsp");
-        		result.append(UIUtil.colorHTML(UIUtil.uiWhite()));
+        		result.append(UIUtil.fontHTML(UIUtil.uiWhite()));
         		result.append(groundObject.specificName());
         		result.append("</font>");
         		result.append("<br/>");
@@ -186,7 +186,7 @@ public final class HexTooltip {
         if (bldg.getBasementCollapsed(mcoords)) {
             sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
         }
-        sBuilding = UIUtil.colorHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
+        sBuilding = UIUtil.fontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
         String col = "<TD>" + sBuilding + "</TD>";
         String row = "<TR>" + col + "</TR>";
         String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBuildingBGColor()) + " width=100%>" + row + "</TABLE>";
@@ -207,7 +207,7 @@ public final class HexTooltip {
         boolean inAtmosphere = game.getBoard().inAtmosphere();
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, mcoords).getIndicator();
-        String illuminated = DOT_SPACER + UIUtil.colorHTML(GUIP.getCautionColor()) + " " + indicator + "</FONT>";
+        String illuminated = DOT_SPACER + UIUtil.fontHTML(GUIP.getCautionColor()) + " " + indicator + "</FONT>";
         String result = "";
         StringBuilder sTerrain = new StringBuilder(
                 Messages.getString(
@@ -237,7 +237,7 @@ public final class HexTooltip {
             }
         }
 
-        result += UIUtil.colorHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
+        result += UIUtil.fontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
         return result;
     }
 

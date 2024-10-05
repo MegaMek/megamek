@@ -205,8 +205,6 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
         public Component getListCellRendererComponent(final JList<?> list, final Object value,
                 final int index, final boolean isSelected,
                 final boolean cellHasFocus) {
-            JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index,
-                    isSelected, cellHasFocus);
             if ((-1 < index) && (value != null)) {
                 if (terrainTypes != null) {
                     list.setToolTipText(terrainTypes.get(index).getTooltip());
@@ -214,7 +212,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
                     list.setToolTipText(terrains[index].getTerrainTooltip());
                 }
             }
-            return comp;
+            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         }
 
         public void setTerrains(TerrainHelper... terrains) {
@@ -969,7 +967,6 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
                 }
             }
         });
-        choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain"));
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);

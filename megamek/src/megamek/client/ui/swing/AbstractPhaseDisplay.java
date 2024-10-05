@@ -78,7 +78,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         setBorder(new MegaMekBorder(panelSkin));
 
         butDone = new MegaMekButton("DONE", buttonSkin);
-        String f = UIUtil.colorHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.addActionListener(e -> done());
 

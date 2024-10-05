@@ -20,8 +20,7 @@ package megamek.client.ui.swing.lobby;
 
 import static megamek.client.ui.swing.util.UIUtil.FONT_SCALE1;
 import static megamek.client.ui.swing.util.UIUtil.criticalSign;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
+import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.warningSign;
 
 import java.awt.Color;
@@ -314,7 +313,7 @@ public class TeamOverviewPanel extends JPanel {
                 }
             }
             // Add a little margin to the rows
-            teamOverviewTable.setRowHeight(rowHeight + scaleForGUI(20));
+            teamOverviewTable.setRowHeight(rowHeight + 20);
         }
 
         @Override
@@ -322,7 +321,7 @@ public class TeamOverviewPanel extends JPanel {
             column += (isDetached && column > 1) ? 2 : 0;
             String text = Messages.getString("ChatLounge.teamOverview.COL" + TOMCOLS.values()[column]);
             float textSizeDelta = isDetached ? 0f : 0.3f;
-            return "<HTML><NOBR>" + UIUtil.guiScaledFontHTML(textSizeDelta) + text;
+            return "<HTML><NOBR>" + UIUtil.fontHTML(textSizeDelta) + text;
         }
 
         @Override
@@ -340,12 +339,12 @@ public class TeamOverviewPanel extends JPanel {
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
                             : GUIPreferences.getInstance().getMyUnitColor();
-                    result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
+                    result.append(UIUtil.fontHTML(color, textSizeDelta) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
                     break;
 
                 case TONNAGE:
-                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
                     double ton = (double) tons.get(row) / 1000;
                     if (ton < 10) {
                         result.append(String.format("%.2f", ton) + " Tons");
@@ -356,7 +355,7 @@ public class TeamOverviewPanel extends JPanel {
                     break;
 
                 case COST:
-                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
                     if (costs.get(row) < 10_000_000) {
                         result.append(String.format("%,d", costs.get(row)) + " C-Bills");
                     } else {
@@ -369,21 +368,21 @@ public class TeamOverviewPanel extends JPanel {
                     return teams.get(row).players();
 
                 case BV:
-                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
                     result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
                     result.append(relativeValue(bvs, row));
                     break;
 
                 case UNITS:
                     if (!seeTeam(row)) {
-                        return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
+                        return "<HTML>" + UIUtil.fontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
                     }
-                    result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
+                    result.append(fontHTML(textSizeDelta - 0.1f));
                     result.append(units.get(row));
                     break;
 
                 case HIDDEN:
-                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
                     var percentage = hidden.get(row);
                     result.append(percentage == 0 ? "--" : NumberFormat.getPercentInstance().format(percentage));
 
@@ -417,10 +416,10 @@ public class TeamOverviewPanel extends JPanel {
                     String selectedTeam = teamNames.get(selectedRow);
                     long percentage = 100 * values.get(row) / baseValue;
                     if (isDetached) {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray(), -0.1f)
                                 + String.format("(%d %%)", percentage);
                     } else {
-                        return "<BR>" + UIUtil.guiScaledFontHTML(UIUtil.uiGray(), -0.1f)
+                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray(), -0.1f)
                                 + String.format("(%d %% of %s)", percentage, selectedTeam);
                     }
                 }
@@ -450,8 +449,8 @@ public class TeamOverviewPanel extends JPanel {
             add(Box.createVerticalGlue());
             List<?> playerList = (List<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
-            int size = scaleForGUI(2 * baseSize);
-            Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(baseSize));
+            int size = 2 * baseSize;
+            Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, baseSize);
             for (Object obj : playerList) {
                 if (!(obj instanceof Player)) {
                     continue;
@@ -460,7 +459,7 @@ public class TeamOverviewPanel extends JPanel {
                 JLabel lblPlayer = new JLabel(player.getName());
                 lblPlayer.setBorder(new EmptyBorder(3, 3, 3, 3));
                 lblPlayer.setFont(font);
-                lblPlayer.setIconTextGap(scaleForGUI(5));
+                lblPlayer.setIconTextGap(5);
                 Image camo = player.getCamouflage().getImage();
                 lblPlayer.setIcon(new ImageIcon(camo.getScaledInstance(-1, size, Image.SCALE_SMOOTH)));
                 add(lblPlayer);

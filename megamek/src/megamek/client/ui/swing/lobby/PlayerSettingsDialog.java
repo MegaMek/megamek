@@ -22,7 +22,7 @@ package megamek.client.ui.swing.lobby;
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyMekPopupActions.resetBombChoices;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.teamColor;
 import static megamek.client.ui.swing.util.UIUtil.uiYellow;
 
@@ -796,7 +796,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         for (int i : butStartPos.keySet()) {
             butText.get(i).append("<HTML><P ALIGN=CENTER>");
             if (!isValidStartPos(client.getGame(), client.getLocalPlayer(), i)) {
-                butText.get(i).append(UIUtil.colorHTML(uiYellow()));
+                butText.get(i).append(UIUtil.fontHTML(uiYellow()));
                 butTT.get(i).append(Messages.getString("PlayerSettingsDialog.invalidStartPosTT"));
             }
 
@@ -811,7 +811,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         for (Player listedPlayer : client.getGame().getPlayersList()) {
             int pos = listedPlayer.getStartingPos();
             if (!listedPlayer.equals(client.getLocalPlayer()) && (pos != Board.START_ANY)) {
-                butText.get(pos).append(UIUtil.colorHTML(teamColor(listedPlayer, client.getLocalPlayer())));
+                butText.get(pos).append(UIUtil.fontHTML(teamColor(listedPlayer, client.getLocalPlayer())));
                 butText.get(pos).append("\u25A0</FONT>");
                 if (!hasPlayer.containsKey(pos)) {
                     if (butTT.get(pos).length() > 0) {
@@ -824,7 +824,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             }
         }
 
-        butText.get(currentPlayerStartPos).append(UIUtil.colorHTML(GUIPreferences.getInstance().getMyUnitColor()));
+        butText.get(currentPlayerStartPos).append(UIUtil.fontHTML(GUIPreferences.getInstance().getMyUnitColor()));
         butText.get(currentPlayerStartPos).append("\u2B24</FONT>");
 
         for (int i : butStartPos.keySet()) {

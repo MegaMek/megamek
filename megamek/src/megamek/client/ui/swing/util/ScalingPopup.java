@@ -33,7 +33,7 @@ public class ScalingPopup extends JPopupMenu {
             @Override
             public Dimension getPreferredSize() {
                 Dimension s = super.getPreferredSize();
-                return new Dimension(s.width, UIUtil.scaleForGUI(8));
+                return new Dimension(s.width, 8);
             }
         };
         result.setEnabled(false);

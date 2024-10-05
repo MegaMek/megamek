@@ -184,7 +184,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            toolTip = UIUtil.colorHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip = UIUtil.fontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
             toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {

@@ -31,11 +31,9 @@ import javax.swing.*;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 
@@ -86,46 +84,45 @@ public final class UIUtil {
      * Returns an HTML FONT tag setting the font face to Dialog
      * and the font size according to GUIScale.
      */
-    public static String guiScaledFontHTML() {
-        return "<FONT>";
-//        return "<FONT FACE=Dialog " + sizeString() + ">";
+    @Deprecated
+    public static String fontHTML() {
+        return "<FONT FACE=Dialog>";
     }
 
     /**
-     * Returns an HTML FONT tag setting the color to the given col,
-     * the font face to Dialog and the font size according to GUIScale.
+     * Returns an HTML FONT tag setting the color to the given col and the font face to Dialog.
      */
-    public static String colorHTML(Color col) {
-//        return "<FONT " + colorString(col) + ">";
-        return "<FONT FACE=Dialog " + sizeString() + colorString(col) + ">";
+    @Deprecated
+    public static String fontHTML(Color col) {
+        return "<FONT FACE=Dialog " + colorString(col) + ">";
     }
 
     /**
-     * Returns an HTML FONT tag setting the font face to Dialog
-     * and the font size according to GUIScale.
+     * Returns an HTML FONT tag setting the font face to Dialog and the font size according to the given scale delta,
+     * where the font size target is standard font size * (1 + deltaScale)
      */
-    public static String guiScaledFontHTML(float deltaScale) {
-//        return "<FONT>";
+    @Deprecated
+    public static String fontHTML(float deltaScale) {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
 
     /**
-     * Returns an HTML FONT tag setting the color to the given col,
-     * the font face to Dialog and the font size according to GUIScale.
+     * Returns an HTML FONT tag setting the color to the given col, the font face to Dialog and the font size according to the given scale
+     * delta, where the font size target is standard font size * (1 + deltaScale)
      */
-    public static String guiScaledFontHTML(Color col, float deltaScale) {
-//        return colorHTML(col);
+    @Deprecated
+    public static String fontHTML(Color col, float deltaScale) {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + colorString(col) + ">";
     }
 
     /** Returns the yellow and gui-scaled warning sign. */
     public static String warningSign() {
-        return colorHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
+        return fontHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
     }
 
     /** Returns the (usually) red and gui-scaled warning sign. */
     public static String criticalSign() {
-        return colorHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
+        return fontHTML(GUIPreferences.getInstance().getWarningColor()) + WARNING_SIGN + "</FONT>";
     }
 
     /**
@@ -421,27 +418,6 @@ public final class UIUtil {
      */
     public static float scaleForGUI(float value) {
         return GUIPreferences.getInstance().getGUIScale() * value;
-    }
-
-    /**
-     * Returns the given dimension multiplied by the current GUI scaling. Use this to adapt things that the automatic scaling doesn't
-     * affect, e.g. images. Note that the dimension is scaled as float values and then rounded.
-     *
-     * @param dim The dimension to scale up or down according to the current GUI scale
-     */
-    public static Dimension scaleForGUI(Dimension dim) {
-        return scaleForGUI(dim.width, dim.height);
-    }
-
-    /**
-     * Returns the given values multiplied by the current GUI scaling as a Dimension. Use this to adapt things that the automatic scaling
-     * doesn't affect, e.g. images. Note that the dimension is scaled as float values and then rounded.
-     *
-     * @param width The width to scale up or down according to the current GUI scale
-     * @param height The height to scale up or down according to the current GUI scale
-     */
-    public static Dimension scaleForGUI(int width, int height) {
-        return new Dimension(scaleForGUI(width), scaleForGUI(height));
     }
 
     /**
@@ -1148,26 +1124,9 @@ public final class UIUtil {
      * on
      * size 14 and scaled with the current gui scaling.
      */
+    @Deprecated
     public static Font getScaledFont() {
         return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, FONT_SCALE1);
-    }
-
-    /**
-     * Returns a vertical spacer Swing component
-     * ({@link Box#createVerticalStrut(int)}) with the given height
-     * scaled by the current GUI scaling.
-     */
-    public static Component scaledVerticalSpacer(int unscaledHeight) {
-        return Box.createVerticalStrut(scaleForGUI(unscaledHeight));
-    }
-
-    /**
-     * Returns a horizontal spacer Swing component
-     * ({@link Box#createHorizontalStrut(int)}) with the given width
-     * scaled by the current GUI scaling.
-     */
-    public static Component scaledHorizontalSpacer(int unscaledHeight) {
-        return Box.createHorizontalStrut(scaleForGUI(unscaledHeight));
     }
 
     /**

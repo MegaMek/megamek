@@ -504,10 +504,12 @@ public class MekFileParser {
                 }
             }
 
-            if ((ent instanceof Mek) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
-                    || m.getType().hasFlag(MiscType.F_CASEP)
+            boolean hasCase = ent.isClan()
+                || m.getType().hasFlag(MiscType.F_CASE)
+                || m.getType().hasFlag(MiscType.F_CASEII)
+                || m.getType().hasFlag(MiscType.F_CASEP);
 
-            )) {
+            if ((ent instanceof Mek) && hasCase) {
                 ((Mek) ent).setAutoEject(false);
             }
 

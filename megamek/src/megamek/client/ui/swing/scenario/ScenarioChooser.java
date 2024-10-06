@@ -91,10 +91,12 @@ public class ScenarioChooser extends AbstractButtonDialog {
             return scenarioFileName;
         }
         Component selectedTab = tabbedPane.getSelectedComponent();
-        if (!(selectedTab instanceof ScenarioInfoPane) || !getResult().isConfirmed()) {
+        if (!(selectedTab instanceof ScenarioInfoPane selectedPane) || !getResult().isConfirmed()) {
             return null;
+        } else if (selectedPane.getSelectedPreset() != null) {
+            return selectedPane.getSelectedPreset().getFileName();
         } else {
-            return ((ScenarioInfoPane) selectedTab).getSelectedPreset().getFileName();
+            return null;
         }
     }
 

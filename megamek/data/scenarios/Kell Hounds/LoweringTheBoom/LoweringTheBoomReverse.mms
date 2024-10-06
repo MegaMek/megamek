@@ -20,10 +20,11 @@
 MMSVersion: 2
 name: Lowering the Boom [Hunt]
 planet: Castor
-description: >
-  Playing as the Kell Hound side --  
-  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner 
+description: |
+  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner
   has authorized an attack to remove the weapons and provide the Kell Hounds with action.
+
+  *Goal: Playing as the Kell Hounds force, catch the Marik forces before they can flee.*
 
 map:
   boardrows: 2
@@ -126,6 +127,7 @@ factions:
       hyperaggression: 4
       herdmentality: 1
       bravery: 3
+      # Princess respects the edge she is set to flee from
       fleeto: north
       flee: true
 

@@ -30,6 +30,8 @@ import java.util.Objects;
  */
 public final class FlatLafStyleBuilder {
 
+    public static final String FLATLAF_STYLE_KEY = "FlatLaf.style";
+
     private String fontName = "";
     private double size = 1;
     private boolean bold = false;
@@ -106,6 +108,6 @@ public final class FlatLafStyleBuilder {
         if ((fontName != null) && !fontName.isBlank()) {
             styleText += " \"" + fontName + "\"";
         }
-        component.putClientProperty("FlatLaf.style", styleText);
+        component.putClientProperty(FLATLAF_STYLE_KEY, styleText);
     }
 }

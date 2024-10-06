@@ -20,10 +20,11 @@
 MMSVersion: 2
 name: Lowering the Boom [Flee]
 planet: Castor
-description: >
-  Playing as the Marik side -- 
+description: | 
   Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner 
   has authorized an attack to remove the weapons and provide the Kell Hounds with action.
+  
+  *Goal: Playing as the Marik force, escape the Kell Hounds.*
 
 map:
   boardrows: 2

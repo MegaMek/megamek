@@ -49,7 +49,6 @@ import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.ClickableLabel;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;

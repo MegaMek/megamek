@@ -1214,24 +1214,26 @@ public class MULParser {
             // Set the crew for this entity.
             entity.setCrew(crew);
 
-            if (attributes.containsKey(ATTR_AUTOEJECT) && !attributes.get(ATTR_AUTOEJECT).isBlank()) {
-                ((Mek) entity).setAutoEject(Boolean.parseBoolean(attributes.get(ATTR_AUTOEJECT)));
-            }
+            if (entity instanceof Mek mek) {
+                if (attributes.containsKey(ATTR_AUTOEJECT) && !attributes.get(ATTR_AUTOEJECT).isBlank()) {
+                    mek.setAutoEject(Boolean.parseBoolean(attributes.get(ATTR_AUTOEJECT)));
+                }
 
-            if (attributes.containsKey(ATTR_CONDEJECTAMMO) && !attributes.get(ATTR_CONDEJECTAMMO).isBlank()) {
-                ((Mek) entity).setCondEjectAmmo(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTAMMO)));
-            }
+                if (attributes.containsKey(ATTR_CONDEJECTAMMO) && !attributes.get(ATTR_CONDEJECTAMMO).isBlank()) {
+                    mek.setCondEjectAmmo(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTAMMO)));
+                }
 
-            if (attributes.containsKey(ATTR_CONDEJECTENGINE) && !attributes.get(ATTR_CONDEJECTENGINE).isBlank()) {
-                ((Mek) entity).setCondEjectEngine(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTENGINE)));
-            }
+                if (attributes.containsKey(ATTR_CONDEJECTENGINE) && !attributes.get(ATTR_CONDEJECTENGINE).isBlank()) {
+                    mek.setCondEjectEngine(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTENGINE)));
+                }
 
-            if (attributes.containsKey(ATTR_CONDEJECTCTDEST) && !attributes.get(ATTR_CONDEJECTCTDEST).isBlank()) {
-                ((Mek) entity).setCondEjectCTDest(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTCTDEST)));
-            }
+                if (attributes.containsKey(ATTR_CONDEJECTCTDEST) && !attributes.get(ATTR_CONDEJECTCTDEST).isBlank()) {
+                    mek.setCondEjectCTDest(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTCTDEST)));
+                }
 
-            if (attributes.containsKey(ATTR_CONDEJECTHEADSHOT) && !attributes.get(ATTR_CONDEJECTHEADSHOT).isBlank()) {
-                ((Mek) entity).setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTHEADSHOT)));
+                if (attributes.containsKey(ATTR_CONDEJECTHEADSHOT) && !attributes.get(ATTR_CONDEJECTHEADSHOT).isBlank()) {
+                    mek.setCondEjectHeadshot(Boolean.parseBoolean(attributes.get(ATTR_CONDEJECTHEADSHOT)));
+                }
             }
         }
     }

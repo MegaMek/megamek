@@ -84,7 +84,7 @@ public class PrototypeLBXHandler extends LBXHandler {
             return true;
         }
         
-        if (roll.getIntValue() == 2) {
+        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

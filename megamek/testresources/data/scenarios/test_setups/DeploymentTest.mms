@@ -26,4 +26,3 @@ factions:
       - fullname: Fensalir Combat WiGE
 #      - fullname: Foot Platoon (MG)
 
-

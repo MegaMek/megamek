@@ -72,7 +72,6 @@ public class ASStatsDialog extends AbstractDialog {
         super(frame, "AlphaStrikeStatsDialog", "AlphaStrikeStatsDialog.title");
         this.entities = new ArrayList<>(entities);
         initialize();
-        adaptToGUIScale();
     }
 
     @Override
@@ -105,7 +104,6 @@ public class ASStatsDialog extends AbstractDialog {
         tablePanel = new ASStatsTablePanel(getFrame()).add(entities, "Selected Units");
         scrollPane.setViewportView(tablePanel.getPanel());
         centerPanel.add(scrollPane);
-        adaptToGUIScale();
     }
 
     private void copyToClipboard() {
@@ -195,10 +193,6 @@ public class ASStatsDialog extends AbstractDialog {
             JOptionPane.showMessageDialog(getParent(), "The MMU file could not be written. "
                     + e.getMessage());
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
     private void printCards() {

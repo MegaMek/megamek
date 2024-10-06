@@ -211,6 +211,7 @@ public class WrapLayout extends FlowLayout {
     public static String wordWrap(String input, int maximumCharacters) {
         StringTokenizer token = new StringTokenizer(input, " ");
         StringBuilder output = new StringBuilder(input.length());
+        output.append("<html>");
 
         int lineLen = 0;
 
@@ -218,13 +219,14 @@ public class WrapLayout extends FlowLayout {
             String word = token.nextToken();
 
             if (lineLen + word.length() > maximumCharacters) {
-                output.append('\n');
+                output.append("<br>");
                 lineLen = 0;
             }
             output.append(word).append(' ');
             lineLen += word.length();
         }
 
+        output.append("</html>");
         return output.toString();
     }
 }

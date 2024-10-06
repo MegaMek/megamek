@@ -188,6 +188,19 @@ factions:
       offset: 0
       # width is 3 by default
       width: 1
+    # OR
+    deploy:
+      # see also area definitions
+      area:
+        union:
+          first:
+            circle:
+              center: [ 10, 10 ]
+              radius: 7
+          second:
+            list:
+              - [2,2]
+              - [5,5]
 
     minefields:                               # optional, availability depending on game type
     - conventional: 2
@@ -529,3 +542,161 @@ trigger:
     - type: phasestart
       phase: movement
 
+trigger:
+  # The positions condition is met when the given number(s) of units are in the given area
+  type: positions
+  area:
+    border:
+      edges: north
+      maxdistance: 3
+  # Optional: limit the test to the player's units
+  player: Player A
+  # Optional: a list of units to limit the check to. This makes sense most of time to avoid counting MekWarriors
+  # or other spawns; when giving unit IDs, the player limitation is redundant
+  # It also makes sense to set fixed IDs for all units to make sure this works correctly
+  units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+  # At least the given number of units must be in the given area, can be alone or combined with atmost
+  atleast: 7
+  # At most the given number of units must be in the given area, can be alone or combined with atleast
+  atmost: 10
+  # OR: the exact number of units must be in the given area; this cannot be combined with atmost/atleast
+  count: 2
+
+trigger:
+  # This is a simpler way to write a position condition that is met when the unit is in the given area
+  type: position
+  area:
+    border:
+      edges: north
+      maxdistance: 3
+  # The unit ID to be checked
+  unit: 201
+
+# ###############################################
+# Areas
+# are used to define places on the map. They are either a single shape or a combination of shapes. They are
+# never given as a list, only a single element that is either the shape or the combination type.
+# Areas need not be contiguous
+area:
+  # Combinations are union, difference and intersection (as in "Constructive Solid Geometry")
+  # Each combination requires the "first:" and "second:" area to be given. These are areas in turn, i.e.,
+  # they are themselves either shapes or combinations. In other words, this can be nested to any depth.
+  union:
+    first:
+      # A hex circle (or more like, hex-shape) is all hexes around the center at a distance of at most the
+      # given radius (the circle is filled). To get only the hexes at the distance 7, use a difference
+      # of two circles, the second of radius 6 can be used.
+      circle:
+        center: [ 10, 10 ]
+        radius: 7
+    # In union and intersection, it does not matter which area is first and second. In a difference, the second
+    # area is subtracted from the first, so reversing the two changes the result.
+    second:
+      # A list is simply a list of hex coordinates
+      list:
+        - [2,2]
+        - [5,5]
+
+area:
+  difference:
+    first:
+      # A rectangle is given by its corners. The order of the values does not matter, i.e. the corners can be
+      # upper left and lower right or upper right and lower left in any order. The rectangle is filled and includes
+      # its border
+      rectangle:
+        - [ 2, 2 ]
+        - [ 5, 5 ]
+    second:
+      # Subtracting a smaller rectangle leaves the border of the first rectangle
+      rectangle:
+        - [ 4, 4 ]
+        - [ 3, 3 ]
+
+area:
+  # There are two versions of halfplane
+  # One is cartesian, i.e. vertical or horizontal, i.e. all hexes above, below, to left or to right of a
+  # given coordinate value, including the coordinate (line) itself
+  halfplane:
+    coordinate: 4
+    # The direction the halfplane extends to: above, below, left or right. A toleft halfplane includes all
+    # hexes of x <= coordinate
+    extends: above
+
+  # The other is delimited by a hex row in one of the 3 directions N/S, NE/SW and NW/SE. The plane extends to
+  # either the right or left of that (there is no above/below, as the hex row cannot be horizontal). The
+  # directions are, as always N = 0, SE = 2 ...; opposite directions have the same result
+  halfplane:
+    point: [4,5]
+    direction: 2
+    # The direction the halfplane extends to: above, below, to_left or to_right. A toleft halfplane includes all
+    # hexes of x <= coordinate
+    extends: left
+
+area:
+  intersection:
+    first:
+      # A line along one of the hex row directions (N = 0, SE = 2; opposite directions have the same result)
+      # through one hex; the line is infinite
+      line:
+        point: [ 0, 5 ]
+        direction: 1
+    second:
+      union:
+        first:
+          # A ray along one of the hex row directions (N = 0, SE = 2) starting at a hex; the ray is similar to the
+          # line with the same values but it is cut off at the hex (the ray includes the start hex)
+          ray:
+            point: [ 0, 5 ]
+            direction: 1
+        second:
+          # This area is the north border of the board (all hexes with y = 0)
+          border: north
+
+area:
+  # Two or more borders of the board can be given as a list.
+  # The absolute hexes that these represent depend on
+  # the rectangle that the area is applied to (e.g. the board size)
+  # The east (left) border is all hexes at x = 0; south is all hexes at y = board height; west all hexes at
+  # x = board width
+  border: [ south, east, west ]
+
+area:
+  # for a thicker border or inset border, use the "edges:" node
+  border:
+    edges: [ east, north ]
+    # optional: the minimum distance from the edge; 0 means start at the edge hexes
+    mindistance: 2
+    # optional: the maximum distance from the edge
+    maxdistance: 3
+
+area:
+  # The empty area has no hexes. Can be used to prevent units from fleeing the board
+  empty:
+
+area:
+  # the area can be given as a terrain type
+  terrain:
+    # required: the terrain type to include in the area
+    type: woods
+    # optional: the terrain level to include; when omitted, any terrain level is included
+    level: 1
+    # OR optional: a range of terrain levels to include
+    minlevel: 1
+    maxlevel: 2
+    # optional: the minimum distance from any hex with the terrain; 0 means only the hexes themselves
+    mindistance: 2
+    # optional: the maximum distance from any hex with the terrain
+    # be careful with distances of more than 3 or so on big boards: this leads to exploding calculation times
+    maxdistance: 3
+
+area:
+  # the area can be given as hex levels to include
+  # either a single hex level
+  hexlevel: 0
+
+area:
+  # OR a range
+  hexlevel:
+    minlevel: 1
+    # optional: the maximum hex level
+    maxlevel: 2

@@ -18,7 +18,9 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.server.scriptedevent.NarrativeDisplayProvider;
 
 import javax.swing.*;
@@ -50,7 +52,7 @@ public class MMNarrativeStoryDialog extends MMStoryDialog {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         JTextPane txtDesc = new JTextPane();
-        txtDesc.setFont(FontHandler.notoFont());
+        new FlatLafStyleBuilder(FontHandler.notoFont()).apply(txtDesc);
         txtDesc.setEditable(false);
         txtDesc.setContentType("text/html");
         txtDesc.setText(getStoryPoint().text());
@@ -59,7 +61,7 @@ public class MMNarrativeStoryDialog extends MMStoryDialog {
         JScrollPane scrollPane = new JScrollPane(txtDesc) {
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(400, super.getPreferredSize().height);
+                return new Dimension(UIUtil.scaleForGUI(400), super.getPreferredSize().height);
             }
         };
         scrollPane.setBorder(null);

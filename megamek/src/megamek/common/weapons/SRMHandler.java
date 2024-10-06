@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -26,10 +26,13 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Sebastian Brocks
  */
 public class SRMHandler extends MissileWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -1618484541772117621L;
 
     public SRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
@@ -49,9 +52,9 @@ public class SRMHandler extends MissileWeaponHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
-            
+
             return (int) toReturn;
         }
         return 2;

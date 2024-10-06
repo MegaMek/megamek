@@ -53,7 +53,7 @@ import megamek.logging.MMLogger;
 /**
  * @author Ken Nguyen (kenn)
  */
-public class Ruler extends JDialog implements BoardViewListener, IPreferenceChangeListener {
+public class Ruler extends JDialog implements BoardViewListener {
     private static final MMLogger logger = MMLogger.create(Ruler.class);
 
     private static final long serialVersionUID = -4820402626782115601L;
@@ -268,10 +268,6 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         add(sp);
 
         validate();
-
-        adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
-
         setVisible(false);
     }
 
@@ -496,16 +492,5 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     @Override
     public void unitSelected(BoardViewEvent b) {
         // ignored
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
     }
 }

@@ -59,7 +59,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * This class shows the critical hits and systems for a mek
  */
 class SystemPanel extends PicMap
-        implements ItemListener, ActionListener, ListSelectionListener, IPreferenceChangeListener {
+        implements ItemListener, ActionListener, ListSelectionListener {
 
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
@@ -217,8 +217,6 @@ class SystemPanel extends PicMap
         gridbag.setConstraints(m_bDumpAmmo, c);
         panelMain.add(m_bDumpAmmo);
 
-        adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
         setLayout(new BorderLayout());
         add(panelMain);
         panelMain.setOpaque(false);
@@ -872,19 +870,5 @@ class SystemPanel extends PicMap
 
         m_chMode.removeItemListener(this);
         m_bDumpAmmo.removeActionListener(this);
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
-        tSlotScroll.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
-        tSlotScroll.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
     }
 }

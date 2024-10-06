@@ -54,6 +54,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
+import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
 import megamek.common.options.GameOptions;
@@ -82,6 +83,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+
+import static megamek.common.EquipmentTypeLookup.TSM;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -717,7 +720,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private final Vector<Integer> hitBySwarmsWeapon = new Vector<>();
 
     /**
-     * True if and only if this is a canon (published) unit.
+     * True if and only if this is a canon (published) unit. This is established
+     * by checking against a text file in the docs folder; "OfficialUnitList.txt".
+     * @see MekFileParser
      */
     private boolean canon;
 
@@ -907,6 +912,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * icon.
      */
     protected Base64Image icon = new Base64Image();
+
+    private boolean hasFleeZone = false;
+    private HexArea fleeZone = HexArea.EMPTY_AREA;
 
     /**
      * Generates a new, blank, entity.
@@ -4825,6 +4833,54 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public abstract int getHeatCapacity(boolean radicalHeatSink);
+
+    /**
+     * Pretty-prints the heat capacity of a unit, including optional heat sinking systems.
+     * Typically, this is equivalent to {@link #getHeatCapacity()},
+     * but in the presence of Radical Heat Sinks, Coolant Pods, or the RISC Emergency Coolant System,
+     * produces strings like "24 [36]" or "12 [+MoS]".
+     * @return The formatted heat capacity
+     */
+    public String formatHeat() {
+        // This method might make sense as an abstract method with overrides in Mek and Aero,
+        // But since the implementation would be the same in both classes, this way avoids code duplication.
+        int sinks;
+        if (this instanceof Mek m) {
+            sinks = m.getActiveSinks();
+        } else if (this instanceof Aero a) {
+            sinks = a.getHeatSinks();
+        } else {
+            return "(none)";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        int capacity = getHeatCapacity(false);
+        sb.append(capacity);
+
+        // Radical Heat Sinks
+        if (hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+            capacity += sinks;
+            sb.append(", ").append(capacity).append(" with RHS");
+        }
+
+        // Coolant Pod
+        for (AmmoMounted m : getAmmo()) {
+            if (m.getType().ammoType == AmmoType.T_COOLANT_POD) {
+                capacity += sinks;
+                sb.append(", ").append(capacity).append(" with Coolant Pod");
+                break;
+            }
+        }
+
+        // RISC ECS
+        for (MiscMounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                sb.append(", +MoS with RISC ECS");
+            }
+        }
+
+        return sb.toString();
+    }
 
     /**
      * Returns the amount of heat that the entity can sink each turn, factoring
@@ -9541,9 +9597,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && !isShutDown()
                 && !getCrew().isUnconscious()
                 && (getSwarmTargetId() == NONE)
-                && (isOffBoard() || ((pos != null)
-                        && ((pos.getX() == 0) || (pos.getX() == (getGame().getBoard().getWidth() - 1))
-                                || (pos.getY() == 0) || (pos.getY() == (getGame().getBoard().getHeight() - 1)))));
+                && (isOffBoard() || ((pos != null) && game.canFleeFrom(this, pos)));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -9874,6 +9928,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
         if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()) {
+            return false;
+        }
+
+        if (moved == EntityMovementType.MOVE_SPRINT
+            || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
+            if(isMek()) {
+                return getMisc().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_TSM));
+            }
             return false;
         }
 
@@ -15774,5 +15836,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasFlotationHull() {
         return hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+    }
+
+    @Override
+    public boolean hasFleeZone() {
+        return hasFleeZone;
+    }
+
+    @Override
+    public HexArea getFleeZone() {
+        return fleeZone;
+    }
+
+    /**
+     * Sets the board area this unit may flee from. The area may be empty, in which case the unit may not flee. Also sets this unit to know
+     * that it has a flee zone and the owning player should not be asked to provide this information.
+     *
+     * @param fleeZone The new flee zone
+     */
+    public void setFleeZone(HexArea fleeZone) {
+        this.fleeZone = fleeZone;
+        hasFleeZone = true;
+    }
+
+    /**
+     * Resets the flee information this unit has. After calling this method, the unit will no longer consider to have its own flee area; the
+     * game will refer to the unit's owner to see if it can flee from a hex.
+     */
+    public void removeFleeZone() {
+        fleeZone = HexArea.EMPTY_AREA;
+        hasFleeZone = false;
     }
 }

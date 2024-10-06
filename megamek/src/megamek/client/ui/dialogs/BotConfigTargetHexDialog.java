@@ -45,7 +45,7 @@ import static megamek.common.Terrains.*;
 public class BotConfigTargetHexDialog extends AbstractButtonDialog {
 
     private static final String OK_ACTION = "Ok_Action";
-    
+
     private final TipTextField coordsField = new TipTextField("", 5, "x, y");
     private final JLabel coordsLabel = new JLabel(Messages.getString("BotConfigDialog.hexCoordsLabel"));
     private final JLabel listLabel = new JLabel(Messages.getString("BotConfigDialog.hexListLabel"));
@@ -85,15 +85,14 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
                 coordsField.requestFocus();
             }
         });
-        adaptToGUIScale();
     }
-    
+
     @Override
     protected Container createCenterPane() {
         JPanel result = new JPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
+
         var coordsFieldPanel = new UIUtil.FixedYPanel();
         coordsFieldPanel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         coordsField.setToolTipText(Messages.getString("BotConfigDialog.hexCoordsTip"));
@@ -102,21 +101,21 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         coordsFieldPanel.add(coordsLabel);
         coordsFieldPanel.add(coordsField);
 
-        var listLabelPanel = new UIUtil.FixedYPanel(); 
+        var listLabelPanel = new UIUtil.FixedYPanel();
         listLabel.setLabelFor(coordsList);
         listLabel.setDisplayedMnemonic(KeyEvent.VK_S);
         listLabelPanel.add(listLabel);
-        
+
         coordsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         coordsList.setLayoutOrientation(JList.VERTICAL);
         coordsList.setCellRenderer(new BuildingHexRenderer());
         coordsList.setFont(UIUtil.getScaledFont());
         coordsList.setVisibleRowCount(6);
         coordsList.setPrototypeCellValue(new Coords(-21, 22));
-        
+
         if (clientGui == null) {
             listLabel.setEnabled(false);
-            coordsList.setEnabled(false);   
+            coordsList.setEnabled(false);
         } else {
             board.getBuildingsVector().stream().map(Building::getCoordsList).forEach(coordsListModel::addAll);
         }
@@ -127,10 +126,10 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         result.add(listLabelPanel);
         result.add(Box.createVerticalStrut(25));
         result.add(new JScrollPane(coordsList));
-        
+
         return result;
     }
-    
+
     public List<Coords> getSelectedCoords() {
         List<Coords> result = new ArrayList<>();
         // Parse the Coords text field
@@ -144,11 +143,11 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         } catch (Exception ignored) {
             // No coords if it cannot be parsed
         }
-        // Add the marked list entries 
+        // Add the marked list entries
         result.addAll(coordsList.getSelectedValuesList());
         return result;
     }
-    
+
     /** Shows building info for the hexes in the list model. */
     private class BuildingHexRenderer extends DefaultListCellRenderer {
 
@@ -158,13 +157,13 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             Coords coords = (Coords) value;
             String content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
             if (board != null && board.getHex(coords) != null) {
-                final Hex hex = board.getHex(coords); 
+                final Hex hex = board.getHex(coords);
                 final Building bldg = board.getBuildingAt(coords);
                 if (hex.containsTerrain(BUILDING)) {
                     content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),
                             Building.className(bldg.getBldgClass()), hex.terrainLevel(BLDG_ELEV), hex.terrainLevel(BLDG_CF));
                 } else if (hex.containsTerrain(FUEL_TANK)) {
-                    content += Messages.getString("BotConfigDialog.hexListFuel", 
+                    content += Messages.getString("BotConfigDialog.hexListFuel",
                             hex.terrainLevel(FUEL_TANK_CF), hex.terrainLevel(FUEL_TANK_MAGN));
                 } else {
                     content += Messages.getString("BotConfigDialog.hexListBrdg", Building.typeName(bldg.getType()),
@@ -173,9 +172,5 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             }
             return super.getListCellRendererComponent(list, content, index, isSelected, cellHasFocus);
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

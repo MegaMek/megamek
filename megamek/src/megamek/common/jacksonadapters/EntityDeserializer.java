@@ -59,6 +59,8 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String AMMO = "ammo";
     private static final String SLOT = "slot";
     private static final String SHOTS = "shots";
+    public static final String FLEE_AREA = "fleefrom";
+    private static final String AREA = "area";
 
     public EntityDeserializer() {
         this(null);
@@ -89,6 +91,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignRemaining(entity, node);
         assignCrits(entity, node);
         assignAmmos(entity, node);
+        assignFleeArea(entity, node);
         return entity;
     }
 
@@ -110,13 +113,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void assignPosition(Entity entity, JsonNode node) {
         try {
             if (node.has(AT)) {
-                List<Integer> xyList = new ArrayList<>();
-                node.get(AT).elements().forEachRemaining(n -> xyList.add(n.asInt()));
-                setDeployedPosition(entity, new Coords(xyList.get(0), xyList.get(1)));
-
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node.get(AT)));
             } else if (node.has(X) || node.has(Y)) {
-                requireFields("Entity", node, X, Y);
-                setDeployedPosition(entity, new Coords(node.get(X).asInt(), node.get(Y).asInt()));
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node));
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Illegal position information for entity " + entity, e);
@@ -316,6 +315,17 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 ammo.setShotsLeft(Math.min(shots, ammo.getBaseShotsLeft()));
             } else {
                 throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
+            }
+        }
+    }
+
+    private void assignFleeArea(Entity entity, JsonNode node) {
+        if (node.has(FLEE_AREA)) {
+            // allow using or omitting "area:"
+            if (node.get(FLEE_AREA).has(AREA)) {
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
+            } else {
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
             }
         }
     }

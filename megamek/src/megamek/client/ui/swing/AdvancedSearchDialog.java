@@ -14,7 +14,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -47,7 +46,6 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegaMekTable;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EquipmentType;
 import megamek.common.Mek;
 import megamek.common.MekSearchFilter;
@@ -545,14 +543,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 (frame.getLocation().y + (frame.getSize().height / 2)) -
                         (getSize().height / 2));
         setLocation(x, y);
-    }
-
-    @Override
-    public void setVisible(boolean show) {
-        if (show) {
-            adaptToGUIScale();
-        }
-        super.setVisible(show);
     }
 
     /**
@@ -1349,7 +1339,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * Base class for different tokens that can be in a filter expression.
-     * 
+     *
      * @author Arlith
      */
     public class FilterTokens {
@@ -1358,7 +1348,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents parenthesis.
-     * 
+     *
      * @author Arlith
      */
     public class ParensFT extends FilterTokens {
@@ -1376,7 +1366,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents equipment.
-     * 
+     *
      * @author Arlith
      */
     public class EquipmentFT extends FilterTokens {
@@ -1402,7 +1392,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     /**
      * FilterTokens subclass that represents a boolean operation.
-     * 
+     *
      * @author Arlith
      *
      */
@@ -1423,13 +1413,5 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 return "";
             }
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
     }
 }

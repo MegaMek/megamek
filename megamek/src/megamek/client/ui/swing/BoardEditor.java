@@ -84,8 +84,6 @@ import megamek.common.MapSettings;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -99,9 +97,8 @@ import megamek.logging.MMLogger;
 // TODO: sluggish hex drawing?
 // TODO: the board validation after a board load seems to be influenced by the former board...
 // TODO: copy/paste hexes
-public class BoardEditor extends JPanel
-        implements ItemListener, ListSelectionListener, ActionListener,
-        DocumentListener, IMapSettingsObserver, IPreferenceChangeListener {
+public class BoardEditor extends JPanel implements ItemListener, ListSelectionListener, ActionListener,
+        DocumentListener, IMapSettingsObserver {
     private final static MMLogger logger = MMLogger.create(BoardEditor.class);
 
     /**
@@ -208,8 +205,6 @@ public class BoardEditor extends JPanel
         public Component getListCellRendererComponent(final JList<?> list, final Object value,
                 final int index, final boolean isSelected,
                 final boolean cellHasFocus) {
-            JComponent comp = (JComponent) super.getListCellRendererComponent(list, value, index,
-                    isSelected, cellHasFocus);
             if ((-1 < index) && (value != null)) {
                 if (terrainTypes != null) {
                     list.setToolTipText(terrainTypes.get(index).getTooltip());
@@ -217,7 +212,7 @@ public class BoardEditor extends JPanel
                     list.setToolTipText(terrains[index].getTerrainTooltip());
                 }
             }
-            return comp;
+            return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         }
 
         public void setTerrains(TerrainHelper... terrains) {
@@ -509,9 +504,6 @@ public class BoardEditor extends JPanel
                 showHelp();
             }
         }
-
-        adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     /**
@@ -547,11 +539,6 @@ public class BoardEditor extends JPanel
                     controller.boardEditor = null;
                 }
                 frame.dispose();
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-                GUIPreferences.getInstance().removePreferenceChangeListener(BoardEditor.this);
             }
         });
     }
@@ -980,7 +967,6 @@ public class BoardEditor extends JPanel
                 }
             }
         });
-        choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain"));
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butTerrDown = prepareButton("ButtonTLDN", "Decrease Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -2356,59 +2342,6 @@ public class BoardEditor extends JPanel
         if (event.getSource().equals(lisTerrain) && !noTextFieldUpdate) {
             refreshTerrainFromList();
         }
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
-    }
-
-    /** Adapts the whole Board Editor UI to the current guiScale. */
-    private void adaptToGUIScale() {
-        Font scaledFont = UIUtil.getScaledFont();
-
-        butAddTerrain.setFont(scaledFont);
-        butBoardNew.setFont(scaledFont);
-        butBoardOpen.setFont(scaledFont);
-        butBoardSave.setFont(scaledFont);
-        butBoardSaveAs.setFont(scaledFont);
-        butBoardSaveAsImage.setFont(scaledFont);
-        butBoardValidate.setFont(scaledFont);
-        butExpandMap.setFont(scaledFont);
-        butSourceFile.setFont(scaledFont);
-
-        choTerrainType.setFont(scaledFont);
-        choTheme.setFont(scaledFont);
-        cheRoadsAutoExit.setFont(scaledFont);
-        cheTerrExitSpecified.setFont(scaledFont);
-        lisTerrain.setFont(scaledFont);
-        texTerrExits.setFont(scaledFont);
-        texElev.setFont(scaledFont);
-        texTerrainLevel.setFont(scaledFont);
-        copyButton.setFont(scaledFont);
-        pasteButton.setFont(scaledFont);
-
-        labHelp1.setFont(scaledFont);
-        labHelp2.setFont(scaledFont);
-        labTheme.setFont(scaledFont);
-
-        ((TitledBorder) panelBoardSettings.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder) panelHexSettings.getBorder()).setTitleFont(scaledFont);
-        ((TitledBorder) panelTerrSettings.getBorder()).setTitleFont(scaledFont);
-
-        terrainButtons.forEach(ScalingIconButton::rescale);
-        undoButtons.forEach(ScalingIconButton::rescale);
-        brushButtons.forEach(ScalingIconToggleButton::rescale);
-        butTerrDown.rescale();
-        butTerrUp.rescale();
-        butElevDown.rescale();
-        butElevUp.rescale();
-        butExitDown.rescale();
-        butExitUp.rescale();
-        butTerrExits.rescale();
-        butDelTerrain.rescale();
     }
 
     /**

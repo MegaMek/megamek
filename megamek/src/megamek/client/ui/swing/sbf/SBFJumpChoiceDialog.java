@@ -24,6 +24,7 @@ import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setBorder(BorderFactory.createCompoundBorder(
                 new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-                new UIUtil.ScaledEmptyBorder(10, 0, 10, 0)));
+                new EmptyBorder(10, 0, 10, 0)));
         buttonPanel.add(new ButtonEsc(new CloseAction(this)));
         return buttonPanel;
     }
@@ -74,15 +75,6 @@ public class SBFJumpChoiceDialog extends AbstractChoiceDialog<Integer> {
                 + spanCSS("speccell", " JUMP ")
                 + spanCSS("label", "points to use:")
                 + "</div></BODY></HTML>";
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        if (visible) {
-            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-            pack();
-        }
-        super.setVisible(visible);
     }
 
     public static String styles() {

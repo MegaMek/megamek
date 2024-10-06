@@ -31,13 +31,6 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
-    /**
-     * This constructor can only be used for deserialization.
-     */
-    protected ArtilleryCannonWeaponHandler() {
-        super();
-    }
-
     public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }

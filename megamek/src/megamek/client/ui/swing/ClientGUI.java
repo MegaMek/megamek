@@ -166,6 +166,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String VIEW_TOGGLE_HEXCOORDS = "viewToggleHexCoords";
     public static final String VIEW_LABELS = "viewLabels";
     public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire";
+    public static final String VIEW_TOGGLE_FLEE_ZONE = "viewToggleFleeZone";
     public static final String VIEW_TOGGLE_SENSOR_RANGE = "viewToggleSensorRange";
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
@@ -244,6 +245,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private BoardView bv;
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
+    private FleeZoneSpriteHandler fleeZoneSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private GroundObjectSpriteHandler groundObjectSpriteHandler;
@@ -350,6 +352,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private final AudioService audioService = new SoundManager();
 
     private Coords currentHex;
+
+    private boolean showFleeZone = false;
 
     // endregion Variable Declarations
 
@@ -509,10 +513,11 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(bv, client.getGame());
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(bv, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(bv, this);
+        fleeZoneSpriteHandler = new FleeZoneSpriteHandler(bv);
 
-        spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler,
-                sensorRangeSpriteHandler, flareSpritesHandler, collapseWarningSpriteHandler,
-                groundObjectSpriteHandler, firingSolutionSpriteHandler, firingArcSpriteHandler));
+        spriteHandlers.addAll(List.of(movementEnvelopeHandler, movementModifierSpriteHandler, sensorRangeSpriteHandler,
+            flareSpritesHandler, collapseWarningSpriteHandler, groundObjectSpriteHandler, firingSolutionSpriteHandler,
+            firingArcSpriteHandler, fleeZoneSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -925,6 +930,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
                 bv.getPanel().repaint();
                 break;
+            case VIEW_TOGGLE_FLEE_ZONE:
+                toggleFleeZone();
+                break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
                 break;
@@ -1238,7 +1246,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case STARTING_SCENARIO:
                 component = new StartingScenarioPanel();
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);
                 panMain.add(component, main);
@@ -1246,7 +1253,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             case EXCHANGE:
                 chatlounge.killPreviewBV();
                 component = new ReceivingGameDataPanel();
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
                 panMain.add(component, main);
@@ -1814,7 +1820,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        UIUtil.adjustContainer(scrollPane, UIUtil.FONT_SCALE1);
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
                 (int) (clientGuiPanel.getSize().getWidth() / 1.5), (int) (clientGuiPanel.getSize().getHeight() / 1.5)));
@@ -2217,6 +2222,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             clientGuiPanel.validate();
             cb.moveToEnd();
+            hideFleeZone();
         }
 
         @Override
@@ -3092,5 +3098,20 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     public void setCurrentHex(Coords hex) {
         currentHex = hex;
+    }
+
+    private void toggleFleeZone() {
+        showFleeZone = !showFleeZone;
+        if (showFleeZone && unitDisplay.getCurrentEntity() != null) {
+            Game game = client.getGame();
+            fleeZoneSpriteHandler.renewSprites(game.getFleeZone(unitDisplay.getCurrentEntity()).getCoords(game.getBoard()));
+        } else {
+            fleeZoneSpriteHandler.clear();
+        }
+    }
+
+    public void hideFleeZone() {
+        showFleeZone = false;
+        fleeZoneSpriteHandler.clear();
     }
 }

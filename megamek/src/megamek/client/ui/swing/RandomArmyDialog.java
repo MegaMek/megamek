@@ -267,8 +267,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         setSize(GUIP.getRndArmySizeWidth(), GUIP.getRndArmySizeHeight());
         setLocation(GUIP.getRndArmyPosX(), GUIP.getRndArmyPosY());
 
-        adaptToGUIScale();
-
         String closeAction = "closeAction";
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
@@ -1145,7 +1143,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             updateRATs();
         }
 
-        adaptToGUIScale();
         m_chPlayer.grabFocus();
         super.setVisible(show);
     }
@@ -1451,9 +1448,5 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             }
             return null;
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

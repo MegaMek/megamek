@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -34,18 +35,14 @@ import megamek.server.totalwarfare.TWGameManager;
  * @since Sept 29, 2004
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 7551194199079004134L;
+
     int howManyShots;
     private final boolean twoRollsUltra; // Tracks whether this is an
-
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
@@ -53,18 +50,13 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                         || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
-     */
     @Override
     protected void useAmmo() {
         setDone();
         checkAmmo();
         howManyShots = (weapon.curMode().equals(Weapon.MODE_AC_SINGLE) ? 1 : 2);
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total > 1 ) {
+        if (total > 1) {
             // No need to change howManyShots
         } else if (total == 1) {
             howManyShots = 1;
@@ -95,11 +87,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump BAs can't mount UACS/RACs
@@ -144,18 +131,13 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         return shotsHit;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
-     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (super.doChecks(vPhaseReport)) {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
+        if ((roll.getIntValue() == 2) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
@@ -171,11 +153,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();

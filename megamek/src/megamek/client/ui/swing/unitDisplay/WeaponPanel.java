@@ -238,6 +238,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             StringBuilder wn = new StringBuilder(mounted.getDesc());
             wn.append(" [");
             wn.append(en.getLocationAbbr(mounted.getLocation()));
+            //Check if mixedTech and add Clan or IS tag
+            if (en.isMixedTech()) {
+                wn.insert(0, wtype.isClan() ? "(C) " : "(IS) ");
+            }
             if (mounted.isSplit()) {
                 wn.append('/');
                 wn.append(en.getLocationAbbr(mounted.getSecondLocation()));
@@ -460,7 +464,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         this.add(splitPane);
 
         addListeners();
-        adaptToGUIScale();
         GUIP.addPreferenceChangeListener(this);
 
         setBackGround();
@@ -1371,7 +1374,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     /**
      * Selects the first valid weapon in the weapon list.
-     * 
+     *
      * @return The weapon id of the weapon selected
      */
     public int selectFirstWeapon() {
@@ -2773,16 +2776,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         this.prevTarget = prevTarget;
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
+        if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
             tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.revalidate();
@@ -2794,7 +2791,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * Updates the Weapon Panel with the information for the given entity. If the
      * given entity
      * is `null`, this method will do nothing.
-     * 
+     *
      * @param entity - The weapon panel will update info based on the {@link Entity}
      *               provided.
      */

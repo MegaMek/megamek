@@ -19,7 +19,7 @@
 package megamek.client.ui.swing.lobby;
 
 import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.fontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiGreen;
 
 import java.awt.Color;
@@ -127,7 +127,7 @@ public class MekTableModel extends AbstractTableModel {
             boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
             boolean hideEntity = !localGM && isEnemy && isBlindDrop;
             float size = chatLounge.isCompact() ? 0 : 0.2f;
-            return hideEntity ? "" : guiScaledFontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
+            return hideEntity ? "" : fontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
 
         } else if (col == COLS.PLAYER.ordinal()) {
             return playerCells.get(row);
@@ -240,7 +240,7 @@ public class MekTableModel extends AbstractTableModel {
      */
     @Override
     public String getColumnName(int column) {
-        String result = "<HTML>" + UIUtil.guiScaledFontHTML(0.2f);
+        String result = "<HTML>" + UIUtil.fontHTML(0.2f);
         if (column == COLS.PILOT.ordinal()) {
             return result + Messages.getString("ChatLounge.colPilot");
         } else if (column == COLS.UNIT.ordinal()) {
@@ -275,9 +275,9 @@ public class MekTableModel extends AbstractTableModel {
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);
         float size = chatLounge.isCompact() ? 0 : 0.2f;
         String sep = chatLounge.isCompact() ? DOT_SPACER : "<BR>";
-        result.append(guiScaledFontHTML(owner.getColour().getColour(), size)).append(owner.getName())
-                .append("</FONT>").append(guiScaledFontHTML(size)).append(sep).append("</FONT>")
-                .append(guiScaledFontHTML(isEnemy ? Color.RED : uiGreen(), size))
+        result.append(UIUtil.fontHTML(owner.getColour().getColour(), size)).append(owner.getName())
+                .append("</FONT>").append(fontHTML(size)).append(sep).append("</FONT>")
+                .append(UIUtil.fontHTML(isEnemy ? Color.RED : uiGreen(), size))
                 .append(Player.TEAM_NAMES[owner.getTeam()]);
         return result.toString();
     }

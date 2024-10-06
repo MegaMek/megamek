@@ -142,6 +142,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             getString("CommonMenuBar.viewToggleSensorRange"));
     private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(
             getString("CommonMenuBar.viewToggleFieldOfFire"));
+    private final JMenuItem toggleFleeZone = new JMenuItem(getString("CommonMenuBar.viewToggleFleeZone"));
     private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(
             getString("CommonMenuBar.viewToggleFovHighlight"));
     private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(
@@ -343,6 +344,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
+        initMenuItem(toggleFleeZone, menu, VIEW_TOGGLE_FLEE_ZONE);
+        toggleFleeZone.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFleeZoneToolTip"));
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
         toggleFiringSolutions.setSelected(GUIP.getShowFiringSolutions());
@@ -366,7 +369,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         initMenuItem(helpAbout, menu, HELP_ABOUT);
 
-        adaptToGUIScale();
         setKeyBinds();
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
@@ -547,6 +549,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewUnitOverview.setEnabled(isInGameBoardView);
         toggleSensorRange.setEnabled(isInGameBoardView);
         toggleFieldOfFire.setEnabled(isInGameBoardView);
+        toggleFleeZone.setEnabled(isInGameBoardView);
         toggleFovHighlight.setEnabled(isInGameBoardView);
         toggleFovDarken.setEnabled(isInGameBoardView);
         toggleFiringSolutions.setEnabled(isInGameBoardView);
@@ -595,8 +598,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewTurnDetailsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
@@ -614,11 +615,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
         }
-    }
-
-    /** Adapts the menu (the font size) to the current GUI scale. */
-    private void adaptToGUIScale() {
-        UIUtil.scaleMenu(this);
     }
 
     /** Removes this as listener. */
@@ -652,6 +648,5 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
         }
         boardRecent.setEnabled(!recentBoards.isEmpty());
-        adaptToGUIScale();
     }
 }

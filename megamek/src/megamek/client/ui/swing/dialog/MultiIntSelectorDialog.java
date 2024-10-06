@@ -20,7 +20,6 @@
 package megamek.client.ui.swing.dialog;
 
 import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 
 import java.awt.Container;
 import java.util.List;
@@ -77,8 +76,7 @@ public class MultiIntSelectorDialog extends AbstractButtonDialog {
         JPanel listFieldPanel = new FixedYPanel();
         listFieldPanel.add(list);
 
-        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + description),
-                SwingConstants.CENTER);
+        JLabel labInfo = new JLabel("<CENTER>" + description, SwingConstants.CENTER);
         labInfo.setAlignmentX(CENTER_ALIGNMENT);
 
         result.add(Box.createVerticalGlue());

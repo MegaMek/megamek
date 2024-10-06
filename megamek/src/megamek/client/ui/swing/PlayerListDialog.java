@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team  
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,12 +16,9 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +30,7 @@ import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.List;
 
-public class PlayerListDialog extends JDialog implements ActionListener, IPreferenceChangeListener {
+public class PlayerListDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7270469195373150106L;
 
@@ -69,10 +66,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
 
         refreshPlayerList();
         setMinimumSize(new Dimension(300, 260));
-
-        adaptToGUIScale();
-        GUIP.addPreferenceChangeListener(this);
-
         pack();
         setResizable(false);
 
@@ -195,19 +188,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
             if (!modal) {
                 saveSettings();
             }
-        }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(260)));
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         }
     }
 }

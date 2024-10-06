@@ -19,8 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -38,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.Content;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.util.UIUtil.OptionPanel;
@@ -68,7 +67,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
     /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
     public PlanetaryConditionsDialog(ClientGUI cl) {
-        super(cl.frame, Messages.getString("PlanetaryConditionsDialog.title"), true, true);
+        super(cl.frame, Messages.getString("PlanetaryConditionsDialog.title"), true);
         client = cl;
         setupDialog();
         update(client.getClient().getGame().getPlanetaryConditions());
@@ -76,7 +75,7 @@ public class PlanetaryConditionsDialog extends ClientDialog {
 
     /** Creates new PlanetaryConditionsDialog and sets the given conditions. Used for scenarios. */
     public PlanetaryConditionsDialog(JFrame frame, PlanetaryConditions conditions) {
-        super(frame, Messages.getString("PlanetaryConditionsDialog.title"), true, true);
+        super(frame, Messages.getString("PlanetaryConditionsDialog.title"), true);
         setupDialog();
         update(conditions);
     }
@@ -168,10 +167,10 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         result.setAlignmentX(Component.LEFT_ALIGNMENT);
         File iconFile = new MegaMekFile(Configuration.widgetsDir(), "Planetary.png").getFile();
         Image image = ImageUtil.loadImageFromFile(iconFile.toString());
-        Icon planetIcon = new ImageIcon(image.getScaledInstance(scaleForGUI(40), -1, Image.SCALE_SMOOTH));
+        Icon planetIcon = new ImageIcon(image.getScaledInstance(UIUtil.scaleForGUI(40), -1, Image.SCALE_SMOOTH));
         JLabel planetLabel = new JLabel(Messages.getString("PlanetaryConditionsDialog.title"),
                 planetIcon, SwingConstants.CENTER);
-        planetLabel.setIconTextGap(scaleForGUI(12));
+        planetLabel.setIconTextGap(12);
         planetLabel.setBorder(new EmptyBorder(15, 0, 10, 0));
         result.add(planetLabel);
         return result;

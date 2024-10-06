@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 import java.awt.event.ActionEvent;
@@ -26,6 +25,7 @@ import java.util.Map;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Board;
@@ -148,12 +148,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             String tt = cmd.getHotKeyDesc();
             if (!tt.isEmpty()) {
                 String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt = UIUtil.fontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
                 tt += "<BR>";
             }
             if (Messages.keyExists(ttKey)) {
                 String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+                tt += msg_key;
             }
             if (!tt.isEmpty()) {
                 String b = "<BODY>" + tt + "</BODY>";

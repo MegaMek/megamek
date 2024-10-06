@@ -99,7 +99,6 @@ public class EditBotsDialog extends AbstractButtonDialog {
     @Override
     protected void initialize() {
         super.initialize();
-        adaptToGUIScale();
         try {
             finalizeInitialization();
         } catch (Exception ex) {
@@ -375,9 +374,5 @@ public class EditBotsDialog extends AbstractButtonDialog {
             }
         }
         return result;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

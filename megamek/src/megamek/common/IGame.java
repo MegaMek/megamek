@@ -205,6 +205,14 @@ public interface IGame {
     Player getPlayer(int id);
 
     /**
+     * @param id A player ID
+     * @return True when there is a player for the given ID
+     */
+    default boolean hasPlayer(int id) {
+        return getPlayer(id) != null;
+    }
+
+    /**
      * @return The current players as a list. Implementations should make sure that
      *         this list can be safely modified.
      */

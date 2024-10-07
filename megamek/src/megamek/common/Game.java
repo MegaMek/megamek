@@ -1216,13 +1216,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
 
         // And... lets get this straight now.
-        if ((entity instanceof Mek)
-                && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
-            ((Mek) entity).setAutoEject(true);
-            ((Mek) entity).setCondEjectAmmo(!entity.hasCase() && !entity.hasCASEII());
-            ((Mek) entity).setCondEjectEngine(true);
-            ((Mek) entity).setCondEjectCTDest(true);
-            ((Mek) entity).setCondEjectHeadshot(true);
+        if (entity instanceof Mek mek) {
+            if (getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
+                mek.setAutoEject(true);
+                mek.setCondEjectAmmo(!entity.hasCase() && !entity.hasCASEII());
+                mek.setCondEjectEngine(true);
+                mek.setCondEjectCTDest(true);
+                mek.setCondEjectHeadshot(true);
+            } else {
+                mek.setAutoEject(!entity.hasCase() && !entity.hasCASEII());
+            }
         }
 
         if (genEvent) {

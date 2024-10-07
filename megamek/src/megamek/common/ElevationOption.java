@@ -21,12 +21,12 @@ package megamek.common;
 import java.util.Objects;
 
 /**
- * This is a data record for a possible deployment elevation together with a DeploymentElevationType that
- * signals if the elevation is, e.g., on the ground, on a bridge or submerged. Note that two such records are
- * equal when their elevation and type are equal.
+ * This is a data record for a possible deployment elevation together with a DeploymentElevationType that signals if the elevation is, e.g.,
+ * on the ground, on a bridge or submerged. Note that two such records are equal when their elevation and type are equal. ElevationOptions
+ * are comparable, with the natural ordering being by their elevation only.
  *
  * @param elevation The elevation or altitude in the hex
- * @param type the DeploymentElevationType (on the ground, on a bridge, ...)
+ * @param type      the DeploymentElevationType (on the ground, on a bridge, ...)
  */
 public record ElevationOption(int elevation, DeploymentElevationType type) implements Comparable<ElevationOption> {
 

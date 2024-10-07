@@ -4258,7 +4258,6 @@ public abstract class Mek extends Entity {
     /**
      * Get an '.mtf' file representation of the Mek. This string can be
      * directly written to disk as a file and later loaded by the MtfFile class.
-     * Known missing level 3 features: mixed tech, laser heatsinks
      */
     public String getMtf() {
         StringBuilder sb = new StringBuilder();
@@ -4450,7 +4449,7 @@ public abstract class Mek extends Entity {
             }
             sb.append(getLocationAbbr(element)).append(" ").append(MtfFile.ARMOR);
             if (hasPatchworkArmor()) {
-                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), isClan()))
+                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), TechConstants.isClan(getArmorTechLevel(element))))
                         .append('(').append(TechConstants.getTechName(getArmorTechLevel(element)))
                         .append("):");
             }

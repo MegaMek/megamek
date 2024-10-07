@@ -42,7 +42,6 @@ public class MMToggleButton extends JToggleButton {
         super();
         setText(text);
         // The standard UI font doesn't show unicode characters (on Win10)
-        setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, getFont().getSize()));
         new FlatLafStyleBuilder().font(MMConstants.FONT_DIALOG).apply(this);
         addActionListener(event -> setText(getText()));
     }

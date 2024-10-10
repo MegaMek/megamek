@@ -2928,7 +2928,7 @@ exact "Goshawk II 2" "meks/GoshawkII_2.png"
 exact "Goshawk II 3" "meks/GoshawkII_3.png"
 exact "Goshawk II 4" "meks/GoshawkII_4.png"
 exact "Goshawk II RISC" "meks/GoshawkII_4.png"
-chassis "Götterdämmerung" "meks/Gotterdammerung.png"
+chassis "Götterdämmerung" "meks/Götterdämmerung.png"
 #Grand Crusader
 chassis "Grand Crusader" "meks/GrandCrusader.png"
 exact "Grand Crusader GRN-D-01-X" "meks/GrandCrusader_01X.png"

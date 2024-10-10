@@ -557,6 +557,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // remove temporary attacks from game & board
         removeTempAttacks();
 
+        // If the only action is a torso/turret twist, discard it as it would have no effect for the unit but prevent twisting later
+        if ((attacks.size() == 1) && (attacks.firstElement() instanceof TorsoTwistAction)) {
+            attacks.clear();
+        }
+
         // send out attacks
         clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
 

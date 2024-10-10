@@ -724,6 +724,9 @@ public class Report implements ReportEntry {
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
+        styleSheet.addRule("span.small { font-size: small; }");
+        styleSheet.addRule("span.x-small { font-size: x-small; }");
+        styleSheet.addRule("span.xx-small { font-size: xx-small; }");
     }
 
     public String span(String name, String text) {

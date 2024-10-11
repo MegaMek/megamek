@@ -106,15 +106,6 @@ public final class UIUtil {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
 
-    /**
-     * Returns an HTML FONT tag setting the color to the given col, the font face to Dialog and the font size according to the given scale
-     * delta, where the font size target is standard font size * (1 + deltaScale)
-     */
-    @Deprecated
-    public static String fontHTML(Color col, float deltaScale) {
-        return "<FONT FACE=Dialog " + sizeString(deltaScale) + colorString(col) + ">";
-    }
-
     /** Returns the yellow and gui-scaled warning sign. */
     public static String warningSign() {
         return fontHTML(uiYellow()) + WARNING_SIGN + "</FONT>";

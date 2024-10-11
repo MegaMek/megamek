@@ -246,7 +246,8 @@ public final class PilotToolTip {
         String sOptionList = "";
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
-        result = UIUtil.fontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + sOptionList + "</FONT>";
+        sOptionList = UIUtil.fontHTML(uiQuirksColor()) + sOptionList + "</FONT>";
+        result = "<span class=xx-small>" + sOptionList + "</span>";
 
         return new StringBuilder().append(result);
     }

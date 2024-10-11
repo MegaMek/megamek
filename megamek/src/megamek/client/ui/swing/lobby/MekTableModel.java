@@ -273,11 +273,10 @@ public class MekTableModel extends AbstractTableModel {
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         Player owner = ownerOf(entity);
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);
-        float size = chatLounge.isCompact() ? 0 : 0.2f;
         String sep = chatLounge.isCompact() ? DOT_SPACER : "<BR>";
-        result.append(UIUtil.fontHTML(owner.getColour().getColour(), size)).append(owner.getName())
-                .append("</FONT>").append(fontHTML(size)).append(sep).append("</FONT>")
-                .append(UIUtil.fontHTML(isEnemy ? Color.RED : uiGreen(), size))
+        result.append(UIUtil.fontHTML(owner.getColour().getColour())).append(owner.getName())
+                .append("</FONT>").append(fontHTML()).append(sep).append("</FONT>")
+                .append(UIUtil.fontHTML(isEnemy ? Color.RED : uiGreen()))
                 .append(Player.TEAM_NAMES[owner.getTeam()]);
         return result.toString();
     }

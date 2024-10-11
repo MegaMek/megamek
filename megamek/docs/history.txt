@@ -49,6 +49,7 @@ MEGAMEK VERSION HISTORY:
 + FIX #6027: Disregard torso twists when no weapon is fired together with it
 + PR #6080: Prevent altitude 0 deployment on atmo maps
 + PR #6082: Data update - line wrapping and consolidating availability ratings
++ PR #6085: remove hardcoded html font size
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

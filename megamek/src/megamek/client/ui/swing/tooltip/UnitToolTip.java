@@ -1037,7 +1037,7 @@ public final class UnitToolTip {
                         String msg_x = Messages.getString("BoardView1.Tooltip.X");
                         col1 = currentEquip.count + " " + msg_x + " ";
                     } else {
-                        col1 = "";
+                        col1 = "&nbsp;";
                     }
 
                     col2 = addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr).toString();
@@ -1046,7 +1046,7 @@ public final class UnitToolTip {
                         col2 = "<S>" + col2 + "</S>";
                     }
                 } else {
-                    col1 = "";
+                    col1 = "&nbsp;";
                     col2 = "";
                     // few weapons: list each weapon separately
                     for (int i = 0; i < currentEquip.count; i++) {
@@ -1057,12 +1057,15 @@ public final class UnitToolTip {
                         }
                         col2 += "<BR>";
                     }
+                    col2 = col2.substring(1, col2.length() - 4);
                 }
                 ;
 
                 col1 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col1 + "</FONT>";
+                col1 = "<span class=xx-small>" + col1 + "</span>";
                 col1 = "<TD>" + col1 + "</TD>";
                 col2 = UIUtil.fontHTML(GUIP.getUnitToolTipWeaponColor()) + col2 + "</FONT>";
+                col2 = "<span class=xx-small>" + col2 + "</span>";
                 col2 = "<TD>" + col2 + "</TD>";
                 row = "<TR>" + col1 + col2 + "</TR>";
             }
@@ -1147,8 +1150,10 @@ public final class UnitToolTip {
         int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
         if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
             String msg_outofammo = Messages.getString("BoardView1.Tooltip.OutOfAmmo");
-            col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
+            col1 = "&nbsp;";
+            col1 = "<span class=xx-small>" + col1 + "</span>";
             col1 = "<TD>" + col1 + "</TD>";
+            col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
             col2 = UIUtil.fontHTML(GUIP.getCautionColor()) + col2 + "</FONT>";
             col2 = "<span class=xx-small>" + col2 + "</span>";
             col2 = "<TD>" + col2 + "</TD>";
@@ -1163,7 +1168,7 @@ public final class UnitToolTip {
                 if (ammo.getValue() == 0) {
                     continue;
                 }
-                col1 = "";
+                col1 = "&nbsp;";
                 col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
                 String msg_shots = Messages.getString("BoardView1.Tooltip.Shots");
                 if (ammoInfo.ammoActiveWeaponCount > 1) {
@@ -1177,6 +1182,7 @@ public final class UnitToolTip {
                     col2 += ammoName + ammo.getValue() + " " + msg_shots;
                 }
 
+                col1 = "<span class=xx-small>" + col1 + "</span>";
                 col1 = "<TD>" + col1 + "</TD>";
                 col2 = UIUtil.fontHTML(GUIP.getCautionColor()) + col2 + "</FONT>";
                 col2 = "<span class=xx-small>" + col2 + "</span>";
@@ -1202,7 +1208,8 @@ public final class UnitToolTip {
             sECMInfo += ECM_SIGN + " " + msg_eccmsource;
         }
 
-        result = UIUtil.fontHTML() + sECMInfo + "</FONT>";
+        sECMInfo = UIUtil.fontHTML() + sECMInfo + "</FONT>";
+        result = "<span class=xx-small>" + sECMInfo + "</span>";
         result = UIUtil.fontHTML() + result + "</FONT>";
 
         return new StringBuilder().append(result);
@@ -1959,7 +1966,8 @@ public final class UnitToolTip {
                 }
             }
 
-            result = UIUtil.fontHTML() + sCarriedUnits + "</FONT>";
+            sCarriedUnits = UIUtil.fontHTML() + sCarriedUnits + "</FONT>";
+            result = "<span class=xx-small>" + sCarriedUnits + "</span>";
         }
 
         return new StringBuilder().append(result);

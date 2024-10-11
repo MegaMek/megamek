@@ -1600,12 +1600,14 @@ public final class UnitToolTip {
                 if (tempList.length() > 1) {
                     tempList.delete(tempList.length() - 2, tempList.length());
                     String sSeenBy = addToTT("SeenBy", BR, tempList.toString()).toString();
-                    result += UIUtil.fontHTML() + sSeenBy + "</FONT>";
+                    sSeenBy = UIUtil.fontHTML() + sSeenBy + "</FONT>";
+                    result += "<span class=xx-small>" + sSeenBy + "</span>";
                 }
             }
         }
 
         if (showSensors) {
+            String sensors = "";
             // If sensors, display what sensors this unit is using
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                     || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS))
@@ -1614,17 +1616,18 @@ public final class UnitToolTip {
                 if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
-                result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
+                sensors += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
             } else {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
                 if (conditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
                 }
-                result += addToTT("Visual", BR, visualRange);
+                sensors += addToTT("Visual", BR, visualRange);
             }
             if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && entity.hasBAP()) {
-                result += addToTT("BAPRange", NOBR, entity.getBAPRange());
+                sensors += addToTT("BAPRange", NOBR, entity.getBAPRange());
             }
+            result += "<span class=small>" + sensors + "</span>";
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {
@@ -2012,7 +2015,8 @@ public final class UnitToolTip {
                 sForceEntry += forceChain.get(i).getName();
                 sForceEntry += i != 0 ? ", " : "";
             }
-            result = UIUtil.fontHTML(color) + sForceEntry + "</FONT>";
+            sForceEntry = UIUtil.fontHTML(color) + sForceEntry + "</FONT>";
+            result = "<span class=x-small>" + sForceEntry + "</span>";
         }
 
         return new StringBuilder().append(result);

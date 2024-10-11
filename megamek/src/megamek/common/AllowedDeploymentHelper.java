@@ -98,7 +98,11 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         if (board.onGround()) {
             result.add(new ElevationOption(0, ON_GROUND));
         }
-        int startingAltitude = Math.max(0, board.inAtmosphere() ? board.getHex(coords).ceiling(true) + 1 : 1);
+        int startingAltitude = 1;
+        if (board.inAtmosphere()) {
+            // Stay above terrain on an atmospheric board, but never below altitude 1
+            startingAltitude += Math.max(0, board.getHex(coords).ceiling(true));
+        }
         for (int altitude = startingAltitude; altitude <= 10; altitude++) {
             result.add(new ElevationOption(altitude, ALTITUDE));
         }

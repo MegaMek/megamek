@@ -1,0 +1,170 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-12
+chassis:Ostsol
+model:OTL-4D (Ragnar)
+
+Config:Biped
+techbase:Inner Sphere
+era:3035
+source:Force Manual Kurita
+rules level:1
+role:Skirmisher
+
+quirk:low_profile
+quirk:imp_sensors
+
+mass:60
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:16 Single
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:22
+RT armor:22
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:6
+Large Laser, Left Torso
+Medium Laser, Left Torso
+Large Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Large Laser
+Large Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Large Laser
+Large Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview: Ostmann Industries had built up a solid portfolio of BattleMechs by 2693, having drawn up and produced the successful Ostwar, Ostsol, and Ostscout designs. Their attempt at a new member of their line-up, a heavy cavalry BattleMech capable of independant operations, would lead to the development of the Ostsol. Their manufacturing lines, however, were already overloaded by demand for the popular Ostsol, leading Ostsmann to partner with Kong Interstellar to manufacture the design on Kong's lines on Connaught. The pact would be profitable for both companies, and the Ostsol became a popular staple in both House armies and SLDF forces.
+capabilities: The Ostsol was created to fulfull a contract for a rapid heavy BattleMech with a fully energy-based armament. In this, Ostmann Industries was successful. The Ostsol has offered sterling service as a heavy cavalry design since its inception, and the shattered supply lines of the Succession Wars did little to reduce the 'Mech's effectiveness. The TRSS.2L3 sensors, reused after their outstanding use on the Ostscout, give the Ostsol excellent data gathering capabilities for a 'Mech of its role. However, just as with the earlier Ostroc, the Ostsol suffers from fragile arms and often loses them in combat.
+deployment: The Ostsol has been a popular fixture of House armies since its introduction. The Succession Wars did little to chage this, and the 'Mech remained a common sight throughout the Inner Sphere. Repair and refit kits produced by Kong Interstellar helped keep  Free Worlds League Ostsols in better condition than some, though their overall concentration of the venerable -4D remained similiar to other states.
+systemmanufacturer:CHASSIS:Kell
+systemmode:CHASSIS:/H
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Valiant
+systemmode:ARMOR:Lamellor
+systemmanufacturer:COMMUNICATIONS:Barret
+systemmode:COMMUNICATIONS:509p
+systemmanufacturer:TARGETING:TRSS
+systemmode:TARGETING:.2L3
+

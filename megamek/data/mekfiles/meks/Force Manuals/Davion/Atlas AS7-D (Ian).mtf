@@ -1,0 +1,162 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-12
+chassis:Atlas
+model:AS7-D (Ian)
+
+Config:Biped
+techbase:Inner Sphere
+era:3050
+source:Force Manual:Davion
+rules level:2
+role:Sniper
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+quirk:command_mech
+quirk:imp_com
+
+mass:100
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:15 IS Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:8
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Gauss Rifle, Left Torso
+SRM 6, Left Torso
+Gauss Rifle, Right Torso
+ER Large Laser, Right Torso
+ER Large Laser, Center Torso
+Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Gauss Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+SRM 6
+SRM 6
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Right Torso:
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISERLargeLaser
+ISERLargeLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ammo SRM-6
+IS Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Gauss Ammo
+IS Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

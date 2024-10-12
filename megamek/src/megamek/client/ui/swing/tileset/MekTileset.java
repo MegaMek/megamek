@@ -26,8 +26,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import megamek.common.*;
@@ -203,18 +205,17 @@ public class MekTileset {
      */
     public MekEntry entryFor(Entity entity, int secondaryPos) {
         // Some entities (QuadVees, LAMs) use different sprites depending on mode.
-        String mode = entity.getTilesetModeString().toUpperCase();
-
+        String mode = entity.getTilesetModeString().toUpperCase(Locale.ROOT);
         String addendum = (secondaryPos == -1) ? "" : "_" + secondaryPos;
 
         // first, check for exact matches
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase() + mode + addendum)) {
-            return exact.get(entity.getShortNameRaw().toUpperCase() + mode + addendum);
+        if (exact.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT) + mode + addendum)) {
+            return exact.get(entity.getShortNameRaw().toUpperCase(Locale.ROOT) + mode + addendum);
         }
 
         // second, check for chassis matches
-        if (chassis.containsKey(entity.getFullChassis().toUpperCase() + mode + addendum)) {
-            return chassis.get(entity.getFullChassis().toUpperCase() + mode + addendum);
+        if (chassis.containsKey(entity.getFullChassis().toUpperCase(Locale.ROOT) + mode + addendum)) {
+            return chassis.get(entity.getFullChassis().toUpperCase(Locale.ROOT) + mode + addendum);
         }
 
         // last, the generic model
@@ -367,7 +368,7 @@ public class MekTileset {
 
     public void loadFromFile(String filename) throws IOException {
         logger.info("Loading unit icons from {}", filename);
-        try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile()))) {
+        try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile(), StandardCharsets.UTF_8))) {
             StandardTextfileStreamTokenizer tokenizer = new StandardTextfileStreamTokenizer(r);
             while (true) {
                 List<String> tokens = tokenizer.getLineTokens();
@@ -381,9 +382,9 @@ public class MekTileset {
                             logger.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.get(0).equals(CHASSIS_KEY)) {
-                        chassis.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
+                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
                     } else {
-                        exact.put(tokens.get(1).toUpperCase(), new MekEntry(tokens.get(2)));
+                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
                     }
                 } else {
                     logger.warn("Malformed line in {}: {}", filename, tokens.toString());
@@ -391,64 +392,64 @@ public class MekTileset {
             }
         }
 
-        default_ultra_light = exact.get(ULTRA_LIGHT_STRING.toUpperCase());
-        default_light = exact.get(LIGHT_STRING.toUpperCase());
-        default_medium = exact.get(MEDIUM_STRING.toUpperCase());
-        default_heavy = exact.get(HEAVY_STRING.toUpperCase());
-        default_assault = exact.get(ASSAULT_STRING.toUpperCase());
-        default_super_heavy_mek = exact.get(SUPER_HEAVY_MEK_STRING.toUpperCase());
-        default_quad = exact.get(QUAD_STRING.toUpperCase());
-        default_quadvee = exact.get(QUADVEE_STRING.toUpperCase());
-        default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase());
-        default_lam_mek = exact.get(LAM_MEK_STRING.toUpperCase());
-        default_lam_airmek = exact.get(LAM_AIRMEK_STRING.toUpperCase());
-        default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase());
-        default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
-        default_tracked = exact.get(TRACKED_STRING.toUpperCase());
-        default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());
-        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
-        default_wheeled = exact.get(WHEELED_STRING.toUpperCase());
-        default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase());
-        default_hover = exact.get(HOVER_STRING.toUpperCase());
-        default_naval = exact.get(NAVAL_STRING.toUpperCase());
-        default_submarine = exact.get(SUBMARINE_STRING.toUpperCase());
-        default_hydrofoil = exact.get(HYDROFOIL_STRING.toUpperCase());
-        default_vtol = exact.get(VTOL_STRING.toUpperCase());
-        default_inf = exact.get(INF_STRING.toUpperCase());
-        default_ba = exact.get(BA_STRING.toUpperCase());
-        default_proto = exact.get(PROTO_STRING.toUpperCase());
-        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
-        default_wige = exact.get(WIGE_STRING.toUpperCase());
-        default_aero = exact.get(AERO_STRING.toUpperCase());
-        default_small_craft_aero = exact.get(SMALL_CRAFT_AERO_STRING.toUpperCase());
-        default_dropship_aero = exact.get(DROPSHIP_AERO_STRING.toUpperCase());
-        default_dropship_aero_0 = exact.get(DROPSHIP_AERO_STRING_0.toUpperCase());
-        default_dropship_aero_1 = exact.get(DROPSHIP_AERO_STRING_1.toUpperCase());
-        default_dropship_aero_2 = exact.get(DROPSHIP_AERO_STRING_2.toUpperCase());
-        default_dropship_aero_3 = exact.get(DROPSHIP_AERO_STRING_3.toUpperCase());
-        default_dropship_aero_4 = exact.get(DROPSHIP_AERO_STRING_4.toUpperCase());
-        default_dropship_aero_5 = exact.get(DROPSHIP_AERO_STRING_5.toUpperCase());
-        default_dropship_aero_6 = exact.get(DROPSHIP_AERO_STRING_6.toUpperCase());
-        default_small_craft_sphere = exact.get(SMALL_CRAFT_SPHERE_STRING.toUpperCase());
-        default_dropship_sphere = exact.get(DROPSHIP_SPHERE_STRING.toUpperCase());
-        default_dropship_sphere_0 = exact.get(DROPSHIP_SPHERE_STRING_0.toUpperCase());
-        default_dropship_sphere_1 = exact.get(DROPSHIP_SPHERE_STRING_1.toUpperCase());
-        default_dropship_sphere_2 = exact.get(DROPSHIP_SPHERE_STRING_2.toUpperCase());
-        default_dropship_sphere_3 = exact.get(DROPSHIP_SPHERE_STRING_3.toUpperCase());
-        default_dropship_sphere_4 = exact.get(DROPSHIP_SPHERE_STRING_4.toUpperCase());
-        default_dropship_sphere_5 = exact.get(DROPSHIP_SPHERE_STRING_5.toUpperCase());
-        default_dropship_sphere_6 = exact.get(DROPSHIP_SPHERE_STRING_6.toUpperCase());
-        default_jumpship = exact.get(JUMPSHIP_STRING.toUpperCase());
-        default_warship = exact.get(WARSHIP_STRING.toUpperCase());
-        default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
-        default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
-        default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
-        default_unknown = exact.get(UNKNOWN_STRING.toUpperCase());
+        default_ultra_light = exact.get(ULTRA_LIGHT_STRING.toUpperCase(Locale.ROOT));
+        default_light = exact.get(LIGHT_STRING.toUpperCase(Locale.ROOT));
+        default_medium = exact.get(MEDIUM_STRING.toUpperCase(Locale.ROOT));
+        default_heavy = exact.get(HEAVY_STRING.toUpperCase(Locale.ROOT));
+        default_assault = exact.get(ASSAULT_STRING.toUpperCase(Locale.ROOT));
+        default_super_heavy_mek = exact.get(SUPER_HEAVY_MEK_STRING.toUpperCase(Locale.ROOT));
+        default_quad = exact.get(QUAD_STRING.toUpperCase(Locale.ROOT));
+        default_quadvee = exact.get(QUADVEE_STRING.toUpperCase(Locale.ROOT));
+        default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase(Locale.ROOT));
+        default_lam_mek = exact.get(LAM_MEK_STRING.toUpperCase(Locale.ROOT));
+        default_lam_airmek = exact.get(LAM_AIRMEK_STRING.toUpperCase(Locale.ROOT));
+        default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase(Locale.ROOT));
+        default_tripod = exact.get(TRIPOD_STRING.toUpperCase(Locale.ROOT));
+        default_tracked = exact.get(TRACKED_STRING.toUpperCase(Locale.ROOT));
+        default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase(Locale.ROOT));
+        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING.toUpperCase(Locale.ROOT));
+        default_wheeled = exact.get(WHEELED_STRING.toUpperCase(Locale.ROOT));
+        default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase(Locale.ROOT));
+        default_hover = exact.get(HOVER_STRING.toUpperCase(Locale.ROOT));
+        default_naval = exact.get(NAVAL_STRING.toUpperCase(Locale.ROOT));
+        default_submarine = exact.get(SUBMARINE_STRING.toUpperCase(Locale.ROOT));
+        default_hydrofoil = exact.get(HYDROFOIL_STRING.toUpperCase(Locale.ROOT));
+        default_vtol = exact.get(VTOL_STRING.toUpperCase(Locale.ROOT));
+        default_inf = exact.get(INF_STRING.toUpperCase(Locale.ROOT));
+        default_ba = exact.get(BA_STRING.toUpperCase(Locale.ROOT));
+        default_proto = exact.get(PROTO_STRING.toUpperCase(Locale.ROOT));
+        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING.toUpperCase(Locale.ROOT));
+        default_wige = exact.get(WIGE_STRING.toUpperCase(Locale.ROOT));
+        default_aero = exact.get(AERO_STRING.toUpperCase(Locale.ROOT));
+        default_small_craft_aero = exact.get(SMALL_CRAFT_AERO_STRING.toUpperCase(Locale.ROOT));
+        default_dropship_aero = exact.get(DROPSHIP_AERO_STRING.toUpperCase(Locale.ROOT));
+        default_dropship_aero_0 = exact.get(DROPSHIP_AERO_STRING_0.toUpperCase(Locale.ROOT));
+        default_dropship_aero_1 = exact.get(DROPSHIP_AERO_STRING_1.toUpperCase(Locale.ROOT));
+        default_dropship_aero_2 = exact.get(DROPSHIP_AERO_STRING_2.toUpperCase(Locale.ROOT));
+        default_dropship_aero_3 = exact.get(DROPSHIP_AERO_STRING_3.toUpperCase(Locale.ROOT));
+        default_dropship_aero_4 = exact.get(DROPSHIP_AERO_STRING_4.toUpperCase(Locale.ROOT));
+        default_dropship_aero_5 = exact.get(DROPSHIP_AERO_STRING_5.toUpperCase(Locale.ROOT));
+        default_dropship_aero_6 = exact.get(DROPSHIP_AERO_STRING_6.toUpperCase(Locale.ROOT));
+        default_small_craft_sphere = exact.get(SMALL_CRAFT_SPHERE_STRING.toUpperCase(Locale.ROOT));
+        default_dropship_sphere = exact.get(DROPSHIP_SPHERE_STRING.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_0 = exact.get(DROPSHIP_SPHERE_STRING_0.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_1 = exact.get(DROPSHIP_SPHERE_STRING_1.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_2 = exact.get(DROPSHIP_SPHERE_STRING_2.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_3 = exact.get(DROPSHIP_SPHERE_STRING_3.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_4 = exact.get(DROPSHIP_SPHERE_STRING_4.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_5 = exact.get(DROPSHIP_SPHERE_STRING_5.toUpperCase(Locale.ROOT));
+        default_dropship_sphere_6 = exact.get(DROPSHIP_SPHERE_STRING_6.toUpperCase(Locale.ROOT));
+        default_jumpship = exact.get(JUMPSHIP_STRING.toUpperCase(Locale.ROOT));
+        default_warship = exact.get(WARSHIP_STRING.toUpperCase(Locale.ROOT));
+        default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase(Locale.ROOT));
+        default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase(Locale.ROOT));
+        default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase(Locale.ROOT));
+        default_unknown = exact.get(UNKNOWN_STRING.toUpperCase(Locale.ROOT));
     }
 
     boolean hasOnlyChassisMatch(Entity entity) {
-        return !exact.containsKey(entity.getShortNameRaw().toUpperCase())
-                && chassis.containsKey(entity.getShortNameRaw().toUpperCase());
+        return !exact.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT))
+                && chassis.containsKey(entity.getShortNameRaw().toUpperCase(Locale.ROOT));
     }
 
     /**

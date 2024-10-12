@@ -106,6 +106,12 @@ public final class UIUtil {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
 
+    public static String tag(String tag, String attributes, String text) {
+        String format = attributes.isEmpty() ? "<%s>%s</%s>" : "<%s %s>%s</%s>";
+        String result = attributes.isEmpty() ? String.format(format, tag, text, tag) : String.format(format, tag, attributes, text, tag);
+        return result;
+    }
+
     /** Returns the yellow and gui-scaled warning sign. */
     public static String warningSign() {
         return fontHTML(uiYellow()) + WARNING_SIGN + "</FONT>";
@@ -1194,6 +1200,14 @@ public final class UIUtil {
      */
     public static String colorString(Color col) {
         return " COLOR=" + Integer.toHexString(col.getRGB() & 0xFFFFFF) + " ";
+    }
+
+    /**
+     * Returns Color Hex String, e.g. #FFFFFF according to the given
+     * color.
+     */
+    public static String toColorHexString(Color col) {
+        return Integer.toHexString(col.getRGB() & 0xFFFFFF);
     }
 
     private static int uiBgBrightness() {

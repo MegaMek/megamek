@@ -98,10 +98,10 @@ public final class PilotToolTip {
 
         cols += crewInfoCell(entity);
         cols += crewPickedUpCell(entity);
-        row = "<TR>" + cols + "</TR>";
+        row = UIUtil.tag("TR", "", cols);
         rows += row;
-        String table = "<TABLE BORDER=0>" + rows + "</TABLE>";
-        result += "<DIV width=100% >" + table + "</DIV>";
+        String table = UIUtil.tag("TABLE", "BORDER=0", rows);
+        result +=  UIUtil.tag("<DIV", "width=100%", table);
 
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";
@@ -115,7 +115,7 @@ public final class PilotToolTip {
     /** The crew advantages and MD */
     public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
         String sCrewAdvs = crewAdvs(entity, detailed).toString();
-        String result = htmlSpacer(3) + sCrewAdvs + "</FONT>";
+        String result = htmlSpacer(3) + sCrewAdvs;
 
         return new StringBuilder().append(result);
     }
@@ -144,8 +144,9 @@ public final class PilotToolTip {
             }
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
-                String sNickName = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
-                sCrew += UIUtil.fontHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
+                String sNickName = UIUtil.tag("B", "", crew.getNickname(i).toUpperCase());
+                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(UIUtil.uiNickColor()));
+                sCrew += UIUtil.tag("FONT", attr,  sNickName);
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 sCrew += crew.getName(i);
             } else {
@@ -157,7 +158,8 @@ public final class PilotToolTip {
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
-                sCrew += UIUtil.fontHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
+                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
+                sCrew += UIUtil.tag("FONT", attr,  crew.getStatusDesc(i));
             }
             result += sCrew + "<BR>";
         }
@@ -165,7 +167,7 @@ public final class PilotToolTip {
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
-        String col = "<TD align=\"left\">" + result + "</TD>";
+        String col = UIUtil.tag("TD", "align=\"left\"", result);
 
         return new StringBuilder().append(col);
     }
@@ -183,9 +185,9 @@ public final class PilotToolTip {
         String col = "";
 
         if (!pickedUp.isEmpty()) {
-            pickedUp = UIUtil.fontHTML(GUIP.getCautionColor()) + Messages.getString("BoardView1.Tooltip.PickedUp")
-                    + pickedUp + "</FONT>";
-            col = "<TD>" + pickedUp + "</TD>";
+            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+            pickedUp = UIUtil.tag("FONT", attr,  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp);
+            col = UIUtil.tag("TD", "", pickedUp);
         }
 
         return new StringBuilder().append(col);
@@ -225,9 +227,10 @@ public final class PilotToolTip {
                     img = "<IMG SRC=file:" + tempPath + ">";
                 } else {
                     // span crew tag replaced later in Client.receiveReport with crew portrait
-                    img = "<span crew='" + entity.getId() + ":" + i + "'></span>";
+                    img = UIUtil.tag("span", "crew='" + entity.getId() + ":" + i + "'", "");
                 }
-                col += "<TD VALIGN=TOP>" + img + "</TD>";
+
+                col += UIUtil.tag("TD", "VALIGN=TOP", img);
             } catch (Exception e) {
                 logger.error("", e);
             }
@@ -246,8 +249,9 @@ public final class PilotToolTip {
         String sOptionList = "";
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
-        sOptionList = UIUtil.fontHTML(uiQuirksColor()) + sOptionList + "</FONT>";
-        result = "<span class=xx-small>" + sOptionList + "</span>";
+        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(uiQuirksColor()));
+        sOptionList = UIUtil.tag("FONT", attr,  sOptionList);
+        result = UIUtil.tag("span", "class=xx-small", sOptionList);
 
         return new StringBuilder().append(result);
     }

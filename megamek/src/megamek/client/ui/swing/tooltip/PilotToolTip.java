@@ -255,7 +255,7 @@ public final class PilotToolTip {
         String sOptionList = "";
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
-        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(uiQuirksColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
         sOptionList = UIUtil.tag("FONT", attr,  sOptionList);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = UIUtil.tag("span", fontSizeAttr, sOptionList);

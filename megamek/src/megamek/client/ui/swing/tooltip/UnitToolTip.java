@@ -226,6 +226,25 @@ public final class UnitToolTip {
         return result;
     }
 
+    public static String addPlayerColorBoarder(GUIPreferences GUIP, Entity entity, String entityTip) {
+        Color color = GUIP.getUnitToolTipFGColor();
+        // the player's color
+        // Table to add a bar to the left of an entity in
+        if (!EntityVisibilityUtils.onlyDetectedBySensors(entity.getOwner(), entity)) {
+            color = entity.getOwner().getColour().getColour();
+        }
+
+        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(color));
+        entityTip = UIUtil.tag("FONT", attr,  entityTip);
+        attr = String.format("BGCOLOR=%s WIDTH=6", UIUtil.toColorHexString(color));
+        String col1 = UIUtil.tag("TD", attr, "");
+        String col2 = UIUtil.tag("TD", "", entityTip);
+        String row = UIUtil.tag("TR", "", col1 + col2);
+        attr = String.format("CELLSPACING=0 CELLPADDING=4 BORDER=0 BGCOLOR=%s WIDTH=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+        String table = UIUtil.tag("TABLE", attr,  row);
+        return table;
+    }
+
     private static String getChassisInfo(Entity entity) {
         String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";

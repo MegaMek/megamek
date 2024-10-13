@@ -156,6 +156,7 @@ public class SummaryPanel extends PicMap {
             rows += row;
 
             String unitTip = UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer).toString();
+            unitTip = UnitToolTip.addPlayerColorBoarder(GUIP, entity, unitTip);
             col = UIUtil.tag("TD", "", unitTip);
             row = UIUtil.tag("TR", "", col);
             rows += row;
@@ -185,6 +186,7 @@ public class SummaryPanel extends PicMap {
 
             String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", rows);
             txt = padLeft(table);
+            //txt = table;
         }
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
@@ -192,7 +194,7 @@ public class SummaryPanel extends PicMap {
     }
 
     private String padLeft(String html) {
-        int dist = 7;
+        int dist = 4;
         String col = UIUtil.tag("TD", "", html);
         String row = UIUtil.tag("TR", "", col);
         String attr = String.format("CELLSPACING=0 CELLPADDING=%s width=100%%", dist);

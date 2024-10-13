@@ -354,25 +354,9 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             return;
         }
 
-        String result = "";
-
-        result += "<HR STYLE=WIDTH:90% />";
-        // Table to add a bar to the left of an entity in
-        // the player's color
-        Color color = GUIP.getUnitToolTipFGColor();
-        if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer(), entity)) {
-            color = entity.getOwner().getColour().getColour();
-        }
-
+        String result =  "<HR STYLE=WIDTH:90% />";
         String entityTip = UnitToolTip.getEntityTipGame(entity, localPlayer()).toString();
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(color));
-        entityTip = UIUtil.tag("FONT", attr,  entityTip);
-        attr = String.format("BGCOLOR=%s WIDTH=6", UIUtil.toColorHexString(color));
-        String col1 = UIUtil.tag("TD", attr, "");
-        String col2 = UIUtil.tag("TD", "", entityTip);
-        String row = UIUtil.tag("TR", "", col1 + col2);
-        attr = String.format("BORDER=0 BGCOLOR=%s WIDTH=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
-        String table = UIUtil.tag("TABLE", attr,  row);
+        String table = UnitToolTip.addPlayerColorBoarder(GUIP, entity, entityTip);
         result += table;
 
         txt.append(result);

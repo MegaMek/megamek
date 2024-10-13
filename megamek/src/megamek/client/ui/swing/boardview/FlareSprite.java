@@ -29,7 +29,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 /**
  * A Sprite for a flare, as the name indicates.
  */
-class FlareSprite extends Sprite {
+public class FlareSprite extends Sprite {
 
     private static final String FILENAME_FLARE_IMAGE = "flare.png";
     private static final Image FLARE_IMAGE;

@@ -15,8 +15,7 @@ package megamek.client.ui.swing.tooltip;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.htmlSpacer;
-import static megamek.client.ui.swing.util.UIUtil.fontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -100,7 +99,7 @@ public final class PilotToolTip {
         cols += crewPickedUpCell(entity);
         row = UIUtil.tag("TR", "", cols);
         rows += row;
-        String table = UIUtil.tag("TABLE", "BORDER=0", rows);
+        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=2 BORDER=0", rows);
         result +=  UIUtil.tag("<DIV", "width=100%", table);
 
         if (!detailed) {
@@ -123,11 +122,14 @@ public final class PilotToolTip {
     private static StringBuilder crewInfoLine(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
-        String result = "";
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
-        return new StringBuilder(result);
+        String col = CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        col = UIUtil.tag("TD", "", col);
+        String row = UIUtil.tag("TR", "", col);
+        String rows = row;
+        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 BORDER=0", rows);
+        return new StringBuilder(table);
     }
 
     /** Returns a tooltip part with names and skills of the crew. */
@@ -148,13 +150,13 @@ public final class PilotToolTip {
                 String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(UIUtil.uiNickColor()));
                 sCrew += UIUtil.tag("FONT", attr,  sNickName);
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
-                sCrew += crew.getName(i);
+                sCrew += crew.getName(i) + " ";
             } else {
                 sCrew += Messages.getString("BoardView1.Tooltip.Pilot");
             }
 
             if (crew.getSlotCount() > 1) {
-                sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i);
+                sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i) + " ";
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
@@ -167,6 +169,8 @@ public final class PilotToolTip {
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+        result = UIUtil.tag("span", fontSizeAttr, result);
         String col = UIUtil.tag("TD", "align=\"left\"", result);
 
         return new StringBuilder().append(col);
@@ -187,6 +191,8 @@ public final class PilotToolTip {
         if (!pickedUp.isEmpty()) {
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
             pickedUp = UIUtil.tag("FONT", attr,  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp);
+            String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+            pickedUp = UIUtil.tag("span", fontSizeAttr, pickedUp);
             col = UIUtil.tag("TD", "", pickedUp);
         }
 
@@ -251,7 +257,8 @@ public final class PilotToolTip {
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
         String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(uiQuirksColor()));
         sOptionList = UIUtil.tag("FONT", attr,  sOptionList);
-        result = UIUtil.tag("span", "class=xx-small", sOptionList);
+        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+        result = UIUtil.tag("span", fontSizeAttr, sOptionList);
 
         return new StringBuilder().append(result);
     }

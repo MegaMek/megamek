@@ -482,7 +482,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pane.setBackground(TEXT_BG);
         pane.setEditable(false);
         pane.setOpaque(true);
-        pane.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
     }
 
     private void addSubdisplay(JPanel parent, JComponent child, int minHeight, int fill) {

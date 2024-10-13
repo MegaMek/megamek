@@ -1897,7 +1897,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dragonfly (Viper)' unitType='Mek' omni='Clan'>
-			<availability>CSV:3,CLAN:4,CFM:5,CSJ:3CGB:3</availability>
+			<availability>CSV:3,CLAN:4,CFM:5,CSJ:3,CGB:3</availability>
 			<model name='A'>
 				<availability>CDS:8,General:6,CJF:8,CGB:6</availability>
 			</model>

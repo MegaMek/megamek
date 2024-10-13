@@ -50,6 +50,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6080: Prevent altitude 0 deployment on atmo maps
 + PR #6082: Data update - line wrapping and consolidating availability ratings
 + PR #6085: remove hardcoded html font size
++ PR #6087: Read Mekset as UTF8
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

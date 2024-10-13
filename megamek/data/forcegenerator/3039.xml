@@ -640,7 +640,7 @@
 			</model>
 		</chassis>
 		<chassis name='AC/2 Carrier' unitType='Tank'>
-			<availability>MOC:3,HL:2,IS:4,Periphery.Deep:4,FS:5,Periphery:4CS:3,NIOPS:3,DC:5</availability>
+			<availability>MOC:3,HL:2,IS:4,Periphery.Deep:4,FS:5,Periphery:4,CS:3,NIOPS:3,DC:5</availability>
 			<model name=''>
 				<roles>fire_support</roles>
 				<availability>HL:4,General:6,Periphery.Deep:5,Periphery:6</availability>

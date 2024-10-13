@@ -234,7 +234,7 @@ public final class UnitToolTip {
         return chassis;
     }
 
-    private static String getOwnerInfo(Game game, Entity entity, Player owner) {
+    private static String getOwnerInfo(Entity entity, Player owner) {
         String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
         String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
         String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
@@ -262,7 +262,7 @@ public final class UnitToolTip {
             row = UIUtil.tag("TR", "", col);
             rows = row;
 
-            col = getOwnerInfo(game, entity, owner);
+            col = getOwnerInfo(entity, owner);
             attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(ownerColor));
             col = UIUtil.tag("FONT", attr, col);
             col = UIUtil.tag("span", fontSizeAttr, col);
@@ -1708,6 +1708,7 @@ public final class UnitToolTip {
             if (tempList.length() > 1) {
                 tempList.delete(tempList.length() - 2, tempList.length());
                 String sSeenBy = addToTT("SeenBy", NOBR, tempList.toString()).toString();
+                result = sSeenBy;
             }
         }
 

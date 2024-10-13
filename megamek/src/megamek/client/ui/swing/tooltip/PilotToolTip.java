@@ -147,7 +147,7 @@ public final class PilotToolTip {
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 String sNickName = UIUtil.tag("B", "", crew.getNickname(i).toUpperCase());
-                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(UIUtil.uiNickColor()));
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(UIUtil.uiNickColor()));
                 sCrew += UIUtil.tag("FONT", attr,  sNickName);
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
                 sCrew += crew.getName(i) + " ";
@@ -160,7 +160,7 @@ public final class PilotToolTip {
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
-                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
                 sCrew += UIUtil.tag("FONT", attr,  crew.getStatusDesc(i));
             }
             result += sCrew + "<BR>";
@@ -189,7 +189,7 @@ public final class PilotToolTip {
         String col = "";
 
         if (!pickedUp.isEmpty()) {
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
             pickedUp = UIUtil.tag("FONT", attr,  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp);
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
             pickedUp = UIUtil.tag("span", fontSizeAttr, pickedUp);
@@ -255,7 +255,7 @@ public final class PilotToolTip {
         String sOptionList = "";
         Crew crew = entity.getCrew();
         sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(uiQuirksColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(uiQuirksColor()));
         sOptionList = UIUtil.tag("FONT", attr,  sOptionList);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = UIUtil.tag("span", fontSizeAttr, sOptionList);

@@ -64,7 +64,7 @@ public final class HexTooltip {
                         bldg.getMagnitude());
             }
 
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
             sFuelTank = UIUtil.tag("FONT", attr, sFuelTank);
             sFuelTank = UIUtil.tag("span", fontSizeAttr, sFuelTank);
             String col = UIUtil.tag("TD", "", sFuelTank);
@@ -100,7 +100,7 @@ public final class HexTooltip {
                 }
             }
 
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
             sBuilding = UIUtil.tag("FONT", attr, sBuilding);
             sBuilding = UIUtil.tag("span", fontSizeAttr, sBuilding);
             String col = UIUtil.tag("TD", "", sBuilding);
@@ -128,7 +128,7 @@ public final class HexTooltip {
                         bldg.getCurrentCF(mcoords));
             }
 
-            String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
             sBridge = UIUtil.tag("FONT", attr, sBridge);
             sBridge = UIUtil.tag("span", fontSizeAttr, sBridge);
             String col = UIUtil.tag("TD", "", sBridge);
@@ -164,7 +164,7 @@ public final class HexTooltip {
                         break;
                 }
 
-                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(UIUtil.uiWhite()));
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 sMinefield = UIUtil.tag("FONT", attr, sMinefield);
                 result.append(sMinefield);
                 result.append("<BR>");
@@ -175,7 +175,7 @@ public final class HexTooltip {
         	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
         		result.append("&nbsp");
                 String groundObj = groundObject.specificName();
-                String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(UIUtil.uiWhite()));
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
         		result.append(groundObj);
         		result.append("<BR/>");
@@ -199,7 +199,7 @@ public final class HexTooltip {
         if (bldg.getBasementCollapsed(mcoords)) {
             sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
         }
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
         sBuilding = UIUtil.tag("FONT", attr, sBuilding);
         sBuilding = UIUtil.tag("span", fontSizeAttr, sBuilding);
         String col = UIUtil.tag("TD", "", sBuilding);
@@ -225,7 +225,7 @@ public final class HexTooltip {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Coords mcoords = mhex.getCoords();
         String indicator = IlluminationLevel.determineIlluminationLevel(game, mcoords).getIndicator();
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
         String illuminated = UIUtil.tag("FONT", attr, " " + indicator);
         illuminated = DOT_SPACER + illuminated;
 
@@ -258,7 +258,7 @@ public final class HexTooltip {
             }
         }
 
-        attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         result = UIUtil.tag("FONT", attr, sTerrain.toString());
         result = UIUtil.tag("span", fontSizeAttr, result);
 
@@ -275,7 +275,7 @@ public final class HexTooltip {
             sTerrain += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
         }
 
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         String result = UIUtil.tag("FONT", attr, sTerrain);
         result = UIUtil.tag("span", fontSizeAttr, result);
 
@@ -292,7 +292,7 @@ public final class HexTooltip {
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
             String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
 
-            String attr = String.format("FACE=Dialog  COLOR=%s",UIUtil.toColorHexString(GUIP.getWarningColor()));
+            String attr = String.format("FACE=Dialog COLOR=%s",UIUtil.toColorHexString(GUIP.getWarningColor()));
             sTerrain += UIUtil.tag("FONT", attr, tmp);
             sTerrain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
         }
@@ -308,7 +308,7 @@ public final class HexTooltip {
             sTerrain += UIUtil.tag("I", "", sDinstanceMove);
         }
 
-        String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainFGColor()));
         sTerrain = UIUtil.tag("FONT", attr, sTerrain);
         sTerrain = UIUtil.tag("span", fontSizeAttr, sTerrain);
 
@@ -328,7 +328,7 @@ public final class HexTooltip {
                 }
 
                 String sName = "&nbsp;&nbsp;" + player.getName();
-                String attr = String.format("FACE=Dialog  COLOR=%s",UIUtil.toColorHexString(player.getColour().getColour()));
+                String attr = String.format("FACE=Dialog COLOR=%s",UIUtil.toColorHexString(player.getColour().getColour()));
                 sName = UIUtil.tag("FONT", attr, sName);
                 sAttilleryAutoHix += UIUtil.tag("B", "", sName);
                 sAttilleryAutoHix += "<BR>";
@@ -345,10 +345,10 @@ public final class HexTooltip {
         msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
         sAttilleryAutoHix = UIUtil.tag("I", "", msg_artyautohit);
 
-        String attr = String.format("FACE=Dialog  COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
+        String attr = String.format("FACE=Dialog COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
         sAttilleryAutoHix = UIUtil.tag("FONT", attr, sAttilleryAutoHix);
 
-        attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(uiWhite()));
+        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(uiWhite()));
         sAttilleryAutoHix = UIUtil.tag("FONT", attr, sAttilleryAutoHix);
         sAttilleryAutoHix = UIUtil.tag("span", fontSizeAttr, sAttilleryAutoHix);
         String col = UIUtil.tag("TD", "", sAttilleryAutoHix);
@@ -380,7 +380,7 @@ public final class HexTooltip {
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(coords)) {
                 String sWreck = wSprite.getTooltip().toString();
-                String attr = String.format("FACE=Dialog  COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
+                String attr = String.format("FACE=Dialog COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
                 sWreck = UIUtil.tag("FONT", attr, sWreck);
                 sWreck = UIUtil.tag("span", fontSizeAttr, sWreck);
                 String col = UIUtil.tag("TD", "", sWreck);
@@ -391,7 +391,7 @@ public final class HexTooltip {
                     String sPilot = PilotToolTip.getPilotTipShort(wSprite.getEntity(),
                         GUIP.getshowPilotPortraitTT(), false).toString();
 
-                    attr = String.format("FACE=Dialog  COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
+                    attr = String.format("FACE=Dialog COLOR=%s",UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
                     sPilot = UIUtil.tag("FONT", attr, sPilot);
                     sPilot = UIUtil.tag("span", fontSizeAttr, sPilot);
                     col = UIUtil.tag("TD", "", sPilot);

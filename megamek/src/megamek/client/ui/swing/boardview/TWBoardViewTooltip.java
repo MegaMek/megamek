@@ -125,7 +125,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
                     sInvalidHex += String.join("<BR>", errors);
-                    sInvalidHex = UIUtil.fontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
+                    attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipFGColor())));
+                    sInvalidHex += UIUtil.tag("FONT", attr, sInvalidHex);
                     result += "<BR>" + sInvalidHex;
                 }
             }

@@ -164,14 +164,14 @@ public class SummaryPanel extends PicMap {
 
             if (mhex != null) {
                 String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
-                String attr = String.format("FACE=Dialog  BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                 col = UIUtil.tag("TD", attr, terrainTip);
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
                 String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
                 if (!hexTip.isEmpty()) {
-                    attr = String.format("FACE=Dialog  BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
                     row = UIUtil.tag("TR", "", col);
                     rows += row;

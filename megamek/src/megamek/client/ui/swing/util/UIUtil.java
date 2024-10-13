@@ -106,6 +106,9 @@ public final class UIUtil {
         return "<FONT FACE=Dialog " + sizeString(deltaScale) + ">";
     }
 
+    /**
+     * Returns an HTML - tag attribute text end tag
+     */
     public static String tag(String tag, String attributes, String text) {
         String format = attributes.isEmpty() ? "<%s>%s</%s>" : "<%s %s>%s</%s>";
         String result = attributes.isEmpty() ? String.format(format, tag, text, tag) : String.format(format, tag, attributes, text, tag);

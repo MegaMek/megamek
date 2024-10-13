@@ -156,7 +156,6 @@ public class SummaryPanel extends PicMap {
             rows += row;
 
             String unitTip = UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer).toString();
-            unitTip = UnitToolTip.addPlayerColorBoarder(GUIP, entity, unitTip);
             col = UIUtil.tag("TD", "", unitTip);
             row = UIUtil.tag("TR", "", col);
             rows += row;

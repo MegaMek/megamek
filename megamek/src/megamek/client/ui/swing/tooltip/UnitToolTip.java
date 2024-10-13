@@ -141,7 +141,7 @@ public final class UnitToolTip {
         if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
             String col = UIUtil.tag("TD", "", result);
             String row = UIUtil.tag("TR", "", col);
-            String table = UIUtil.tag("TABLE", "width=100%", row);
+            String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", row);
             return new StringBuilder().append(table);
         }
 
@@ -163,9 +163,6 @@ public final class UnitToolTip {
         // Bomb List
         result += bombList(entity);
 
-        // StratOps quirks, chassis and weapon
-        result += getQuirks(entity, game, details);
-
         // Partial repairs
         result += getPartialRepairs(entity, details);
 
@@ -178,10 +175,13 @@ public final class UnitToolTip {
         // C3 Info
         result += c3Info(entity, details);
 
+        // StratOps quirks, chassis and weapon
+        result += getQuirks(entity, game, details);
+
         String col = UIUtil.tag("TD", "", result);
         String row = UIUtil.tag("TR", "", col);
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", row);
-
+        table = UnitToolTip.addPlayerColorBoarder(GUIP, entity, table);
         return new StringBuilder().append(table);
     }
 
@@ -202,8 +202,10 @@ public final class UnitToolTip {
     public static String getTargetTipSummary(Targetable target, @Nullable Client client) {
         if (target == null) {
             return Messages.getString("BoardView1.Tooltip.NoTarget");
-        } else if (target instanceof Entity) {
-            return getTargetTipSummaryEntity((Entity) target, client);
+        } else if (target instanceof Entity targetEntity) {
+            String result = getTargetTipSummaryEntity((Entity) target, client);
+            result = UnitToolTip.addPlayerColorBoarder(GUIP, targetEntity, result);
+            return result;
         } else if (target instanceof BuildingTarget) {
             return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null) ? client.getBoard() : null);
         }
@@ -226,7 +228,7 @@ public final class UnitToolTip {
         return result;
     }
 
-    public static String addPlayerColorBoarder(GUIPreferences GUIP, Entity entity, String entityTip) {
+    private static String addPlayerColorBoarder(GUIPreferences GUIP, Entity entity, String entityTip) {
         Color color = GUIP.getUnitToolTipFGColor();
         // the player's color
         // Table to add a bar to the left of an entity in
@@ -311,7 +313,7 @@ public final class UnitToolTip {
 
     private static String getQuirks(Entity entity, Game game, boolean details) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            String sQuirks = "<BR>";
+            String sQuirks = "";
             String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, details);
             if (!quirksList.isEmpty()) {
                 sQuirks += quirksList;
@@ -325,10 +327,18 @@ public final class UnitToolTip {
                 }
             }
 
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
-            sQuirks = UIUtil.tag("FONT", attr,  sQuirks);
-            String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-            sQuirks = UIUtil.tag("span", fontSizeAttr, sQuirks);
+            if (!sQuirks.isEmpty()) {
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipQuirkColor()));
+                sQuirks = UIUtil.tag("FONT", attr, sQuirks);
+                String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+                sQuirks = UIUtil.tag("span", fontSizeAttr, sQuirks);
+
+                String col = UIUtil.tag("TD", "", sQuirks);
+                String row = UIUtil.tag("TR", "", col);
+                String tbody = UIUtil.tag("TBODY", "", row);
+                sQuirks = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody);
+            }
+
             return sQuirks;
         }
 
@@ -344,7 +354,12 @@ public final class UnitToolTip {
             String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getPrecautionColor()));
             partialList = UIUtil.tag("FONT", attr,  partialList);
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-            result = UIUtil.tag("span", fontSizeAttr, partialList);
+            partialList = UIUtil.tag("span", fontSizeAttr, partialList);
+
+            String col = UIUtil.tag("TD", "", partialList);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "",  row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
         }
 
         return result;
@@ -1306,8 +1321,15 @@ public final class UnitToolTip {
             sECMInfo += ECM_SIGN + " " + msg_eccmsource;
         }
 
-        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-        result = UIUtil.tag("span", fontSizeAttr,  sECMInfo);
+        if (!sECMInfo.isEmpty()) {
+            String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+            sECMInfo = UIUtil.tag("span", fontSizeAttr, sECMInfo);
+
+            String col = UIUtil.tag("TD", "", sECMInfo);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "", row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody);
+        }
 
         return new StringBuilder().append(result);
     }
@@ -1765,11 +1787,11 @@ public final class UnitToolTip {
         String col = "";
         String row = "";
         String rows = "";
+        String attr = "";
         Game game = entity.getGame();
         GameOptions gameOptions = game.getOptions();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
-        String result = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         if (!inGameValue) {
@@ -1782,7 +1804,7 @@ public final class UnitToolTip {
         bvDamageLevel += " " + getDamageLevelDesc(entity, true);
 
         if (!bvDamageLevel.isEmpty()) {
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
             bvDamageLevel = UIUtil.tag("FONT", attr, bvDamageLevel);
             bvDamageLevel = UIUtil.tag("span", fontSizeAttr,  bvDamageLevel);
             col = UIUtil.tag("TD", "", bvDamageLevel);
@@ -1810,12 +1832,14 @@ public final class UnitToolTip {
             sFacingTwist += "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + entity.getFacingName(entity.getSecondaryFacing());
         }
 
-        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
-        sFacingTwist = UIUtil.tag("FONT", attr, sFacingTwist);
-        sFacingTwist = UIUtil.tag("span", fontSizeAttr,  sFacingTwist);
-        col = UIUtil.tag("TD", "", sFacingTwist);
-        row = UIUtil.tag("TR", "", col);
-        rows += row;
+        if (!sFacingTwist.isEmpty()) {
+            attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
+            sFacingTwist = UIUtil.tag("FONT", attr, sFacingTwist);
+            sFacingTwist = UIUtil.tag("span", fontSizeAttr, sFacingTwist);
+            col = UIUtil.tag("TD", "", sFacingTwist);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
 
         // Heat
         String heatInfo = getHeatInfo(entity);
@@ -1860,9 +1884,8 @@ public final class UnitToolTip {
         }
 
         String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", rows);
-        result = table;
 
-        return new StringBuilder().append(result);
+        return new StringBuilder().append(table);
     }
 
     /**
@@ -2169,8 +2192,7 @@ public final class UnitToolTip {
             sWarnings += "<BR>" + msg_cannotsurvivespace;
         }
 
-        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getWarningColor()));
-        result += UIUtil.tag("FONT", attr,  sWarnings);
+        result += sWarnings;
 
         String sNoncritial = "";
         // Non-critical (yellow) warnings
@@ -2187,9 +2209,16 @@ public final class UnitToolTip {
             sNoncritial += "<BR>" + msg_fightersquadronempty;
         }
 
-        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-        result += UIUtil.tag("FONT", attr,  sNoncritial);
-        result += "<BR>";
+        result += sNoncritial;
+        if (!result.isEmpty()) {
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+            result += UIUtil.tag("FONT", attr, result);
+
+            String col = UIUtil.tag("TD", "", result);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "", row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody);
+        }
 
         return new StringBuilder().append(result);
     }
@@ -2216,7 +2245,12 @@ public final class UnitToolTip {
             }
 
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-            result = UIUtil.tag("span", fontSizeAttr,  sCarriedUnits);
+            sCarriedUnits = UIUtil.tag("span", fontSizeAttr,  sCarriedUnits);
+
+            String col = UIUtil.tag("TD", "", sCarriedUnits);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "",  row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
         }
 
         return new StringBuilder().append(result);
@@ -2224,19 +2258,25 @@ public final class UnitToolTip {
 
     private static StringBuilder carriedCargo(Entity entity) {
         StringBuilder sb = new StringBuilder();
+        String result = "";
         List<ICarryable> cargoList = entity.getDistinctCarriedObjects();
 
         if (!cargoList.isEmpty()) {
-            sb.append(Messages.getString("MissionRole.cargo"));
-            sb.append(":<br/>&nbsp;&nbsp;");
+            String carriedCargo = Messages.getString("MissionRole.cargo");
+            carriedCargo += ":<br/>&nbsp;&nbsp;";
 
             for (ICarryable cargo : entity.getDistinctCarriedObjects()) {
-                sb.append(cargo.toString());
-                sb.append("<br/>&nbsp;&nbsp;");
+                carriedCargo +=  cargo.toString();
+                carriedCargo += "<br/>&nbsp;&nbsp;";
             }
+
+            String col = UIUtil.tag("TD", "", carriedCargo);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "",  row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
         }
 
-        return sb;
+        return sb.append(result);
     }
 
 
@@ -2266,10 +2306,18 @@ public final class UnitToolTip {
                 color = GUIP.getAllyUnitColor();
             }
 
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(color));
-            sForceEntry = UIUtil.tag("FONT", attr,  getForceInfo(entity));
-            String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-            result = UIUtil.tag("span", fontSizeAttr,  sForceEntry);
+            String force = getForceInfo(entity);
+            if (!force.isEmpty()) {
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(color));
+                sForceEntry = UIUtil.tag("FONT", attr, force);
+                String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+                sForceEntry = UIUtil.tag("span", fontSizeAttr, sForceEntry);
+
+                String col = UIUtil.tag("TD", "", sForceEntry);
+                String row = UIUtil.tag("TR", "", col);
+                String tbody = UIUtil.tag("TBODY", "", row);
+                result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0", tbody);
+            }
         }
 
         return new StringBuilder().append(result);
@@ -2303,8 +2351,12 @@ public final class UnitToolTip {
             String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipHighlightColor()));
             sC3Info = UIUtil.tag("FONT", attr,  sC3Info);
             String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-            result = UIUtil.tag("span", fontSizeAttr,  sC3Info);
+            sC3Info = UIUtil.tag("span", fontSizeAttr,  sC3Info);
 
+            String col = UIUtil.tag("TD", "", sC3Info);
+            String row = UIUtil.tag("TR", "", col);
+            String tbody = UIUtil.tag("TBODY", "",  row);
+            result = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
         }
 
         return new StringBuilder().append(result);

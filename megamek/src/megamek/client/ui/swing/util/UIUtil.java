@@ -110,8 +110,9 @@ public final class UIUtil {
      * Returns an HTML - tag attribute text end tag
      */
     public static String tag(String tag, String attributes, String text) {
-        String format = attributes.isEmpty() ? "<%s>%s</%s>" : "<%s %s>%s</%s>";
-        String result = attributes.isEmpty() ? String.format(format, tag, text, tag) : String.format(format, tag, attributes, text, tag);
+        attributes = attributes.isEmpty() ? attributes : ' ' + attributes;
+        String format = "<%s%s>%s</%s>";
+        String result = String.format(format, tag, attributes, text, tag);
         return result;
     }
 

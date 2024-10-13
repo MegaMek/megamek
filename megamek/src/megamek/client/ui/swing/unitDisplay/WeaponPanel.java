@@ -984,9 +984,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             txt = Messages.getString("MekDisplay.NoTarget");
         } else {
             txt = UnitToolTip.getTargetTipDetail(target, client);
-            if (target instanceof Entity targetEntity) {
-                txt = UnitToolTip.addPlayerColorBoarder(GUIP, targetEntity, txt);
-            }
         }
 
         wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));

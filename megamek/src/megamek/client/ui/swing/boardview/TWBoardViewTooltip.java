@@ -63,6 +63,8 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
         if (!game.getBoard().contains(coords)) {
             return null;
         }
+
+        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         Entity selectedEntity = (clientGui != null) ? clientGui.getDisplayedUnit() : null;
         Player localPlayer = localPlayer();
         Hex mhex = game.getBoard().getHex(coords);
@@ -125,9 +127,13 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     String sInvalidHex = Messages.getString("BoardView1.invalidHex");
                     sInvalidHex += "<BR>";
                     sInvalidHex += String.join("<BR>", errors);
-                    attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipFGColor())));
+                    attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipTerrainFGColor())));
                     sInvalidHex += UIUtil.tag("FONT", attr, sInvalidHex);
-                    result += "<BR>" + sInvalidHex;
+                    sInvalidHex = UIUtil.tag("span", fontSizeAttr, sInvalidHex);
+                    col = UIUtil.tag("TD", "", sInvalidHex);
+                    row = UIUtil.tag("TR", "", col);
+                    attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor()));
+                    result += UIUtil.tag("TABLE", attr,  row);
                 }
             }
         }
@@ -177,6 +183,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
             sUnitsInfo = UIUtil.tag("FONT", attr,  sUnitsInfo);
+            sUnitsInfo = UIUtil.tag("span", fontSizeAttr, sUnitsInfo);
             String col = UIUtil.tag("TD", "", sUnitsInfo);
             String row = UIUtil.tag("TR", "", col);
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
@@ -191,6 +198,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
                 String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
                 sAttackSprite = UIUtil.tag("FONT", attr,  sAttackSprite);
+                sAttackSprite = UIUtil.tag("span", fontSizeAttr, sAttackSprite);
                 String col = UIUtil.tag("TD", "", sAttackSprite);
                 String row = UIUtil.tag("TR", "", col);
                 attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
@@ -231,6 +239,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBlockFGColor()));
             msg_artilleryatack = UIUtil.tag("FONT", attr,  msg_artilleryatack);
+            msg_artilleryatack = UIUtil.tag("span", fontSizeAttr, msg_artilleryatack);
             String col = UIUtil.tag("TD", "", msg_artilleryatack);
             String row = UIUtil.tag("TR", "", col);
             attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBlockBGColor()));
@@ -261,7 +270,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
             String attr = String.format("FACE=Dialog  COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
             msg_artilleryautohit = UIUtil.tag("FONT", attr,  msg_artilleryautohit);
 
-            result += msg_artilleryautohit + "<BR>";
+            msg_artilleryautohit = UIUtil.tag("span", fontSizeAttr, msg_artilleryautohit);
+            String col = UIUtil.tag("TD", "", msg_artilleryautohit);
+            String row = UIUtil.tag("TR", "", col);
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+            result += UIUtil.tag("TABLE", attr,  row);
         }
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(coords);
@@ -295,7 +308,11 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 }
             }
 
-            result += sSpecialHex;
+            sSpecialHex = UIUtil.tag("span", fontSizeAttr, sSpecialHex);
+            String col = UIUtil.tag("TD", "", sSpecialHex);
+            String row = UIUtil.tag("TR", "", col);
+            String attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+            result += UIUtil.tag("TABLE", attr,  row);
         }
 
         StringBuilder txt = new StringBuilder();
@@ -356,8 +373,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
 
         String result =  "<HR STYLE=WIDTH:90% />";
         String entityTip = UnitToolTip.getEntityTipGame(entity, localPlayer()).toString();
-        String table = UnitToolTip.addPlayerColorBoarder(GUIP, entity, entityTip);
-        result += table;
+        result += entityTip;
 
         txt.append(result);
     }

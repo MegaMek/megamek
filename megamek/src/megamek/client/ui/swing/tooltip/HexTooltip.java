@@ -69,7 +69,7 @@ public final class HexTooltip {
             sFuelTank = UIUtil.tag("span", fontSizeAttr, sFuelTank);
             String col = UIUtil.tag("TD", "", sFuelTank);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
+            attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
             result.append(table);
         }
@@ -105,7 +105,7 @@ public final class HexTooltip {
             sBuilding = UIUtil.tag("span", fontSizeAttr, sBuilding);
             String col = UIUtil.tag("TD", "", sBuilding);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
+            attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
             result.append(table);
         }
@@ -133,7 +133,7 @@ public final class HexTooltip {
             sBridge = UIUtil.tag("span", fontSizeAttr, sBridge);
             String col = UIUtil.tag("TD", "", sBridge);
             String row = UIUtil.tag("TR", "", col);
-            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
+            attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
             String table = UIUtil.tag("TABLE", attr, row);
             result.append(table);
         }
@@ -204,7 +204,7 @@ public final class HexTooltip {
         sBuilding = UIUtil.tag("span", fontSizeAttr, sBuilding);
         String col = UIUtil.tag("TD", "", sBuilding);
         String row = UIUtil.tag("TR", "", col);
-        attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
+        attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBuildingBGColor()));
         String table = UIUtil.tag("TABLE", attr, row);
 
         return table;
@@ -353,7 +353,7 @@ public final class HexTooltip {
         sAttilleryAutoHix = UIUtil.tag("span", fontSizeAttr, sAttilleryAutoHix);
         String col = UIUtil.tag("TD", "", sAttilleryAutoHix);
         String row = UIUtil.tag("TR", "", col);
-        attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
+        attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipBGColor()));
         String table = UIUtil.tag("TABLE", attr, row);
 
         return table;
@@ -399,7 +399,7 @@ public final class HexTooltip {
                     rows += row;
                 }
 
-                attr = String.format("BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
+                attr = String.format("CELLSPACING=0 CELLPADDING=0 BORDER=0 BGCOLOR=%s width=100%%", GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
                 String table = UIUtil.tag("TABLE", attr, rows);
                 result = table;
             }

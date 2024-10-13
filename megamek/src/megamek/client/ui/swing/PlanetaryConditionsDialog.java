@@ -160,6 +160,9 @@ public class PlanetaryConditionsDialog extends ClientDialog {
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, closeAction);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(escape, closeAction);
         getRootPane().getActionMap().put(closeAction, new CloseAction(this));
+
+        pack();
+        center();
     }
 
     private JPanel headerSection() {

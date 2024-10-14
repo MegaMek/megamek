@@ -51,6 +51,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6082: Data update - line wrapping and consolidating availability ratings
 + PR #6085: remove hardcoded html font size
 + PR #6087: Read Mekset as UTF8
++ PR #6094: Makes PlanetaryConditionsDialog work again after scaling stuff
++ Fix #6006, #6050: Revert tech legality change
+add unittooltip font size scaling #6098
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

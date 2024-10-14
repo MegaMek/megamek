@@ -2288,7 +2288,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
-    boolean useIsometric() {
+    public boolean useIsometric() {
         return drawIsometric;
     }
 
@@ -5156,11 +5156,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return fovHighlightingAndDarkening;
     }
 
-    ArrayList<WreckSprite> getWreckSprites() {
+    public ArrayList<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
 
-    ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
+    public ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
         return isometricWreckSprites;
     }
 

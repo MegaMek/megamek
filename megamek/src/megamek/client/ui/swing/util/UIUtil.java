@@ -637,6 +637,18 @@ public final class UIUtil {
         }
     }
 
+    /**
+     * Updates all existing windows and frames. Use after a gui scale change or look-and-feel change.
+     */
+    public static void updateAfterUiChange() {
+        for (Window window : Window.getWindows()) {
+            SwingUtilities.updateComponentTreeUI(window);
+            window.invalidate();
+            window.validate();
+            window.repaint();
+        }
+    }
+
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
         private static final long serialVersionUID = -6235772150005269143L;

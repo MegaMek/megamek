@@ -11,7 +11,7 @@
 #   AtBC tables, please post the updated file on the forum thread.          #
 #                                                                           #
 # Notes on adaptation:                                                      #
-# * Civilian Mech table alone, for convenience                              #
+# * Civilian Mek table alone, for convenience                              #
 #############################################################################
 CivilianUnits_CivMech
 #IndustrialMeks

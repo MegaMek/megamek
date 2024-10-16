@@ -218,19 +218,23 @@ public final class PilotToolTip {
                 String img = "";
 
                 if (!report) {
-                    // Write the scaled portrait to file
-                    // This is done to avoid using HTML rescaling on the portrait which does
-                    // not do any smoothing and has extremely ugly results
-                    String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX
+                    try {
+                        // Write the scaled portrait to file
+                        // This is done to avoid using HTML rescaling on the portrait which does
+                        // not do any smoothing and has extremely ugly results
+                        String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX
                             + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
-                    File tempFile = new File(tempPath);
-                    if (!tempFile.exists()) {
-                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
+                        File tempFile = new File(tempPath);
+                        if (!tempFile.exists()) {
+                            BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null),
                                 portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
-                        bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
-                        ImageIO.write(bufferedImage, "PNG", tempFile);
+                            bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
+                            ImageIO.write(bufferedImage, "PNG", tempFile);
+                        }
+                        img = "<IMG SRC=file:" + tempPath + ">";
+                    } catch (Exception e) {
+                        // when an error occurs, do not display any image
                     }
-                    img = "<IMG SRC=file:" + tempPath + ">";
                 } else {
                     // span crew tag replaced later in Client.receiveReport with crew portrait
                     img = UIUtil.tag("span", "crew='" + entity.getId() + ":" + i + "'", "");

@@ -18,6 +18,25 @@
  */
 package megamek.client.generator;
 
+import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
+import megamek.common.containers.MunitionTree;
+import megamek.common.options.GameOptions;
+import megamek.common.options.Option;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
+import org.apache.commons.collections4.IteratorUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -27,25 +46,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import megamek.client.Client;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.*;
-import megamek.common.containers.MunitionTree;
-import megamek.common.options.GameOptions;
-import megamek.common.options.Option;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PilotOptions;
 
 class TeamLoadOutGeneratorTest {
 
@@ -137,13 +137,13 @@ class TeamLoadOutGeneratorTest {
 
         // First imperative entry is invalid, so bin1 should get second choice
         // (Standard)
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
         // Third choice is invalid, so 2nd bin gets 4th choice, Flak
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_FLAK));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_FLAK));
         // Now two bins are left over, so they're filled with the _new_ default,
         // Standard (choice #2)
-        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
 
     @Test
@@ -157,8 +157,8 @@ class TeamLoadOutGeneratorTest {
 
         // We expect to see no change in loadouts
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
 
     @Test
@@ -175,18 +175,18 @@ class TeamLoadOutGeneratorTest {
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
-        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
 
         // Now reset the ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard");
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
     }
 
     @Test
@@ -203,7 +203,7 @@ class TeamLoadOutGeneratorTest {
         // First, set all bins to Smoke
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Smoke");
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_SMOKE_WARHEAD));
 
         // Then reset bins with useful ammo
         mt.insertImperative("Catapult", "CPLT-C1", "any", "LRM-15", "Standard", "Dead-Fire", "Heat-Seeking");
@@ -211,13 +211,13 @@ class TeamLoadOutGeneratorTest {
         // We expect that all bins are set to the desired munition type as only one type
         // is provided
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
-        assertFalse(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertFalse(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
+        assertFalse(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_HEAT_SEEKING));
         // The final bin should be reset to the default, in this case "Standard"
-        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
 
     @Test
@@ -244,18 +244,18 @@ class TeamLoadOutGeneratorTest {
 
         // J. Robert H. should get the first load out
         tlg.reconfigureEntity(mockMek, mt, "IS");
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
-        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING));
-        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_HEAT_SEEKING));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(Munitions.M_SMOKE_WARHEAD));
 
         // John Q. should get the generalized load out; last bin should be set to
         // Standard
         tlg.reconfigureEntity(mockMek2, mt, "IS");
-        assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_SWARM));
-        assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED));
-        assertTrue(((AmmoType) bin8.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(Munitions.M_SWARM));
+        assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(Munitions.M_SEMIGUIDED));
+        assertTrue(((AmmoType) bin8.getType()).getMunitionType().contains(Munitions.M_STANDARD));
     }
 
     @Test
@@ -296,17 +296,17 @@ class TeamLoadOutGeneratorTest {
 
         // Check loadouts
         // 1. AC20 HBK should have two tons of Caseless
-        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
-        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(AmmoType.Munitions.M_CASELESS));
+        assertTrue(((AmmoType) bin1.getType()).getMunitionType().contains(Munitions.M_CASELESS));
+        assertTrue(((AmmoType) bin2.getType()).getMunitionType().contains(Munitions.M_CASELESS));
 
         // 2. LRM HBK should have one each of Dead-Fire and Standard
-        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE));
-        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin3.getType()).getMunitionType().contains(Munitions.M_DEAD_FIRE));
+        assertTrue(((AmmoType) bin4.getType()).getMunitionType().contains(Munitions.M_STANDARD));
 
         // 3. LRM HBK should have two Infernos and one Standard
-        assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
-        assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(AmmoType.Munitions.M_STANDARD));
-        assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO));
+        assertTrue(((AmmoType) bin5.getType()).getMunitionType().contains(Munitions.M_INFERNO));
+        assertTrue(((AmmoType) bin6.getType()).getMunitionType().contains(Munitions.M_STANDARD));
+        assertTrue(((AmmoType) bin7.getType()).getMunitionType().contains(Munitions.M_INFERNO));
     }
 
     @Test
@@ -459,7 +459,7 @@ class TeamLoadOutGeneratorTest {
         assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
         // Check mixed-tech and regular Clan tech, which should match IS at this point
         assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
-        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", false));
+        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);

@@ -41,7 +41,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6049: Fixing missing Text string for Mechanical Jump Fall Damage
 + PR #6063: Enhance wordWrap with HTML Tags for Line Breaks
 + Fix #1486: Add option to skip firing turn for mechs/vees that sprint
-+ PR #6068/#6076: Replace Manual GUI scaling with FlatLaf Scaling
++ PR #6068, #6076, #6103, #6094: Replace Manual GUI scaling with FlatLaf Scaling
 + Fix #3926: Clan Meks now default autoeject to disabled to prevent unnecessary ejects
 + PR #6072: Prevent an error when clicking OK in the scenario chooser without having selected a scenario
 + Fix #6061: Princess should again deploy Aero units at viable altitudes on atmosphere and ground maps; setting altitude to 0 in the lobby will have Princess deploy them grounded
@@ -51,9 +51,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6082: Data update - line wrapping and consolidating availability ratings
 + PR #6085: remove hardcoded html font size
 + PR #6087: Read Mekset as UTF8
-+ PR #6094: Makes PlanetaryConditionsDialog work again after scaling stuff
 + Fix #6006, #6050: Revert tech legality change
-add unittooltip font size scaling #6098
++ PR #6098: Add unittooltip font size scaling
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

@@ -333,11 +333,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(scenB, gridbag, c);
         c.gridy++;
         addBag(connectB, gridbag, c);
+//        Connecting to an SBF game is not useful (yet)
+//        c.gridy++;
+//        addBag(connectSBF, gridbag, c);
         c.gridy++;
-        addBag(connectSBF, gridbag, c);
-        c.gridy++;
-        // addBag(botB, gridbag, c);
-        // c.gridy++;
+//        Connecting as a bot was deemed not useful; leaving this for now to uncomment if necessary
+//        addBag(botB, gridbag, c);
+//        c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);

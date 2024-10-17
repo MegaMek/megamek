@@ -43,7 +43,6 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            logger.error(e, "Missing i18n entry: " + key);
             return '!' + key + '!';
         }
     }

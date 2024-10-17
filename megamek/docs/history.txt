@@ -53,6 +53,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6087: Read Mekset as UTF8
 + Fix #6006, #6050: Revert tech legality change
 + PR #6098: Add unittooltip font size scaling
++ PR #6109: Fix missing text, dont report callstack for missing resources
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

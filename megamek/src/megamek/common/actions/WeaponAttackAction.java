@@ -4703,10 +4703,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // we have BAP in range or C3 member has BAP in range
         // we reduce the BTH by 1
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)) {
-            boolean targetWoodsAffectModifier = te != null
-                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
-                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE));
+            boolean targetWoodsAffectModifier = (te != null) && !te.isOffBoard() && (te.getPosition() != null)
+                && (game.getBoard().getHex(te.getPosition()) != null)
+                && game.getBoard().getHex(te.getPosition()).hasVegetation()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
                 boolean bapInRange = Compute.bapInRange(game, ae, te);
                 boolean c3BAP = false;

@@ -54,6 +54,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6006, #6050: Revert tech legality change
 + PR #6098: Add unittooltip font size scaling
 + PR #6109: Fix missing text, dont report callstack for missing resources
++ Fix #6083: TacOps BAP rule offboard checks #6112
++ Fix #6100: Always check GUIPrefs if incline highlighting is on
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

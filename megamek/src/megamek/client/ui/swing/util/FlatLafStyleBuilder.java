@@ -110,7 +110,17 @@ public final class FlatLafStyleBuilder {
     }
 
     /**
-     * Sets the font scaling for the given component using the default font ("MekHQ") and standard text.
+     * Sets the default font scaling for the given component using the default font ("MekHQ"), no
+     * bold text, and a default size of 1.
+     *
+     * @param component The component for which the default font scaling needs to be set.
+     */
+    public static void setFontScaling(JComponent component) {
+        setFontScaling(component, "MekHQ", false, 1);
+    }
+
+    /**
+     * Sets the font scaling for the given component using the default font ("MekHQ") and no bold text.
      *
      * @param component The component for which the font scaling needs to be set.
      * @param size      The desired size of font scaling.

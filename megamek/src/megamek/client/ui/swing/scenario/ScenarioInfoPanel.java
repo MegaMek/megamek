@@ -18,7 +18,10 @@
  */
 package megamek.client.ui.swing.scenario;
 
-import megamek.client.ui.swing.util.*;
+import megamek.client.ui.swing.util.DashedSeparator;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.LocationBorder;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioV1;
 
@@ -56,7 +59,7 @@ public class ScenarioInfoPanel extends JPanel {
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));
         add(Box.createVerticalStrut(10));
 
-        new FlatLafStyleBuilder().font(FontHandler.notoFont()).apply(textDescription2);
+        setFontScaling(textDescription2, FontHandler.notoFont().getFontName(), false, 1);
         textDescription2.setAlignmentX(0.5f);
         textDescription2.setVerticalAlignment(SwingConstants.TOP);
         textDescription2.setBorder(new EmptyBorder(0, 10, 0, 10));

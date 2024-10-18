@@ -98,14 +98,51 @@ public final class FlatLafStyleBuilder {
     public void apply(JComponent component) {
         String styleText = "font:";
         if ((size != 1) && (size > 0)) {
-            styleText += " " + (int) (100 * size) + "%";
+            styleText += " " + (int) (100 * size) + '%';
         }
         if (bold) {
             styleText += " bold";
         }
         if ((fontName != null) && !fontName.isBlank()) {
-            styleText += " \"" + fontName + "\"";
+            styleText += " \"" + fontName + '"';
         }
         component.putClientProperty("FlatLaf.style", styleText);
+    }
+
+    /**
+     * Sets the font scaling for the given component using the default font ("MekHQ") and standard text.
+     *
+     * @param component The component for which the font scaling needs to be set.
+     * @param size      The desired size of font scaling.
+     */
+    public static void setFontScaling(JComponent component, double size) {
+        setFontScaling(component, "MekHQ", false, size);
+    }
+
+    /**
+     * Sets the font scaling for the given component using the default font ("MekHQ").
+     *
+     * @param component The component for which the font scaling needs to be set.
+     * @param boldText  boolean determining if the text should be displayed in bold.
+     * @param size      The desired size of font scaling.
+     */
+    public static void setFontScaling(JComponent component, boolean boldText, double size) {
+        setFontScaling(component, "MekHQ", boldText, size);
+    }
+
+    /**
+     * Sets the font scaling for the given component using the specified font.
+     *
+     * @param component The component for which the font scaling needs to be set.
+     * @param font      The name of the font.
+     * @param boldText  boolean determining if the text should be displayed in bold.
+     * @param size      the desired size of font scaling.
+     */
+    public static void setFontScaling(JComponent component, String font, boolean boldText, double size) {
+        if (boldText) {
+            new FlatLafStyleBuilder().font(font).bold().size(size).apply(component);
+        } else {
+            new FlatLafStyleBuilder().font(font).size(size).apply(component);
+        }
     }
 }

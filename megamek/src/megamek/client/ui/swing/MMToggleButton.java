@@ -19,10 +19,10 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 
 import javax.swing.*;
-import java.awt.*;
+
+import static megamek.client.ui.swing.util.FlatLafStyleBuilder.setFontScaling;
 
 /**
  * A JToggleButton that shows a check mark and cross mark to make its
@@ -42,7 +42,7 @@ public class MMToggleButton extends JToggleButton {
         super();
         setText(text);
         // The standard UI font doesn't show unicode characters (on Win10)
-        new FlatLafStyleBuilder().font(MMConstants.FONT_DIALOG).apply(this);
+        setFontScaling(this, MMConstants.FONT_DIALOG, false, 1);
         addActionListener(event -> setText(getText()));
     }
 

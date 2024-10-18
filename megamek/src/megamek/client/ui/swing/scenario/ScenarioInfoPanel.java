@@ -19,12 +19,14 @@
 package megamek.client.ui.swing.scenario;
 
 import megamek.client.ui.swing.util.*;
-import megamek.common.scenario.ScenarioV1;
 import megamek.common.scenario.Scenario;
+import megamek.common.scenario.ScenarioV1;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+
+import static megamek.client.ui.swing.util.FlatLafStyleBuilder.setFontScaling;
 
 /**
  * This panel displays a single {@link ScenarioV1} object in a well-formatted manner for display in the
@@ -48,7 +50,7 @@ public class ScenarioInfoPanel extends JPanel {
         lblTitle.setName("lblTitle");
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTitle.setForeground(UIUtil.uiLightGreen());
-        new FlatLafStyleBuilder().font("Exo 2").bold().size(1.4).apply(lblTitle);
+        setFontScaling(lblTitle, "Exo 2", true, 1.4);
         add(lblTitle);
         add(Box.createVerticalStrut(10));
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));

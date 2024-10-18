@@ -855,7 +855,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int aElev = ae.getElevation();
         int tElev = target.getElevation();
         int targEl;
-        if (te == null) {
+        if (target instanceof INarcPod) {
+            // brush off attached INarcs on oneself; use left arm as a placeholder here as no choice has been made
+            return BrushOffAttackAction.toHit(game, attackerId, target, BrushOffAttackAction.LEFT);
+        } else if (te == null) {
             targEl = game.getBoard().getHex(target.getPosition()).floor();
         } else {
             targEl = te.relHeight();

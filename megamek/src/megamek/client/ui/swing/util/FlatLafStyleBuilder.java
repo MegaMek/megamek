@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.MMConstants;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -110,34 +111,34 @@ public final class FlatLafStyleBuilder {
     }
 
     /**
-     * Sets the default font scaling for the given component using the default font ("MekHQ"), no
+     * Sets the default font scaling for the given component using the default dialog font, no
      * bold text, and a default size of 1.
      *
      * @param component The component for which the default font scaling needs to be set.
      */
     public static void setFontScaling(JComponent component) {
-        setFontScaling(component, "MekHQ", false, 1);
+        setFontScaling(component, MMConstants.FONT_DIALOG, false, 1);
     }
 
     /**
-     * Sets the font scaling for the given component using the default font ("MekHQ") and no bold text.
+     * Sets the font scaling for the given component using the default dialog font and no bold text.
      *
      * @param component The component for which the font scaling needs to be set.
      * @param size      The desired size of font scaling.
      */
     public static void setFontScaling(JComponent component, double size) {
-        setFontScaling(component, "MekHQ", false, size);
+        setFontScaling(component, MMConstants.FONT_DIALOG, false, size);
     }
 
     /**
-     * Sets the font scaling for the given component using the default font ("MekHQ").
+     * Sets the font scaling for the given component using the default dialog font.
      *
      * @param component The component for which the font scaling needs to be set.
      * @param boldText  boolean determining if the text should be displayed in bold.
      * @param size      The desired size of font scaling.
      */
     public static void setFontScaling(JComponent component, boolean boldText, double size) {
-        setFontScaling(component, "MekHQ", boldText, size);
+        setFontScaling(component, MMConstants.FONT_DIALOG, boldText, size);
     }
 
     /**

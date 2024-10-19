@@ -209,23 +209,28 @@ public class WrapLayout extends FlowLayout {
      * @return The string with line breaks inserted.
      */
     public static String wordWrap(String input, int maximumCharacters) {
-        StringTokenizer token = new StringTokenizer(input, " ");
+        String[] lines = input.split("<br>");
+
         StringBuilder output = new StringBuilder(input.length());
         output.append("<html>");
 
-        int lineLen = 0;
+        // Process each line
+        for (String line : lines) {
+            StringTokenizer token = new StringTokenizer(line, " ");
 
-        while (token.hasMoreTokens()) {
-            String word = token.nextToken();
+            int lineLen = 0;
+            while (token.hasMoreTokens()) {
+                String word = token.nextToken();
 
-            if (lineLen + word.length() > maximumCharacters) {
-                output.append("<br>");
-                lineLen = 0;
+                if (lineLen + word.length() > maximumCharacters) {
+                    output.append("<br>");
+                    lineLen = 0;
+                }
+                output.append(word).append(' ');
+                lineLen += word.length();
             }
-            output.append(word).append(' ');
-            lineLen += word.length();
+            output.append("<br>");
         }
-
         output.append("</html>");
         return output.toString();
     }

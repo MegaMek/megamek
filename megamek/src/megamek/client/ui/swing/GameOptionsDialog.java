@@ -371,6 +371,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         panSearch.add(panSearchBar);
         panSearch.add(panSearchOptions);
         panOptions.addTab(Messages.getString("GameOptionsDialog.Search"), scrOptions);
+        refreshSearchPanel();
     }
 
     private void addOption(JPanel groupPanel, IOption option) {

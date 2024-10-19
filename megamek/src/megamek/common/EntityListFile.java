@@ -13,29 +13,20 @@
  */
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.utilities.xml.MMXMLUtility;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
@@ -98,7 +89,7 @@ public class EntityListFile {
         StringBuilder output = new StringBuilder();
 
         output.append(indentStr(indentLvl))
-                .append("<" + MULParser.ELE_SLOT + " " + MULParser.ATTR_INDEX + "=\"")
+                .append('<' + MULParser.ELE_SLOT + ' ' + MULParser.ATTR_INDEX + "=\"")
                 .append(index)
                 .append("\" " + MULParser.ATTR_TYPE + "=\"");
 
@@ -134,12 +125,12 @@ public class EntityListFile {
             if (mount.getEntity().isSupportVehicle()
                     && (mount.getType() instanceof InfantryWeapon)) {
                 for (Mounted<?> ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
-                    if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(Munitions.M_INFERNO)) {
                         output.append("\" " + MULParser.ATTR_INFERNO + "=\"").append(ammo.getBaseShotsLeft())
-                                .append(":").append(ammo.getOriginalShots());
+                                .append(':').append(ammo.getOriginalShots());
                     } else {
                         output.append("\" " + MULParser.ATTR_STANDARD + "=\"").append(ammo.getBaseShotsLeft())
-                                .append(":").append(ammo.getOriginalShots());
+                                .append(':').append(ammo.getOriginalShots());
                     }
                 }
             }
@@ -247,7 +238,7 @@ public class EntityListFile {
                 }
                 if (entity.getOArmor(loc) != currentArmor) {
                     thisLoc.append(
-                            indentStr(indentLvl + 1) + "<" + MULParser.ELE_ARMOR + " " + MULParser.ATTR_POINTS + "=\"");
+                            indentStr(indentLvl + 1) + '<' + MULParser.ELE_ARMOR + ' ' + MULParser.ATTR_POINTS + "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity
                             .getArmorForReal(loc)));
                     thisLoc.append("\"/>\n");
@@ -255,7 +246,7 @@ public class EntityListFile {
 
                 if (entity.getOInternal(loc) != entity.getInternalForReal(loc)) {
                     thisLoc.append(
-                            indentStr(indentLvl + 1) + "<" + MULParser.ELE_ARMOR + " " + MULParser.ATTR_POINTS + "=\"");
+                            indentStr(indentLvl + 1) + '<' + MULParser.ELE_ARMOR + ' ' + MULParser.ATTR_POINTS + "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity
                             .getInternalForReal(loc)));
                     thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_INTERNAL + "\"/>\n");
@@ -265,18 +256,18 @@ public class EntityListFile {
                         && (entity.getOArmor(loc, true) != entity
                                 .getArmorForReal(loc, true))) {
                     thisLoc.append(
-                            indentStr(indentLvl + 1) + "<" + MULParser.ELE_ARMOR + " " + MULParser.ATTR_POINTS + "=\"");
+                            indentStr(indentLvl + 1) + '<' + MULParser.ELE_ARMOR + ' ' + MULParser.ATTR_POINTS + "=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity
                             .getArmorForReal(loc, true)));
                     thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_REAR + "\"/>\n");
                 }
 
                 if (entity.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
-                    thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BREACH + "/>\n");
+                    thisLoc.append(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BREACH + "/>\n");
                 }
 
                 if (blownOff) {
-                    thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BLOWN_OFF + "/>\n");
+                    thisLoc.append(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BLOWN_OFF + "/>\n");
                 }
             }
 
@@ -297,7 +288,7 @@ public class EntityListFile {
                             && !entity.entityIsQuad()
                             && ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM))
                             && ((loop == 2) || (loop == 3))) {
-                        thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_SLOT + " " + MULParser.ATTR_INDEX
+                        thisLoc.append(indentStr(indentLvl + 1) + '<' + MULParser.ELE_SLOT + ' ' + MULParser.ATTR_INDEX
                                 + "=\"");
                         thisLoc.append(loop + 1);
                         thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"" + MULParser.VALUE_EMPTY + "\"/>\n");
@@ -375,7 +366,7 @@ public class EntityListFile {
                             }
                         }
 
-                        thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_SLOT + " " + MULParser.ATTR_INDEX
+                        thisLoc.append(indentStr(indentLvl + 1) + '<' + MULParser.ELE_SLOT + ' ' + MULParser.ATTR_INDEX
                                 + "=\"");
                         thisLoc.append(loop + 1);
                         thisLoc.append("\" " + MULParser.ATTR_TYPE + "=\"");
@@ -421,7 +412,7 @@ public class EntityListFile {
             // Stabilizer hit
             if ((entity instanceof Tank)
                     && ((Tank) entity).isStabiliserHit(loc)) {
-                thisLoc.append(indentStr(indentLvl + 1) + "<" + MULParser.ELE_STABILIZER + " " + MULParser.ATTR_IS_HIT
+                thisLoc.append(indentStr(indentLvl + 1) + '<' + MULParser.ELE_STABILIZER + ' ' + MULParser.ATTR_IS_HIT
                         + "=\"true\"/>\n");
             }
 
@@ -459,7 +450,7 @@ public class EntityListFile {
             if (thisLoc.length() > 0) {
 
                 // Add this location to the output string.
-                output.append(indentStr(indentLvl) + "<" + MULParser.ELE_LOCATION + " " + MULParser.ATTR_INDEX + "=\"");
+                output.append(indentStr(indentLvl) + '<' + MULParser.ELE_LOCATION + ' ' + MULParser.ATTR_INDEX + "=\"");
                 output.append(loc);
                 if (isDestroyed) {
                     output.append("\" " + MULParser.ATTR_IS_DESTROYED + "=\"true");
@@ -469,7 +460,7 @@ public class EntityListFile {
                 if (blownOff) {
                     output.append(" has been blown off.");
                 }
-                output.append("\n");
+                output.append('\n');
                 output.append(thisLoc);
                 output.append(indentStr(indentLvl) + "</" + MULParser.ELE_LOCATION + ">\n");
 
@@ -483,11 +474,11 @@ public class EntityListFile {
             else if (isDestroyed) {
 
                 // Add this location to the output string.
-                output.append(indentStr(indentLvl) + "<" + MULParser.ELE_LOCATION + " " + MULParser.ATTR_INDEX + "=\"");
+                output.append(indentStr(indentLvl) + '<' + MULParser.ELE_LOCATION + ' ' + MULParser.ATTR_INDEX + "=\"");
                 output.append(loc);
                 output.append("\" " + MULParser.ATTR_IS_DESTROYED + "=\"true\" /> ");
                 output.append(entity.getLocationName(loc));
-                output.append("\n");
+                output.append('\n');
 
             } // End location-completely-destroyed
 
@@ -503,12 +494,12 @@ public class EntityListFile {
 
         // If we recorded a slot, remind the player that slots start at 1.
         if (haveSlot) {
-            output.insert(0, "\n");
+            output.insert(0, '\n');
             output.insert(0, "      The first slot in a location is at index=\"1\".");
 
             // Tanks do weird things with ammo.
             if (entity instanceof Tank) {
-                output.insert(0, "\n");
+                output.insert(0, '\n');
                 output.insert(0, "      Tanks have special needs, so don't delete any ammo slots.");
             }
         }
@@ -521,27 +512,56 @@ public class EntityListFile {
     /**
      * Save the <code>Entity</code>s in the list to the given file.
      * <p>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to a
+     * The <code>Entity</code>s' pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained, but data specific to a
+     * particular game is ignored. This method is a simpler version of the
+     * overloaded method {@link #saveTo(File, ArrayList, Integer)}, with a default
+     * generic battle value of 0 (this causes GBV to be ignored).
+     *
+     * @param file
+     *             - The current contents of the file will be discarded and all
+     *             <code>Entity</code>s in the list will be written to the file.
+     * @param list
+     *             - An <code>ArrayList</code> containing <code>Entity</code>s to be
+     *             stored in a file.
+     * @throws IOException
+     *             - Is thrown on any error.
+     */
+    public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
+        saveTo(file, list, 0);
+    }
+
+    /**
+     * Save the <code>Entity</code>s in the list to the given file.
+     * <p>
+     * The <code>Entity</code>s' pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained, but data specific to a
      * particular game is ignored.
      *
      * @param file
      *             - The current contents of the file will be discarded and all
      *             <code>Entity</code>s in the list will be written to the file.
      * @param list
-     *             - a <code>Vector</code> containing <code>Entity</code>s to be
+     *             - A <code>ArrayList</code> containing <code>Entity</code>s to be
      *             stored in a file.
+     * @param genericBattleValue
+     *             - An <code>Integer</code> representing the generic battle value. If it
+     *               is greater than 0, it will be written into the XML.
      * @throws IOException
-     *                     is thrown on any error.
+     *             - Is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
+    public static void saveTo(File file, ArrayList<Entity> list, int genericBattleValue) throws IOException {
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), StandardCharsets.UTF_8));
 
         // Output the doctype and header stuff.
         output.write("<?xml " + MULParser.VERSION + "=\"1.0\" encoding=\"UTF-8\"?>\n\n");
-        output.write("<" + MULParser.ELE_UNIT + " " + MULParser.VERSION + "=\"" + MMConstants.VERSION + "\" >\n\n");
+        output.write('<' + MULParser.ELE_UNIT + ' ' + MULParser.VERSION + "=\"" + MMConstants.VERSION + "\" >\n\n");
+
+        if (genericBattleValue > 0) {
+            output.write("<TotalGenericBattleValue>" + genericBattleValue + "</TotalGenericBattleValue>\n\n");
+        }
 
         writeEntityList(output, list);
 
@@ -580,7 +600,7 @@ public class EntityListFile {
 
         // Output the doctype and header stuff.
         output.write("<?xml " + MULParser.VERSION + "=\"1.0\" encoding=\"UTF-8\"?>\n\n");
-        output.write("<" + MULParser.ELE_RECORD + " " + MULParser.VERSION + "=\"" + MMConstants.VERSION + "\" >");
+        output.write('<' + MULParser.ELE_RECORD + ' ' + MULParser.VERSION + "=\"" + MMConstants.VERSION + "\" >");
 
         ArrayList<Entity> living = new ArrayList<>();
         ArrayList<Entity> allied = new ArrayList<>();
@@ -653,42 +673,42 @@ public class EntityListFile {
 
         if (!living.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_SURVIVORS + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_SURVIVORS + ">\n\n");
             writeEntityList(output, living);
             output.write(indentStr(1) + "</" + MULParser.ELE_SURVIVORS + ">\n");
         }
 
         if (!allied.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_ALLIES + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_ALLIES + ">\n\n");
             writeEntityList(output, allied);
             output.write(indentStr(1) + "</" + MULParser.ELE_ALLIES + ">\n");
         }
 
         if (!salvage.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_SALVAGE + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_SALVAGE + ">\n\n");
             writeEntityList(output, salvage);
             output.write(indentStr(1) + "</" + MULParser.ELE_SALVAGE + ">\n");
         }
 
         if (!retreated.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_RETREATED + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_RETREATED + ">\n\n");
             writeEntityList(output, retreated);
             output.write(indentStr(1) + "</" + MULParser.ELE_RETREATED + ">\n");
         }
 
         if (!devastated.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_DEVASTATED + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_DEVASTATED + ">\n\n");
             writeEntityList(output, devastated);
             output.write(indentStr(1) + "</" + MULParser.ELE_DEVASTATED + ">\n");
         }
 
         if (!kills.isEmpty()) {
             output.write("\n");
-            output.write(indentStr(1) + "<" + MULParser.ELE_KILLS + ">\n\n");
+            output.write(indentStr(1) + '<' + MULParser.ELE_KILLS + ">\n\n");
             writeKills(output, kills);
             output.write(indentStr(1) + "</" + MULParser.ELE_KILLS + ">\n");
         }
@@ -702,7 +722,7 @@ public class EntityListFile {
     private static void writeKills(Writer output, Hashtable<String, String> kills) throws IOException {
         int indentLvl = 2;
         for (String killed : kills.keySet()) {
-            output.write(indentStr(indentLvl) + "<" + MULParser.ELE_KILL + " " + MULParser.ATTR_KILLED + "=\"");
+            output.write(indentStr(indentLvl) + '<' + MULParser.ELE_KILL + ' ' + MULParser.ATTR_KILLED + "=\"");
             output.write(killed.replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_KILLER + "=\"");
             output.write(kills.get(killed));
@@ -722,7 +742,7 @@ public class EntityListFile {
             int indentLvl = 2;
 
             // Start writing this entity to the file.
-            output.write(indentStr(indentLvl) + "<" + MULParser.ELE_ENTITY + " " + MULParser.ATTR_CHASSIS + "=\"");
+            output.write(indentStr(indentLvl) + '<' + MULParser.ELE_ENTITY + ' ' + MULParser.ATTR_CHASSIS + "=\"");
             output.write(entity.getFullChassis().replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_MODEL + "=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
@@ -766,7 +786,7 @@ public class EntityListFile {
             }
             if (entity instanceof VTOL) {
                 output.write("\" " + MULParser.ATTR_ELEVATION + "=\"");
-                output.write(((VTOL) entity).getElevation() + "");
+                output.write(entity.getElevation() + "");
             }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" " + MULParser.ATTR_EXT_ID + "=\"");
@@ -846,7 +866,7 @@ public class EntityListFile {
             final Crew crew = entity.getCrew();
             if (crew.getSlotCount() > 1) {
                 output.write(
-                        indentStr(indentLvl + 1) + "<" + MULParser.ELE_CREW + " " + MULParser.ATTR_CREWTYPE + "=\"");
+                        indentStr(indentLvl + 1) + '<' + MULParser.ELE_CREW + ' ' + MULParser.ATTR_CREWTYPE + "=\"");
                 output.write(crew.getCrewType().toString().toLowerCase());
                 writeCrewAttributes(output, entity, crew);
                 output.write("\">\n");
@@ -855,14 +875,14 @@ public class EntityListFile {
                     if (crew.isMissing(pos)) {
                         continue;
                     }
-                    output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_CREWMEMBER + " " + MULParser.ATTR_SLOT
+                    output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_CREWMEMBER + ' ' + MULParser.ATTR_SLOT
                             + "=\"" + pos);
                     writePilotAttributes(output, entity, crew, pos);
                     output.write("\"/>\n");
                 }
-                output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_CREW + ">");
+                output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_CREW + '>');
             } else {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_PILOT + " " + MULParser.ATTR_SIZE + "=\"");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_PILOT + ' ' + MULParser.ATTR_SIZE + "=\"");
                 output.write(String.valueOf(crew.getSize()));
                 writePilotAttributes(output, entity, crew, 0);
                 writeCrewAttributes(output, entity, crew);
@@ -871,8 +891,7 @@ public class EntityListFile {
             output.write("\n");
 
             // If it's a tank, add a movement tag.
-            if (entity instanceof Tank) {
-                Tank tentity = (Tank) entity;
+            if (entity instanceof Tank tentity) {
                 output.write(EntityListFile.getMovementString(tentity));
                 if (tentity.isTurretLocked(tentity.getLocTurret())) {
                     output.write(EntityListFile.getTurretLockedString(tentity));
@@ -882,10 +901,9 @@ public class EntityListFile {
             }
 
             // Aero stuff that also applies to LAMs
-            if (entity instanceof IAero) {
-                IAero a = (IAero) entity;
+            if (entity instanceof IAero a) {
                 // fuel
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_FUEL + " " + MULParser.ATTR_LEFT + "=\"");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_FUEL + ' ' + MULParser.ATTR_LEFT + "=\"");
                 output.write(String.valueOf(a.getCurrentFuel()));
                 output.write("\"/>\n");
             }
@@ -896,11 +914,11 @@ public class EntityListFile {
                 int[] intBombChoices = b.getIntBombChoices();
                 int[] extBombChoices = b.getExtBombChoices();
                 if (intBombChoices.length > 0 || extBombChoices.length > 0) {
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BOMBS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BOMBS + ">\n");
                     for (int type = 0; type < BombType.B_NUM; type++) {
                         String typeName = BombType.getBombInternalName(type);
                         if (intBombChoices[type] > 0) {
-                            output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_BOMB + " " + MULParser.ATTR_TYPE
+                            output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_BOMB + ' ' + MULParser.ATTR_TYPE
                                     + "=\"");
                             output.write(typeName);
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
@@ -909,7 +927,7 @@ public class EntityListFile {
                             output.write("\"/>\n");
                         }
                         if (extBombChoices[type] > 0) {
-                            output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_BOMB + " " + MULParser.ATTR_TYPE
+                            output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_BOMB + ' ' + MULParser.ATTR_TYPE
                                     + "=\"");
                             output.write(typeName);
                             output.write("\" " + MULParser.ATTR_LOAD + "=\"");
@@ -922,7 +940,7 @@ public class EntityListFile {
                         if (!(m.getType() instanceof BombType)) {
                             continue;
                         }
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_BOMB + " " + MULParser.ATTR_TYPE
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_BOMB + ' ' + MULParser.ATTR_TYPE
                                 + "=\"");
                         output.write(m.getType().getShortName());
                         output.write("\" " + MULParser.ATTR_LOAD + "=\"");
@@ -936,31 +954,30 @@ public class EntityListFile {
             }
 
             // aero stuff that does not apply to LAMs
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
+            if (entity instanceof Aero a) {
 
                 // SI
                 output.write(
-                        indentStr(indentLvl + 1) + "<" + MULParser.ELE_SI + " " + MULParser.ATTR_INTEGRITY + "=\"");
+                        indentStr(indentLvl + 1) + '<' + MULParser.ELE_SI + ' ' + MULParser.ATTR_INTEGRITY + "=\"");
                 output.write(String.valueOf(a.getSI()));
                 output.write("\"/>\n");
 
                 // heat sinks
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_HEAT + " " + MULParser.ATTR_SINK + "=\"");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_HEAT + ' ' + MULParser.ATTR_SINK + "=\"");
                 output.write(String.valueOf(a.getHeatSinks()));
                 output.write("\"/>\n");
 
                 // large craft bays and doors.
                 if ((a instanceof Dropship) || (a instanceof Jumpship)) {
                     for (Bay nextbay : a.getTransportBays()) {
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BAY + " " + MULParser.ATTR_INDEX
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BAY + ' ' + MULParser.ATTR_INDEX
                                 + "=\"" + nextbay.getBayNumber() + "\">\n");
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_BAYDAMAGE + ">"
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_BAYDAMAGE + '>'
                                 + nextbay.getBayDamage() + "</" + MULParser.ELE_BAYDAMAGE + ">\n");
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_BAYDOORS + ">"
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_BAYDOORS + '>'
                                 + nextbay.getCurrentDoors() + "</" + MULParser.ELE_BAYDOORS + ">\n");
                         for (Entity e : nextbay.getLoadedUnits()) {
-                            output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_LOADED + ">" + e.getId() + "</"
+                            output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_LOADED + '>' + e.getId() + "</"
                                     + MULParser.ELE_LOADED + ">\n");
                         }
                         output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_BAY + ">\n");
@@ -968,17 +985,16 @@ public class EntityListFile {
                 }
 
                 // jumpship, warship and space station stuff
-                if (a instanceof Jumpship) {
-                    Jumpship j = (Jumpship) a;
+                if (a instanceof Jumpship j) {
 
                     // kf integrity
                     output.write(
-                            indentStr(indentLvl + 1) + "<" + MULParser.ELE_KF + " " + MULParser.ATTR_INTEGRITY + "=\"");
+                            indentStr(indentLvl + 1) + '<' + MULParser.ELE_KF + ' ' + MULParser.ATTR_INTEGRITY + "=\"");
                     output.write(String.valueOf(j.getKFIntegrity()));
                     output.write("\"/>\n");
 
                     // kf sail integrity
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_SAIL + " " + MULParser.ATTR_INTEGRITY
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_SAIL + ' ' + MULParser.ATTR_INTEGRITY
                             + "=\"");
                     output.write(String.valueOf(j.getSailIntegrity()));
                     output.write("\"/>\n");
@@ -988,15 +1004,13 @@ public class EntityListFile {
                 output.write(EntityListFile.getAeroCritString(a));
 
                 // dropship only crits
-                if (a instanceof Dropship) {
-                    Dropship d = (Dropship) a;
+                if (a instanceof Dropship d) {
                     output.write(EntityListFile.getDropshipCritString(d));
                 }
 
             }
 
-            if (entity instanceof BattleArmor) {
-                BattleArmor ba = (BattleArmor) entity;
+            if (entity instanceof BattleArmor ba) {
                 for (Mounted<?> m : entity.getEquipment()) {
                     if (m.getType().hasFlag(MiscType.F_BA_MEA)) {
                         Mounted<?> manipulator = null;
@@ -1005,7 +1019,7 @@ public class EntityListFile {
                         } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                             manipulator = ba.getRightManipulator();
                         }
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BA_MEA + " ");
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_MEA + ' ');
                         output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + m.getBaMountLoc() + "\" ");
                         if (manipulator != null) {
                             output.write(MULParser.ATTR_BA_MEA_TYPE_NAME + "=\""
@@ -1018,7 +1032,7 @@ public class EntityListFile {
                         if (m.getLinked() != null) {
                             apType = m.getLinked().getType();
                         }
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_BA_APM + " ");
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_APM + ' ');
                         output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIdx + "\" ");
                         if (apType != null) {
                             output.write(MULParser.ATTR_BA_APM_TYPE_NAME + "=\"" + apType.getInternalName() + "\" ");
@@ -1036,14 +1050,14 @@ public class EntityListFile {
 
             // Write the C3i Data if needed
             if (entity.hasC3i()) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_C3I + ">\n");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_C3I + ">\n");
                 Iterator<Entity> c3iList = list.iterator();
                 while (c3iList.hasNext()) {
                     final Entity C3iEntity = c3iList.next();
 
                     if ((C3iEntity.getC3UUIDAsString() != null) &&
                             C3iEntity.onSameC3NetworkAs(entity, true)) {
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_C3ILINK + " " + MULParser.ATTR_LINK
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_C3ILINK + ' ' + MULParser.ATTR_LINK
                                 + "=\"");
                         output.write(C3iEntity.getC3UUIDAsString());
                         output.write("\"/>\n");
@@ -1054,14 +1068,14 @@ public class EntityListFile {
 
             // Write the NC3 Data if needed
             if (entity.hasNavalC3()) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_NC3 + ">\n");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_NC3 + ">\n");
                 Iterator<Entity> NC3List = list.iterator();
                 while (NC3List.hasNext()) {
                     final Entity NC3Entity = NC3List.next();
 
                     if ((NC3Entity.getC3UUIDAsString() != null) &&
                             NC3Entity.onSameC3NetworkAs(entity, true)) {
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_NC3LINK + " " + MULParser.ATTR_LINK
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_NC3LINK + ' ' + MULParser.ATTR_LINK
                                 + "=\"");
                         output.write(NC3Entity.getC3UUIDAsString());
                         output.write("\"/>\n");
@@ -1072,47 +1086,45 @@ public class EntityListFile {
 
             // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_CONVEYANCE + " " + MULParser.ATTR_ID + "=\""
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_CONVEYANCE + ' ' + MULParser.ATTR_ID + "=\""
                         + entity.getTransportId());
                 output.write("\"/>\n");
             }
             // Record this unit's id number
             if (entity.getId() != Entity.NONE) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_GAME + " " + MULParser.ATTR_ID + "=\""
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_GAME + ' ' + MULParser.ATTR_ID + "=\""
                         + entity.getId());
                 output.write("\"/>\n");
             }
 
             // Write the force hierarchy
             if (!entity.getForceString().isBlank()) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_FORCE + " " + MULParser.ATTR_FORCE + "=\"");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_FORCE + ' ' + MULParser.ATTR_FORCE + "=\"");
                 output.write(entity.getForceString());
                 output.write("\"/>\n");
             } else if ((entity.getGame() != null) && (entity.getForceId() != Force.NO_FORCE)) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_FORCE + " " + MULParser.ATTR_FORCE + "=\"");
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_FORCE + ' ' + MULParser.ATTR_FORCE + "=\"");
                 output.write(entity.getGame().getForces().forceStringFor(entity));
                 output.write("\"/>\n");
             }
 
             // Write the escape craft data, if needed
-            if (entity instanceof Aero) {
-                Aero aero = (Aero) entity;
+            if (entity instanceof Aero aero) {
                 if (!aero.getEscapeCraft().isEmpty()) {
                     for (String id : aero.getEscapeCraft()) {
-                        output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ESCCRAFT + " " + MULParser.ATTR_ID
+                        output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCRAFT + ' ' + MULParser.ATTR_ID
                                 + "=\"" + id);
                         output.write("\"/>\n");
                     }
                 }
             }
 
-            if (entity instanceof SmallCraft) {
-                SmallCraft craft = (SmallCraft) entity;
+            if (entity instanceof SmallCraft craft) {
                 if (!craft.getNOtherCrew().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
                     for (String id : craft.getNOtherCrew().keySet()) {
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_SHIP + " " + MULParser.ATTR_ID
-                                + "=\"" + id + "\"" + " " + MULParser.ATTR_NUMBER + "=\""
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_SHIP + ' ' + MULParser.ATTR_ID
+                                + "=\"" + id + '"' + ' ' + MULParser.ATTR_NUMBER + "=\""
                                 + craft.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
@@ -1120,10 +1132,10 @@ public class EntityListFile {
                 }
 
                 if (!craft.getPassengers().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
                     for (String id : craft.getPassengers().keySet()) {
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_SHIP + " " + MULParser.ATTR_ID
-                                + "=\"" + id + "\"" + " " + MULParser.ATTR_NUMBER + "=\""
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_SHIP + ' ' + MULParser.ATTR_ID
+                                + "=\"" + id + '"' + ' ' + MULParser.ATTR_NUMBER + "=\""
                                 + craft.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
@@ -1131,18 +1143,17 @@ public class EntityListFile {
                 }
                 if (craft instanceof EscapePods) {
                     // Original number of pods, used to set the strength of a group of pods
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ORIG_PODS + " " + MULParser.ATTR_NUMBER
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ORIG_PODS + ' ' + MULParser.ATTR_NUMBER
                             + "=\"" + craft.get0SI());
                     output.write("\"/>\n");
                 }
 
-            } else if (entity instanceof EjectedCrew) {
-                EjectedCrew eCrew = (EjectedCrew) entity;
+            } else if (entity instanceof EjectedCrew eCrew) {
                 if (!eCrew.getNOtherCrew().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ESCCREW + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCCREW + ">\n");
                     for (String id : eCrew.getNOtherCrew().keySet()) {
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_SHIP + " " + MULParser.ATTR_ID
-                                + "=\"" + id + "\"" + " " + MULParser.ATTR_NUMBER + "=\""
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_SHIP + ' ' + MULParser.ATTR_ID
+                                + "=\"" + id + '"' + ' ' + MULParser.ATTR_NUMBER + "=\""
                                 + eCrew.getNOtherCrew().get(id));
                         output.write("\"/>\n");
                     }
@@ -1150,17 +1161,17 @@ public class EntityListFile {
                 }
 
                 if (!eCrew.getPassengers().isEmpty()) {
-                    output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ESCPASS + ">\n");
+                    output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ESCPASS + ">\n");
                     for (String id : eCrew.getPassengers().keySet()) {
-                        output.write(indentStr(indentLvl + 2) + "<" + MULParser.ELE_SHIP + " " + MULParser.ATTR_ID
-                                + "=\"" + id + "\"" + " " + MULParser.ATTR_NUMBER + "=\""
+                        output.write(indentStr(indentLvl + 2) + '<' + MULParser.ELE_SHIP + ' ' + MULParser.ATTR_ID
+                                + "=\"" + id + '"' + ' ' + MULParser.ATTR_NUMBER + "=\""
                                 + eCrew.getPassengers().get(id));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_ESCPASS + ">\n");
                 }
                 // Original number of men
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_ORIG_MEN + " " + MULParser.ATTR_NUMBER
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_ORIG_MEN + ' ' + MULParser.ATTR_NUMBER
                         + "=\"" + eCrew.getOInternal(Infantry.LOC_INFANTRY));
                 output.write("\"/>\n");
             }
@@ -1224,7 +1235,7 @@ public class EntityListFile {
         }
 
         if (crew.isDead(pos) || (crew.getHits(pos) > 5)) {
-            output.write("\" " + MULParser.ATTR_HITS + "=\"" + MULParser.VALUE_DEAD + "");
+            output.write("\" " + MULParser.ATTR_HITS + "=\"" + MULParser.VALUE_DEAD);
         } else if (crew.getHits(pos) > 0) {
             output.write("\" " + MULParser.ATTR_HITS + "=\"");
             output.write(String.valueOf(crew.getHits(pos)));
@@ -1331,74 +1342,74 @@ public class EntityListFile {
     }
 
     private static String getTurretLockedString(Tank e) {
-        String retval = "      <" + MULParser.ELE_TURRETLOCK + " " + MULParser.ATTR_DIRECTION + "=\"";
-        retval = retval.concat(Integer.toString(e.getSecondaryFacing()));
-        retval = retval.concat("\"/>\n");
+        String retval = "      <" + MULParser.ELE_TURRETLOCK + ' ' + MULParser.ATTR_DIRECTION + "=\"";
+        retval = retval + Integer.toString(e.getSecondaryFacing());
+        retval = retval + "\"/>\n";
         return retval;
     }
 
     private static String getMovementString(Tank e) {
-        String retVal = "      <" + MULParser.ELE_MOTIVE + " " + MULParser.ATTR_MDAMAGE + "=\"";
-        retVal = retVal.concat(Integer.toString(e.getMotiveDamage()));
-        retVal = retVal.concat("\" " + MULParser.ATTR_MPENALTY + "=\"");
-        retVal = retVal.concat(Integer.toString(e.getMotivePenalty()));
-        retVal = retVal.concat("\"/>\n");
+        String retVal = "      <" + MULParser.ELE_MOTIVE + ' ' + MULParser.ATTR_MDAMAGE + "=\"";
+        retVal = retVal + Integer.toString(e.getMotiveDamage());
+        retVal = retVal + "\" " + MULParser.ATTR_MPENALTY + "=\"";
+        retVal = retVal + Integer.toString(e.getMotivePenalty());
+        retVal = retVal + "\"/>\n";
         return retVal;
     }
 
     // Aero crits
     private static String getAeroCritString(Aero a) {
 
-        String retVal = "      <" + MULParser.ELE_AEROCRIT + "";
+        String retVal = "      <" + MULParser.ELE_AEROCRIT;
         String critVal = "";
 
         // crits
         if (a.getAvionicsHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_AVIONICS + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getAvionicsHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_AVIONICS + "=\"";
+            critVal = critVal + Integer.toString(a.getAvionicsHits());
+            critVal = critVal + "\"";
         }
         if (a.getSensorHits() > 0) {
-            critVal = critVal.concat("  " + MULParser.ATTR_SENSORS + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getSensorHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + "  " + MULParser.ATTR_SENSORS + "=\"";
+            critVal = critVal + Integer.toString(a.getSensorHits());
+            critVal = critVal + "\"";
         }
         if (a.getEngineHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_ENGINE + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getEngineHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_ENGINE + "=\"";
+            critVal = critVal + Integer.toString(a.getEngineHits());
+            critVal = critVal + "\"";
         }
         if (a.getFCSHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_FCS + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getFCSHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_FCS + "=\"";
+            critVal = critVal + Integer.toString(a.getFCSHits());
+            critVal = critVal + "\"";
         }
         if (a.getCICHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_CIC + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getCICHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_CIC + "=\"";
+            critVal = critVal + Integer.toString(a.getCICHits());
+            critVal = critVal + "\"";
         }
         if (a.getLeftThrustHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_LEFT_THRUST + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getLeftThrustHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_LEFT_THRUST + "=\"";
+            critVal = critVal + Integer.toString(a.getLeftThrustHits());
+            critVal = critVal + "\"";
         }
         if (a.getRightThrustHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_RIGHT_THRUST + "=\"");
-            critVal = critVal.concat(Integer.toString(a.getRightThrustHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_RIGHT_THRUST + "=\"";
+            critVal = critVal + Integer.toString(a.getRightThrustHits());
+            critVal = critVal + "\"";
         }
         if (!a.hasLifeSupport()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_LIFE_SUPPORT + "=\"" + MULParser.VALUE_NONE + "\"");
+            critVal = critVal + ' ' + MULParser.ATTR_LIFE_SUPPORT + "=\"" + MULParser.VALUE_NONE + '"';
         }
         if (a.isGearHit()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_GEAR + "=\"" + MULParser.VALUE_NONE + "\"");
+            critVal = critVal + ' ' + MULParser.ATTR_GEAR + "=\"" + MULParser.VALUE_NONE + '"';
         }
 
         if (!critVal.isBlank()) {
             // then add beginning and end
-            retVal = retVal.concat(critVal);
-            retVal = retVal.concat("/>\n");
+            retVal = retVal + critVal;
+            retVal = retVal + "/>\n";
         } else {
             return critVal;
         }
@@ -1414,16 +1425,16 @@ public class EntityListFile {
 
         // crits
         if (a.isDockCollarDamaged()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_DOCKING_COLLAR + "=\"" + MULParser.VALUE_NONE + "\"");
+            critVal = critVal + ' ' + MULParser.ATTR_DOCKING_COLLAR + "=\"" + MULParser.VALUE_NONE + '"';
         }
         if (a.isKFBoomDamaged()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_KFBOOM + "=\"" + MULParser.VALUE_NONE + "\"");
+            critVal = critVal + ' ' + MULParser.ATTR_KFBOOM + "=\"" + MULParser.VALUE_NONE + '"';
         }
 
         if (!critVal.isBlank()) {
             // then add beginning and end
-            retVal = retVal.concat(critVal);
-            retVal = retVal.concat("/>\n");
+            retVal = retVal + critVal;
+            retVal = retVal + "/>\n";
         } else {
             return critVal;
         }
@@ -1439,36 +1450,36 @@ public class EntityListFile {
 
         // crits
         if (t.getSensorHits() > 0) {
-            critVal = critVal.concat(" " + MULParser.ATTR_SENSORS + "=\"");
-            critVal = critVal.concat(Integer.toString(t.getSensorHits()));
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_SENSORS + "=\"";
+            critVal = critVal + Integer.toString(t.getSensorHits());
+            critVal = critVal + "\"";
         }
         if (t.isEngineHit()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_ENGINE + "=\"");
-            critVal = critVal.concat(MULParser.VALUE_HIT);
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_ENGINE + "=\"";
+            critVal = critVal + MULParser.VALUE_HIT;
+            critVal = critVal + "\"";
         }
 
         if (t.isDriverHit()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_DRIVER + "=\"");
-            critVal = critVal.concat(MULParser.VALUE_HIT);
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_DRIVER + "=\"";
+            critVal = critVal + MULParser.VALUE_HIT;
+            critVal = critVal + "\"";
         }
 
         if (t.isCommanderHit()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_COMMANDER + "=\"");
-            critVal = critVal.concat(MULParser.VALUE_HIT);
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_COMMANDER + "=\"";
+            critVal = critVal + MULParser.VALUE_HIT;
+            critVal = critVal + "\"";
         } else if (t.isUsingConsoleCommander()) {
-            critVal = critVal.concat(" " + MULParser.ATTR_COMMANDER + "=\"");
-            critVal = critVal.concat(MULParser.VALUE_CONSOLE);
-            critVal = critVal.concat("\"");
+            critVal = critVal + ' ' + MULParser.ATTR_COMMANDER + "=\"";
+            critVal = critVal + MULParser.VALUE_CONSOLE;
+            critVal = critVal + "\"";
         }
 
         if (!critVal.isBlank()) {
             // then add beginning and end
-            retVal = retVal.concat(critVal);
-            retVal = retVal.concat("/>\n");
+            retVal = retVal + critVal;
+            retVal = retVal + "/>\n";
         } else {
             return critVal;
         }

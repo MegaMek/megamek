@@ -515,8 +515,8 @@ public class EntityListFile {
      * The <code>Entity</code>s' pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained, but data specific to a
      * particular game is ignored. This method is a simpler version of the
-     * overloaded method {@link #saveTo(File, ArrayList, Integer)}, with a default
-     * generic battle value of 0 (this causes GBV to be ignored).
+     * overloaded method {@code saveTo}, with a default generic battle value of 0
+     * (this causes GBV to be ignored).
      *
      * @param file
      *             - The current contents of the file will be discarded and all
@@ -1343,16 +1343,16 @@ public class EntityListFile {
 
     private static String getTurretLockedString(Tank e) {
         String retval = "      <" + MULParser.ELE_TURRETLOCK + ' ' + MULParser.ATTR_DIRECTION + "=\"";
-        retval = retval + Integer.toString(e.getSecondaryFacing());
+        retval = retval + e.getSecondaryFacing();
         retval = retval + "\"/>\n";
         return retval;
     }
 
     private static String getMovementString(Tank e) {
         String retVal = "      <" + MULParser.ELE_MOTIVE + ' ' + MULParser.ATTR_MDAMAGE + "=\"";
-        retVal = retVal + Integer.toString(e.getMotiveDamage());
+        retVal = retVal + e.getMotiveDamage();
         retVal = retVal + "\" " + MULParser.ATTR_MPENALTY + "=\"";
-        retVal = retVal + Integer.toString(e.getMotivePenalty());
+        retVal = retVal + e.getMotivePenalty();
         retVal = retVal + "\"/>\n";
         return retVal;
     }
@@ -1366,38 +1366,38 @@ public class EntityListFile {
         // crits
         if (a.getAvionicsHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_AVIONICS + "=\"";
-            critVal = critVal + Integer.toString(a.getAvionicsHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getAvionicsHits();
+            critVal = critVal + '"';
         }
         if (a.getSensorHits() > 0) {
             critVal = critVal + "  " + MULParser.ATTR_SENSORS + "=\"";
-            critVal = critVal + Integer.toString(a.getSensorHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getSensorHits();
+            critVal = critVal + '"';
         }
         if (a.getEngineHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_ENGINE + "=\"";
-            critVal = critVal + Integer.toString(a.getEngineHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getEngineHits();
+            critVal = critVal + '"';
         }
         if (a.getFCSHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_FCS + "=\"";
-            critVal = critVal + Integer.toString(a.getFCSHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getFCSHits();
+            critVal = critVal + '"';
         }
         if (a.getCICHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_CIC + "=\"";
-            critVal = critVal + Integer.toString(a.getCICHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getCICHits();
+            critVal = critVal + '"';
         }
         if (a.getLeftThrustHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_LEFT_THRUST + "=\"";
-            critVal = critVal + Integer.toString(a.getLeftThrustHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getLeftThrustHits();
+            critVal = critVal + '"';
         }
         if (a.getRightThrustHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_RIGHT_THRUST + "=\"";
-            critVal = critVal + Integer.toString(a.getRightThrustHits());
-            critVal = critVal + "\"";
+            critVal = critVal + a.getRightThrustHits();
+            critVal = critVal + '"';
         }
         if (!a.hasLifeSupport()) {
             critVal = critVal + ' ' + MULParser.ATTR_LIFE_SUPPORT + "=\"" + MULParser.VALUE_NONE + '"';
@@ -1451,29 +1451,29 @@ public class EntityListFile {
         // crits
         if (t.getSensorHits() > 0) {
             critVal = critVal + ' ' + MULParser.ATTR_SENSORS + "=\"";
-            critVal = critVal + Integer.toString(t.getSensorHits());
-            critVal = critVal + "\"";
+            critVal = critVal + t.getSensorHits();
+            critVal = critVal + '"';
         }
         if (t.isEngineHit()) {
             critVal = critVal + ' ' + MULParser.ATTR_ENGINE + "=\"";
             critVal = critVal + MULParser.VALUE_HIT;
-            critVal = critVal + "\"";
+            critVal = critVal + '"';
         }
 
         if (t.isDriverHit()) {
             critVal = critVal + ' ' + MULParser.ATTR_DRIVER + "=\"";
             critVal = critVal + MULParser.VALUE_HIT;
-            critVal = critVal + "\"";
+            critVal = critVal + '"';
         }
 
         if (t.isCommanderHit()) {
             critVal = critVal + ' ' + MULParser.ATTR_COMMANDER + "=\"";
             critVal = critVal + MULParser.VALUE_HIT;
-            critVal = critVal + "\"";
+            critVal = critVal + '"';
         } else if (t.isUsingConsoleCommander()) {
             critVal = critVal + ' ' + MULParser.ATTR_COMMANDER + "=\"";
             critVal = critVal + MULParser.VALUE_CONSOLE;
-            critVal = critVal + "\"";
+            critVal = critVal + '"';
         }
 
         if (!critVal.isBlank()) {

@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.advancedsearch;
 
 import megamek.common.TechConstants;
@@ -44,54 +62,30 @@ public class WeaponsTableModel extends AbstractTableModel {
     }
 
     public int getPreferredWidth(int col) {
-        switch (col) {
-            case COL_QTY:
-                return 40;
-            case COL_NAME:
-                return 310;
-            case COL_IS_CLAN:
-                return 75;
-            case COL_DMG:
-                return 50;
-            case COL_HEAT:
-                return 50;
-            case COL_SHORT:
-                return 50;
-            case COL_MED:
-                return 50;
-            case COL_LONG:
-                return 50;
-            case COL_LEVEL:
-                return 100;
-            default:
-                return 0;
-        }
+        return switch (col) {
+            case COL_QTY -> 40;
+            case COL_NAME -> 310;
+            case COL_IS_CLAN -> 75;
+            case COL_DMG, COL_HEAT, COL_SHORT, COL_MED, COL_LONG -> 50;
+            case COL_LEVEL -> 100;
+            default -> 0;
+        };
     }
 
     @Override
     public String getColumnName(int column) {
-        switch (column) {
-            case COL_QTY:
-                return "Qty";
-            case COL_NAME:
-                return "Weapon Name";
-            case COL_IS_CLAN:
-                return "IS/Clan";
-            case COL_DMG:
-                return "DMG";
-            case COL_HEAT:
-                return "Heat";
-            case COL_SHORT:
-                return "Short";
-            case COL_MED:
-                return "Med";
-            case COL_LONG:
-                return "Long";
-            case COL_LEVEL:
-                return "Lvl";
-            default:
-                return "?";
-        }
+        return switch (column) {
+            case COL_QTY -> "Qty";
+            case COL_NAME -> "Weapon Name";
+            case COL_IS_CLAN -> "IS/Clan";
+            case COL_DMG -> "DMG";
+            case COL_HEAT -> "Heat";
+            case COL_SHORT -> "Short";
+            case COL_MED -> "Med";
+            case COL_LONG -> "Long";
+            case COL_LEVEL -> "Lvl";
+            default -> "?";
+        };
     }
 
     @Override
@@ -101,12 +95,7 @@ public class WeaponsTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                return true;
-            default:
-                return false;
-        }
+        return col == COL_QTY;
     }
 
     // fill table with values
@@ -127,44 +116,27 @@ public class WeaponsTableModel extends AbstractTableModel {
             return null;
         }
         WeaponType wp = weapons.elementAt(row);
-        switch (col) {
-            case COL_QTY:
-                return qty[row] + "";
-            case COL_NAME:
-                return wp.getName();
-            case COL_IS_CLAN:
-                return TechConstants.getTechName(wp.getTechLevel(twAdvancedSearchPanel.gameYear));
-            case COL_DMG:
-                return wp.getDamage();
-            case COL_HEAT:
-                return wp.getHeat();
-            case COL_SHORT:
-                return wp.getShortRange();
-            case COL_MED:
-                return wp.getMediumRange();
-            case COL_LONG:
-                return wp.getLongRange();
-            case COL_LEVEL:
-                return TechConstants.getSimpleLevelName(TechConstants
-                    .convertFromNormalToSimple(wp
-                        .getTechLevel(twAdvancedSearchPanel.gameYear)));
-            case COL_INTERNAL_NAME:
-                return wp.getInternalName();
-            default:
-                return "?";
-        }
+        return switch (col) {
+            case COL_QTY -> qty[row] + "";
+            case COL_NAME -> wp.getName();
+            case COL_IS_CLAN -> TechConstants.getTechName(wp.getTechLevel(twAdvancedSearchPanel.gameYear));
+            case COL_DMG -> wp.getDamage();
+            case COL_HEAT -> wp.getHeat();
+            case COL_SHORT -> wp.getShortRange();
+            case COL_MED -> wp.getMediumRange();
+            case COL_LONG -> wp.getLongRange();
+            case COL_LEVEL -> TechConstants.getSimpleLevelName(
+                TechConstants.convertFromNormalToSimple(wp.getTechLevel(twAdvancedSearchPanel.gameYear)));
+            case COL_INTERNAL_NAME -> wp.getInternalName();
+            default -> "?";
+        };
     }
 
     @Override
     public void setValueAt(Object value, int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                qty[row] = Integer.parseInt((String) value);
-                fireTableCellUpdated(row, col);
-                break;
-            default:
-                break;
+        if (col == COL_QTY) {
+            qty[row] = Integer.parseInt((String) value);
+            fireTableCellUpdated(row, col);
         }
     }
-
 }

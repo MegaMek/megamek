@@ -232,8 +232,7 @@ public class MekSearchFilter {
     /**
      * Creates an Expressiontree from a collection of tokens.
      */
-    public void createFilterExpressionFromTokens(Vector<FilterTokens> toks)
-            throws FilterParsingException {
+    public void createFilterExpressionFromTokens(List<FilterTokens> toks) throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
         if (!toks.isEmpty()) {
             equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(), null);

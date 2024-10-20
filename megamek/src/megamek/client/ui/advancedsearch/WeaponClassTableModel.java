@@ -1,11 +1,29 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.advancedsearch;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Vector;
 
 public class WeaponClassTableModel extends AbstractTableModel {
-    private static final long serialVersionUID = 1L;
 
     static final int COL_QTY = 0;
     static final int COL_NAME = 1;
@@ -13,14 +31,12 @@ public class WeaponClassTableModel extends AbstractTableModel {
     static final int COL_VAL = 2;
 
 
-    private int[] qty;
+    private final int[] qty;
 
-    private Vector<WeaponClass> weaponClasses = new Vector<>();
+    private final Vector<WeaponClass> weaponClasses = new Vector<>();
 
     public WeaponClassTableModel() {
-        for (WeaponClass cl : WeaponClass.values()) {
-            weaponClasses.add(cl);
-        }
+        Collections.addAll(weaponClasses, WeaponClass.values());
         qty = new int[weaponClasses.size()];
         Arrays.fill(qty, 1);
     }
@@ -36,26 +52,20 @@ public class WeaponClassTableModel extends AbstractTableModel {
     }
 
     public int getPreferredWidth(int col) {
-        switch (col) {
-            case COL_QTY:
-                return 40;
-            case COL_NAME:
-                return 310;
-            default:
-                return 0;
-        }
+        return switch (col) {
+            case COL_QTY -> 40;
+            case COL_NAME -> 310;
+            default -> 0;
+        };
     }
 
     @Override
     public String getColumnName(int column) {
-        switch (column) {
-            case COL_QTY:
-                return "Qty";
-            case COL_NAME:
-                return "Weapon Class";
-            default:
-                return "?";
-        }
+        return switch (column) {
+            case COL_QTY -> "Qty";
+            case COL_NAME -> "Weapon Class";
+            default -> "?";
+        };
     }
 
     @Override
@@ -65,24 +75,7 @@ public class WeaponClassTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    // fill table with values
-    // public void setData(Vector<Integer> wps) {
-    //     weaponClasses = wps;
-    //     qty = new int[wps.size()];
-    //     Arrays.fill(qty, 1);
-    //     fireTableDataChanged();
-    // }
-
-    public WeaponClass getWeaponTypeAt(int row) {
-        return weaponClasses.elementAt(row);
+        return col == COL_QTY;
     }
 
     @Override
@@ -91,28 +84,19 @@ public class WeaponClassTableModel extends AbstractTableModel {
             return null;
         }
 
-        switch (col) {
-            case COL_QTY:
-                return qty[row] + "";
-            case COL_NAME:
-                return weaponClasses.elementAt(row).toString();
-            case COL_VAL:
-                return weaponClasses.elementAt(row);
-            default:
-                return "?";
-        }
+        return switch (col) {
+            case COL_QTY -> qty[row] + "";
+            case COL_NAME -> weaponClasses.elementAt(row).toString();
+            case COL_VAL -> weaponClasses.elementAt(row);
+            default -> "?";
+        };
     }
 
     @Override
     public void setValueAt(Object value, int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                qty[row] = Integer.parseInt((String) value);
-                fireTableCellUpdated(row, col);
-                break;
-            default:
-                break;
+        if (col == COL_QTY) {
+            qty[row] = Integer.parseInt((String) value);
+            fireTableCellUpdated(row, col);
         }
     }
-
 }

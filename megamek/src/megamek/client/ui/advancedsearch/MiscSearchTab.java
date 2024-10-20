@@ -32,7 +32,6 @@ import java.util.Map;
 
 public class MiscSearchTab extends JPanel {
 
-    // Base
     JButton btnBaseClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
     JLabel lblWalk = new JLabel(Messages.getString("MekSelectorDialog.Search.Walk"));
     JTextField tStartWalk = new JTextField(4);
@@ -63,7 +62,6 @@ public class MiscSearchTab extends JPanel {
     JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
     JLabel lblClanEngine = new JLabel(Messages.getString("MekSelectorDialog.Search.ClanEngine"));
     JComboBox<String> cClanEngine = new JComboBox<>();
-    JLabel lblTableFilters = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilters"));
     JLabel lblSource = new JLabel(Messages.getString("MekSelectorDialog.Search.Source"));
     JTextField tSource = new JTextField(4);
     JLabel lblMULId = new JLabel(Messages.getString("MekSelectorDialog.Search.MULId"));

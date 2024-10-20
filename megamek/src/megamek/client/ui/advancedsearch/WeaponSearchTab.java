@@ -29,7 +29,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -41,41 +40,41 @@ public class WeaponSearchTab extends JPanel implements KeyListener, ListSelectio
 
     final List<FilterTokens> filterToks = new ArrayList<>();
 
-    // Weapons / Equipment
-    JButton btnWELeftParen = new JButton("(");
-    JButton btnWERightParen = new JButton(")");
-    JButton btnWEAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
-    JButton btnWEAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
-    JButton btnWEOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
-    JButton btnWEClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
-    JButton btnWEBack = new JButton("Back");
-    JLabel  lblWEEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
-    JTextArea  txtWEEqExp = new JTextArea("");
-    JScrollPane expWEScroller = new JScrollPane(txtWEEqExp,
+    final JLabel lblTableFilters = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilters"));
+    final JButton btnWELeftParen = new JButton("(");
+    final JButton btnWERightParen = new JButton(")");
+    final JButton btnWEAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
+    final JButton btnWEAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
+    final JButton btnWEOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
+    final JButton btnWEClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
+    final JButton btnWEBack = new JButton("Back");
+    final JLabel  lblWEEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
+    final JTextArea  txtWEEqExp = new JTextArea("");
+    final JScrollPane expWEScroller = new JScrollPane(txtWEEqExp,
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
-    JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
-    JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
-    JComboBox<String> cboUnitType = new JComboBox<>();
-    JComboBox<String> cboTechClass = new JComboBox<>();
-    JComboBox<String> cboTechLevel = new JComboBox<>();
-    JLabel lblWeaponClass = new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponClass"));
-    JScrollPane scrTableWeaponType = new JScrollPane();
-    MegaMekTable tblWeaponType;
-    WeaponClassTableModel weaponTypesModel;
-    TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
-    JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
-    JScrollPane scrTableWeapons = new JScrollPane();
-    MegaMekTable tblWeapons;
-    WeaponsTableModel weaponsModel;
-    TableRowSorter<WeaponsTableModel> weaponsSorter;
-    JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
-    JScrollPane scrTableEquipment = new JScrollPane();
-    MegaMekTable tblEquipment;
-    EquipmentTableModel equipmentModel;
-    TableRowSorter<EquipmentTableModel> equipmentSorter;
-    JComboBox<String> cboQty = new JComboBox<>();
+    final JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
+    final JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
+    final JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
+    final JComboBox<String> cboUnitType = new JComboBox<>();
+    final JComboBox<String> cboTechClass = new JComboBox<>();
+    final JComboBox<String> cboTechLevel = new JComboBox<>();
+    final JLabel lblWeaponClass = new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponClass"));
+    final JScrollPane scrTableWeaponType = new JScrollPane();
+    final MegaMekTable tblWeaponType;
+    final WeaponClassTableModel weaponTypesModel;
+    final TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
+    final JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
+    final JScrollPane scrTableWeapons = new JScrollPane();
+    final MegaMekTable tblWeapons;
+    final WeaponsTableModel weaponsModel;
+    final TableRowSorter<WeaponsTableModel> weaponsSorter;
+    final JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
+    final JScrollPane scrTableEquipment = new JScrollPane();
+    final MegaMekTable tblEquipment;
+    final EquipmentTableModel equipmentModel;
+    final TableRowSorter<EquipmentTableModel> equipmentSorter;
+    final JComboBox<String> cboQty = new JComboBox<>();
 
     private final TWAdvancedSearchPanel parentPanel;
 

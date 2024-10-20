@@ -19,12 +19,14 @@
  */
 package megamek.client.ui.advancedsearch;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.*;
 
+import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 
@@ -57,7 +59,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
 
         basePanel = new MiscSearchTab(this);
         weaponEqPanel = new WeaponSearchTab(this);
-        unitTypePanel = new UnitTypeSearchTab(this);
+        unitTypePanel = new UnitTypeSearchTab();
         quirkPanel = new QuirksSearchTab(this);
         transportsPanel = new TransportsSearchTab(this);
 
@@ -67,11 +69,11 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
         String msg_quirkType = Messages.getString("MekSelectorDialog.Search.Quirks");
         String msg_transports = Messages.getString("MekSelectorDialog.Search.Transports");
 
-        addTab(msg_unitType, unitTypePanel);
-        addTab(msg_base, basePanel);
-        addTab(msg_weaponEq, weaponEqPanel);
-        addTab(msg_transports, transportsPanel);
-        addTab(msg_quirkType, quirkPanel);
+        addTab(msg_unitType, new StandardScrollPane(unitTypePanel));
+        addTab(msg_base, new StandardScrollPane(basePanel));
+        addTab(msg_weaponEq, new StandardScrollPane(weaponEqPanel));
+        addTab(msg_transports, new StandardScrollPane(transportsPanel));
+        addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
     }
 
     /**
@@ -213,86 +215,10 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
             weaponEqPanel.clearWeaponsEquipment();
         } else if (ev.getSource().equals(basePanel.btnBaseClear)) {
             clearBase();
-        } else if (ev.getSource().equals(unitTypePanel.btnUnitTypeClear)) {
-            unitTypePanel.clearUnitType();
         } else if (ev.getSource().equals(transportsPanel.btnTransportsClear)) {
             transportsPanel.clearTransports();
         } else if (ev.getSource().equals(quirkPanel.btnQuirksClear)) {
             clearQuirks();
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterMek)) {
-            toggleText(unitTypePanel.btnFilterMek);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterBipedMek)) {
-            toggleText(unitTypePanel.btnFilterBipedMek);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterProtoMek)) {
-            toggleText(unitTypePanel.btnFilterProtoMek);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterLAM)) {
-            toggleText(unitTypePanel.btnFilterLAM);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterTripod)) {
-            toggleText(unitTypePanel.btnFilterTripod);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterQuad)) {
-            toggleText(unitTypePanel.btnFilterQuad);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterQuadVee)) {
-            toggleText(unitTypePanel.btnFilterQuadVee);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterAero)) {
-            toggleText(unitTypePanel.btnFilterAero);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterFixedWingSupport)) {
-            toggleText(unitTypePanel.btnFilterFixedWingSupport);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterConvFighter)) {
-            toggleText(unitTypePanel.btnFilterConvFighter);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSmallCraft)) {
-            toggleText(unitTypePanel.btnFilterSmallCraft);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDropship)) {
-            toggleText(unitTypePanel.btnFilterDropship);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterJumpship)) {
-            toggleText(unitTypePanel.btnFilterJumpship);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterWarship)) {
-            toggleText(unitTypePanel.btnFilterWarship);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSpaceStation)) {
-            toggleText(unitTypePanel.btnFilterSpaceStation);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterInfantry)) {
-            toggleText(unitTypePanel.btnFilterInfantry);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterBattleArmor)) {
-            toggleText(unitTypePanel.btnFilterBattleArmor);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterTank)) {
-            toggleText(unitTypePanel.btnFilterTank);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterVTOL)) {
-            toggleText(unitTypePanel.btnFilterVTOL);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSupportVTOL)) {
-            toggleText(unitTypePanel.btnFilterSupportVTOL);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterGunEmplacement)) {
-            toggleText(unitTypePanel.btnFilterGunEmplacement);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterFixedWingSupport)) {
-            toggleText(unitTypePanel.btnFilterFixedWingSupport);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSuperHeavyTank)) {
-            toggleText(unitTypePanel.btnFilterSuperHeavyTank);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSupportTank)) {
-            toggleText(unitTypePanel.btnFilterSupportTank);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterLargeSupportTank)) {
-            toggleText(unitTypePanel.btnFilterLargeSupportTank);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterOmni)) {
-            toggleText(unitTypePanel.btnFilterOmni);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterMilitary)) {
-            toggleText(unitTypePanel.btnFilterMilitary);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterIndustrial)) {
-            toggleText(unitTypePanel.btnFilterIndustrial);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterMountedInfantry)) {
-            toggleText(unitTypePanel.btnFilterMountedInfantry);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterWaterOnly)) {
-            toggleText(unitTypePanel.btnFilterWaterOnly);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterSupportVehicle)) {
-            toggleText(unitTypePanel.btnFilterSupportVehicle);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterAerospaceFighter)) {
-            toggleText(unitTypePanel.btnFilterAerospaceFighter);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDoomedOnGround)) {
-            toggleText(unitTypePanel.btnFilterDoomedOnGround);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDoomedInAtmosphere)) {
-            toggleText(unitTypePanel.btnFilterDoomedInAtmosphere);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDoomedInSpace)) {
-            toggleText(unitTypePanel.btnFilterDoomedInSpace);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDoomedInExtremeTemp)) {
-            toggleText(unitTypePanel.btnFilterDoomedInExtremeTemp);
-        } else if (ev.getSource().equals(unitTypePanel.btnFilterDoomedInVacuum)) {
-            toggleText(unitTypePanel.btnFilterDoomedInVacuum);
         }
     }
 
@@ -371,7 +297,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
      */
     public void clearValues() {
         mekFilter = null;
-        unitTypePanel.clearUnitType();
+        unitTypePanel.clear();
         clearBase();
         transportsPanel.clearTransports();
         clearQuirks();
@@ -610,5 +536,23 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
             case "\u2612" -> 2;
             default -> -1;
         };
+    }
+
+    public int getValue(FlatTriStateCheckBox b) {
+        return switch (b.getState()) {
+            case INDETERMINATE -> 2;
+            case SELECTED -> 1;
+            case UNSELECTED -> 0;
+        };
+    }
+
+    static class StandardScrollPane extends JScrollPane {
+
+        public StandardScrollPane(Component view) {
+            super(view, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            getVerticalScrollBar().setUnitIncrement(16);
+            getHorizontalScrollBar().setUnitIncrement(16);
+            setBorder(null);
+        }
     }
 }

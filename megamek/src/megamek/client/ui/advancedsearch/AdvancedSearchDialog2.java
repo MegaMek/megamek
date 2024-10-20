@@ -18,10 +18,15 @@
  */
 package megamek.client.ui.advancedsearch;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.ButtonEsc;
+import megamek.client.ui.swing.CloseAction;
+import megamek.client.ui.swing.dialog.DialogButton;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 /**
@@ -65,15 +70,23 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
-        JPanel buttonPanel = super.createButtonPanel();
-        buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.setBorder(new EmptyBorder(5, 0, 5, 0));
+        JButton cancelButton = new ButtonEsc(new CloseAction(this));
+        JButton okButton = new DialogButton(Messages.getString("Ok.text"));
+        okButton.addActionListener(this::okButtonActionPerformed);
+        getRootPane().setDefaultButton(okButton);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+        buttonPanel.setBorder(BorderFactory.createCompoundBorder(
+            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+            new EmptyBorder(10, 0, 10, 0)));
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
         return buttonPanel;
     }
 
     @Override
     protected Container createCenterPane() {
-        return new JScrollPane(advancedSearchPane);
+        return advancedSearchPane;
     }
 
     /** Deactivates the search fields in both search tabs so that no units are filtered out. */

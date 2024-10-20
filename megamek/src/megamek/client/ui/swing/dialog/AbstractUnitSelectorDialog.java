@@ -44,6 +44,7 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.client.ui.advancedsearch.AdvancedSearchDialog2;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.models.XTableColumnModel;
 import megamek.client.ui.panes.EntityViewPane;

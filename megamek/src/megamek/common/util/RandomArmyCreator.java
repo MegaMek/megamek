@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
+import megamek.client.ui.advancedsearch.ASAdvancedSearchPanel;
 import megamek.common.Compute;
 import megamek.common.MekSearchFilter;
 import megamek.common.MekSummary;

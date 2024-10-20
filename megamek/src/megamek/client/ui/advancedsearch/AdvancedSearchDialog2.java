@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,12 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog;
+package megamek.client.ui.advancedsearch;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -76,8 +73,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
-        JScrollPane advScrollpane = new JScrollPane(advancedSearchPane);
-        return advScrollpane;
+        return new JScrollPane(advancedSearchPane);
     }
 
     /** Deactivates the search fields in both search tabs so that no units are filtered out. */

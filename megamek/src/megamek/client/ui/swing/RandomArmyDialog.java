@@ -65,7 +65,7 @@ import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.dialog.AdvancedSearchDialog2;
+import megamek.client.ui.advancedsearch.AdvancedSearchDialog2;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;

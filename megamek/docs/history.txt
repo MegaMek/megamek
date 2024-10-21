@@ -56,6 +56,14 @@ MEGAMEK VERSION HISTORY:
 + PR #6109: Fix missing text, dont report callstack for missing resources
 + Fix #6083: TacOps BAP rule offboard checks #6112
 + Fix #6100: Always check GUIPrefs if incline highlighting is on
++ Fix #6063: Fix targeting choice with iNarcs
++ Fix #6013: Mine Clearance Missile fixes
++ Fix #6101: Fix selected ammo retrieval
++ Fix #5990, #6089, #6102: Messages fixes
++ Fix #5972: Game Options
++ PR #6122: Added TotalGenericBattleValue Tag to MUL Export
++ PR #6123: Improved Word Wrapping to Handle Existing Line Breaks
++ Fix #6126: Fix issue with miss matched tag
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

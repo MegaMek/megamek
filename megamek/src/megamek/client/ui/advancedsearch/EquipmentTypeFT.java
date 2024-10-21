@@ -5,12 +5,13 @@ package megamek.client.ui.advancedsearch;
  *
  * @author Arlith
  */
-public class EquipmentFT extends FilterTokens {
+public class EquipmentTypeFT extends EquipmentFilterToken {
+
     public String internalName;
     public String fullName;
     public int qty;
 
-    public EquipmentFT(String in, String fn, int q) {
+    public EquipmentTypeFT(String in, String fn, int q) {
         internalName = in;
         fullName = fn;
         qty = q;

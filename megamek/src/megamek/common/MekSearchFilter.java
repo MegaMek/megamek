@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -232,7 +231,7 @@ public class MekSearchFilter {
     /**
      * Creates an Expressiontree from a collection of tokens.
      */
-    public void createFilterExpressionFromTokens(List<FilterTokens> toks) throws FilterParsingException {
+    public void createFilterExpressionFromTokens(List<FilterToken> toks) throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
         if (!toks.isEmpty()) {
             equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(), null);
@@ -242,14 +241,14 @@ public class MekSearchFilter {
         }
     }
 
-    private ExpNode createFTFromTokensRecursively(Iterator<FilterTokens> toks,
+    private ExpNode createFTFromTokensRecursively(Iterator<FilterToken> toks,
             ExpNode currNode) {
         // Base case. We're out of tokens, so we're done.
         if (!toks.hasNext()) {
             return currNode;
         }
 
-        FilterTokens filterTok = toks.next();
+        FilterToken filterTok = toks.next();
 
         // Parsing Parenthesis
         if (filterTok instanceof ParensFT) {
@@ -273,8 +272,8 @@ public class MekSearchFilter {
         }
 
         // Parsing an Operation
-        if (filterTok instanceof OperationFT) {
-            OperationFT ft = (OperationFT) filterTok;
+        if (filterTok instanceof OperatorFT) {
+            OperatorFT ft = (OperatorFT) filterTok;
             ExpNode newNode = new ExpNode();
             // If currNode is null, we came from a right paren
             if (currNode == null) {
@@ -317,11 +316,11 @@ public class MekSearchFilter {
         }
 
         // Parsing an Operand
-        if (filterTok instanceof EquipmentFT) {
+        if (filterTok instanceof EquipmentTypeFT) {
             if (currNode == null) {
                 currNode = new ExpNode();
             }
-            EquipmentFT ft = (EquipmentFT) filterTok;
+            EquipmentTypeFT ft = (EquipmentTypeFT) filterTok;
             ExpNode newChild = new ExpNode(ft.internalName, ft.qty);
             currNode.children.add(newChild);
             return createFTFromTokensRecursively(toks, currNode);

@@ -24,7 +24,6 @@ import megamek.common.equipment.ArmorType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -76,25 +75,25 @@ public class MiscSearchTab extends JPanel {
     JTextField tStartBV = new JTextField(4);
     JTextField tEndBV = new JTextField(4);
     JLabel lblCockpitType = new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType"));
-    JList<TriStateItem> listCockpitType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listCockpitType = new JList<>(new DefaultListModel<>());
     JScrollPane spCockpitType = new JScrollPane(listCockpitType);
     JLabel lblArmorType = new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType"));
-    JList<TriStateItem> listArmorType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listArmorType = new JList<>(new DefaultListModel<>());
     JScrollPane spArmorType = new JScrollPane(listArmorType);
     JLabel lblInternalsType = new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType"));
-    JList<TriStateItem> listInternalsType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listInternalsType = new JList<>(new DefaultListModel<>());
     JScrollPane spInternalsType = new JScrollPane(listInternalsType);
     JLabel lblEngineType = new JLabel(Messages.getString("MekSelectorDialog.Search.Engine"));
-    JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<>());
     JScrollPane spEngineType = new JScrollPane(listEngineType);
     JLabel lblGyroType = new JLabel(Messages.getString("MekSelectorDialog.Search.Gyro"));
-    JList<TriStateItem> listGyroType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listGyroType = new JList<>(new DefaultListModel<>());
     JScrollPane spGyroType = new JScrollPane(listGyroType);
     JLabel lblTechLevel = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
-    JList<TriStateItem> listTechLevel = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listTechLevel = new JList<>(new DefaultListModel<>());
     JScrollPane spTechLevel = new JScrollPane(listTechLevel);
     JLabel lblTechBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechBase"));
-    JList<TriStateItem> listTechBase = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listTechBase = new JList<>(new DefaultListModel<>());
     JScrollPane spTechBase = new JScrollPane(listTechBase);
 
     private JPanel createBaseAttributes() {
@@ -267,7 +266,7 @@ public class MiscSearchTab extends JPanel {
         gyroPanel.add(spGyroType, BorderLayout.CENTER);
         baseComboBoxesPanel.add(gyroPanel, c);
 
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         JPanel armorTypePanel = new JPanel(new BorderLayout());
         armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
         armorTypePanel.add(spArmorType, BorderLayout.CENTER);
@@ -282,7 +281,7 @@ public class MiscSearchTab extends JPanel {
         internalsPanel.add(spInternalsType, BorderLayout.CENTER);
         baseComboBoxesPanel.add(internalsPanel, c);
 
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         JPanel techLevelPanel = new JPanel(new BorderLayout());
         techLevelPanel.add(lblTechLevel, BorderLayout.NORTH);
         techLevelPanel.add(spTechLevel, BorderLayout.CENTER);
@@ -296,8 +295,8 @@ public class MiscSearchTab extends JPanel {
         return baseComboBoxesPanel;
     }
 
-    MiscSearchTab(ActionListener listener) {
-        btnBaseClear.addActionListener(listener);
+    MiscSearchTab() {
+        btnBaseClear.addActionListener(e -> clear());
 
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
@@ -310,12 +309,12 @@ public class MiscSearchTab extends JPanel {
         c.gridx = 0; c.gridy = 0;
 
         add(createBaseAttributes(), c);
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         add(createBaseComboBoxes(), c);
 
         c.weighty = 1;
         JPanel clearPanel = new JPanel();
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         clearPanel.add(btnBaseClear, c);
         add(clearPanel, c);
     }
@@ -379,5 +378,53 @@ public class MiscSearchTab extends JPanel {
 
         list.setModel(m);
         list.repaint();
+    }
+
+    void clear() {
+        tStartWalk.setText("");
+        tEndWalk.setText("");
+        tStartJump.setText("");
+        tEndJump.setText("");
+        cArmor.setSelectedIndex(0);
+        cOfficial.setSelectedIndex(0);
+        cCanon.setSelectedIndex(0);
+        cPatchwork.setSelectedIndex(0);
+        cInvalid.setSelectedIndex(0);
+        cFailedToLoadEquipment.setSelectedIndex(0);
+        cClanEngine.setSelectedIndex(0);
+        tStartTankTurrets.setText("");
+        tEndTankTurrets.setText("");
+        tStartLowerArms.setText("");
+        tEndLowerArms.setText("");
+        tStartHands.setText("");
+        tEndHands.setText("");
+        tStartYear.setText("");
+        tEndYear.setText("");
+        tStartTons.setText("");
+        tEndTons.setText("");
+        tStartBV.setText("");
+        tEndBV.setText("");
+        tSource.setText("");
+        tMULId.setText("");
+
+        clearTriStateItem(listArmorType);
+        clearTriStateItem(listCockpitType);
+        clearTriStateItem(listEngineType);
+        clearTriStateItem(listGyroType);
+        clearTriStateItem(listInternalsType);
+        clearTriStateItem(listTechLevel);
+        clearTriStateItem(listTechBase);
+    }
+
+    void clearTriStateItem(JList<TriStateItem> l) {
+        ListModel<TriStateItem> m = l.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            ms.state = "\u2610";
+        }
+
+        l.setModel(m);
+        l.repaint();
     }
 }

@@ -7,10 +7,10 @@ import megamek.common.MekSearchFilter;
  *
  * @author Arlith
  */
-public class OperationFT extends FilterTokens {
+public abstract class OperatorFT implements FilterToken {
     public MekSearchFilter.BoolOp op;
 
-    public OperationFT(MekSearchFilter.BoolOp o) {
+    protected OperatorFT(MekSearchFilter.BoolOp o) {
         op = o;
     }
 

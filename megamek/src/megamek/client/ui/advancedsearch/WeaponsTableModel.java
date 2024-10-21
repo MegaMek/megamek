@@ -22,8 +22,9 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * A table model for displaying weapons
@@ -45,7 +46,7 @@ public class WeaponsTableModel extends AbstractTableModel {
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
     private int[] qty;
 
-    private Vector<WeaponType> weapons = new Vector<>();
+    private List<WeaponType> weapons = new ArrayList<>();
 
     public WeaponsTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -98,8 +99,7 @@ public class WeaponsTableModel extends AbstractTableModel {
         return col == COL_QTY;
     }
 
-    // fill table with values
-    public void setData(Vector<WeaponType> wps) {
+    public void setData(List<WeaponType> wps) {
         weapons = wps;
         qty = new int[wps.size()];
         Arrays.fill(qty, 1);
@@ -107,7 +107,7 @@ public class WeaponsTableModel extends AbstractTableModel {
     }
 
     public WeaponType getWeaponTypeAt(int row) {
-        return weapons.elementAt(row);
+        return weapons.get(row);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class WeaponsTableModel extends AbstractTableModel {
         if (row >= weapons.size()) {
             return null;
         }
-        WeaponType wp = weapons.elementAt(row);
+        WeaponType wp = weapons.get(row);
         return switch (col) {
             case COL_QTY -> qty[row] + "";
             case COL_NAME -> wp.getName();

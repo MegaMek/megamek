@@ -1,6 +1,6 @@
 package megamek.client.ui.advancedsearch;
 
-public class WeaponClassFT extends FilterTokens {
+public class WeaponClassFT extends EquipmentFilterToken {
     public WeaponClass weaponClass;
     public int qty;
 

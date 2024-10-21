@@ -22,7 +22,6 @@ import megamek.client.ui.Messages;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 class TransportsSearchTab extends JPanel {
 
@@ -133,8 +132,8 @@ class TransportsSearchTab extends JPanel {
     JTextField tStartNavalRepairFacilities = new JTextField(4);
     JTextField tEndNavalRepairFacilities = new JTextField(4);
 
-    TransportsSearchTab(ActionListener listener) {
-        btnTransportsClear.addActionListener(listener);
+    TransportsSearchTab() {
+        btnTransportsClear.addActionListener(e -> clear());
 
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
@@ -339,7 +338,7 @@ class TransportsSearchTab extends JPanel {
         add(blankPanel, c);
     }
 
-    void clearTransports() {
+    void clear() {
         tStartTroopSpace.setText("");
         tEndTroopSpace.setText("");
         tStartASFBays.setText("");

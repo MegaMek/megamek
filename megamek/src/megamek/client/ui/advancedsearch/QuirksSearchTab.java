@@ -23,7 +23,6 @@ import megamek.common.options.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -40,18 +39,18 @@ class QuirksSearchTab extends JPanel {
     JLabel lblQuirkExclude = new JLabel("\u2612");
     JComboBox<String> cQuirkExclude = new JComboBox<>();
     JLabel lblQuirkType = new JLabel(Messages.getString("MekSelectorDialog.Search.Quirk"));
-    JList<TriStateItem> listQuirkType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listQuirkType = new JList<>(new DefaultListModel<>());
     JScrollPane spQuirkType = new JScrollPane(listQuirkType);
     JLabel lblWeaponQuirkInclude = new JLabel("\u2611");
     JComboBox<String> cWeaponQuirkInclue = new JComboBox<>();
     JLabel lblWeaponQuirkExclude = new JLabel("\u2612");
     JComboBox<String> cWeaponQuirkExclude = new JComboBox<>();
     JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponQuirk"));
-    JList<TriStateItem> listWeaponQuirkType = new JList<>(new DefaultListModel<TriStateItem>());
+    JList<TriStateItem> listWeaponQuirkType = new JList<>(new DefaultListModel<>());
     JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
 
-    QuirksSearchTab(ActionListener listener) {
-        btnQuirksClear.addActionListener(listener);
+    QuirksSearchTab() {
+        btnQuirksClear.addActionListener(e -> clear());
 
         loadAndOr(cQuirkInclue, 0);
         loadAndOr(cQuirkExclude, 1);
@@ -70,7 +69,7 @@ class QuirksSearchTab extends JPanel {
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(20, 10, 0, 0);
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         JPanel quirkPanel = new JPanel(new BorderLayout());
         JPanel quirkIEPanel = new JPanel(new FlowLayout());
         quirkIEPanel.add(lblQuirkType);
@@ -96,7 +95,7 @@ class QuirksSearchTab extends JPanel {
         add(weaponQuirkPanel, c);
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
-        c.gridx = 0; c.gridy++;;
+        c.gridx = 0; c.gridy++;
         blankPanel.add(btnQuirksClear, c);
         add(blankPanel, c);
     }
@@ -166,5 +165,27 @@ class QuirksSearchTab extends JPanel {
 
         list.setModel(m);
         list.repaint();
+    }
+
+    void clear() {
+        cQuirkInclue.setSelectedIndex(0);
+        cQuirkExclude.setSelectedIndex(1);
+        clearTriStateItem(listQuirkType);
+
+        cWeaponQuirkInclue.setSelectedIndex(0);
+        cWeaponQuirkExclude.setSelectedIndex(1);
+        clearTriStateItem(listWeaponQuirkType);
+    }
+
+    void clearTriStateItem(JList<TriStateItem> l) {
+        ListModel<TriStateItem> m = l.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            ms.state = "\u2610";
+        }
+
+        l.setModel(m);
+        l.repaint();
     }
 }

@@ -20,8 +20,6 @@
 package megamek.client.ui.advancedsearch;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.*;
@@ -37,7 +35,7 @@ import megamek.common.*;
  * @author Jay Lawson
  * @author Simon (Juliez)
  */
-public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener {
+public class TWAdvancedSearchPanel extends JTabbedPane {
 
     public MekSearchFilter mekFilter = new MekSearchFilter();
 
@@ -57,11 +55,11 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
     public TWAdvancedSearchPanel(int year) {
         gameYear = year;
 
-        basePanel = new MiscSearchTab(this);
+        basePanel = new MiscSearchTab();
         weaponEqPanel = new WeaponSearchTab(this);
         unitTypePanel = new UnitTypeSearchTab();
-        quirkPanel = new QuirksSearchTab(this);
-        transportsPanel = new TransportsSearchTab(this);
+        quirkPanel = new QuirksSearchTab();
+        transportsPanel = new TransportsSearchTab();
 
         String msg_base = Messages.getString("MekSelectorDialog.Search.Base");
         String msg_weaponEq = Messages.getString("MekSelectorDialog.Search.WeaponEq");
@@ -71,7 +69,8 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
 
         addTab(msg_unitType, new StandardScrollPane(unitTypePanel));
         addTab(msg_base, new StandardScrollPane(basePanel));
-        addTab(msg_weaponEq, new StandardScrollPane(weaponEqPanel));
+        // The weapon panel must manage its own scrollpane!
+        addTab(msg_weaponEq, weaponEqPanel);
         addTab(msg_transports, new StandardScrollPane(transportsPanel));
         addTab(msg_quirkType, new StandardScrollPane(quirkPanel));
     }
@@ -88,14 +87,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
         MekSearchFilter currFilter = mekFilter;
         mekFilter = new MekSearchFilter(currFilter);
         weaponEqPanel.txtWEEqExp.setText(mekFilter.getEquipmentExpression());
-        if ((weaponEqPanel.filterToks == null) || weaponEqPanel.filterToks.isEmpty()
-            || (weaponEqPanel.filterToks.get(weaponEqPanel.filterToks.size() - 1) instanceof OperationFT)) {
-            weaponEqPanel.disableOperationButtons();
-            weaponEqPanel.enableSelectionButtons();
-        } else {
-            weaponEqPanel.enableOperationButtons();
-            weaponEqPanel.disableSelectionButtons();
-        }
+        weaponEqPanel.adaptTokenButtons();
         setVisible(true);
         if (isCanceled) {
             mekFilter = currFilter;
@@ -108,7 +100,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
     public void prepareFilter() {
         try {
             mekFilter = new MekSearchFilter(mekFilter);
-            mekFilter.createFilterExpressionFromTokens(weaponEqPanel.filterToks);
+            mekFilter.createFilterExpressionFromTokens(weaponEqPanel.filterTokens);
             updateMekSearchFilter();
         } catch (MekSearchFilter.FilterParsingException e) {
             JOptionPane.showMessageDialog(this,
@@ -118,190 +110,13 @@ public class TWAdvancedSearchPanel extends JTabbedPane implements ActionListener
         }
     }
 
-    /**
-     *  Listener for button presses.
-     */
-    @Override
-    public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(weaponEqPanel.cboUnitType)
-            || ev.getSource().equals(weaponEqPanel.cboTechLevel)
-            || ev.getSource().equals(weaponEqPanel.cboTechClass)) {
-            weaponEqPanel.filterTables();
-        } else if (ev.getSource().equals(weaponEqPanel.btnWEAdd)) {
-            int row = weaponEqPanel.tblEquipment.getSelectedRow();
-            if (row >= 0) {
-                String internalName = (String)
-                    weaponEqPanel.tblEquipment.getModel().getValueAt(
-                        weaponEqPanel.tblEquipment.convertRowIndexToModel(row),
-                        EquipmentTableModel.COL_INTERNAL_NAME);
-                String fullName = (String) weaponEqPanel.tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
-                int qty = Integer.parseInt((String)
-                    weaponEqPanel.tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
-                weaponEqPanel.filterToks.add(new EquipmentFT(internalName, fullName, qty));
-                weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-                weaponEqPanel.btnWEBack.setEnabled(true);
-                weaponEqPanel.enableOperationButtons();
-                weaponEqPanel.disableSelectionButtons();
-            }
-            row = weaponEqPanel.tblWeapons.getSelectedRow();
-            if (row >= 0) {
-                String internalName = (String)
-                    weaponEqPanel.tblWeapons.getModel().getValueAt(
-                        weaponEqPanel.tblWeapons.convertRowIndexToModel(row),
-                        WeaponsTableModel.COL_INTERNAL_NAME);
-                String fullName = (String) weaponEqPanel.tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
-                int qty = Integer.parseInt((String)
-                    weaponEqPanel.tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
-                weaponEqPanel.filterToks.add(new EquipmentFT(internalName, fullName, qty));
-                weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-                weaponEqPanel.btnWEBack.setEnabled(true);
-                weaponEqPanel.enableOperationButtons();
-                weaponEqPanel.disableSelectionButtons();
-            }
-            row = weaponEqPanel.tblWeaponType.getSelectedRow();
-            if (row >= 0) {
-                int qty = Integer.parseInt((String)weaponEqPanel.tblWeaponType.getValueAt(row, WeaponClassTableModel.COL_QTY));
-                weaponEqPanel.filterToks.add(new WeaponClassFT((WeaponClass)weaponEqPanel.tblWeaponType.getModel().getValueAt(weaponEqPanel.tblWeaponType.convertRowIndexToModel(row), WeaponClassTableModel.COL_VAL), qty));
-                weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-                weaponEqPanel.btnWEBack.setEnabled(true);
-                weaponEqPanel.enableOperationButtons();
-                weaponEqPanel.disableSelectionButtons();
-            }
-        } else if (ev.getSource().equals(weaponEqPanel.btnWELeftParen)) {
-            weaponEqPanel.filterToks.add(new ParensFT("("));
-            weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-            weaponEqPanel.btnWEBack.setEnabled(true);
-            weaponEqPanel.disableOperationButtons();
-            weaponEqPanel.enableSelectionButtons();
-            weaponEqPanel.btnWELeftParen.setEnabled(false);
-            weaponEqPanel.btnWERightParen.setEnabled(false);
-        } else if (ev.getSource().equals(weaponEqPanel.btnWERightParen)) {
-            weaponEqPanel.filterToks.add(new ParensFT(")"));
-            weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-            weaponEqPanel.btnWEBack.setEnabled(true);
-            weaponEqPanel.enableOperationButtons();
-            weaponEqPanel.disableSelectionButtons();
-            weaponEqPanel.btnWELeftParen.setEnabled(false);
-            weaponEqPanel.btnWERightParen.setEnabled(false);
-        } else if (ev.getSource().equals(weaponEqPanel.btnWEAnd)) {
-            weaponEqPanel.filterToks.add(new OperationFT(MekSearchFilter.BoolOp.AND));
-            weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-            weaponEqPanel.btnWEBack.setEnabled(true);
-            weaponEqPanel.disableOperationButtons();
-            weaponEqPanel.enableSelectionButtons();
-        } else if (ev.getSource().equals(weaponEqPanel.btnWEOr)) {
-            weaponEqPanel.filterToks.add(new OperationFT(MekSearchFilter.BoolOp.OR));
-            weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-            weaponEqPanel.btnWEBack.setEnabled(true);
-            weaponEqPanel.disableOperationButtons();
-            weaponEqPanel.enableSelectionButtons();
-        } else if (ev.getSource().equals(weaponEqPanel.btnWEBack)) {
-            if (!weaponEqPanel.filterToks.isEmpty()) {
-                weaponEqPanel.filterToks.remove(weaponEqPanel.filterToks.size() - 1);
-                weaponEqPanel.txtWEEqExp.setText(weaponEqPanel.filterExpressionString());
-                if (weaponEqPanel.filterToks.isEmpty()) {
-                    weaponEqPanel.btnWEBack.setEnabled(false);
-                }
-
-                if ((weaponEqPanel.filterToks.isEmpty()) || (weaponEqPanel.filterToks.get(weaponEqPanel.filterToks.size() - 1) instanceof OperationFT)) {
-                    weaponEqPanel.disableOperationButtons();
-                    weaponEqPanel.enableSelectionButtons();
-                } else {
-                    weaponEqPanel.enableOperationButtons();
-                    weaponEqPanel.disableSelectionButtons();
-                }
-            }
-        } else if (ev.getSource().equals(weaponEqPanel.btnWEClear)) {
-            weaponEqPanel.clearWeaponsEquipment();
-        } else if (ev.getSource().equals(basePanel.btnBaseClear)) {
-            clearBase();
-        } else if (ev.getSource().equals(transportsPanel.btnTransportsClear)) {
-            transportsPanel.clearTransports();
-        } else if (ev.getSource().equals(quirkPanel.btnQuirksClear)) {
-            clearQuirks();
-        }
-    }
-
-    private void toggleText(JButton b) {
-        if (b.getText().equals("\u2610")) {
-            b.setText("\u2611");
-        } else if (b.getText().equals("\u2611")) {
-            b.setText("\u2612");
-        } else if (b.getText().equals("\u2612")) {
-            b.setText("\u2610");
-        } else {
-            b.setText("\u2610");
-        }
-    }
-
-    private void clearTriStateItem(JList<TriStateItem> l) {
-        ListModel<TriStateItem> m = l.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            ms.state = "\u2610";
-        }
-
-        l.setModel(m);
-        l.repaint();
-    }
-
-    private void clearBase() {
-        basePanel.tStartWalk.setText("");
-        basePanel.tEndWalk.setText("");
-        basePanel.tStartJump.setText("");
-        basePanel.tEndJump.setText("");
-        basePanel.cArmor.setSelectedIndex(0);
-        basePanel.cOfficial.setSelectedIndex(0);
-        basePanel.cCanon.setSelectedIndex(0);
-        basePanel.cPatchwork.setSelectedIndex(0);
-        basePanel.cInvalid.setSelectedIndex(0);
-        basePanel.cFailedToLoadEquipment.setSelectedIndex(0);
-        basePanel.cClanEngine.setSelectedIndex(0);
-        basePanel.tStartTankTurrets.setText("");
-        basePanel.tEndTankTurrets.setText("");
-        basePanel.tStartLowerArms.setText("");
-        basePanel.tEndLowerArms.setText("");
-        basePanel.tStartHands.setText("");
-        basePanel.tEndHands.setText("");
-        basePanel.tStartYear.setText("");
-        basePanel.tEndYear.setText("");
-        basePanel.tStartTons.setText("");
-        basePanel.tEndTons.setText("");
-        basePanel.tStartBV.setText("");
-        basePanel.tEndBV.setText("");
-        basePanel.tSource.setText("");
-        basePanel.tMULId.setText("");
-
-        clearTriStateItem(basePanel.listArmorType);
-        clearTriStateItem(basePanel.listCockpitType);
-        clearTriStateItem(basePanel.listEngineType);
-        clearTriStateItem(basePanel.listGyroType);
-        clearTriStateItem(basePanel.listInternalsType);
-        clearTriStateItem(basePanel.listTechLevel);
-        clearTriStateItem(basePanel.listTechBase);
-    }
-
-    private void clearQuirks() {
-        quirkPanel.cQuirkInclue.setSelectedIndex(0);
-        quirkPanel.cQuirkExclude.setSelectedIndex(1);
-        clearTriStateItem(quirkPanel.listQuirkType);
-
-        quirkPanel.cWeaponQuirkInclue.setSelectedIndex(0);
-        quirkPanel.cWeaponQuirkExclude.setSelectedIndex(1);
-        clearTriStateItem(quirkPanel.listWeaponQuirkType);
-    }
-
-    /**
-     *  Clear the filter.
-     */
     public void clearValues() {
         mekFilter = null;
         unitTypePanel.clear();
-        clearBase();
-        transportsPanel.clearTransports();
-        clearQuirks();
-        weaponEqPanel.clearWeaponsEquipment();
+        basePanel.clear();
+        transportsPanel.clear();
+        quirkPanel.clear();
+        weaponEqPanel.clear();
     }
 
     public MekSearchFilter getMekSearchFilter() {

@@ -22,11 +22,12 @@ import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
+import java.util.List;
 
 /**
- * A table model for displaying equipment
+ * A table model for the advanced search weapon tab's equipment list
  */
 public class EquipmentTableModel extends AbstractTableModel {
 
@@ -40,7 +41,7 @@ public class EquipmentTableModel extends AbstractTableModel {
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
     private int[] qty;
-    private Vector<EquipmentType> equipment = new Vector<>();
+    private List<EquipmentType> equipment = new ArrayList<>();
 
     public EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -57,38 +58,26 @@ public class EquipmentTableModel extends AbstractTableModel {
     }
 
     public int getPreferredWidth(int col) {
-        switch (col) {
-            case COL_QTY:
-                return 40;
-            case COL_NAME:
-                return 400;
-            case COL_IS_CLAN:
-                return 75;
-            case COL_COST:
-                return 175;
-            case COL_LEVEL:
-                return 100;
-            default:
-                return 0;
-        }
+        return switch (col) {
+            case COL_QTY -> 40;
+            case COL_NAME -> 400;
+            case COL_IS_CLAN -> 75;
+            case COL_COST -> 175;
+            case COL_LEVEL -> 100;
+            default -> 0;
+        };
     }
 
     @Override
     public String getColumnName(int column) {
-        switch (column) {
-            case COL_QTY:
-                return "Qty";
-            case COL_NAME:
-                return "Name";
-            case COL_IS_CLAN:
-                return "IS/Clan";
-            case COL_COST:
-                return "Cost";
-            case COL_LEVEL:
-                return "Lvl";
-            default:
-                return "?";
-        }
+        return switch (column) {
+            case COL_QTY -> "Qty";
+            case COL_NAME -> "Name";
+            case COL_IS_CLAN -> "IS/Clan";
+            case COL_COST -> "Cost";
+            case COL_LEVEL -> "Lvl";
+            default -> "?";
+        };
     }
 
     @Override
@@ -98,16 +87,10 @@ public class EquipmentTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                return true;
-            default:
-                return false;
-        }
+        return col == COL_QTY;
     }
 
-    // fill table with values
-    public void setData(Vector<EquipmentType> eq) {
+    public void setData(List<EquipmentType> eq) {
         equipment = eq;
         qty = new int[eq.size()];
         Arrays.fill(qty, 1);
@@ -115,7 +98,7 @@ public class EquipmentTableModel extends AbstractTableModel {
     }
 
     public EquipmentType getEquipmentTypeAt(int row) {
-        return equipment.elementAt(row);
+        return equipment.get(row);
     }
 
     @Override
@@ -123,36 +106,24 @@ public class EquipmentTableModel extends AbstractTableModel {
         if (row >= equipment.size()) {
             return null;
         }
-        EquipmentType eq = equipment.elementAt(row);
-        switch (col) {
-            case COL_QTY:
-                return qty[row] + "";
-            case COL_NAME:
-                return eq.getName();
-            case COL_IS_CLAN:
-                return TechConstants.getTechName(eq.getTechLevel(twAdvancedSearchPanel.gameYear));
-            case COL_COST:
-                return eq.getRawCost();
-            case COL_LEVEL:
-                return TechConstants.getSimpleLevelName(TechConstants
-                    .convertFromNormalToSimple(eq
-                        .getTechLevel(twAdvancedSearchPanel.gameYear)));
-            case COL_INTERNAL_NAME:
-                return eq.getInternalName();
-            default:
-                return "?";
-        }
+        EquipmentType eq = equipment.get(row);
+        return switch (col) {
+            case COL_QTY -> qty[row] + "";
+            case COL_NAME -> eq.getName();
+            case COL_IS_CLAN -> TechConstants.getTechName(eq.getTechLevel(twAdvancedSearchPanel.gameYear));
+            case COL_COST -> eq.getRawCost();
+            case COL_LEVEL -> TechConstants.getSimpleLevelName(
+                TechConstants.convertFromNormalToSimple(eq.getTechLevel(twAdvancedSearchPanel.gameYear)));
+            case COL_INTERNAL_NAME -> eq.getInternalName();
+            default -> "?";
+        };
     }
 
     @Override
     public void setValueAt(Object value, int row, int col) {
-        switch (col) {
-            case COL_QTY:
-                qty[row] = Integer.parseInt((String) value);
-                fireTableCellUpdated(row, col);
-                break;
-            default:
-                break;
+        if (col == COL_QTY) {
+            qty[row] = Integer.parseInt((String) value);
+            fireTableCellUpdated(row, col);
         }
     }
 }

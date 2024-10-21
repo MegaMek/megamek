@@ -13694,8 +13694,10 @@ public class AmmoType extends EquipmentType {
     }
 
     public static boolean canClearMinefield(AmmoType at) {
-        // first the normal munition types
         if (at != null) {
+            if (at.getMunitionType().contains(Munitions.M_MINE_CLEARANCE)) {
+                return true;
+            }
             // LRM-20's, RL-20's, and MRM 20, 30, and 40 can clear minefields
             if (((at.getAmmoType() == T_LRM) || (at.getAmmoType() == T_LRM_IMP)
                     || (at.getAmmoType() == T_LRM_STREAK)

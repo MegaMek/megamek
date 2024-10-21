@@ -11,7 +11,7 @@
 #   AtBC tables, please post the updated file on the forum thread.          #
 #                                                                           #
 # Notes on adaptation:                                                      #
-# * Primitive Mech table alone, for convenience                             #
+# * Primitive Mek table alone, for convenience                             #
 # * May in the future want to expand this table to include                  #
 #       a wider variety of mechs and/or split table by weight class.        #
 #############################################################################

@@ -3873,7 +3873,7 @@
 			</model>
 		</chassis>
 		<chassis name='Koshi (Mist Lynx)' unitType='Mek' omni='Clan'>
-			<availability>CIH:8,CLAN:7,CCO:5,BAN:7,CSA:5,CW:6CSJ:9,CJF:5,CB:8</availability>
+			<availability>CIH:8,CLAN:7,CCO:5,BAN:7,CSA:5,CW:6,CSJ:9,CJF:5,CB:8</availability>
 			<model name='A'>
 				<roles>recon,spotter</roles>
 				<availability>CIH:6,CDS:7,CW:6,CSV:6,General:5,CGB:7</availability>

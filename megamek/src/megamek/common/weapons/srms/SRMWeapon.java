@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,10 +38,13 @@ import megamek.common.weapons.SRMTandemChargeHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Sebastian Brocks
  */
 public abstract class SRMWeapon extends MissileWeapon {
+    @Serial
     private static final long serialVersionUID = 3636219178276978444L;
 
     public SRMWeapon() {
@@ -61,36 +64,8 @@ public abstract class SRMWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-            TWGameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
-            return new SRMFragHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD)) {
-            return new SRMAXHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
-            return new SRMAntiTSMHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
-            return new SRMInfernoHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-            return new SRMDeadFireHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)) {
-            return new SRMTandemChargeHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
-            return new SRMSmokeWarheadHandler(toHit, waa, game, manager);
-        }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
-            return new MissileMineClearanceHandler(toHit, waa, game, manager);
-        }
-        return new SRMHandler(toHit, waa, game, manager);
-
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        return getSRMHandler(toHit, waa, game, manager);
     }
 
     @Override
@@ -119,5 +94,34 @@ public abstract class SRMWeapon extends MissileWeapon {
             }
             return "SRM " + oneShotTag + rackSize;
         }
+    }
+
+    public static AttackHandler getSRMHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
+            return new SRMFragHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD)) {
+            return new SRMAXHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
+            return new SRMAntiTSMHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
+            return new SRMInfernoHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            return new SRMDeadFireHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)) {
+            return new SRMTandemChargeHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+            return new SRMSmokeWarheadHandler(toHit, waa, game, manager);
+        }
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
+            return new MissileMineClearanceHandler(toHit, waa, game, manager);
+        }
+        return new SRMHandler(toHit, waa, game, manager);
     }
 }

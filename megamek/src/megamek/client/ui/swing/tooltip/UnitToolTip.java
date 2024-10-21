@@ -1143,9 +1143,7 @@ public final class UnitToolTip {
                         if (isDestroyed) {
                             col2 = UIUtil.tag("S", "",  col2);
                         }
-                        col2 += "<BR>";
                     }
-                    col2 = col2.substring(1, col2.length() - 4);
                 }
 
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));
@@ -2376,7 +2374,7 @@ public final class UnitToolTip {
             msg_c3 = Messages.getString("BoardView1.Tooltip.C3M") + " ";
         }
 
-        sC3UnitName += UIUtil.tag("I", "<span class=small>",  msg_c3);
+        sC3UnitName += UIUtil.tag("I", "",  msg_c3);
         String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
         sC3UnitName = UIUtil.tag("FONT", attr,  sC3UnitName);
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
@@ -2384,7 +2382,7 @@ public final class UnitToolTip {
         result += c3member.getShortNameRaw();
 
         String msg_thisunit = " (" + Messages.getString("BoardView1.Tooltip.ThisUnit") + ")";
-        tmp += UIUtil.tag("I", "<span class=small>",  msg_thisunit);
+        tmp += UIUtil.tag("I", "",  msg_thisunit);
         String sC3Member = c3member.equals(entity) ? tmp : "";
         attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
         sC3Member = UIUtil.tag("FONT", attr,  sC3Member);

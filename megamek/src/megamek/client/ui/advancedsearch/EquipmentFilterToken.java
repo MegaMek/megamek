@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.ui.advancedsearch;
 
-public class EquipmentFilterToken implements FilterToken {
-
+/**
+ * This is a superclass for filter tokens that are actual equipment, not operators or parentheses
+ */
+public abstract class EquipmentFilterToken implements FilterToken {
 
 }

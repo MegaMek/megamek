@@ -27,6 +27,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -159,6 +160,14 @@ public class WeaponSearchTab extends JPanel implements KeyListener, DocumentList
         tblWeapons.addKeyListener(this);
         tblWeapons.addFocusListener(this);
 
+        var tableDataRenderer = new EquipmentDataRenderer();
+        for (int column : List.of(0, 2, 3, 4, 5, 6)) {
+            tblWeapons.getColumnModel().getColumn(column).setCellRenderer(tableDataRenderer);
+        }
+
+        var techBaseRenderer = new TechBaseRenderer();
+        tblWeapons.getColumnModel().getColumn(7).setCellRenderer(techBaseRenderer);
+
         for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
         }
@@ -185,6 +194,11 @@ public class WeaponSearchTab extends JPanel implements KeyListener, DocumentList
         for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
             tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
         }
+
+        tblEquipment.getColumnModel().getColumn(0).setCellRenderer(tableDataRenderer);
+        var costRenderer = new EquipmentCostRenderer();
+        tblEquipment.getColumnModel().getColumn(2).setCellRenderer(costRenderer);
+        tblEquipment.getColumnModel().getColumn(3).setCellRenderer(techBaseRenderer);
 
         scrTableEquipment.setViewportView(tblEquipment);
 

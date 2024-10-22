@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
@@ -19,22 +18,26 @@
  */
 package megamek.client.ui.advancedsearch;
 
-public class WeaponClassFT extends EquipmentFilterToken {
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
-    public WeaponClass weaponClass;
-    public int qty;
+public class EquipmentCostRenderer extends DefaultTableCellRenderer {
 
-    public WeaponClassFT(WeaponClass in_class, int in_qty) {
-        weaponClass = in_class;
-        qty = in_qty;
+    public EquipmentCostRenderer() {
+        super();
+        setHorizontalAlignment(SwingConstants.RIGHT);
     }
 
     @Override
-    public String toString() {
-        if (qty == 1) {
-            return qty + " " + weaponClass.toString();
-        } else {
-            return qty + " " + weaponClass.toString() + "s";
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value instanceof Double number) {
+            if (number < 0) {
+                value = "variable";
+            } else {
+                value = "%,d".formatted(Math.round(number));
+            }
         }
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }

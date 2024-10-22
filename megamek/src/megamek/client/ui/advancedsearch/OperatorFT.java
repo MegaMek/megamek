@@ -8,6 +8,7 @@ import megamek.common.MekSearchFilter;
  * @author Arlith
  */
 public abstract class OperatorFT implements FilterToken {
+
     public MekSearchFilter.BoolOp op;
 
     protected OperatorFT(MekSearchFilter.BoolOp o) {
@@ -16,12 +17,10 @@ public abstract class OperatorFT implements FilterToken {
 
     @Override
     public String toString() {
-        if (op == MekSearchFilter.BoolOp.AND) {
-            return "And";
-        } else if (op == MekSearchFilter.BoolOp.OR) {
-            return "Or";
-        } else {
-            return "";
-        }
+        return switch (op) {
+            case AND -> "and";
+            case OR -> "or";
+            default -> "";
+        };
     }
 }

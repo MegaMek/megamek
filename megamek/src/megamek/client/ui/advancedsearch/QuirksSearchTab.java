@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 class QuirksSearchTab extends JPanel {
 
-    // Quirks
     JButton btnQuirksClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
     JLabel lblQuirkInclude = new JLabel("\u2611");
     JComboBox<String> cQuirkInclue = new JComboBox<>();

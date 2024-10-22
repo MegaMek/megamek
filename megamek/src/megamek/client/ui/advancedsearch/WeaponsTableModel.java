@@ -45,8 +45,7 @@ public class WeaponsTableModel extends AbstractTableModel {
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
     private int[] qty;
-
-    private List<WeaponType> weapons = new ArrayList<>();
+    private final List<WeaponType> weapons = new ArrayList<>();
 
     public WeaponsTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -100,7 +99,8 @@ public class WeaponsTableModel extends AbstractTableModel {
     }
 
     public void setData(List<WeaponType> wps) {
-        weapons = wps;
+        weapons.clear();
+        weapons.addAll(wps);
         qty = new int[wps.size()];
         Arrays.fill(qty, 1);
         fireTableDataChanged();

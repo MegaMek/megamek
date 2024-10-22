@@ -25,4 +25,9 @@ public class AndFilterToken extends OperatorFT {
     public AndFilterToken() {
         super(MekSearchFilter.BoolOp.AND);
     }
+
+    @Override
+    public String toString() {
+        return "and";
+    }
 }

@@ -25,4 +25,9 @@ public class OrFilterToken extends OperatorFT {
     public OrFilterToken() {
         super(MekSearchFilter.BoolOp.OR);
     }
+
+    @Override
+    public String toString() {
+        return "or";
+    }
 }

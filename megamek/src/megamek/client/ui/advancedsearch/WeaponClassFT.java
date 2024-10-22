@@ -19,6 +19,9 @@
  */
 package megamek.client.ui.advancedsearch;
 
+/**
+ * Represents a filter token for a weapon class.
+ */
 public class WeaponClassFT extends EquipmentFilterToken {
 
     public WeaponClass weaponClass;

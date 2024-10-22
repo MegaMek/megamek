@@ -30,13 +30,12 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 /**
- * This is a (new) dialog for advanced unit filtering, mostly for the unit selector. It contains the old
- * TW advanced search in one tab and the new AlphaStrike search in another tab. Both searches can be used
- * simultaneously.
+ * This is the dialog for advanced unit filtering, mostly for the unit selector. It contains the TW advanced search in one tab and the
+ * AlphaStrike search in another tab. Both searches can be used simultaneously.
  */
 public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
-    final int year;
+    private final int year;
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
     private final JTabbedPane advancedSearchPane = new JTabbedPane();

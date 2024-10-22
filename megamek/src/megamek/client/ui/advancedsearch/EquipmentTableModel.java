@@ -41,7 +41,7 @@ public class EquipmentTableModel extends AbstractTableModel {
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
     private int[] qty;
-    private List<EquipmentType> equipment = new ArrayList<>();
+    private final List<EquipmentType> equipment = new ArrayList<>();
 
     public EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -91,7 +91,8 @@ public class EquipmentTableModel extends AbstractTableModel {
     }
 
     public void setData(List<EquipmentType> eq) {
-        equipment = eq;
+        equipment.clear();
+        equipment.addAll(eq);
         qty = new int[eq.size()];
         Arrays.fill(qty, 1);
         fireTableDataChanged();

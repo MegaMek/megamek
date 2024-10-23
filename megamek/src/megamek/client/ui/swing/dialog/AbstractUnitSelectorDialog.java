@@ -53,7 +53,7 @@ import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.MekFileParser;
-import megamek.common.MekSearchFilter;
+import megamek.client.ui.advancedsearch.MekSearchFilter;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
 import megamek.common.TechConstants;

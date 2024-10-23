@@ -72,7 +72,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.MekFileParser;
-import megamek.common.MekSearchFilter;
+import megamek.client.ui.advancedsearch.MekSearchFilter;
 import megamek.common.MekSummary;
 import megamek.common.Player;
 import megamek.common.TechConstants;

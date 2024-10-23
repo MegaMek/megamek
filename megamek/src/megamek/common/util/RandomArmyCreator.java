@@ -21,7 +21,7 @@ import java.util.List;
 
 import megamek.client.ui.advancedsearch.ASAdvancedSearchPanel;
 import megamek.common.Compute;
-import megamek.common.MekSearchFilter;
+import megamek.client.ui.advancedsearch.MekSearchFilter;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
 import megamek.common.TechConstants;

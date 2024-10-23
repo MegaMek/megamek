@@ -18,8 +18,6 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import megamek.common.MekSearchFilter;
-
 public class OrFilterToken extends OperatorFT {
 
     public OrFilterToken() {

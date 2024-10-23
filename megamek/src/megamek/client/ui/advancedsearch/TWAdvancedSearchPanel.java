@@ -26,7 +26,6 @@ import javax.swing.*;
 
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
 import megamek.client.ui.Messages;
-import megamek.common.*;
 
 /**
  * Panel that allows the user to create a unit filter.

@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2002, 2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2018, 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -17,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.client.ui.advancedsearch;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import megamek.client.ui.advancedsearch.*;
+import megamek.common.Entity;
+import megamek.common.MekSummary;
+import megamek.common.Messages;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 

@@ -18,8 +18,6 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import megamek.common.MekSearchFilter;
-
 /**
  * FilterTokens subclass that represents a boolean operation.
  *

@@ -64,6 +64,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6122: Added TotalGenericBattleValue Tag to MUL Export
 + PR #6123: Improved Word Wrapping to Handle Existing Line Breaks
 + Fix #6126: Fix issue with miss matched tag
++ Fix #6124: Use elevation of source hex when checking for leaving prohibited terrain
 
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)

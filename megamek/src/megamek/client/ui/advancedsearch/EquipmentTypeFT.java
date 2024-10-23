@@ -23,13 +23,13 @@ package megamek.client.ui.advancedsearch;
  *
  * @author Arlith
  */
-public class EquipmentTypeFT extends EquipmentFilterToken {
+class EquipmentTypeFT extends EquipmentFilterToken {
 
-    public String internalName;
-    public String fullName;
-    public int qty;
+    String internalName;
+    String fullName;
+    int qty;
 
-    public EquipmentTypeFT(String in, String fn, int q) {
+    EquipmentTypeFT(String in, String fn, int q) {
         internalName = in;
         fullName = fn;
         qty = q;

@@ -38,7 +38,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-public class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, FocusListener {
+class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, FocusListener {
 
     final List<FilterToken> filterTokens = new ArrayList<>();
 

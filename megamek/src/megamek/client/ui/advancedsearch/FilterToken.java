@@ -23,6 +23,6 @@ package megamek.client.ui.advancedsearch;
  *
  * @author Arlith
  */
-public interface FilterToken {
+interface FilterToken {
 
 }

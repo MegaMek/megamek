@@ -23,11 +23,11 @@ package megamek.client.ui.advancedsearch;
  *
  * @author Arlith
  */
-public abstract class ParensFT implements FilterToken {
+abstract class ParensFT implements FilterToken {
 
-    public String parens;
+    String parens;
 
-    public ParensFT(String p) {
+    ParensFT(String p) {
         parens = p;
     }
 

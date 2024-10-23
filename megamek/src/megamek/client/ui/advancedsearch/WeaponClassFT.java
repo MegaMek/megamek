@@ -22,12 +22,12 @@ package megamek.client.ui.advancedsearch;
 /**
  * Represents a filter token for a weapon class.
  */
-public class WeaponClassFT extends EquipmentFilterToken {
+class WeaponClassFT extends EquipmentFilterToken {
 
-    public WeaponClass weaponClass;
-    public int qty;
+    WeaponClass weaponClass;
+    int qty;
 
-    public WeaponClassFT(WeaponClass in_class, int in_qty) {
+    WeaponClassFT(WeaponClass in_class, int in_qty) {
         weaponClass = in_class;
         qty = in_qty;
     }

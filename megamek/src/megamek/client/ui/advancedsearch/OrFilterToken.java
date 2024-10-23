@@ -18,9 +18,9 @@
  */
 package megamek.client.ui.advancedsearch;
 
-public class OrFilterToken extends OperatorFT {
+class OrFilterToken extends OperatorFT {
 
-    public OrFilterToken() {
+    OrFilterToken() {
         super(MekSearchFilter.BoolOp.OR);
     }
 

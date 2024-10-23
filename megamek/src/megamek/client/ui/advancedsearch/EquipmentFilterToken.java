@@ -21,6 +21,6 @@ package megamek.client.ui.advancedsearch;
 /**
  * This is a superclass for filter tokens that are actual equipment, not operators or parentheses
  */
-public abstract class EquipmentFilterToken implements FilterToken {
+abstract class EquipmentFilterToken implements FilterToken {
 
 }

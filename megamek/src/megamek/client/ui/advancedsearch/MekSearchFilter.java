@@ -43,7 +43,7 @@ import megamek.logging.MMLogger;
 public class MekSearchFilter {
     private static final MMLogger logger = MMLogger.create(MekSearchFilter.class);
 
-    public enum BoolOp {
+    enum BoolOp {
         AND, OR, NOP
     }
 
@@ -163,6 +163,8 @@ public class MekSearchFilter {
     public List<Integer> armorTypeExclude = new ArrayList<>();
     public List<Integer> internalsType = new ArrayList<>();
     public List<Integer> internalsTypeExclude = new ArrayList<>();
+    public List<String> movemodes = new ArrayList<>();
+    public List<String> movemodeExclude = new ArrayList<>();
 
     public List<Integer> cockpitType = new ArrayList<>();
     public List<Integer> cockpitTypeExclude = new ArrayList<>();
@@ -724,6 +726,14 @@ public class MekSearchFilter {
         }
 
         if ((!f.techBaseExclude.isEmpty()) && (anyMatch(f.techBaseExclude, mek.getTechBase()))) {
+            return false;
+        }
+
+        if ((!f.movemodes.isEmpty()) && (!anyMatch(f.movemodes, mek.getMoveMode().toString()))) {
+            return false;
+        }
+
+        if ((!f.movemodeExclude.isEmpty()) && (anyMatch(f.movemodeExclude, mek.getMoveMode().name()))) {
             return false;
         }
 

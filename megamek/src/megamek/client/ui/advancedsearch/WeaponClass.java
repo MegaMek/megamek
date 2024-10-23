@@ -19,7 +19,7 @@
  */
 package megamek.client.ui.advancedsearch;
 
-public enum WeaponClass {
+enum WeaponClass {
     AUTOCANNON {
         public String toString() {
             return "Autocannon";

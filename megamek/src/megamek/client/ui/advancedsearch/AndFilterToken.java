@@ -18,9 +18,9 @@
  */
 package megamek.client.ui.advancedsearch;
 
-public class AndFilterToken extends OperatorFT {
+class AndFilterToken extends OperatorFT {
 
-    public AndFilterToken() {
+    AndFilterToken() {
         super(MekSearchFilter.BoolOp.AND);
     }
 

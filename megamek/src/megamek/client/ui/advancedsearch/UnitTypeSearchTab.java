@@ -29,7 +29,7 @@ import java.awt.*;
  * This class is the unit type search panel of the (TW) advanced search, offering selection of e.g. Quad, Tripod, Doomed in Vacuum
  * and other filters beyond the standard unit types.
  */
-public class UnitTypeSearchTab extends JPanel {
+class UnitTypeSearchTab extends JPanel {
 
     final JButton clearButton = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
 

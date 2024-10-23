@@ -191,6 +191,7 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         updateTriStateItem(mekFilter.gyroType, mekFilter.gyroTypeExclude, basePanel.listGyroType);
         updateTriStateItem(mekFilter.techLevel, mekFilter.techLevelExclude, basePanel.listTechLevel);
         updateTriStateItemString(mekFilter.techBase, mekFilter.techBaseExclude, basePanel.listTechBase);
+        updateTriStateItemString(mekFilter.movemodes, mekFilter.movemodeExclude, basePanel.listMoveMode);
     }
 
     private void updateTransports() {

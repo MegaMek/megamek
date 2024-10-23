@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * A table model for the advanced search weapon tab's equipment list
  */
-public class EquipmentTableModel extends AbstractTableModel {
+class EquipmentTableModel extends AbstractTableModel {
 
     static final int COL_QTY = 0;
     static final int COL_NAME = 1;
@@ -43,7 +43,7 @@ public class EquipmentTableModel extends AbstractTableModel {
     private int[] qty;
     private final List<EquipmentType> equipment = new ArrayList<>();
 
-    public EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
+    EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
     }
 
@@ -57,7 +57,7 @@ public class EquipmentTableModel extends AbstractTableModel {
         return N_COL;
     }
 
-    public int getPreferredWidth(int col) {
+    int getPreferredWidth(int col) {
         return switch (col) {
             case COL_QTY -> 40;
             case COL_NAME -> 400;
@@ -90,7 +90,7 @@ public class EquipmentTableModel extends AbstractTableModel {
         return col == COL_QTY;
     }
 
-    public void setData(List<EquipmentType> eq) {
+    void setData(List<EquipmentType> eq) {
         equipment.clear();
         equipment.addAll(eq);
         qty = new int[eq.size()];
@@ -98,7 +98,7 @@ public class EquipmentTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public EquipmentType getEquipmentTypeAt(int row) {
+    EquipmentType getEquipmentTypeAt(int row) {
         return equipment.get(row);
     }
 

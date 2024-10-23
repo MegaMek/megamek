@@ -26,10 +26,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class MiscSearchTab extends JPanel {
+class MiscSearchTab extends JPanel {
 
     JButton btnBaseClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
     JLabel lblWalk = new JLabel(Messages.getString("MekSelectorDialog.Search.Walk"));
@@ -95,6 +96,8 @@ public class MiscSearchTab extends JPanel {
     JLabel lblTechBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechBase"));
     JList<TriStateItem> listTechBase = new JList<>(new DefaultListModel<>());
     JScrollPane spTechBase = new JScrollPane(listTechBase);
+    JList<TriStateItem> listMoveMode = new JList<>(new DefaultListModel<>());
+    JScrollPane spMoveMode = new JScrollPane(listMoveMode);
 
     private JPanel createBaseAttributes() {
         loadYesNo(cOfficial);
@@ -180,6 +183,12 @@ public class MiscSearchTab extends JPanel {
         jumpPanel.add(new JLabel("-"));
         jumpPanel.add(tEndJump);
         baseAttributesPanel.add(jumpPanel, c);
+
+        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).toList();
+        loadTriStateItem(moveModes, listMoveMode, 4);
+
+        c.gridx = 0; c.gridy++;
+        baseAttributesPanel.add(spMoveMode, c);
 
         c.gridx = 0; c.gridy++;
         JPanel lowerArmsPanel = new JPanel();
@@ -414,6 +423,7 @@ public class MiscSearchTab extends JPanel {
         clearTriStateItem(listInternalsType);
         clearTriStateItem(listTechLevel);
         clearTriStateItem(listTechBase);
+        clearTriStateItem(listMoveMode);
     }
 
     void clearTriStateItem(JList<TriStateItem> l) {

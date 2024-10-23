@@ -22,9 +22,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-public class TechBaseRenderer extends DefaultTableCellRenderer {
+class TechBaseRenderer extends DefaultTableCellRenderer {
 
-    public TechBaseRenderer() {
+    TechBaseRenderer() {
         super();
         setHorizontalAlignment(SwingConstants.CENTER);
     }

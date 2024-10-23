@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * A table model for displaying weapons
  */
-public class WeaponsTableModel extends AbstractTableModel {
+class WeaponsTableModel extends AbstractTableModel {
 
     static final int COL_QTY = 0;
     static final int COL_NAME = 1;
@@ -47,7 +47,7 @@ public class WeaponsTableModel extends AbstractTableModel {
     private int[] qty;
     private final List<WeaponType> weapons = new ArrayList<>();
 
-    public WeaponsTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
+    WeaponsTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
     }
 
@@ -61,7 +61,7 @@ public class WeaponsTableModel extends AbstractTableModel {
         return N_COL;
     }
 
-    public int getPreferredWidth(int col) {
+    int getPreferredWidth(int col) {
         return switch (col) {
             case COL_QTY -> 40;
             case COL_NAME -> 310;
@@ -98,7 +98,7 @@ public class WeaponsTableModel extends AbstractTableModel {
         return col == COL_QTY;
     }
 
-    public void setData(List<WeaponType> wps) {
+    void setData(List<WeaponType> wps) {
         weapons.clear();
         weapons.addAll(wps);
         qty = new int[wps.size()];
@@ -106,7 +106,7 @@ public class WeaponsTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public WeaponType getWeaponTypeAt(int row) {
+    WeaponType getWeaponTypeAt(int row) {
         return weapons.get(row);
     }
 

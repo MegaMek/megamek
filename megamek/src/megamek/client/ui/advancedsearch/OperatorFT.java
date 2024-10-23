@@ -23,11 +23,11 @@ package megamek.client.ui.advancedsearch;
  *
  * @author Arlith
  */
-public abstract class OperatorFT implements FilterToken {
+abstract class OperatorFT implements FilterToken {
 
-    public MekSearchFilter.BoolOp op;
+    MekSearchFilter.BoolOp op;
 
-    protected OperatorFT(MekSearchFilter.BoolOp o) {
+    OperatorFT(MekSearchFilter.BoolOp o) {
         op = o;
     }
 }

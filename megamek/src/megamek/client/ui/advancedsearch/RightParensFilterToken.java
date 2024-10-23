@@ -18,9 +18,9 @@
  */
 package megamek.client.ui.advancedsearch;
 
-public class RightParensFilterToken extends ParensFT {
+class RightParensFilterToken extends ParensFT {
 
-    public RightParensFilterToken() {
+    RightParensFilterToken() {
         super(")");
     }
 }

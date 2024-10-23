@@ -3806,7 +3806,7 @@ public class MoveStep implements Serializable {
                 // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot
                 // leave
                 && (type != MoveStepType.CONVERT_MODE)
-                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
+                && entity.isLocationProhibited(src, srcEl) && !isPavementStep()) {
             return false;
         }
         if (type == MoveStepType.UP) {

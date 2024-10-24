@@ -22,6 +22,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+/**
+ * This renderer replaces negative numbers with "var." and centers the contents.
+ */
 class EquipmentDataRenderer extends DefaultTableCellRenderer {
 
     EquipmentDataRenderer() {

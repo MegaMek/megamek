@@ -24,80 +24,45 @@ import megamek.common.equipment.ArmorType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 class MiscSearchTab extends JPanel {
 
-    JButton btnBaseClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
-    JLabel lblWalk = new JLabel(Messages.getString("MekSelectorDialog.Search.Walk"));
-    JTextField tStartWalk = new JTextField(4);
-    JTextField tEndWalk = new JTextField(4);
-    JLabel lblJump = new JLabel(Messages.getString("MekSelectorDialog.Search.Jump"));
-    JTextField tStartJump = new JTextField(4);
-    JTextField tEndJump = new JTextField(4);
-    JLabel lblTankTurrets = new JLabel(Messages.getString("MekSelectorDialog.Search.TankTurrets"));
-    JTextField tStartTankTurrets = new JTextField(4);
-    JTextField tEndTankTurrets= new JTextField(4);
-    JLabel lblLowerArms = new JLabel(Messages.getString("MekSelectorDialog.Search.LowerArms"));
-    JTextField tStartLowerArms = new JTextField(4);
-    JTextField tEndLowerArms = new JTextField(4);
-    JLabel lblHands = new JLabel(Messages.getString("MekSelectorDialog.Search.Hands"));
-    JTextField tStartHands = new JTextField(4);
-    JTextField tEndHands = new JTextField(4);
-    JLabel lblArmor = new JLabel(Messages.getString("MekSelectorDialog.Search.Armor"));
-    JComboBox<String> cArmor = new JComboBox<>();
-    JLabel lblOfficial = new JLabel(Messages.getString("MekSelectorDialog.Search.Official"));
-    JComboBox<String> cOfficial = new JComboBox<>();
-    JLabel lblCanon = new JLabel(Messages.getString("MekSelectorDialog.Search.Canon"));
-    JComboBox<String> cCanon = new JComboBox<>();
-    JLabel lblPatchwork = new JLabel(Messages.getString("MekSelectorDialog.Search.Patchwork"));
-    JComboBox<String> cPatchwork = new JComboBox<>();
-    JLabel lblInvalid = new JLabel(Messages.getString("MekSelectorDialog.Search.Invalid"));
-    JComboBox<String> cInvalid = new JComboBox<>();
-    JLabel lblFailedToLoadEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment"));
-    JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
-    JLabel lblClanEngine = new JLabel(Messages.getString("MekSelectorDialog.Search.ClanEngine"));
-    JComboBox<String> cClanEngine = new JComboBox<>();
-    JLabel lblSource = new JLabel(Messages.getString("MekSelectorDialog.Search.Source"));
-    JTextField tSource = new JTextField(4);
-    JLabel lblMULId = new JLabel(Messages.getString("MekSelectorDialog.Search.MULId"));
-    JTextField tMULId = new JTextField(4);
-    JLabel lblYear = new JLabel(Messages.getString("MekSelectorDialog.Search.Year"));
-    JTextField tStartYear = new JTextField(4);
-    JTextField tEndYear = new JTextField(4);
-    JLabel lblTons = new JLabel(Messages.getString("MekSelectorDialog.Search.Tons"));
-    JTextField tStartTons = new JTextField(4);
-    JTextField tEndTons = new JTextField(4);
-    JLabel lblBV = new JLabel(Messages.getString("MekSelectorDialog.Search.BV"));
-    JTextField tStartBV = new JTextField(4);
-    JTextField tEndBV = new JTextField(4);
-    JLabel lblCockpitType = new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType"));
-    JList<TriStateItem> listCockpitType = new JList<>(new DefaultListModel<>());
-    JScrollPane spCockpitType = new JScrollPane(listCockpitType);
-    JLabel lblArmorType = new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType"));
-    JList<TriStateItem> listArmorType = new JList<>(new DefaultListModel<>());
-    JScrollPane spArmorType = new JScrollPane(listArmorType);
-    JLabel lblInternalsType = new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType"));
-    JList<TriStateItem> listInternalsType = new JList<>(new DefaultListModel<>());
-    JScrollPane spInternalsType = new JScrollPane(listInternalsType);
-    JLabel lblEngineType = new JLabel(Messages.getString("MekSelectorDialog.Search.Engine"));
-    JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<>());
-    JScrollPane spEngineType = new JScrollPane(listEngineType);
-    JLabel lblGyroType = new JLabel(Messages.getString("MekSelectorDialog.Search.Gyro"));
-    JList<TriStateItem> listGyroType = new JList<>(new DefaultListModel<>());
-    JScrollPane spGyroType = new JScrollPane(listGyroType);
-    JLabel lblTechLevel = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
-    JList<TriStateItem> listTechLevel = new JList<>(new DefaultListModel<>());
-    JScrollPane spTechLevel = new JScrollPane(listTechLevel);
-    JLabel lblTechBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechBase"));
-    JList<TriStateItem> listTechBase = new JList<>(new DefaultListModel<>());
-    JScrollPane spTechBase = new JScrollPane(listTechBase);
-    JList<TriStateItem> listMoveMode = new JList<>(new DefaultListModel<>());
-    JScrollPane spMoveMode = new JScrollPane(listMoveMode);
+    final JButton btnBaseClear = new JButton(Messages.getString("MekSelectorDialog.ClearTab"));
+    final JTextField tStartWalk = new JTextField(4);
+    final JTextField tEndWalk = new JTextField(4);
+    final JTextField tStartJump = new JTextField(4);
+    final JTextField tEndJump = new JTextField(4);
+    final JTextField tStartTankTurrets = new JTextField(4);
+    final JTextField tEndTankTurrets= new JTextField(4);
+    final JTextField tStartLowerArms = new JTextField(4);
+    final JTextField tEndLowerArms = new JTextField(4);
+    final JTextField tStartHands = new JTextField(4);
+    final JTextField tEndHands = new JTextField(4);
+    final JComboBox<String> cArmor = new JComboBox<>();
+    final JComboBox<String> cOfficial = new JComboBox<>();
+    final JComboBox<String> cCanon = new JComboBox<>();
+    final JComboBox<String> cPatchwork = new JComboBox<>();
+    final JComboBox<String> cInvalid = new JComboBox<>();
+    final JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
+    final JComboBox<String> cClanEngine = new JComboBox<>();
+    final JTextField tSource = new JTextField(4);
+    final JTextField tMULId = new JTextField(4);
+    final JTextField tStartYear = new JTextField(4);
+    final JTextField tEndYear = new JTextField(4);
+    final JTextField tStartTons = new JTextField(4);
+    final JTextField tEndTons = new JTextField(4);
+    final JTextField tStartBV = new JTextField(4);
+    final JTextField tEndBV = new JTextField(4);
+    TriStateItemList listCockpitType;
+    TriStateItemList listArmorType;
+    TriStateItemList listInternalsType;
+    TriStateItemList listEngineType;
+    TriStateItemList listGyroType;
+    TriStateItemList listTechLevel;
+    TriStateItemList listTechBase;
+    TriStateItemList listMoveMode;
 
     private JPanel createBaseAttributes() {
         loadYesNo(cOfficial);
@@ -114,107 +79,93 @@ class MiscSearchTab extends JPanel {
         c.fill = GridBagConstraints.NONE;
         c.gridwidth  = 1;
         c.insets = new Insets(20, 10, 0, 0);
-        c.gridx = 0; c.gridy = 0;
+        c.gridy = 0;
 
         JPanel p0Panel = new JPanel();
-        p0Panel.add(lblOfficial);
+        p0Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Official")));
         p0Panel.add(cOfficial);
-        p0Panel.add(lblCanon);
+        p0Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Canon")));
         p0Panel.add(cCanon);
         baseAttributesPanel.add(p0Panel, c);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
         JPanel sPanel = new JPanel(new BorderLayout());
-        sPanel.add(lblSource, BorderLayout.WEST);
+        sPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Source")), BorderLayout.WEST);
         sPanel.add(tSource, BorderLayout.CENTER);
         baseAttributesPanel.add(sPanel, c);
-        c.gridx = 2;
         JPanel mPanel = new JPanel(new BorderLayout());
-        mPanel.add(lblMULId, BorderLayout.WEST);
+        mPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.MULId")), BorderLayout.WEST);
         mPanel.add(tMULId, BorderLayout.CENTER);
         baseAttributesPanel.add(mPanel, c);
 
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 10, 0, 0);
-        c.gridx = 0; c.gridy++;
+        c.gridy++;
         JPanel yearPanel = new JPanel();
-        yearPanel.add(lblYear);
+        yearPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Year")));
         yearPanel.add(tStartYear);
         yearPanel.add(new JLabel("-"));
         yearPanel.add(tEndYear);
         baseAttributesPanel.add(yearPanel, c);
-        c.gridx = 1;
         JPanel p1bPanel = new JPanel();
-        p1bPanel.add(lblFailedToLoadEquipment);
+        p1bPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.FailedToLoadEquipment")));
         p1bPanel.add(cFailedToLoadEquipment);
         baseAttributesPanel.add(p1bPanel, c);
-        c.gridx = 2;
         JPanel p1cPanel = new JPanel();
-        p1cPanel.add(lblInvalid);
+        p1cPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Invalid")));
         p1cPanel.add(cInvalid);
         baseAttributesPanel.add(p1cPanel, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridy++;
         JPanel bvPanel = new JPanel();
-        bvPanel.add(lblBV);
+        bvPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.BV")));
         bvPanel.add(tStartBV);
         bvPanel.add(new JLabel("-"));
         bvPanel.add(tEndBV);
         baseAttributesPanel.add(bvPanel, c);
-        c.gridx = 1;
         JPanel tonsPanel = new JPanel();
-        tonsPanel.add(lblTons);
+        tonsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Tons")));
         tonsPanel.add(tStartTons);
         tonsPanel.add(new JLabel("-"));
         tonsPanel.add(tEndTons);
         baseAttributesPanel.add(tonsPanel, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridy++;
         JPanel walkPanel = new JPanel();
-        walkPanel.add(lblWalk);
+        walkPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Walk")));
         walkPanel.add(tStartWalk);
         walkPanel.add(new JLabel("-"));
         walkPanel.add(tEndWalk);
         baseAttributesPanel.add(walkPanel, c);
-        c.gridx = 1;
         JPanel jumpPanel = new JPanel();
-        jumpPanel.add(lblJump);
+        jumpPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Jump")));
         jumpPanel.add(tStartJump);
         jumpPanel.add(new JLabel("-"));
         jumpPanel.add(tEndJump);
         baseAttributesPanel.add(jumpPanel, c);
 
-        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).toList();
-        loadTriStateItem(moveModes, listMoveMode, 4);
-
-        c.gridx = 0; c.gridy++;
-        baseAttributesPanel.add(spMoveMode, c);
-
-        c.gridx = 0; c.gridy++;
+        c.gridy++;
         JPanel lowerArmsPanel = new JPanel();
-        lowerArmsPanel.add(lblLowerArms);
+        lowerArmsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.LowerArms")));
         lowerArmsPanel.add(tStartLowerArms);
         lowerArmsPanel.add(new JLabel("-"));
         lowerArmsPanel.add(tEndLowerArms);
         baseAttributesPanel.add(lowerArmsPanel, c);
-        c.gridx = 1;
         JPanel handsPanel = new JPanel();
-        handsPanel.add(lblHands);
+        handsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Hands")));
         handsPanel.add(tStartHands);
         handsPanel.add(new JLabel("-"));
         handsPanel.add(tEndHands);
         baseAttributesPanel.add(handsPanel, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridy++;
         JPanel p2Panel = new JPanel();
-        p2Panel.add(lblTankTurrets);
+        p2Panel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TankTurrets")));
         p2Panel.add(tStartTankTurrets);
         p2Panel.add(new JLabel("-"));
         p2Panel.add(tEndTankTurrets);
         baseAttributesPanel.add(p2Panel, c);
-        c.gridx = 1;
         JPanel armorPanel = new JPanel();
-        armorPanel.add(lblArmor);
+        armorPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Armor")));
         armorPanel.add(cArmor);
         baseAttributesPanel.add(armorPanel, c);
 
@@ -237,13 +188,16 @@ class MiscSearchTab extends JPanel {
         loadYesNo(cClanEngine);
         loadYesNo(cPatchwork);
 
-        loadTriStateItem(ArmorType.getAllArmorCodeName(), listArmorType, 5);
-        loadTriStateItem(Mek.getAllCockpitCodeName(), listCockpitType, 7);
-        loadTriStateItem(EquipmentType.getAllStructureCodeName(), listInternalsType, 7);
-        loadTriStateItem(Engine.getAllEngineCodeName(), listEngineType, 5);
-        loadTriStateItem(Entity.getAllGyroCodeName(), listGyroType, 7);
-        loadTriStateItem(SimpleTechLevel.getAllSimpleTechLevelCodeName(), listTechLevel, 5);
-        loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);
+        listArmorType = new TriStateItemList(ArmorType.getAllArmorCodeName(), 5);
+        listCockpitType = new TriStateItemList(Mek.getAllCockpitCodeName(), 7);
+        listInternalsType = new TriStateItemList(EquipmentType.getAllStructureCodeName(), 7);
+        listEngineType = new TriStateItemList(Engine.getAllEngineCodeName(), 5);
+        listGyroType = new TriStateItemList(Entity.getAllGyroCodeName(), 7);
+        listTechLevel = new TriStateItemList(SimpleTechLevel.getAllSimpleTechLevelCodeName(), 5);
+
+        listTechBase = new TriStateItemList(Entity.getTechBaseDescriptions(), 4);
+        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).toList();
+        listMoveMode = new TriStateItemList(moveModes, 13);
 
         JPanel baseComboBoxesPanel = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
@@ -252,53 +206,64 @@ class MiscSearchTab extends JPanel {
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.gridwidth  = 1;
+        c.gridwidth = 1;
         c.insets = new Insets(5, 10, 0, 0);
-        c.gridx = 0; c.gridy = 0;
+        c.gridx = 0;
+        c.gridy = 0;
 
         JPanel cockpitPanel = new JPanel(new BorderLayout());
-        cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
-        cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
+        cockpitPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.CockpitType")), BorderLayout.NORTH);
+        cockpitPanel.add(new JScrollPane(listCockpitType.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(cockpitPanel, c);
         c.gridx = 1;
         JPanel enginePanel = new JPanel(new BorderLayout());
-        enginePanel.add(lblEngineType, BorderLayout.NORTH);
-        enginePanel.add(spEngineType, BorderLayout.CENTER);
+        enginePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Engine")), BorderLayout.NORTH);
+        enginePanel.add(new JScrollPane(listEngineType.getComponent()), BorderLayout.CENTER);
         JPanel clanEnginePanel = new JPanel();
-        clanEnginePanel.add(lblClanEngine);
+        clanEnginePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.ClanEngine")));
         clanEnginePanel.add(cClanEngine);
         enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
         baseComboBoxesPanel.add(enginePanel, c);
         c.gridx = 2;
         JPanel gyroPanel = new JPanel(new BorderLayout());
-        gyroPanel.add(lblGyroType, BorderLayout.NORTH);
-        gyroPanel.add(spGyroType, BorderLayout.CENTER);
+        gyroPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Gyro")), BorderLayout.NORTH);
+        gyroPanel.add(new JScrollPane(listGyroType.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(gyroPanel, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridx = 0;
+        c.gridy++;
         JPanel armorTypePanel = new JPanel(new BorderLayout());
-        armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
-        armorTypePanel.add(spArmorType, BorderLayout.CENTER);
+        armorTypePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.ArmorType")), BorderLayout.NORTH);
+        armorTypePanel.add(new JScrollPane(listArmorType.getComponent()), BorderLayout.CENTER);
         JPanel patchworkPanel = new JPanel();
-        patchworkPanel.add(lblPatchwork);
+        patchworkPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Patchwork")));
         patchworkPanel.add(cPatchwork);
         armorTypePanel.add(patchworkPanel, BorderLayout.SOUTH);
         baseComboBoxesPanel.add(armorTypePanel, c);
         c.gridx = 1;
         JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
-        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
+        internalsPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.InternalsType")), BorderLayout.NORTH);
+        internalsPanel.add(new JScrollPane(listInternalsType.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(internalsPanel, c);
 
-        c.gridx = 0; c.gridy++;
+        c.gridx = 2;
+        c.gridheight = 2;
+        JPanel moveModePanel = new JPanel(new BorderLayout());
+        moveModePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.MoveMode")), BorderLayout.NORTH);
+        moveModePanel.add(new JScrollPane(listMoveMode.getComponent()), BorderLayout.CENTER);
+        baseComboBoxesPanel.add(moveModePanel, c);
+
+        c.gridx = 0;
+        c.gridy++;
+        c.gridheight = 1;
         JPanel techLevelPanel = new JPanel(new BorderLayout());
-        techLevelPanel.add(lblTechLevel, BorderLayout.NORTH);
-        techLevelPanel.add(spTechLevel, BorderLayout.CENTER);
+        techLevelPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel")), BorderLayout.NORTH);
+        techLevelPanel.add(new JScrollPane(listTechLevel.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(techLevelPanel, c);
         c.gridx = 1;
         JPanel techBasePanel = new JPanel(new BorderLayout());
-        techBasePanel.add(lblTechBase, BorderLayout.NORTH);
-        techBasePanel.add(spTechBase, BorderLayout.CENTER);
+        techBasePanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechBase")), BorderLayout.NORTH);
+        techBasePanel.add(new JScrollPane(listTechBase.getComponent()), BorderLayout.CENTER);
         baseComboBoxesPanel.add(techBasePanel, c);
 
         return baseComboBoxesPanel;
@@ -315,78 +280,17 @@ class MiscSearchTab extends JPanel {
         c.fill = GridBagConstraints.NONE;
         c.gridwidth  = 1;
         c.insets = new Insets(20, 10, 0, 0);
-        c.gridx = 0; c.gridy = 0;
-
+        c.gridy = 0;
         add(createBaseAttributes(), c);
-        c.gridx = 0; c.gridy++;
+
+        c.gridy++;
         add(createBaseComboBoxes(), c);
 
         c.weighty = 1;
+        c.gridy++;
         JPanel clearPanel = new JPanel();
-        c.gridx = 0; c.gridy++;
         clearPanel.add(btnBaseClear, c);
         add(clearPanel, c);
-    }
-
-    private void loadTriStateItem(List<String> s, JList<TriStateItem> l, int count) {
-        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
-
-        for (String desc : s) {
-            dlma.addElement(new TriStateItem("\u2610", desc));
-        }
-
-        l.setModel(dlma);
-        l.setVisibleRowCount(count);
-        jListSetup(l);
-    }
-
-    private void loadTriStateItem(Map<Integer, String> s, JList<TriStateItem> l, int count) {
-        DefaultListModel<TriStateItem> dlma = new DefaultListModel<>();
-
-        for (Map.Entry<Integer, String> desc : s.entrySet()) {
-            dlma.addElement(new TriStateItem("\u2610", desc.getKey(), desc.getValue()));
-        }
-
-        l.setModel(dlma);
-        l.setVisibleRowCount(count);
-        jListSetup(l);
-    }
-
-    private void jListSetup(JList<TriStateItem> l) {
-        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        l.setSelectionModel(new NoSelectionModel());
-        l.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList<TriStateItem> list = (JList<TriStateItem>) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
-    }
-
-    private void toggleText(JList<TriStateItem> list, int index) {
-        ListModel<TriStateItem> m = list.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-
-            if (index == i) {
-                if (ms.state.contains("\u2610")) {
-                    ms.state = "\u2611";
-                } else if (ms.state.contains("\u2611")) {
-                    ms.state = "\u2612";
-                } else if (ms.state.contains("\u2612")) {
-                    ms.state = "\u2610";
-                }
-            }
-        }
-
-        list.setModel(m);
-        list.repaint();
     }
 
     void clear() {
@@ -416,25 +320,13 @@ class MiscSearchTab extends JPanel {
         tSource.setText("");
         tMULId.setText("");
 
-        clearTriStateItem(listArmorType);
-        clearTriStateItem(listCockpitType);
-        clearTriStateItem(listEngineType);
-        clearTriStateItem(listGyroType);
-        clearTriStateItem(listInternalsType);
-        clearTriStateItem(listTechLevel);
-        clearTriStateItem(listTechBase);
-        clearTriStateItem(listMoveMode);
-    }
-
-    void clearTriStateItem(JList<TriStateItem> l) {
-        ListModel<TriStateItem> m = l.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            ms.state = "\u2610";
-        }
-
-        l.setModel(m);
-        l.repaint();
+        listCockpitType.clear();
+        listArmorType.clear();
+        listInternalsType.clear();
+        listEngineType.clear();
+        listGyroType.clear();
+        listTechLevel.clear();
+        listTechBase.clear();
+        listMoveMode.clear();
     }
 }

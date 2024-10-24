@@ -20,7 +20,6 @@
 package megamek.client.ui.advancedsearch;
 
 import java.awt.*;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -122,33 +121,6 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         return mekFilter;
     }
 
-    private void updateTriStateItemString(List<String> include, List<String> exclude, JList<TriStateItem> l) {
-        ListModel<TriStateItem> m = l.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            if (ms.state.contains("\u2611")) {
-                include.add(ms.text);
-            } else if (ms.state.contains("\u2612")) {
-                exclude.add(ms.text);
-            }
-        }
-    }
-
-    private void updateTriStateItem(List<Integer> include, List<Integer> exclude, JList<TriStateItem> l) {
-        ListModel<TriStateItem> m = l.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            if (ms.state.contains("\u2611")) {
-                include.add(ms.code);
-
-            } else if (ms.state.contains("\u2612")) {
-                exclude.add(ms.code);
-            }
-        }
-    }
-
     private void updateBase() {
         mekFilter.sStartWalk = basePanel.tStartWalk.getText();
         mekFilter.sEndWalk = basePanel.tEndWalk.getText();
@@ -184,14 +156,14 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
         mekFilter.sStartBV = basePanel.tStartBV.getText();
         mekFilter.sEndBV = basePanel.tEndBV.getText();
 
-        updateTriStateItem(mekFilter.armorType, mekFilter.armorTypeExclude, basePanel.listArmorType);
-        updateTriStateItem(mekFilter.cockpitType, mekFilter.cockpitTypeExclude, basePanel.listCockpitType);
-        updateTriStateItem(mekFilter.internalsType, mekFilter.internalsTypeExclude, basePanel.listInternalsType);
-        updateTriStateItem(mekFilter.engineType, mekFilter.engineTypeExclude, basePanel.listEngineType);
-        updateTriStateItem(mekFilter.gyroType, mekFilter.gyroTypeExclude, basePanel.listGyroType);
-        updateTriStateItem(mekFilter.techLevel, mekFilter.techLevelExclude, basePanel.listTechLevel);
-        updateTriStateItemString(mekFilter.techBase, mekFilter.techBaseExclude, basePanel.listTechBase);
-        updateTriStateItemString(mekFilter.movemodes, mekFilter.movemodeExclude, basePanel.listMoveMode);
+        basePanel.listArmorType.toIntegerResultLists(mekFilter.armorType, mekFilter.armorTypeExclude);
+        basePanel.listCockpitType.toIntegerResultLists(mekFilter.cockpitType, mekFilter.cockpitTypeExclude);
+        basePanel.listInternalsType.toIntegerResultLists(mekFilter.internalsType, mekFilter.internalsTypeExclude);
+        basePanel.listEngineType.toIntegerResultLists(mekFilter.engineType, mekFilter.engineTypeExclude);
+        basePanel.listGyroType.toIntegerResultLists(mekFilter.gyroType, mekFilter.gyroTypeExclude);
+        basePanel.listTechLevel.toIntegerResultLists(mekFilter.techLevel, mekFilter.techLevelExclude);
+        basePanel.listTechBase.toStringResultLists(mekFilter.techBase, mekFilter.techBaseExclude);
+        basePanel.listMoveMode.toStringResultLists(mekFilter.movemodes, mekFilter.movemodeExclude);
     }
 
     private void updateTransports() {
@@ -282,15 +254,15 @@ public class TWAdvancedSearchPanel extends JTabbedPane {
     }
 
     private void updateQuirks() {
-        mekFilter.quirkInclude = quirkPanel.cQuirkInclue.getSelectedIndex();
+        mekFilter.quirkInclude = quirkPanel.cQuirkInclude.getSelectedIndex();
         mekFilter.quirkExclude = quirkPanel.cQuirkExclude.getSelectedIndex();
 
-        updateTriStateItemString(mekFilter.quirkType, mekFilter.quirkTypeExclude, quirkPanel.listQuirkType);
+        quirkPanel.listQuirkType.toStringResultLists(mekFilter.quirkType, mekFilter.quirkTypeExclude);
 
-        mekFilter.weaponQuirkInclude = quirkPanel.cWeaponQuirkInclue.getSelectedIndex();
+        mekFilter.weaponQuirkInclude = quirkPanel.cWeaponQuirkInclude.getSelectedIndex();
         mekFilter.weaponQuirkExclude = quirkPanel.cWeaponQuirkExclude.getSelectedIndex();
 
-        updateTriStateItemString(mekFilter.weaponQuirkType, mekFilter.weaponQuirkTypeExclude, quirkPanel.listWeaponQuirkType);
+        quirkPanel.listWeaponQuirkType.toStringResultLists(mekFilter.weaponQuirkType, mekFilter.weaponQuirkTypeExclude);
     }
 
     private void updateUnitTypes() {

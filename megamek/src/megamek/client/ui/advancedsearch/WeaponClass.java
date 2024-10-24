@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
@@ -184,7 +183,7 @@ enum WeaponClass {
             if (name.toLowerCase().contains("ultraa")) {
                 return true;
             }
-        } else if (name.toLowerCase().contains(this.name().toLowerCase()) && !name.toLowerCase().contains("ammo")) {
+        } else if (name.toLowerCase().contains(name().toLowerCase()) && !name.toLowerCase().contains("ammo")) {
             return true;
         }
         return false;

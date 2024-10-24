@@ -20,6 +20,9 @@ package megamek.client.ui.advancedsearch;
 
 import javax.swing.*;
 
+/**
+ * This selection model is used for tri state checkboxes shown in a JList where selection is handled by the checkboxes.
+ */
 class NoSelectionModel extends DefaultListSelectionModel {
 
     @Override

@@ -733,7 +733,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if ((!f.movemodeExclude.isEmpty()) && (anyMatch(f.movemodeExclude, mek.getMoveMode().name()))) {
+        if ((!f.movemodeExclude.isEmpty()) && (anyMatch(f.movemodeExclude, mek.getMoveMode().toString()))) {
             return false;
         }
 

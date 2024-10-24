@@ -237,6 +237,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(fileRefreshCache, menu, FILE_REFRESH_CACHE);
         initMenuItem(fileUnitsBrowse, menu, FILE_UNITS_BROWSE);
+        fileUnitsBrowse.setAccelerator(KeyStroke.getKeyStroke(VK_B, CTRL_DOWN_MASK));
         menu.addSeparator();
 
         initMenuItem(fireSaveWeaponOrder, menu, FIRE_SAVE_WEAPON_ORDER);

@@ -102,6 +102,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
     private int walkMp;
     private int runMp;
     private int jumpMp;
+    private EntityMovementMode moveMode;
     private int totalArmor;
     private int totalInternal;
     private int cockpitType;
@@ -1121,6 +1122,14 @@ public class MekSummary implements Serializable, ASCardDisplayable {
 
     public void setTotalArmor(int totalArmor) {
         this.totalArmor = totalArmor;
+    }
+
+    public EntityMovementMode getMoveMode() {
+        return moveMode;
+    }
+
+    public void setMoveMode(EntityMovementMode moveMode) {
+        this.moveMode = moveMode;
     }
 
     public int getTotalArmor() {

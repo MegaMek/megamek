@@ -89,7 +89,10 @@ class MiscSearchTab extends JPanel {
         baseAttributesPanel.add(p0Panel, c);
         c.fill = GridBagConstraints.HORIZONTAL;
         JPanel sPanel = new JPanel(new BorderLayout());
-        sPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Source")), BorderLayout.WEST);
+        var sourceLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.Source"));
+        sourceLabel.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
+        tSource.setToolTipText(Messages.getString("MekSelectorDialog.Search.Source.TT"));
+        sPanel.add(sourceLabel, BorderLayout.WEST);
         sPanel.add(tSource, BorderLayout.CENTER);
         baseAttributesPanel.add(sPanel, c);
         JPanel mPanel = new JPanel(new BorderLayout());

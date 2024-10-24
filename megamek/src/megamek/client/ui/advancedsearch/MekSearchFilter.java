@@ -18,17 +18,13 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import megamek.common.Entity;
 import megamek.common.MekSummary;
 import megamek.common.Messages;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -419,7 +415,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if ((!f.source.isEmpty()) && (!mek.getSource().contains(f.source))) {
+        if (!f.source.isEmpty() && !f.findTokenized(mek.getSource(), f.source)) {
             return false;
         }
 
@@ -1189,6 +1185,24 @@ public class MekSearchFilter {
 
         FilterParsingException(String m) {
             msg = m;
+        }
+    }
+
+    /**
+     * Returns true if the given searchTarget contains all the tokens (separated by space) given in the saerchTokens String. Comparisons are
+     * done ignoring case. Returns false when any of the strings is null or the search tokens are empty.
+     *
+     * @param searchTarget The String that may contains the search tokens, such as "Shrapnel #9"
+     * @param searchTokens The String that contains the search tokens, such as "shra 9"
+     * @return True if all search tokens are contained in the searchTarget
+     */
+    private boolean findTokenized(@Nullable String searchTarget, @Nullable String searchTokens) {
+        if (searchTarget == null || searchTokens == null || searchTokens.isBlank()) {
+            return false;
+        } else {
+            String searchTargetLowerCase = searchTarget.toLowerCase(Locale.ROOT);
+            String[] tokens = searchTokens.toLowerCase(Locale.ROOT).split(" ");
+            return Arrays.stream(tokens).allMatch(searchTargetLowerCase::contains);
         }
     }
 }

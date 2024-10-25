@@ -899,7 +899,6 @@ public final class UnitToolTip {
         HashMap<String, WeaponInfo> wpInfos = createWeaponList(entity);
 
         // Print to Tooltip
-        String row = "";
         String rows = "";
 
         // Display sorted by weapon name
@@ -909,12 +908,10 @@ public final class UnitToolTip {
         for (WeaponInfo currentEquip : wps) {
             // This WeaponInfo is ammo
             if (!currentEquip.ammos.isEmpty()) {
-                row = createAmmoEntry(currentEquip).toString();
+                rows += createAmmoEntry(currentEquip).toString();
             } else {
-                row = createWeaponEntry(entity, currentEquip).toString();
+                rows += createWeaponEntry(entity, currentEquip).toString();
             }
-
-            rows += row;
         }
 
         String tbody = UIUtil.tag("TBODY", "",  rows);
@@ -923,8 +920,10 @@ public final class UnitToolTip {
         return new StringBuilder().append(table);
     }
 
+    /**
+     * Gather names, counts, Clan/IS
+     */
     public static HashMap<String, WeaponInfo> createWeaponList(Entity entity) {
-        // Gather names, counts, Clan/IS
         HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
         WeaponInfo currentWp;
         List<WeaponMounted> weapons = entity.getWeaponList();
@@ -1141,7 +1140,7 @@ public final class UnitToolTip {
     }
 
     /** Returns the weapon line(s) for the weapons type.
-     * Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+     *  Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
      **/
     private static StringBuilder createWeaponEntry(Entity entity, WeaponInfo currentEquip) {
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
@@ -1206,7 +1205,6 @@ public final class UnitToolTip {
         col2 = UIUtil.tag("FONT", attr,  col2);
         col2 = UIUtil.tag("span", fontSizeAttr, col2);
         col2 = UIUtil.tag("TD", "",  col2);
-        ;
         row = UIUtil.tag("TR", "",  col1 + col2);
 
         return new StringBuilder().append(row);

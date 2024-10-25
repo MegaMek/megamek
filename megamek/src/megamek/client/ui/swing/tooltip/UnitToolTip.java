@@ -896,10 +896,38 @@ public final class UnitToolTip {
             return new StringBuilder();
         }
 
-        List<WeaponMounted> weapons = entity.getWeaponList();
-        HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
+        HashMap<String, WeaponInfo> wpInfos = createWeaponList(entity);
+
+        // Print to Tooltip
+        String row = "";
+        String rows = "";
+
+        // Display sorted by weapon name
+        var wps = new ArrayList<>(wpInfos.values());
+        wps.sort(Comparator.comparing(w -> w.sortString));
+
+        for (WeaponInfo currentEquip : wps) {
+            // This WeaponInfo is ammo
+            if (!currentEquip.ammos.isEmpty()) {
+                row = createAmmoEntry(currentEquip).toString();
+            } else {
+                row = createWeaponEntry(entity, currentEquip).toString();
+            }
+
+            rows += row;
+        }
+
+        String tbody = UIUtil.tag("TBODY", "",  rows);
+        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
+
+        return new StringBuilder().append(table);
+    }
+
+    public static HashMap<String, WeaponInfo> createWeaponList(Entity entity) {
         // Gather names, counts, Clan/IS
+        HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
         WeaponInfo currentWp;
+        List<WeaponMounted> weapons = entity.getWeaponList();
 
         for (WeaponMounted curWp : weapons) {
             WeaponType wtype = curWp.getType();
@@ -970,7 +998,7 @@ public final class UnitToolTip {
                 int maxRange = RangeType.RANGE_LONG;
 
                 if (entity.getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
 
@@ -985,7 +1013,7 @@ public final class UnitToolTip {
                 WeaponType wpT = ((WeaponType) curWp.getType());
 
                 if (!wpT.hasFlag(WeaponType.F_AMS)
-                        || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                    || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
                 }
 
@@ -996,8 +1024,8 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
-                        && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
-                        && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
+                    && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                    && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 
                     if (wpInfos.containsKey(curWp.getName() + msg_ammo)) {
@@ -1024,9 +1052,9 @@ public final class UnitToolTip {
                                 String msg_hotloadedparens = Messages.getString("BoardView1.Tooltip.HotLoadedParens");
 
                                 String name = amounted.getName().replace(msg_antipersonnel, msg_ap)
-                                        .replace(msg_ammo, "").replace(msg_isbracket, "").replace(msg_clanbrackets, "")
-                                        .replace(msg_clanparens, "").replace(msg_halfbrackets, "").replace(msg_half, "")
-                                        .replace(curWp.getDesc(), "").trim();
+                                    .replace(msg_ammo, "").replace(msg_isbracket, "").replace(msg_clanbrackets, "")
+                                    .replace(msg_clanparens, "").replace(msg_halfbrackets, "").replace(msg_half, "")
+                                    .replace(curWp.getDesc(), "").trim();
 
                                 if (name.isBlank()) {
                                     name = msg_standard;
@@ -1093,29 +1121,7 @@ public final class UnitToolTip {
             }
         }
 
-        // Print to Tooltip
-        String row = "";
-        String rows = "";
-
-        // Display sorted by weapon name
-        var wps = new ArrayList<>(wpInfos.values());
-        wps.sort(Comparator.comparing(w -> w.sortString));
-
-        for (WeaponInfo currentEquip : wps) {
-            // This WeaponInfo is ammo
-            if (!currentEquip.ammos.isEmpty()) {
-                row = createAmmoEntry(currentEquip).toString();
-            } else {
-                row = createWeaponEntry(entity, currentEquip).toString();
-            }
-
-            rows += row;
-        }
-
-        String tbody = UIUtil.tag("TBODY", "",  rows);
-        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
-
-        return new StringBuilder().append(table);
+        return wpInfos;
     }
 
     private static String weaponModifier(boolean isDestroyed, WeaponInfo currentEquip) {

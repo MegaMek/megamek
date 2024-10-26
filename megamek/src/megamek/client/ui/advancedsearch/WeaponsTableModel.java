@@ -33,12 +33,13 @@ class WeaponsTableModel extends AbstractTableModel {
     static final int COL_NAME = 0;
     static final int COL_DMG = 1;
     static final int COL_HEAT = 2;
-    static final int COL_SHORT = 3;
-    static final int COL_MED = 4;
-    static final int COL_LONG = 5;
-    static final int COL_IS_CLAN = 6;
-    static final int COL_LEVEL = 7;
-    static final int N_COL = 8;
+    static final int COL_MIN = 3;
+    static final int COL_SHORT = 4;
+    static final int COL_MED = 5;
+    static final int COL_LONG = 6;
+    static final int COL_IS_CLAN = 7;
+    static final int COL_LEVEL = 8;
+    static final int N_COL = 9;
     static final int COL_INTERNAL_NAME = 9;
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
@@ -62,7 +63,7 @@ class WeaponsTableModel extends AbstractTableModel {
         return switch (col) {
             case COL_NAME -> 310;
             case COL_IS_CLAN -> 75;
-            case COL_DMG, COL_HEAT, COL_SHORT, COL_MED, COL_LONG -> 50;
+            case COL_DMG, COL_HEAT, COL_SHORT, COL_MED, COL_LONG, COL_MIN -> 50;
             case COL_LEVEL -> 100;
             default -> 0;
         };
@@ -72,12 +73,13 @@ class WeaponsTableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         return switch (column) {
             case COL_NAME -> "Weapon Name";
-            case COL_IS_CLAN -> "IS/Clan";
-            case COL_DMG -> "DMG";
+            case COL_IS_CLAN -> "Class";
+            case COL_DMG -> "Dmg";
+            case COL_MIN -> "Min";
             case COL_HEAT -> "Heat";
-            case COL_SHORT -> "Short";
-            case COL_MED -> "Med";
-            case COL_LONG -> "Long";
+            case COL_SHORT -> "S";
+            case COL_MED -> "M";
+            case COL_LONG -> "L";
             case COL_LEVEL -> "Lvl";
             default -> "?";
         };
@@ -109,6 +111,7 @@ class WeaponsTableModel extends AbstractTableModel {
             case COL_IS_CLAN -> TechConstants.getTechName(wp.getTechLevel(twAdvancedSearchPanel.gameYear));
             case COL_DMG -> wp.getDamage();
             case COL_HEAT -> wp.getHeat();
+            case COL_MIN -> Math.max(wp.getMinimumRange(), 0);
             case COL_SHORT -> wp.getShortRange();
             case COL_MED -> wp.getMediumRange();
             case COL_LONG -> wp.getLongRange();

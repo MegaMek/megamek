@@ -68,8 +68,8 @@ class EquipmentTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case COL_NAME -> "Name";
-            case COL_IS_CLAN -> "IS/Clan";
+            case COL_NAME -> "Equipment Name";
+            case COL_IS_CLAN -> "Class";
             case COL_COST -> "Cost";
             case COL_LEVEL -> "Lvl";
             default -> "?";

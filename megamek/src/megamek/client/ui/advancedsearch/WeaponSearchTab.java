@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.advancedsearch;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 import megamek.client.ui.swing.util.FontHandler;
@@ -61,19 +62,21 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     final JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
-    final JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
-    final JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
     final JList<String> unitTypeSelector = new JList<>();
+    final JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
     final JList<String> techClassSelector = new JList<>();
+    final JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
     final JList<String> techLevelSelector = new JList<>();
     final JLabel tableFilterTextLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilter"));
     final JTextField tableFilterText = new JTextField(10);
+    private final JButton filterClearButton = new JButton("X");
 
     final JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
     final JScrollPane scrTableWeapons = new JScrollPane();
     final SearchableTable tblWeapons;
     final WeaponsTableModel weaponsModel;
     final TableRowSorter<WeaponsTableModel> weaponsSorter;
+
     final JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
     final JScrollPane scrTableEquipment = new JScrollPane();
     final SearchableTable tblEquipment;
@@ -84,8 +87,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     final JSpinner weaponClassCount;
     final JComboBox<WeaponClass> weaponClassChooser;
 
-    JComponent focusedSelector = null;
-
+    private JComponent focusedSelector = null;
     private final TWAdvancedSearchPanel parentPanel;
 
     WeaponSearchTab(TWAdvancedSearchPanel parentPanel) {
@@ -160,12 +162,15 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         tblWeapons.getSelectionModel().addListSelectionListener(e -> adaptTokenButtons());
 
         var tableDataRenderer = new EquipmentDataRenderer();
-        for (int column : List.of(1, 2, 3, 4, 5)) {
+        List<Integer> numberColumns = List.of(WeaponsTableModel.COL_DMG, WeaponsTableModel.COL_HEAT, WeaponsTableModel.COL_MIN,
+            WeaponsTableModel.COL_SHORT, WeaponsTableModel.COL_MED, WeaponsTableModel.COL_LONG);
+        for (int column : numberColumns) {
             tblWeapons.getColumnModel().getColumn(column).setCellRenderer(tableDataRenderer);
         }
 
         var techBaseRenderer = new TechBaseRenderer();
-        tblWeapons.getColumnModel().getColumn(6).setCellRenderer(techBaseRenderer);
+        tblWeapons.getColumnModel().getColumn(WeaponsTableModel.COL_IS_CLAN).setCellRenderer(techBaseRenderer);
+        tblWeapons.getColumnModel().getColumn(WeaponsTableModel.COL_LEVEL).setCellRenderer(techBaseRenderer);
 
         for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
@@ -192,8 +197,8 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
             tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
         }
-
-       var costRenderer = new EquipmentCostRenderer();
+        tblEquipment.getColumnModel().getColumn(EquipmentTableModel.COL_LEVEL).setCellRenderer(techBaseRenderer);
+        var costRenderer = new EquipmentCostRenderer();
         tblEquipment.getColumnModel().getColumn(1).setCellRenderer(costRenderer);
         tblEquipment.getColumnModel().getColumn(2).setCellRenderer(techBaseRenderer);
 
@@ -221,6 +226,9 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         txtWEEqExp.setWrapStyleWord(true);
 
         tableFilterText.getDocument().addDocumentListener(this);
+        filterClearButton.addActionListener(e -> tableFilterText.setText(""));
+        filterClearButton.setToolTipText("Clear the filter text");
+        filterClearButton.putClientProperty(FlatClientProperties.STYLE_CLASS, "small");
 
         JPanel upperPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -247,6 +255,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         JPanel filterPanel = new JPanel();
         filterPanel.add(tableFilterTextLabel);
         filterPanel.add(tableFilterText);
+        filterPanel.add(filterClearButton);
         gbc.gridy++;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         upperPanel.add(filterPanel, gbc);

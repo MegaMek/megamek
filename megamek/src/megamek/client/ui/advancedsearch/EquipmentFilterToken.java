@@ -23,4 +23,6 @@ package megamek.client.ui.advancedsearch;
  */
 abstract class EquipmentFilterToken implements FilterToken {
 
+    int qty;
+    boolean atleast;
 }

@@ -199,7 +199,7 @@ class MiscSearchTab extends JPanel {
         listTechLevel = new TriStateItemList(SimpleTechLevel.getAllSimpleTechLevelCodeName(), 5);
 
         listTechBase = new TriStateItemList(Entity.getTechBaseDescriptions(), 4);
-        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).toList();
+        List<String> moveModes = Arrays.stream(EntityMovementMode.values()).map(EntityMovementMode::toString).distinct().toList();
         listMoveMode = new TriStateItemList(moveModes, 13);
 
         JPanel baseComboBoxesPanel = new JPanel();

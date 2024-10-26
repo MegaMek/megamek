@@ -19,7 +19,9 @@
 package megamek.client.ui.advancedsearch;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.table.MegaMekTable;
+import megamek.client.ui.swing.util.FlatLafStyleBuilder;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
@@ -27,7 +29,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.FocusEvent;
@@ -44,7 +45,11 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     final JButton btnLeftParen = new JButton("(");
     final JButton btnRightParen = new JButton(")");
+    final JToggleButton btnLessThan = new JToggleButton("<");
+    final JToggleButton btnAtLeast = new JToggleButton("\u2265");
     final JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
+    final JButton btnAddMultiOr = new JButton("Add [OR]");
+    final JButton btnAddMultiAnd = new JButton("Add [AND]");
     final JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
     final JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
     final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
@@ -55,27 +60,25 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    final JLabel lblTableFilters = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilters"));
     final JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
     final JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
     final JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
-    final JComboBox<String> cboUnitType = new JComboBox<>();
-    final JComboBox<String> cboTechClass = new JComboBox<>();
-    final JComboBox<String> cboTechLevel = new JComboBox<>();
+    final JList<String> unitTypeSelector = new JList<>();
+    final JList<String> techClassSelector = new JList<>();
+    final JList<String> techLevelSelector = new JList<>();
     final JLabel tableFilterTextLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilter"));
-    final JTextField tableFilterText = new JTextField(20);
+    final JTextField tableFilterText = new JTextField(10);
 
     final JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
     final JScrollPane scrTableWeapons = new JScrollPane();
-    final MegaMekTable tblWeapons;
+    final SearchableTable tblWeapons;
     final WeaponsTableModel weaponsModel;
     final TableRowSorter<WeaponsTableModel> weaponsSorter;
     final JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
     final JScrollPane scrTableEquipment = new JScrollPane();
-    final MegaMekTable tblEquipment;
+    final SearchableTable tblEquipment;
     final EquipmentTableModel equipmentModel;
     final TableRowSorter<EquipmentTableModel> equipmentSorter;
-    final JComboBox<String> cboQty = new JComboBox<>();
 
     final JLabel lblWeaponClass = new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponClass"));
     final JSpinner weaponClassCount;
@@ -88,84 +91,81 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     WeaponSearchTab(TWAdvancedSearchPanel parentPanel) {
         this.parentPanel = parentPanel;
 
+        ButtonGroup atleastGroup = new ButtonGroup();
+        atleastGroup.add(btnAtLeast);
+        atleastGroup.add(btnLessThan);
+        var btnStyle = new FlatLafStyleBuilder(FontHandler.notoFont());
+        btnStyle.apply(btnAtLeast);
+        btnStyle.apply(btnLessThan);
+
         btnAnd.addActionListener(e -> addFilterToken(new AndFilterToken()));
-        btnAdd.addActionListener(e -> addButtonPressed());
+        btnAdd.addActionListener(e -> addFilter(true));
+        btnAddMultiAnd.addActionListener(e -> addFilter(true));
+        btnAddMultiOr.addActionListener(e -> addFilter(false));
         btnLeftParen.addActionListener(e -> addFilterToken(new LeftParensFilterToken()));
         btnRightParen.addActionListener(e -> addFilterToken(new RightParensFilterToken()));
         btnOr.addActionListener(e -> addFilterToken(new OrFilterToken()));
         btnClear.addActionListener(e -> clear());
         btnBack.addActionListener(e -> backOperation());
+        btnAtLeast.setSelected(true);
         adaptTokenButtons();
 
-        for (int i = 1; i <= 20; i++) {
-            cboQty.addItem(Integer.toString(i));
-        }
-        cboQty.setSelectedIndex(0);
+        unitTypeSelector.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        unitTypeSelector.setVisibleRowCount(1);
+        var model = new DefaultListModel<String>();
+        model.addElement("All");
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.MEK));
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.TANK));
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
+        model.addElement(UnitType.getTypeDisplayableName(UnitType.AERO));
+        unitTypeSelector.setModel(model);
+        unitTypeSelector.setSelectedIndices(new int[]{0, 1, 2, 3, 4, 5});
+        unitTypeSelector.addListSelectionListener(e -> filterTables());
+        unitTypeSelector.setCellRenderer(new ChoiceRenderer());
 
-        // Setup table filter combo boxes
-        DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
-        unitTypeModel.addElement(Messages.getString("MekSelectorDialog.All"));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.MEK));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.TANK));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.BATTLE_ARMOR));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.INFANTRY));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.PROTOMEK));
-        unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.AERO));
-        unitTypeModel.setSelectedItem(Messages.getString("MekSelectorDialog.All"));
+        techLevelSelector.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        techLevelSelector.setVisibleRowCount(1);
+        techLevelSelector.setListData(TechConstants.T_SIMPLE_NAMES);
+        techLevelSelector.setSelectedIndices(new int[]{0, 1, 2, 3}); // all except unofficial as the default selection
+        techLevelSelector.addListSelectionListener(e -> filterTables());
+        techLevelSelector.setCellRenderer(new ChoiceRenderer());
 
-        cboUnitType.setModel(unitTypeModel);
-        cboUnitType.addActionListener(e -> filterTables());
-
-        DefaultComboBoxModel<String> techLevelModel = new DefaultComboBoxModel<>();
-
-        for (int i = 0; i < TechConstants.SIZE; i++) {
-            techLevelModel.addElement(TechConstants.getLevelDisplayableName(i));
-        }
-
-        techLevelModel.setSelectedItem(TechConstants.getLevelDisplayableName(TechConstants.SIZE - 1));
-        cboTechLevel.setModel(techLevelModel);
-        cboTechLevel.addActionListener(e -> filterTables());
-
-        DefaultComboBoxModel<String> techClassModel = new DefaultComboBoxModel<>();
-        techClassModel.addElement("All");
-        techClassModel.addElement("Inner Sphere");
-        techClassModel.addElement("Clan");
-        techClassModel.addElement("IS/Clan");
-        techClassModel.addElement("(Unknown Technology Base)");
-        techClassModel.setSelectedItem("All");
-        cboTechClass.setModel(techClassModel);
-        cboTechClass.addActionListener(e -> filterTables());
+        techClassSelector.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        techClassSelector.setVisibleRowCount(1);
+        techClassSelector.setListData(new String[]{"Inner Sphere", "Clan"});
+        techClassSelector.setSelectedIndices(new int[]{0, 1}); // all except unofficial as the default selection
+        techClassSelector.addListSelectionListener(e -> filterTables());
+        techClassSelector.setCellRenderer(new ChoiceRenderer());
 
         // Set up Weapon Class chooser
         weaponClassCount = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
-        weaponClassCount.addChangeListener(e->spinnerChange());
         weaponClassChooser = new JComboBox<>(WeaponClass.values());
         weaponClassChooser.addFocusListener(this);
 
         // Setup Weapons Table
         weaponsModel = new WeaponsTableModel(parentPanel);
-        tblWeapons = new MegaMekTable(weaponsModel, WeaponsTableModel.COL_NAME) {
+        tblWeapons = new SearchableTable(weaponsModel, WeaponsTableModel.COL_NAME) {
             @Override
             public Dimension getPreferredScrollableViewportSize() {
-                Dimension standardSize = super.getPreferredScrollableViewportSize();
-                return new Dimension(standardSize.width, getRowHeight() * 6);
+                return new Dimension(UIUtil.scaleForGUI(600), getRowHeight() * 6);
             }
         };
-        TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(WeaponsTableModel.COL_QTY);
-        wpsCol.setCellEditor(new DefaultCellEditor(cboQty));
-        tblWeapons.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblWeapons.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
         tblWeapons.addFocusListener(this);
+        tblWeapons.getSelectionModel().addListSelectionListener(e -> adaptTokenButtons());
 
         var tableDataRenderer = new EquipmentDataRenderer();
-        for (int column : List.of(0, 2, 3, 4, 5, 6)) {
+        for (int column : List.of(1, 2, 3, 4, 5)) {
             tblWeapons.getColumnModel().getColumn(column).setCellRenderer(tableDataRenderer);
         }
 
         var techBaseRenderer = new TechBaseRenderer();
-        tblWeapons.getColumnModel().getColumn(7).setCellRenderer(techBaseRenderer);
+        tblWeapons.getColumnModel().getColumn(6).setCellRenderer(techBaseRenderer);
 
         for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
@@ -175,29 +175,27 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
         // Setup Equipment Table
         equipmentModel = new EquipmentTableModel(parentPanel);
-        tblEquipment = new MegaMekTable(equipmentModel, EquipmentTableModel.COL_NAME) {
+        tblEquipment = new SearchableTable(equipmentModel, EquipmentTableModel.COL_NAME) {
             @Override
             public Dimension getPreferredScrollableViewportSize() {
                 Dimension standardSize = super.getPreferredScrollableViewportSize();
                 return new Dimension(standardSize.width, getRowHeight() * 6);
             }
         };
-        TableColumn eqCol = tblEquipment.getColumnModel().getColumn(EquipmentTableModel.COL_QTY);
-        eqCol.setCellEditor(new DefaultCellEditor(cboQty));
-        tblEquipment.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tblEquipment.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
         tblEquipment.addFocusListener(this);
+        tblEquipment.getSelectionModel().addListSelectionListener(e -> adaptTokenButtons());
 
         for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
             tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
         }
 
-        tblEquipment.getColumnModel().getColumn(0).setCellRenderer(tableDataRenderer);
-        var costRenderer = new EquipmentCostRenderer();
-        tblEquipment.getColumnModel().getColumn(2).setCellRenderer(costRenderer);
-        tblEquipment.getColumnModel().getColumn(3).setCellRenderer(techBaseRenderer);
+       var costRenderer = new EquipmentCostRenderer();
+        tblEquipment.getColumnModel().getColumn(1).setCellRenderer(costRenderer);
+        tblEquipment.getColumnModel().getColumn(2).setCellRenderer(techBaseRenderer);
 
         scrTableEquipment.setViewportView(tblEquipment);
 
@@ -224,44 +222,44 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
         tableFilterText.getDocument().addDocumentListener(this);
 
-        JPanel upperPanel = new JPanel();
-        upperPanel.setLayout(new GridBagLayout());
+        JPanel upperPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.weighty = 0;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 0, 0, 0);
         gbc.gridy = 0;
-        upperPanel.add(lblTableFilters, gbc);
-        gbc.gridy++;
-        gbc.gridwidth = 4;
-        gbc.anchor = GridBagConstraints.CENTER;
-        JPanel tableTechFilterPanel = new JPanel();
-        tableTechFilterPanel.add(lblUnitType);
-        tableTechFilterPanel.add(cboUnitType);
-        tableTechFilterPanel.add(lblTechClass);
-        tableTechFilterPanel.add(cboTechClass);
-        tableTechFilterPanel.add(lblTechLevelBase);
-        tableTechFilterPanel.add(cboTechLevel);
-        upperPanel.add(tableTechFilterPanel, gbc);
-
-        gbc.gridy++;
-        JPanel tableTextFilterPanel = new JPanel();
-        tableTextFilterPanel.add(tableFilterTextLabel);
-        tableTextFilterPanel.add(tableFilterText);
-        upperPanel.add(tableTextFilterPanel, gbc);
-
+        gbc.anchor = GridBagConstraints.WEST;
         gbc.gridwidth = 1;
-        gbc.insets = new Insets(0, 0, 0, 0);
-        gbc.fill = GridBagConstraints.NONE;
+        upperPanel.add(lblTechClass, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        upperPanel.add(techClassSelector, gbc);
+
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        upperPanel.add(lblUnitType, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        upperPanel.add(unitTypeSelector, gbc);
+
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        upperPanel.add(lblTechLevelBase, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        upperPanel.add(techLevelSelector, gbc);
+
+        JPanel filterPanel = new JPanel();
+        filterPanel.add(tableFilterTextLabel);
+        filterPanel.add(tableFilterText);
+        gbc.gridy++;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        upperPanel.add(filterPanel, gbc);
+
+        gbc.gridheight = 1;
+        gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
         upperPanel.add(lblWeapons, gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridy++;
         upperPanel.add(scrTableWeapons, gbc);
 
@@ -276,7 +274,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.gridwidth = 5;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridy++;
         upperPanel.add(scrTableEquipment, gbc);
 
@@ -289,11 +287,17 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.insets = new Insets(0, 0, 0, 20);
         upperPanel.add(lblWeaponClass, gbc);
         gbc.gridy++;
-        upperPanel.add(weaponClassCount, gbc);
-        upperPanel.add(weaponClassChooser, gbc);
+        JPanel weaponClassPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        weaponClassPanel.add(weaponClassChooser);
+        upperPanel.add(weaponClassPanel, gbc);
 
         JPanel btnPanel = new JPanel();
+        btnPanel.add(btnAtLeast);
+        btnPanel.add(btnLessThan);
+        btnPanel.add(weaponClassCount);
         btnPanel.add(btnAdd);
+        btnPanel.add(btnAddMultiAnd);
+        btnPanel.add(btnAddMultiOr);
         btnPanel.add(btnLeftParen);
         btnPanel.add(btnRightParen);
         btnPanel.add(btnAnd);
@@ -320,9 +324,9 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     void filterTables() {
         RowFilter<WeaponsTableModel, Integer> weaponFilter;
-        final int techLevel = cboTechLevel.getSelectedIndex();
-        final String techClass = (String) cboTechClass.getSelectedItem();
-        final int unitType = cboUnitType.getSelectedIndex() - 1;
+        final int[] techLevels = techLevelSelector.getSelectedIndices();
+        final int[] techClass = techClassSelector.getSelectedIndices();
+        final int[] unitTypes = unitTypeSelector.getSelectedIndices();
         // If current expression doesn't parse, don't update.
         try {
             weaponFilter = new RowFilter<>() {
@@ -330,13 +334,12 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                 public boolean include(Entry<? extends WeaponsTableModel, ? extends Integer> entry) {
                     WeaponsTableModel weapModel = entry.getModel();
                     WeaponType wp = weapModel.getWeaponTypeAt(entry.getIdentifier());
-                    String currTechClass = TechConstants.getTechName(wp.getTechLevel(parentPanel.gameYear));
-
-                    boolean techLvlMatch = matchTechLvl(techLevel, wp.getTechLevel(parentPanel.gameYear));
-                    boolean techClassMatch = matchTechClass(techClass, currTechClass);
-                    boolean unitTypeMatch = matchUnitType(unitType, wp);
+                    String weaponTechClass = TechConstants.getTechName(wp.getTechLevel(parentPanel.gameYear));
+                    boolean techLvlMatch = matchTechLvl(techLevels, wp.getTechLevel(parentPanel.gameYear));
+                    boolean techClassMatch = matchTechClass(techClass, weaponTechClass);
+                    boolean unitTypeMatch = matchUnitTypeToWeapon(unitTypes, wp);
                     boolean textFilterMatch = (tableFilterText.getText() == null) || (tableFilterText.getText().length() < 2)
-                        || matchWeaponTextFilter(entry, WeaponsTableModel.COL_NAME);
+                        || matchWeaponTextFilter(entry);
                     return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch;
                 }
             };
@@ -351,13 +354,13 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                 @Override
                 public boolean include(Entry<? extends EquipmentTableModel, ? extends Integer> entry) {
                     EquipmentTableModel eqModel = entry.getModel();
-                    EquipmentType eq = eqModel.getEquipmentTypeAt(entry.getIdentifier());
+                    MiscType eq = eqModel.getEquipmentTypeAt(entry.getIdentifier());
                     String currTechClass = TechConstants.getTechName(eq.getTechLevel(parentPanel.gameYear));
-                    boolean techLvlMatch = matchTechLvl(techLevel, eq.getTechLevel(parentPanel.gameYear));
+                    boolean techLvlMatch = matchTechLvl(techLevels, eq.getTechLevel(parentPanel.gameYear));
                     boolean techClassMatch = matchTechClass(techClass, currTechClass);
-                    boolean unitTypeMatch = matchUnitType(unitType, eq);
+                    boolean unitTypeMatch = matchUnitTypeToMisc(unitTypes, eq);
                     boolean textFilterMatch = (tableFilterText.getText() == null) || (tableFilterText.getText().length() < 2)
-                        || matchEquipmentTextFilter(entry, EquipmentTableModel.COL_NAME);
+                        || matchEquipmentTextFilter(entry);
                     return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch;
                 }
             };
@@ -376,26 +379,20 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     }
 
     /**
-     * Creates collections for all the possible <code>WeaponType</code>s and
-     * <code>EquipmentType</code>s. These are used to populate the weapons
-     * and equipment tables.
+     * Creates collections for all the possible WeaponTypes and MiscTypes. These are used to populate the weapons and equipment tables.
      */
     private void populateWeaponsAndEquipmentChoices() {
         List<WeaponType> weapons = new ArrayList<>();
-        List<EquipmentType> equipment = new ArrayList<>();
+        List<MiscType> equipment = new ArrayList<>();
 
-        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
-            EquipmentType et = e.nextElement();
+        for (EquipmentType et : EquipmentType.allTypes()) {
             if (et instanceof WeaponType) {
                 weapons.add((WeaponType) et);
-                // Check for C3+Tag and C3 Master Booster
-                if (et.hasFlag(WeaponType.F_C3M) || et.hasFlag(WeaponType.F_C3MBS)) {
-                    equipment.add(et);
-                }
             } else if (et instanceof MiscType) {
-                equipment.add(et);
+                equipment.add((MiscType) et);
             }
         }
+
         weaponsModel.setData(weapons);
         equipmentModel.setData(equipment);
     }
@@ -423,57 +420,48 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         }
     }
 
-    private boolean matchTechClass(String t1, String t2) {
-        if (t1.equals("All")) {
+    private boolean matchTechClass(int[] selectedClasses, String t2) {
+        if (t2.equals("IS/Clan") || (selectedClasses.length != 1)) {
             return true;
-        } else if (t1.equals("IS/Clan")) {
-            return t2.equals("Inner Sphere") || t2.equals("Clan") || t1.equals(t2);
         } else {
-            return t1.equals(t2);
+            if (selectedClasses[0] == 0) {
+                return t2.equals("Inner Sphere");
+            } else {
+                return t2.equals("Clan");
+            }
         }
     }
 
-    private boolean matchUnitType(int unitTypeFilter, EquipmentType eq) {
-        // All is selected
-        if (unitTypeFilter < 0) {
+    private boolean matchUnitTypeToWeapon(int[] selectedUnitTypes, EquipmentType eq) {
+        // All or nothing is selected
+        if (selectedUnitTypes.length == 0 || selectedUnitTypes.length >= 5) {
             return true;
+        } else {
+            List<Integer> selection = Arrays.stream(selectedUnitTypes).boxed().toList();
+            // 5 is the index, not the unit type constant!
+            return (selection.contains(5) && eq.hasFlag(WeaponType.F_AERO_WEAPON))
+                || (selection.contains(UnitType.BATTLE_ARMOR) && eq.hasFlag(WeaponType.F_BA_WEAPON))
+                || (selection.contains(UnitType.INFANTRY) && eq.hasFlag(WeaponType.F_INFANTRY))
+                || (selection.contains(UnitType.MEK) && eq.hasFlag(WeaponType.F_MEK_WEAPON))
+                || (selection.contains(UnitType.TANK) && eq.hasFlag(WeaponType.F_TANK_WEAPON))
+                || (selection.contains(UnitType.PROTOMEK) && eq.hasFlag(WeaponType.F_PROTO_WEAPON));
         }
+    }
 
-        switch (unitTypeFilter) {
-            case 5:
-                if (eq.hasFlag(WeaponType.F_AERO_WEAPON) || eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT)) {
-                    return true;
-                }
-                break;
-            case UnitType.BATTLE_ARMOR:
-                if (eq.hasFlag(WeaponType.F_BA_WEAPON) || eq.hasFlag(MiscType.F_BA_EQUIPMENT)) {
-                    return true;
-                }
-                break;
-            case UnitType.INFANTRY:
-                if (eq.hasFlag(WeaponType.F_INFANTRY)) {
-                    return true;
-                }
-                break;
-            case UnitType.MEK:
-                if (eq.hasFlag(WeaponType.F_MEK_WEAPON) || eq.hasFlag(MiscType.F_MEK_EQUIPMENT)) {
-                    return true;
-                }
-                break;
-            case UnitType.TANK:
-                if (eq.hasFlag(WeaponType.F_TANK_WEAPON) || eq.hasFlag(MiscType.F_TANK_EQUIPMENT)) {
-                    return true;
-                }
-                break;
-            case UnitType.PROTOMEK:
-                if (eq.hasFlag(WeaponType.F_PROTO_WEAPON) || eq.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
-                    return true;
-                }
-                break;
-            default:
-                return false;
+    private boolean matchUnitTypeToMisc(int[] selectedUnitTypes, MiscType eq) {
+        // All or nothing is selected
+        if (selectedUnitTypes.length == 0 || selectedUnitTypes.length >= 5) {
+            return true;
+        } else {
+            List<Integer> selection = Arrays.stream(selectedUnitTypes).boxed().toList();
+            // 5 is the index, not the unit type constant!
+            return (selection.contains(5) && eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT))
+                || (selection.contains(UnitType.BATTLE_ARMOR) && eq.hasFlag(MiscType.F_BA_EQUIPMENT))
+                || (selection.contains(UnitType.INFANTRY) && eq.hasFlag(MiscType.F_INF_EQUIPMENT))
+                || (selection.contains(UnitType.MEK) && eq.hasFlag(MiscType.F_MEK_EQUIPMENT))
+                || (selection.contains(UnitType.TANK) && eq.hasFlag(MiscType.F_TANK_EQUIPMENT))
+                || (selection.contains(UnitType.PROTOMEK) && eq.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT));
         }
-        return false;
     }
 
     // Build the string representation of the new expression
@@ -485,46 +473,61 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         return filterExp.toString();
     }
 
-    private boolean matchTechLvl(int t1, int t2) {
-        return ((t1 == TechConstants.T_ALL) || (t1 == t2)
-            || ((t1 == TechConstants.T_IS_TW_ALL) && (t2 <= TechConstants.T_IS_TW_NON_BOX)))
-
-            || ((t1 == TechConstants.T_TW_ALL) && (t2 <= TechConstants.T_CLAN_TW))
-
-            || ((t1 == TechConstants.T_ALL_IS) && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-            || (t2 == TechConstants.T_IS_ADVANCED)
-            || (t2 == TechConstants.T_IS_EXPERIMENTAL)
-            || (t2 == TechConstants.T_IS_UNOFFICIAL)))
-
-            || ((t1 == TechConstants.T_ALL_CLAN)
-            && ((t2 == TechConstants.T_CLAN_TW)
-            || (t2 == TechConstants.T_CLAN_ADVANCED)
-            || (t2 == TechConstants.T_CLAN_EXPERIMENTAL)
-            || (t2 == TechConstants.T_CLAN_UNOFFICIAL)));
+    private boolean matchTechLvl(int[] selectedTechLevels, int equipmentTechLevel) {
+        int simpleEquipmentLevel = TechConstants.convertFromNormalToSimple(equipmentTechLevel);
+        return Arrays.stream(selectedTechLevels).anyMatch(selectedLevel -> selectedLevel == simpleEquipmentLevel);
     }
 
-    private void addButtonPressed() {
-        if ((focusedSelector == tblEquipment) && (tblEquipment.getSelectedRow() != -1)) {
-            int row = tblEquipment.getSelectedRow();
-            String internalName = (String) tblEquipment.getModel().getValueAt(
-                tblEquipment.convertRowIndexToModel(row),
-                EquipmentTableModel.COL_INTERNAL_NAME);
-            String fullName = (String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
-            int qty = Integer.parseInt((String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
-            filterTokens.add(new EquipmentTypeFT(internalName, fullName, qty));
+    private void addEquipmentFilter(int row, int qty, boolean atleast) {
+        String internalName = (String) tblEquipment.getModel().getValueAt(
+            tblEquipment.convertRowIndexToModel(row),
+            EquipmentTableModel.COL_INTERNAL_NAME);
+        String fullName = (String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
+        filterTokens.add(new EquipmentTypeFT(internalName, fullName, qty, atleast));
+    }
 
-        } else if ((focusedSelector == tblWeapons) && (tblWeapons.getSelectedRow() != -1)) {
-            int row = tblWeapons.getSelectedRow();
-            String internalName = (String) tblWeapons.getModel().getValueAt(
-                tblWeapons.convertRowIndexToModel(row),
-                WeaponsTableModel.COL_INTERNAL_NAME);
-            String fullName = (String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
-            int qty = Integer.parseInt((String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
-            filterTokens.add(new EquipmentTypeFT(internalName, fullName, qty));
+    private void addWeaponFilter(int row, int qty, boolean atleast) {
+        String internalName = (String) tblWeapons.getModel().getValueAt(
+            tblWeapons.convertRowIndexToModel(row),
+            WeaponsTableModel.COL_INTERNAL_NAME);
+        String fullName = (String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
+        filterTokens.add(new EquipmentTypeFT(internalName, fullName, qty, atleast));
+    }
 
+    private void addFilter(boolean and) {
+        boolean atleast = btnAtLeast.isSelected();
+        int qty = (int) weaponClassCount.getValue();
+        if (focusedSelector == tblEquipment) {
+            int[] rows = tblEquipment.getSelectedRows();
+            if (rows.length == 1) {
+                addEquipmentFilter(rows[0], qty, atleast);
+            } else if (rows.length > 1) {
+                addFilterToken(new LeftParensFilterToken());
+                for (int row : rows) {
+                    if (row != rows[0]) {
+                        addFilterToken(and ? new AndFilterToken() : new OrFilterToken());
+                    }
+                    addEquipmentFilter(row, qty, atleast);
+                }
+                addFilterToken(new RightParensFilterToken());
+            }
+
+        } else if (focusedSelector == tblWeapons) {
+            int[] rows = tblWeapons.getSelectedRows();
+            if (rows.length == 1) {
+                addWeaponFilter(rows[0], qty, atleast);
+            } else if (rows.length > 1) {
+                addFilterToken(new LeftParensFilterToken());
+                for (int row : rows) {
+                    if (row != rows[0]) {
+                        addFilterToken(and ? new AndFilterToken() : new OrFilterToken());
+                    }
+                    addWeaponFilter(row, qty, atleast);
+                }
+                addFilterToken(new RightParensFilterToken());
+            }
         } else if ((focusedSelector == weaponClassChooser) && (weaponClassChooser.getSelectedItem() != null)) {
-            int qty = (int) weaponClassCount.getValue();
-            filterTokens.add(new WeaponClassFT((WeaponClass) weaponClassChooser.getSelectedItem(), qty));
+            filterTokens.add(new WeaponClassFT((WeaponClass) weaponClassChooser.getSelectedItem(), qty, atleast));
 
         } else {
             // if something else is focused, do nothing
@@ -534,13 +537,13 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         adaptTokenButtons();
     }
 
-    private boolean matchWeaponTextFilter(RowFilter.Entry<? extends WeaponsTableModel, ? extends Integer> entry, int column) {
-        String wp = entry.getModel().getValueAt(entry.getIdentifier(), column).toString();
+    private boolean matchWeaponTextFilter(RowFilter.Entry<? extends WeaponsTableModel, ? extends Integer> entry) {
+        String wp = entry.getModel().getValueAt(entry.getIdentifier(), WeaponsTableModel.COL_NAME).toString();
         return matchTextFilter(wp);
     }
 
-    private boolean matchEquipmentTextFilter(RowFilter.Entry<? extends EquipmentTableModel, ? extends Integer> entry, int column) {
-        String wp = entry.getModel().getValueAt(entry.getIdentifier(), column).toString();
+    private boolean matchEquipmentTextFilter(RowFilter.Entry<? extends EquipmentTableModel, ? extends Integer> entry) {
+        String wp = entry.getModel().getValueAt(entry.getIdentifier(), EquipmentTableModel.COL_NAME).toString();
         return matchTextFilter(wp);
     }
 
@@ -576,10 +579,6 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     @Override
     public void focusLost(FocusEvent e) { }
 
-    private void spinnerChange() {
-        focusWeaponClasschooser();
-    }
-
     private void focusWeaponClasschooser() {
         focusedSelector = weaponClassChooser;
         tblWeapons.clearSelection();
@@ -601,13 +600,20 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
         boolean canAddEquipment = filterTokens.isEmpty() || (lastToken() instanceof OperatorFT)
             || (lastToken() instanceof LeftParensFilterToken);
-        btnAdd.setEnabled(hasFocusedSelector() && canAddEquipment);
+        btnAdd.setEnabled(hasFocusedSelector() && canAddEquipment && !isMultiSelection());
+        btnAddMultiOr.setEnabled(isMultiSelection() && canAddEquipment);
+        btnAddMultiAnd.setEnabled(isMultiSelection() && canAddEquipment);
         btnLeftParen.setEnabled(canAddEquipment);
 
         boolean canAddOperator = (lastToken() instanceof EquipmentFilterToken) || (lastToken() instanceof RightParensFilterToken);
         btnAnd.setEnabled(canAddOperator);
         btnOr.setEnabled(canAddOperator);
         btnRightParen.setEnabled(canAddOperator);
+    }
+
+    private boolean isMultiSelection() {
+        return ((focusedSelector == tblEquipment) && (tblEquipment != null) && (tblEquipment.getSelectedRows().length > 1))
+            || ((focusedSelector == tblWeapons) && (tblWeapons != null) && (tblWeapons.getSelectedRows().length > 1));
     }
 
     private void addFilterToken(FilterToken token) {
@@ -621,6 +627,23 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
             filterTokens.remove(filterTokens.size() - 1);
             txtWEEqExp.setText(filterExpressionString());
             adaptTokenButtons();
+        }
+    }
+
+    private static class ChoiceRenderer extends DefaultListCellRenderer {
+
+        public ChoiceRenderer() {
+            paddingPanel.add(this);
+            paddingPanel.setBorder(new EmptyBorder(0, 2, 0, 2));
+        }
+
+        JPanel paddingPanel = new JPanel(new GridLayout(1, 1));
+
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, false);
+            return paddingPanel;
         }
     }
 }

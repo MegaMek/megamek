@@ -1,4 +1,22 @@
-package megamek.client.ui.swing.table;
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
+package megamek.client.ui.advancedsearch;
 
 import javax.swing.*;
 import javax.swing.table.TableColumnModel;
@@ -7,13 +25,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
 
-public class MegaMekTable extends JTable {
-    private static final long serialVersionUID = 1L;
+class SearchableTable extends JTable {
 
     private static final int KEY_TIMEOUT = 1000;
 
     private long lastSearch;
-
     StringBuffer searchBuffer;
 
     /**
@@ -21,57 +37,57 @@ public class MegaMekTable extends JTable {
      */
     protected int searchColumn;
 
-    public MegaMekTable() {
+    public SearchableTable() {
         super();
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(int numRows, int numColumns) {
+    public SearchableTable(int numRows, int numColumns) {
         super(numRows, numColumns);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(Object[][] rowData, Object[] columnNames) {
+    public SearchableTable(Object[][] rowData, Object[] columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(TableModel dm) {
+    public SearchableTable(TableModel dm) {
         super(dm);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(TableModel dm, int sc) {
+    public SearchableTable(TableModel dm, int sc) {
         super(dm);
         lastSearch = 0;
         searchColumn = sc;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(TableModel dm, TableColumnModel cm) {
+    public SearchableTable(TableModel dm, TableColumnModel cm) {
         super(dm, cm);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(TableModel dm, TableColumnModel cm,
-            ListSelectionModel sm) {
+    public SearchableTable(TableModel dm, TableColumnModel cm,
+                           ListSelectionModel sm) {
         super(dm, cm, sm);
         lastSearch = 0;
         searchColumn = 0;
         searchBuffer = new StringBuffer();
     }
 
-    public MegaMekTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
+    public SearchableTable(Vector<Vector<String>> rowData, Vector<String> columnNames) {
         super(rowData, columnNames);
         lastSearch = 0;
         searchColumn = 0;
@@ -96,7 +112,9 @@ public class MegaMekTable extends JTable {
         java.awt.Point p = e.getPoint();
         int rowIndex = rowAtPoint(p);
         int colIndex = columnAtPoint(p);
-        tip = getValueAt(rowIndex, colIndex).toString();
+        if (rowIndex >= 0) {
+            tip = getValueAt(rowIndex, colIndex).toString();
+        }
         return tip;
     }
 

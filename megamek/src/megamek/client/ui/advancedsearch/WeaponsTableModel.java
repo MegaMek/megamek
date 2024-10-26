@@ -23,7 +23,6 @@ import megamek.common.WeaponType;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,20 +30,18 @@ import java.util.List;
  */
 class WeaponsTableModel extends AbstractTableModel {
 
-    static final int COL_QTY = 0;
-    static final int COL_NAME = 1;
-    static final int COL_DMG = 2;
-    static final int COL_HEAT = 3;
-    static final int COL_SHORT = 4;
-    static final int COL_MED = 5;
-    static final int COL_LONG = 6;
-    static final int COL_IS_CLAN = 7;
-    static final int COL_LEVEL = 8;
-    static final int N_COL = 9;
+    static final int COL_NAME = 0;
+    static final int COL_DMG = 1;
+    static final int COL_HEAT = 2;
+    static final int COL_SHORT = 3;
+    static final int COL_MED = 4;
+    static final int COL_LONG = 5;
+    static final int COL_IS_CLAN = 6;
+    static final int COL_LEVEL = 7;
+    static final int N_COL = 8;
     static final int COL_INTERNAL_NAME = 9;
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
-    private int[] qty;
     private final List<WeaponType> weapons = new ArrayList<>();
 
     WeaponsTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
@@ -63,7 +60,6 @@ class WeaponsTableModel extends AbstractTableModel {
 
     int getPreferredWidth(int col) {
         return switch (col) {
-            case COL_QTY -> 40;
             case COL_NAME -> 310;
             case COL_IS_CLAN -> 75;
             case COL_DMG, COL_HEAT, COL_SHORT, COL_MED, COL_LONG -> 50;
@@ -75,7 +71,6 @@ class WeaponsTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case COL_QTY -> "Qty";
             case COL_NAME -> "Weapon Name";
             case COL_IS_CLAN -> "IS/Clan";
             case COL_DMG -> "DMG";
@@ -93,16 +88,9 @@ class WeaponsTableModel extends AbstractTableModel {
         return getValueAt(0, c).getClass();
     }
 
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        return col == COL_QTY;
-    }
-
     void setData(List<WeaponType> wps) {
         weapons.clear();
         weapons.addAll(wps);
-        qty = new int[wps.size()];
-        Arrays.fill(qty, 1);
         fireTableDataChanged();
     }
 
@@ -117,7 +105,6 @@ class WeaponsTableModel extends AbstractTableModel {
         }
         WeaponType wp = weapons.get(row);
         return switch (col) {
-            case COL_QTY -> qty[row] + "";
             case COL_NAME -> wp.getName();
             case COL_IS_CLAN -> TechConstants.getTechName(wp.getTechLevel(twAdvancedSearchPanel.gameYear));
             case COL_DMG -> wp.getDamage();
@@ -130,13 +117,5 @@ class WeaponsTableModel extends AbstractTableModel {
             case COL_INTERNAL_NAME -> wp.getInternalName();
             default -> "?";
         };
-    }
-
-    @Override
-    public void setValueAt(Object value, int row, int col) {
-        if (col == COL_QTY) {
-            qty[row] = Integer.parseInt((String) value);
-            fireTableCellUpdated(row, col);
-        }
     }
 }

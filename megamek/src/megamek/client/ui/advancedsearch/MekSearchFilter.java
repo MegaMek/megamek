@@ -320,7 +320,7 @@ public class MekSearchFilter {
             if (currNode == null) {
                 currNode = new ExpNode();
             }
-            ExpNode newChild = new ExpNode(ft.internalName, ft.qty);
+            ExpNode newChild = new ExpNode(ft.internalName, ft.qty, ft.atleast);
             currNode.children.add(newChild);
             return createFTFromTokensRecursively(toks, currNode);
 
@@ -331,7 +331,7 @@ public class MekSearchFilter {
                 currNode = new ExpNode();
             }
 
-            ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty);
+            ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty, ft.atleast);
             currNode.children.add(newChild);
             return createFTFromTokensRecursively(toks, currNode);
         }
@@ -988,10 +988,10 @@ public class MekSearchFilter {
                 // If the requested quantity is 0, then we match if and only if the total number
                 // of matching equipment is also 0.
                 // Otherwise, we match if the total equals or exceeds the requested amount.
-                if (n.qty == 0) {
-                    return total == 0;
-                } else {
+                if (n.atleast) {
                     return total >= n.qty;
+                } else {
+                    return total < n.qty;
                 }
 
             } else {
@@ -1022,9 +1022,9 @@ public class MekSearchFilter {
                     // means that the unit isn't a match for the filter, as it has a
                     // weapon/equipment that is required to
                     // NOT be there.
-                    if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
+                    if (currEq.equals(n.name) && n.atleast && (currQty >= n.qty)) {
                         return true;
-                    } else if (currEq.equals(n.name) && n.qty == 0) {
+                    } else if (currEq.equals(n.name) && !n.atleast && (currQty >= n.qty)) {
                         return false;
                     }
 
@@ -1035,7 +1035,7 @@ public class MekSearchFilter {
                 // If the leaf quantity is 0, that means that the mek is a match. If the leaf
                 // quantity is non-zero, that means the mek isn't
                 // a match.
-                return n.qty == 0;
+                return !n.atleast;
             }
         }
         // Otherwise, recurse on all the children and either AND the results
@@ -1091,6 +1091,7 @@ public class MekSearchFilter {
         public WeaponClass weaponClass;
         public int qty;
         public List<ExpNode> children;
+        public boolean atleast;
 
         public ExpNode() {
             operation = BoolOp.NOP;
@@ -1118,22 +1119,24 @@ public class MekSearchFilter {
             }
         }
 
-        public ExpNode(String n, int q) {
+        public ExpNode(String n, int q, boolean atleast) {
             parent = null;
             name = n;
             weaponClass = null;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
+            this.atleast = atleast;
         }
 
-        public ExpNode(WeaponClass n, int q) {
+        public ExpNode(WeaponClass n, int q, boolean atleast) {
             parent = null;
             name = null;
             weaponClass = n;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
+            this.atleast = atleast;
         }
 
         @Override

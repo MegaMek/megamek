@@ -27,16 +27,20 @@ class EquipmentTypeFT extends EquipmentFilterToken {
 
     String internalName;
     String fullName;
-    int qty;
 
     EquipmentTypeFT(String in, String fn, int q) {
+        this(in, fn, q, true);
+    }
+
+    EquipmentTypeFT(String in, String fn, int q, boolean atleast) {
         internalName = in;
         fullName = fn;
         qty = q;
+        this.atleast = atleast;
     }
 
     @Override
     public String toString() {
-        return qty + " " + fullName + ((qty != 1) ? "s" : "");
+        return (atleast ? "" : "less than ") + qty + " " + fullName + ((qty != 1) ? "s" : "");
     }
 }

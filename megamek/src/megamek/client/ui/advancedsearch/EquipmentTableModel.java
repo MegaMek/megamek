@@ -19,11 +19,11 @@
 package megamek.client.ui.advancedsearch;
 
 import megamek.common.EquipmentType;
+import megamek.common.MiscType;
 import megamek.common.TechConstants;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,17 +31,15 @@ import java.util.List;
  */
 class EquipmentTableModel extends AbstractTableModel {
 
-    static final int COL_QTY = 0;
-    static final int COL_NAME = 1;
-    static final int COL_COST = 2;
-    static final int COL_IS_CLAN = 3;
-    static final int COL_LEVEL = 4;
-    static final int N_COL = 5;
+    static final int COL_NAME = 0;
+    static final int COL_COST = 1;
+    static final int COL_IS_CLAN = 2;
+    static final int COL_LEVEL = 3;
+    static final int N_COL = 4;
     static final int COL_INTERNAL_NAME = 5;
 
     private final TWAdvancedSearchPanel twAdvancedSearchPanel;
-    private int[] qty;
-    private final List<EquipmentType> equipment = new ArrayList<>();
+    private final List<MiscType> equipment = new ArrayList<>();
 
     EquipmentTableModel(TWAdvancedSearchPanel twAdvancedSearchPanel) {
         this.twAdvancedSearchPanel = twAdvancedSearchPanel;
@@ -59,7 +57,6 @@ class EquipmentTableModel extends AbstractTableModel {
 
     int getPreferredWidth(int col) {
         return switch (col) {
-            case COL_QTY -> 40;
             case COL_NAME -> 400;
             case COL_IS_CLAN -> 75;
             case COL_COST -> 175;
@@ -71,7 +68,6 @@ class EquipmentTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int column) {
         return switch (column) {
-            case COL_QTY -> "Qty";
             case COL_NAME -> "Name";
             case COL_IS_CLAN -> "IS/Clan";
             case COL_COST -> "Cost";
@@ -85,20 +81,13 @@ class EquipmentTableModel extends AbstractTableModel {
         return getValueAt(0, c).getClass();
     }
 
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        return col == COL_QTY;
-    }
-
-    void setData(List<EquipmentType> eq) {
+    void setData(List<MiscType> eq) {
         equipment.clear();
         equipment.addAll(eq);
-        qty = new int[eq.size()];
-        Arrays.fill(qty, 1);
         fireTableDataChanged();
     }
 
-    EquipmentType getEquipmentTypeAt(int row) {
+    MiscType getEquipmentTypeAt(int row) {
         return equipment.get(row);
     }
 
@@ -109,7 +98,6 @@ class EquipmentTableModel extends AbstractTableModel {
         }
         EquipmentType eq = equipment.get(row);
         return switch (col) {
-            case COL_QTY -> qty[row] + "";
             case COL_NAME -> eq.getName();
             case COL_IS_CLAN -> TechConstants.getTechName(eq.getTechLevel(twAdvancedSearchPanel.gameYear));
             case COL_COST -> eq.getRawCost();
@@ -118,13 +106,5 @@ class EquipmentTableModel extends AbstractTableModel {
             case COL_INTERNAL_NAME -> eq.getInternalName();
             default -> "?";
         };
-    }
-
-    @Override
-    public void setValueAt(Object value, int row, int col) {
-        if (col == COL_QTY) {
-            qty[row] = Integer.parseInt((String) value);
-            fireTableCellUpdated(row, col);
-        }
     }
 }

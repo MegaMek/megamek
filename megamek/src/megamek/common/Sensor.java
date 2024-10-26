@@ -182,10 +182,12 @@ public class Sensor implements Serializable {
 
         if ((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.getEMI().isEMI()) {
+            if (conditions.isEMI()) {
                 range -= 4;
             }
-            // TODO: add lightning
+            if (conditions.getWeather().isLightningStorm()) {
+                range -= 1;
+            }
         }
 
         if ((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)

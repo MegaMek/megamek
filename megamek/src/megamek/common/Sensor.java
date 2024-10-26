@@ -180,6 +180,7 @@ public class Sensor implements Serializable {
             return 0;
         }
 
+        //TO:AR 6th ed. p 190
         if ((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.isEMI()) {

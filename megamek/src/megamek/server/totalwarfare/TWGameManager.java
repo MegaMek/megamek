@@ -31352,15 +31352,11 @@ public class TWGameManager extends AbstractGameManager {
                 .collect(Collectors.toList());
 
         for (Entity entity : hitEntities) {
-            int entityDamage = damage;
-
-            if (entityDamage > 0) {
-                ToHitData toHit = new ToHitData();
-                toHit.setSideTable(ToHitData.SIDE_RANDOM);
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
-                Vector<Report> entityReport = damageEntity(entity, hit, entityDamage);
-                vFullReport.addAll(entityReport);
-            }
+            ToHitData toHit = new ToHitData();
+            toHit.setSideTable(ToHitData.SIDE_RANDOM);
+            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
+            Vector<Report> entityReport = damageEntity(entity, hit, damage);
+            vFullReport.addAll(entityReport);
         }
     }
 

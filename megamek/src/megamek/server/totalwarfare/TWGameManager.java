@@ -31348,10 +31348,7 @@ public class TWGameManager extends AbstractGameManager {
 
         for (Entity entity : hitEntities) {
             int entityDamage = damage;
-            if ((bldg != null)
-                    && (Compute.isInBuilding(game, entity))) {
-                entityDamage = bldg.getAbosrbedDamage(entityDamage, coords);
-            }
+
             if (entityDamage > 0) {
                 ToHitData toHit = new ToHitData();
                 toHit.setSideTable(ToHitData.SIDE_RANDOM);

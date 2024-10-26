@@ -165,10 +165,11 @@ public enum Weather {
                 || isLightningStorm();
     }
 
-    public boolean isDownpourOrHeavySnowOrIceStorm() {
+    public boolean isDownpourOrHeavySnowOrIceStormOrLightningStorm() {
         return isDownpour()
                 || isHeavySnow()
-                || isIceStorm();
+                || isIceStorm()
+                || isLightningStorm();
     }
 
     public boolean isSnowFlurriesOrSleetOrIceStorm() {

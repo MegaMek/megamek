@@ -24,7 +24,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -32,7 +32,7 @@ import megamek.server.GameManager;
 public class NarcHandler extends MissileWeaponHandler {
     private static final long serialVersionUID = 3195613885543781820L;
 
-    public NarcHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public NarcHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -161,9 +161,9 @@ public class NarcHandler extends MissileWeaponHandler {
 
         // If our narc pod "hits" an already-missing head, reroll until we hit
         // somewhere else as per the errata for torso-mounted cockpits.
-        if (entityTarget instanceof Mech
-            && !narcCanAttachTo(entityTarget, Mech.LOC_HEAD)) {
-            while (hit.getLocation() == Mech.LOC_HEAD) {
+        if (entityTarget instanceof Mek
+            && !narcCanAttachTo(entityTarget, Mek.LOC_HEAD)) {
+            while (hit.getLocation() == Mek.LOC_HEAD) {
                 hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
@@ -173,9 +173,9 @@ public class NarcHandler extends MissileWeaponHandler {
 
         // Catch Protomech near-misses here.
         // So what do we do for a near miss on a glider? Assume attach to wings.
-        if (entityTarget instanceof Protomech
-                && hit.getLocation() == Protomech.LOC_NMISS
-                && !((Protomech) entityTarget).isGlider()) {
+        if (entityTarget instanceof ProtoMek
+                && hit.getLocation() == ProtoMek.LOC_NMISS
+                && !((ProtoMek) entityTarget).isGlider()) {
             Report r = new Report(6035);
             r.subject = entityTarget.getId();
             vPhaseReport.add(r);
@@ -193,18 +193,18 @@ public class NarcHandler extends MissileWeaponHandler {
 
         // If the pod would attach to a destroyed location, have it transfer
         // inwards.
-        if (entityTarget instanceof Mech) {
+        if (entityTarget instanceof Mek) {
             while (!narcCanAttachTo(entityTarget, hit.getLocation())
-                && (hit.getLocation() != Mech.LOC_CT)) {
+                && (hit.getLocation() != Mek.LOC_CT)) {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }
 
-        // Now the same check for ProtoMechs. We've already covered near-misses
+        // Now the same check for ProtoMeks. We've already covered near-misses
         // above, so here we only have to worry about the actual hits left over.
-        if (entityTarget instanceof Protomech) {
+        if (entityTarget instanceof ProtoMek) {
             while (!narcCanAttachTo(entityTarget, hit.getLocation())
-                && (hit.getLocation() != Protomech.LOC_TORSO)) {
+                && (hit.getLocation() != ProtoMek.LOC_TORSO)) {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }

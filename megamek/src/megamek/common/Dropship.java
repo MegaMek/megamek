@@ -171,7 +171,7 @@ public class Dropship extends SmallCraft {
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
-        if (isAirborne()) {
+        if (currElevation != 0) {
             return hex.containsTerrain(Terrains.IMPASSABLE);
         }
         // Check prohibited terrain
@@ -760,5 +760,10 @@ public class Dropship extends SmallCraft {
         boolean spheroidOrLessThanThin = isSpheroid()
                 || conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
         return spheroidOrLessThanThin && (getCurrentThrust() > 2);
+    }
+
+    @Override
+    public int getGenericBattleValue() {
+        return (int) Math.round(Math.exp(6.5266 + 0.2497*Math.log(getWeight())));
     }
 }

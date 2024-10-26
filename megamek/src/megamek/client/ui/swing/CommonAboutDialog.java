@@ -25,6 +25,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -74,19 +75,19 @@ public class CommonAboutDialog extends JDialog {
         copyButton.addActionListener(e -> copySystemData());
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
-        buttonPanel.setBorder(new UIUtil.ScaledEmptyBorder(25, 20, 10, 10));
+        buttonPanel.setBorder(new EmptyBorder(25, 20, 10, 10));
         buttonPanel.add(closeButton);
         buttonPanel.add(copyButton);
 
         Box contentPanel = Box.createVerticalBox();
-        contentPanel.setBorder(new UIUtil.ScaledEmptyBorder(35, 50, 0, 50));
+        contentPanel.setBorder(new EmptyBorder(35, 50, 0, 50));
         titleImageLabel.setAlignmentX(0.5f);
         contentPanel.add(titleImageLabel);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(35), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(35));
         contentPanel.add(lblVersion);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(15), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(lblCopyright);
-        contentPanel.add(UIUtil.scaledVerticalSpacer(15), BorderLayout.PAGE_START);
+        contentPanel.add(Box.createVerticalStrut(15));
         contentPanel.add(lblAbout);
 
         add(contentPanel, BorderLayout.CENTER);
@@ -94,7 +95,6 @@ public class CommonAboutDialog extends JDialog {
 
         // Size and center
         getRootPane().setDefaultButton(closeButton);
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         pack();
         setLocationRelativeTo(parentFrame);
         setResizable(false);

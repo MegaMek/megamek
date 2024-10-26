@@ -13,7 +13,7 @@
  */
 package megamek.test.entities;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.Board;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -27,7 +27,7 @@ public class TestOffBoardEntity {
         game.setBoardDirect(new Board(16, 17));
 
         // Now create an entity in the game.
-        Entity entity = new BipedMech();
+        Entity entity = new BipedMek();
         entity.setGame(game);
         entity.setDeployRound(1);
 

@@ -23,7 +23,7 @@ import megamek.common.Game;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;
@@ -33,7 +33,7 @@ public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
      * @param waa
      * @param g
      */
-    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }

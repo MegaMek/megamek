@@ -1,10 +1,22 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
-
-import megamek.common.planetaryconditions.Atmosphere;
-import megamek.common.planetaryconditions.PlanetaryConditions;
-import megamek.common.planetaryconditions.Wind;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,15 +27,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-public class PlanetaryConditionsTest {
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.planetaryconditions.Wind;
+
+class PlanetaryConditionsTest {
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testWhyDoomed() {
+    void testWhyDoomed() {
         Game mockGame = mock(Game.class);
         Board mockBoard = mock(Board.class);
         Hex mockHex = mock(Hex.class);
@@ -48,17 +67,16 @@ public class PlanetaryConditionsTest {
         assertNull(planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame);
 
-        // F4 Tornado - Entity is a mech (not doomed)
+        // F4 Tornado - Entity is a mek (not doomed)
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setWind(Wind.TORNADO_F4);
-        mockEntity = mock(Mech.class);
+        mockEntity = mock(Mek.class);
         when(mockEntity.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         assertNull(planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame);
 
-
-        // F4 Tornado - Entity is not a mech (doomed)
+        // F4 Tornado - Entity is not a mek (doomed)
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setWind(Wind.TORNADO_F4);
         mockEntity = mock(Infantry.class);
@@ -130,9 +148,11 @@ public class PlanetaryConditionsTest {
         assertNull(planetaryConditions.whyDoomed(mockEntity, mockGame));
         reset(mockEntity, mockGame);
 
-        // Extreme temperature - Doomed in extreme temperature, but sheltered in building (not doomed)
-        // FIXME: This test is really coupled with Compute.isInBuilding() implementation. It would be nice if I
-        //  could mock a static class somehow and abstract the whole thing.
+        // Extreme temperature - Doomed in extreme temperature, but sheltered in
+        // building (not doomed)
+        // FIXME: This test is really coupled with Compute.isInBuilding()
+        // implementation. It would be nice if I
+        // could mock a static class somehow and abstract the whole thing.
 
         planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setTemperature(100);
@@ -163,7 +183,7 @@ public class PlanetaryConditionsTest {
     }
 
     @Test
-    public void testIsExtremeTemperature() {
+    void testIsExtremeTemperature() {
         // Extreme temperature - Heat
         PlanetaryConditions planetaryConditions = new PlanetaryConditions();
         planetaryConditions.setTemperature(51);
@@ -181,7 +201,7 @@ public class PlanetaryConditionsTest {
     }
 
     @Test
-    public void testGetTemperatureDisplayableName() {
+    void testGetTemperatureDisplayableName() {
         // Extreme Heat
         assertEquals("51 (Extreme Heat)", PlanetaryConditions.getTemperatureDisplayableName(51));
 

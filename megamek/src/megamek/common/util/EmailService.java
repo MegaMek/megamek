@@ -14,15 +14,6 @@
 */
 package megamek.common.util;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.Report;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -30,16 +21,31 @@ import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.logging.MMLogger;
+
 public class EmailService {
+    private static final MMLogger logger = MMLogger.create(EmailService.class);
+
     private static class RoundReportMessage extends MimeMessage {
 
-
         private RoundReportMessage(InternetAddress from,
-                                   Player to,
-                                   Game game,
-                                   Vector<Report> reports,
-                                   int sequenceNumber,
-                                   Session session) throws Exception {
+                Player to,
+                Game game,
+                Vector<Report> reports,
+                int sequenceNumber,
+                Session session) throws Exception {
             super(session);
 
             // Since MM mutates game state as it progresses, need to
@@ -49,19 +55,16 @@ public class EmailService {
 
             setFrom(from);
             setRecipient(
-                RecipientType.TO,
-                new InternetAddress(to.getEmail(), to.getName())
-            );
+                    RecipientType.TO,
+                    new InternetAddress(to.getEmail(), to.getName()));
 
             setHeader(
-                "Message-ID",
-                newMessageId(from, to, game, sequenceNumber)
-            );
+                    "Message-ID",
+                    newMessageId(from, to, game, sequenceNumber));
             if (sequenceNumber > 0) {
                 setHeader(
-                    "In-Reply-To",
-                    newMessageId(from, to, game, sequenceNumber - 1)
-                );
+                        "In-Reply-To",
+                        newMessageId(from, to, game, sequenceNumber - 1));
             }
 
             Report subjectReport;
@@ -72,11 +75,11 @@ public class EmailService {
                 subjectReport = new Report(991);
                 subjectReport.add(round, false);
             }
-            setSubject(subjectReport.getText());
+            setSubject(subjectReport.text());
 
             var body = new StringBuilder("<div style=\"white-space: pre\">");
-            for (var report: reports) {
-                body.append(report.getText());
+            for (var report : reports) {
+                body.append(report.text());
             }
             body.append("</div>");
             setText(body.toString(), "UTF-8", "html");
@@ -88,18 +91,17 @@ public class EmailService {
         }
 
         private static String newMessageId(InternetAddress from,
-                                           Player to,
-                                           Game game,
-                                           int actualSequenceNumber) {
+                Player to,
+                Game game,
+                int actualSequenceNumber) {
             final var address = from.getAddress();
             return String.format(
-                "<megamek.%s.%d.%d.%d@%s>",
-                game.getUUIDString(),
-                game.getRoundCount(),
-                to.getId(),
-                actualSequenceNumber,
-                address.substring(address.indexOf("@") + 1)
-            );
+                    "<megamek.%s.%d.%d.%d@%s>",
+                    game.getUUIDString(),
+                    game.getRoundCount(),
+                    to.getId(),
+                    actualSequenceNumber,
+                    address.substring(address.indexOf("@") + 1));
         }
 
     }
@@ -113,11 +115,9 @@ public class EmailService {
     private Thread mailWorker;
     private boolean running = true;
 
-
     public EmailService(Properties mailProperties) throws Exception {
         this.from = InternetAddress.parse(
-            mailProperties.getProperty("megamek.smtp.from", "")
-        )[0];
+                mailProperties.getProperty("megamek.smtp.from", ""))[0];
         this.mailProperties = mailProperties;
 
         Authenticator auth = null;
@@ -125,11 +125,11 @@ public class EmailService {
         var password = mailProperties.getProperty("megamek.smtp.password", "").trim();
         if (!login.isBlank() && !password.isBlank()) {
             auth = new Authenticator() {
-                    @Override
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(login, password);
-                    }
-                };
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(login, password);
+                }
+            };
         }
 
         mailSession = Session.getInstance(mailProperties, auth);
@@ -140,7 +140,7 @@ public class EmailService {
 
     public Vector<Player> getEmailablePlayers(Game game) {
         Vector<Player> emailable = new Vector<>();
-        for (var player: game.getPlayersVector()) {
+        for (var player : game.getPlayersList()) {
             if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot()
                     && !player.isObserver()) {
                 emailable.add(player);
@@ -159,8 +159,7 @@ public class EmailService {
             messageSequences.put(player, nextSequence);
         }
         return new RoundReportMessage(
-            from, player, game, reports, nextSequence, mailSession
-        );
+                from, player, game, reports, nextSequence, mailSession);
     }
 
     public void send(final Message message) {
@@ -198,7 +197,7 @@ public class EmailService {
                 // All good, just shut down
                 running = false;
             } catch (Exception ex) {
-                LogManager.getLogger().error("Error sending email", ex);
+                logger.error("Error sending email", ex);
             }
         }
     }

@@ -19,12 +19,16 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class CLBALBX extends Weapon {
     private static final long serialVersionUID = 2978911783244524588L;
@@ -51,7 +55,7 @@ public class CLBALBX extends Weapon {
         bv = 20;
         cost = 70000;
         // TODO: implement F_NO_COUNT_AMMO
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F)
@@ -65,7 +69,7 @@ public class CLBALBX extends Weapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new BALBXHandler(toHit, waa, game, manager);
     }
 

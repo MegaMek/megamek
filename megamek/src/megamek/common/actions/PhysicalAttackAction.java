@@ -34,13 +34,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
     /**
      * Common checking whether is it possible to physically attack the target
      *
-     * @param game The current {@link Game}
-     * @param ae the attacking {@link Entity}, which may be null
+     * @param game   The current {@link Game}
+     * @param ae     the attacking {@link Entity}, which may be null
      * @param target the attack's target
      * @return reason the attack is impossible, or null if it is possible
      */
     protected static @Nullable String toHitIsImpossible(Game game, @Nullable Entity ae,
-                                                        Targetable target) {
+            Targetable target) {
         if (target == null) {
             return "target is null";
         }
@@ -48,10 +48,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
         }
@@ -64,6 +64,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // can't make a physical attack if you are evading
         if (ae.isEvading()) {
             return "Attacker is evading.";
+        }
+
+        // can't make physical attacks if loading/unloading cargo
+        if (ae.endOfTurnCargoInteraction()) {
+            return Messages.getString("WeaponAttackAction.CantFireWhileLoadingUnloadingCargo");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -108,7 +113,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            // can't physically attack mechs making dfa attacks
+            // can't physically attack meks making dfa attacks
             if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
@@ -116,8 +121,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
         // Can't target woods or ignite a building with a physical.
         if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-            || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-            || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE)) {
             return "Invalid attack";
         }
 
@@ -140,8 +145,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "infantry squad target");
         }
 
-        // Ejected MechWarriors are also more difficult targets.
-        if (target instanceof MechWarrior) {
+        // Ejected MekWarriors are also more difficult targets.
+        if (target instanceof MekWarrior) {
             toHit.addModifier(2, "ejected Pilot target");
         }
         // attacker movement
@@ -157,22 +162,22 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Modular Armor");
         }
 
-        if ((ae instanceof Mech) && ae.isSuperHeavy()) {
-            toHit.addModifier(1, "attacker is superheavy mech");
+        if ((ae instanceof Mek) && ae.isSuperHeavy()) {
+            toHit.addModifier(1, "attacker is superheavy mek");
         }
-        
-        if ((ae instanceof TripodMech) && ae.getCrew().hasDedicatedPilot()) {
+
+        if ((ae instanceof TripodMek) && ae.getCrew().hasDedicatedPilot()) {
             toHit.addModifier(-1, "attacker is tripod with dedicated pilot");
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+                    Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                 Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                    Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Sensors Completely Destroyed for Torso-Mounted Cockpit");
@@ -205,7 +210,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             }
 
-            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne()
+                    && !te.isSpaceborne()) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
             }
 
@@ -245,8 +251,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.append(te.getStealthModifier(RangeType.RANGE_MINIMUM, ae));
             }
         }
-        
-        if ((ae instanceof Mech) && ((Mech) ae).hasIndustrialTSM()) {
+
+        if ((ae instanceof Mek) && ((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
     }

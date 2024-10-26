@@ -28,7 +28,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la";
     public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra";
     public static final String QUIRK_POS_COMBAT_COMPUTER = "combat_computer";
-    public static final String QUIRK_POS_COMMAND_MECH = "command_mech";
+    public static final String QUIRK_POS_COMMAND_MEK = "command_mech";
     public static final String QUIRK_POS_COMPACT = "compact_mech";
     public static final String QUIRK_POS_COWL = "cowl";
     // TODO - Code directional torso mount for play
@@ -147,7 +147,7 @@ public class OptionsConstants {
     public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
     // public static final String PILOT_DUST_OFF = "dust_off";
-    // public static final String PILOT_HVY_LIFTER = "hvy_lifter";
+    public static final String PILOT_HVY_LIFTER = "hvy_lifter";
     // public static final String PILOT_HOPPER = "hopper";
     public static final String PILOT_HOPPING_JACK = "hopping_jack";
     public static final String PILOT_HOT_DOG = "hot_dog";
@@ -218,11 +218,12 @@ public class OptionsConstants {
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter";
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek";
     public static final String UNOFF_SMALL_PILOT = "small_pilot";
+    public static final String UNOFF_ADV_ATMOSPHERIC_CONTROL = "unoff_adv_atmospheric_control";
 
     // EDGE
     public static final String EDGE = "edge";
     // different edge triggers
-    // Mech Triggers
+    // Mek Triggers
     public static final String EDGE_WHEN_HEADHIT = "edge_when_headhit";
     public static final String EDGE_WHEN_TAC = "edge_when_tac";
     public static final String EDGE_WHEN_KO = "edge_when_ko";
@@ -366,7 +367,7 @@ public class OptionsConstants {
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
     public static final String ADVANCED_ALL_HAVE_EI_COCKPIT = "all_have_ei_cockpit";
     public static final String ADVANCED_EXTREME_TEMPERATURE_SURVIVAL = "extreme_temperature_survival";
-    public static final String ADVANCED_ARMED_MECHWARRIORS = "armed_mechwarriors";
+    public static final String ADVANCED_ARMED_MEKWARRIORS = "armed_mekwarriors";
     public static final String ADVANCED_PILOTS_VISUAL_RANGE_ONE = "pilots_visual_range_one";
     public static final String ADVANCED_PILOTS_CANNOT_SPOT = "pilots_cannot_spot";
     public static final String ADVANCED_METAL_CONTENT = "metal_content";
@@ -411,7 +412,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
 
     public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
-    public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS = "tacops_advanced_mech_hit_locations";
+    public static final String ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS = "tacops_advanced_mek_hit_locations";
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
     public static final String ADVCOMBAT_TACOPS_BA_VS_BA = "tacops_ba_vs_ba";
     public static final String ADVCOMBAT_NO_TAC = "no_tac";
@@ -423,7 +424,6 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS = "protos_safe_from_infernos";
     public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE = "indirect_always_possible";
     public static final String ADVCOMBAT_INCREASED_AC_DMG = "increased_ac_dmg";
-    public static final String ADVCOMBAT_INCREASED_ISERLL_RANGE = "increased_iserll_range";
     public static final String ADVCOMBAT_UNJAM_UAC = "unjam_uac";
     public static final String ADVCOMBAT_UAC_TWOROLLS = "uac_tworolls";
     public static final String ADVCOMBAT_CLUBS_PUNCH = "clubs_punch";
@@ -501,6 +501,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
     public static final String ADVAERORULES_SINGLE_NO_CAP = "single_no_cap";
     public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS = "aero_artillery_munitions";
+    public static final String ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE = "crashed_dropships_survive";
     public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE = "expanded_kf_drive_damage";
     public static final String INIT_INF_MOVE_EVEN = "inf_move_even";
     public static final String INIT_INF_DEPLOY_EVEN = "inf_deploy_even";

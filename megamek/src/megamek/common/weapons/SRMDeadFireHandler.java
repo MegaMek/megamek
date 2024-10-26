@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -24,15 +24,18 @@ import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.Serial;
 
 /**
  * @author Jason Tighe
  */
 public class SRMDeadFireHandler extends SRMHandler {
+    @Serial
     private static final long serialVersionUID = -1511452503641090393L;
 
-    public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " dead fire missile(s) ";
     }
@@ -50,7 +53,7 @@ public class SRMDeadFireHandler extends SRMHandler {
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }

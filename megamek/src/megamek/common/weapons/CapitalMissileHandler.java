@@ -25,7 +25,6 @@ import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
@@ -36,8 +35,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -52,7 +50,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * @param g
      * @param m
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }

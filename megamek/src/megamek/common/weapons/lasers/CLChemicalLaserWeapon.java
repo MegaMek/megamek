@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ChemicalLaserHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -32,7 +32,7 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
     public CLChemicalLaserWeapon() {
         ammoType = AmmoType.T_CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
-        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON)
+        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MEK_WEAPON)
                 .or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);
         atClass = CLASS_LASER;
     }
@@ -47,7 +47,7 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ChemicalLaserHandler(toHit, waa, game, manager);
     }
 }

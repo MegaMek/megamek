@@ -1,0 +1,169 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
+chassis:Spartan
+model:SPT-N2
+mul id:2995
+Config:Biped
+techbase:Inner Sphere
+era:2765
+source:TRO: 3058
+rules level:2
+role:Skirmisher
+
+quirk:imp_sensors
+
+mass:80
+engine:400 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:26
+RT armor:26
+CT armor:31
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:8
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+ER PPC, Left Torso
+TAG, Left Torso
+Anti-Missile System, Right Torso
+Streak SRM 2, Center Torso
+Streak SRM 2, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo
+ISTAG
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAMS Ammo
+ISAMS Ammo
+ISAntiMissileSystem
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM2
+ISStreakSRM2
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Spartan, a Star League era BattleMech, began full production just before the Civil War at Terra's Martinson Armaments facility. Conceived as a general service 'Mech, the Spartan was known for its remarkable speed and diverse range capabilities, distinguishing it from similar weight class 'Mechs like the Crockett and Thug. Though only a little over 600 units were produced before the destruction of the manufacturing facility during Stefan Amaris' coup, the Spartan dispersed throughout the Inner Sphere, with a few remaining operational in Com Guards and other factions by 3042.
+capabilities:The Spartan's hallmark was its versatility across various combat ranges. Its primary long-range weapon, the Kinslaughter ER PPC, was notable for its lower heat generation and ease of maintenance. Medium-range combat was handled by three Blankenburg Technologies medium pulse lasers, offering greater damage output despite a slightly reduced range. For close engagements, it relied on two Streak SRM-2 packs located in the upper center torso. A unique feature was its auxiliary escape hatch, providing an alternate exit when standard ejection was compromised. Its superior speed, capable of reaching over 86 kph, allowed Spartan pilots to effectively control engagement ranges, using speed as a defensive asset.
+deployment:The Spartan SPT-N2 is an 80-ton BattleMech that excels in skirmishing roles, leveraging its speed and advanced sensor capabilities. Equipped with a 400 XL Engine, it achieves a notable top speed of 86.4 km/h, granting it exceptional mobility for an assault class 'Mech.<p>Armament includes a powerful Extended-Range Particle Projection Cannon (ER PPC) in the left torso, offering significant long-range firepower. This is complemented by three Medium Pulse Lasers in the right arm, enhancing its short to medium-range combat effectiveness. For additional tactical flexibility, the SPT-N2 is equipped with two Streak SRM-2 launchers in the center torso, providing reliable, accurate missile support.</p><p>A key feature of this variant is the inclusion of TAG in the left torso, allowing for precision targeting and coordination with indirect fire support. The SPT-N2 also boasts an Anti-Missile System (AMS) in the right torso, enhancing its defensive capabilities against missile attacks.</p><p>Armor-wise, the SPT-N2 is protected by standard Inner Sphere armor, providing a balanced level of protection without compromising its speed. The variant is known for its improved sensors, enhancing its battlefield awareness and reconnaissance abilities, crucial for its role as a skirmisher.</p>
+history:The Spartan, initially produced in limited numbers by the Star League, saw a decline in deployment during the Succession Wars due to production cessation and battlefield attrition. Despite this, the 'Mech maintained a niche presence, particularly among mercenary groups and peripheral states where its balanced capabilities in assault roles were valued. The Spartan's rarity made it a target for salvage operations, and those that survived became prized assets for their owners.
+manufacturer:Martinson Armaments
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Geometric 500 Hard Core
+systemmanufacturer:ENGINE:Dantrus 400 XL
+systemmanufacturer:ARMOR:Strausburg Armaments 206 Diamond Weave
+systemmanufacturer:COMMUNICATIONS:Blow 300 SNA Net
+systemmanufacturer:TARGETING:Scope 40 RNDST
+

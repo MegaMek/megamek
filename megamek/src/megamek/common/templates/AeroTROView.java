@@ -14,18 +14,26 @@
 */
 package megamek.common.templates;
 
-import megamek.common.*;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import megamek.common.Aero;
+import megamek.common.AmmoType;
+import megamek.common.Entity;
+import megamek.common.EntityFluff;
+import megamek.common.FighterSquadron;
+import megamek.common.Messages;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
+import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
 
 /**
  * Creates a TRO template model for aerospace and conventional fighters.
@@ -65,6 +73,7 @@ public class AeroTROView extends TROView {
         setModelData("isConventional", aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER));
         setModelData("isSupportVehicle", aero.isSupportVehicle());
         setModelData("isVSTOL", aero.isVSTOL());
+        setModelData("isFighterSquadron", aero instanceof FighterSquadron);
         final TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
         if (aero.hasEngine()) {
             setModelData("engineName", stripNotes(aero.getEngine().getEngineName()));
@@ -102,7 +111,7 @@ public class AeroTROView extends TROView {
     }
 
     private void addFluff() {
-        addMechVeeAeroFluff(aero);
+        addMekVeeAeroFluff(aero);
         setModelData("frameDesc", formatSystemFluff(EntityFluff.System.CHASSIS, aero.getFluff(),
                 () -> Messages.getString("TROView.Unknown")));
     }

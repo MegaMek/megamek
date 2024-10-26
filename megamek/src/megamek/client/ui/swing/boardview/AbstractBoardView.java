@@ -22,13 +22,13 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 public abstract class AbstractBoardView implements IBoardView {
 
-    protected final ArrayList<BoardViewListener> boardViewListeners = new ArrayList<>();
+    protected final List<BoardViewListener> boardViewListeners = new ArrayList<>();
     protected final LinkedHashSet<IDisplayable> overlays = new LinkedHashSet<>();
+    protected final TreeSet<Sprite> allSprites = new TreeSet<>();
 
     /**
      * Notifies attached BoardViewListeners of the event.
@@ -40,7 +40,7 @@ public abstract class AbstractBoardView implements IBoardView {
         for (BoardViewListener l : new ArrayList<>(boardViewListeners)) {
             switch (event.getType()) {
                 case BoardViewEvent.BOARD_HEX_CLICKED:
-                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
+                case BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED:
                 case BoardViewEvent.BOARD_HEX_DRAGGED:
                 case BoardViewEvent.BOARD_HEX_POPUP:
                     l.hexMoused(event);
@@ -70,12 +70,6 @@ public abstract class AbstractBoardView implements IBoardView {
         }
     }
 
-    /**
-     * Adds the specified BoardViewListener to receive board events from this boardview. A listener that is
-     * already present is not added again.
-     *
-     * @param listener the BoardViewListener
-     */
     @Override
     public final void addBoardViewListener(BoardViewListener listener) {
         if (!boardViewListeners.contains(listener)) {
@@ -83,11 +77,6 @@ public abstract class AbstractBoardView implements IBoardView {
         }
     }
 
-    /**
-     * Removes the specified BoardViewListener.
-     *
-     * @param listener the BoardViewListener
-     */
     @Override
     public final void removeBoardViewListener(BoardViewListener listener) {
         boardViewListeners.remove(listener);
@@ -106,5 +95,33 @@ public abstract class AbstractBoardView implements IBoardView {
     @Override
     public final void removeOverlay(IDisplayable overlay) {
         overlays.remove(overlay);
+    }
+
+    @Override
+    public void addSprites(Collection<? extends Sprite> sprites) {
+        allSprites.addAll(sprites);
+        repaint();
+    }
+
+    @Override
+    public void removeSprites(Collection<? extends Sprite> sprites) {
+        allSprites.removeAll(sprites);
+        repaint();
+    }
+
+    /**
+     * Removes all sprites from this BoardView. This includes (possibly) sprites for units, attacks etc.
+     * Note that this is not communicated to the SpriteHandlers.
+     */
+    public void clearSprites() {
+        allSprites.clear();
+        repaint();
+    }
+
+    /**
+     * Returns an unmodifiable view of this BoardView's sprites.
+     */
+    public Set<Sprite> getAllSprites() {
+        return Collections.unmodifiableSet(allSprites);
     }
 }

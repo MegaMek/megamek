@@ -13,17 +13,17 @@
  */
 package megamek.common.commandline;
 
+import java.io.File;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
-import java.net.URI;
 
 public class ClientServerCommandLineParser extends AbstractCommandLineParser {
+    private static final MMLogger logger = MMLogger.create(ClientServerCommandLineParser.class);
 
     private String saveGameFileName;
     private int port;
@@ -89,6 +89,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     public boolean getUseDefaults() {
         return useDefaults;
     }
+
     /**
      * @return the game file name option value or <code>null</code> if it wasn't set
      */
@@ -158,7 +159,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 break;
                         }
                     } catch (ParseException ex) {
-                        LogManager.getLogger().error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
+                        logger.error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                         throw ex;
                     }
                     break;
@@ -252,7 +253,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     }
 
     public Resolver getResolver(String defaultPassword, int defaultPort,
-                                String defaultServerAddress, String defaultPlayerName) {
+            String defaultServerAddress, String defaultPlayerName) {
         return new Resolver(this, defaultPassword, defaultPort, defaultServerAddress, defaultPlayerName);
     }
 
@@ -263,12 +264,11 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
         protected final String saveGameFileName;
 
         public Resolver(ClientServerCommandLineParser parser, String defaultPassword, int defaultPort,
-                        String defaultServerAddress, String defaultPlayerName)
-        {
+                String defaultServerAddress, String defaultPlayerName) {
             try {
                 parser.parse();
             } catch (AbstractCommandLineParser.ParseException e) {
-                LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+                logger.error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             }
 
             String playerName = parser.getPlayerName();
@@ -330,6 +330,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
          * path resolves the saveGameFileName arg if it was provided.
          * If it is an absolute path, uses that, otherwise looks first in
          * current working directory and then in ./savegame/
+         *
          * @return File object if valid file, null if not
          */
         public File getSaveGameFile() {
@@ -341,16 +342,16 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             if (gameFile.canRead()) {
                 return gameFile;
             } else if (gameFile.isAbsolute()) {
-                LogManager.getLogger().error("Unable to read savegame file: " + gameFile.getAbsolutePath());
+                logger.error("Unable to read savegame file: " + gameFile.getAbsolutePath());
                 return null;
             } else {
-                String searched = '"'+ gameFile.getAbsolutePath()+'"';
+                String searched = '"' + gameFile.getAbsolutePath() + '"';
                 gameFile = new File("./savegames", saveGameFileName);
                 if (gameFile.canRead()) {
                     return gameFile;
                 } else {
-                    searched += " or \"" + gameFile.getAbsolutePath()+'"';
-                    LogManager.getLogger().error("Unable to read savegame file at " + searched);
+                    searched += " or \"" + gameFile.getAbsolutePath() + '"';
+                    logger.error("Unable to read savegame file at " + searched);
                     return null;
                 }
             }

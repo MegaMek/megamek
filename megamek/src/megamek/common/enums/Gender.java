@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 - The MegaMek Team. All Rights Reserved
+ * Copyright (C) 2020-2024 - The MegaMek Team. All Rights Reserved
  *
  * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,31 +16,37 @@
  */
 package megamek.common.enums;
 
-import megamek.client.generator.RandomGenderGenerator;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.generator.RandomGenderGenerator;
+import megamek.logging.MMLogger;
+
 /**
- * Author's Note: This is for Biological Gender (strictly speaking, the term is Sex) only,
- * with the two OTHER-? flags being implemented here for MekHQ usage.
+ * In this context, sex relates to the character's capacity to incubate
+ * offspring.
+ * While this is a very limited view of the broad spectrum of human genders,
+ * the needs of programming dictate that we need to take a more binary view of
+ * things.
+ * To this end, males can't birth children, females can.
+ * 'Other' genders are used for characters that fall outside the gender binary,
+ * with the sex following 'other' determining their capacity to birth children.
  */
 public enum Gender {
-    //region Enum Declarations
+    // region Enum Declarations
     MALE(false, "Male"),
     FEMALE(false, "Female"),
-    OTHER_MALE(true, "Male"),
-    OTHER_FEMALE(true, "Female"),
+    OTHER_MALE(true, "Other (M)"),
+    OTHER_FEMALE(true, "Other (F)"),
     RANDOMIZE(true);
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-    //region Variable Declarations
+    // region Variable Declarations
     private final boolean internal;
     private final String displayName;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     Gender(boolean internal) {
         this(internal, "");
     }
@@ -49,18 +55,18 @@ public enum Gender {
         this.internal = internal;
         this.displayName = displayName;
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Boolean Checks
+    // region Boolean Checks
     /**
-     * @return true is the person's biological gender is male, otherwise false
+     * @return true if the person's biological gender is male, otherwise false
      */
     public boolean isMale() {
         return (this == MALE) || (this == OTHER_MALE);
     }
 
     /**
-     * @return true is the person's biological gender is female, otherwise false
+     * @return true if the person's biological gender is female, otherwise false
      */
     public boolean isFemale() {
         return (this == FEMALE) || (this == OTHER_FEMALE);
@@ -79,7 +85,7 @@ public enum Gender {
     public boolean isInternal() {
         return internal;
     }
-    //endregion Boolean Checks
+    // endregion Boolean Checks
 
     /**
      * @return a list of all external-facing gender options
@@ -112,8 +118,9 @@ public enum Gender {
 
     /**
      * @param input the string to parse
-     * @return the gender defined by the input, or a randomly generated string if the string isn't a
-     * proper value
+     * @return the gender defined by the input, or a randomly generated string if
+     *         the string isn't a
+     *         proper value
      */
     public static Gender parseFromString(String input) {
         try {
@@ -123,21 +130,20 @@ public enum Gender {
         }
 
         try {
-            switch (Integer.parseInt(input)) {
-                case 0:
-                    return MALE;
-                case 1:
-                    return FEMALE;
-                case -1:
-                default:
-                    return RandomGenderGenerator.generate();
-            }
+            return switch (Integer.parseInt(input)) {
+                case 0 -> MALE;
+                case 1 -> FEMALE;
+                case 2 -> OTHER_MALE;
+                case 3 -> OTHER_FEMALE;
+                default -> RandomGenderGenerator.generate();
+            };
         } catch (Exception ignored) {
 
         }
 
-        LogManager.getLogger().error("Failed to parse the gender value from input String " + input
-                        + ". Returning a newly generated gender.");
+        MMLogger.create(Gender.class).error(
+                "Failed to parse the gender value from input String {}. Returning a newly generated gender.",
+                input);
         return RandomGenderGenerator.generate();
     }
 

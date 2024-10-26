@@ -1,0 +1,173 @@
+chassis:Awesome
+model:AWS-9Q
+mul id:179
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3057
+Source:TRO: 3050
+Rules Level:2
+role:Sniper
+
+
+
+quirk:battle_fists_la
+
+
+Mass:80
+Engine:240 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:19 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:24
+RT Armor:24
+CT Armor:31
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:10
+RTR Armor:10
+RTC Armor:19
+
+Weapons:6
+1 ISPPC, Left Torso
+1 ISPPC, Right Arm
+1 ISPPC, Right Torso
+1 ISPPC, Left Arm
+1 ISGuardianECM, Center Torso
+1 ISSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISPPC
+ISPPC
+ISPPC
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISPPC
+ISPPC
+ISPPC
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISPPC
+ISPPC
+ISPPC
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISPPC
+ISPPC
+ISPPC
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Awesome was designed in 2665 for the Star League by the Technicron Conglomorate and was based on the aging STR-2C Striker. While not as fast as its forefather, the Awesome is a strong assault 'Mech.
+
+capabilities:The Awesome's abilities are nearly entirely dependent on its particle projection cannons. The AWS can withstand a severe and consistent onslaught from its weaponry thanks to several heat sinks. With one and a half tons more armor than the Striker, the AWS is more protected than even the BattleMaster. The Awesome, like any other BattleMech, has weaknesses. While it is lethal at range, it is less effective in close-quarters combat since its PPCs have a tougher time connecting with the victim. In that case, it just possesses a light weapon and a left fist to fall back on. Because of its limited mobility, it is vulnerable to flanking attacks from speedier opponents seeking to get past the PPCs. While they face arguably of the heaviest rear armor found on any BattleMech, the Awesome's lack of rear facing armaments or a weapon mount on its left arm has offered numerous MechWarriors a fighting chance. Formations of Awesomes (or even just a few) are incredibly effective and tough to stop or defeat when correctly placed by commanders who are knowledgeable of the AWS's limitations.
+
+deployment:A basic upgrade to the original 8Q introduced in 3057, the heat sinks are upgraded to double heat sinks and are reduced to nineteen. The saved weight is used to add a fourth PPC to the 'Mech as well as a Guardian ECM Suite. Although there was some criticism for using basic PPCs and not upgrading to ER models, the 9Q proved itself during Operation Guerrero to be quite devastating.
+
+history:Awesomes can be found in every military House. Because the Free Worlds League has the last remaining manufacturing factories capable of generating the Awesome, it also has the most Awesomes of any of the Great Houses. Opinions on the 'Mech vary greatly within the League. Many people laud its powers, while others believe that its limited mobility is too high a price to pay for what it can do. Similar sentiments exist in the other Houses, but none of them can debate the issue beyond academics. Few commanders would turn down the opportunity to acquire an Awesome for their army. The Awesome is typically used to assault a fixed position or to breach the enemy's line of defense. They are also in demand for defensive operations. MechWarriors piloting the Awesome can expect to be involved in heavy battle and to be charged with obtaining or guarding the most crucial objectives from the adversary.
+
+manufacturer:Lüneburg Vehicle Corporation,Irian BattleMechs Unlimited,Technicron Manufacturing
+primaryfactory:Braunschweig,Irian,Savannah
+systemmanufacturer:CHASSIS:Technicron Type G
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Durallex Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett T19-G with ECM
+systemmanufacturer:TARGETING:Dynatec 2780

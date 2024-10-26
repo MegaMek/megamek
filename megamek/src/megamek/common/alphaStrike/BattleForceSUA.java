@@ -94,9 +94,14 @@ public enum BattleForceSUA {
         return transportBayDoors.getOrDefault(this, UNKNOWN);
     }
 
-    /** @return True when this SUA is an artillery SUA such as ARTAIS. */
+    /** @return True when this SUA is an artillery SUA such as ARTAIS, including artillery cannon SUAs. */
     public boolean isArtillery() {
         return isAnyOf(ARTAIS, ARTAC, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC);
+    }
+
+    /** @return True when this SUA is an artillery cannon SUA such as ARTSC for the Sniper Cannon. */
+    public boolean isArtilleryCannon() {
+        return isAnyOf(ARTTC, ARTSC, ARTLTC);
     }
 
     @Override

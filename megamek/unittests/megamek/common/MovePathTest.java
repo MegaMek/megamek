@@ -19,25 +19,32 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.Vector;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.Vector;
+
+import org.junit.jupiter.api.Test;
+
+import megamek.common.planetaryconditions.PlanetaryConditions;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/23/13 9:16 AM
  */
-public class MovePathTest {
+class MovePathTest {
 
     @Test
-    public void testGetLastStep() {
+    void testGetLastStep() {
         Game mockGame = mock(Game.class);
-        Entity mockMech = mock(BipedMech.class);
+        PlanetaryConditions mockPC = new PlanetaryConditions();
+        mockPC.setGravity(1.0f);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
+
+        Entity mockMek = mock(BipedMek.class);
 
         Vector<MoveStep> stepVector = new Vector<>();
 
@@ -53,7 +60,7 @@ public class MovePathTest {
         MoveStep mockStep4 = mock(MoveStep.class);
         stepVector.add(mockStep4);
 
-        MovePath testPath = spy(new MovePath(mockGame, mockMech));
+        MovePath testPath = spy(new MovePath(mockGame, mockMek));
         doReturn(stepVector).when(testPath).getStepVector();
 
         assertEquals(mockStep4, testPath.getLastStep());

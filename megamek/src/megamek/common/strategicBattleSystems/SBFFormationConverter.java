@@ -30,10 +30,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.jacksonadapters.MMUWriter;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
@@ -50,7 +47,7 @@ public final class SBFFormationConverter {
     public SBFFormationConverter(Force force, Game game) {
         this.force = force;
         this.game = game;
-        this.report = new FlexibleCalculationReport();
+        report = new FlexibleCalculationReport();
     }
 
     /**
@@ -188,7 +185,7 @@ public final class SBFFormationConverter {
 
     void calcFormationSpecialAbilities() {
         report.addLine("Special Abilites:", "");
-        addFormationSpasIfAny(formation, DN, XMEC, COM, HPG, LEAD, MCS, UCS, MEC, MAS, LMAS,
+        addFormationSpasIfAny(formation, DN, XMEC, COM, HPG, MCS, UCS, MEC, MAS, LMAS,
                 MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
         addFormationSpasIf2Thirds(formation, AC3, PRB, AECM, ECM, ENG, LPRB, LECM, ORO, RCN, SRCH, SHLD, TAG, WAT);
         addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PAR, RAIL, RBT, UMU);
@@ -283,7 +280,7 @@ public final class SBFFormationConverter {
         if (formation.hasSUA(MHQ)) {
             double mhqValue = (Integer) formation.getSUA(MHQ);
             long delta = Math.min(3, Math.round(mhqValue / 2));
-            tactics -= Math.min(3, Math.round(mhqValue / 2));
+            tactics -= (int) Math.min(3, Math.round(mhqValue / 2));
             calculation += " - " + delta;
         }
         report.addLine("Tactics:", calculation, tactics + "");
@@ -293,7 +290,7 @@ public final class SBFFormationConverter {
     void calcFormationType() {
         List<SBFUnit> units = formation.getUnits();
         int majorityCount = (int) Math.round(2.0 / 3 * units.size());
-        List<SBFElementType> types = units.stream().map(SBFUnit::getType).collect(toList());
+        List<SBFElementType> types = units.stream().map(SBFUnit::getType).toList();
         Map<SBFElementType, Long> occurrenceCount = types.stream().collect(groupingBy(Function.identity(), counting()));
         long highestCount = occurrenceCount.values().stream().max(Long::compare).orElse(0L);
         SBFElementType highestType = types.stream()

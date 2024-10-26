@@ -22,20 +22,20 @@ import java.util.Vector;
 /**
  * Represents a trailer hitch that allows a wheeled or tracked vehicle to tow trailers.
  *
- * @see MechFileParser#postLoadInit
+ * @see MekFileParser#postLoadInit
  */
 public class TankTrailerHitch implements Transporter {
     private static final long serialVersionUID = 1193349063084937973L;
-    
+
     /**
      * Is this transporter associated with a front or rear-mounted hitch equipment?
      */
     private boolean rearMounted = false;
-    
+
     public boolean getRearMounted() {
         return rearMounted;
     }
-    
+
     /**
      * The entity being towed by this hitch.
      */
@@ -93,7 +93,7 @@ public class TankTrailerHitch implements Transporter {
     public boolean canLoad(Entity unit) {
         return false;
     }
-    
+
     @Override
     public boolean canTow(Entity unit) {
         // Only trailers can be towed.
@@ -105,10 +105,10 @@ public class TankTrailerHitch implements Transporter {
         if (towed != Entity.NONE) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Load the given unit.
      *
@@ -140,7 +140,7 @@ public class TankTrailerHitch implements Transporter {
         Vector<Entity> units = new Vector<>(1);
         if (towed != Entity.NONE) {
             Entity entity = game.getEntity(towed);
-            
+
             if (entity != null) {
                 units.addElement(entity);
             }
@@ -196,7 +196,7 @@ public class TankTrailerHitch implements Transporter {
     public void resetTransporter() {
         towed = Entity.NONE;
     }
-    
+
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
@@ -251,7 +251,7 @@ public class TankTrailerHitch implements Transporter {
     public int getCargoMpReduction(Entity carrier) {
         return 0;
     }
-    
+
     @Override
     public String toString() {
         return "Trailer Hitch:" + getUnused();

@@ -25,54 +25,54 @@ import megamek.common.options.OptionsConstants;
 
 public class MekCostCalculator {
 
-    public static double calculateCost(Mech mek, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(Mek mek, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[17 + mek.locations()];
         int i = 0;
 
         double cockpitCost;
         switch (mek.getCockpitType()) {
-            case Mech.COCKPIT_TORSO_MOUNTED:
+            case Mek.COCKPIT_TORSO_MOUNTED:
                 cockpitCost = 750000;
                 break;
-            case Mech.COCKPIT_DUAL:
+            case Mek.COCKPIT_DUAL:
                 // Solaris VII - The Game World (German) This is not actually canonical as it
                 // has never been repeated in any English language source including Tech Manual
                 cockpitCost = 40000;
                 break;
-            case Mech.COCKPIT_COMMAND_CONSOLE:
+            case Mek.COCKPIT_COMMAND_CONSOLE:
                 // Command Consoles are listed as a cost of 500,000.
                 // That appears to be in addition to the primary cockpit.
                 cockpitCost = 700000;
                 break;
-            case Mech.COCKPIT_SMALL:
+            case Mek.COCKPIT_SMALL:
                 cockpitCost = 175000;
                 break;
-            case Mech.COCKPIT_VRRP:
+            case Mek.COCKPIT_VRRP:
                 cockpitCost = 1250000;
                 break;
-            case Mech.COCKPIT_INDUSTRIAL:
-            case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
+            case Mek.COCKPIT_INDUSTRIAL:
+            case Mek.COCKPIT_PRIMITIVE_INDUSTRIAL:
                 cockpitCost = 100000;
                 break;
-            case Mech.COCKPIT_TRIPOD:
-            case Mech.COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL:
+            case Mek.COCKPIT_TRIPOD:
+            case Mek.COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL:
                 cockpitCost = 400000;
                 break;
-            case Mech.COCKPIT_TRIPOD_INDUSTRIAL:
-            case Mech.COCKPIT_SUPERHEAVY:
+            case Mek.COCKPIT_TRIPOD_INDUSTRIAL:
+            case Mek.COCKPIT_SUPERHEAVY:
                 cockpitCost = 300000;
                 break;
-            case Mech.COCKPIT_QUADVEE:
+            case Mek.COCKPIT_QUADVEE:
                 cockpitCost = 375000;
                 break;
-            case Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE:
                 // The cost is the sum of both superheavy cockpit and command console
                 cockpitCost = 800000;
                 break;
-            case Mech.COCKPIT_SUPERHEAVY_TRIPOD:
+            case Mek.COCKPIT_SUPERHEAVY_TRIPOD:
                 cockpitCost = 500000;
                 break;
-            case Mech.COCKPIT_SMALL_COMMAND_CONSOLE:
+            case Mek.COCKPIT_SMALL_COMMAND_CONSOLE:
                 // The cost is the sum of both small and command console
                 cockpitCost = 675000;
                 break;
@@ -95,13 +95,13 @@ public class MekCostCalculator {
         if (mek.hasEngine()) {
             costs[i++] = (mek.getEngine().getBaseCost() * mek.getEngine().getRating() * mek.getWeight()) / 75.0;
         }
-        if (mek.getGyroType() == Mech.GYRO_XL) {
+        if (mek.getGyroType() == Mek.GYRO_XL) {
             costs[i++] = 750000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 0.5;
-        } else if (mek.getGyroType() == Mech.GYRO_COMPACT) {
+        } else if (mek.getGyroType() == Mek.GYRO_COMPACT) {
             costs[i++] = 400000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 1.5;
-        } else if (mek.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+        } else if (mek.getGyroType() == Mek.GYRO_HEAVY_DUTY) {
             costs[i++] = 500000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f) * 2;
-        } else if (mek.getGyroType() == Mech.GYRO_STANDARD) {
+        } else if (mek.getGyroType() == Mek.GYRO_STANDARD) {
             costs[i++] = 300000 * (int) Math.ceil((mek.getOriginalWalkMP() * mek.getWeight()) / 100f);
         }
         double jumpBaseCost = 200;
@@ -109,14 +109,14 @@ public class MekCostCalculator {
         if (mek.hasUMU()) {
             costs[i++] = Math.pow(mek.getAllUMUCount(), 2.0) * mek.getWeight() * jumpBaseCost;
             // We could have Jump boosters
-            if (mek.getJumpType() == Mech.JUMP_BOOSTER) {
+            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
                 jumpBaseCost = 150;
                 costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
             }
         } else {
-            if (mek.getJumpType() == Mech.JUMP_BOOSTER) {
+            if (mek.getJumpType() == Mek.JUMP_BOOSTER) {
                 jumpBaseCost = 150;
-            } else if (mek.getJumpType() == Mech.JUMP_IMPROVED) {
+            } else if (mek.getJumpType() == Mek.JUMP_IMPROVED) {
                 jumpBaseCost = 500;
             }
             costs[i++] = Math.pow(mek.getOriginalJumpMP(), 2.0) * mek.getWeight() * jumpBaseCost;
@@ -152,9 +152,9 @@ public class MekCostCalculator {
         double weaponCost = CostCalculator.getWeaponsAndEquipmentCost(mek, ignoreAmmo);
         costs[i++] = weaponCost;
 
-        if (mek instanceof LandAirMech) {
+        if (mek instanceof LandAirMek) {
             costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.65 : 0.75);
+                    * (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_BIMODAL ? 0.65 : 0.75);
         } else if (mek instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {

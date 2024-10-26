@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.TargetRoll;
@@ -36,8 +37,8 @@ class FiringSolutionSprite extends HexSprite {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
-    private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
+    private static final int HEX_CENTER_X = HexTileset.HEX_W / 2;
+    private static final int HEX_CENTER_Y = HexTileset.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(40,255,255,230);
     private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
 
@@ -89,7 +90,7 @@ class FiringSolutionSprite extends HexSprite {
         AffineTransform at = AffineTransform.getTranslateInstance(30, RANGE_AT.y);
         at.scale(0.17, 0.17);
         at.translate(-HEX_CENTER_X, -HEX_CENTER_Y);
-        rangeHexPolygon = at.createTransformedShape(BoardView.hexPoly);
+        rangeHexPolygon = at.createTransformedShape(BoardView.getHexPoly());
     }
 
     @Override
@@ -121,12 +122,22 @@ class FiringSolutionSprite extends HexSprite {
         if (firingSolution.isTargetSpotted()) {
             graph.setColor(INDIRECT_DASH_COLOR_1);
             graph.setStroke(INDIRECT_STROKE_1);
-            graph.draw(BoardView.hexPoly);
+            graph.draw(BoardView.getHexPoly());
             graph.setColor(INDIRECT_DASH_COLOR_2);
             graph.setStroke(INDIRECT_STROKE_2);
-            graph.draw(BoardView.hexPoly);
+            graph.draw(BoardView.getHexPoly());
         }
 
         graph.dispose();
+    }
+
+    @Override
+    protected boolean isBehindTerrain() {
+        return false;
+    }
+
+    @Override
+    protected int getSpritePriority() {
+        return 80;
     }
 }

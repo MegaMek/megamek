@@ -13,21 +13,14 @@
  */
 package megamek.common.actions;
 
-import java.io.Serializable;
-import java.util.Vector;
-
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+
+import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in

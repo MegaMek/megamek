@@ -20,7 +20,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -53,7 +53,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON);
         // suppveeslots = 3;
         rulesRefs = "297, TO";
         techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3072, 3093).setPrototypeFactions(F_DC)
@@ -64,7 +64,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -72,7 +72,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return super.getCorrectHandler(toHit, waa, game, manager);
         // FIXME: Implement handler
     }

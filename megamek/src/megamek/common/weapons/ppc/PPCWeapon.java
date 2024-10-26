@@ -13,19 +13,18 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -42,7 +41,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -50,15 +49,16 @@ public abstract class PPCWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new PPCHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted capacitor) {
+    public double getBattleForceDamage(int range, Mounted<?> capacitor) {
         double damage = 0;
         if (range <= getLongRange()) {
-            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
+            // Variable damage weapons that cannot reach into the BF long range band use LR
+            // damage for the MR band
             if ((getDamage() == DAMAGE_VARIABLE)
                     && (range == AlphaStrikeElement.MEDIUM_RANGE)
                     && (getLongRange() < AlphaStrikeElement.LONG_RANGE)) {
@@ -74,10 +74,10 @@ public abstract class PPCWeapon extends EnergyWeapon {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05; 
+                damage -= damage * getToHitModifier() * 0.05;
             }
         }
-        return damage / 10.0;        
+        return damage / 10.0;
     }
 
     @Override
@@ -85,9 +85,10 @@ public abstract class PPCWeapon extends EnergyWeapon {
         super.adaptToGameOptions(gOp);
 
         // Modes for disengaging PPC field inhibitors according to TacOps, p.103.
-        // The benefit is removing the minimum range, so only PPCs with a minimum range get the modes.
+        // The benefit is removing the minimum range, so only PPCs with a minimum range
+        // get the modes.
         if (minimumRange > 0) {
-            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) { 
+            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
             } else {

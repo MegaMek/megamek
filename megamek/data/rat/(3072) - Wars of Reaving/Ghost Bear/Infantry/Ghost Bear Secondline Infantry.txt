@@ -1,5 +1,5 @@
 Clan Ghost Bear Secondline Infantry (WoRS)
-Clan Medium Battle Armor (Bär), 1
+Clan Medium Battle Armor (Naval) 'Bär' (Sqd5), 1
 Kobold Battle Armor (GB) [SL/TAG], 2
 Kobold Battle Armor (GB) [SL/TAG], 3
 Clan Medium Battle Armor (Rabid), 4

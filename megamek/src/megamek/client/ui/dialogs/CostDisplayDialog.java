@@ -115,7 +115,6 @@ public class CostDisplayDialog extends AbstractDialog {
 
     /** Does gui-scaling, packs the dialog and reduces the height if its too big. */
     private void updateDialogSize() {
-        adaptToGUIScale();
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);
         setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
@@ -124,9 +123,5 @@ public class CostDisplayDialog extends AbstractDialog {
     private void copyToClipboard(String reportString) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(reportString), null);
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

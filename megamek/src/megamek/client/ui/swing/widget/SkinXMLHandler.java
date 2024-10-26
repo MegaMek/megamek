@@ -16,31 +16,40 @@
 */
 package megamek.client.ui.swing.widget;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
-import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.DocumentBuilder;
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
+import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+import megamek.utilities.xml.MMXMLUtility;
+
 /**
- * This class reads in an XML file that specifies different aspects of the visual skin for MegaMek.
+ * This class reads in an XML file that specifies different aspects of the
+ * visual skin for MegaMek.
  *
  * @author arlith
  */
 public class SkinXMLHandler {
+    private static final MMLogger logger = MMLogger.create(SkinXMLHandler.class);
 
     public static String SKIN_FOOTER = "</skin>";
     public static String SKIN_HEADER;
@@ -127,7 +136,7 @@ public class SkinXMLHandler {
     public static final String TopRightCorner = "tr_corner";
     public static final String BottomRightCorner = "br_corner";
 
-    public static final String MechOutline = "mech_outline";
+    public static final String MekOutline = "mek_outline";
 
     private static Map<String, SkinSpecification> skinSpecs;
 
@@ -150,7 +159,7 @@ public class SkinXMLHandler {
             Document doc = builder.parse(file);
             // TODO: Just validate against the XSD
             // Until that's done, just assume anything with UI_ELEMENT tags is
-            //  valid
+            // valid
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
             if (listOfComponents.getLength() > 0) {
                 return true;
@@ -177,16 +186,18 @@ public class SkinXMLHandler {
         udSpec = null;
 
         if (filename == null) {
-            LogManager.getLogger().error("Cannot initialize skin based on a null filename.");
+            logger.error("Cannot initialize skin based on a null filename.");
             return false;
         }
 
         File file = new MegaMekFile(filename).getFile();
         if (!file.exists() || !file.isFile()) {
-            // for backwards compatibility, also check the skins filename as if it is only a relative path
+            // for backwards compatibility, also check the skins filename as if it is only a
+            // relative path
             file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
             if (!file.exists() || !file.isFile()) {
-                LogManager.getLogger().error("Cannot initialize skin based on a non-existent file with filename " + filename);
+                logger
+                        .error("Cannot initialize skin based on a non-existent file with filename " + filename);
                 return false;
             }
         }
@@ -194,7 +205,7 @@ public class SkinXMLHandler {
         // Build the XML document.
         try {
             DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
-            LogManager.getLogger().debug("Parsing " + file.getName());
+            logger.debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
 
             // Get the list of units.
@@ -228,7 +239,7 @@ public class SkinXMLHandler {
                     // Get the border specs
                     Element border = (Element) borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        LogManager.getLogger().error(String.format("Missing <%s> tag in element %s", BORDER, comp));
+                        logger.error(String.format("Missing <%s> tag in element %s", BORDER, comp));
                         continue;
                     }
 
@@ -290,7 +301,7 @@ public class SkinXMLHandler {
                 }
 
                 if (UIComponents.getUIComponent(name) == null) {
-                    LogManager.getLogger().error("Unable to add unrecognized UI component: " + name);
+                    logger.error("Unable to add unrecognized UI component: " + name);
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -298,12 +309,12 @@ public class SkinXMLHandler {
 
             if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
-                LogManager.getLogger().error(String.format("Skin specification file doesn't specify %s or %s",
+                logger.error(String.format("Skin specification file doesn't specify %s or %s",
                         UIComponents.DefaultUIElement, UIComponents.DefaultButton));
                 return false;
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return false;
         }
 
@@ -343,12 +354,12 @@ public class SkinXMLHandler {
                         .getElementsByTagName(TILED).item(0).getTextContent();
 
                 if (icon == null) {
-                    LogManager.getLogger().error("Missing <" + ICON + "> tag");
+                    logger.error("Missing <" + ICON + "> tag");
                     continue;
                 }
 
                 if (tiled == null) {
-                    LogManager.getLogger().error("Missing <" + TILED + "> tag");
+                    logger.error("Missing <" + TILED + "> tag");
                     continue;
                 }
                 icons.add(icon);
@@ -359,7 +370,7 @@ public class SkinXMLHandler {
                     .getElementsByTagName(EDGE_NAME).item(0).getTextContent();
 
             if (edgeName == null) {
-                LogManager.getLogger().error("Missing <" + EDGE_NAME + "> tag");
+                logger.error("Missing <" + EDGE_NAME + "> tag");
                 continue;
             }
 
@@ -387,7 +398,7 @@ public class SkinXMLHandler {
 
     /**
      * Given a UI_Component component with a UnitDisplay name, parse it into
-     * a new UnitDisplaySkinSpecification.  This tupe of UI_Element has a
+     * a new UnitDisplaySkinSpecification. This tupe of UI_Element has a
      * different structure than other UI_Elements.
      *
      * @param border
@@ -504,9 +515,9 @@ public class SkinXMLHandler {
                     .getTextContent());
         }
 
-        if (border.getElementsByTagName(MechOutline).getLength() > 0) {
-            udSpec.setMechOutline(border
-                    .getElementsByTagName(MechOutline).item(0)
+        if (border.getElementsByTagName(MekOutline).getLength() > 0) {
+            udSpec.setMekOutline(border
+                    .getElementsByTagName(MekOutline).item(0)
                     .getTextContent());
         }
     }
@@ -518,8 +529,8 @@ public class SkinXMLHandler {
      */
     public static void writeSkinToFile(String filename) {
         try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(filename).getFile());
-             OutputStreamWriter osw = new OutputStreamWriter(fos);
-             Writer output = new BufferedWriter(osw)) {
+                OutputStreamWriter osw = new OutputStreamWriter(fos);
+                Writer output = new BufferedWriter(osw)) {
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);
@@ -530,7 +541,7 @@ public class SkinXMLHandler {
             }
             output.write(SKIN_FOOTER);
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -646,9 +657,9 @@ public class SkinXMLHandler {
         out.write(udSpec.getBottomRightCorner());
         out.write("</" + BottomRightCorner + ">\n");
 
-        out.write("\t\t\t<" + MechOutline + ">");
-        out.write(udSpec.getMechOutline());
-        out.write("</" + MechOutline + ">\n");
+        out.write("\t\t\t<" + MekOutline + ">");
+        out.write(udSpec.getMekOutline());
+        out.write("</" + MekOutline + ">\n");
 
         // Close UI_ELEMENT tag
         out.write("\t</" + UI_ELEMENT + ">\n\n");
@@ -656,6 +667,7 @@ public class SkinXMLHandler {
 
     /**
      * Convenience method for writing out the UI_ELEMENT tag.
+     *
      * @param component
      * @param out
      * @throws IOException
@@ -857,6 +869,7 @@ public class SkinXMLHandler {
 
     /**
      * Returns the list of components that have SkinSpecifications.
+     *
      * @return
      */
     public synchronized static Set<String> getSkinnedComponents() {
@@ -867,10 +880,11 @@ public class SkinXMLHandler {
      * Get a <code>SkinSpecification</code> for a given component.
      *
      * @param component
-     *            The name of the component to get skin info for.
+     *                       The name of the component to get skin info for.
      * @param defaultToPlain
-     *            Determines if a default component should be used if no match,
-     *            or a plain component
+     *                       Determines if a default component should be used if no
+     *                       match,
+     *                       or a plain component
      * @return
      */
     public synchronized static SkinSpecification getSkin(String component,
@@ -918,7 +932,7 @@ public class SkinXMLHandler {
         if (skinSpecs == null) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
-                return ;
+                return;
             }
         }
         SkinSpecification newSpec = new SkinSpecification(component);

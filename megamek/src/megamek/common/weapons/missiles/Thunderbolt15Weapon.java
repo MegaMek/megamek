@@ -20,7 +20,6 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
 import megamek.common.Mounted;
-import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public abstract class Thunderbolt15Weapon extends ThunderBoltWeapon {
@@ -36,7 +35,7 @@ public abstract class Thunderbolt15Weapon extends ThunderBoltWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 0.87;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

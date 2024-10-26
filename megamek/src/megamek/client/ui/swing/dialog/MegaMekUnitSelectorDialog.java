@@ -18,6 +18,17 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -27,18 +38,13 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.Entity;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummaryCache;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
@@ -71,29 +77,30 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     //region Button Methods
     @Override
     protected JPanel createButtonsPanel() {
+        GridBagConstraints gbc = new GridBagConstraints();
         JPanel panelButtons = new JPanel(new GridBagLayout());
 
-        buttonSelect = new JButton(Messages.getString("MechSelectorDialog.m_bPick"));
+        buttonSelect = new JButton(Messages.getString("MekSelectorDialog.m_bPick"));
         buttonSelect.addActionListener(this);
-        panelButtons.add(buttonSelect, new GridBagConstraints());
+        panelButtons.add(buttonSelect, gbc);
 
-        buttonSelectClose = new JButton(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        buttonSelectClose = new JButton(Messages.getString("MekSelectorDialog.m_bPickClose"));
         buttonSelectClose.addActionListener(this);
-        panelButtons.add(buttonSelectClose, new GridBagConstraints());
+        panelButtons.add(buttonSelectClose, gbc);
 
         buttonClose = new JButton(Messages.getString("Close"));
         buttonClose.addActionListener(this);
-        panelButtons.add(buttonClose, new GridBagConstraints());
+        panelButtons.add(buttonClose, gbc);
 
-        JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
+        JLabel labelPlayer = new JLabel(Messages.getString("MekSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
-        panelButtons.add(labelPlayer, new GridBagConstraints());
+        panelButtons.add(labelPlayer, gbc);
 
-        panelButtons.add(comboPlayer, new GridBagConstraints());
+        panelButtons.add(comboPlayer, gbc);
 
-        buttonShowBV = new JButton(Messages.getString("MechSelectorDialog.BV"));
+        buttonShowBV = new JButton(Messages.getString("MekSelectorDialog.BV"));
         buttonShowBV.addActionListener(this);
-        panelButtons.add(buttonShowBV, new GridBagConstraints());
+        panelButtons.add(buttonShowBV, gbc);
 
         return panelButtons;
     }
@@ -144,21 +151,34 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         }
     }
 
-    private void updatePlayerChoice() {
-        String lastChoice = (String) comboPlayer.getSelectedItem();
+    private void updatePlayerChoice(String selectionName) {
         String clientName = clientGUI.getClient().getName();
+        comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        comboPlayer.setEnabled(true);
         comboPlayer.addItem(clientName);
+
         for (AbstractClient client : clientGUI.getLocalBots().values()) {
             comboPlayer.addItem(client.getName());
         }
-        if (comboPlayer.getItemCount() == 1) {
-            comboPlayer.setEnabled(false);
-        }
-        comboPlayer.setSelectedItem(lastChoice);
+        comboPlayer.setSelectedItem(selectionName);
         if (comboPlayer.getSelectedIndex() < 0) {
             comboPlayer.setSelectedIndex(0);
+        }
+        if (comboPlayer.getItemCount() > 1) {
+            comboPlayer.setEnabled(true);
+        }
+    }
+
+    private void updatePlayerChoice() {
+        String lastChoice = (String) comboPlayer.getSelectedItem();
+        updatePlayerChoice(lastChoice);
+    }
+
+    public void setPlayerFromClient(Client c) {
+        if (c != null) {
+            updatePlayerChoice(c.getName());
+        } else {
+            updatePlayerChoice();
         }
     }
     //endregion Button Methods
@@ -179,7 +199,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // instance (loading a saved game without a cache).  In these cases,
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
-            final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
+            final Map<String, String> hFailedFiles = MekSummaryCache.getInstance().getFailedFiles();
             if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);
@@ -189,10 +209,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        // Set the cursor in the text filter and mark the content, so it can be directly replaced
-        textFilter.grabFocus();
-        textFilter.select(0, textFilter.getText().length());
         updatePlayerChoice();
+        comboPlayer.grabFocus();
         super.setVisible(visible);
     }
 }

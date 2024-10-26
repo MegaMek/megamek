@@ -19,22 +19,22 @@
  */
 package megamek.common;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Edward Cullen
  */
-public class ConfigurationTests {
+class ConfigurationTests {
 
     /**
      * Test method for {@link megamek.common.Configuration#configDir()}.
      */
     @Test
-    public final void testConfigDir() {
+    final void testConfigDir() {
         assertEquals("mmconf", Configuration.configDir().toString());
     }
 
@@ -43,7 +43,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setConfigDir(java.io.File)}.
      */
     @Test
-    public final void testSetConfigDir() {
+    final void testSetConfigDir() {
         Configuration.setConfigDir(new File("config"));
         assertEquals("config", Configuration.configDir().toString());
         // Should rest to default.
@@ -55,7 +55,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#dataDir()}.
      */
     @Test
-    public final void testDataDir() {
+    final void testDataDir() {
         assertEquals("data", Configuration.dataDir().toString());
     }
 
@@ -64,7 +64,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setDataDir(java.io.File)}.
      */
     @Test
-    public final void testSetDataDir() {
+    final void testSetDataDir() {
         Configuration.setDataDir(new File("mydata"));
         assertEquals("mydata", Configuration.dataDir().toString());
         // Should rest to default.
@@ -76,7 +76,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#docsDir()}.
      */
     @Test
-    public final void testDocsDir() {
+    final void testDocsDir() {
         assertEquals("docs", Configuration.docsDir().toString());
     }
 
@@ -85,7 +85,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setDocsDir(java.io.File)}.
      */
     @Test
-    public final void testSetDocsDir() {
+    final void testSetDocsDir() {
         Configuration.setDocsDir(new File("mydocs"));
         assertEquals("mydocs", Configuration.docsDir().toString());
         // Should rest to default.
@@ -97,7 +97,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#armyTablesDir()}.
      */
     @Test
-    public final void testArmyTablesDir() {
+    final void testArmyTablesDir() {
         assertEquals(new File("data", "rat").toString(), Configuration
                 .armyTablesDir().toString());
     }
@@ -107,7 +107,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setArmyTablesDir(java.io.File)}.
      */
     @Test
-    public final void testSetArmyTablesDir() {
+    final void testSetArmyTablesDir() {
         Configuration.setArmyTablesDir(new File("my_armies"));
         assertEquals("my_armies", Configuration.armyTablesDir().toString());
         // Should reset to default.
@@ -120,7 +120,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#boardsDir()}.
      */
     @Test
-    public final void testBoardsDir() {
+    final void testBoardsDir() {
         assertEquals(new File("data", "boards").toString(), Configuration
                 .boardsDir().toString());
     }
@@ -130,7 +130,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setBoardsDir(java.io.File)}.
      */
     @Test
-    public final void testSetBoardsDir() {
+    final void testSetBoardsDir() {
         Configuration.setBoardsDir(new File("my_boards"));
         assertEquals("my_boards", Configuration.boardsDir().toString());
         // Should reset to default.
@@ -143,8 +143,8 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#unitsDir()}.
      */
     @Test
-    public final void testUnitsDir() {
-        assertEquals(new File("data", "mechfiles").toString(), Configuration
+    final void testUnitsDir() {
+        assertEquals(new File("data", "mekfiles").toString(), Configuration
                 .unitsDir().toString());
     }
 
@@ -153,12 +153,12 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setUnitsDir(java.io.File)}.
      */
     @Test
-    public final void testSetUnitsDir() {
+    final void testSetUnitsDir() {
         Configuration.setUnitsDir(new File("my_units"));
         assertEquals("my_units", Configuration.unitsDir().toString());
         // Should reset to default.
         Configuration.setUnitsDir(null);
-        assertEquals(new File("data", "mechfiles").toString(), Configuration
+        assertEquals(new File("data", "mekfiles").toString(), Configuration
                 .unitsDir().toString());
     }
 
@@ -166,7 +166,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#scenariosDir()}.
      */
     @Test
-    public final void testScenariosDir() {
+    final void testScenariosDir() {
         assertEquals(new File("data", "scenarios").toString(), Configuration
                 .scenariosDir().toString());
     }
@@ -176,7 +176,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setScenariosDir(java.io.File)}.
      */
     @Test
-    public final void testSetScenariosDir() {
+    final void testSetScenariosDir() {
         Configuration.setScenariosDir(new File("my_scenarios"));
         assertEquals("my_scenarios", Configuration.scenariosDir().toString());
         // Should reset to default.
@@ -189,7 +189,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#soundsDir()}.
      */
     @Test
-    public final void testSoundsDir() {
+    final void testSoundsDir() {
         assertEquals(new File("data", "sounds").toString(), Configuration
                 .soundsDir().toString());
     }
@@ -199,7 +199,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setSoundsDir(java.io.File)}.
      */
     @Test
-    public final void testSetSoundsDir() {
+    final void testSetSoundsDir() {
         Configuration.setSoundsDir(new File("my_sounds"));
         assertEquals("my_sounds", Configuration.soundsDir().toString());
         // Should reset to default.
@@ -212,7 +212,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#imagesDir()}.
      */
     @Test
-    public final void testImagesDir() {
+    final void testImagesDir() {
         assertEquals(new File("data", "images").toString(), Configuration
                 .imagesDir().toString());
     }
@@ -222,7 +222,7 @@ public class ConfigurationTests {
      * {@link megamek.common.Configuration#setImagesDir(java.io.File)}.
      */
     @Test
-    public final void testSetImagesDir() {
+    final void testSetImagesDir() {
         Configuration.setImagesDir(new File("my_images"));
         assertEquals("my_images", Configuration.imagesDir().toString());
         // Should reset to default.
@@ -235,7 +235,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#camoDir()}.
      */
     @Test
-    public final void testCamoDir() {
+    final void testCamoDir() {
         assertEquals(new File(Configuration.imagesDir(), "camo").toString(),
                 Configuration.camoDir().toString());
     }
@@ -244,7 +244,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#hexesDir()}.
      */
     @Test
-    public final void testHexesDir() {
+    final void testHexesDir() {
         assertEquals(new File(Configuration.imagesDir(), "hexes").toString(),
                 Configuration.hexesDir().toString());
     }
@@ -253,7 +253,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#fluffImagesDir()}.
      */
     @Test
-    public final void testFluffImagesDir() {
+    final void testFluffImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "fluff").toString(),
                 Configuration.fluffImagesDir().toString());
     }
@@ -262,7 +262,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#miscImagesDir()}.
      */
     @Test
-    public final void testMiscImagesDir() {
+    final void testMiscImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "misc").toString(),
                 Configuration.miscImagesDir().toString());
     }
@@ -271,7 +271,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#portraitImagesDir()}.
      */
     @Test
-    public final void testPortraitImagesDir() {
+    final void testPortraitImagesDir() {
         assertEquals(
                 new File(Configuration.imagesDir(), "portraits").toString(),
                 Configuration.portraitImagesDir().toString());
@@ -281,7 +281,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#unitImagesDir()}.
      */
     @Test
-    public final void testUnitImagesDir() {
+    final void testUnitImagesDir() {
         assertEquals(new File(Configuration.imagesDir(), "units").toString(),
                 Configuration.unitImagesDir().toString());
     }
@@ -290,7 +290,7 @@ public class ConfigurationTests {
      * Test method for {@link megamek.common.Configuration#widgetsDir()}.
      */
     @Test
-    public final void testWidgetsDir() {
+    final void testWidgetsDir() {
         assertEquals(new File(Configuration.imagesDir(), "widgets").toString(),
                 Configuration.widgetsDir().toString());
     }

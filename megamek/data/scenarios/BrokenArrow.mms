@@ -1,7 +1,7 @@
 #  A MegaMek Scenario file
 MMSVersion=1
 Name=Broken Arrow
-Description=A Lance of Strike Mechs must take down a heavily damaged Assault and its escort
+Description=A Lance of Strike Meks must take down a heavily damaged Assault and its escort
 BoardWidth=2
 BoardHeight=1
 BridgeCF=100

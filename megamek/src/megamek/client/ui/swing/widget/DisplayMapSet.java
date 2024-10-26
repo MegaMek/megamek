@@ -13,12 +13,12 @@
  */
 package megamek.client.ui.swing.widget;
 
-import megamek.common.Entity;
-
 import java.util.Vector;
 
+import megamek.common.Entity;
+
 /**
- * Generic set of PicMap areas do represent various units in MechDisplay class
+ * Generic set of PicMap areas do represent various units in MekDisplay class
  */
 public interface DisplayMapSet {
     PMAreasGroup getContentGroup();

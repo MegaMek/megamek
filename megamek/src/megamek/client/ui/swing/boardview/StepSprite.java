@@ -16,6 +16,7 @@ package megamek.client.ui.swing.boardview;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
@@ -72,7 +73,7 @@ class StepSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = new BufferedImage(BoardView.HEX_W, BoardView.HEX_H,
+        Image tempImage = new BufferedImage(HexTileset.HEX_W, HexTileset.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
         Graphics2D g2D = (Graphics2D) graph;
@@ -81,7 +82,7 @@ class StepSprite extends Sprite {
 
         // fill with key color
         graph.setColor(new Color(0, 0, 0, 0));
-        graph.fillRect(0, 0, BoardView.HEX_W, BoardView.HEX_H);
+        graph.fillRect(0, 0, HexTileset.HEX_W, HexTileset.HEX_H);
 
         // setup some variables
         Shape moveArrow = bv.movementPolys[step.getFacing()];
@@ -204,6 +205,14 @@ class StepSprite extends Sprite {
                 String load = Messages.getString("BoardView1.Load");
                 drawAnnouncement(g2D, load, step, col);
                 break;
+            case PICKUP_CARGO:
+            	String pickup = Messages.getString("MovementDisplay.movePickupCargo");
+            	drawAnnouncement(g2D, pickup, step, col);
+            	break;
+            case DROP_CARGO:
+            	String dropCargo = Messages.getString("MovementDisplay.moveDropCargo");
+            	drawAnnouncement(g2D, dropCargo, step, col);
+            	break;
             case TOW:
                 String tow = Messages.getString("BoardView1.Tow");
                 drawAnnouncement(g2D, tow, step, col);

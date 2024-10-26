@@ -31,7 +31,7 @@ import static megamek.client.ui.Messages.*;
 public final class FloodDialog extends AbstractButtonDialog {
 
     private BoardEditor.EditorTextField txtLevelChange = new BoardEditor.EditorTextField("0", 5, -5, 15);
-    private MMToggleButton butRemove = new MMToggleButton(scaleStringForGUI(getString("FloodDialog.removeButton")));
+    private MMToggleButton butRemove = new MMToggleButton(getString("FloodDialog.removeButton"));
 
     /** Constructs a modal LevelChangeDialog with frame as parent. */
     public FloodDialog(JFrame frame) {
@@ -47,17 +47,15 @@ public final class FloodDialog extends AbstractButtonDialog {
 
         JPanel textFieldPanel = new FixedYPanel();
         textFieldPanel.add(txtLevelChange);
-        
+
         JPanel toggleButtonPanel = new FixedYPanel();
         toggleButtonPanel.add(butRemove);
-        
-        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.info")), 
-                SwingConstants.CENTER);
+
+        JLabel labInfo = new JLabel("<CENTER>" + getString("FloodDialog.info"), SwingConstants.CENTER);
         labInfo.setAlignmentX(CENTER_ALIGNMENT);
-        JLabel labRemoveInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("FloodDialog.removeInfo")), 
-                SwingConstants.CENTER);
+        JLabel labRemoveInfo = new JLabel("<CENTER>" + getString("FloodDialog.removeInfo"), SwingConstants.CENTER);
         labRemoveInfo.setAlignmentX(CENTER_ALIGNMENT);
-        
+
         result.add(Box.createVerticalGlue());
         result.add(labInfo);
         result.add(Box.createVerticalStrut(5));
@@ -67,10 +65,10 @@ public final class FloodDialog extends AbstractButtonDialog {
         result.add(Box.createVerticalStrut(5));
         result.add(toggleButtonPanel);
         result.add(Box.createVerticalGlue());
-        
+
         return result;
     }
-    
+
     /** Returns the level change entered by the user or 0, if it cannot be parsed. */
     public int getLevelChange() {
         try {
@@ -79,7 +77,7 @@ public final class FloodDialog extends AbstractButtonDialog {
             return 0;
         }
     }
-    
+
     /** Returns if all newly submerged hexes should have their terrain removed. */
     public boolean getRemoveTerrain() {
         return butRemove.isSelected();

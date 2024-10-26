@@ -19,7 +19,7 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum SkillLevel {
-    //region Enum Declarations
+    // region Enum Declarations
     NONE("SkillLevel.NONE.text", "SkillLevel.NONE.toolTipText"),
     ULTRA_GREEN("SkillLevel.ULTRA_GREEN.text", "SkillLevel.ULTRA_GREEN.toolTipText"),
     GREEN("SkillLevel.GREEN.text", "SkillLevel.GREEN.toolTipText"),
@@ -36,29 +36,29 @@ public enum SkillLevel {
     ELITE("SkillLevel.ELITE.text", "SkillLevel.ELITE.toolTipText"),
     HEROIC("SkillLevel.HEROIC.text", "SkillLevel.HEROIC.toolTipText"),
     LEGENDARY("SkillLevel.LEGENDARY.text", "SkillLevel.LEGENDARY.toolTipText");
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
-    //region Variable Declarations
+    // region Variable Declarations
     private final String name;
     private final String toolTipText;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     SkillLevel(final String name, final String toolTipText) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters
+    // region Getters
     public String getToolTipText() {
         return toolTipText;
     }
-    //endregion Getters
+    // endregion Getters
 
-    //region Boolean Comparisons
+    // region Boolean Comparisons
     public boolean isNone() {
         return this == NONE;
     }
@@ -114,7 +114,7 @@ public enum SkillLevel {
     public boolean isHeroicOrGreater() {
         return isHeroic() || isLegendary();
     }
-    //endregion Boolean Comparisons
+    // endregion Boolean Comparisons
 
     /**
      * @return the skill level adjusted so that 0 is the level for Ultra-Green
@@ -124,14 +124,17 @@ public enum SkillLevel {
     }
 
     /**
-     * This returns the default skill values by level. This should never return the value for NONE,
+     * This returns the default skill values by level. This should never return the
+     * value for NONE,
      * as NONE means one does not have the skill.
+     *
      * @return the default skill array pairing
      */
     public int[] getDefaultSkillValues() {
         switch (this) {
             case NONE:
-                LogManager.getLogger().error("Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
+                MMLogger.create(SkillLevel.class).error(
+                        "Attempting to get illegal default skill values for NONE Skill Level. Returning { 8, 8 }");
                 return new int[] { 8, 8 };
             case ULTRA_GREEN:
                 return new int[] { 6, 7 };
@@ -158,7 +161,7 @@ public enum SkillLevel {
         return Stream.of(values()).filter(skillLevel -> !skillLevel.isNone()).collect(Collectors.toList());
     }
 
-    //region File I/O
+    // region File I/O
     public static SkillLevel parseFromString(final String text) {
         try {
             return valueOf(text);
@@ -183,11 +186,34 @@ public enum SkillLevel {
 
         }
 
-        LogManager.getLogger().error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
+        MMLogger.create(SkillLevel.class).error("Unable to parse " + text + " into a SkillLevel. Returning REGULAR.");
 
         return REGULAR;
     }
-    //endregion File I/O
+
+    /**
+     * Parses an integer value to a {@link SkillLevel} enumeration.
+     *
+     * @param value the integer value to parse
+     * @return the {@link SkillLevel} enum corresponding to the given integer value
+     * @throws IllegalStateException if the integer value does not match any {@link SkillLevel} enum
+     * value
+     */
+    public static SkillLevel parseFromInteger(final int value) {
+        return switch (value) {
+            case 0 -> NONE;
+            case 1 -> ULTRA_GREEN;
+            case 2 -> GREEN;
+            case 3 -> REGULAR;
+            case 4 -> VETERAN;
+            case 5 -> ELITE;
+            case 6 -> HEROIC;
+            case 7 -> LEGENDARY;
+            default -> throw new IllegalStateException(
+                "Unexpected value in megamek/common/enums/SkillLevel.java: " + value);
+        };
+    }
+    // endregion File I/O
 
     @Override
     public String toString() {

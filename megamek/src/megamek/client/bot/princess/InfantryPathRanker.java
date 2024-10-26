@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+*/
 package megamek.client.bot.princess;
 
 import java.util.List;
@@ -6,11 +24,11 @@ import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.MechWarrior;
+import megamek.common.MekWarrior;
 import megamek.common.MovePath;
 import megamek.common.options.OptionsConstants;
 
-public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
+public class InfantryPathRanker extends BasicPathRanker {
 
     public InfantryPathRanker(Princess princess) {
         super(princess);
@@ -23,10 +41,10 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
             List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
-                
+
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
-                   
+
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
@@ -36,46 +54,46 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         for (Entity enemy : enemies) {
-       
+
             // Skip ejected pilots.
-            if (enemy instanceof MechWarrior) {
+            if (enemy instanceof MekWarrior) {
                 continue;
             }
-            
+
             // Skip units not actually on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null) 
+            if (enemy.isOffBoard() || (enemy.getPosition() == null)
                     || !game.getBoard().contains(enemy.getPosition())) {
                 continue;
             }
-            
+
             //skip broken enemies
             if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(),
                  enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
                 continue;
             }
-            
+
             EntityEvaluationResponse eval;
             // For units that have already moved
-            // TODO: Always consider Aeros to have moved, as right now we
+            // TODO: Always consider Aero's to have moved, as right now we
             // don't try to predict their movement.
-            if (!enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero()) { 
+            if (!enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAero()) {
                 eval = evaluateMovedEnemy(enemy, pathCopy, game);
             } else { //for units that have not moved this round
                 eval = evaluateUnmovedEnemy(enemy, pathCopy, extremeRange, losRange);
             }
-            
+
             if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
                 damageEstimate.firingDamage = eval.getMyEstimatedDamage();
             }
-            
+
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
         }
-        
+
         calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
         double maximumDamageDone = damageEstimate.firingDamage;
-                
-        // My bravery modifier is based on my chance of getting to the 
-        // firing position (successProbability), how much damage I can do 
+
+        // My bravery modifier is based on my chance of getting to the
+        // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
         double braveryValue =
          getOwner().getBehaviorSettings().getBraveryValue();
@@ -87,43 +105,43 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
         .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
         double utility = braveryMod;
-        
+
         // If an infantry unit is not in range to do damage,
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
         // that's not going to end well.
         if (maximumDamageDone <= 0) {
             utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
         }
-        
-        // The further I am from my teammates, the lower this path 
+
+        // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
-        
+
         // If I need to flee the board, I want to get closer to my home edge.
         utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
                                          formula);
-        
+
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(maximumDamageDone);
         return rankedPath;
     }
-    
+
     @Override
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
                                                   boolean useExtremeRange, boolean useLOSRange) {
-        
+
         //some preliminary calculations
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse =
                 new EntityEvaluationResponse();
 
-        //Aeros always move after other units, and would require an 
+        //Aero's always move after other units, and would require an
         // entirely different evaluation
         //TODO (low priority) implement a way to see if I can dodge aero units
         if (enemy.isAirborneAeroOnGroundMap()) {
             return returnResponse;
         }
-        
+
         Coords finalCoords = path.getFinalCoords();
         int myFacing = path.getFinalFacing();
         Coords behind = finalCoords.translated((myFacing + 3) % 6);
@@ -133,15 +151,15 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
         if (closest == null) {
             return returnResponse;
         }
-        
+
         int range = closest.distance(finalCoords);
-        // assume that an enemy unit is highly unlikely to stand there and let you swarm them 
+        // assume that an enemy unit is highly unlikely to stand there and let you swarm them
         if (range <= 0) {
             range = 1;
         }
 
         MovePath blankEnemyPath = new MovePath(getOwner().getGame(), enemy);
-        
+
         // for infantry, facing doesn't matter because you rotate for free
         // (unless you're using "dig in" rules, but we're not there yet)
         returnResponse.addToMyEstimatedDamage(
@@ -160,7 +178,7 @@ public class InfantryPathRanker extends BasicPathRanker implements IPathRanker {
                         range,
                         useExtremeRange,
                         useLOSRange) * damageDiscount);
-        
+
         //It is especially embarrassing if the enemy can move behind or flank me and then kick me
         if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
             returnResponse.addToEstimatedEnemyDamage(

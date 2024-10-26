@@ -18,7 +18,11 @@
  */
 package megamek.server;
 
-import megamek.common.*;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.MekWarrior;
+import megamek.common.Player;
 
 public class ServerReportsHelper {
 
@@ -58,22 +62,22 @@ public class ServerReportsHelper {
     public static int getEjectedCrewCount(Player player, Game game) {
         return Math.toIntExact(game.getPlayerEntities(player, false).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        (((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() == Entity.NONE) ||
-                                ((entity instanceof EjectedCrew) && !(entity instanceof MechWarrior)))).count());
+                        (((entity instanceof MekWarrior) && ((MekWarrior) entity).getPickedUpById() == Entity.NONE) ||
+                                ((entity instanceof EjectedCrew) && !(entity instanceof MekWarrior)))).count());
     }
 
     public static int getEjectedCrewPickedUpByTeamCount(Player player, Game game) {
         return Math.toIntExact(game.getPlayerEntities(player, false).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE
-                                && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() == player.getTeam())).count());
+                        ((entity instanceof MekWarrior) && ((MekWarrior) entity).getPickedUpById() != Entity.NONE
+                                && game.getEntity(((MekWarrior) entity).getPickedUpById()).getOwner().getTeam() == player.getTeam())).count());
     }
 
     public static int getEjectedCrewPickedUpByEnemyTeamCount(Player player, Game game) {
         return Math.toIntExact(game.getPlayerEntities(player, false).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
-                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE
-                                && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() != player.getTeam())).count());
+                        ((entity instanceof MekWarrior) && ((MekWarrior) entity).getPickedUpById() != Entity.NONE
+                                && game.getEntity(((MekWarrior) entity).getPickedUpById()).getOwner().getTeam() != player.getTeam())).count());
     }
 
     public static int getEjectedCrewKilledCount(Player player, Game game) {

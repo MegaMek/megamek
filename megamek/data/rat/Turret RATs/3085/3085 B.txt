@@ -1,5 +1,4 @@
 Turrets 3085 B
-
 @DirectFire Turrets 3075, 20
 @InDirectFire Turrets 3050, 40
 @AntiAir Turrets 3075, 20

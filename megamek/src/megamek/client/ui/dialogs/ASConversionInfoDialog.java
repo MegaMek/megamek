@@ -76,7 +76,6 @@ public class ASConversionInfoDialog extends AbstractDialog {
     @Override
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
-        adaptToGUIScale();
         if (!StringUtility.isNullOrBlank(unitName)) {
             setTitle(getTitle() + " (" + unitName + ")");
         }
@@ -118,10 +117,6 @@ public class ASConversionInfoDialog extends AbstractDialog {
     private void copyToClipboard(String reportString) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(reportString), null);
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }
 

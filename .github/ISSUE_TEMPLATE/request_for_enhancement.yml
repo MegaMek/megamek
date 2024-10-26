@@ -1,0 +1,97 @@
+name: Request for Enhancement
+description: Use this to submit a Request for Enhancement (RFE)—asking for a new feature, extending an existing feature, or implementing missing rules or errata.
+title: "[RFE] Brief Description"
+labels: [(RFE) Enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **This form is to submit a Request for Enhancement (RFE)—asking for a new feature, extending an existing feature, or implementing missing rules or errata. Submitting an RFE is no guarantee of its prioritization by the development team.**
+
+        **Fields marked with a red asterisk (*) are mandatory to complete.**       
+
+        Before submitting an RFE, please review our [Content Policy](https://github.com/MegaMek/megamek/wiki/Unofficial-or-Non%E2%80%90Canon-Content-Policy).
+
+  - type: checkboxes
+    id: prerequisites-and-pre-issue-checks
+    attributes:
+      label: Prerequisites and Pre-Issue Checklist
+      description: Please confirm you have completed the following steps before submitting an RFE.
+      options:
+        - label: |
+            I'm reporting the RFE to the correct repository:
+            - [MegaMek](https://github.com/MegaMek/megamek/issues)
+            - [MegaMekLab](https://github.com/MegaMek/megameklab/issues)
+            - [MekHQ](https://github.com/MegaMek/mekhq/issues)
+          required: true
+        - label: "Does this conform with our Content Policy linked above?"
+          required: true
+        - label: "I've searched the GitHub tracker and haven't found a similar feature request listed"
+          required: true
+
+  - type: markdown
+    attributes:
+      value: "![How to Search the GitHub Tracker](https://i.imgur.com/QMJY7pll.png)"
+
+  - type: dropdown
+    id: rfe
+    attributes:
+      label: RFE Details *
+      description: Please select the type of RFE you're submitting.
+      options:
+        - "This is a new feature"
+        - "This is an improvement to an existing feature"
+        - "This is an implementation of a missing official rule"
+        - "This is a request to implement Errata"
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        For new features or improvements to existing features, please describe them in detail.
+        For rule implementations, provide the book, page, and edition.
+        For errata, reference the official documents: [Errata](https://bg.battletech.com/errata/)
+
+  - type: textarea
+    id: brief-description
+    attributes:
+      label: Brief Description *
+      description: |
+        ## Brief Description of the Feature *
+      placeholder: |
+        Provide a detailed description of the requested feature, including why it's needed, any relevant use cases, and screenshots/mock-ups if applicable.
+    validations:
+      required: true
+
+  - type: input
+    id: megamek-version
+    attributes:
+      label: MegaMekLab Suite Version *
+      description: Which version of MegaMek are you using? All RFEs must be checked against the most current development release.
+      placeholder: "e.g., v0.50.0, v0.49.19.1, or development version"
+    validations:
+      required: true
+
+  - type: textarea
+    id: attached-files
+    attributes:
+      label: Attach Files
+      description: Provide any relevant files by attaching them to the request here.
+      placeholder: "Drag and drop or click to upload relevant files."
+
+  - type: checkboxes
+    id: final-checks
+    attributes:
+      label: Final Checklist
+      description: Before submitting, confirm the following steps-
+      options:
+        - label: "I've checked to make sure that this RFE has not already been filed"
+          required: true
+        - label: "I am requesting implementation of only one relevant set of features in this ticket for clarity and focus "
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        **You will not be able to submit this report unless all fields marked with a red asterisk (*) are complete and filled out before submitting your report.**

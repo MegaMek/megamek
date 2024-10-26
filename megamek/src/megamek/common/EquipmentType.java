@@ -18,18 +18,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.LogManager;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
@@ -37,6 +27,7 @@ import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
 import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import megamek.logging.MMLogger;
 
 /**
  * Represents any type of equipment mounted on a 'Mek, excluding systems and
@@ -46,15 +37,17 @@ import megamek.common.weapons.ppc.PPCWeapon;
  * @since April 1, 2002, 1:35 PM
  */
 public class EquipmentType implements ITechnology {
+    private static final MMLogger logger = MMLogger.create(EquipmentType.class);
+
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
     /**
-     * Default value for support vehicle slot cost. Those that differ from `Mechs
+     * Default value for support vehicle slot cost. Those that differ from `Meks
      * are assigned a value >= 0
      */
-    private static final int MECH_SLOT_COST = -1;
+    private static final int MEK_SLOT_COST = -1;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;
@@ -157,7 +150,7 @@ public class EquipmentType implements ITechnology {
     protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
-    protected int svslots = MECH_SLOT_COST;
+    protected int svslots = MEK_SLOT_COST;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
@@ -194,7 +187,7 @@ public class EquipmentType implements ITechnology {
      */
     public Vector<String> endTurnModes = new Vector<String>();
 
-    // static list of eq
+    // static list of equipment
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
 
@@ -398,17 +391,17 @@ public class EquipmentType implements ITechnology {
     }
 
     public int getSupportVeeSlots(Entity entity) {
-        if (svslots == MECH_SLOT_COST) {
+        if (svslots == MEK_SLOT_COST) {
             return getCriticals(entity);
         }
         return svslots;
     }
 
-    public boolean isExplosive(Mounted mounted) {
+    public boolean isExplosive(Mounted<?> mounted) {
         return isExplosive(mounted, false);
     }
 
-    public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
+    public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
         if (null == mounted) {
             return explosive;
         }
@@ -445,7 +438,7 @@ public class EquipmentType implements ITechnology {
             if (!mounted.isUsedThisRound()) {
                 return false;
             }
-            Mounted ammo = mounted.getLinked();
+            Mounted<?> ammo = mounted.getLinked();
             if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
                     || (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
                 return false;
@@ -552,9 +545,9 @@ public class EquipmentType implements ITechnology {
             return false;
         }
 
-        // Beware concurrent modification
-        for (EquipmentMode mode : modes) {
-            if (mode.getName().equals(modeType)) {
+        // Avoid Concurrent Modification exception with this one simple trick!
+        for (Iterator<EquipmentMode> iterator = modes.iterator(); iterator.hasNext();) {
+            if (iterator.next().getName().equals(modeType)) {
                 return true;
             }
         }
@@ -846,7 +839,7 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is mech
+     * Convenience method to test whether an EquipmentType instance is mek
      * structure. This works by comparing the results of {@link #getName()} to the
      * structure names array and returning {@code true} if there is a match.
      *
@@ -1114,7 +1107,7 @@ public class EquipmentType implements ITechnology {
             w.flush();
             w.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1230,7 +1223,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1378,7 +1371,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1518,7 +1511,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 
@@ -1632,7 +1625,7 @@ public class EquipmentType implements ITechnology {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
         }
     }
 

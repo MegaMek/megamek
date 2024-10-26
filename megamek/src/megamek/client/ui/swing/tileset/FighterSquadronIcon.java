@@ -18,17 +18,18 @@
  */
 package megamek.client.ui.swing.tileset;
 
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.icons.Camouflage;
-import megamek.common.util.ImageUtil;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
+import megamek.common.icons.Camouflage;
+import megamek.common.util.ImageUtil;
 
 /**
  * This is a specialized version of EntityImage for FighterSquadrons that assembles its icon from the
@@ -106,8 +107,8 @@ public class FighterSquadronIcon extends EntityImage {
      */
     private final int positionHash;
 
-    public FighterSquadronIcon(Image base, Image wreck, Camouflage camouflage, Component comp, Entity entity, int secondaryPos, boolean preview) {
-        super(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+    public FighterSquadronIcon(Image base, Image wreck, Camouflage camouflage, Entity entity, int secondaryPos, boolean preview) {
+        super(base, wreck, camouflage, entity, secondaryPos, preview);
         if (entity instanceof FighterSquadron) {
             squadron = (FighterSquadron) entity;
         } else {
@@ -127,8 +128,8 @@ public class FighterSquadronIcon extends EntityImage {
         int index = 0;
         int totalUnitCount = squadron.getActiveSubEntities().size();
         for (Entity fighter : squadron.getActiveSubEntities()) {
-            final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(fighter);
-            var ei = EntityImage.createIcon(base, fighter.getCamouflageOrElseOwners(), new JPanel(), fighter)
+            final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(fighter);
+            var ei = EntityImage.createIcon(base, fighter.getCamouflageOrElseOwners(), fighter)
                     .loadPreviewImage(true);
             int height = getSize(totalUnitCount);
             if ((ei.getHeight(null) > 0) && (ei.getWidth(null) > 0)) {

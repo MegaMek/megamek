@@ -39,17 +39,13 @@ public class PushAttackAction extends DisplacementAttackAction {
      * pushes are impossible when physical attacks are impossible, or a
      * retractable blade is extended
      *
-     * @param game The current {@link Game}
+     * @param game   The current {@link Game}
      * @param ae
      * @param target
      * @return
      */
     protected static String toHitIsImpossible(Game game, Entity ae, Targetable target) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
-        String extendedBladeImpossible = null;
-        if ((ae instanceof Mech) && ((Mech) ae).hasExtendedRetractableBlade()) {
-            extendedBladeImpossible = "Extended retractable blade";
-        }
 
         if (physicalImpossible != null) {
             return physicalImpossible;
@@ -59,26 +55,22 @@ public class PushAttackAction extends DisplacementAttackAction {
             return "Unit Grappled";
         }
 
-        if (ae.isEvading()) {
-            return "attacker is evading.";
+        // can't push if carrying any cargo per TW
+        if ((ae instanceof Mek) &&
+                !((Mek) ae).canFireWeapon(Mek.LOC_LARM) ||
+                !((Mek) ae).canFireWeapon(Mek.LOC_LARM)) {
+            return Messages.getString("WeaponAttackAction.CantFireWhileCarryingCargo");
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
-            // a friendly unit can never be the target of a direct attack.
-            if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                        && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
-                return "A friendly unit can never be the target of a direct attack.";
-            }
+        if ((ae instanceof Mek) && ((Mek) ae).hasExtendedRetractableBlade()) {
+            return "Extended retractable blade";
         }
 
-        return extendedBladeImpossible;
+        return null;
     }
 
     /**
-     * To-hit number for the mech to push another mech
+     * To-hit number for the mek to push another mek
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
@@ -123,9 +115,9 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
         }
 
-        // non-mechs can't push
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't push");
+        // non-meks can't push
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't push");
         }
 
         // Quads can't push
@@ -133,14 +125,14 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        // LAM AirMechs can only push when grounded.
+        // LAM AirMeks can only push when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push while airborne");
         }
 
-        // Can only push mechs
-        if (!(te instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mech");
+        // Can only push meks
+        if (!(te instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mek");
         }
 
         // Can't push with flipped arms
@@ -159,7 +151,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // check if both arms are present
-        if (ae.isLocationBad(Mech.LOC_RARM) || ae.isLocationBad(Mech.LOC_LARM)) {
+        if (ae.isLocationBad(Mek.LOC_RARM) || ae.isLocationBad(Mek.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
@@ -169,7 +161,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // check if attacker has fired arm-mounted weapons
-        if (ae.weaponFiredFrom(Mech.LOC_RARM) || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+        if (ae.weaponFiredFrom(Mek.LOC_RARM) || ae.weaponFiredFrom(Mek.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
@@ -183,14 +175,14 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not at same elevation");
         }
 
-        // can't push mech making non-pushing displacement attack
+        // can't push mek making non-pushing displacement attack
         if (te.hasDisplacementAttack() && !te.isPushing()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a charge/DFA attack");
         }
 
-        // can't push mech pushing another, different mech
+        // can't push mek pushing another, different mek
         if (te.isPushing() && (te.getDisplacementAttack().getTargetId() != ae.getId())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mech");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mek");
         }
 
         // can't do anything but counter-push if the target of another attack
@@ -220,7 +212,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // can't push prone mechs
+        // can't push prone meks
         if (te.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
@@ -248,6 +240,11 @@ public class PushAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
+        String otherImpossible = toHitIsImpossible(game, ae, target);
+        if (otherImpossible != null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, otherImpossible);
+        }
+
         // Set the base BTH
         int base = ae.getCrew().getPiloting() - 1;
 
@@ -266,10 +263,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
             toHit.addModifier(2, "Right Shoulder destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
         }
 
@@ -289,7 +286,7 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        //evading
+        // evading
         if (te.isEvading()) {
             toHit.addModifier(te.getEvasionBonus(), "target is evading");
         }
@@ -300,9 +297,9 @@ public class PushAttackAction extends DisplacementAttackAction {
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+        if (((Mek) ae).getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_SENSORS, Mek.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
@@ -310,7 +307,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             }
         }
 
-        //Attacking Weight Class Modifier.
+        // Attacking Weight Class Modifier.
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
@@ -319,7 +316,7 @@ public class PushAttackAction extends DisplacementAttackAction {
             }
         }
 
-        if (((Mech) ae).hasIndustrialTSM()) {
+        if (((Mek) ae).hasIndustrialTSM()) {
             toHit.addModifier(2, "industrial TSM");
         }
 

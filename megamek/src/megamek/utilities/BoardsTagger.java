@@ -18,43 +18,52 @@
  */
 package megamek.utilities;
 
+import static java.util.stream.Collectors.toSet;
+import static megamek.common.Terrains.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Configuration;
 import megamek.common.Hex;
+import megamek.logging.MMLogger;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
-import static megamek.common.Terrains.*;
-
-/** 
+/**
  * Scans all boards and applies automated tags to them.
- * Examples: Woods (Auto), DenseUrban (Auto). Deletes its own tags (and only those) 
- * before applying them (again), so if the rules for applying tags are changed, 
- * they may be removed accordingly and will also not be applied twice.  
- * 
+ * Examples: Woods (Auto), DenseUrban (Auto). Deletes its own tags (and only
+ * those) before applying them (again), so if the rules for applying tags are
+ * changed, they may be removed accordingly and will also not be applied twice.
+ *
  * @author Simon (Juliez)
  */
 public class BoardsTagger {
+    private static final MMLogger logger = MMLogger.create(BoardsTagger.class);
 
-    /** When true, will print some information to System.out. */
-    private final static boolean DEBUG = false;
+    /** When true, will print some information to Logger. */
+    private static final boolean DEBUG = false;
 
     /**
-     * A suffix added to tags to distinguish them from manually added tags. The suffix
-     * is also used to identify them for deleting tags that no longer apply to a board or
-     * that got renamed. 
-     * If the suffix is changed, this tool will not remove tags with the old suffix
-     * before applying new ones, so those must be handled manually.
+     * A suffix added to tags to distinguish them from manually added tags. The
+     * suffix is also used to identify them for deleting tags that no longer apply
+     * to a board or that got renamed. If the suffix is changed, this tool will not
+     * remove tags with the old suffix before applying new ones, so those must be
+     * handled manually.
      */
     private static final String AUTO_SUFFIX = " (Auto)";
 
     public enum Tags {
-
         TAG_LIGHTFOREST("LightForest"),
         TAG_MEDFOREST("MediumForest"),
         TAG_DENSEFOREST("DenseForest"),
@@ -91,44 +100,46 @@ public class BoardsTagger {
 
         static {
             internalTagMap = new HashMap<>();
-            
+
             for (Tags tag : values()) {
                 internalTagMap.put(tag.getName().replace(AUTO_SUFFIX, ""), tag);
             }
         }
-        
+
         Tags(String name) {
             tagName = name + AUTO_SUFFIX;
         }
-        
+
         public String getName() {
             return tagName;
         }
-        
+
         public static Tags parse(String tag) {
             String noAutoTag = tag.replace(AUTO_SUFFIX, "");
             if (internalTagMap.containsKey(noAutoTag)) {
                 return internalTagMap.get(noAutoTag);
             }
-            
+
             return null;
         }
     }
-
 
     public static void main(String... args) {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
         } catch (Exception ex) {
-            System.out.println("Board tagger cannot scan boards");
-            ex.printStackTrace();
+            logger.error(ex, "Board tagger cannot scan boards");
             System.exit(64);
         }
-        System.out.println("Finished.");
+
+        logger.info("Finished.");
     }
 
-    /** Recursively scans the supplied file/directory for any boards and auto-tags them. */
+    /**
+     * Recursively scans the supplied file/directory for any boards and auto-tags
+     * them.
+     */
     private static void scanForBoards(File file) throws IOException {
         if (file.isDirectory()) {
             String[] fileList = file.list();
@@ -146,8 +157,8 @@ public class BoardsTagger {
     }
 
     /**
-     * Scans the board for the types and number of terrains present, deletes old automatic tags
-     * and applies new automatic tags as approptiate.
+     * Scans the board for the types and number of terrains present, deletes old
+     * automatic tags and applies new automatic tags as appropriate.
      */
     private static void tagBoard(File boardFile) {
         // If this isn't a board, ignore it
@@ -159,14 +170,16 @@ public class BoardsTagger {
         Board board = new Board();
         try (InputStream is = new FileInputStream(boardFile)) {
             // Apply tags only to boards that are valid and fully functional
-            StringBuffer errors = new StringBuffer();
+            List<String> errors = new ArrayList<>();
             board.load(is, errors, true);
-            if (errors.length() > 0) {
-                System.out.println("Board has errors: " + boardFile);
+            if (!errors.isEmpty()) {
+                String message = String.format("Board has errors: %s", boardFile);
+                logger.debug(message);
                 return;
             }
         } catch (Exception e) {
-            System.out.println("Could not load board: " + boardFile);
+            String message = String.format("Could not load board: %s", boardFile);
+            logger.error(e, message);
             return;
         }
 
@@ -201,7 +214,7 @@ public class BoardsTagger {
         int water = 0;
         int ice = 0;
         int snowTerrain = 0;
-        
+
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Hex hex = board.getHex(x, y);
@@ -240,11 +253,12 @@ public class BoardsTagger {
                 sEdgeWater += ((y == board.getHeight() - 1) && hex.containsTerrain(WATER)) ? 1 : 0;
                 weighedLevels += Math.abs(hex.getLevel());
                 water += hex.containsTerrain(WATER) ? 1 : 0;
-                if (hex.containsTerrain(BUILDING) 
+                if (hex.containsTerrain(BUILDING)
                         && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
-                        && ((hex.terrainLevel(BUILDING) == Building.LIGHT) || (hex.terrainLevel(BUILDING) == Building.MEDIUM))) {
+                        && ((hex.terrainLevel(BUILDING) == Building.LIGHT)
+                                || (hex.terrainLevel(BUILDING) == Building.MEDIUM))) {
                     stdBuildings++;
-                    int height = hex.terrainLevel(BLDG_ELEV); 
+                    int height = hex.terrainLevel(BLDG_ELEV);
                     lowBuildings += (height <= 2) ? 1 : 0;
                     highBuildings += (height > 2) ? 1 : 0;
                 }
@@ -253,18 +267,21 @@ public class BoardsTagger {
 
         // The board area
         int area = board.getWidth() * board.getHeight();
-        // The geometric mean of the board sides. Better for some comparisons than the area.
+        // The geometric mean of the board sides. Better for some comparisons than the
+        // area.
         int normSide = (int) Math.sqrt(area);
         int levelExtent = board.getMaxElevation() - board.getMinElevation();
 
         // Calculate which tags apply
-        var matchingTags = new HashMap<Tags, Boolean>();
-        
-        matchingTags.put(Tags.TAG_MEDFOREST, (forest >= normSide * 5) && (forest < normSide * 10) && (forestHU < normSide * 2));
-        matchingTags.put(Tags.TAG_LIGHTFOREST, (forest >= normSide * 2) && (forestHU < normSide) && (forest < normSide * 5));
+        EnumMap<Tags, Boolean> matchingTags = new EnumMap<>(Tags.class);
+
+        matchingTags.put(Tags.TAG_MEDFOREST,
+                (forest >= normSide * 5) && (forest < normSide * 10) && (forestHU < normSide * 2));
+        matchingTags.put(Tags.TAG_LIGHTFOREST,
+                (forest >= normSide * 2) && (forestHU < normSide) && (forest < normSide * 5));
         matchingTags.put(Tags.TAG_DENSEFOREST, (forest >= normSide * 10) && (forestHU > normSide * 2));
         matchingTags.put(Tags.TAG_WOODS, woods > forest / 2);
-        matchingTags.put(Tags.TAG_JUNGLE,  jungles > forest / 2);
+        matchingTags.put(Tags.TAG_JUNGLE, jungles > forest / 2);
         matchingTags.put(Tags.TAG_ROADS, roads > 10);
         matchingTags.put(Tags.TAG_ROUGH, roughs > normSide / 2);
         matchingTags.put(Tags.TAG_FOLIAGE, foliage > 5);
@@ -279,7 +296,7 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_MARS, mars > area / 2);
         matchingTags.put(Tags.TAG_VOLCANIC, volcanic > area / 2);
         matchingTags.put(Tags.TAG_SNOWTHEME, snowTheme > area / 2);
-        matchingTags.put(Tags.TAG_OCEAN, nEdgeWater > (board.getWidth() * 9 / 10) 
+        matchingTags.put(Tags.TAG_OCEAN, nEdgeWater > (board.getWidth() * 9 / 10)
                 || sEdgeWater > (board.getWidth() * 9 / 10)
                 || eEdgeWater > (board.getHeight() * 9 / 10)
                 || wEdgeWater > (board.getHeight() * 9 / 10));
@@ -287,31 +304,36 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_HIGHHILLS, (levelExtent >= 5) && (weighedLevels > normSide * 15));
         matchingTags.put(Tags.TAG_WATER, water > normSide / 3);
         matchingTags.put(Tags.TAG_ICE, ice > normSide / 3);
-        boolean lightUrban = (lowBuildings > normSide) && (highBuildings < normSide / 3) && (lowBuildings < normSide * 2) && (roads > normSide / 3);
+        boolean lightUrban = (lowBuildings > normSide) && (highBuildings < normSide / 3)
+                && (lowBuildings < normSide * 2) && (roads > normSide / 3);
         matchingTags.put(Tags.TAG_LIGHTURBAN, lightUrban);
-        matchingTags.put(Tags.TAG_MEDURBAN, !lightUrban && (stdBuildings >= normSide) 
+        matchingTags.put(Tags.TAG_MEDURBAN, !lightUrban && (stdBuildings >= normSide)
                 && (roads > normSide / 3) && (stdBuildings < normSide * 4));
         matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
 
-        // Remove (see below) any auto tags that might be present so that auto tags that no longer apply
+        // Remove (see below) any auto tags that might be present so that auto tags that
+        // no longer apply
         // are not left in the board file.
         Set<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toSet());
 
         // Find any applicable tags to give the board
-        Set<String> toAdd = matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName).collect(toSet());
+        Set<String> toAdd = matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName)
+                .collect(toSet());
 
         if (DEBUG) {
-            System.out.println("----- Board: " + boardFile);
+            String message = String.format("----- Board: %s", boardFile);
+            logger.debug(message);
             if (toRemove.equals(toAdd)) {
-                System.out.println("No changes");
+                logger.debug("No changes.");
             } else {
-                toAdd.forEach(System.out::println);
+                toAdd.forEach(logger::debug);
             }
         }
-        
-        // Now, if there are actual changes in the autotags, remove the former ones, add the new ones and save
+
+        // Now, if there are actual changes in the auto tags, remove the former ones,
+        // add the new ones and save
         if (!toRemove.equals(toAdd)) {
             toRemove.forEach(board::removeTag);
             toAdd.forEach(board::addTag);
@@ -320,10 +342,9 @@ public class BoardsTagger {
             try (OutputStream os = new FileOutputStream(boardFile)) {
                 board.save(os);
             } catch (Exception ex) {
-                System.out.println("Error: Could not save board: " + boardFile);
-                ex.printStackTrace();
+                String message = String.format("Could not save board: %s", boardFile);
+                logger.error(ex, message);
             }
-
         }
     }
 }

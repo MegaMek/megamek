@@ -457,6 +457,34 @@ public class Coords implements Serializable {
     }
 
     /**
+     * Returns true when the given other Coords are exactly on the hex row (line) from this Coords in the given
+     * direction. For example, if the direction is 0 (north), returns true only for Coords that are above
+     * this Coords at the same x. Returns false when the other Coords are null, the other Coords are equal
+     * to this or the direction is outside of 0 to 5.
+     *
+     * @param direction The direction, 0 = N, 2 = SE ...
+     * @param other The Coords to test
+     * @return True when the other Coords are on the hex row from this Coords in the given direction
+     */
+    public boolean isOnHexRow(int direction, @Nullable Coords other) {
+        if ((other == null) || this.equals(other)) {
+            return false;
+        }
+        HexLine line = new HexLine(this, direction);
+        if (line.judgePoint(other) != 0) {
+            return false;
+        } else {
+            return switch (direction) {
+                case 0 -> other.y < y;
+                case 1, 2 -> other.x > x;
+                case 3 -> other.y > y;
+                case 4, 5 -> other.x < x;
+                default -> false;
+            };
+        }
+    }
+
+    /**
      * Returns a list of all adjacent coordinates (distance = 1), 
      * regardless of whether they're on the board or not.
      */

@@ -1,15 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.event;
@@ -19,16 +25,16 @@ import megamek.common.Entity;
 
 /**
  * Instances of this class are sent as a result of changes in BoardView
- * 
+ *
  * @see BoardViewListener
  */
 public class BoardViewEvent extends java.util.EventObject {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4823618884833399318L;
     public static final int BOARD_HEX_CLICKED = 0;
-    public static final int BOARD_HEX_DOUBLECLICKED = 1;
+    public static final int BOARD_HEX_DOUBLE_CLICKED = 1;
     public static final int BOARD_HEX_DRAGGED = 2;
 
     public static final int BOARD_HEX_CURSOR = 3;
@@ -61,7 +67,7 @@ public class BoardViewEvent extends java.util.EventObject {
     public BoardViewEvent(Object source, int type) {
         super(source);
         this.type = type;
-        entityId = megamek.common.Entity.NONE;
+        entityId = Entity.NONE;
     }
 
     public BoardViewEvent(Object source, int type, int entityId) {
@@ -69,9 +75,8 @@ public class BoardViewEvent extends java.util.EventObject {
         this.type = type;
         this.entityId = entityId;
     }
-    
-    public BoardViewEvent(Object source, Coords c, Entity entity, int type, 
-            int modifiers, int mouseButton) {
+
+    public BoardViewEvent(Object source, Coords c, Entity entity, int type, int modifiers, int mouseButton) {
         this(source, c, entity, type, modifiers);
         this.mouseButton = mouseButton;
     }
@@ -125,7 +130,7 @@ public class BoardViewEvent extends java.util.EventObject {
      * <li> 5 Button greater than 3
      * </ul>
      * <p>
-     * 
+     *
      */
     public int getButton() {
         return mouseButton ;

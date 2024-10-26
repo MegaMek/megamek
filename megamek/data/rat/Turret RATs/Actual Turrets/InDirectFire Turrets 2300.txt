@@ -1,5 +1,4 @@
 InDirectFire Turrets 2300
-
 #Missile Turrets
 Light Missile Turret (2300), 50
 Medium Missile Turret (2300), 25

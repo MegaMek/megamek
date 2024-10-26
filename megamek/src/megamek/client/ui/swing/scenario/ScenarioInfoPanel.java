@@ -18,13 +18,12 @@
  */
 package megamek.client.ui.swing.scenario;
 
-import megamek.client.ui.swing.util.DashedSeparator;
-import megamek.client.ui.swing.util.LocationBorder;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.util.*;
 import megamek.common.scenario.ScenarioV1;
 import megamek.common.scenario.Scenario;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -36,7 +35,7 @@ public class ScenarioInfoPanel extends JPanel {
     static final int BASE_MINIMUM_WIDTH = 600;
     static final int BASE_MINIMUM_HEIGHT = 100;
 
-    private final JLabel lblTitle = new HeaderLabel();
+    private final JLabel lblTitle = new JLabel();
     private final DescriptionLabel textDescription2 = new DescriptionLabel();
 
     public ScenarioInfoPanel() {
@@ -49,16 +48,16 @@ public class ScenarioInfoPanel extends JPanel {
         lblTitle.setName("lblTitle");
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTitle.setForeground(UIUtil.uiLightGreen());
-        lblTitle.setFont(new Font("Exo 2", Font.BOLD, UIUtil.FONT_SCALE1));
+        new FlatLafStyleBuilder().font("Exo 2").bold().size(1.4).apply(lblTitle);
         add(lblTitle);
-        add(UIUtil.scaledVerticalSpacer(10));
+        add(Box.createVerticalStrut(10));
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));
-        add(UIUtil.scaledVerticalSpacer(10));
+        add(Box.createVerticalStrut(10));
 
-        textDescription2.setFont(new Font("Noto Sans", Font.PLAIN, UIUtil.FONT_SCALE1));
+        new FlatLafStyleBuilder().font(FontHandler.notoFont()).apply(textDescription2);
         textDescription2.setAlignmentX(0.5f);
         textDescription2.setVerticalAlignment(SwingConstants.TOP);
-        textDescription2.setBorder(new UIUtil.ScaledEmptyBorder(0, 10, 0, 10));
+        textDescription2.setBorder(new EmptyBorder(0, 10, 0, 10));
         add(textDescription2);
     }
 
@@ -70,21 +69,13 @@ public class ScenarioInfoPanel extends JPanel {
     private static class DescriptionLabel extends JLabel {
         @Override
         public Dimension getMaximumSize() {
-            return UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH, BASE_MINIMUM_HEIGHT);
+            // Fixed sizes do not get scaled by FlatLaf
+            return new Dimension(UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH), UIUtil.scaleForGUI(BASE_MINIMUM_HEIGHT));
         }
 
         @Override
         public Dimension getPreferredSize() {
-            return UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH, BASE_MINIMUM_HEIGHT);
-        }
-    }
-
-    private static class HeaderLabel extends JLabel {
-        @Override
-        public void setFont(Font font) {
-            // Keep a higher font size; UIUtil.adjustDialog sets everything to the same absolute font size
-            font = font.deriveFont(1.4f * font.getSize());
-            super.setFont(font);
+            return getMaximumSize();
         }
     }
 }

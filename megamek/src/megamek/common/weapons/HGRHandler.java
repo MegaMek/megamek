@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.Vector;
 
@@ -32,13 +32,13 @@ public class HGRHandler extends GRHandler {
      * @param g
      * @param m
      */
-    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public HGRHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -46,8 +46,8 @@ public class HGRHandler extends GRHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
-        if ((ae.mpUsed > 0) && (ae instanceof Mech) && ae.canFall()
+
+        if ((ae.mpUsed > 0) && (ae instanceof Mek) && ae.canFall()
             // Only check up to assault class, superheavies do not roll.
             && ae.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
             // Modifier is weight-based.

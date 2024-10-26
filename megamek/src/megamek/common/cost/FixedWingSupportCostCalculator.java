@@ -25,7 +25,8 @@ import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
 
-    public static double calculateCost(FixedWingSupport fixedWingSupport, CalculationReport costReport, boolean ignoreAmmo) {
+    public static double calculateCost(FixedWingSupport fixedWingSupport, CalculationReport costReport,
+            boolean ignoreAmmo) {
         double[] costs = new double[13 + fixedWingSupport.locations()];
         int i = 0;
         // Chassis cost for Support Vehicles
@@ -65,7 +66,8 @@ public class FixedWingSupportCostCalculator {
         // armor
         if (fixedWingSupport.hasPatchworkArmor()) {
             for (int loc = 0; loc < fixedWingSupport.locations(); loc++) {
-                costs[i++] = fixedWingSupport.getArmorWeight(loc) * ArmorType.forEntity(fixedWingSupport, loc).getCost();
+                costs[i++] = fixedWingSupport.getArmorWeight(loc)
+                        * ArmorType.forEntity(fixedWingSupport, loc).getCost();
             }
         } else {
             ArmorType armor = ArmorType.forEntity(fixedWingSupport);
@@ -84,10 +86,12 @@ public class FixedWingSupportCostCalculator {
         double techRatingMultiplier = 0.5 + (fixedWingSupport.getStructuralTechRating() * 0.25);
         costs[structCostIdx] *= techRatingMultiplier;
 
-        double freeHeatSinks = (fixedWingSupport.hasEngine() ? fixedWingSupport.getEngine().getWeightFreeEngineHeatSinks() : 0);
+        double freeHeatSinks = (fixedWingSupport.hasEngine()
+                ? fixedWingSupport.getEngine().getWeightFreeEngineHeatSinks()
+                : 0);
         int sinks = 0;
         double paWeight = 0;
-        for (Mounted m : fixedWingSupport.getWeaponList()) {
+        for (Mounted<?> m : fixedWingSupport.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 sinks += wt.getHeat();
@@ -95,7 +99,8 @@ public class FixedWingSupportCostCalculator {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if ((fixedWingSupport.hasEngine() && (fixedWingSupport.getEngine().isFusion() || fixedWingSupport.getEngine().getEngineType() == Engine.FISSION))
+        if ((fixedWingSupport.hasEngine() && (fixedWingSupport.getEngine().isFusion()
+                || fixedWingSupport.getEngine().getEngineType() == Engine.FISSION))
                 || fixedWingSupport.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             paWeight = 0;
         }

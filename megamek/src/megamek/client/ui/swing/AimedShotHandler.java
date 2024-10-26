@@ -1,15 +1,33 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 class AimedShotHandler implements ActionListener, ItemListener {
     private final FiringDisplay firingDisplay;
@@ -47,11 +65,11 @@ class AimedShotHandler implements ActionListener, ItemListener {
             } else {
                 return;
             }
-            if (this.firingDisplay.target instanceof Mech) {
+            if (this.firingDisplay.target instanceof Mek) {
                 if (aimingMode.isImmobile()) {
-                    aimingAt = Mech.LOC_HEAD;
+                    aimingAt = Mek.LOC_HEAD;
                 } else if (aimingMode.isTargetingComputer()) {
-                    aimingAt = Mech.LOC_CT;
+                    aimingAt = Mek.LOC_CT;
                 }
             } else if (this.firingDisplay.target instanceof Tank) {
                 int side = Compute.targetSideTable(this.firingDisplay.ce(), this.firingDisplay.target);
@@ -80,12 +98,12 @@ class AimedShotHandler implements ActionListener, ItemListener {
                 if (side == ToHitData.SIDE_FRONT) {
                     aimingAt = Tank.LOC_FRONT;
                 }
-            } else if (this.firingDisplay.target instanceof Protomech) {
-                aimingAt = Protomech.LOC_TORSO;
+            } else if (this.firingDisplay.target instanceof ProtoMek) {
+                aimingAt = ProtoMek.LOC_TORSO;
             } else if (this.firingDisplay.target instanceof BattleArmor) {
                 aimingAt = BattleArmor.LOC_TROOPER_1;
             } else {
-                // no aiming allowed for MechWarrior or BattleArmor
+                // no aiming allowed for MekWarrior or BattleArmor
                 return;
             }
 
@@ -212,9 +230,9 @@ class AimedShotHandler implements ActionListener, ItemListener {
         }
 
         // remove main gun on protos that don't have one
-        if (this.firingDisplay.target instanceof Protomech) {
-            if (!((Protomech) this.firingDisplay.target).hasMainGun()) {
-                mask[Protomech.LOC_MAINGUN] = false;
+        if (this.firingDisplay.target instanceof ProtoMek) {
+            if (!((ProtoMek) this.firingDisplay.target).hasMainGun()) {
+                mask[ProtoMek.LOC_MAINGUN] = false;
             }
         }
 
@@ -226,44 +244,44 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
         // remove locations hidden by partial cover
         if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-            mask[Mech.LOC_LLEG] = false;
-            mask[Mech.LOC_RLEG] = false;
+            mask[Mek.LOC_LLEG] = false;
+            mask[Mek.LOC_RLEG] = false;
         }
         if (side == ToHitData.SIDE_FRONT) {
             if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mech.LOC_RLEG] = false;
+                mask[Mek.LOC_RLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mech.LOC_LLEG] = false;
+                mask[Mek.LOC_LLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mech.LOC_RARM] = false;
-                mask[Mech.LOC_RT] = false;
+                mask[Mek.LOC_RARM] = false;
+                mask[Mek.LOC_RT] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mech.LOC_LARM] = false;
-                mask[Mech.LOC_LT] = false;
+                mask[Mek.LOC_LARM] = false;
+                mask[Mek.LOC_LT] = false;
             }
         } else {
             if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                mask[Mech.LOC_LLEG] = false;
+                mask[Mek.LOC_LLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                mask[Mech.LOC_RLEG] = false;
+                mask[Mek.LOC_RLEG] = false;
             }
             if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                mask[Mech.LOC_LARM] = false;
-                mask[Mech.LOC_LT] = false;
+                mask[Mek.LOC_LARM] = false;
+                mask[Mek.LOC_LT] = false;
             }
             if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                mask[Mech.LOC_RARM] = false;
-                mask[Mech.LOC_RT] = false;
+                mask[Mek.LOC_RARM] = false;
+                mask[Mek.LOC_RT] = false;
             }
         }
 
         if (aimingMode.isTargetingComputer()) {
             // Can't target head with targeting computer.
-            mask[Mech.LOC_HEAD] = false;
+            mask[Mek.LOC_HEAD] = false;
         }
         return mask;
     }
@@ -316,7 +334,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
     /**
      * Sets the aiming mode, depending on the target and the attacker.
-     * Against immobile mechs, targeting computer aiming mode will be used
+     * Against immobile meks, targeting computer aiming mode will be used
      * if turned on. (This is a hack, but it's the resolution suggested by
      * the bug submitter, and I don't think it's half bad.
      */
@@ -324,21 +342,22 @@ class AimedShotHandler implements ActionListener, ItemListener {
     public void setAimingMode() {
         boolean allowAim;
 
-        // TC against a mech
+        // TC against a mek
         allowAim = ((this.firingDisplay.target != null) && (this.firingDisplay.ce() != null)
-                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mech)
-                || (this.firingDisplay.target instanceof Tank)
-                || (this.firingDisplay.target instanceof BattleArmor) || (this.firingDisplay.target instanceof Protomech)));
+                && this.firingDisplay.ce().hasAimModeTargComp() && ((this.firingDisplay.target instanceof Mek)
+                        || (this.firingDisplay.target instanceof Tank)
+                        || (this.firingDisplay.target instanceof BattleArmor)
+                        || (this.firingDisplay.target instanceof ProtoMek)));
         if (allowAim) {
             aimingMode = AimingMode.TARGETING_COMPUTER;
             return;
         }
-        // immobile mech or gun emplacement
+        // immobile mek or gun emplacement
         allowAim = ((this.firingDisplay.target != null)
                 && ((this.firingDisplay.target.isImmobile()
-                && ((this.firingDisplay.target instanceof Mech)
-                || (this.firingDisplay.target instanceof Tank)))
-                || (this.firingDisplay.target instanceof GunEmplacement)));
+                        && ((this.firingDisplay.target instanceof Mek)
+                                || (this.firingDisplay.target instanceof Tank)))
+                        || (this.firingDisplay.target instanceof GunEmplacement)));
         if (allowAim) {
             aimingMode = AimingMode.IMMOBILE;
             return;

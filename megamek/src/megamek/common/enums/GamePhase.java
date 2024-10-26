@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,11 +22,9 @@ import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public enum GamePhase {
-    //region Enum Declarations
     UNKNOWN("GamePhase.UNKNOWN.text"),
     LOUNGE("GamePhase.LOUNGE.text"),
     SELECTION("GamePhase.SELECTION.text"),
@@ -34,6 +32,8 @@ public enum GamePhase {
     DEPLOYMENT("GamePhase.DEPLOYMENT.text"),
     INITIATIVE("GamePhase.INITIATIVE.text"),
     INITIATIVE_REPORT("GamePhase.INITIATIVE_REPORT.text"),
+    SBF_DETECTION("GamePhase.SBF_DETECTION.text"),
+    SBF_DETECTION_REPORT("GamePhase.SBF_DETECTION_REPORT.text"),
     TARGETING("GamePhase.TARGETING.text"),
     TARGETING_REPORT("GamePhase.TARGETING_REPORT.text"),
     PREMOVEMENT("GamePhase.PREMOVEMENT.text"),
@@ -53,21 +53,16 @@ public enum GamePhase {
     DEPLOY_MINEFIELDS("GamePhase.DEPLOY_MINEFIELDS.text"),
     STARTING_SCENARIO("GamePhase.STARTING_SCENARIO.text"),
     SET_ARTILLERY_AUTOHIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
-    //endregion Enum Declarations
 
-    //region Variable Declarations
     private final String name;
-    //endregion Variable Declarations
 
-    //region Constructors
     GamePhase(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
-    //endregion Constructors
 
-    //region Boolean Comparison Methods
+    // region comparison methods
     public boolean isUnknown() {
         return this == UNKNOWN;
     }
@@ -172,141 +167,36 @@ public enum GamePhase {
         return this == SET_ARTILLERY_AUTOHIT_HEXES;
     }
 
+    // endregion
+
     public boolean isReport() {
-        switch (this) {
-            case INITIATIVE_REPORT:
-            case TARGETING_REPORT:
-            case MOVEMENT_REPORT:
-            case OFFBOARD_REPORT:
-            case FIRING_REPORT:
-            case PHYSICAL_REPORT:
-            case END_REPORT:
-            case VICTORY:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case INITIATIVE_REPORT, TARGETING_REPORT, MOVEMENT_REPORT, OFFBOARD_REPORT, FIRING_REPORT, PHYSICAL_REPORT,
+                 END_REPORT, SBF_DETECTION_REPORT, VICTORY -> true;
+            default -> false;
+        };
     }
 
     /**
      * Returns true when this phase shows the game map.
      */
     public boolean isOnMap() {
-        switch (this) {
-            case DEPLOYMENT:
-            case TARGETING:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case OFFBOARD:
-            case PREFIRING:
-            case FIRING:
-            case PHYSICAL:
-            case DEPLOY_MINEFIELDS:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-            case INITIATIVE_REPORT:
-            case TARGETING_REPORT:
-            case MOVEMENT_REPORT:
-            case OFFBOARD_REPORT:
-            case FIRING_REPORT:
-            case PHYSICAL_REPORT:
-            case END_REPORT:
-            case VICTORY:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Should we play this phase or skip it?
-     */
-    public boolean isPlayable(final Game game) {
-        switch (this) {
-            case INITIATIVE:
-            case END:
-                return false;
-            case DEPLOYMENT:
-            case TARGETING:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case PREFIRING:
-            case FIRING:
-            case PHYSICAL:
-            case DEPLOY_MINEFIELDS:
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-                return game.hasMoreTurns();
-            case OFFBOARD:
-                return isOffboardPlayable(game);
-            default:
-                return true;
-        }
-    }
-
-    /**
-     * Skip offboard phase, if there is no homing / semiguided ammo in play
-     */
-    private boolean isOffboardPlayable(final Game game) {
-        if (!game.hasMoreTurns()) {
-            return false;
-        }
-
-        for (final Entity entity : game.getEntitiesVector()) {
-            for (final Mounted mounted : entity.getAmmo()) {
-                AmmoType ammoType = (AmmoType) mounted.getType();
-
-                // per errata, TAG will spot for LRMs and such
-                if ((ammoType.getAmmoType() == AmmoType.T_LRM)
-                        || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
-                        || (ammoType.getAmmoType() == AmmoType.T_MML)
-                        || (ammoType.getAmmoType() == AmmoType.T_NLRM)
-                        || (ammoType.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
-                    return true;
-                }
-
-                if (((ammoType.getAmmoType() == AmmoType.T_ARROW_IV)
-                        || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
-                        || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
-                        || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
-                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
-                    return true;
-                }
-            }
-
-            if (entity.getBombs().stream().anyMatch(bomb -> !bomb.isDestroyed()
-                    && (bomb.getUsableShotsLeft() > 0)
-                    && (((BombType) bomb.getType()).getBombType() == BombType.B_LG))) {
-                return true;
-            }
-        }
-
-        // Go through all current attacks, checking if any use homing ammunition. If so, the phase
-        // is playable. This prevents issues from aerospace homing artillery with the aerospace
-        // unit having left the field already, for example
-        return game.getAttacksVector().stream()
-                .map(attackHandler -> attackHandler.getWaa())
-                .filter(Objects::nonNull).anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
+        return switch (this) {
+            case UNKNOWN, LOUNGE, SELECTION, EXCHANGE, INITIATIVE, POINTBLANK_SHOT, END -> false;
+            default -> true;
+        };
     }
 
     /**
      * @return true if this phase has turns. If false, the phase is simply waiting for everybody
      * to declare "done".
      */
-    public boolean hasTurns() {
-        switch (this) {
-            case SET_ARTILLERY_AUTOHIT_HEXES:
-            case DEPLOY_MINEFIELDS:
-            case DEPLOYMENT:
-            case PREMOVEMENT:
-            case MOVEMENT:
-            case PREFIRING:
-            case FIRING:
-            case PHYSICAL:
-            case TARGETING:
-            case OFFBOARD:
-                return true;
-            default:
-                return false;
-        }
+    public boolean usesTurns() {
+        return switch (this) {
+            case SET_ARTILLERY_AUTOHIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING,
+                 PHYSICAL, TARGETING, OFFBOARD -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -314,24 +204,15 @@ public enum GamePhase {
      * @return true if this phase is simultaneous
      */
     public boolean isSimultaneous(final Game game) {
-        switch (this) {
-            case DEPLOYMENT:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
-            case MOVEMENT:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
-            case FIRING:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
-            case PHYSICAL:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
-            case TARGETING:
-            case OFFBOARD:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
-            case PREMOVEMENT:
-            case PREFIRING:
-                return true;
-            default:
-                return false;
-        }
+        return switch (this) {
+            case DEPLOYMENT -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
+            case MOVEMENT -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
+            case FIRING -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
+            case PHYSICAL -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
+            case TARGETING, OFFBOARD -> game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
+            case PREMOVEMENT, PREFIRING -> true;
+            default -> false;
+        };
     }
 
     public boolean isDuringOrAfter(final GamePhase otherPhase) {
@@ -341,10 +222,13 @@ public enum GamePhase {
     public boolean isBefore(final GamePhase otherPhase) {
         return compareTo(otherPhase) < 0;
     }
-    //endregion Boolean Comparison Methods
 
     @Override
     public String toString() {
+        return name();
+    }
+
+    public String localizedName() {
         return name;
     }
 }

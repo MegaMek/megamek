@@ -29,7 +29,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         name = "Grenade Launcher (Heavy)";
         setInternalName("CLBAHeavyGrenadeLauncher");
         addLookupName("CLBAHeavyGL");
-        addLookupName("Heavy BA Grenade Launcher");      
+        addLookupName("Heavy BA Grenade Launcher");
         addLookupName("ISBAHeavyGrenadeLauncher");
         addLookupName("BA Heavy Grenade Launcher");
         addLookupName("ISBAAutoGL");
@@ -50,7 +50,7 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
         criticals = 1;
         bv = 1;
         cost = 4500;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "256, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
@@ -62,6 +62,6 @@ public class CLBAGrenadeLauncherHeavy extends Weapon {
                 .setClanAdvancement(2880, 2900, 3050, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CSF)
-                .setProductionFactions(F_CSF);        
+                .setProductionFactions(F_CSF);
     }
 }

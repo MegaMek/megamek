@@ -13,22 +13,25 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.common.EntityMovementMode;
-import megamek.common.UnitType;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.w3c.dom.Node;
+
+import megamek.common.EntityMovementMode;
+import megamek.common.UnitType;
+import megamek.logging.MMLogger;
+
 /**
  * Base class of all nodes in the Force Generator faction ruleset files.
- * 
+ *
  * @author Neoancient
  */
 public class RulesetNode {
+    private final static MMLogger logger = MMLogger.create(RulesetNode.class);
+
     protected String name;
     protected Properties predicates;
     protected Properties assertions;
@@ -57,7 +60,9 @@ public class RulesetNode {
         }
     }
 
-    /* Allow augmented to be passed separately so the eschelon entry in the ruleset TOC
+    /*
+     * Allow augmented to be passed separately so the eschelon entry in the ruleset
+     * TOC
      * can be passed without setting it in the fd.
      */
     public boolean matches(ForceDescriptor fd) {
@@ -97,7 +102,7 @@ public class RulesetNode {
                     }
                     break;
                 case "ifMotive":
-                    //FIXME: EntityMovementType::toString does not match the property from the file
+                    // FIXME: EntityMovementType::toString does not match the property from the file
                     if (!collectionMatchesProperty(fd.getMovementModes().stream()
                             .map(EntityMovementMode::toString)
                             .collect(Collectors.toList()), predicates.getProperty((String) key))) {
@@ -105,8 +110,7 @@ public class RulesetNode {
                     }
                     break;
                 case "ifAugmented":
-                    if (predicates.getProperty((String) key).equals("1") !=
-                    augmented) {
+                    if (predicates.getProperty((String) key).equals("1") != augmented) {
                         return false;
                     }
                     break;
@@ -136,7 +140,7 @@ public class RulesetNode {
                     break;
                 case "ifEschelon":
                     if (fd.getEschelon() == null ||
-                    !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
+                            !matches(fd.getEschelonCode(), predicates.getProperty((String) key))) {
                         return false;
                     }
                     break;
@@ -203,7 +207,7 @@ public class RulesetNode {
 
     /**
      * Each csv field of property must be contained in the list for a match.
-     * 
+     *
      * @param list
      * @param property
      * @return
@@ -279,7 +283,7 @@ public class RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                LogManager.getLogger().error("Force generator could not parse role " + p);
+                                logger.error("Force generator could not parse role " + p);
                             }
                         }
                     }
@@ -289,7 +293,7 @@ public class RulesetNode {
                     if (null != ft) {
                         fd.setFormationType(ft);
                     } else {
-                        LogManager.getLogger().warn("Could not parse formation type " + property);
+                        logger.warn("Could not parse formation type " + property);
                     }
                     break;
                 case "flags":

@@ -46,37 +46,37 @@ public class JumpShipBVCalculator extends LargeAeroBVCalculator {
     }
 
     @Override
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_NOSE);
     }
 
     @Override
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_AFT);
     }
 
     @Override
-    protected Predicate<Mounted> leftWeaponFilter() {
+    protected Predicate<Mounted<?>> leftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_FLS);
     }
 
     @Override
-    protected Predicate<Mounted> leftAftWeaponFilter() {
+    protected Predicate<Mounted<?>> leftAftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_ALS);
     }
 
     @Override
-    protected Predicate<Mounted> rightWeaponFilter() {
+    protected Predicate<Mounted<?>> rightWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_FRS);
     }
 
     @Override
-    protected Predicate<Mounted> rightAftWeaponFilter() {
+    protected Predicate<Mounted<?>> rightAftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Jumpship.LOC_ARS);
     }
 
     @Override
-    protected int bvLocation(Mounted equipment) {
+    protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Jumpship.LOC_NOSE) {
             return BVLOC_NOSE;
         } else if (equipment.getLocation() == Jumpship.LOC_FLS) {

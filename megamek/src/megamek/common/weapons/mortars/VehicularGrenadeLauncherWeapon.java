@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VGLWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -37,7 +37,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
 
     public VehicularGrenadeLauncherWeapon() {
         super();
-      
+
         heat = 1;
         damage = 0;
         ammoType = AmmoType.T_VGL;
@@ -49,7 +49,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         extremeRange = 1;
         tonnage = 0.5;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BALLISTIC).or(F_ONESHOT).or(F_VGL);
         explosive = false;
         bv = 15;
@@ -70,43 +70,42 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new VGLWeaponHandler(toHit, waa, game, manager);
     }
-    
-    public static Targetable getTargetHex(Mounted weapon, int weaponID) {
+
+    public static Targetable getTargetHex(Mounted<?> weapon, int weaponID) {
         Entity owner = weapon.getEntity();
         int facing;
-        
-        facing = owner.isSecondaryArcWeapon(weaponID) ? 
-                owner.getSecondaryFacing() : owner.getFacing();        
+
+        facing = owner.isSecondaryArcWeapon(weaponID) ? owner.getSecondaryFacing() : owner.getFacing();
         facing = (facing + weapon.getFacing()) % 6;
-        
+
         // attempt to target first the "correct" automatic coordinates.
         Coords c = owner.getPosition().translated(facing);
         if (owner.getGame().getBoard().contains(c)) {
             return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
         }
-        
+
         // then one hex clockwise
         c = owner.getPosition().translated((facing + 1) % 6);
         if (owner.getGame().getBoard().contains(c)) {
             return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
         }
-        
+
         // then one hex counterclockwise
         c = owner.getPosition().translated((facing - 1) % 6);
         if (owner.getGame().getBoard().contains(c)) {
             return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
         }
-        
+
         // default to the "correct" coordinates even though they're off board
         c = owner.getPosition().translated(facing);
         return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);

@@ -1,5 +1,5 @@
 #  3025 Full Regimental Assault
-#  A MegaMek Scenario file 
+#  A MegaMek Scenario file
 #  Created by Phillip "bullseyesmith" Starke
 #  Best played Double-Blind!
 MMSVersion=1

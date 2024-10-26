@@ -252,13 +252,6 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         panMain.add(comboHistoricalEthnicity, c);
 
         getContentPane().add(panMain, java.awt.BorderLayout.PAGE_START);
-
-        adaptToGUIScale();
-
         pack();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

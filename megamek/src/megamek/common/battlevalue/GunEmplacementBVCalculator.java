@@ -33,7 +33,8 @@ public class GunEmplacementBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected void processStructure() { }
+    protected void processStructure() {
+    }
 
     @Override
     protected int offensiveSpeedFactorMP() {
@@ -41,7 +42,7 @@ public class GunEmplacementBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected String equipmentDescriptor(Mounted mounted) {
+    protected String equipmentDescriptor(Mounted<?> mounted) {
         return mounted.getType().getShortName();
     }
 }

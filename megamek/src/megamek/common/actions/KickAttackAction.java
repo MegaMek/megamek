@@ -48,22 +48,22 @@ public class KickAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * Damage that the specified mech does with a kick
+     * Damage that the specified mek does with a kick
      *
-     * @return The kick damage for the 'Mech, or 0 for non-'Mech entities.
+     * @return The kick damage for the 'Mek, or 0 for non-'Mek entities.
      */
     public static int getDamageFor(Entity entity, int leg,
             boolean targetInfantry) {
-        if (!(entity instanceof Mech)) {
-            return 0; // Non-'Mechs can't kick, so can't deal damage this way.
+        if (!(entity instanceof Mek)) {
+            return 0; // Non-'Meks can't kick, so can't deal damage this way.
         }
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && (leg != LEFTMULE) && (leg != RIGHTMULE)) {
-            kickLegs[0] = Mech.LOC_RARM;
-            kickLegs[1] = Mech.LOC_LARM;
+            kickLegs[0] = Mek.LOC_RARM;
+            kickLegs[1] = Mek.LOC_LARM;
         } else {
-            kickLegs[0] = Mech.LOC_RLEG;
-            kickLegs[1] = Mech.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RLEG;
+            kickLegs[1] = Mek.LOC_LLEG;
         }
 
         final int legLoc = ((leg == RIGHT) || (leg == RIGHTMULE)) ? kickLegs[0]
@@ -71,21 +71,21 @@ public class KickAttackAction extends PhysicalAttackAction {
         int damage = (int) Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
 
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLoc)) {
             multiplier /= 2.0f;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLoc)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLoc)) {
             multiplier /= 2.0f;
         }
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_HIP, legLoc)) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_HIP, legLoc)) {
             damage = 0;
         }
-        if (((Mech) entity).hasActiveTSM()) {
+        if (((Mek) entity).hasActiveTSM()) {
             multiplier *= 2.0f;
         }
 
         double talonMultiplier = 1;
-        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
+        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
             talonMultiplier += 0.5;
         }
 
@@ -118,8 +118,8 @@ public class KickAttackAction extends PhysicalAttackAction {
                     "You can't attack from a null entity!");
         }
 
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Mechs can't kick.");
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Meks can't kick.");
         }
 
         if (ae.isStuck()) {
@@ -143,16 +143,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (ae.entityIsQuad()) {
             if ((leg == KickAttackAction.LEFTMULE)
                     || (leg == KickAttackAction.RIGHTMULE)) {
-                kickLegs[0] = Mech.LOC_RLEG;
-                kickLegs[1] = Mech.LOC_LLEG;
+                kickLegs[0] = Mek.LOC_RLEG;
+                kickLegs[1] = Mek.LOC_LLEG;
                 mule = 1; // To-hit modifier
             } else {
-                kickLegs[0] = Mech.LOC_RARM;
-                kickLegs[1] = Mech.LOC_LARM;
+                kickLegs[0] = Mek.LOC_RARM;
+                kickLegs[1] = Mek.LOC_LARM;
             }
         } else {
-            kickLegs[0] = Mech.LOC_RLEG;
-            kickLegs[1] = Mech.LOC_LLEG;
+            kickLegs[0] = Mek.LOC_RLEG;
+            kickLegs[1] = Mek.LOC_LLEG;
         }
         final int legLoc = ((leg == KickAttackAction.RIGHTMULE) || (leg == KickAttackAction.RIGHT)) ? kickLegs[0]
                 : kickLegs[1];
@@ -168,29 +168,29 @@ public class KickAttackAction extends PhysicalAttackAction {
                     "Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
         }
 
-        // non-mechs can't kick
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
+        // non-meks can't kick
+        if (!(ae instanceof Mek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-meks can't kick");
         }
 
         // check if all legs are present & working
-        if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_RLEG)
+        if (ae.isLocationBad(Mek.LOC_LLEG) || ae.isLocationBad(Mek.LOC_RLEG)
                 || (ae.entityIsQuad()
-                        && (ae.isLocationBad(Mech.LOC_LARM)
-                                || ae.isLocationBad(Mech.LOC_RARM)))) {
+                        && (ae.isLocationBad(Mek.LOC_LARM)
+                                || ae.isLocationBad(Mek.LOC_RARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check if all hips are operational
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LLEG)
-                || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RLEG)
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LLEG)
+                || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RLEG)
                 || (ae.entityIsQuad()
-                        && (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_LARM)
-                                || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, Mech.LOC_RARM)))) {
+                        && (!ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_LARM)
+                                || !ae.hasWorkingSystem(Mek.ACTUATOR_HIP, Mek.LOC_RARM)))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
         // check if attacker has fired leg-mounted weapons
-        for (Mounted mounted : ae.getWeaponList()) {
+        for (Mounted<?> mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && (mounted.getLocation() == legLoc)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapons fired from leg this turn");
@@ -235,7 +235,6 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
         }
 
-
         // Attacks against adjacent buildings automatically hit.
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
@@ -264,13 +263,13 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_LEG, legLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_LEG, legLoc)) {
             toHit.addModifier(2, "Upper leg actuator destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, legLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_LEG, legLoc)) {
             toHit.addModifier(2, "Lower leg actuator destroyed");
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
+        if (!ae.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
@@ -287,12 +286,12 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
 
-        //What to do with grounded dropships? Awaiting rules clarification, but
-        //until then, we will assume that if the attacker height is less than half
-        //the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
-        //See Dropship.rollHitLocation to see how HIT_KICK is handled
+        // What to do with grounded dropships? Awaiting rules clarification, but
+        // until then, we will assume that if the attacker height is less than half
+        // the target elevation, then use HIT_KICK, otherwise HIT_NORMAL
+        // See Dropship.rollHitLocation to see how HIT_KICK is handled
         if (target instanceof Dropship) {
-            if ((attackerElevation - targetElevation) > (target.getHeight()/2)) {
+            if ((attackerElevation - targetElevation) > (target.getHeight() / 2)) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
@@ -303,7 +302,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 
         // BMRr pg. 42, "The side on which a vehicle takes damage is determined
-        // randomly if the BattleMech is attacking from the same hex."
+        // randomly if the BattleMek is attacking from the same hex."
         if ((0 == range) && (target instanceof Tank)) {
             toHit.setSideTable(ToHitData.SIDE_RANDOM);
         }
@@ -320,16 +319,24 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int leg = this.getLeg();
         switch (leg) {
             case KickAttackAction.BOTH:
-                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                        .getValueAsString();
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
                 break;
             case KickAttackAction.LEFT:
-                rollLeft = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT).getValueAsString();
+                rollLeft = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.LEFT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickLeft", rollLeft);
                 break;
             case KickAttackAction.RIGHT:
-                rollRight = KickAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
+                rollRight = KickAttackAction.toHit(game, this.getEntityId(),
+                        game.getTarget(this.getTargetType(), this.getTargetId()), KickAttackAction.RIGHT)
+                        .getValueAsString();
                 buffer = Messages.getString("BoardView1.kickRight", rollRight);
                 break;
             default:

@@ -13,11 +13,11 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.GameOptions;
+import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -31,27 +31,27 @@ import java.awt.event.ActionListener;
  * to end the users current turn.
  */
 public class TurnTimer {
-    private Timer timer;
-    private JProgressBar progressBar;
-    private ActionListener listener;
-    private JLabel remaining;
-    private JPanel display;
-    private int timeLimit;
-    private AbstractPhaseDisplay phaseDisplay;
-    private boolean extendTimer;
-    private boolean allowExtension;
-    private boolean expired;
-    private Client client;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    public TurnTimer(int limit, AbstractPhaseDisplay pD, Client client) {
+    private final JProgressBar progressBar;
+    private final ActionListener listener;
+    private final JLabel remaining;
+    private final JPanel display;
+    private final int timeLimit;
+    private final AbstractPhaseDisplay phaseDisplay;
+    private final boolean allowExtension;
+
+    private Timer timer;
+    private boolean extendTimer;
+    private boolean expired;
+
+    public TurnTimer(int limit, AbstractPhaseDisplay pD, IClient client) {
         phaseDisplay = pD;
         // linit in seconds.
         timeLimit = limit;
         extendTimer = false;
         expired = false;
-        this.client = client;
 
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
@@ -60,14 +60,12 @@ public class TurnTimer {
         int seconds = timeLimit % 60;
         int minutes = timeLimit / 60;
         remaining = new JLabel(String.format("%s:%02d", minutes, seconds));
-        phaseDisplay.getClientgui().getMenuBar().add(display);
+        phaseDisplay.getClientgui().turnTimerComponent().add(display);
         display.setLayout(new FlowLayout());
         display.add(remaining);
         display.add(progressBar);
 
-        UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
-
-        GameOptions options = client.getGame().getOptions();
+        BasicGameOptions options = client.getGame().getOptions();
         allowExtension = options.getOption(OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION).booleanValue();
 
         listener = new ActionListener() {
@@ -84,8 +82,6 @@ public class TurnTimer {
                 progressBar.setForeground(c);
                 progressBar.setValue(counter);
 
-                UIUtil.adjustContainer(display, UIUtil.FONT_SCALE1);
-
                 if (counter < 2 && extendTimer && allowExtension) {
                     timer.restart();
                     counter = timeLimit;
@@ -97,7 +93,7 @@ public class TurnTimer {
                     phaseDisplay.ready();
                     timer.stop();
                     display.setVisible(false);
-                    phaseDisplay.getClientgui().getMenuBar().remove(display);
+                    phaseDisplay.getClientgui().turnTimerComponent().remove(display);
                 }
             }
         };
@@ -106,21 +102,22 @@ public class TurnTimer {
     public void startTimer() {
         SwingUtilities.invokeLater(() -> {
             timer = new Timer(1000, listener);
-            phaseDisplay.getClientgui().getMenuBar().add(display);
+            phaseDisplay.getClientgui().turnTimerComponent().add(display);
             timer.start();
             display.setVisible(true);
-
         });
     }
 
     public void stopTimer() {
         display.setVisible(false);
 
-        if (phaseDisplay.getClientgui().getMenuBar() != null) {
-            phaseDisplay.getClientgui().getMenuBar().remove(display);
+        if (phaseDisplay.getClientgui().turnTimerComponent() != null) {
+            phaseDisplay.getClientgui().turnTimerComponent().remove(display);
         }
 
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
     }
 
     public void setExtendTimer() {
@@ -131,9 +128,9 @@ public class TurnTimer {
         return expired;
     }
 
-    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
+    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, IClient client) {
         // check if there should be a turn timer running
-        GameOptions options = client.getGame().getOptions();
+        BasicGameOptions options = client.getGame().getOptions();
         GamePhase phase = client.getGame().getPhase();
 
         int timerLimit = 0;
@@ -154,7 +151,6 @@ public class TurnTimer {
                 timerLimit = options.getOption(OptionsConstants.BASE_TURN_TIMER_PHYSICAL).intValue();
                 break;
             default:
-                timerLimit = 0;
         }
 
         if (timerLimit > 0) {
@@ -165,5 +161,4 @@ public class TurnTimer {
 
         return null;
     }
-
 }

@@ -1,18 +1,27 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.widget;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -23,12 +32,8 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
- * Set of areas for PicMap to represent infantry platoon in MechDisplay
+ * Set of areas for PicMap to represent infantry platoon in MekDisplay
  */
 public class InfantryMapSet implements DisplayMapSet {
 
@@ -42,7 +47,7 @@ public class InfantryMapSet implements DisplayMapSet {
     // Main areas group that will be passing to PicMap
     private PMAreasGroup content = new PMAreasGroup();
     // JLabel
-    private PMValueLabel label;   
+    private PMValueLabel label;
     // JLabel
     private PMValueLabel armorLabel;
     // Set of Background drawers
@@ -51,7 +56,7 @@ public class InfantryMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorMediumFontSize());
+            GUIP.getUnitDisplayMekArmorMediumFontSize());
 
     public InfantryMapSet(JComponent c) {
         comp = c;
@@ -115,7 +120,7 @@ public class InfantryMapSet implements DisplayMapSet {
         content.translate(0, d.height + 5);
         armorLabel.moveTo(0, d.height);
         content.addArea(armorLabel);
-        
+
         label = new PMValueLabel(fm, Color.white);
         label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", "00"));
         d = label.getSize();

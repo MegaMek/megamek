@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -27,7 +28,7 @@ import java.util.List;
  * This handles special features of both weapons. Infantry units that only have
  * a single weapon should use {@link Mounted}.
  */
-public class InfantryWeaponMounted extends Mounted<InfantryWeapon> {
+public class InfantryWeaponMounted extends WeaponMounted {
 
     transient private InfantryWeapon otherWeapon;
     private final String typeName;

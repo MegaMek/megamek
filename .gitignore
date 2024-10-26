@@ -35,6 +35,7 @@ build/
 #MegaMek Data Folders
 # mmconf
 /megamek/mmconf/clientsettings.xml
+/megamek/mmconf/recent_boards.yml
 /megamek/mmconf/*gameoptions.xml
 /megamek/mmconf/*.properties
 !/megamek/mmconf/shared.properties
@@ -52,16 +53,21 @@ megamek/userdata/**
 # MUL Files
 *.mul
 
+#Revision
+/megamek/docs/mm-revision.txt
+/megamek/docs/mml-revision.txt
+/megamek/docs/mhq-revision.txt
+
 #MegaMek/data Folders
 /megamek/data/misc/
 /megamek/data/recordsheets/
 /megamek/data/splash/
 
-# mechfiles
-/megamek/data/mechfiles/units.cache
-/megamek/data/mechfiles/IrTech/
-/megamek/data/mechfiles/Special/
-/megamek/data/mechfiles/customs/
+# mekfiles
+/megamek/data/mekfiles/units.cache
+/megamek/data/mekfiles/IrTech/
+/megamek/data/mekfiles/Special/
+/megamek/data/mekfiles/customs/
 
 # Images
 /megamek/data/images/*_atlas.png
@@ -87,3 +93,8 @@ megamek/userdata/**
 /megamek/Entity Issues.txt
 /megamek/apidocs/
 #End MegaMek Other Outputs
+
+/megamek/docs/mm-revision.txt
+/megamek/MegaMek.l4j.ini
+OfficialUnitList.txt
+equipment.txt

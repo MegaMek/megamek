@@ -1,5 +1,4 @@
 Turrets 3145 C
-
 @DirectFire Turrets 3075, 25
 @InDirectFire Turrets 3050, 30
 @AntiAir Turrets 3075, 25

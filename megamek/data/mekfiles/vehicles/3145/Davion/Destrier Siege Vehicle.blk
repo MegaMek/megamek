@@ -1,0 +1,167 @@
+#Saved from version 0.50.0-SNAPSHOT on 2024-08-05
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Destrier Siege Vehicle
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+6329
+</mul id:>
+
+<year>
+3100
+</year>
+
+<originalBuildYear>
+3100
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<quirks>
+imp_target_long
+oversized
+non_standard
+poor_performance
+</quirks>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+4
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+60
+45
+45
+35
+35
+35
+41
+</armor>
+
+<Body Equipment>
+SponsonTurret
+ISCASE
+Communications Equipment:SIZE:1.0
+ISGuardianECMSuite
+ISC3SlaveUnit
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+IS Light Machine Gun Ammo - Full
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+ISAntiMissileSystem(ST)
+Light Machine Gun(ST)
+Light Machine Gun(ST)
+</Front Right Equipment>
+
+<Front Left Equipment>
+ISAntiMissileSystem(ST)
+Light Machine Gun(ST)
+Light Machine Gun(ST)
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Light Machine Gun
+Light Machine Gun
+Hitch
+ISAntiMissileSystem
+</Rear Equipment>
+
+<Turret Equipment>
+ISLongTomCannon
+ISLongTomCannon
+ISERMediumLaser
+ISERMediumLaser
+ISAntiMissileSystem
+</Turret Equipment>
+
+<capabilities>
+Twice the mass of a conventional assault tank, wrapped in almost forty tons of hardened armor, and armed with a pair of turreted Long Tom assault cannons, the Destrier excels at reducing enemy fortifications to dust within minutes of its arrival. Heavy defensive weaponry and thick armor just barely compensate for its slow speed, however.
+</capabilities>
+
+<overview>
+Despite the formation of its light combat teams and its public declarations of defensive doctrine, the adoption of the Destrier Siege Vehicle at the turn of the thirty-second century proved that the AFFS hadn’t completely rejected offensive warfare. The Federated Suns' involvement in the Victoria War, where it acted as the aggressor, demonstrated to the Inner Sphere that it had not forgotten Hanse Davion’s lessons.
+</overview>
+
+<history>
+Given the relative scarcity of AFFS invasions, the most notable engagement to feature the Destrier came on Spica in 3104. The Eighth Avalon Hussars light combat team, the world’s garrison, was attacked by the Third McCarron’s Armored Cavalry. Unable to stand against the Third directly, the Eighth planned an ambush with the company of Destriers assigned to it. Using her ’Mechs as bait and her hovertanks as harassers, General Stasi Ivanova led the Capellan vanguard into a valley and destroyed it with concentrated Long Tom fire. As missile artillery began to fall from the Destriers’ attached Ballista trailers, the Hussars ’Mechs counterattacked and drove the Capellans into retreat.
+<p>Several times during the Kuritan invasion, Destriers and their crews have been sacrificed—voluntarily or not—as forlorn hopes to let battered Davion units escape. Too slow to retreat and too large to be easily evacuated, the Destriers make fine last-line holders. On Barlow’s End, for instance, a platoon of Destriers set itself outside the gates of the Princess Melissa spaceport. As the DCMS advanced, the Second New Ivaarsen Chasseurs withdrew to their DropShips. A small group of lottery-chosen VTOLs and hovertanks remained to designate targets for the Ballistas’ Arrow IV missiles, while the Destriers hid themselves among the spaceport buildings. As the lead ’Mechs of Ryuken-roku advanced, the Destriers fired from cover, causing enough confusion that the DropShips could escape. None of the Destrier crews survived to be captured.</p>
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM SuperLoad 400 XL Fusion
+ARMOR:Johnston Bastion Plate 530 Hardened with CASE
+COMMUNICATIONS:Electronics HICS-17 with C3 Slave and Guardian ECM Suite
+TARGETING:Federated Bombard Mk. II
+</systemManufacturers>
+
+<source>
+TRO: 3145 Federated Suns
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+

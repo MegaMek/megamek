@@ -15,11 +15,10 @@ package megamek.common.commandline;
 
 import java.util.Locale;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
+import megamek.logging.MMLogger;
 
 public enum MegaMekCommandLineFlag {
     // region Enum Declarations
@@ -54,7 +53,8 @@ public enum MegaMekCommandLineFlag {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text " + text);
+            MMLogger.create(MegaMekCommandLineFlag.class)
+                    .error("Failed to parse the MegaMekCommandLineFlag from text " + text);
             throw (ex);
         }
     }

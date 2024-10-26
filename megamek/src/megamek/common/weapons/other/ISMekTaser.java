@@ -13,13 +13,16 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MechTaserHandler;
-import megamek.server.GameManager;
+import megamek.common.weapons.MekTaserHandler;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -48,7 +51,7 @@ public class ISMekTaser extends AmmoWeapon {
         criticals = 3;
         explosionDamage = 6;
         explosive = true;
-        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
+        flags = flags.or(F_MEK_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
         rulesRefs = "346, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
@@ -62,8 +65,8 @@ public class ISMekTaser extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
-        return new MechTaserHandler(toHit, waa, game, manager);
+                                              TWGameManager manager) {
+        return new MekTaserHandler(toHit, waa, game, manager);
     }
 
     @Override

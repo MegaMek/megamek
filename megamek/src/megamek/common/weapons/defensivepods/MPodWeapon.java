@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MPodHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -43,7 +43,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
         extremeRange = 4;
         tonnage = 1.0;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
                 .or(F_ONESHOT).or(F_M_POD);
         explosive = true;
         bv = 5;
@@ -60,12 +60,12 @@ public abstract class MPodWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MPodHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 }

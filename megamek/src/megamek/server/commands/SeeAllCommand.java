@@ -15,8 +15,8 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Allows an observer to see all units
@@ -26,9 +26,9 @@ import megamek.server.Server;
  */
 public class SeeAllCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public SeeAllCommand(Server server, GameManager gameManager) {
+    public SeeAllCommand(Server server, TWGameManager gameManager) {
         super(server, "seeall",
                 "Allows a player to see all in double blind game if you are an observer. Usage: /seeall <password> <player id#>. For a list of player id #s, use the /who command (default is yourself)");
         this.gameManager = gameManager;
@@ -73,7 +73,7 @@ public class SeeAllCommand extends ServerCommand {
                     if ((!player.isSeeAllPermitted()))
                     {
                         server.sendServerChat(connId, player.getName()
-                                + " is not an Observer or Game Master so may be given /seeall");
+                                + " is not an Observer or Game Master so may not be given /seeall");
                         return;
                     }
                     give_take = " has been granted";

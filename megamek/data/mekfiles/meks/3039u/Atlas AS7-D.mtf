@@ -1,0 +1,175 @@
+chassis:Atlas
+model:AS7-D
+mul id:140
+
+Config:Biped
+techbase:Inner Sphere
+era:2755
+source:TRO: 3039
+rules level:1
+role:Juggernaut
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:20 Single
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:7
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+LRM 20, Left Torso
+SRM 6, Left Torso
+AC/20, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+SRM 6
+SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
+-Empty-
+
+Right Torso:
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+IS Ammo AC/20
+IS Ammo AC/20
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser (R)
+Medium Laser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:"A 'Mech as powerful as possible, as impenetrable as possible, and as ugly and foreboding as conceivable, so that fear itself will be our ally.”-Aleksandr Kerensky
+
+capabilities:The Atlas is probably the best-known BattleMech to ever set foot on the modern battlefield. Designed with specifications from Aleksandr Kerensky himself in 2755 in the midst of the Cameron Edicts, the Atlas was originally intended to ensure SLDF superiority over the Star League member states. Carrying the largest LRM launcher, the largest autocannon, and the largest SRM launcher possible, the Atlas can deal frightening amounts of damage in short amounts of time. Often used as a command vehicle, the Atlas mounts an advanced antenna and communications array, allowing it to engage in surface-to-space communications in real time. The massive 19-ton hide of armor that protects the Atlas makes it a difficult foe to take down. Indeed, most MechWarriors choose to fall back rather than face one head-on, as its lumbering gait means it can rarely catch up to other 'Mechs that choose to flee it. A full year of development went into crafting the famous "Death's Head" of the 'Mech to achieve the perfect ratio of functionality and fear. The head is also quite roomy and allows a small satellite dish to be mounted for surface-to-space communications. During combat the pilot can easily fold up the dish and store it within a protective portion of the head.
+
+deployment:The Atlas is armed with a multitude of weapons for both long and short range combat, all designed specifically to be as visible as possible so as to strike fear in the hearts of its enemies. For long ranges, the 'Mech carries a FarFire Maxi-Rack LRM-20 in the left torso that allows it to both fire directly at an enemy target at long range, and to give indirect fire support when needed. Unable to fit a full twenty-tube system on the 'Mech, the FarFire instead launches the missiles in waves of five over the course of ten seconds and carries two tons of reloads for twelve such salvos. For close range combat the 'Mech is armed with a Defiance 'Mech Hunter Autocannon/20 in the right torso with two tons of ammo. Although lacking a cooling jacket and liable to overheat, the massive autocannon gives the Atlas the firepower to take on an entire 'Mech company. To back up the AC/20 the Atlas carries four Defiance B3M Medium Lasers, one in each arm and two mounted in the rear center torso, and a TharHes Maxi SRM-6 launcher with one ton of missiles in the right torso (the aperture between the SRM and LRM launchers is not another weapon but an omnicoupling for power and coolant cable connection). Furthermore the Atlas is equipped with hand actuators which, combined with its sheer weight and power, makes it a potent hand-to-hand fighter. Accounts of Atlases actually picking up medium-weight 'Mechs and throwing them around like toys makes for suitable horror stories and further enhances the aura of the 'Mech.
+
+history:Though the inexorable arming of the Great Houses continued, the Atlas proved itself to be everything General Kerensky requested. With the largest amount of armor of nearly any 'Mech, crippling firepower, and the foreboding skull-shaped "Death's Head" cockpit/head assembly, the Atlas lived up to its reputation. The mere sight of an Atlas had been known to make even a veteran MechWarrior break out in a cold sweat, and theoretically a single Atlas can take on and wipe out an entire battalion of Stingers in exchange for minor armor loss. The Atlas' first combat trials came during the Amaris Civil War, where it served an instrumental role as a powerful command vehicle. Though General Kerensky is well-known for being the one who kicked down the palace doors of the Usurper in his Orion, it was his close friend Aaron DeChavilier who, in his Atlas, weathered the storm of enemy fire and breached the protective wall surrounding the complex. After this conflict it was therefore with little surprise that the General wished for all of these 'Mechs to accompany him on Operation Exodus, but ironically of those MechWarriors who refused his summons fully two-thirds were Atlas pilots. These units were spread among the Successor States and Atlas factories on Al Na'ir, Hesperus II and Quentin would continue production of the 'Mech through the Succession Wars. Most commanders were loath to tamper too much with such a successful 'Mech, but the recovery of the Helm Memory Core resulted in a number of ancient designs being updated with lostech, and the Atlas was no exception. The new AS7-K model was released in 3049, just in time to fight off the Clan Invasion. The Federated Commonwealth also briefly began production of their own model, the AS7-S, although following the civil war that line was discontinued and further variants have been introduced by the Lyran Alliance and Draconis Combine. Despite its age, well into the end of the thirty-first century there were no plans to replace the Atlas, and even the most cutting-edge designs will stop and pause when faced with the prospect of an Atlas bearing down on them.
+
+manufacturer:Yori 'Mech Works,HildCo Interplanetary,Witten Industries,Defiance Industries,Independence Weaponry
+primaryfactory:Al Na'ir,Carver V/Liberty,Hesperus II,Hesperus II,Quentin
+systemmanufacturer:CHASSIS:Foundation Type 10X
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Durallex Special Heavy
+systemmanufacturer:COMMUNICATIONS:Angst Discom
+systemmanufacturer:TARGETING:Angst Accuracy

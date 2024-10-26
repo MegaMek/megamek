@@ -14,15 +14,15 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PlasmaCannonHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -45,7 +45,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         extremeRange = 24;
         tonnage = 3.0;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_PROTO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE).or(F_ENERGY);
         bv = 170;
         cost = 320000;
@@ -67,7 +67,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -75,7 +75,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new PlasmaCannonHandler(toHit, waa, game, manager);
     }
 
@@ -85,7 +85,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         return 0;
     }
 }

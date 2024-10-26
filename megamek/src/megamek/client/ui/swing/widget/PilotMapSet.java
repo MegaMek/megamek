@@ -14,6 +14,16 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -25,14 +35,8 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.Enumeration;
-import java.util.Vector;
-
 /**
- * Set of elements to represent pilot information in MechDisplay
+ * Set of elements to represent pilot information in MekDisplay
  */
 public class PilotMapSet implements DisplayMapSet {
 
@@ -41,17 +45,17 @@ public class PilotMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;
-    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, initBL, commandBL;
-    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, fatigueBL, initBL, commandBL;
+    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, fatigueBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechLargeFontSize());
+            GUIP.getUnitDisplayMekLargeFontSize());
     private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
-            GUIP.getUnitDisplayMechLargeFontSize());
+            GUIP.getUnitDisplayMekLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -92,7 +96,7 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(hitsR);
         getNewYCoord();
 
-        pilotL = createLabel(Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord());
+        pilotL = createLabel(Messages.getString("PilotMapSet.pilotLAntiMek"), fm, 0, getNewYCoord());
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(pilotR);
@@ -128,6 +132,11 @@ public class PilotMapSet implements DisplayMapSet {
         toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
         content.addArea(toughBR);
 
+        fatigueBL = createLabel(Messages.getString("PilotMapSet.fatigueBL"), fm, pilotL.getSize().width + 50, getNewYCoord());
+        content.addArea(fatigueBL);
+        fatigueBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 25, getYCoord());
+        content.addArea(fatigueBR);
+
         gunneryBL = createLabel(Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord());
         content.addArea(gunneryBL);
         gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
@@ -153,10 +162,10 @@ public class PilotMapSet implements DisplayMapSet {
     public void setEntity(Entity en) {
         setEntity(en, 0);
     }
-    
+
     public void setEntity(Entity en, int slot) {
         if (en instanceof Infantry) {
-            pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));
+            pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMek"));
         } else {
             pilotL.setString(Messages.getString("PilotMapSet.pilotL"));
         }
@@ -215,6 +224,16 @@ public class PilotMapSet implements DisplayMapSet {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
+
+        if ((en.getGame() != null)
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
+                && !en.getCrew().isMissing(slot)) {
+            fatigueBR.setString(Integer.toString(en.getCrew().getCrewFatigue(slot)));
+        } else {
+            fatigueBL.setVisible(false);
+            fatigueBR.setVisible(false);
+        }
+
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
                 && !en.getCrew().isMissing(slot)) {

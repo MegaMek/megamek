@@ -19,8 +19,6 @@ import megamek.common.Team;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
-import java.util.Enumeration;
-
 public class CheckBVTeamCommand extends ServerCommand {
 
     public CheckBVTeamCommand(Server server) {
@@ -35,7 +33,7 @@ public class CheckBVTeamCommand extends ServerCommand {
                 && server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         // Connection Ids match player Ids
         Player requestingPlayer = server.getGame().getPlayer(connId);
-        
+
         server.sendServerChat(connId, "Remaining BV:");
         for (Team team : server.getGame().getTeams()) {
             int initialTeamBV = 0;

@@ -22,14 +22,14 @@ import megamek.common.*;
 
 public class ProtoMekBVCalculator extends BVCalculator {
 
-    Protomech protoMek = (Protomech) entity;
+    ProtoMek protoMek = (ProtoMek) entity;
 
     ProtoMekBVCalculator(Entity entity) {
         super(entity);
     }
 
     @Override
-    protected double getAmmoBV(Mounted ammo) {
+    protected double getAmmoBV(Mounted<?> ammo) {
         return ((AmmoType) ammo.getType()).getKgPerShotBV(ammo.getUsableShotsLeft());
     }
 

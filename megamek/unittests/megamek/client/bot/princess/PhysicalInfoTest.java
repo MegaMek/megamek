@@ -18,24 +18,41 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.*;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.PunchAttackAction;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import megamek.common.BipedMek;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Mek;
+import megamek.common.QuadMek;
+import megamek.common.Tank;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.PunchAttackAction;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2/27/14 3:23 PM
  */
-public class PhysicalInfoTest {
+class PhysicalInfoTest {
 
     private static final double TOLERANCE = 0.0001;
 
     @Test
-    public void testInitDamage() {
+    void testInitDamage() {
         Princess mockPrincess = mock(Princess.class);
 
         FireControl mockFireControl = mock(FireControl.class);
@@ -45,16 +62,16 @@ public class PhysicalInfoTest {
         when(mockFireControl.guessToHitModifierPhysical(any(Entity.class), any(EntityState.class),
                 any(Targetable.class), any(EntityState.class), any(PhysicalAttackType.class),
                 any(Game.class)))
-               .thenReturn(mockToHit);
+                .thenReturn(mockToHit);
         when(mockToHit.getValue()).thenReturn(7);
 
-        Entity mockShooter = mock(BipedMech.class);
+        Entity mockShooter = mock(BipedMek.class);
         when(mockShooter.getId()).thenReturn(1);
         when(mockShooter.getWeight()).thenReturn(50.0);
 
         EntityState mockShooterState = mock(EntityState.class);
 
-        Mech mockTarget = mock(BipedMech.class);
+        Mek mockTarget = mock(BipedMek.class);
         when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
         when(mockTarget.getArmor(anyInt(), eq(false))).thenReturn(10);
         when(mockTarget.getArmor(anyInt(), eq(true))).thenReturn(5);
@@ -128,7 +145,7 @@ public class PhysicalInfoTest {
         assertEquals(10.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
         // Test a non-biped trying to punch.
-        testPhysicalInfo.setShooter(mock(QuadMech.class));
+        testPhysicalInfo.setShooter(mock(QuadMek.class));
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);
         assertEquals(0.0, testPhysicalInfo.getProbabilityToHit(), TOLERANCE);
         assertEquals(0.0, testPhysicalInfo.getMaxDamage(), TOLERANCE);
@@ -145,7 +162,7 @@ public class PhysicalInfoTest {
         assertEquals(0.0, testPhysicalInfo.getKillProbability(), TOLERANCE);
         assertEquals(0.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
-        // Test a non-mech.
+        // Test a non-mek.
         testPhysicalInfo.setShooter(mock(Tank.class));
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);
         assertEquals(0.0, testPhysicalInfo.getProbabilityToHit(), TOLERANCE);

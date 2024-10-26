@@ -22,12 +22,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import megamek.common.ForceAssignable;
 import megamek.common.alphaStrike.*;
-import megamek.common.force.Force;
 import megamek.common.jacksonadapters.SBFUnitDeserializer;
 import megamek.common.jacksonadapters.SBFUnitSerializer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +40,8 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 @JsonRootName(value = "SBFUnit")
 @JsonSerialize(using = SBFUnitSerializer.class)
 @JsonDeserialize(using = SBFUnitDeserializer.class)
-public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, BattleForceSUAFormatter {
+public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormatter,
+        Serializable {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;
@@ -49,6 +49,7 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     private int tmm = 0;
     private int movement = 0;
     private SBFMovementMode movementMode = SBFMovementMode.UNKNOWN;
+    //TODO make JUMP a special?
     private int jumpMove = 0;
     private int trspMovement = 0;
     private SBFMovementMode trspMovementMode = SBFMovementMode.UNKNOWN;
@@ -61,10 +62,11 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private List<AlphaStrikeElement> elements = new ArrayList<>();
 
-    private String forceString = "";
-    private int forceId = Force.NO_FORCE;
-    private int id;
-    private int ownerId;
+    // ingame values
+    private int currentArmor;
+    private int damageCrits = 0;
+    private int targetingCrits = 0;
+    private int mpCrits = 0;
 
     public String getName() {
         return name;
@@ -166,12 +168,29 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
         return armor;
     }
 
+    /**
+     * Sets the full (undamaged) armor of this SBF Unit. Also sets the current armor to the same value.
+     *
+     * @param armor The full undamaged armor of this Unit
+     */
     public void setArmor(int armor) {
         this.armor = armor;
+        currentArmor = armor;
+    }
+
+    /**
+     * @return The current armor of this Unit, which is any value between the full (undamaged) armor and 0.
+     */
+    public int getCurrentArmor() {
+        return currentArmor;
     }
 
     public ASDamageVector getDamage() {
         return damage;
+    }
+
+    public ASDamageVector getCurrentDamage() {
+        return damage.reducedBy(damageCrits);
     }
 
     public void setDamage(ASDamageVector damage) {
@@ -207,9 +226,15 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     /**
      * Returns true if this SBF Unit represents an aerospace Unit.
      */
-    @Override
     public boolean isAerospace() {
         return type.isAerospace();
+    }
+
+    /**
+     * Returns true if this SBF Unit represents a ground Unit.
+     */
+    public boolean isGround() {
+        return !type.isAerospace();
     }
 
     @Override
@@ -269,21 +294,6 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
     }
 
     @Override
-    public boolean isUnitGroup() {
-        return true;
-    }
-
-    @Override
-    public String generalName() {
-        return name;
-    }
-
-    @Override
-    public String specificName() {
-        return "";
-    }
-
-    @Override
     public String toString() {
         return "[SBFUnit] " + name + ": " + type + "; SZ" + size + "; TMM" + tmm + "; MV" + movement + movementMode.code
                 + (jumpMove > 0 ? "/" + jumpMove + "j" : "")
@@ -292,48 +302,42 @@ public class SBFUnit implements ForceAssignable, ASSpecialAbilityCollector, Batt
                 + "; " + specialAbilities.getSpecialsDisplayString(this);
     }
 
-    @Override
-    public int getId() {
-        return id;
+    public void addTargetingCrit() {
+        targetingCrits++;
     }
 
-    @Override
-    public void setId(int newId) {
-        id = newId;
+    public void addDamageCrit() {
+        damageCrits++;
     }
 
-    @Override
-    public String getForceString() {
-        return forceString;
+    public void addMovementCrit() {
+        mpCrits++;
     }
 
-    @Override
-    public void setForceString(String newForceString) {
-        forceString = newForceString;
+    public int getDamageCrits() {
+        return damageCrits;
     }
 
-    @Override
-    public int getForceId() {
-        return forceId;
+    public int getTargetingCrits() {
+        return targetingCrits;
     }
 
-    @Override
-    public void setForceId(int newId) {
-        forceId = newId;
+    public int getMpCrits() {
+        return mpCrits;
     }
 
-    @Override
-    public int getOwnerId() {
-        return ownerId;
+    /**
+     * @return The base roll value for firing on targets. Equals the skill, modified by targeting crits.
+     */
+    public int getBaseGunnery() {
+        return skill + targetingCrits;
     }
 
-    @Override
-    public void setOwnerId(int newOwnerId) {
-        ownerId = newOwnerId;
+    public void setCurrentArmor(int currentArmor) {
+        this.currentArmor = currentArmor;
     }
 
-    @Override
-    public int getStrength() {
-        return pointValue;
+    public boolean hasArmorDamage() {
+        return currentArmor != armor;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,71 +18,94 @@
  */
 package megamek.utilities;
 
-import megamek.common.*;
+import java.io.File;
+
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.annotations.Nullable;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
-import megamek.common.verifier.TestEntity;
-
-import java.io.File;
+import megamek.logging.MMLogger;
 
 /**
- * This util will go through all available units and filter them according to the filter() method and
- * print out any units that match the filter. Edit {@link #filter(Entity, MechSummary)} to apply the
- * desired filter.
+ * This util will go through all available units and filter them according to
+ * the filter() method and print out any units that match the filter. Edit
+ * {@link Entity} and {@link MekSummary} to apply the desired filter.
  */
 public final class FilteredUnitListTool {
+    private static final MMLogger logger = MMLogger.create(FilteredUnitListTool.class);
+    private static final String UNIT_VERIFIER_OPTIONS = "data/mekfiles/UnitVerifierOptions.xml";
 
     /**
-     * Edit the return value filter to any sort of check on entity or summary that, when true,
-     * should make the unit be listed.
-     * E.g. when looking for all SV with a fusion engine, use:
+     * Edit the return value filter to any sort of check on entity or summary that,
+     * when true, should make the unit be listed. E.g. when looking for all SV with
+     * a fusion engine, use:
+     *
+     * <code>
      * passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
+     *</code>
+     *
      * All Primitive Meks with a standard gyro:
-     * passesFilter = entity instanceof Mech && entity.isPrimitive() && entity.getGyroType() == Mech.GYRO_STANDARD;
+     *
+     * <code>
+     * passesFilter = entity instanceof Mek && entity.isPrimitive() &&
+     * entity.getGyroType() == Mek.GYRO_STANDARD;
+     * </code>
+     *
      * SV with amphibious chassis:
-     * passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
-     * Note that the MechSummary contains Alpha Strike values and can be filtered using those.
+     *
+     * <code>
+     * passesFilter = entity.isSupportVehicle() &&
+     * entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+     * </code>
+     *
+     * Note that the MekSummary contains Alpha Strike values and can be filtered
+     * using those.
      *
      * @param entity The full Entity of the current unit to be tested
-     * @param summary The MechSummary of the current unit to be tested
      * @return True if this unit is to be listed
      */
-    private static boolean filter(final Entity entity, final MechSummary summary) {
-//        return summary.getASUnitType().isBattleArmor() && entity.getMovementMode().isJumpInfantry()
-//                && entity.getJumpMP() == 0;
+    private static boolean filter(final Entity entity) {
         if (!entity.isBattleArmor()) {
             return false;
         }
-        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-                "data/mechfiles/UnitVerifierOptions.xml"));
+
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(UNIT_VERIFIER_OPTIONS));
         TestBattleArmor testBattleArmor = new TestBattleArmor((BattleArmor) entity, entityVerifier.baOption, null);
         return !testBattleArmor.correctEntity(new StringBuffer(), entity.getTechLevel());
     }
 
     // No changes necessary after here:
     public static void main(String[] args) {
-        MechSummaryCache cache = MechSummaryCache.getInstance(true);
-        System.out.println("Filtering...");
+        MekSummaryCache cache = MekSummaryCache.getInstance(true);
+        logger.info("Filtering...");
+
         int countFound = 0;
-        for (MechSummary unitSummary : cache.getAllMechs()) {
+
+        for (MekSummary unitSummary : cache.getAllMeks()) {
             Entity entity = loadEntity(unitSummary.getSourceFile(), unitSummary.getEntryName());
-            if ((entity != null) && filter(entity, unitSummary)) {
-                System.out.println(entity.getShortName());
+            if ((entity != null) && filter(entity)) {
+                logger.info(entity.getShortName());
                 countFound++;
             }
         }
-        System.out.println("-------------------------");
-        System.out.println("Found " + countFound + " units.");
+
+        logger.info("-------------------------");
+        String message = String.format("Found %s units.", countFound);
+        logger.info(message);
     }
 
     public static @Nullable Entity loadEntity(File f, String entityName) {
         try {
-            return new MechFileParser(f, entityName).getEntity();
+            return new MekFileParser(f, entityName).getEntity();
         } catch (megamek.common.loaders.EntityLoadingException e) {
             return null;
         }
     }
 
-    private FilteredUnitListTool() { }
+    private FilteredUnitListTool() {
+    }
 }

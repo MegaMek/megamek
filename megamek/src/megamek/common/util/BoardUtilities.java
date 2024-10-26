@@ -44,6 +44,22 @@ public class BoardUtilities {
      * @param height the height of each individual board, before the combine
      * @param sheetWidth how many sheets wide the combined map is
      * @param sheetHeight how many sheets tall the combined map is
+     * @param boards a list of the boards to be combined
+     * @param isRotated Flag that determines if any of the maps are rotated
+     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
+     */
+    public static Board combine(int width, int height, int sheetWidth, int sheetHeight,
+                                List<Board> boards, List<Boolean> isRotated, int medium) {
+        return combine(width, height, sheetWidth, sheetHeight, boards.toArray(new Board[0]), isRotated, medium);
+    }
+
+    /**
+     * Combines one or more boards into one huge megaboard!
+     *
+     * @param width the width of each individual board, before the combine
+     * @param height the height of each individual board, before the combine
+     * @param sheetWidth how many sheets wide the combined map is
+     * @param sheetHeight how many sheets tall the combined map is
      * @param boards an array of the boards to be combined
      * @param isRotated Flag that determines if any of the maps are rotated
      * @param medium Sets the medium the map is in (ie., ground, atmo, space)

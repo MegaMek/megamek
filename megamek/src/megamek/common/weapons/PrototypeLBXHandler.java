@@ -20,7 +20,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -36,7 +36,7 @@ public class PrototypeLBXHandler extends LBXHandler {
      * @param m
      */
     public PrototypeLBXHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -84,7 +84,7 @@ public class PrototypeLBXHandler extends LBXHandler {
             return true;
         }
         
-        if (roll.getIntValue() == 2) {
+        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

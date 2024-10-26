@@ -54,7 +54,7 @@ public class ISExtendedLRM10 extends ExtendedLRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted ignore) {
+    public double getBattleForceDamage(int range, Mounted<?> ignore) {
         return range == AlphaStrikeElement.SHORT_RANGE ? 0.15 : 0.6;
     }
 }

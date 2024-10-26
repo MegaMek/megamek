@@ -19,12 +19,12 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
- * This command starts a vote to allow player to assume the elevated Game Master role
+ * This command starts a vote to allow player to assume the elevated Game Master
+ * role
  *
  * @author arlith
  */
@@ -56,25 +56,27 @@ public class GameMasterCommand extends ServerCommand {
             return;
         }
 
-        GameManager gameManager = (GameManager) server.getGameManager();
+        TWGameManager gameManager = (TWGameManager) server.getGameManager();
         if (player.getGameMaster()) {
             // toggling off game master requires no vote
             gameManager.setGameMaster(player, false);
-        } else if (gameManager.getGame() != null && gameManager.getGame().getPhase().isLounge() ) {
+        } else if (gameManager.getGame() != null && gameManager.getGame().getPhase().isLounge()) {
             // becoming GameMaster in Lobby is always permitted
             server.sendServerChat(player.getName() + " will become Game Master without vote.");
             gameManager.setGameMaster(player, true);
         } else {
-            // becoming GameMaster in regular gameplay requires unanimous human player voting
-            for (Player p : server.getGame().getPlayersVector()) {
+            // becoming GameMaster in regular gameplay requires unanimous human player
+            // voting
+            for (Player p : server.getGame().getPlayersList()) {
                 if (p.getId() != player.getId()) {
-                    server.sendServerChat(p.getId(), player.getName() + " wants to become a Game Master" + SERVER_VOTE_PROMPT_MSG);
+                    server.sendServerChat(p.getId(),
+                            player.getName() + " wants to become a Game Master" + SERVER_VOTE_PROMPT_MSG);
                 }
             }
 
             server.requestGameMaster(player);
 
-            for (Player p : server.getGame().getPlayersVector()) {
+            for (Player p : server.getGame().getPlayersList()) {
                 p.setVotedToAllowGameMaster(false);
             }
 

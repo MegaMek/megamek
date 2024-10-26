@@ -27,7 +27,6 @@ import java.util.Vector;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.server.Server;
 
 /**
@@ -35,7 +34,7 @@ import megamek.server.Server;
  */
 public class HostDialog extends AbstractGameConnectionDialog {
     private static final long serialVersionUID = -103094006944170081L;
-    
+
     // Some fields are accessed for the results of the dialog
     private String serverPass;
     private boolean register;
@@ -173,18 +172,5 @@ public class HostDialog extends AbstractGameConnectionDialog {
         getClientPreferences().setLastServerPass(getServerPass());
         getClientPreferences().setValue("megamek.megamek.metaservername", getMetaserver());
         setVisible(false);
-    }
-    
-    @Override
-    public void setVisible(boolean b) {
-        if (b) {
-            adaptToGUIScale();
-            pack();
-        }
-        super.setVisible(b);
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

@@ -1,4 +1,25 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
@@ -10,13 +31,11 @@ import megamek.common.Player;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.OptionsConstants;
 
-import java.awt.*;
-import java.awt.image.ImageObserver;
-
 /**
- * Sprite used for isometric rendering to render an entity partially hidden behind a hill.
+ * Sprite used for isometric rendering to render an entity partially hidden
+ * behind a hill.
  */
-class IsometricSprite extends Sprite {
+class IsometricSprite extends HexSprite {
 
     Entity entity;
     private Image radarBlipImage;
@@ -26,7 +45,7 @@ class IsometricSprite extends Sprite {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public IsometricSprite(BoardView boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
-        super(boardView1);
+        super(boardView1, secondaryPos == -1 ? entity.getPosition() : entity.getSecondaryPositions().get(secondaryPos));
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
@@ -72,7 +91,7 @@ class IsometricSprite extends Sprite {
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
             boolean makeTranslucent) {
-        
+
         if (!isReady()) {
             prepare();
             return;
@@ -85,7 +104,7 @@ class IsometricSprite extends Sprite {
                     secondaryPos));
         }
         Graphics2D g2 = (Graphics2D) g;
-        
+
         if (onlyDetectedBySensors()) {
             Image blipImage = bv.getScaledImage(radarBlipImage, true);
             if (makeTranslucent) {
@@ -96,7 +115,7 @@ class IsometricSprite extends Sprite {
                         AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(blipImage, x, y, observer);
-            }            
+            }
         } else if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                     entity, entity.getFacing(), secondaryPos));
@@ -137,9 +156,9 @@ class IsometricSprite extends Sprite {
         } else if (makeTranslucent) {
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
-            
+
             drawImmobileElements(g2, x, y, observer);
-            
+
             g2.drawImage(image, x, y, observer);
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
@@ -148,24 +167,24 @@ class IsometricSprite extends Sprite {
             g.drawImage(image, x, y, observer);
         }
     }
-    
+
     /**
      * Worker function that draws "immobile" decals.
      */
     public void drawImmobileElements(Graphics graph, int x, int y, ImageObserver observer) {
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
-        
+
         if (drawFuelLeak) {
             Image fuelLeak = bv.getScaledImage(bv.tileManager.bottomLayerFuelLeakMarkerFor(entity), true);
             if (null != fuelLeak) {
                 graph.drawImage(fuelLeak, x, y, observer);
             }
         }
-        
+
         // draw the 'tires' or 'tracks' decal where appropriate
         boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
-        
+
         if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getScaledImage(bv.tileManager.bottomLayerMotiveMarkerFor(entity), true);
             if (null != motiveWreckage) {
@@ -176,6 +195,7 @@ class IsometricSprite extends Sprite {
 
     @Override
     public void prepare() {
+        updateBounds();
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
@@ -184,10 +204,10 @@ class IsometricSprite extends Sprite {
                 Transparency.TRANSLUCENT);
         Graphics2D g = (Graphics2D) image.getGraphics();
 
-        // draw the unit icon translucent if hidden from the enemy 
+        // draw the unit icon translucent if hidden from the enemy
         // (and activated graphics setting); or submerged
         boolean translucentHiddenUnits = GUIP.getTranslucentHiddenUnits();
-        
+
         if ((trackThisEntitiesVisibilityInfo(entity)
                 && !entity.isVisibleToEnemy() && translucentHiddenUnits)
                 || (entity.relHeight() < 0)) {
@@ -199,10 +219,10 @@ class IsometricSprite extends Sprite {
                 this);
         g.dispose();
     }
-    
+
     /**
      * We only want to show double-blind visibility indicators on our own
-     * mechs and teammates mechs (assuming team vision option).
+     * meks and teammates meks (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
         Player localPlayer = this.bv.getLocalPlayer();
@@ -213,14 +233,14 @@ class IsometricSprite extends Sprite {
         AbstractOptions opts = this.bv.game.getOptions();
         return opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ((e.getOwner().getId() == localPlayer.getId())
-                || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
-                && (e.getOwner().getTeam() == localPlayer.getTeam())));
+                        || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
+                                && (e.getOwner().getTeam() == localPlayer.getTeam())));
     }
-    
+
     /**
      * Used to determine if this EntitySprite is only detected by an enemies
      * sensors and hence should only be a sensor return.
-     * 
+     *
      * @return
      */
     private boolean onlyDetectedBySensors() {
@@ -237,6 +257,6 @@ class IsometricSprite extends Sprite {
 
     @Override
     protected int getSpritePriority() {
-        return entity.getSpriteDrawPriority();
+        return entity.getSpriteDrawPriority() + 10;
     }
 }

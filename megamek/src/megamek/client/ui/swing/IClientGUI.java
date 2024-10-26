@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.IClient;
+
 import javax.swing.*;
 
 public interface IClientGUI {
@@ -28,8 +30,10 @@ public interface IClientGUI {
     JFrame getFrame();
 
     /**
-     * Returns true if a dialog is visible on top of the ClientGUI. For example, the MegaMekController
-     * should ignore hotkeys if there is a dialog, like the CommonSettingsDialog, open.
+     * Returns true if a dialog is visible on top of the ClientGUI. For example, the
+     * MegaMekController
+     * should ignore hotkeys if there is a dialog, like the CommonSettingsDialog,
+     * open.
      *
      * @return True when hotkey events should not be forwarded to this ClientGUI
      */
@@ -42,7 +46,20 @@ public interface IClientGUI {
     void initialize();
 
     /**
-     * Performs shut down for threads and sockets and other things that can be disposed.
+     * Performs shut down for threads and sockets and other things that can be
+     * disposed.
      */
     void die();
+
+    IClient getClient();
+
+    JComponent turnTimerComponent();
+
+    default boolean isChatBoxActive() {
+        return false;
+    }
+
+    void setChatBoxActive(boolean active);
+
+    void clearChatBox();
 }

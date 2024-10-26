@@ -1,17 +1,32 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.Level;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
@@ -26,9 +41,15 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.enums.AimingMode;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -37,23 +58,71 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
+import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import megamek.common.weapons.Weapon;
+import megamek.logging.MMLogger;
 
 public class Princess extends BotClient {
+    private static final MMLogger logger = MMLogger.create(Princess.class);
     private static final char PLUS = '+';
     private static final char MINUS = '-';
+
+    private static final int MAX_OVERHEAT_AMS = 14;
+
+    /**
+     * Highest target number to consider when not aiming at the head on an immobile Mek
+     */
+    private static final int SHUTDOWN_MAX_TARGET_NUMBER = 12;
+
+    /**
+     * Default maximum location armor for checking called shots
+     */
+    private static final int CALLED_SHOT_DEFAULT_MAX_ARMOR = 10;
+
+    /**
+     * Combined armor and structure value where a location is at risk of destruction
+     */
+    private static final int LOCATION_DESTRUCTION_THREAT = 5;
+
+    /**
+     * Difference in to-hit number between a general shot at an immobile Mek, and aiming for the head
+     */
+    private static final int IMMOBILE_HEAD_SHOT_MODIFIER = 7;
+
+    /**
+     * To-hit modifier for aimed shots against active targets
+     */
+    private static final int AIMED_SHOT_MODIFIER = 3;
+
+    /**
+     * To-hit modifier for called shots
+     */
+    private static final int CALLED_SHOT_MODIFIER = 3;
+
+    /**
+     * Minimum damage to be considered as a 'big gun' for prioritizing aimed shot locations
+     */
+    private static final int BIG_GUN_MIN_DAMAGE = 10;
+
+    /**
+     * Range to check damage when determining if a weapon is a 'big gun'
+     */
+    private static final int BIG_GUN_TYPICAL_RANGE = 5;
+
+    /**
+     * Minimum walking speed to consider for calling a shot low
+     */
+    private static final int CALLED_SHOT_MIN_MOVE = 6;
+
+    /**
+     * Minimum jump distance to consider for calling a shot low
+     */
+    private static final int CALLED_SHOT_MIN_JUMP = 5;
+
 
     private final IHonorUtil honorUtil = new HonorUtil();
 
@@ -67,12 +136,15 @@ public class Princess extends BotClient {
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
 
-    private Integer spinupThreshold = null;
+    private List<HeatMap> enemyHeatMaps;
+    private HeatMap friendlyHeatMap;
+
+    private Integer spinUpThreshold = null;
 
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
-    private final Thread precogThread;
+    private final Thread precognitionThread;
     /**
      * Mapping to hold the damage allocated to each targetable, stored by ID.
      * Used to allocate damage more intelligently and avoid overkill.
@@ -88,6 +160,22 @@ public class Princess extends BotClient {
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
 
+    // Track entities that fired an AMS manually this round
+    private List<Integer> manualAMSIds;
+
+    // Master switch to enable/disable use of enhanced targeting system (aimed/called shots)
+    private boolean enableEnhancedTargeting;
+
+    // Limits types of units Princess will target and attack with enhanced targeting
+    private List<Integer> enhancedTargetingTargetTypes;
+    private List<Integer> enhancedTargetingAttackerTypes;
+
+    // Controls whether Princess will use called shots on immobile targets
+    private boolean useCalledShotsOnImmobileTarget;
+
+    // Controls whether Princess will use enhanced targeting on targets that have partial cover
+    private boolean allowCoverEnhancedTargeting;
+
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -95,7 +183,7 @@ public class Princess extends BotClient {
     public static Princess createPrincess(String name, String host, int port, BehaviorSettings behavior) {
         Princess result = new Princess(name, host, port);
         result.setBehaviorSettings(behavior);
-        LogManager.getLogger().debug(result.getBehaviorSettings().toLog());
+        logger.debug(result.getBehaviorSettings().toLog());
         return result;
     }
 
@@ -112,11 +200,14 @@ public class Princess extends BotClient {
         fireControlState = new FireControlState();
         pathRankerState = new PathRankerState();
 
-        // Start-up precog now, so that it can instantiate its game instance,
+        // Set up enhanced targeting
+        resetEnhancedTargeting(true);
+
+        // Start-up precognition now, so that it can instantiate its game instance,
         // and it will stay up-to date.
         precognition = new Precognition(this);
-        precogThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
-        precogThread.start();
+        precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        precognitionThread.start();
     }
 
     /**
@@ -218,7 +309,7 @@ public class Princess extends BotClient {
     }
 
     private void setFleeBoard(final boolean fleeBoard, final String reason) {
-        LogManager.getLogger().debug("Setting Flee Board " + fleeBoard + " because: " + reason);
+        logger.debug("Setting Flee Board " + fleeBoard + " because: " + reason);
 
         this.fleeBoard = fleeBoard;
     }
@@ -253,17 +344,17 @@ public class Princess extends BotClient {
     }
 
     public void setFallBack(final boolean fallBack, final String reason) {
-        LogManager.getLogger().debug("Setting Fall Back " + fallBack + " because: " + reason);
+        logger.debug("Setting Fall Back " + fallBack + " because: " + reason);
         this.fallBack = fallBack;
     }
 
     public void setBehaviorSettings(final BehaviorSettings behaviorSettings) {
-        LogManager.getLogger().info("New behavior settings for " + getName() +
+        logger.info("New behavior settings for " + getName() +
             "\n" + behaviorSettings.toLog());
         try {
             this.behaviorSettings = behaviorSettings.getCopy();
         } catch (final PrincessException e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
             return;
         }
         getStrategicBuildingTargets().clear();
@@ -287,7 +378,7 @@ public class Princess extends BotClient {
             getStrategicBuildingTargets().add(coords);
         }
 
-        spinupThreshold = null;
+        spinUpThreshold = null;
     }
 
     /**
@@ -339,7 +430,7 @@ public class Princess extends BotClient {
             throw new NullPointerException("Coords is null.");
         }
         if (!getGame().getBoard().contains(coords)) {
-            LogManager.getLogger().warn("Board does not contain " + coords.toFriendlyString());
+            logger.warn("Board does not contain " + coords.toFriendlyString());
             return;
         }
         getStrategicBuildingTargets().add(coords);
@@ -389,7 +480,7 @@ public class Princess extends BotClient {
         // if we are using forced withdrawal, and the entity being considered is crippled
         // we will opt to not re-deploy the entity
         if (getForcedWithdrawal() && getEntity(entityNum).isCrippled()) {
-            LogManager.getLogger().info("Declining to deploy crippled unit: "
+            logger.info("Declining to deploy crippled unit: "
                     + getEntity(entityNum).getChassis() + ". Removing unit.");
             sendDeleteEntity(entityNum);
             return;
@@ -398,14 +489,14 @@ public class Princess extends BotClient {
         // get a list of all coordinates to which we can deploy
         final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
         if (startingCoords.isEmpty()) {
-            LogManager.getLogger().error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
+            logger.error("No valid locations to deploy " + getEntity(entityNum).getDisplayName());
         }
 
         // get the coordinates I can deploy on
         final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
         if (null == deployCoords) {
             // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business
-            LogManager.getLogger().error("getCoordsAround gave no location for "
+            logger.error("getCoordsAround gave no location for "
                     + getEntity(entityNum).getChassis() + ". Removing unit.");
 
             sendDeleteEntity(entityNum);
@@ -432,13 +523,32 @@ public class Princess extends BotClient {
             decentFacing = deployCoords.direction(center);
         }
 
-        final Entity deployEntity = game.getEntity(entityNum);
+        final Entity deployEntity = getEntity(entityNum);
         final Hex deployHex = game.getBoard().getHex(deployCoords);
+        int deployElevation = deployEntity.getElevation();
 
-        int deployElevation = getDeployElevation(deployEntity, deployHex);
-
-        // Compensate for hex elevation where != 0...
-        deployElevation -= deployHex.getLevel();
+        if (deployEntity.isAero()) {
+            if (game.getBoard().onGround()) {
+                // keep the altitude set in the lobby, possibly starting grounded
+                deployElevation = deployEntity.getAltitude();
+            } else if (game.getBoard().inAtmosphere()) {
+                // try to keep the altitude set in the lobby, but stay above the terrain
+                var deploymentHelper = new AllowedDeploymentHelper(deployEntity, deployCoords, game.getBoard(), deployHex, game);
+                List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(DeploymentElevationType.ALTITUDE);
+                if (allowedDeployment.isEmpty()) {
+                    // that's bad, cannot deploy at all
+                    logger.error("Cannot find viable altitude to deploy to");
+                    sendDeleteEntity(entityNum);
+                    return;
+                } else {
+                    deployElevation = Math.max(deployEntity.getAltitude(), Collections.min(allowedDeployment).elevation());
+                }
+            }
+        } else {
+            deployElevation = getDeployElevation(deployEntity, deployHex);
+            // Compensate for hex elevation where != 0...
+            deployElevation -= deployHex.getLevel();
+        }
         deploy(entityNum, deployCoords, decentFacing, deployElevation);
     }
 
@@ -473,7 +583,7 @@ public class Princess extends BotClient {
         } else if (getGame().useVectorMove()) {
             return calculateAdvancedAerospaceDeploymentCoords(deployedUnit, possibleDeployCoords);
         } else {
-            return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
+            return rankDeploymentCoords(deployedUnit, possibleDeployCoords);
         }
     }
 
@@ -551,10 +661,154 @@ public class Princess extends BotClient {
         return (building.getCurrentCF(coords) + hex.terrainLevel(Terrains.BLDG_ELEV) * 2) / turretCount;
     }
 
+    protected double rankKernelAroundCoords(MovePath start, Entity deployedUnit, int radius, BasicPathRanker ranker) {
+        // Logging is extremely slow, only use when debugging.
+        StringBuilder sb = null;
+        if (logger.isDebugEnabled()) {
+            sb = new StringBuilder();
+            sb.append("Ranking kernel around hex ").append(start.getFinalCoords().toString());
+        }
+
+        double rank;
+        // allAtDistance uses a concept of radius that is 1 smaller.
+        ArrayList<Coords> kernel = start.getFinalCoords().allAtDistance(radius+1);
+
+        // Get all paths from the start point to the outer hexes that use "radius" MP
+        // Worse starting hexes have fewer, and shorter, paths
+        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(
+                                        radius, MoveStepType.FORWARDS, game);
+        pf.run(start);
+
+        // Lower rank is better; 0.0 is minimum at this point.
+        rank = Math.max(kernel.size() - pf.getAllComputedPaths().size(), 0.0);
+        for (MovePath mp: pf.getAllComputedPaths().values()) {
+            rank -= mp.getHexesMoved();
+            rank += ranker.checkPathForHazards(mp, deployedUnit, game);
+        }
+
+        if (sb != null) {
+            sb.append("\n\tAll computed ")
+                    .append(radius)
+                    .append("-length paths: ")
+                    .append(pf.getAllComputedPaths().size());
+            sb.append("\n\tFinal rank (including hazards): ").append(rank);
+            logger.debug(sb.toString());
+        }
+
+        return rank;
+    }
+
+    /**
+     * Rank possible deployment coordinates by hazard, path freedom, concealment
+     * 1. Randomly select N coords from list
+     * 2. For selected coords:
+     *      1. Check if hex is invalid
+     *      2. Create a MovePath containing the starting coordinate
+     *      3. Get the hazard value
+     *      4. Save Coords to HashMap with hazard as key
+     *
+     * @param deployedUnit
+     * @param possibleDeployCoords
+     * @return
+     */
+    protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+        StringBuilder sb = null;
+        if (logger.isDebugEnabled()) {
+            sb = new StringBuilder();
+            sb.append("Ranking deployment hexes...");
+        }
+
+        // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
+        int LIMIT = 20;
+        int RADIUS = 3;
+
+        // Shallow copy of refs list
+        ArrayList<Coords> localCopy = new ArrayList<>(possibleDeployCoords);
+
+        // Hacky, but really, "DEPLOY" should be a path step...
+        MovePath mp = new MovePath(game, deployedUnit);
+        mp.addStep(MoveStepType.NONE);
+        MoveStep deployStep = mp.getLastStep();
+        IPathRanker ranker = getPathRanker(deployedUnit);
+        HashMap<Double, ArrayList<Coords>> rankedCoords = new HashMap<>();
+
+        // Units that deploy airborne don't need to worry about all this
+        if (!(deployedUnit.isAero()
+                || ((deployedUnit.getMovementMode().isVTOL() || deployedUnit.getMovementMode().isWiGE())
+                    && deployedUnit.getElevation() > 0)
+        )) {
+            double hazard;
+            int longest = 0;
+            int size = 0;
+            for (Coords dest : localCopy) {
+                deployStep.setPosition(dest);
+                if (null != super.getFirstValidCoords(deployedUnit, List.of(dest))) {
+                    hazard = -((BasicPathRanker) ranker).checkPathForHazards(mp, deployedUnit, game);
+                    if (!rankedCoords.containsKey(hazard)) {
+                        rankedCoords.put(hazard, new ArrayList<>());
+                    }
+                    rankedCoords.get(hazard).add(dest);
+                    size = rankedCoords.get(hazard).size();
+                    longest = Math.max(size, longest);
+
+                    if (sb != null) {
+                        sb.append("\n\tFound valid coordinates (").append(dest.toString())
+                                .append(") with initial hazard of: ")
+                                .append(hazard);
+                    }
+                }
+
+                // Only get some subset
+                if (longest > LIMIT || rankedCoords.size() > LIMIT) {
+                    break;
+                }
+            }
+            if (!rankedCoords.isEmpty()) {
+                double bestRank = rankedCoords.keySet().stream().mapToDouble(d -> d).max().getAsDouble();
+                Coords bestCandidate = null;
+                double scoreToBeat = -Double.MAX_VALUE;
+                double current;
+                ArrayList<Coords> candidates = rankedCoords.get(bestRank);
+                for (Coords c: candidates) {
+                    mp.clear();
+                    mp.addStep((deployedUnit.getJumpMP() == 0) ? MoveStepType.NONE: MoveStepType.START_JUMP);
+                    mp.getLastStep().setPosition(c);
+                    current = bestRank - rankKernelAroundCoords(
+                            mp, deployedUnit, RADIUS, (BasicPathRanker) ranker);
+                    if (current > scoreToBeat) {
+                        scoreToBeat = current;
+                        bestCandidate = c;
+                    }
+                }
+                if (bestCandidate != null) {
+                    if (sb != null) {
+                        sb.append("\n\tFound best candidate (").append(bestCandidate.toString())
+                                .append(") out of ")
+                                .append(candidates.size())
+                                .append(" with a score of ")
+                                .append(scoreToBeat);
+                        logger.debug(sb.toString());
+                    }
+                    return bestCandidate;
+                }
+            }
+        } else {
+            if (sb != null) {
+                sb.append("\n\tAerospace / flying ground units don't worry about ground level hazards;");
+            }
+        }
+
+        if (sb != null) {
+            sb.append("\n\tFalling back to default getFirstValidCoords method!");
+            logger.debug(sb.toString());
+        }
+        // Fall back on old method
+        return super.getFirstValidCoords(deployedUnit, possibleDeployCoords);
+    }
+
     @Override
     protected void calculateFiringTurn() {
         final Entity shooter;
-        final Logger logger = LogManager.getLogger();
         try {
             // get the first entity that can act this turn make sure weapons
             // are loaded
@@ -618,6 +872,65 @@ public class Princess extends BotClient {
                     logger.debug(shooter.getDisplayName() + " - Detailed Best Firing Plan: " +
                             plan.getDebugDescription(true));
 
+                    // Consider making an aimed shot if the target is shut down or the attacker has
+                    // a targeting computer. Alternatively, consider using the called shots optional
+                    // rule to adjust the hit table to something more favorable.
+
+                    boolean isCalledShot = false;
+                    int locationDestruction = Integer.MAX_VALUE;
+                    int aimLocation = Mek.LOC_NONE;
+                    int calledShotDirection = CalledShot.CALLED_NONE;
+
+                    WeaponFireInfo primaryFire = plan.get(0);
+                    int targetID;
+                    if (primaryFire != null) {
+                        targetID = primaryFire.getTarget().getId();
+                    } else {
+                        targetID = Entity.NONE;
+                    }
+
+                    // TODO: gate this block on a game option or client option
+                    if (targetID > Entity.NONE &&
+                            primaryFire.getTarget() != null &&
+                            plan.stream().allMatch(curFire -> primaryFire.getTarget().getId() == targetID) &&
+                            checkForEnhancedTargeting(shooter,
+                                    primaryFire.getTarget(),
+                                    primaryFire.getToHit().getCover())) {
+
+                        Entity aimTarget = (Mek) primaryFire.getTarget();
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
+                                (!aimTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
+                            isCalledShot = true;
+                        }
+
+                        // Check for an aimed shot
+                        if (aimTarget.isImmobile() || shooter.hasTargComp()) {
+                            boolean rearShot = primaryFire.getToHit().getSideTable() == ToHitData.SIDE_REAR;
+
+                            // Get the Mek location to aim at. Infantry and BA will go for the head
+                            // if the odds are good.
+                            aimLocation = getAimedShotLocation(primaryFire.getTarget(),
+                                    plan, rearShot, shooter.isInfantry());
+
+                            // When aiming at a location, don't bother checking for called shots
+                            if (aimLocation != Mek.LOC_NONE) {
+                                isCalledShot = false;
+                                // TODO: this should be adjusted to better handle multiple target types
+                                locationDestruction = aimTarget.getArmor(aimLocation, rearShot) + aimTarget.getInternal(aimLocation);
+                            }
+
+                        }
+
+                        if (isCalledShot) {
+
+                            calledShotDirection = getCalledShotDirection(primaryFire.getTarget(),
+                                    primaryFire.getToHit().getSideTable(),
+                                    plan);
+
+                        }
+
+                    }
+
                     // Add expected damage from the chosen FiringPlan to the
                     // damageMap for the target enemy.
                     // while we're looping through all the shots anyway, send any firing mode changes
@@ -627,6 +940,20 @@ public class Princess extends BotClient {
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
 
+                        // Track manual AMS use each round
+                        if (shot.getWeapon().getType().hasFlag(Weapon.F_AMS)) {
+                            if (shot.getWeapon().curMode().equals(Weapon.MODE_AMS_MANUAL)) {
+                                flagManualAMSUse(shooter.getId());
+                            }
+                        }
+
+                        // Set attacks as aimed or called, as required
+                        if (aimLocation != Mek.LOC_NONE || calledShotDirection != CalledShot.CALLED_NONE) {
+                            setAttackAsAimedOrCalled(shot,
+                                    aimLocation,
+                                    calledShotDirection,
+                                    locationDestruction);
+                        }
                         if (shot.getUpdatedFiringMode() != null) {
                             super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
                         }
@@ -662,7 +989,7 @@ public class Princess extends BotClient {
             if (shooter.getSwarmTargetId() != Entity.NONE) {
                 // If we are skipping firing while swarming, it is because we are fleeing...
                 // so let's stop swarming if we are doing so
-                final Mounted stopSwarmWeapon = shooter.getIndividualWeaponList().stream()
+                final Mounted<?> stopSwarmWeapon = shooter.getIndividualWeaponList().stream()
                         .filter(weapon -> weapon.getType() instanceof StopSwarmAttack)
                         .findFirst()
                         .orElse(null);
@@ -712,7 +1039,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Calculates the targeting/ offboard turn
+     * Calculates the targeting/ off board turn
      * This includes firing TAG and non-direct-fire artillery
      */
     @Override
@@ -743,7 +1070,7 @@ public class Princess extends BotClient {
         try {
             final Map<AmmoType, Integer> ammoCounts = new HashMap<>();
             msg.append("\nPooling Ammo:");
-            for (final Mounted ammo : shooter.getAmmo()) {
+            for (final Mounted<?> ammo : shooter.getAmmo()) {
                 final AmmoType ammoType = (AmmoType) ammo.getType();
                 msg.append("\n\t").append(ammoType);
                 if (ammoCounts.containsKey(ammoType)) {
@@ -796,7 +1123,7 @@ public class Princess extends BotClient {
 
             return ammoConservation;
         } finally {
-            LogManager.getLogger().debug(msg.toString());
+            logger.debug(msg.toString());
         }
     }
 
@@ -814,8 +1141,8 @@ public class Princess extends BotClient {
             return new Vector<>();
         }
 
-        final FiringPlanCalculationParameters fccp = new Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
-        FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(fccp);
+        final FiringPlanCalculationParameters firingPlanCalculationParameters = new Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
+        FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(firingPlanCalculationParameters);
         getFireControl(shooter).loadAmmo(shooter, plan);
         plan.sortPlan();
 
@@ -836,7 +1163,7 @@ public class Princess extends BotClient {
     /**
      * Calculates the move index for the given unit.
      * In general, faster units and units closer to the enemy should move before others.
-     * Additional modifiers for being prone, stealthed, unit type and so on are also factored in.
+     * Additional modifiers for being prone, stealth-ed, unit type and so on are also factored in.
      *
      * @param entity The unit to be indexed.
      * @return The movement index of this unit. May be positive or negative. Higher index values should move first.
@@ -884,7 +1211,7 @@ public class Princess extends BotClient {
                 modifiers.append("\tx1.1 (Is Prone)");
             }
 
-            // If all else is equal, Infantry before Battle Armor before Tanks before Mechs.
+            // If all else is equal, Infantry before Battle Armor before Tanks before Meks.
             if (entity instanceof BattleArmor) {
                 total *= PRIORITY_BA;
                 modifiers.append("\tx2.0 (is BA)");
@@ -918,7 +1245,7 @@ public class Princess extends BotClient {
             if (entity.isStealthActive() || entity.isStealthOn() ||
                 entity.isVoidSigActive() || entity.isVoidSigOn()) {
                 total *= PRIORITY_STEALTH;
-                modifiers.append("\tx1/3 (is Stealthed)");
+                modifiers.append("\tx1/3 (is Stealth-ed)");
             }
 
             return total;
@@ -927,6 +1254,696 @@ public class Princess extends BotClient {
             msg.append("\n\t\tTotal = ").append(numberFormat.format(total));
         }
     }
+
+
+
+    // Enhanced targeting controls
+
+    public boolean getEnhancedTargetingControl () {
+        return enableEnhancedTargeting;
+    }
+
+    public void setEnableEnhancedTargeting (boolean newSetting) {
+        enableEnhancedTargeting = newSetting;
+    }
+
+    /**
+     * Sets all enhanced targeting controls to default values and optionally enables its use
+     * @param enable  true to immediately enable enhanced targeting features after reset
+     */
+    public void resetEnhancedTargeting (boolean enable) {
+
+        // Toggle enhanced targeting
+        enableEnhancedTargeting = enable;
+
+        // Set default enhanced targeting target and attacker types
+        enhancedTargetingTargetTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK
+        ));
+        enhancedTargetingAttackerTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.BATTLE_ARMOR,
+                UnitType.INFANTRY,
+                UnitType.PROTOMEK,
+                UnitType.VTOL,
+                UnitType.GUN_EMPLACEMENT
+        ));
+
+        // Set default as not using called shots against immobile targets
+        useCalledShotsOnImmobileTarget = false;
+
+        // Set default as not allowing enhanced targeting if the target has partial cover.
+        // This prevents all sorts of issues, such as aiming for locations that are covered.
+        allowCoverEnhancedTargeting = false;
+
+    }
+
+    /**
+     * Swap out current set of valid enhanced targeting target types for a new set. Automatically
+     * removes certain types that will never apply, such as infantry.
+     * @param newTargetTypes  List of {@link UnitType} constants, may be empty or null to clear
+     */
+    public void setEnhancedTargetingTargetTypes (List<Integer> newTargetTypes) {
+        enhancedTargetingTargetTypes = Objects.requireNonNullElseGet(newTargetTypes, ArrayList::new);
+        if (enhancedTargetingTargetTypes.contains(UnitType.INFANTRY)) {
+            enhancedTargetingTargetTypes.remove(UnitType.INFANTRY);
+        }
+        if (enhancedTargetingTargetTypes.contains(UnitType.BATTLE_ARMOR)) {
+            enhancedTargetingTargetTypes.remove(UnitType.BATTLE_ARMOR);
+        }
+    }
+
+    /**
+     * Swap out current set of valid enhanced targeting attacker types for a new set
+     * @param newAttackerTypes  List of {@link UnitType} constants, may be empty or null to clear
+     */
+    public void setEnhancedTargetingAttackerTypes (List<Integer> newAttackerTypes) {
+        enhancedTargetingAttackerTypes = Objects.requireNonNullElseGet(newAttackerTypes, ArrayList::new);
+    }
+
+    /**
+     * Returns a copy of the list of valid enhanced targeting target types
+     * @return   list of {@link UnitType} constants, or empty list
+     */
+    public List<Integer> seeEnhancedTargetingTargetTypes () {
+        return new ArrayList<>(enhancedTargetingTargetTypes);
+    }
+
+    /**
+     * Returns a copy of the list of valid enhanced targeting attacker types
+     * @return   list of {@link UnitType} constants, or empty list
+     */
+    public List<Integer> seeEnhancedTargetingAttackerTypes () {
+        return new ArrayList<>(enhancedTargetingAttackerTypes);
+    }
+
+    /**
+     * Checks if the supplied unit type is considered a valid target for enhanced targeting
+     * @param testType  {@link UnitType} constant
+     * @return          true, if unit is a valid target for enhanced targeting
+     */
+    public boolean isValidEnhancedTargetingTarget (int testType) {
+        if (enhancedTargetingTargetTypes != null) {
+            return enhancedTargetingTargetTypes.contains(testType);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks if the supplied unit type is considered a valid attacker for enhanced targeting
+     * @param testType  {@link UnitType} constant
+     * @return          true, if unit is a valid attacker for enhanced targeting
+     */
+    public boolean isValidEnhancedTargetingAttacker (int testType) {
+        if (enhancedTargetingAttackerTypes != null) {
+            return enhancedTargetingAttackerTypes.contains(testType);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean getAllowCalledShotsOnImmobile () {
+        return useCalledShotsOnImmobileTarget;
+    }
+
+    public void setAllowCalledShotsOnImmobile (boolean newSetting) {
+        useCalledShotsOnImmobileTarget = newSetting;
+    }
+
+    public boolean getPartialCoverEnhancedTargeting () {
+        return allowCoverEnhancedTargeting;
+    }
+
+    /**
+     * Controls whether enhanced targeting will be used against targets with partial cover from
+     * the shooter. Use with caution as this can result in situations like aiming for a location
+     * which is protected by intervening cover.
+     * @param newSetting  true, to allow aimed/called shots against targets with partial cover
+     */
+    public void setPartialCoverEnhancedTargeting (boolean newSetting) {
+        allowCoverEnhancedTargeting = newSetting;
+    }
+
+    /**
+     * Determine if a shooter should consider using enhanced targeting - aimed or called shots -
+     * against a given target. This includes some basic filtering for unit types and equipment such
+     * targeting computers.
+     * @param shooter           Entity doing the shooting
+     * @param targetable        Hex, Building, or Entity being shot at (Enhanced Targeting only works on the last one)
+     * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
+     * @return                 true, if aimed or called shots should be checked
+     */
+    protected boolean checkForEnhancedTargeting (Entity shooter, Targetable targetable, int cover) {
+        // Only works on entities
+        if (!(targetable instanceof Entity)){
+            return false;
+        }
+
+        if (!enableEnhancedTargeting) {
+            return false;
+        }
+
+        // Partial cover adds all sorts of complications, don't bother unless enabled
+        if (cover != LosEffects.COVER_NONE && !allowCoverEnhancedTargeting) {
+            return false;
+        }
+
+        // Basic unit type filtering for shooter. Ejected crews are considered infantry, so need
+        // to be specifically checked.
+        if (!isValidEnhancedTargetingAttacker(shooter.getUnitType()) ||
+                shooter instanceof EjectedCrew) {
+            return false;
+        }
+
+        Entity target = (Entity) targetable;
+        if (!isValidEnhancedTargetingTarget(target.getUnitType())) {
+            return false;
+        }
+
+        boolean useAimedShot = false;
+        boolean useCalledShot = false;
+
+        // Only certain unit types can be the target of aimed shots
+        List<Integer> validAimTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.VTOL,
+                UnitType.CONV_FIGHTER,
+                UnitType.AEROSPACEFIGHTER
+        ));
+
+        if (validAimTypes.contains(target.getUnitType())) {
+
+            // Aimed shots are only possible if the target is immobile or the shooter has a
+            // targeting computer
+            if (target.isImmobile() || shooter.hasTargComp()) {
+                useAimedShot = true;
+            }
+        }
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
+            // Called shots against immobile targets can be a little too effective, so only use
+            // when enabled
+            if (!target.isImmobile() || useCalledShotsOnImmobileTarget) {
+                useCalledShot = true;
+            }
+        }
+
+        return useAimedShot || useCalledShot;
+    }
+
+    /**
+     * Determine which location to aim for on a general target. Returned location constant is
+     * relative to the provided target type.
+     * Currently only supports aimed shots against Meks.
+     * @param target        Entity being shot at
+     * @param planOfAttack  Proposed attacks against {@code target}
+     * @param rearAttack    true if attacking from rear arc
+     * @param includeHead   true if the head is a valid location, ignored for non-Mek targets
+     * @return              location constant to aim for, with the {@code LOC_NONE} constant
+     *                      indicating no suitable location
+     */
+    protected int getAimedShotLocation (Targetable target,
+                                        FiringPlan planOfAttack,
+                                        boolean rearAttack,
+                                        boolean includeHead) {
+
+        int aimLocation = Entity.LOC_NONE;
+        if (planOfAttack == null || target == null) {
+            return aimLocation;
+        }
+
+        // Only check attacks if the target has locations that can be aimed for, which can be
+        // aimed, and are against the designated target
+        List<Integer> validAimTypes = new ArrayList<>(Arrays.asList(
+                UnitType.MEK,
+                UnitType.TANK,
+                UnitType.VTOL,
+                UnitType.CONV_FIGHTER,
+                UnitType.AEROSPACEFIGHTER
+        ));
+
+        if (!validAimTypes.contains(((Entity) target).getUnitType())) {
+            return aimLocation;
+        }
+
+        List<WeaponFireInfo> workingShots = planOfAttack.
+                stream().
+                filter(curShot -> curShot.getTarget().getId() == target.getId()).
+                filter(curShot ->
+                Compute.allowAimedShotWith(curShot.getWeapon(),
+                        target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)).
+                collect(Collectors.toList());
+
+        if (workingShots.isEmpty()) {
+            return aimLocation;
+        }
+
+        // Each type of unit requires its own checking process due to unique locations.
+        // TODO: placeholders are used for non-Mek targets. Create appropriate methods for each.
+        switch (((Entity) target).getUnitType()) {
+            case UnitType.MEK:
+                aimLocation = calculateAimedShotLocation(
+                        (Mek) target,
+                        workingShots,
+                        rearAttack,
+                        includeHead
+                );
+                break;
+            case UnitType.TANK:
+            case UnitType.VTOL:
+            case UnitType.NAVAL:
+                aimLocation = Entity.LOC_NONE;
+                break;
+            case UnitType.CONV_FIGHTER:
+            case UnitType.AEROSPACEFIGHTER:
+                aimLocation = Entity.LOC_NONE;
+                break;
+            default:
+                break;
+        }
+
+        return aimLocation;
+    }
+
+    /**
+     * Determine which direction to make a called shot - left, right, high, or low. Some target
+     * types only support calling shots left or right.
+     * Currently only supports called shots against Meks.
+     * @param target       Entity being shot at
+     * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
+     *                     to target
+     * @param planOfAttack Proposed attacks against {@code target}
+     * @return             {@link CalledShot} constant indicating which direction to call, may
+     *                     return {@code CalledShot.CALLED_NONE}.
+     */
+    protected int getCalledShotDirection (Targetable target,
+                                          int attackSide,
+                                          FiringPlan planOfAttack) {
+        int calledShotDirection = CalledShot.CALLED_NONE;
+        if (planOfAttack == null || target == null) {
+            return calledShotDirection;
+        }
+
+        WeaponFireInfo primaryFire = planOfAttack.get(0);
+        if (primaryFire == null) {
+            return calledShotDirection;
+        }
+
+        // Limit the weapons fire to those against the designated target and which have a
+        // reasonable to-hit number
+        int maximumToHit = calcEnhancedTargetingMaxTN(false);
+        List<WeaponFireInfo> workingShots = planOfAttack.
+                stream().
+                filter(curShot -> curShot.getTarget().getId() == target.getId()).
+                filter(curShot -> curShot.getToHit().getValue() + CALLED_SHOT_MODIFIER <= maximumToHit).
+                collect(Collectors.toList());
+
+        if (workingShots.isEmpty()) {
+            return calledShotDirection;
+        }
+
+        if (target instanceof Mek) {
+            calledShotDirection = calculateCalledShotDirection((Mek) target, attackSide, workingShots);
+        } else {
+            // TODO: placeholder for non-Mek targets. Create appropriate methods for each.
+            calledShotDirection = CalledShot.CALLED_NONE;
+        }
+
+        return calledShotDirection;
+    }
+
+    /**
+     * Determine which location to aim for on a Mek. Prioritizes torsos and legs, and ignores
+     * destroyed locations. Prefers right to left, given that most non-symmetrical Meks are
+     * 'right-handed'.
+     * @param target        Mek being shot at
+     * @param aimedShots    Proposed attacks against {@code target}
+     * @param rearAttack    true if attacking from the rear arc
+     * @param includeHead   true to include the head as a valid location
+     * @return              {@link Mek} constant for location to shoot, or {@code Mek.LOC_NONE}
+     *                      for none
+     */
+    protected int calculateAimedShotLocation (Mek target,
+                                              List<WeaponFireInfo> aimedShots,
+                                              boolean rearAttack,
+                                              boolean includeHead) {
+        int aimLocation = Mek.LOC_NONE;
+
+        if (aimedShots == null || target == null) {
+            return aimLocation;
+        }
+
+        WeaponFireInfo primaryFire = aimedShots.get(0);
+        int lowestArmor = Integer.MAX_VALUE;
+        List<Integer> rankedLocations = new ArrayList<>();
+
+        // Aiming for the head can only be done against an immobile Mek, and takes a penalty.
+        // Don't aim for the head for anti-Mek attacks except after swarming.
+        if (includeHead &&
+                target.isImmobile() &&
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK) &&
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
+                !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
+            aimLocation = Mek.LOC_HEAD;
+            int headShotMaxTN = calcEnhancedTargetingMaxTN(false);
+            if (aimedShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
+                    IMMOBILE_HEAD_SHOT_MODIFIER > headShotMaxTN)) {
+                aimLocation = Mek.LOC_NONE;
+            } else {
+                return aimLocation;
+            }
+        }
+
+        // Limit leg attack aimed shots to the legs
+        if (!primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK)) {
+
+            // Consider arm locations if they have a 'big' weapon
+            for (WeaponMounted curWeapon : target.getWeaponList().
+                    stream().
+                    filter(w -> w.isOperable() && isBigGun(w)).
+                    collect(Collectors.toSet())) {
+
+                if (!rankedLocations.contains(Mek.LOC_RARM) &&
+                        curWeapon.getLocation() == Mek.LOC_RARM &&
+                        target.getInternal(Mek.LOC_RARM) > 0) {
+                    rankedLocations.add(Mek.LOC_RARM);
+                } else if (!rankedLocations.contains(Mek.LOC_LARM) &&
+                        curWeapon.getLocation() == Mek.LOC_LARM &&
+                        target.getInternal(Mek.LOC_LARM) > 0) {
+                    rankedLocations.add(Mek.LOC_LARM);
+                }
+                if (rankedLocations.contains(Mek.LOC_RARM) && rankedLocations.contains(Mek.LOC_LARM)) {
+                    break;
+                }
+
+            }
+
+            // Most Mek designs will have their main weapon in either the right torso or right arm,
+            // so going after the right torso first solves both conditions. Putting the right torso
+            // first ensures the left torso and other locations will only supersede it if they have
+            // taken more damage and make for a better target.
+            if (target.getInternal(Mek.LOC_RT) > 0) {
+                rankedLocations.add(Mek.LOC_RT);
+            } else if (target.getInternal(Mek.LOC_LT) > 0) {
+                rankedLocations.add(Mek.LOC_LT);
+            }
+
+            if (!rankedLocations.contains(Mek.LOC_LT)) {
+                if (target.getInternal(Mek.LOC_LT) > 0) {
+                    rankedLocations.add((Mek.LOC_LT));
+                }
+            }
+
+            rankedLocations.add(Mek.LOC_CT);
+        }
+
+        // Favor right leg over left due to damage transfer to right torso, except if right leg is
+        // completely gone
+        if (target.getInternal(Mek.LOC_RLEG) > 0) {
+            rankedLocations.add(Mek.LOC_RLEG);
+        } else if (target.getInternal(Mek.LOC_LLEG) > 0) {
+            rankedLocations.add(Mek.LOC_LLEG);
+        }
+
+        if (!rankedLocations.contains(Mek.LOC_LLEG)) {
+            if (target.getInternal(Mek.LOC_LLEG) > 0) {
+                rankedLocations.add(Mek.LOC_LLEG);
+            }
+        }
+
+        // Select the most vulnerable location
+        int locationDestruction = 0;
+        for (int curLocation : rankedLocations) {
+            int locationArmor = Math.max(target.hasRearArmor(curLocation) ?
+                    target.getArmor(curLocation, rearAttack) :
+                    target.getArmor(curLocation), 0);
+
+            if (target.getInternal(curLocation) > 0 &&
+                    (lowestArmor > locationArmor ||
+                            locationDestruction > locationArmor + target.getInternal(curLocation))) {
+
+                aimLocation = curLocation;
+                lowestArmor = locationArmor;
+                locationDestruction = lowestArmor + target.getInternal(aimLocation);
+
+            }
+
+            // Doesn't get any better than a torso with no armor
+            if (lowestArmor == 0 &&
+                    (aimLocation == Mek.LOC_RT ||
+                            aimLocation == Mek.LOC_LT ||
+                            aimLocation == Mek.LOC_CT)) {
+                break;
+            }
+        }
+        // Evaluate whether all the weapons at the chosen location will be effective
+        if (aimLocation != Mek.LOC_NONE &&
+                (!target.isImmobile() || aimLocation == Mek.LOC_HEAD)) {
+
+            int offset = 0;
+            if (locationDestruction <= LOCATION_DESTRUCTION_THREAT) {
+                offset = 1;
+            }
+
+            int penetratorCount = 0;
+            double totalDamage = 0;
+            int maximumToHit = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mek.LOC_HEAD);
+            for (WeaponFireInfo curFire : aimedShots) {
+                if (curFire.getToHit().getValue() + (aimLocation == Mek.LOC_HEAD ?
+                        IMMOBILE_HEAD_SHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
+
+                    totalDamage += curFire.getMaxDamage();
+                    if (curFire.getMaxDamage() >= lowestArmor) {
+                        penetratorCount++;
+                    }
+
+                }
+            }
+
+            // If none of the weapons have a low enough to-hit number, or if none of the weapons
+            // can penetrate the armor individually or cumulatively, don't bother aiming
+            if (totalDamage == 0 ||
+                    (penetratorCount == 0 && 0.4 * totalDamage < lowestArmor)) {
+                aimLocation = Mek.LOC_NONE;
+            }
+
+        }
+
+        return aimLocation;
+    }
+
+    /**
+     * Determine which direction to make a called shot against a Mek - left, right, high, or low.
+     * Shots into a side arc will be called to become rear shots. Shots to the front or rear will
+     * call high or low based on how many locations have minimal armor.
+     * @param target       Mek being shot at
+     * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
+     *                     to target
+     * @param calledShots  Proposed attacks against {@code target} parameter
+     * @return             {@link CalledShot} constant indicating which direction to call, may
+     *                     return {@code CalledShot.CALLED_NONE}.
+     */
+    protected int calculateCalledShotDirection (Mek target,
+                                                int attackSide,
+                                                List<WeaponFireInfo> calledShots) {
+        int calledShotDirection = CalledShot.CALLED_NONE;
+
+        if (calledShots == null ||
+                calledShots.isEmpty() ||
+                calledShots.get(0) == null) {
+            return calledShotDirection;
+        }
+
+        WeaponFireInfo primaryFire = calledShots.get(0);
+
+        // If the target is being shot in a side arc, set the call direction to hit the rear arc
+        if (attackSide == ToHitData.SIDE_LEFT || attackSide == ToHitData.SIDE_REARLEFT) {
+            calledShotDirection = CalledShot.CALLED_RIGHT;
+        } else if (attackSide == ToHitData.SIDE_RIGHT || attackSide == ToHitData.SIDE_REARRIGHT) {
+            calledShotDirection = CalledShot.CALLED_LEFT;
+        }
+
+        if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
+
+            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RT,
+                    Mek.LOC_LT,
+                    Mek.LOC_CT));
+
+            // Only consider the arms if they have 'big' weapons
+            for (WeaponMounted curWeapon : target.getWeaponList().
+                    stream().
+                    filter(w -> w.isOperable() && isBigGun(w)).
+                    collect(Collectors.toSet())) {
+
+                if (!upperLocations.contains(Mek.LOC_RARM) &&
+                        curWeapon.getLocation() == Mek.LOC_RARM &&
+                        target.getInternal(Mek.LOC_RARM) > 0) {
+                    upperLocations.add(Mek.LOC_RARM);
+                } else if (!upperLocations.contains(Mek.LOC_LARM) &&
+                        curWeapon.getLocation() == Mek.LOC_LARM &&
+                        target.getInternal(Mek.LOC_LARM) > 0) {
+                    upperLocations.add(Mek.LOC_LARM);
+                }
+                if (upperLocations.contains(Mek.LOC_RARM) && upperLocations.contains(Mek.LOC_LARM)) {
+                    break;
+                }
+
+            }
+
+            // Establish a maximum armor value for calling shots high/low. If most
+            // of the locations have more armor than this, it's not a good option.
+            // Infantry and battle armor weapons rely on many small hits, so use
+            // a default value.
+            int armorThreshold;
+            Entity shooter = primaryFire.getShooter();
+            if (!shooter.isInfantry()) {
+                OptionalDouble averageDamage = calledShots.stream().mapToDouble(WeaponFireInfo::getMaxDamage).average();
+                if (averageDamage.isPresent()) {
+                    armorThreshold = (int) Math.floor(averageDamage.getAsDouble());
+                } else {
+                    armorThreshold = CALLED_SHOT_DEFAULT_MAX_ARMOR;
+                }
+            } else {
+                armorThreshold = CALLED_SHOT_DEFAULT_MAX_ARMOR;
+            }
+
+            double upperTargets = upperLocations.
+                    stream().
+                    mapToInt(loc -> loc).
+                    filter(loc -> target.getArmor(loc, attackSide == ToHitData.SIDE_REAR) <= armorThreshold).
+                    count();
+
+            // Only consider shooting low if both legs are intact
+            double lowerTargets = 0;
+            if (target.getInternal(Mek.LOC_RLEG) > 0 && target.getInternal(Mek.LOC_LLEG) > 0) {
+                if (target.getArmor(Mek.LOC_RLEG) <= armorThreshold) {
+                    lowerTargets++;
+                }
+                if (target.getArmor(Mek.LOC_LLEG) <= armorThreshold) {
+                    lowerTargets++;
+                }
+            }
+
+            // If the head armor is weak or there are proportionally more upper targets, call high.
+            // If the leg armor is weak and this is a fast and/or jumping Mek, call low.
+            if (target.getArmor(Mek.LOC_HEAD) + target.getInternal(Mek.LOC_HEAD) <= LOCATION_DESTRUCTION_THREAT ||
+                    (upperTargets / upperLocations.size() > lowerTargets / 2.0)) {
+                calledShotDirection = CalledShot.CALLED_HIGH;
+            } else if (lowerTargets >= 1 ||
+                    target.getWalkMP() >= CALLED_SHOT_MIN_MOVE ||
+                    target.getJumpMP() >= CALLED_SHOT_MIN_JUMP) {
+                calledShotDirection = CalledShot.CALLED_LOW;
+            }
+
+        }
+
+        return calledShotDirection;
+    }
+
+
+    /**
+     * Checks if a weapon is considered a 'big gun' worth taking a shot at
+     * @param testWeapon  weapon to check
+     * @return            true if weapon damage exceeds {@code BIG_GUN_MIN_DAMAGE} at a
+     *                    typical range value
+     */
+    private boolean isBigGun(WeaponMounted testWeapon) {
+        return testWeapon.getType().getDamage(BIG_GUN_TYPICAL_RANGE) >= BIG_GUN_MIN_DAMAGE;
+    }
+
+    /**
+     * Figure out the highest practical to-hit number for enhanced aiming (aimed/called shots),
+     * using behavior settings
+     * @param isAimedImmobile   true if making aimed shot at immobile target
+     * @return  maximum to-hit number for a weapons attack with enhanced aiming
+     */
+    private int calcEnhancedTargetingMaxTN (boolean isAimedImmobile) {
+        if (isAimedImmobile) {
+            return SHUTDOWN_MAX_TARGET_NUMBER;
+        } else {
+            return Math.max(10 - getBehaviorSettings().getSelfPreservationIndex(), 2);
+        }
+    }
+
+
+    /**
+     * If a shot meets criteria, set it as aimed or called.  {@code aimLocation} and {@code
+     * calledShotDirection} are not mutually exclusive - if both are provided, weapons which
+     * cannot make an aimed shot will make a called shot instead
+     * @param shot   Single-weapon attack action
+     * @param aimLocation     {@link Mek} LOC_ constant with aiming location
+     * @param destructionThreshold how much damage to completely destroy the location
+     */
+    protected void setAttackAsAimedOrCalled (WeaponFireInfo shot,
+                                             int aimLocation,
+                                             int calledShotDirection,
+                                             int destructionThreshold) {
+        Entity shooter = shot.getShooter();
+
+        int offset = 0;
+
+        // If the target is a Mek and the attack is not artillery or non-damaging anti-Mek
+        if (shot.getTarget().getTargetType() == UnitType.MEK &&
+                !shot.getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) &&
+                !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
+                !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
+
+            Mek target = (Mek) shot.getTarget();
+            int maximumTN;
+
+            // If set for aimed shots, and the weapon can make aimed shots
+            if ((aimLocation != Mek.LOC_NONE) &&
+                    Compute.allowAimedShotWith(shot.getWeapon(), target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
+
+                maximumTN = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mek.LOC_HEAD);
+
+                // Increase the maximum target number for attacks that may destroy the location,
+                // as well as infantry weapons which may have multiple hits per shot
+                if ((!shooter.isInfantry() && shot.getMaxDamage() >= destructionThreshold) ||
+                        shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    offset = 1;
+                }
+
+                // If the target number is considered viable set attack as aimed
+                // at the provided location
+                if ((shot.getToHit().getValue() + (target.isImmobile() ? 0 : AIMED_SHOT_MODIFIER)) <= (maximumTN + offset)) {
+                    shot.getAction().setAimingMode(target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER);
+                    shot.getAction().setAimedLocation(aimLocation);
+                }
+
+            } else if (calledShotDirection != CalledShot.CALLED_NONE) {
+
+                maximumTN = calcEnhancedTargetingMaxTN(false);
+
+                // If the weapon uses the cluster table, increase the maximum target number
+                if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE ||
+                        (shot.getAmmo() != null &&
+                                shot.getAmmo().getType().getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) ||
+                        shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    offset = 2;
+                }
+
+                // If the target number is considered viable, step through the options until
+                // it gets to the desired setting
+                if ((shot.getToHit().getValue() + CALLED_SHOT_MODIFIER) <= (maximumTN + offset)) {
+                    // TODO: adjust send/receive method to transmit new called shot rather than stepping through
+                    for (int i = 0; i < calledShotDirection; i++) {
+                        sendCalledShotChange(shooter.getId(), shot.getWeaponAttackAction().getWeaponId());
+                    }
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+
 
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.
@@ -972,7 +1989,7 @@ public class Princess extends BotClient {
     /**
      * Loops through the list of entities controlled by this Princess instance
      * and decides which should be moved first.
-     * Immobile units and ejected MechWarriors / crews will be moved first.
+     * Immobile units and ejected MekWarriors / crews will be moved first.
      * After that, each unit is given an index// This unit should have already
      * moved due to the isImmobilized check. via the
      * {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest
@@ -982,7 +1999,7 @@ public class Princess extends BotClient {
      */
     Entity getEntityToMove() {
 
-        // first move useless units: immobile units, ejected MechWarrior, etc
+        // first move useless units: immobile units, ejected MekWarrior, etc
         Entity movingEntity = null;
         final List<Entity> myEntities = getEntitiesOwned();
         double highestIndex = -Double.MAX_VALUE;
@@ -1003,20 +2020,20 @@ public class Princess extends BotClient {
                 continue;
             }
 
-            // Move immobile units & ejected MechWarriors immediately.
+            // Move immobile units & ejected MekWarriors immediately.
             if (isImmobilized(entity) && !(entity instanceof Infantry)) {
                 msg.append("is immobile.");
                 movingEntity = entity;
                 break;
             }
 
-            if (entity instanceof MechWarrior) {
+            if (entity instanceof MekWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
             }
 
-            // can't do anything with out-of-control aeros, so use them as init sinks
+            // can't do anything with out-of-control aero's, so use them as init sinks
             if (entity.isAero() && ((IAero) entity).isOutControlTotal()) {
                 msg.append("is out-of-control aero.");
                 movingEntity = entity;
@@ -1041,9 +2058,9 @@ public class Princess extends BotClient {
         }
 
         if (movingEntity == null) {
-            LogManager.getLogger().warn(msg.toString());
+            logger.warn(msg.toString());
         } else {
-            LogManager.getLogger().debug(msg.toString());
+            logger.debug(msg.toString());
         }
 
         return movingEntity;
@@ -1052,7 +2069,12 @@ public class Princess extends BotClient {
     @Override
     protected @Nullable MovePath calculateMoveTurn() {
         try {
-            return continueMovementFor(getEntityToMove());
+            MovePath path = continueMovementFor(getEntityToMove());
+            // Update the friendly heat map with movement of ground units
+            if (path != null && path.getEntity().isGround()) {
+                friendlyHeatMap.updateTrackers(path);
+            }
+            return path;
         } catch (Exception ignored) {
             return null;
         }
@@ -1076,7 +2098,7 @@ public class Princess extends BotClient {
                     msg.append("\n\tI will not attack so long as I'm not fired on.");
                     return null;
                 }
-                LogManager.getLogger().info(msg.toString());
+                logger.info(msg.toString());
             }
 
             // the original bot's physical options seem superior
@@ -1130,17 +2152,17 @@ public class Princess extends BotClient {
 
     boolean isImmobilized(final Entity mover) {
         if (mover.isImmobile() && !mover.isShutDown()) {
-            LogManager.getLogger().info("Is truly immobile.");
+            logger.info("Is truly immobile.");
             return true;
         } else if (1 > mover.getRunMP()) {
-            LogManager.getLogger().info("Has 0 movement.");
+            logger.info("Has 0 movement.");
             return true;
-        } else if (!(mover instanceof Mech)) {
+        } else if (!(mover instanceof Mek)) {
             return false;
         }
 
-        final Mech mech = (Mech) mover;
-        if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
+        final Mek mek = (Mek) mover;
+        if (!mek.isProne() && !mek.isStuck() && !mek.isStalled()) {
             return false;
         }
 
@@ -1175,9 +2197,9 @@ public class Princess extends BotClient {
         }
 
         // If we're prone, see if we have a chance of getting up.
-        if (mech.isProne()) {
-            if (mech.cannotStandUpFromHullDown()) {
-                LogManager.getLogger().info("Cannot stand up.");
+        if (mek.isProne()) {
+            if (mek.cannotStandUpFromHullDown()) {
+                logger.info("Cannot stand up.");
                 return true;
             }
 
@@ -1187,8 +2209,8 @@ public class Princess extends BotClient {
 
             // If our odds to get up are equal to or worse than the threshold,
             // consider ourselves immobile.
-            final PilotingRollData target = mech.checkGetUp(getUp, movePath.getLastStepMovementType());
-            LogManager.getLogger().info("Need to roll " + target.getValue() +
+            final PilotingRollData target = mek.checkGetUp(getUp, movePath.getLastStepMovementType());
+            logger.info("Need to roll " + target.getValue() +
                 " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
         }
@@ -1196,10 +2218,10 @@ public class Princess extends BotClient {
         // How likely are we to get unstuck.
         final MoveStepType type = MoveStepType.FORWARDS;
         final MoveStep walk = new MoveStep(movePath, type);
-        final Hex hex = getHex(mech.getPosition());
-        final PilotingRollData target = mech.checkBogDown(walk, movePath.getLastStepMovementType(),
-                hex, mech.getPriorPosition(), mech.getPosition(), hex.getLevel(), false);
-        LogManager.getLogger().info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
+        final Hex hex = getHex(mek.getPosition());
+        final PilotingRollData target = mek.checkBogDown(walk, movePath.getLastStepMovementType(),
+                hex, mek.getPriorPosition(), mek.getPosition(), hex.getLevel(), false);
+        logger.info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
 
@@ -1219,7 +2241,7 @@ public class Princess extends BotClient {
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
-            LogManager.getLogger().debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
+            logger.debug("Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
@@ -1229,7 +2251,7 @@ public class Princess extends BotClient {
                 } else if (entity.isCrippled()) {
                     msg += " is crippled and withdrawing.";
                 }
-                LogManager.getLogger().debug(msg);
+                logger.debug(msg);
                 sendChat(msg, Level.ERROR);
 
                 // If this entity is falling back, able to flee the board, on
@@ -1243,7 +2265,7 @@ public class Princess extends BotClient {
                 // If we want to flee, but cannot, eject the crew.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
                     msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
-                    LogManager.getLogger().info(msg);
+                    logger.info(msg);
                     sendChat(msg, Level.ERROR);
                     final MovePath mp = new MovePath(game, entity);
                     mp.addStep(MoveStepType.EJECT);
@@ -1254,20 +2276,20 @@ public class Princess extends BotClient {
             final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
-                LogManager.getLogger().warn("No valid paths found.");
+                logger.warn("No valid paths found.");
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
             final double thisTimeEstimate = (paths.size() * moveEvaluationTimeEstimate) / 1e3;
-            if (LogManager.getLogger().getLevel().isLessSpecificThan(Level.INFO)) {
-                String timeestimate = "unknown.";
+            if (logger.getLevel().isLessSpecificThan(Level.INFO)) {
+                String timeEstimate = "unknown.";
                 if (0 != thisTimeEstimate) {
-                    timeestimate = (int) thisTimeEstimate + " seconds";
+                    timeEstimate = (int) thisTimeEstimate + " seconds";
                 }
                 final String message = "Moving " + entity.getChassis() + ". "
                         + Long.toString(paths.size())
                         + " paths to consider.  Estimated time to completion: "
-                        + timeestimate;
+                        + timeEstimate;
                 sendChat(message);
             }
 
@@ -1276,7 +2298,7 @@ public class Princess extends BotClient {
             // fall tolerance range between 0.50 and 1.0
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
 
-            final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
+            final List<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(paths,
                     getGame(), getMaxWeaponRange(entity), fallTolerance, getEnemyEntities(),
                     getFriendEntities());
 
@@ -1291,18 +2313,18 @@ public class Princess extends BotClient {
 
             moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
 
-            if (rankedpaths.isEmpty()) {
+            if (rankedPaths.isEmpty()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
-            LogManager.getLogger().debug("Path ranking took " + (stop_time - startTime) + " millis");
+            logger.debug("Path ranking took " + (stop_time - startTime) + " millis");
 
-            final RankedPath bestpath = getPathRanker(entity).getBestPath(rankedpaths);
-            LogManager.getLogger().info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
+            final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
+            logger.info("Best Path: " + bestPath.getPath() + "  Rank: " + bestPath.getRank());
 
-            return performPathPostProcessing(bestpath);
+            return performPathPostProcessing(bestPath);
         } catch (Exception e) {
-            LogManager.getLogger().error("MP is now null!", e);
+            logger.error("MP is now null!", e);
             return null;
         } finally {
             precognition.unPause();
@@ -1316,11 +2338,11 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            final List<Entity> ents = game.getEntitiesVector();
-            for (final Entity ent : ents) {
-                final String errors = getFireControl(ent).checkAllGuesses(ent, game);
+            final List<Entity> entities = game.getEntitiesVector();
+            for (final Entity entity : entities) {
+                final String errors = getFireControl(entity).checkAllGuesses(entity, game);
                 if (!StringUtility.isNullOrBlank(errors)) {
-                    LogManager.getLogger().warn(errors);
+                    logger.warn(errors);
                 }
             }
             // -----------------------------------------------------------------------
@@ -1519,7 +2541,7 @@ public class Princess extends BotClient {
                 }
             }
         } finally {
-            LogManager.getLogger().info(msg.toString());
+            logger.info(msg.toString());
         }
     }
 
@@ -1611,11 +2633,6 @@ public class Princess extends BotClient {
     }
 
     @Override
-    public Game getGame() {
-        return game;
-    }
-
-    @Override
     public void initialize() {
         try {
             if (initialized) {
@@ -1648,6 +2665,10 @@ public class Princess extends BotClient {
                     }
                 }
             }
+
+            // Set up heat mapping
+            initEnemyHeatMaps();
+            initFriendlyHeatMap();
 
             initialized = true;
             BotGeometry.debugSelfTest(this);
@@ -1695,7 +2716,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Reduce utility of TAGging something if we're already trying.  Update the utilty if it's better,
+     * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better,
      * otherwise try to dissuade the next attacker.
      * @param te
      * @param damage
@@ -1778,7 +2799,7 @@ public class Princess extends BotClient {
             // All candidate weapons should be unique instances.
             friendlyGuidedWeapons.addAll(candidateWeapons);
         }
-        // Cache result in case needed for later pathing / planning.
+        // Cache result in case needed for later path planning.
         incomingGuidablesMap.put(key, friendlyGuidedWeapons);
         return friendlyGuidedWeapons;
     }
@@ -1804,8 +2825,7 @@ public class Princess extends BotClient {
         }
     }
 
-    private boolean isEnemyGunEmplacement(final Entity entity,
-                                          final Coords coords) {
+    private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                && entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -1813,9 +2833,8 @@ public class Princess extends BotClient {
                && !entity.isCrippled();
     }
 
-    private boolean isEnemyInfantry(final Entity entity,
-                                    final Coords coords) {
-        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
+    private boolean isEnemyInfantry(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR)
                 && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                 && entity.getOwner().isEnemyOf(getLocalPlayer())
                 && !getStrategicBuildingTargets().contains(coords)
@@ -1827,7 +2846,7 @@ public class Princess extends BotClient {
         super.die();
         if (null != precognition) {
             precognition.signalDone();
-            precogThread.interrupt();
+            precognitionThread.interrupt();
         }
     }
 
@@ -1869,7 +2888,7 @@ public class Princess extends BotClient {
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                LogManager.getLogger().warn("Invalid tick: '" + tick + "'.");
+                logger.warn("Invalid tick: '" + tick + "'.");
             }
         }
         return adjustment;
@@ -1892,27 +2911,30 @@ public class Princess extends BotClient {
      * Lazy-loaded calculation of the "to-hit target number" threshold for
      * spinning up a rapid fire autocannon.
      */
-    public int getSpinupThreshold() {
-        if (spinupThreshold == null) {
+    public int getSpinUpThreshold() {
+        if (spinUpThreshold == null) {
         // we start spinning up the cannon at 11+ TN at highest aggression levels
         // dropping it down to 6+ TN at the lower aggression levels
-            spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+            spinUpThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
         }
 
-        return spinupThreshold;
+        return spinUpThreshold;
     }
 
-    public void resetSpinupThreshold() {
-        spinupThreshold = null;
+    public void resetSpinUpThreshold() {
+        spinUpThreshold = null;
     }
 
     @Override
     public void endOfTurnProcessing() {
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
-        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
+        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        setAMSModes();
+        updateEnemyHeatMaps();
+        updateFriendlyHeatMap();
     }
 
     @Override
@@ -1923,7 +2945,7 @@ public class Princess extends BotClient {
             getPrecognition().handlePacket(c);
         }
         finally {
-            LogManager.getLogger().trace(msg.toString());
+            logger.trace(msg.toString());
         }
     }
 
@@ -1944,7 +2966,7 @@ public class Princess extends BotClient {
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();
-            precogThread.interrupt();
+            precognitionThread.interrupt();
         }
         super.disconnected();
     }
@@ -1979,20 +3001,20 @@ public class Princess extends BotClient {
      * @return Altered move path
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
-        MovePath retval = path;
-        evadeIfNotFiring(retval, expectedDamage >= 0);
-        turnOnSearchLight(retval, expectedDamage >= 0);
-        unloadTransportedInfantry(retval);
-        launchFighters(retval);
-        unjamRAC(retval);
+        MovePath retVal = path;
+        evadeIfNotFiring(retVal, expectedDamage >= 0);
+        turnOnSearchLight(retVal, expectedDamage >= 0);
+        unloadTransportedInfantry(retVal);
+        launchFighters(retVal);
+        unjamRAC(retVal);
 
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
         if (path.getEntity().isAero() || (path.getEntity() instanceof EjectedCrew && path.getEntity().isSpaceborne())) {
-            retval = SharedUtility.moveAero(retval, null);
+            retVal = SharedUtility.moveAero(retVal, null);
         }
 
-        return retval;
+        return retVal;
     }
 
     /**
@@ -2049,7 +3071,7 @@ public class Princess extends BotClient {
      * Helper function that adds an "unload" step for units that are transporting infantry
      * if the conditions for unloading are favorable.
      *
-     * Infantry unloading logic is different from, for example, hot-dropping mechs or launching aerospace fighters,
+     * Infantry unloading logic is different from, for example, hot-dropping Meks or launching aerospace fighters,
      * so we handle it separately.
      * @param path The path to modify
      */
@@ -2115,7 +3137,7 @@ public class Princess extends BotClient {
 
     /**
      * Helper function that adds an "launch" step for units that are transporting
-     * launchable units in some kind of bay.
+     * launch-able units in some kind of bay.
      */
     private void launchFighters(MovePath path) {
         // if my objective is to cross the board, even though it's tempting, I won't be leaving the aerospace
@@ -2136,7 +3158,7 @@ public class Princess extends BotClient {
         TreeMap<Integer, Vector<Integer>> unitsToLaunch = new TreeMap<>();
         boolean executeLaunch = false;
 
-        // loop through all fighter (or smallcraft) bays in the current entity
+        // loop through all fighter (or small craft) bays in the current entity
         // grouping launched craft by bay to limit launches to 'safe' rate.
         Vector<Bay> fighterBays = movingEntity.getFighterBays();
 
@@ -2162,8 +3184,280 @@ public class Princess extends BotClient {
         }
     }
 
+    /**
+     * Sets the mode for AMS on each unit this bot controls. This may be on or off, and possibly
+     * manual fire if the game options allow it, with any change taking effect next round.
+     * Normal setting is to have the AMS active/automatic. It may be turned off to conserve
+     * ammo on relatively undamaged units, and laser AMS may be turned off to help reduce
+     * overheating. Manual use is reserved as an emergency anti-infantry measure.
+     *
+     */
+    private void setAMSModes() {
+
+        // Get conventional infantry if manual mode is available
+        List<Entity> enemyInfantry = new ArrayList<>();
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+            for (Entity curEnemy : this.getEnemyEntities().stream().filter(Entity::isDeployed).collect(Collectors.toSet())) {
+                if (curEnemy.getPosition() != null && curEnemy.isVisibleToEnemy()) {
+
+                    if (curEnemy instanceof Infantry && !(curEnemy instanceof EjectedCrew)) {
+                        enemyInfantry.add(curEnemy);
+                    }
+
+                }
+            }
+        }
+
+        for (Entity curEntity : this.getEntitiesOwned()) {
+            if (!curEntity.isDeployed() || curEntity.getPosition() == null) {
+                continue;
+            }
+
+            List<WeaponMounted> activeAMS = curEntity.
+                    getWeaponList().
+                    stream().
+                    filter(w -> w.getType().hasFlag(AmmoWeapon.F_AMS) && w.hasModes()).
+                    collect(Collectors.toList());
+
+            if (!activeAMS.isEmpty()) {
+
+                // Set default to on/automatic and test to see if it should be off or manual instead
+                EquipmentMode newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_ON);
+
+                boolean isOverheating = (curEntity instanceof Mek) && (curEntity.getHeat() >= MAX_OVERHEAT_AMS);
+
+                // If there are enough nearby enemy infantry (only counted if the game option is
+                // set), choose manual fire
+                if (!enemyInfantry.isEmpty() && !curEntity.isAirborne()) {
+                    int infantryRange = enemyInfantry.stream().mapToInt(e -> Compute.effectiveDistance(game, curEntity, e)).min().getAsInt();
+                    if (infantryRange <= 3) {
+                        newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_MANUAL);
+                    }
+                }
+
+                // If AMS was used manually this round, chances are it will be needed next round too
+                if (usedManualAMS(curEntity.getId())) {
+                    newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_MANUAL);
+                }
+
+                for (WeaponMounted curAMS : activeAMS) {
+
+                    EquipmentMode curMode = curAMS.curMode();
+
+                    // Turn off laser AMS to help with overheating problems
+                    if (curAMS.getType().hasFlag(WeaponType.F_ENERGY)) {
+                        if (isOverheating) {
+                            newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_OFF);
+                        }
+                    } else {
+
+                        // Determine if ammo needs to be conserved
+                        boolean conserveAmmo = curAMS.getLinkedAmmo().getUsableShotsLeft() <= (int) Math.floor(curAMS.getOriginalShots() *
+                                behaviorSettings.getSelfPreservationValue() / 100.0);
+
+                        // Consider turning off AMS to conserve ammo unless it's needed for infantry
+                        if (conserveAmmo && !newAMSMode.equals(Weapon.MODE_AMS_MANUAL)) {
+
+                            int ammoTN = 12 - behaviorSettings.getBraveryIndex();
+
+                            // Fighting a missile boat is more likely to require an active AMS
+                            int lastTargetID = curEntity.getLastTarget();
+                            if (lastTargetID >= 0) {
+                                Entity lastTarget = game.getEntity(lastTargetID);
+                                if (lastTarget != null && lastTarget.getRole() == UnitRole.MISSILE_BOAT) {
+                                    ammoTN += 4;
+                                }
+                            }
+
+                            // Heavily damaged units are more likely to require an active AMS than
+                            // lightly damaged ones
+                            switch (curEntity.getDamageLevel()) {
+                                case Entity.DMG_NONE:
+                                    ammoTN -= 4;
+                                    break;
+                                case Entity.DMG_LIGHT:
+                                    ammoTN -= 2;
+                                    break;
+                                case Entity.DMG_MODERATE:
+                                    ammoTN += 1;
+                                    break;
+                                case Entity.DMG_HEAVY:
+                                    ammoTN += 4;
+                                case Entity.DMG_CRIPPLED:
+                                    ammoTN += 8;
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (ammoTN < 10) {
+                                if (Compute.d6(2) >= ammoTN) {
+                                    newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_OFF);
+                                }
+                            }
+
+                        }
+
+                    }
+
+                    // Set the mode for the AMS to get the new mode number, and register the change
+                    // with the server
+                    if (!curMode.equals(newAMSMode)) {
+                        int modeNumber = curAMS.setMode(newAMSMode.getName());
+                        if (modeNumber != -1) {
+                            sendModeChange(curEntity.getId(), curEntity.getEquipmentNum(curAMS), modeNumber);
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        // Clear the manual AMS tracking list for next round
+        clearManualAMSIds();
+    }
+
+    /**
+     * Flag an entity as having used manual AMS this round
+     * @param id
+     */
+    public void flagManualAMSUse (int id) {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+        }
+        if (!manualAMSIds.contains(id)) {
+            manualAMSIds.add(id);
+        }
+    }
+
+    public boolean usedManualAMS (int id) {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+            return false;
+        }
+        return manualAMSIds.contains(id);
+    }
+
+    /**
+     * Clear the manual AMS tracking list
+     */
+    public void clearManualAMSIds () {
+        if (manualAMSIds == null) {
+            manualAMSIds = new ArrayList<>();
+        }
+        manualAMSIds.clear();
+    }
+
+    /**
+     * Get a list of all hot spots (positions of high activity) for opposing units
+     * @return
+     */
+    public List<Coords> getEnemyHotSpots () {
+        List<Coords> accumulatedHotSpots = new ArrayList<>();
+        for (HeatMap curMap : enemyHeatMaps) {
+            List<Coords> mapHotSpots = curMap.getHotSpots();
+            if (mapHotSpots != null) {
+                for (Coords curPosition : mapHotSpots) {
+                    if (!accumulatedHotSpots.contains(curPosition)) {
+                        accumulatedHotSpots.add(curPosition);
+                    }
+                }
+            }
+        }
+
+        return accumulatedHotSpots;
+    }
+
+    /**
+     * Get the best hot spot (positions of high activity) for friendly units
+     * @return  {@code Coords} with high friendly activity; may return null
+     */
+    public Coords getFriendlyHotSpot () {
+        return friendlyHeatMap.getHotSpot();
+    }
+
+    /**
+     * Get the nearest top-rated hot spot for friendly units
+     * @param testPosition
+     * @return
+     */
+    public Coords getFriendlyHotSpot (Coords testPosition) {
+        return friendlyHeatMap.getHotSpot(testPosition, true);
+    }
+
+    /**
+     * Set up heat maps to track enemy unit positions over time
+     */
+    protected void initEnemyHeatMaps () {
+        enemyHeatMaps = new ArrayList<>();
+        int princessTeamId = getGame().getTeamForPlayer(this.getLocalPlayer()).getId();
+        for (Team curTeam : getGame().getTeams()) {
+            if (curTeam.getId() != princessTeamId) {
+                HeatMap newMap = new HeatMap(curTeam.getId());
+                newMap.setMapTrimThreshold(0.5);
+                newMap.setActivityDecay(-200);
+                enemyHeatMaps.add(newMap);
+            }
+        }
+    }
+
+    /**
+     * Set up heat map to track friendly units over time
+     */
+    protected void initFriendlyHeatMap () {
+        friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(this.getLocalPlayer()).getId());
+        friendlyHeatMap.setMovementWeightValue(5);
+        friendlyHeatMap.setMapTrimThreshold(0.6);
+        friendlyHeatMap.setActivityDecay(-200);
+        friendlyHeatMap.setIsTrackingFriendlyTeam(true);
+    }
+
+    /**
+     * Update the heat maps with known enemy unit positions, then apply decay
+     */
+    protected void updateEnemyHeatMaps() {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(HeatMap::validateForTracking).
+                collect(Collectors.toList());
+
+        // Process entities into each heat map, then age it
+        for (HeatMap curMap : enemyHeatMaps) {
+            if (!trackedEntities.isEmpty()) {
+                curMap.updateTrackers(trackedEntities);
+            }
+            curMap.ageMaps(game);
+        }
+    }
+
+    /**
+     * Update the heat map with allied unit positions (entities controlled by this bot have
+     * already been processed as they move), then apply decay
+     */
+    protected void updateFriendlyHeatMap () {
+
+        List<Entity> trackedEntities = getGame().
+                inGameTWEntities().
+                stream().
+                filter(e -> e.getOwner().getId() != this.getLocalPlayer().getId() &&
+                    HeatMap.validateForTracking(e)).
+                collect(Collectors.toList());
+
+        if (!trackedEntities.isEmpty()) {
+            friendlyHeatMap.updateTrackers(trackedEntities);
+        }
+        // Units may have skidded, fallen, etc. and need their actual last position updated
+        friendlyHeatMap.refreshLastKnownCache(game);
+        friendlyHeatMap.ageMaps(game);
+    }
+
+
     public void sendChat(final String message, final Level logLevel) {
-        if (LogManager.getLogger().getLevel().isLessSpecificThan(logLevel)) {
+        if (logger.getLevel().isLessSpecificThan(logLevel)) {
             super.sendChat(message);
         }
     }

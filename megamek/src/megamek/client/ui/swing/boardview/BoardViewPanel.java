@@ -18,8 +18,12 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.swing.tileset.HexTileset;
+import megamek.common.Coords;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 
 /**
@@ -29,11 +33,21 @@ import java.awt.image.ImageObserver;
 public class BoardViewPanel extends JPanel implements Scrollable {
 
     private final BoardView boardView;
-    private Dimension preferredSize = new Dimension(0, 0);
 
     public BoardViewPanel(BoardView boardView) {
         super(true);
         this.boardView = boardView;
+    }
+
+    @Override
+    public Point getToolTipLocation(MouseEvent event) {
+        Coords hexCoords = boardView.getCoordsAt(event.getPoint());
+        Point point = boardView.getCentreHexLocation(hexCoords);
+        // add board padding
+        point.translate(HexTileset.HEX_W, HexTileset.HEX_H);
+        // move to the right of the current hex
+        point.translate((int) (HexTileset.HEX_W * boardView.scale * 0.75), (int) (-HexTileset.HEX_H / 4 * boardView.scale));
+        return new Point(point.x, point.y);
     }
 
     @Override
@@ -52,19 +66,13 @@ public class BoardViewPanel extends JPanel implements Scrollable {
     }
 
     @Override
-    public void setPreferredSize(Dimension d) {
-        super.setPreferredSize(d);
-        preferredSize = new Dimension(d);
-    }
-
-    @Override
     public Dimension getPreferredSize() {
         // If the board is small, we want the preferred size to fill the whole ScrollPane viewport,
         // for purposes of drawing the tiled background icon. However, we also need the scrollable
         // client to be as big as the board plus the pad size.
         return new Dimension(
-                Math.max(boardView.getBoardSize().width + (2 * BoardView.HEX_W), preferredSize.width),
-                Math.max(boardView.getBoardSize().height + (2 * BoardView.HEX_W), preferredSize.height));
+                Math.max(boardView.getBoardSize().width + (2 * HexTileset.HEX_W), boardView.getComponent().getWidth()),
+                Math.max(boardView.getBoardSize().height + (2 * HexTileset.HEX_W), boardView.getComponent().getHeight()));
     }
 
     @Override
@@ -74,7 +82,7 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
-        return 500;
+        return boardView.getScrollableBlockIncrement(arg0, arg1, arg2);
     }
 
     @Override
@@ -89,9 +97,6 @@ public class BoardViewPanel extends JPanel implements Scrollable {
 
     @Override
     public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-        if (arg1 == SwingConstants.VERTICAL) {
-            return (int) ((boardView.scale * BoardView.HEX_H) / 2.0);
-        }
-        return (int) ((boardView.scale * BoardView.HEX_W) / 2.0);
+        return boardView.getScrollableUnitIncrement(arg0, arg1, arg2);
     }
 }

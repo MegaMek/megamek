@@ -15,16 +15,9 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
-import org.apache.logging.log4j.LogManager;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.Serializable;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -187,10 +180,10 @@ public class Hex implements Serializable {
             }
 
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
-            
+
             // Water gets a special treatment: Water at the board edge
-            // (hex == null) should usually look like ocean and 
-            // therefore always gets connection to outside the board 
+            // (hex == null) should usually look like ocean and
+            // therefore always gets connection to outside the board
             if ((cTerr.getType() == Terrains.WATER) && (other == null)) {
                 cTerr.setExit(direction, true);
             }
@@ -421,10 +414,31 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return if there is pavement, a road or a bridge in the hex.
+     * @return True if there is pavement, a road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
+        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
+    }
+
+    /**
+     * @return True if there is any woods or jungle in this hex, including foliage (i.e., height 1 woods/jungle).
+     */
+    public boolean hasVegetation() {
+        return containsAnyTerrainOf(Terrains.WOODS, Terrains.JUNGLE);
+    }
+
+    /**
+     * @return The height of woods or jungle in this hex (1, 2 or 3), or 0 if there isn't any.
+     */
+    public int vegetationCeiling() {
+        return containsTerrain(Terrains.FOLIAGE_ELEV) ? terrainLevel(Terrains.FOLIAGE_ELEV) : 0;
+    }
+
+    /**
+     * @return True if there is water in this hex of at least depth 1 (i.e., not depth 0)
+     */
+    public boolean hasDepth1WaterOrDeeper() {
+        return containsTerrain(Terrains.WATER) && (terrainLevel(Terrains.WATER) >= 1);
     }
 
     /**
@@ -601,12 +615,12 @@ public class Hex implements Serializable {
             terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
-    
-    /** 
+
+    /**
      * True if this hex has a clifftop towards otherHex. This hex
      * must have the terrain CLIFF_TOP, it must have exits
      * specified (exits set to active) for the CLIFF_TOP terrain,
-     * and must have an exit in the direction of otherHex.  
+     * and must have an exit in the direction of otherHex.
      */
     public boolean hasCliffTopTowards(Hex otherHex) {
         return containsTerrain(Terrains.CLIFF_TOP)
@@ -619,10 +633,10 @@ public class Hex implements Serializable {
         return coords;
     }
 
-    /** 
+    /**
      * Sets the coords of this hex. DO NOT USE outside board.java!
-     * WILL NOT MOVE THE HEX. Only the position of the hex in the 
-     * board's data[] determines the actual location of the hex. 
+     * WILL NOT MOVE THE HEX. Only the position of the hex in the
+     * board's data[] determines the actual location of the hex.
      */
     public void setCoords(Coords c) {
         coords = c;
@@ -646,57 +660,38 @@ public class Hex implements Serializable {
     }
 
     /**
-     * Windchild Rework Me
-     * Determines if the Hex is valid or not. <code>errBuff</code> can be used to return a report
-     * of why the hex is valid.
+     * Returns true when the hex has no invalid terrain. When the given list of errors is not null,
+     * any error reports from this hex are added to it.
      *
-     * @param errBuff Buffer to contain error messages. If null, method returns on first failure.
-     * @return if the hex is valid
+     * @param errors A list to add error messages to
+     * @return True if the hex is valid
      */
-    public boolean isValid(@Nullable StringBuffer errBuff) {
-        boolean valid = true;
-        
-        // When no StringBuffer is passed, use a dummy
-        // to avoid numerous null checks
-        if (errBuff == null) {
-            errBuff = new StringBuffer();
-        }
-        
+    public boolean isValid(@Nullable List<String> errors) {
+        List<String> newErrors = new ArrayList<>();
+
         // Check individual terrains for validity
         for (final Terrain terrain : terrains.values()) {
             if (terrain == null) {
-                valid = false;
-                errBuff.append("Hex contains a null terrain!\n");
-                continue;
-            }
-
-            StringBuffer terrainErr = new StringBuffer();
-            if (!terrain.isValid(terrainErr)) {
-                valid = false;
-                if (errBuff.length() > 0) {
-                    errBuff.append("\n");
-                }
-                errBuff.append(terrainErr);
+                newErrors.add("Hex contains a null terrain.");
+            } else {
+                terrain.isValid(newErrors);
             }
         }
 
         // Rapids
-        if ((containsTerrain(Terrains.RAPIDS))) {
+        if (containsTerrain(Terrains.RAPIDS)) {
             if (!containsTerrain(Terrains.WATER)) {
-                valid = false;
-                errBuff.append("Rapids must occur within water!\n");
+                newErrors.add("Rapids must occur within water.");
             }
 
             if (depth() < 1) {
-                valid = false;
-                errBuff.append("Rapids must occur in depth 1 or greater!\n");
+                newErrors.add("Rapids must occur in depth 1 or greater.");
             }
         }
 
         // Foliage (Woods and Jungles)
         if (containsTerrain(Terrains.WOODS) && containsTerrain(Terrains.JUNGLE)) {
-            valid = false;
-            errBuff.append("Woods and Jungle cannot appear in the same hex!\n");
+            newErrors.add("Woods and Jungle cannot appear in the same hex.");
         }
 
         if ((containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
@@ -704,54 +699,52 @@ public class Hex implements Serializable {
             int wl = terrainLevel(Terrains.WOODS);
             int jl = terrainLevel(Terrains.JUNGLE);
             int el = terrainLevel(Terrains.FOLIAGE_ELEV);
-            
+
             boolean isLightOrHeavy = wl == 1 || jl == 1 || wl == 2 || jl == 2;
             boolean isUltra = wl == 3 || jl == 3;
-            
+
             if (! ((el == 1) || (isLightOrHeavy && el == 2) || (isUltra && el == 3))) {
-                valid = false;
-                errBuff.append("Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle!\n");
+                newErrors.add("Foliage elevation is wrong, must be 1 or 2 for Light/Heavy and 1 or 3 for Ultra Woods/Jungle.");
             }
         }
         if (!(containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE))
                 && containsTerrain(Terrains.FOLIAGE_ELEV)) {
-            valid = false;
-            errBuff.append("Woods and Jungle elevation terrain present without Woods or Jungle!\n");
+            newErrors.add("Woods and Jungle Elevation terrain present without Woods or Jungle.");
         }
-        
+
         // Buildings must have at least BUILDING, BLDG_ELEV and BLDG_CF
-        if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF, 
+        if (containsAnyTerrainOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF, Terrains.BLDG_FLUFF,
                 Terrains.BLDG_ARMOR, Terrains.BLDG_CLASS, Terrains.BLDG_BASE_COLLAPSED, Terrains.BLDG_BASEMENT_TYPE)
                 && !containsAllTerrainsOf(Terrains.BUILDING, Terrains.BLDG_ELEV, Terrains.BLDG_CF)) {
-            valid = false;
-            errBuff.append("Incomplete Building! A hex with any building terrain must at least contain "
-                    + "a building type, building elevation and building CF.\n");
+            newErrors.add("Incomplete Building! A hex with any building terrain must at least contain "
+                    + "a building type, building elevation and building CF.");
         }
 
         // Bridges must have all of BRIDGE, BRIDGE_ELEV and BRIDGE_CF
         if (containsAnyTerrainOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)
                 && !containsAllTerrainsOf(Terrains.BRIDGE, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_CF)) {
-            valid = false;
-            errBuff.append("Incomplete Bridge! A hex with any bridge terrain must contain "
-                    + "the bridge type, bridge elevation and the bridge CF.\n");
+            newErrors.add("Incomplete Bridge! A hex with any bridge terrain must contain "
+                    + "the bridge type, bridge elevation and the bridge CF.");
         }
 
         // Fuel Tanks must have all of FUEL_TANK, _ELEV, _CF and _MAGN
-        if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
+        if (containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
                 Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)
-                && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, 
+                && !containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF,
                         Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
-            valid = false;
-            errBuff.append("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
-                    + "the fuel tank type, elevation, CF and the fuel tank magnitude.\n");
-        }
-        
-        if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {
-            valid = false;
-            errBuff.append("A Hex cannot have both a Building and a Fuel Tank.\n");
+            newErrors.add("Incomplete Fuel Tank! A hex with any fuel tank terrain must contain "
+                    + "the fuel tank type, elevation, CF and the fuel tank magnitude.");
         }
 
-        return valid;
+        if (containsAllTerrainsOf(Terrains.FUEL_TANK, Terrains.BUILDING)) {
+            newErrors.add("A hex cannot have both a Building and a Fuel Tank.");
+        }
+
+        if (errors != null) {
+            errors.addAll(newErrors);
+        }
+
+        return newErrors.isEmpty();
     }
 
     @Override

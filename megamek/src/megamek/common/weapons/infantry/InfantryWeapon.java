@@ -17,12 +17,11 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -143,7 +142,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * The long range of this weapon type. Infantry weapons calculate ranges based
+     * on the "infantry range" value rather than
      * explicit short/long/medium ranges
      */
     @Override
@@ -155,7 +155,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * The extreme range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
+     * The extreme range of this weapon type. Infantry weapons calculate ranges
+     * based on the "infantry range" value rather than
      * explicit short/long/medium ranges
      */
     @Override
@@ -207,7 +208,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * For weapons that can use inferno ammo, returns the inferno version. If there is
+     * For weapons that can use inferno ammo, returns the inferno version. If there
+     * is
      * no inferno version or this is the inferno version, returns {@code this}.
      *
      * @return The inferno ammo variant of this weapon
@@ -225,7 +227,8 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     /**
-     * For weapons that can use inferno ammo, returns the standard ammo version. If there is
+     * For weapons that can use inferno ammo, returns the standard ammo version. If
+     * there is
      * no standard version or this is the standard version, returns {@code this}.
      *
      * @return The standard ammo variant of this weapon
@@ -253,17 +256,19 @@ public abstract class InfantryWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
-        Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+            TWGameManager manager) {
+        Mounted<?> m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && ((m.hasModes() && m.curMode().isHeat())
                 || (waa.getEntity(game).isSupportVehicle()
-                && m.getLinked() != null
-                && m.getLinked().getType() != null
-                && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
+                        && m.getLinked() != null
+                        && m.getLinked().getType() != null
+                        && (((AmmoType) m.getLinked().getType()).getMunitionType()
+                                .contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
                 && (isFlameBased() || (m instanceof InfantryWeaponMounted)
-                                        &&  ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
+                        && ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
         return new InfantryWeaponHandler(toHit, waa, game, manager);

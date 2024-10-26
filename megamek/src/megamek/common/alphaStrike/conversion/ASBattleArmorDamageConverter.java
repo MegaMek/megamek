@@ -52,7 +52,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     /**
-     * Specialized method to sum up the squad support weapon damage for the given range.
+     * Specialized method to sum up the squad support weapon damage for the given
+     * range.
      * This should always stay similar to the assembleFrontDamage() methods.
      *
      * @param range The range, e.g. AlphaStrikeElement.MEDIUM_RANGE
@@ -60,7 +61,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
      */
     protected double assembleSquadSupportDamage(int range) {
         double rawDamage = 0;
-        for (Mounted weapon : weaponsList) {
+        for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if (!weapon.isSquadSupportWeapon()) {
                 continue;
@@ -80,7 +81,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected double determineDamage(Mounted weapon, int range) {
+    protected double determineDamage(Mounted<?> weapon, int range) {
         return weapon.isAPMMounted() ? 0 : super.determineDamage(weapon, range);
     }
 
@@ -193,7 +194,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
+    protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
         super.assignSpecialAbilities(weapon, weaponType);
 
         if (weaponType.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
@@ -206,14 +207,14 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected void processTaser(Mounted weapon, WeaponType weaponType) {
+    protected void processTaser(Mounted<?> weapon, WeaponType weaponType) {
         if (weaponType.getAmmoType() == AmmoType.T_TASER) {
             assignToLocations(weapon, BTAS, 1);
         }
     }
 
     @Override
-    protected void processNarc(Mounted weapon, WeaponType weaponType) {
+    protected void processNarc(Mounted<?> weapon, WeaponType weaponType) {
         if (weaponType.getAmmoType() == AmmoType.T_NARC) {
             assignToLocations(weapon, CNARC, 1);
         }

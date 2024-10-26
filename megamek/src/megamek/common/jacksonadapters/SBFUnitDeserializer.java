@@ -23,13 +23,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.BTObject;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.strategicBattleSystems.SBFElementType;
-import megamek.common.strategicBattleSystems.SBFMovementMode;
-import megamek.common.strategicBattleSystems.SBFUnit;
-import megamek.common.strategicBattleSystems.SBFUnitConverter;
+import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.strategicBattleSystems.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,12 +36,19 @@ import static megamek.common.jacksonadapters.MMUReader.*;
 import static megamek.common.jacksonadapters.SBFUnitSerializer.*;
 
 /**
- * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU file. When the MMU file
- * lists the elements, these will be taken and converted to the SBFUnit (and any transients like damage
- * applied). When the MMU file doesnt list the elements, it must have the stats; then the SBFUnit will
+ * This Jackson deserializer reads an SBF Unit (part of a formation) from an MMU
+ * file. When the MMU file
+ * lists the elements, these will be taken and converted to the SBFUnit (and any
+ * transients like damage
+ * applied). When the MMU file doesnt list the elements, it must have the stats;
+ * then the SBFUnit will
  * be constructed without the elements.
  */
 public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
+
+    private static final String STATUS = "status";
+    private static final String LEAD = "lead";
+    private static final String COM = "com";
 
     public SBFUnitDeserializer() {
         this(null);
@@ -68,15 +72,15 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
             unit.setName(node.get(GENERAL_NAME).textValue());
             unit.setSkill(node.has(SKILL) ? node.get("skill").intValue() : 4);
 
-            if (node.has(FORCE)) {
-                unit.setForceString(node.get(FORCE).textValue());
-            }
+            // if (node.has(FORCE)) {
+            // unit.setForceString(node.get(FORCE).textValue());
+            // }
 
             if (node.has(ELEMENTS)) {
                 // When the elements are given, read them and convert
                 List<Object> elementsO = new MMUReader().read(node.get(ELEMENTS));
                 if (elementsO.stream().anyMatch(o -> !(o instanceof AlphaStrikeElement))) {
-                    //ERROR - how?
+                    // ERROR - how?
                     throw new IllegalArgumentException("SBFUnits may only contain Alpha Strike Elements!");
                 }
                 List<AlphaStrikeElement> elements = new ArrayList<>();
@@ -84,7 +88,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
                         .map(o -> (AlphaStrikeElement) o)
                         .forEach(elements::add);
 
-                //TODO: elements without skill?
+                // TODO: elements without skill?
                 unit = new SBFUnitConverter(elements,
                         node.get(GENERAL_NAME).textValue(), elements, new DummyCalculationReport()).createSbfUnit();
             } else {
@@ -120,9 +124,34 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
                     ASElementDeserializer.readSpecials(unit.getSpecialAbilities(), specials);
                 }
             }
+            assignStatus(unit, node);
         } catch (NullPointerException exception) {
             throw new IllegalArgumentException("Missing element in SBFUnit definition!");
         }
         return unit;
+    }
+
+    private void assignStatus(SBFUnit unit, JsonNode node) {
+        if (node.has(STATUS)) {
+            JsonNode statusNode = node.get(STATUS);
+            if (statusNode.isContainerNode() && statusNode.isArray()) {
+                statusNode.iterator().forEachRemaining(n -> parseStatus(unit, n.textValue()));
+            } else if (statusNode.isTextual()) {
+                parseStatus(unit, statusNode.asText());
+            }
+        }
+    }
+
+    private void parseStatus(SBFUnit unit, String statusString) {
+        switch (statusString) {
+            case LEAD:
+                unit.getSpecialAbilities().setSUA(BattleForceSUA.LEAD);
+                break;
+            case COM:
+                unit.getSpecialAbilities().setSUA(BattleForceSUA.COM);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown status " + statusString);
+        }
     }
 }

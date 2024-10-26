@@ -20,11 +20,8 @@ package megamek.common.alphaStrike;
 
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
 
@@ -37,6 +34,7 @@ public class ASGame extends AbstractGame {
 
     private GameOptions options = new GameOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
+    private GamePhase lastPhase = GamePhase.UNKNOWN;
     private Board board = new Board();
 
     @Override
@@ -45,8 +43,8 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public boolean hasMoreTurns() {
-        return false;
+    public List<GameTurn> getTurnsList() {
+        return List.of();
     }
 
     @Override
@@ -62,6 +60,11 @@ public class ASGame extends AbstractGame {
     @Override
     public void setPhase(GamePhase phase) {
 
+    }
+
+    @Override
+    public void setLastPhase(GamePhase lastPhase) {
+        this.lastPhase = lastPhase;
     }
 
     @Override
@@ -83,6 +86,29 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public boolean isCurrentPhasePlayable() {
+        switch (phase) {
+            case INITIATIVE:
+            case END:
+            case TARGETING:
+                return false;
+            case PHYSICAL:
+            case OFFBOARD:
+            case OFFBOARD_REPORT:
+            case DEPLOYMENT:
+            case PREMOVEMENT:
+            case MOVEMENT:
+            case PREFIRING:
+            case FIRING:
+            case DEPLOY_MINEFIELDS:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
+                return hasMoreTurns();
+            default:
+                return true;
+        }
+    }
+
+    @Override
     public void setPlayer(int id, Player player) {
 
     }
@@ -98,13 +124,18 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public int getNextEntityId() {
-        return 0;
+    public void replaceUnits(List<InGameObject> units) {
+
     }
 
     @Override
-    public void replaceUnits(List<InGameObject> units) {
+    public List<InGameObject> getGraveyard() {
+        return null;
+    }
 
+    @Override
+    public ReportEntry getNewReport(int messageId) {
+        return new Report(messageId);
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

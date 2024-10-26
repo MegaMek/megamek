@@ -41,7 +41,7 @@ Notes:
 
 And including these older maps:
 
-	55x55 Mech Rush
+	55x55 Mek Rush
 	55x55 Desert Crags
 	55x55 Hemlock Pass
 	55x55 Abysmal Flats
@@ -123,13 +123,13 @@ with these. They're for playing!
 
 ///
 
-This work is licensed under the Creative Commons 
-Attribution-NonCommercial-ShareAlike 2.5 License. 
-To view a copy of this license, visit 
+This work is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 2.5 License.
+To view a copy of this license, visit
 
-http://creativecommons.org/licenses/by-nc-sa/2.5/ 
+http://creativecommons.org/licenses/by-nc-sa/2.5/
 
-or send a letter to 
+or send a letter to
 
 Creative Commons
 543 Howard Street, 5th Floor

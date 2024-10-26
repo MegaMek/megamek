@@ -17,13 +17,12 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ADAMissileWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Martin Metke
  * @since Sep 12, 2023
  */
-
 
 public abstract class ArrowIV extends ArtilleryWeapon {
     private static final long serialVersionUID = -4495524659692575107L;
@@ -54,7 +53,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
     }
 
     @Override
-    public int[] getRanges(Mounted weapon) {
+    public int[] getRanges(Mounted<?> weapon) {
         // modify the ranges for Arrow missile systems based on the ammo selected
         int minRange = getMinimumRange();
         int sRange = getShortRange();
@@ -77,8 +76,8 @@ public abstract class ArrowIV extends ArtilleryWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, Game game, GameManager manager) {
-        if(waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
+        if (waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)) {
             return new ADAMissileWeaponHandler(toHit, waa, game, manager);
         }
         return super.getCorrectHandler(toHit, waa, game, manager);

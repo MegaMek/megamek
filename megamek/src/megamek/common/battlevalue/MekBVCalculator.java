@@ -18,6 +18,15 @@
  */
 package megamek.common.battlevalue;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.EquipmentType.T_STRUCTURE_COMPOSITE;
+import static megamek.common.EquipmentType.T_STRUCTURE_INDUSTRIAL;
+import static megamek.common.EquipmentType.T_STRUCTURE_REINFORCED;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.weapons.autocannons.HVACWeapon;
@@ -30,26 +39,19 @@ import megamek.common.weapons.other.ISMekTaser;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.EquipmentType.*;
-
 public class MekBVCalculator extends HeatTrackingBVCalculator {
 
-    private final Mech mek;
+    private final Mek mek;
 
     MekBVCalculator(Entity entity) {
         super(entity);
-        mek = (Mech) entity;
+        mek = (Mek) entity;
     }
 
     @Override
     protected double addTorsoMountedCockpit() {
-        if (mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            return entity.getArmor(Mech.LOC_CT) + entity.getArmor(Mech.LOC_CT, true);
+        if (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+            return entity.getArmor(Mek.LOC_CT) + entity.getArmor(Mek.LOC_CT, true);
         } else {
             return 0;
         }
@@ -111,17 +113,17 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         bvReport.addLine("Explosive Equipment:", "", "");
         if (hasBlueShield) {
             int unProtectedCrits = 0;
-            for (int loc = Mech.LOC_CT; loc <= Mech.LOC_LLEG; loc++) {
+            for (int loc = Mek.LOC_CT; loc <= Mek.LOC_LLEG; loc++) {
                 if (entity.hasCASEII(loc)) {
                     continue;
                 }
                 if (entity.isClan()) {
-                    // Clan mechs only count ammo in ct, legs or head (per BMRr).
-                    // Also count ammo in side torsos if mech has xxl engine
+                    // Clan meks only count ammo in ct, legs or head (per BMRr).
+                    // Also count ammo in side torsos if mek has xxl engine
                     // (extrapolated from rule intent - not covered in rules)
-                    if (((loc != Mech.LOC_CT) && (loc != Mech.LOC_RLEG) && (loc != Mech.LOC_LLEG))
-                            && !(((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) && entity.hasEngine() &&
-                            (entity.getEngine().getSideTorsoCriticalSlots().length > 2))) {
+                    if (((loc != Mek.LOC_CT) && (loc != Mek.LOC_RLEG) && (loc != Mek.LOC_LLEG))
+                            && !(((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) && entity.hasEngine() &&
+                                    (entity.getEngine().getSideTorsoCriticalSlots().length > 2))) {
                         continue;
                     }
                 } else {
@@ -129,13 +131,13 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     if (entity.hasEngine() && (entity.getEngine().getSideTorsoCriticalSlots().length <= 2)) {
                         // without XL or XXL, only count torsos if not CASEed,
                         // and arms if arm & torso not CASEed
-                        if (((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) && entity.locationHasCase(loc)) {
+                        if (((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) && entity.locationHasCase(loc)) {
                             continue;
-                        } else if ((loc == Mech.LOC_LARM)
-                                && (entity.locationHasCase(loc) || entity.locationHasCase(Mech.LOC_LT))) {
+                        } else if ((loc == Mek.LOC_LARM)
+                                && (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_LT))) {
                             continue;
-                        } else if ((loc == Mech.LOC_RARM)
-                                && (entity.locationHasCase(loc) || entity.locationHasCase(Mech.LOC_RT))) {
+                        } else if ((loc == Mek.LOC_RARM)
+                                && (entity.locationHasCase(loc) || entity.locationHasCase(Mek.LOC_RT))) {
                             continue;
                         }
                     }
@@ -148,7 +150,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             hasExplosiveEquipment = true;
         }
         List<CriticalSlot> slotAlreadyCounted = new ArrayList<>();
-        for (Mounted mounted : entity.getEquipment()) {
+        for (Mounted<?> mounted : entity.getEquipment()) {
             if (!countsAsExplosive(mounted)) {
                 continue;
             }
@@ -169,7 +171,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             }
 
             int toSubtract = 15;
-            // Gauss rifles only subtract 1 point per slot, same for HVACs and iHeavy Lasers and mektasers
+            // Gauss rifles only subtract 1 point per slot, same for HVACs and iHeavy Lasers
+            // and mektasers
             if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)
                     || (etype instanceof CLImprovedHeavyLaserLarge)
                     || (etype instanceof CLImprovedHeavyLaserMedium)
@@ -178,7 +181,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)
                     || (etype.hasFlag(WeaponType.F_B_POD)
-                    || (etype.hasFlag(WeaponType.F_M_POD)))) {
+                            || (etype.hasFlag(WeaponType.F_M_POD)))) {
                 toSubtract = 1;
             }
 
@@ -189,9 +192,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
             if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                    || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
-                    || etype.hasFlag(MiscType.F_JUMP_JET))) {
+                            || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                            || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+                            || etype.hasFlag(MiscType.F_JUMP_JET))) {
                 toSubtract = 1;
             }
 
@@ -216,7 +219,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     }
                 }
             } else if (mounted.getType() instanceof HVACWeapon) {
-                // HVAC are only -1 total, regardless of number of crits. None are large enough to be splittable.
+                // HVAC are only -1 total, regardless of number of crits. None are large enough
+                // to be splittable.
                 criticals = 1;
             } else {
                 criticals = mounted.getCriticals();
@@ -264,7 +268,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             return;
         }
         umuMP = 0;
-        for (Mounted m : entity.getMisc()) {
+        for (Mounted<?> m : entity.getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU) && !m.isInoperable()) {
                 umuMP++;
@@ -275,10 +279,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected int heatEfficiency() {
         int heatCapacity = entity.getHeatCapacity();
-        int mechHeatEfficiency = 6 + heatCapacity;
+        int mekHeatEfficiency = 6 + heatCapacity;
         String calculation = "6 + " + heatCapacity;
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            mechHeatEfficiency += 3;
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            mekHeatEfficiency += 3;
             calculation += " + 3 (LAM)";
         }
 
@@ -286,19 +290,19 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 .filter(t -> t == AmmoType.T_COOLANT_POD).count();
         if (coolantPods > 0) {
             int coolantPodBonus = (int) Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5d);
-            mechHeatEfficiency += coolantPodBonus;
+            mekHeatEfficiency += coolantPodBonus;
             calculation += " + " + coolantPodBonus + " (Cool. Pods)";
         }
 
         if (entity.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-            mechHeatEfficiency += 4;
+            mekHeatEfficiency += 4;
             calculation += " + 4 (ECS)";
         }
 
         int moveHeat;
         String moveHeatType = " (Run)";
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            moveHeat = (int) Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            moveHeat = (int) Math.round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
         } else if ((mek.getJumpMP(MPCalculationSetting.BV_CALCULATION) > 0)
                 && (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) > entity.getRunHeat())) {
             moveHeat = entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION));
@@ -311,52 +315,52 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 moveHeat = entity.getRunHeat();
             }
         }
-        mechHeatEfficiency -= moveHeat;
+        mekHeatEfficiency -= moveHeat;
         calculation += " - " + moveHeat + moveHeatType;
 
         if (entity.hasStealth()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Stealth)";
         }
         if (mek.hasChameleonShield()) {
-            mechHeatEfficiency -= 6;
+            mekHeatEfficiency -= 6;
             calculation += " - 6 (Chameleon)";
         }
         if (mek.hasNullSig()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Null Sig.)";
         }
         if (mek.hasVoidSig()) {
-            mechHeatEfficiency -= 10;
+            mekHeatEfficiency -= 10;
             calculation += " - 10 (Void Sig.)";
         }
         if (mek.hasEngine() && (mek.getEngineHits() > 0)
                 && (mek.getEngine().isFusion() || mek.getEngine().isFission())) {
-            mechHeatEfficiency -= mek.getEngineHits() * 5;
+            mekHeatEfficiency -= mek.getEngineHits() * 5;
             calculation += " - " + mek.getEngineHits() * 5 + " (Engine Hits)";
         }
-        bvReport.addLine("Heat Efficiency:", calculation + " = " + mechHeatEfficiency, "");
-        return mechHeatEfficiency;
+        bvReport.addLine("Heat Efficiency:", calculation + " = " + mekHeatEfficiency, "");
+        return mekHeatEfficiency;
     }
 
     @Override
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon)
-                && !mek.isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()
+                && !mek.isArm(weapon.getLocation()) && !weapon.isMekTurretMounted()
                 && (!weapon.isRearMounted() || isFrontFacingVGL(weapon));
     }
 
     @Override
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> countAsOffensiveWeapon(weapon)
-                && !mek.isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()
+                && !mek.isArm(weapon.getLocation()) && !weapon.isMekTurretMounted()
                 && (weapon.isRearMounted() || isRearFacingVGL(weapon));
     }
 
     @Override
-    protected boolean isNominalRear(Mounted weapon) {
+    protected boolean isNominalRear(Mounted<?> weapon) {
         return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) && !mek.isArm(weapon.getLocation())
-                && !weapon.isMechTurretMounted();
+                && !weapon.isMekTurretMounted();
     }
 
     @Override
@@ -373,16 +377,16 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected void processWeight() {
         double aesMultiplier = 1;
-        if (entity.hasFunctionalArmAES(Mech.LOC_LARM)) {
+        if (entity.hasFunctionalArmAES(Mek.LOC_LARM)) {
             aesMultiplier += 0.1;
         }
-        if (entity.hasFunctionalArmAES(Mech.LOC_RARM)) {
+        if (entity.hasFunctionalArmAES(Mek.LOC_RARM)) {
             aesMultiplier += 0.1;
         }
         if (entity.hasFunctionalLegAES()) {
-            if (mek instanceof BipedMech) {
+            if (mek instanceof BipedMek) {
                 aesMultiplier += 0.2;
-            } else if (mek instanceof QuadMech) {
+            } else if (mek instanceof QuadMek) {
                 aesMultiplier += 0.4;
             }
         }
@@ -409,15 +413,15 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     protected void processSummarize() {
         double cockpitMod = 1;
         String modifier = "";
-        if ((mek.getCockpitType() == Mech.COCKPIT_SMALL)
-                || (mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                || (mek.getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE)) {
+        if ((mek.getCockpitType() == Mek.COCKPIT_SMALL)
+                || (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+                || (mek.getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         } else if (entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             cockpitMod = 0.95;
             modifier = " (Drone Op. Sys.)";
-        } else if (mek.getCockpitType() == Mech.COCKPIT_INTERFACE) {
+        } else if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {
             cockpitMod = 1.3;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         }
@@ -439,9 +443,12 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     /**
-     * Used in BV calculations. Any equipment that will destroy the unit or leg it if it explodes
-     * decreases the defensive battle rating. This is anything in the head, CT, or leg,
-     * or side torso if it has >= 3 engine crits, or any location that can transfer damage to that
+     * Used in BV calculations. Any equipment that will destroy the unit or leg it
+     * if it explodes
+     * decreases the defensive battle rating. This is anything in the head, CT, or
+     * leg,
+     * or side torso if it has >= 3 engine crits, or any location that can transfer
+     * damage to that
      * location.
      *
      * @param loc The location index
@@ -451,9 +458,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if ((loc == Entity.LOC_NONE) || entity.hasCASEII(loc)) {
             return false;
         }
-        if (!entity.entityIsQuad() && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))) {
+        if (!entity.entityIsQuad() && ((loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM))) {
             return !entity.locationHasCase(loc) && hasExplosiveEquipmentPenalty(entity.getTransferLocation(loc));
-        } else if ((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) {
+        } else if ((loc == Mek.LOC_RT) || (loc == Mek.LOC_LT)) {
             return !entity.locationHasCase(loc) || (entity.getEngine().getSideTorsoCriticalSlots().length >= 3);
         } else {
             return true;
@@ -461,14 +468,14 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     /**
-     * Returns the (first) CriticalSlot object for a given mounted equipment in its main location. This is
+     * Returns the (first) CriticalSlot object for a given mounted equipment in its
+     * main location. This is
      * used to find the CriticalSlot for ammo which only uses a single CriticalSlot.
      *
      * @param mounted the equipment to look for
      * @return a CriticalSlot that holds the mounted or null if none can be found
      */
-    public @Nullable
-    CriticalSlot getCriticalSlot(Mounted mounted) {
+    public @Nullable CriticalSlot getCriticalSlot(Mounted<?> mounted) {
         int location = mounted.getLocation();
         if (location == Entity.LOC_NONE) {
             return null;
@@ -488,8 +495,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected int getRunningTMM() {
         int mp = runMP;
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            mp = ((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION);
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            mp = ((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION);
             if (mp == 0) {
                 return 0;
             } else {
@@ -506,8 +513,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            return runMP + (int) (Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
+        if ((mek instanceof LandAirMek) && (((LandAirMek) mek).getLAMType() == LandAirMek.LAM_STANDARD)) {
+            return runMP + (int) (Math
+                    .round(((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
         } else {
             return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
         }

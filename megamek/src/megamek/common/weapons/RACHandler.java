@@ -21,7 +21,7 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -36,7 +36,7 @@ public class RACHandler extends UltraWeaponHandler {
      * @param g
      * @param m
      */
-    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public RACHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -49,9 +49,7 @@ public class RACHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        }
-
-        if (ae instanceof Infantry) {
+        } else if (ae.isConventionalInfantry()) {
             return false;
         }
         boolean jams = false;

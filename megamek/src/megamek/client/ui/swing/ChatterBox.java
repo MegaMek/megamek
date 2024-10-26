@@ -14,11 +14,10 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.commands.ClientCommand;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
@@ -33,9 +32,10 @@ import java.util.LinkedList;
  * ChatterBox keeps track of a player list and a (chat) message buffer. Although
  * it is not an AWT component, it keeps one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener, IPreferenceChangeListener {
+public class ChatterBox implements KeyListener {
     public static final int MAX_HISTORY = 10;
     Client client;
+    private final ClientGUI clientGUI;
 
     private JPanel chatPanel;
     JTextArea chatArea;
@@ -54,6 +54,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
+        clientGUI = clientgui;
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
@@ -139,7 +140,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (inputField.getText().equals("")) {
+                if (inputField.getText().isBlank()) {
                     inputField.setText(chatPlaceholder);
                 }
             }
@@ -153,7 +154,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 scrPlayers, new JScrollPane(chatArea));
         playerChatSplit.setResizeWeight(0.01);
-        
+
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.setPreferredSize(new Dimension(284, 80));
         subPanel.setMinimumSize(new Dimension(284, 80));
@@ -177,9 +178,6 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
-
-        adaptToGUIScale();
-        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -237,10 +235,10 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
 
-            if (!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+            if (!inputField.getText().startsWith(ClientCommand.CLIENT_COMMAND)) {
                 client.sendChat(inputField.getText());
             } else {
-                systemMessage(client.runCommand(inputField.getText()));
+                systemMessage(clientGUI.runCommand(inputField.getText()));
             }
             inputField.setText("");
 
@@ -285,20 +283,5 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     public void setChatterBox2(ChatterBox2 cb2) {
         this.cb2 = cb2;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(chatPanel, UIUtil.FONT_SCALE1);
-        UIUtil.adjustContainer(butDone, UIUtil.FONT_SCALE1);
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        switch (e.getName()) {
-            case GUIPreferences.GUI_SCALE:
-                adaptToGUIScale();
-                break;
-
-        }
     }
 }

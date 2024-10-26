@@ -16,10 +16,11 @@
 
 package megamek.common.planetaryconditions;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import megamek.common.*;
-
 import java.io.Serializable;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import megamek.common.*;
 
 
 /**
@@ -327,14 +328,14 @@ public class PlanetaryConditions implements Serializable {
                 if ((en instanceof VTOL)
                         || en.getMovementMode().isHoverOrWiGE()) {
                     penalty = 2;
-                } else if ((en instanceof Mech)
+                } else if ((en instanceof Mek)
                         || (en.isAirborne())) {
                     penalty = 1;
                 }
                 break;
             case STORM:
                 if ((en instanceof VTOL)
-                        || (en instanceof Mech)
+                        || (en instanceof Mek)
                         || en.getMovementMode().isHoverOrWiGE()) {
                     penalty = 3;
                 } else if (en.isAirborne()) {
@@ -573,7 +574,7 @@ public class PlanetaryConditions implements Serializable {
                 && !((Infantry) en).isXCT();
         if ((en instanceof Tank)
                 || InfantryNotXCT
-                || (en instanceof Protomech)) {
+                || (en instanceof ProtoMek)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
 
@@ -590,7 +591,7 @@ public class PlanetaryConditions implements Serializable {
             return "vacuum";
         }
         if (getWind().isTornadoF4()
-                && !(en instanceof Mech)) {
+                && !(en instanceof Mek)) {
             return "tornado";
         }
         boolean doomF1ToF3Types = en.isConventionalInfantry()
@@ -625,17 +626,17 @@ public class PlanetaryConditions implements Serializable {
 
         boolean Spotlight = false;
 
-        boolean isMechOrVee = false;
+        boolean isMekOrVee = false;
         boolean isLargeCraft = false;
         boolean isAero = false;
 
         // Needed for MekWars for Maximum Visual Range.
         if (en == null) {
-            isMechOrVee = true;
+            isMekOrVee = true;
             Spotlight = targetIlluminated;
         } else {
             Spotlight = en.isUsingSearchlight();
-            isMechOrVee = (en instanceof Mech && !en.isAero())
+            isMekOrVee = (en instanceof Mek && !en.isAero())
                     || (en instanceof Tank);
             isLargeCraft = (en instanceof Dropship)
                     || (en instanceof Jumpship);
@@ -660,14 +661,14 @@ public class PlanetaryConditions implements Serializable {
         } else if (Spotlight
                 && (getLight().isDuskOrFullMoonOrMoonlessOrPitchBack())) {
             // Using a searchlight?  Flat 30 hex range
-            if (isMechOrVee || isAero || isLargeCraft) {
+            if (isMekOrVee || isAero || isLargeCraft) {
                 lightRange = 30;
             } else {
                 // Except infantry/handheld, 10 hexes
                 lightRange = 10;
             }
         } else if (getLight().isPitchBack()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 3;
             } else if (isAero) {
                 lightRange = 5;
@@ -677,7 +678,7 @@ public class PlanetaryConditions implements Serializable {
                 lightRange = 1;
             }
         } else if (getLight().isMoonless()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 5;
             } else if (isAero) {
                 lightRange = 10;
@@ -687,7 +688,7 @@ public class PlanetaryConditions implements Serializable {
                 lightRange = 2;
             }
         } else if (getLight().isFullMoon()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 10;
             } else if (isAero) {
                 lightRange = 20;
@@ -697,7 +698,7 @@ public class PlanetaryConditions implements Serializable {
                 lightRange = 5;
             }
         } else if (getLight().isDusk()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 15;
             } else if (isAero) {
                 lightRange = 30;
@@ -707,7 +708,7 @@ public class PlanetaryConditions implements Serializable {
                 lightRange = 8;
             }
         } else {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 60;
             } else if (isAero) {
                 lightRange = 120;
@@ -721,7 +722,7 @@ public class PlanetaryConditions implements Serializable {
         int otherRange = 0;
 
         if (getFog().isFogHeavy()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 5;
             } else if (isAero) {
                 otherRange = 10;
@@ -732,7 +733,7 @@ public class PlanetaryConditions implements Serializable {
             }
         } else if (isBlowingSandActive()
                 || getWeather().isGustingRainOrDownpourOrHeavySnowOrIceStormOrSleetOrHeavyHail()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 10;
             } else if (isAero) {
                 otherRange = 20;
@@ -743,7 +744,7 @@ public class PlanetaryConditions implements Serializable {
             }
         } else if (getWeather().isHeavyRainOrModerateSnowOrSnowFlurries()
                 && getWind().isStrongerThan(Wind.LIGHT_GALE)) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 15;
             } else if (isAero) {
                 otherRange = 30;
@@ -753,7 +754,7 @@ public class PlanetaryConditions implements Serializable {
                 otherRange = 8;
             }
         } else if (getWeather().isModerateRainOrModerateSnowOrLightningStorm()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 20;
             } else if (isAero) {
                 otherRange = 50;
@@ -764,7 +765,7 @@ public class PlanetaryConditions implements Serializable {
             }
         } else if (getWeather().isLightRainOrLightSnowOrLightHail()
                 || getFog().isFogLight()) {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 30;
             } else if (isAero) {
                 otherRange = 60;
@@ -774,7 +775,7 @@ public class PlanetaryConditions implements Serializable {
                 otherRange = 15;
             }
         } else {
-            if (isMechOrVee || isLowAltitudeAero) {
+            if (isMekOrVee || isLowAltitudeAero) {
                 otherRange = 60;
             } else if (isAero) {
                 otherRange = 120;

@@ -24,7 +24,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +34,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 5545991061428671743L;
     private int chargedCapacitor = 0;
 
-    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
@@ -53,7 +53,7 @@ public class PPCHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -111,7 +111,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         return (int) Math.ceil(toReturn);
@@ -119,7 +119,7 @@ public class PPCHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -163,7 +163,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                             || slot1.isHit()) {
                         continue;
                     }
-                    Mounted mounted = slot1.getMount();
+                    Mounted<?> mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
                         slot1.setHit(true);
                         break;
@@ -208,7 +208,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                         continue;
                     }
                     // Only one Crit needs to be damaged.
-                    Mounted mounted = slot.getMount();
+                    Mounted<?> mounted = slot.getMount();
                     if (mounted.equals(weapon)) {
                         slot.setDestroyed(true);
                         break;

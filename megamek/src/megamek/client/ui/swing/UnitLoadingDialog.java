@@ -27,7 +27,7 @@ import javax.swing.JLabel;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummaryCache;
 
 public class UnitLoadingDialog extends JDialog {
     private static final long serialVersionUID = -3454307876761238915L;
@@ -42,10 +42,10 @@ public class UnitLoadingDialog extends JDialog {
     // Determines how often to update the loading dialog.
     // Setting this too low causes noticeable loading delays.
     private static final long UPDATE_FREQUENCY = 50;
-    
+
     boolean loadingDone = false;
-    
-    private MechSummaryCache.Listener mechSummaryCacheListener = () -> {
+
+    private MekSummaryCache.Listener mekSummaryCacheListener = () -> {
         loadingDone = true;
         setVisible(false);
     };
@@ -70,7 +70,7 @@ public class UnitLoadingDialog extends JDialog {
         setLocationRelativeTo(frame);
 
         Runnable r = () -> {
-            while (!loadingDone && !MechSummaryCache.getInstance().isInitialized()) {
+            while (!loadingDone && !MekSummaryCache.getInstance().isInitialized()) {
                 updateCounts();
                 try {
                     Thread.sleep(UPDATE_FREQUENCY);
@@ -79,14 +79,14 @@ public class UnitLoadingDialog extends JDialog {
                 }
             }
         };
-        MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
+        MekSummaryCache.getInstance().addListener(mekSummaryCacheListener);
         Thread t = new Thread(r, "Unit Loader Dialog");
         t.start();
     }
 
     void updateCounts() {
-        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
-        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
-        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
+        lCacheCount.setText(String.valueOf(MekSummaryCache.getInstance().getCacheCount()));
+        lFileCount.setText(String.valueOf(MekSummaryCache.getInstance().getFileCount()));
+        lZipCount.setText(String.valueOf(MekSummaryCache.getInstance().getZipCount()));
     }
 }

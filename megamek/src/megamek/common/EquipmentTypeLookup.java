@@ -47,13 +47,13 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String IMPROVED_JUMP_JET = "Improved Jump Jet";
     @EquipmentName public static final String PROTOTYPE_JUMP_JET = "ISPrototypeJumpJet";
     @EquipmentName public static final String PROTOTYPE_IMPROVED_JJ = "ISPrototypeImprovedJumpJet";
-    @EquipmentName public static final String MECH_UMU = "UMU";
-    @EquipmentName public static final String MECH_JUMP_BOOSTER = "MechanicalJumpBooster";
+    @EquipmentName public static final String MEK_UMU = "UMU";
+    @EquipmentName public static final String MECHANICAL_JUMP_BOOSTER = "MechanicalJumpBooster";
     @EquipmentName public static final String VEHICLE_JUMP_JET = "VehicleJumpJet";
-    @EquipmentName public static final String PROTOMECH_JUMP_JET = "ProtomechJumpJet";
+    @EquipmentName public static final String PROTOMEK_JUMP_JET = "ProtoMechJumpJet";
     @EquipmentName public static final String EXTENDED_JUMP_JET_SYSTEM = "ExtendedJumpJetSystem";
-    @EquipmentName public static final String PROTOMECH_UMU = "ProtomechUMU";
-    @EquipmentName public static final String PROTOMECH_MYOMER_BOOSTER = "CLMyomerBooster";
+    @EquipmentName public static final String PROTOMEK_UMU = "ProtoMechUMU";
+    @EquipmentName public static final String PROTOMEK_MYOMER_BOOSTER = "CLMyomerBooster";
     @EquipmentName public static final String BA_JUMP_JET = "BAJumpJet";
     @EquipmentName public static final String BA_VTOL = "BAVTOL";
     @EquipmentName public static final String BA_UMU = "BAUMU";
@@ -79,7 +79,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String HITCH = "Hitch";
     @EquipmentName public static final String CLAN_CASE = "CLCASE";
     @EquipmentName public static final String COOLANT_POD = "Coolant Pod";
-    @EquipmentName public static final String MECH_TRACKS = "Tracks";
+    @EquipmentName public static final String MEK_TRACKS = "Tracks";
     @EquipmentName public static final String QUADVEE_WHEELS = "QuadVee Wheels";
     @EquipmentName public static final String IM_EJECTION_SEAT = "Ejection Seat (Industrial Mech)";
     @EquipmentName public static final String TSM = "Triple Strength Myomer";
@@ -111,7 +111,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String TRAILER_CHASSIS_MOD = "TrailerChassisMod";
     @EquipmentName public static final String ULTRALIGHT_CHASSIS_MOD = "UltraLightChassisMod";
     @EquipmentName public static final String VSTOL_CHASSIS_MOD = "VSTOLChassisMod";
-    
+
     @EquipmentName public static final String LIMB_CLUB = "Limb Club";
     @EquipmentName public static final String GIRDER_CLUB = "Girder Club";
     @EquipmentName public static final String TREE_CLUB = "Tree Club";
@@ -154,7 +154,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String SRM_BAY = "SRM Bay";
     @EquipmentName public static final String TELE_CAPITAL_MISSILE_BAY = "Tele-Operated Capital Missile Bay";
     @EquipmentName public static final String THUNDERBOLT_BAY = "Thunderbolt Bay";
-    
+
     @EquipmentName public static final String BACKHOE = "Backhoe";
     @EquipmentName public static final String LIGHT_BRIDGE_LAYER = "LightBridgeLayer";
     @EquipmentName public static final String MEDIUM_BRIDGE_LAYER = "MediumBridgeLayer";
@@ -191,4 +191,6 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String CL_BA_MORTAR_HEAVY = "CLBAHeavyMortar";
     @EquipmentName public static final String CL_BA_MORTAR_LIGHT = "CLBALightMortar";
     @EquipmentName public static final String IS_BA_TUBE_ARTY = "ISBATubeArtillery";
+    @EquipmentName public static final String THUMPER_ARTY = "ISThumper";
+    @EquipmentName public static final String SNIPER_ARTY = "ISSniper";
 }

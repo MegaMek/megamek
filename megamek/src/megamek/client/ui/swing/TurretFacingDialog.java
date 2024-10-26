@@ -13,15 +13,31 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
-import megamek.common.*;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Graphics2D;
+import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
+
+import megamek.client.ui.Messages;
+import megamek.common.Hex;
+import megamek.common.Mek;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Tank;
 
 /**
  * @author beerockxs
@@ -30,18 +46,18 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -4509638026655222982L;
     private JButton butOkay = new JButton(Messages.getString("Okay"));
     private JButton butCancel = new JButton(Messages.getString("Cancel"));
-    Mech mech;
+    Mek mek;
     Tank tank;
-    Mounted turret;
+    Mounted<?> turret;
     ButtonGroup buttonGroup = new ButtonGroup();
     ClientGUI clientgui;
 
     ArrayList<JRadioButton> facings = new ArrayList<>();
 
-    public TurretFacingDialog(JFrame parent, Mech mech, Mounted turret, ClientGUI clientgui) {
+    public TurretFacingDialog(JFrame parent, Mek mek, Mounted<?> turret, ClientGUI clientgui) {
         super(parent, "Turret facing", false);
         super.setResizable(false);
-        this.mech = mech;
+        this.mek = mek;
         this.turret = turret;
         this.clientgui = clientgui;
         butOkay.addActionListener(this);
@@ -55,30 +71,30 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         }
         int turretFacing = 0;
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET) || turret.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
-            if (turret.getLocation() == Mech.LOC_LT) {
-                for (Mounted mount : mech.getEquipment()) {
-                    if ((mount.getLocation() == Mech.LOC_LT) && mount.isMechTurretMounted()) {
+            if (turret.getLocation() == Mek.LOC_LT) {
+                for (Mounted<?> mount : mek.getEquipment()) {
+                    if ((mount.getLocation() == Mek.LOC_LT) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
                 }
-            } else if (turret.getLocation() == Mech.LOC_RT) {
-                for (Mounted mount : mech.getEquipment()) {
-                    if ((mount.getLocation() == Mech.LOC_RT) && mount.isMechTurretMounted()) {
+            } else if (turret.getLocation() == Mek.LOC_RT) {
+                for (Mounted<?> mount : mek.getEquipment()) {
+                    if ((mount.getLocation() == Mek.LOC_RT) && mount.isMekTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
                 }
             }
         } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
-            for (Mounted mount : mech.getEquipment()) {
-                if ((mount.getLocation() == Mech.LOC_HEAD) && mount.isMechTurretMounted()) {
+            for (Mounted<?> mount : mek.getEquipment()) {
+                if ((mount.getLocation() == Mek.LOC_HEAD) && mount.isMekTurretMounted()) {
                     turretFacing = mount.getFacing();
                     break;
                 }
             }
         }
-        int frontFacing = mech.getFacing();
+        int frontFacing = mek.getFacing();
         // select appropriate button if we already have a facing
         for (JRadioButton button : facings) {
             if (button.getActionCommand().equals(((frontFacing + turretFacing) % 6) + "")) {
@@ -100,10 +116,10 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         // for shoulder turrets, we need to disable the appropriate facings
         // opposite of the shoulder the turret is mounted on
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
-            if (turret.getLocation() == Mech.LOC_LT) {
+            if (turret.getLocation() == Mek.LOC_LT) {
                 facings.get((frontFacing + 1) % 6).setEnabled(false);
                 facings.get((frontFacing + 2) % 6).setEnabled(false);
-            } else if (turret.getLocation() == Mech.LOC_RT) {
+            } else if (turret.getLocation() == Mek.LOC_RT) {
                 facings.get((frontFacing + 4) % 6).setEnabled(false);
                 facings.get((frontFacing + 5) % 6).setEnabled(false);
             }
@@ -117,13 +133,13 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         tempPanel.add(panWest, BorderLayout.WEST);
 
         JLabel labImage = new JLabel();
-        clientgui.loadPreviewImage(labImage, mech);
-        Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
+        clientgui.loadPreviewImage(labImage, mek);
+        Image mekImage = ((ImageIcon) labImage.getIcon()).getImage();
         Image hexImage = clientgui.getBoardView().getTilesetManager().baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
-        g2.drawImage(mechImage, 0, 0, null);
+        g2.drawImage(mekImage, 0, 0, null);
         labImage.setIcon(new ImageIcon(toDraw));
         labImage.setHorizontalAlignment(SwingConstants.CENTER);
         tempPanel.add(labImage, BorderLayout.CENTER);
@@ -137,7 +153,8 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         add(tempPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
-        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2), (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
+                (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public TurretFacingDialog(JFrame parent, Tank tank, ClientGUI clientgui) {
@@ -188,12 +205,12 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
 
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, tank);
-        Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
+        Image mekImage = ((ImageIcon) labImage.getIcon()).getImage();
         Image hexImage = clientgui.getBoardView().getTilesetManager().baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
-        g2.drawImage(mechImage, 0, 0, null);
+        g2.drawImage(mekImage, 0, 0, null);
         labImage.setIcon(new ImageIcon(toDraw));
         labImage.setHorizontalAlignment(SwingConstants.CENTER);
         tempPanel.add(labImage, BorderLayout.CENTER);
@@ -207,7 +224,8 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         add(tempPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
-        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2), (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2),
+                (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     @Override
@@ -217,34 +235,35 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         } else if (ae.getSource().equals(butOkay)) {
             int facing = Integer.parseInt(buttonGroup.getSelection().getActionCommand());
             int locToChange;
-            if (mech != null) {
-                facing = ((6 - mech.getFacing()) + facing) % 6;
+            if (mek != null) {
+                facing = ((6 - mek.getFacing()) + facing) % 6;
                 turret.setFacing(facing);
-                clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(turret), facing);
-                if (turret.getLocation() == Mech.LOC_CT) {
-                    locToChange = Mech.LOC_HEAD;
+                clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(turret), facing);
+                if (turret.getLocation() == Mek.LOC_CT) {
+                    locToChange = Mek.LOC_HEAD;
                 } else {
                     locToChange = turret.getLocation();
                 }
 
-                Mounted firstMountedWeapon = null;  // Take note of the first weapon mounted on this turret.
-                Mounted currentSelectedWeapon = null; // Take note of current selected weapon.
+                Mounted<?> firstMountedWeapon = null; // Take note of the first weapon mounted on this turret.
+                Mounted<?> currentSelectedWeapon = null; // Take note of current selected weapon.
                 if (clientgui.getUnitDisplay() != null) {
                     currentSelectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
                 }
 
-                for (Mounted weapon : mech.getWeaponList()) {
-                    if ((weapon.getLocation() == locToChange) && weapon.isMechTurretMounted()) {
+                for (Mounted<?> weapon : mek.getWeaponList()) {
+                    if ((weapon.getLocation() == locToChange) && weapon.isMekTurretMounted()) {
                         weapon.setFacing(facing);
-                        clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(weapon), facing);
+                        clientgui.getClient().sendMountFacingChange(mek.getId(), mek.getEquipmentNum(weapon), facing);
 
-                        // Tag the first mounted weapon as a backup option to refresh after the turret rotation.
+                        // Tag the first mounted weapon as a backup option to refresh after the turret
+                        // rotation.
                         if (firstMountedWeapon == null) {
                             firstMountedWeapon = weapon;
                         }
 
                         // If the currently selected weapon is in the turret, refresh it by default.
-                        if (mech.getEquipmentNum(currentSelectedWeapon) == mech.getEquipmentNum(weapon)) {
+                        if (mek.getEquipmentNum(currentSelectedWeapon) == mek.getEquipmentNum(weapon)) {
                             firstMountedWeapon = currentSelectedWeapon;
                         }
                     }
@@ -252,14 +271,14 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
 
                 // Select the mounted weapon in the unit display to refresh the firing arch.
                 if (clientgui.getUnitDisplay() != null) {
-                    clientgui.getUnitDisplay().wPan.selectWeapon(mech.getEquipmentNum(firstMountedWeapon));
+                    clientgui.getUnitDisplay().wPan.selectWeapon(mek.getEquipmentNum(firstMountedWeapon));
                 }
             } else if (tank != null) {
                 tank.setDualTurretOffset(((6 - tank.getFacing()) + facing) % 6);
                 clientgui.getClient().sendUpdateEntity(tank);
 
                 // `turret` is null here - need to find the first weapon ID of the 2nd turret.
-                for (Mounted weapon : tank.getWeaponList()) {
+                for (Mounted<?> weapon : tank.getWeaponList()) {
                     if (weapon.getLocation() == tank.getLocTurret2()) {
                         turret = weapon;
                         break;

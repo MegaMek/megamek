@@ -1,10 +1,28 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.commands;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import megamek.client.Client;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
@@ -26,9 +44,9 @@ public class ShowTileCommand extends ClientCommand {
         directions.add("SE");
     }
 
-    public ShowTileCommand(Client client) {
+    public ShowTileCommand(ClientGUI clientGUI) {
         super(
-                client,
+                clientGUI,
                 "tile",
                 "print the information about a tile into the chat window. " +
                         "Usage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. " +
@@ -50,10 +68,10 @@ public class ShowTileCommand extends ClientCommand {
             Coords coord;
             if ((args.length >= 1) && directions.contains(args[0].toUpperCase())) {
                 i = 1;
-                coord = getClient().getCurrentHex().translated(args[0]);
+                coord = getClientGUI().getCurrentHex().translated(args[0]);
             } else if ((args.length > 1) && directions.contains(args[1].toUpperCase()) ) {
                 i = 2;
-                coord = getClient().getCurrentHex().translated(args[1]);
+                coord = getClientGUI().getCurrentHex().translated(args[1]);
             } else {
                 coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
                         .parseInt(args[2]) - 1);
@@ -62,7 +80,7 @@ public class ShowTileCommand extends ClientCommand {
 
             do {
                 hex = getClient().getGame().getBoard().getHex(coord);
-                getClient().setCurrentHex(hex);
+                getClientGUI().setCurrentHex(hex);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
                           + (coord.getY() + 1) + ") : " + hex;

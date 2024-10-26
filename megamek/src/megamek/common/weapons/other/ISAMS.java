@@ -34,7 +34,7 @@ public class ISAMS extends AmmoWeapon {
         heat = 1;
         rackSize = 2;
         damage = 2; // for manual operation
-        minimumRange = 0; 
+        minimumRange = 0;
         shortRange = 1;
         mediumRange = 1;
         longRange = 1;
@@ -45,7 +45,7 @@ public class ISAMS extends AmmoWeapon {
         tonnage = 0.5;
         criticals = 1;
         bv = 32;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
@@ -63,7 +63,7 @@ public class ISAMS extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

@@ -13,18 +13,20 @@
  */
 package megamek.server;
 
+import java.io.File;
+import java.io.FileReader;
+import java.util.Properties;
+
 import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.commandline.ClientServerCommandLineParser;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.File;
-import java.io.FileReader;
-import java.util.Properties;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class DedicatedServer {
+    private static final MMLogger logger = MMLogger.create(DedicatedServer.class);
 
     public static void start(String[] args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
@@ -33,14 +35,13 @@ public class DedicatedServer {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+            logger.error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
         }
 
         ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
                 PreferenceManager.getClientPreferences().getLastServerPass(),
                 PreferenceManager.getClientPreferences().getLastServerPort(),
-                null, null
-                );
+                null, null);
 
         EmailService mailer = null;
         if (resolver.mailPropertiesFile != null) {
@@ -50,9 +51,10 @@ public class DedicatedServer {
                 mailProperties.load(propsReader);
                 mailer = new EmailService(mailProperties);
             } catch (Exception ex) {
-                LogManager.getLogger().error(
+                logger.error(
                         "Error: could not load mail properties file \"" +
-                                propsFile.getAbsolutePath() + "\"", ex);
+                                propsFile.getAbsolutePath() + "\"",
+                        ex);
                 return;
             }
         }
@@ -64,9 +66,10 @@ public class DedicatedServer {
         Server server;
 
         try {
-            server = new Server(resolver.password, resolver.port, new GameManager(), resolver.registerServer, resolver.announceUrl, mailer, true);
+            server = new Server(resolver.password, resolver.port, new TWGameManager(), resolver.registerServer,
+                    resolver.announceUrl, mailer, true);
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error: could not start server at localhost" + ":" + resolver.port, ex);
+            logger.error("Error: could not start server at localhost" + ":" + resolver.port, ex);
             return;
         }
 

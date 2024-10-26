@@ -251,3 +251,4 @@ base 2 "tundra:1" "" "tundra/tundra_2.gif"
 base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
 base * "impassable:1" "" "boring/solidrock.gif"
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"

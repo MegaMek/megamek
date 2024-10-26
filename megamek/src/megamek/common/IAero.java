@@ -15,18 +15,26 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
-import org.apache.logging.log4j.LogManager;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 
 /**
- * Methods shared by Aero and LandAirMech
+ * Methods shared by Aero and LandAirMek
  *
  * @author Neoancient
  *
  */
 public interface IAero {
+
+    static final MMLogger logger = MMLogger.create(IAero.class);
 
     int getCurrentThrust();
 
@@ -132,6 +140,8 @@ public interface IAero {
 
     int getThresh(int loc);
 
+    int getHighestThresh();
+
     boolean wasCritThresh();
 
     void setCritThresh(boolean b);
@@ -146,6 +156,17 @@ public interface IAero {
 
     double getFuelPointsPerTon();
 
+    /**
+     * @return True when this aero requires fuel to move. Note that the result is
+     *         undefined when
+     *         the unit has no engine. Callers should consider this case themselves.
+     *         Also note that
+     *         this method does not check whether fuel use as a game option is
+     *         active, only if the unit
+     *         technically requires fuel to move. For example, returns false for
+     *         solar powered prop-driven
+     *         fixed wing support (TM p129).
+     */
     default boolean requiresFuel() {
         return true;
     }
@@ -173,7 +194,6 @@ public interface IAero {
 
     int getAltitude();
 
-
     /**
      * Iterate through current weapons and count the number in each capital
      * fighter location.
@@ -189,43 +209,46 @@ public interface IAero {
      * Refresh the capital fighter weapons groups.
      */
     default void updateWeaponGroups() {
-        // first we need to reset all the weapons in our existing mounts to zero
-        // until proven otherwise
-        Set<String> set = getWeaponGroups().keySet();
-        Iterator<String> iter = set.iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(0);
-        }
-        // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = groupWeaponsByLocation();
-        // now we just need to traverse the hash and either update our existing
-        // equipment or add new ones if there is none
-        Set<String> newSet = groups.keySet();
-        Iterator<String> newIter = newSet.iterator();
-        while (newIter.hasNext()) {
-            String key = newIter.next();
-            if (null != getWeaponGroups().get(key)) {
-                // then this equipment is already loaded, so we just need to
-                // correctly update the number of weapons
-                ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
-            } else {
-                // need to add a new weapon
-                String name = key.split(":")[0];
-                int loc = Integer.parseInt(key.split(":")[1]);
-                EquipmentType etype = EquipmentType.get(name);
-                Mounted newmount;
-                if (etype != null) {
-                    try {
-                        newmount = ((Entity) this).addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
-                    } catch (LocationFullException ex) {
-                        LogManager.getLogger().error("Unable to compile weapon groups", ex);
-                        return;
+        if ((this instanceof Entity entity) && (entity.game != null)
+                && entity.game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
+            // first we need to reset all the weapons in our existing mounts to zero
+            // until proven otherwise
+            Set<String> set = getWeaponGroups().keySet();
+            Iterator<String> iter = set.iterator();
+            while (iter.hasNext()) {
+                String key = iter.next();
+                ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(0);
+            }
+            // now collect a hash of all the same weapons in each location by id
+            Map<String, Integer> groups = groupWeaponsByLocation();
+            // now we just need to traverse the hash and either update our existing
+            // equipment or add new ones if there is none
+            Set<String> newSet = groups.keySet();
+            Iterator<String> newIter = newSet.iterator();
+            while (newIter.hasNext()) {
+                String key = newIter.next();
+                if (null != getWeaponGroups().get(key)) {
+                    // then this equipment is already loaded, so we just need to
+                    // correctly update the number of weapons
+                    ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
+                } else {
+                    // need to add a new weapon
+                    String name = key.split(":")[0];
+                    int loc = Integer.parseInt(key.split(":")[1]);
+                    EquipmentType etype = EquipmentType.get(name);
+                    Mounted<?> newmount;
+                    if (etype != null) {
+                        try {
+                            newmount = ((Entity) this).addWeaponGroup(etype, loc);
+                            newmount.setNWeapons(groups.get(key));
+                            getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
+                        } catch (LocationFullException ex) {
+                            logger.error("Unable to compile weapon groups", ex);
+                            return;
+                        }
+                    } else if (!"0".equals(name)) {
+                        ((Entity) this).addFailedEquipment(name);
                     }
-                } else if (!"0".equals(name)) {
-                    ((Entity) this).addFailedEquipment(name);
                 }
             }
         }
@@ -235,7 +258,7 @@ public interface IAero {
      * Set number of fuel points based on fuel tonnage.
      *
      * @param fuelTons
-     *            The number of tons of fuel
+     *                 The number of tons of fuel
      */
     void setFuelTonnage(double fuelTons);
 
@@ -247,7 +270,7 @@ public interface IAero {
     double getFuelTonnage();
 
     /*
-     * Default methods that are implemented the same for Aero and LandAirMech
+     * Default methods that are implemented the same for Aero and LandAirMek
      */
 
     default PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
@@ -314,12 +337,15 @@ public interface IAero {
     default PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(md.getLastStepMovementType());
 
-        // if the entity has already moved, its movement got interrupted (probably by a hidden unit, not much else can interrupt an aero unit)
-        // in which case, the movement is complete. We just need to allow the user to hit 'done'.
+        // if the entity has already moved, its movement got interrupted (probably by a
+        // hidden unit, not much else can interrupt an aero unit)
+        // in which case, the movement is complete. We just need to allow the user to
+        // hit 'done'.
         if (((Entity) this).delta_distance > 0) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
-        // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere,
-        // hovering, landing, or going off board
+            // an airborne, aerodyne aero is considered to "stall" if it's not moving
+            // anywhere,
+            // hovering, landing, or going off board
         } else if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid()
                 && !((Entity) this).getGame().getBoard().inSpace() && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND) && !md.contains(MoveStepType.RETURN)
@@ -399,12 +425,13 @@ public interface IAero {
      *
      * @param moveType
      * @param velocity
-     *            Velocity when the check is to be made, this needs to be passed
-     *            as the check could happen as part of a Move Path
+     *                   Velocity when the check is to be made, this needs to be
+     *                   passed
+     *                   as the check could happen as part of a Move Path
      * @param landingPos
-     *            The final position the Aero will land on.
+     *                   The final position the Aero will land on.
      * @param isVertical
-     *            If this a vertical or horizontal landing
+     *                   If this a vertical or horizontal landing
      * @return A PilotingRollData tha represents the landing control roll that
      *         must be passed
      */
@@ -430,7 +457,8 @@ public interface IAero {
             roll.addModifier(+2, "No life support");
         }
 
-        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
+        // Landing Gear Partial Repairs, only apply if the landing gear isn't currently
+        // damaged
         if (getLandingGearMod(false) == 0) {
             if (getLandingGearPartialRepairs() == 2) {
                 roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
@@ -443,7 +471,8 @@ public interface IAero {
         if (avihits < 3) {
             if (getAvionicsMisrepaired() == 1) {
                 roll.addModifier(1, "misrepaired avionics");
-            } if (getAvionicsMisreplaced() == 1) {
+            }
+            if (getAvionicsMisreplaced() == 1) {
                 roll.addModifier(1, "misreplaced avionics");
             }
         }
@@ -735,7 +764,8 @@ public interface IAero {
         if (!hex.isClearForLanding()) {
             return "Unacceptable terrain for landing";
         }
-        // Aerospace units are destroyed by water landings except for those that have flotation hulls.
+        // Aerospace units are destroyed by water landings except for those that have
+        // flotation hulls.
         // LAMs are not.
         if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                 && (hex.terrainLevel(Terrains.WATER) > 0)
@@ -776,7 +806,7 @@ public interface IAero {
 
     default int getFuelUsed(int thrust) {
         Entity entity = (Entity) this;
-        if (entity.hasEngine() && entity.getEngine().isSolar()) {
+        if (!entity.hasEngine() || !requiresFuel()) {
             return 0;
         } else {
             int overThrust = Math.max(thrust - entity.getWalkMP(), 0);
@@ -790,14 +820,15 @@ public interface IAero {
      * adjusted by certain game options
      *
      * @param fuelUsed
-     *            The number of fuel points to use
+     *                 The number of fuel points to use
      */
     default void useFuel(int fuelUsed) {
         setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
 
     /**
-     * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
+     * A method to add/remove sensors that only work in space as we transition in
+     * and out of an atmosphere
      */
     default void updateSensorOptions() {
 

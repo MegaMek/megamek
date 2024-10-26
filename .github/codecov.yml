@@ -4,17 +4,16 @@ coverage:
   status:
     project:
       default:
-        target: auto  # auto compares coverage to the previous base commit
-        threshold: 1%  # the leniency in hitting the target
-        informational: true  # makes project checks informational only, not failing
+        target: auto
+        threshold: 1%
+        informational: true
 
     patch:
       default:
-        informational: true  # makes patch checks informational only, not failing
+        informational: true
 
 fixes:
-  - "megamek/::"        # reduce root e.g., "before/path/" => "path/"
+  - "megamek/::"
 
 github_checks:
-  # https://docs.codecov.io/docs/github-checks-beta#disabling-github-checks-patch-annotations-via-yaml
   annotations: false

@@ -1,0 +1,171 @@
+chassis:Templar
+model:TLR1-OR
+mul id:6852
+Config:Biped Omnimech
+techbase:Mixed (IS Chassis)
+era:3134
+source:Record Sheets: 3145 New Tech New Upgrades
+rules level:3
+role:Sniper
+
+
+
+quirk:easy_maintain
+
+
+mass:85
+engine:340 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:15 IS Double
+base chassis heat sinks:13
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:26
+RT armor:26
+CT armor:44
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:8
+ER PPC, Left Arm
+ER PPC, Left Arm
+Medium Re-engineered Laser, Left Arm
+LB 10-X AC, Right Arm
+Medium Re-engineered Laser, Left Torso
+Medium Re-engineered Laser, Left Torso
+Medium Re-engineered Laser, Right Torso
+Medium Re-engineered Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+CLLBXAC10 (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X AC Ammo (OMNIPOD)
+Clan LB 10-X Cluster Ammo (OMNIPOD)
+CLCASEII (OMNIPOD)
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+ISCASE
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Re-engineered Laser (OMNIPOD)
+Medium Re-engineered Laser (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+capabilities:This Dark Age era configuration carries two ER PPCs and an LB 10-X autocannon, all Clan-spec. These are supported by five Medium Re-engineered Lasers.
+deployment: The Templar is built on a lightweight Kallon Type XIX Endo Steel chassis and is powered by a KalTek 340 XL engine that gives the 'Mech a top speed of 64.8 km/h while sacrificing durability. The Templar has thirteen fixed double heat sinks and is armored with sixteen and a half tons of Starshield A armor with CASE fixed in the right torso. Overall, this allows the Templar to have forty tons of free pod space for weapons and equipment which the 'Mech uses effectively in its various configurations.
+history:With a noticeable lack of OmniMechs designed in the Federated Suns, Field Marshal Duke George Hasek went over the heads of the Department of the Quartermaster and commissioned Kallon Industries to design an assault OmniMech and backed the project with his own considerable financial resources. The resulting 'Mech is a force to be reckoned with on the modern battlefield.
+manufacturer:Kallon Industries
+primaryfactory:Talon
+systemmanufacturer:CHASSIS:Kallon Type XIX Endo Steel
+systemmanufacturer:ENGINE:KalTek 340 Extralight
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:COMMUNICATIONS:Newberg Telescan 17
+systemmanufacturer:TARGETING:Spar 3C MegaTrak
+

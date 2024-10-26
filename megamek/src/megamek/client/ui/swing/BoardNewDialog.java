@@ -1,17 +1,45 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import megamek.client.ui.Messages;
+import megamek.logging.MMLogger;
 
 /**
  * a quick class for the new map dialogue box
  */
 public class BoardNewDialog extends JDialog implements ActionListener {
+    private final static MMLogger logger = MMLogger.create(BoardNewDialog.class);
+
     private int xvalue;
     private int yvalue;
     private JLabel labWidth;
@@ -66,8 +94,9 @@ public class BoardNewDialog extends JDialog implements ActionListener {
         pack();
         setResizable(false);
         setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+                - getSize().width / 2,
+                frame.getLocation().y
+                        + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     @Override
@@ -77,7 +106,7 @@ public class BoardNewDialog extends JDialog implements ActionListener {
                 xvalue = Integer.decode(texWidth.getText());
                 yvalue = Integer.decode(texHeight.getText());
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "actionPerformed");
             }
             setVisible(false);
         } else if (evt.getSource().equals(butCancel)) {

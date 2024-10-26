@@ -1,51 +1,41 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.battlearmor;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeaponHandler;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class BATaserHandler extends AmmoWeaponHandler {
-
+    @Serial
     private static final long serialVersionUID = 1308895663099714573L;
 
-    protected BATaserHandler() {
-        // deserialization only
-    }
-
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     * megamek.common.Entity, boolean)
-     */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         boolean done = false;
@@ -61,7 +51,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         if (entityTarget instanceof BattleArmor) {
             if (diceRoll.getIntValue() >= 9) {
                 initHit(entityTarget);
-            
+
                 r = new Report(3706);
                 r.addDesc(entityTarget);
                 // shut down for rest of scenario, so we actually kill it
@@ -70,15 +60,15 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 vPhaseReport.add(r);
                 entityTarget.destroyLocation(hit.getLocation());
                 // Check to see if the squad has been eliminated
-                if (entityTarget.getTransferLocation(hit).getLocation() == 
+                if (entityTarget.getTransferLocation(hit).getLocation() ==
                         Entity.LOC_DESTROYED) {
                     vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
                 }
                 done = true;
             }
-        } else if (entityTarget instanceof Mech) {
-            if (((Mech) entityTarget).isIndustrial()) {
+        } else if (entityTarget instanceof Mek) {
+            if (((Mek) entityTarget).isIndustrial()) {
                 if (diceRoll.getIntValue() >= 11) {
                     entityTarget.taserShutdown(3, true);
                 } else {
@@ -101,7 +91,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(1, 3, true);
                 }
             }
-        } else if ((entityTarget instanceof Protomech)
+        } else if ((entityTarget instanceof ProtoMek)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
             if (diceRoll.getIntValue() >= 11) {

@@ -57,7 +57,7 @@ public class ISHVAC10 extends HVACWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted ignore) {
+    public double getBattleForceDamage(int range, Mounted<?> ignore) {
         return 1;
     }
 

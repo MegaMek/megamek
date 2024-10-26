@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * Stats for beast mounted infantry units. See TO:AU&E, p. 106
+ * Stats for beast mounted infantry units. See TO:AU&amp;E, p. 106
  */
 public class InfantryMount implements Serializable {
     public enum BeastSize {
@@ -27,27 +27,35 @@ public class InfantryMount implements Serializable {
         VERY_LARGE(2, 7, -1, 2, true, false, 1, 1, "BeastSize.very_large"),
         MONSTROUS(4, 2, -2, 3, false, false, 2, 1, "BeastSize.monstrous");
 
-        /** Maximum number of troopers that can be mounted on each beast. For values > 2,
-         * each creature is a separate squad. */
+        /**
+         * Maximum number of troopers that can be mounted on each beast. For values > 2,
+         * each creature is a separate squad.
+         */
         public final int troopsPerCreature;
         /** Maximum number of creatures allowed in a single platoon */
         public final int creaturesPerPlatoon;
         /** Modifer to attack rolls against the beast-mounted infantry due to size */
         public final int toHitMod;
-        /** Maximum number of support weapons allowed per creature. Divide weapon crew needs by 2, rounding up */
+        /**
+         * Maximum number of support weapons allowed per creature. Divide weapon crew
+         * needs by 2, rounding up
+         */
         public final int supportWeaponsPerCreature;
-        /** Whether the infantry unit is permitted to make anti-mech leg attacks */
+        /** Whether the infantry unit is permitted to make anti-mek leg attacks */
         public final boolean canMakeLegAttacks;
-        /** Whether the infantry unit is permitted to make anti-=mech swarm attacks */
+        /** Whether the infantry unit is permitted to make anti-=mek swarm attacks */
         public final boolean canMakeSwarmAttacks;
-        /** Additional MP required to enter a building hex. The building takes twice this much CF damage. */
+        /**
+         * Additional MP required to enter a building hex. The building takes twice this
+         * much CF damage.
+         */
         public final int buildingMP;
         public final int height;
         private final String messageId;
 
         BeastSize(int troopsPerCreature, int creaturesPerPlatoon, int toHitMod,
-                  int supportWeaponsPerCreature, boolean canMakeLegAttacks,
-                  boolean canMakeSwarmAttacks, int buildingMP, int height, String messageId) {
+                int supportWeaponsPerCreature, boolean canMakeLegAttacks,
+                boolean canMakeSwarmAttacks, int buildingMP, int height, String messageId) {
             this.troopsPerCreature = troopsPerCreature;
             this.creaturesPerPlatoon = creaturesPerPlatoon;
             this.toHitMod = toHitMod;
@@ -85,9 +93,9 @@ public class InfantryMount implements Serializable {
     private final boolean custom;
 
     private InfantryMount(String name, BeastSize size, double weight, int movementPoints,
-                         EntityMovementMode movementMode, int burstDamage,
-                         int vehicleDamage, double damageDivisor, int maxWaterDepth,
-                         int secondaryGroundMP, int uwEndurance, boolean custom) {
+            EntityMovementMode movementMode, int burstDamage,
+            int vehicleDamage, double damageDivisor, int maxWaterDepth,
+            int secondaryGroundMP, int uwEndurance, boolean custom) {
         this.name = name;
         this.size = size;
         this.weight = weight;
@@ -103,13 +111,12 @@ public class InfantryMount implements Serializable {
     }
 
     public InfantryMount(String name, BeastSize size, double weight, int movementPoints,
-                          EntityMovementMode movementMode, int burstDamage,
-                          int vehicleDamage, double damageDivisor, int maxWaterDepth,
-                          int secondaryGroundMP, int uwEndurance) {
+            EntityMovementMode movementMode, int burstDamage,
+            int vehicleDamage, double damageDivisor, int maxWaterDepth,
+            int secondaryGroundMP, int uwEndurance) {
         this(name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage, damageDivisor,
                 maxWaterDepth, secondaryGroundMP, uwEndurance, true);
     }
-
 
     /**
      * @return The name of the beast.
@@ -126,7 +133,8 @@ public class InfantryMount implements Serializable {
     }
 
     /**
-     * @return The weight of each beast in tons. Add 2t per trooper to get total weight.
+     * @return The weight of each beast in tons. Add 2t per trooper to get total
+     *         weight.
      */
     public double getWeight() {
         return weight;
@@ -148,7 +156,8 @@ public class InfantryMount implements Serializable {
 
     /**
      *
-     * @return The number of damage dice to use as burst damage against conventional infantry
+     * @return The number of damage dice to use as burst damage against conventional
+     *         infantry
      *         in the same hex.
      */
     public int getBurstDamageDice() {
@@ -156,7 +165,8 @@ public class InfantryMount implements Serializable {
     }
 
     /**
-     * @return The amount of additonal damage done to units other than conventional infantry in the same hex.
+     * @return The amount of additonal damage done to units other than conventional
+     *         infantry in the same hex.
      */
     public int getVehicleDamage() {
         return vehicleDamage;
@@ -185,7 +195,8 @@ public class InfantryMount implements Serializable {
     }
 
     /**
-     * @return For creatures with underwater movement, this is the number of turns they
+     * @return For creatures with underwater movement, this is the number of turns
+     *         they
      *         can stay underwater before needing to resurface.
      */
     public int getUWEndurance() {

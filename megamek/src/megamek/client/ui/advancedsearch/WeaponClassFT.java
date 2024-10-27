@@ -24,20 +24,20 @@ package megamek.client.ui.advancedsearch;
  */
 class WeaponClassFT extends EquipmentFilterToken {
 
-    WeaponClass weaponClass;
+    AdvancedSearchEquipmentClass equipmentClass;
 
-    WeaponClassFT(WeaponClass in_class, int in_qty) {
+    WeaponClassFT(AdvancedSearchEquipmentClass in_class, int in_qty) {
         this(in_class, in_qty, true);
     }
 
-    WeaponClassFT(WeaponClass in_class, int in_qty, boolean atleast) {
-        weaponClass = in_class;
+    WeaponClassFT(AdvancedSearchEquipmentClass in_class, int in_qty, boolean atleast) {
+        equipmentClass = in_class;
         qty = in_qty;
         this.atleast = atleast;
     }
 
     @Override
     public String toString() {
-        return (atleast ? "" : "less than ") + qty + " " + weaponClass.toString() + ((qty != 1) ? "s" : "");
+        return (atleast ? "" : "less than ") + qty + " " + equipmentClass.toString() + ((qty != 1) ? "s" : "");
     }
 }

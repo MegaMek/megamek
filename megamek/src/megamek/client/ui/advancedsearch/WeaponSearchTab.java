@@ -41,24 +41,21 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     final List<FilterToken> filterTokens = new ArrayList<>();
 
-    final JButton btnLeftParen = new JButton("(");
-    final JButton btnRightParen = new JButton(")");
-    final JToggleButton btnLessThan = new JToggleButton("<");
-    final JToggleButton btnAtLeast = new JToggleButton("\u2265");
-    final JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
-    final JButton btnAddMultiOr = new JButton("Add [OR]");
-    final JButton btnAddMultiAnd = new JButton("Add [AND]");
-    final JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
-    final JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
-    final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
-    final JButton btnBack = new JButton("Back");
-    final JLabel lblWEEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
+    private final JButton btnLeftParen = new JButton("(");
+    private final JButton btnRightParen = new JButton(")");
+    private final JSpinner equipmentCount;
+    private final JToggleButton btnLessThan = new JToggleButton("<");
+    private final JToggleButton btnAtLeast = new JToggleButton("\u2265");
+    private final JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
+    private final JButton btnAddMultiOr = new JButton("Add [OR]");
+    private final JButton btnAddMultiAnd = new JButton("Add [AND]");
+    private final JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
+    private final JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
+    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
+    private final JButton btnBack = new JButton("Back");
+    private final JLabel lblWEEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
     final JTextArea txtWEEqExp = new JTextArea("", 2, 40);
-    final JScrollPane expWEScroller = new JScrollPane(txtWEEqExp,
-        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    final JLabel lblUnitType = new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType"));
     private final JButton btnUnitTypeAll = new JButton("All");
     private final JToggleButton btnUnitTypeMek = new JToggleButton("Mek");
     private final JToggleButton btnUnitTypeVee = new JToggleButton("Veh");
@@ -69,12 +66,9 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     private final List<JToggleButton> unitTypeButtons =
         List.of(btnUnitTypeMek, btnUnitTypePM, btnUnitTypeBA, btnUnitTypeCI, btnUnitTypeAero, btnUnitTypeVee);
 
-    final JLabel lblTechClass = new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass"));
     private final JToggleButton btnTechClassIS = new JToggleButton("Inner Sphere");
     private final JToggleButton btnTechClassClan = new JToggleButton("Clan");
 
-    final JLabel lblTechLevelBase = new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel"));
-//    final JList<String> techLevelSelector = new JList<>();
     private final JButton btnTechLevelOfficial = new JButton("Official");
     private final JToggleButton btnTechLevelIntro = new JToggleButton("Intro");
     private final JToggleButton btnTechLevelStd = new JToggleButton("Standard");
@@ -84,25 +78,19 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     private final List<JToggleButton> techLevelButtons =
         List.of(btnTechLevelIntro, btnTechLevelStd, btnTechLevelAdv, btnTechLevelExp, btnTechLevelUnoff);
 
-    final JLabel tableFilterTextLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilter"));
-    final JTextField tableFilterText = new JTextField(10);
+    private final JTextField tableFilterText = new JTextField(10);
     private final JButton filterClearButton = new JButton("X");
+    private final JComboBox<AdvancedSearchEquipmentClass> weaponClassFilter = new JComboBox<>(AdvancedSearchEquipmentClass.values());
 
-    final JLabel lblWeapons = new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons"));
-    final JScrollPane scrTableWeapons = new JScrollPane();
-    final SearchableTable tblWeapons;
-    final WeaponsTableModel weaponsModel;
-    final TableRowSorter<WeaponsTableModel> weaponsSorter;
+    private final SearchableTable tblWeapons;
+    private final WeaponsTableModel weaponsModel;
+    private final TableRowSorter<WeaponsTableModel> weaponsSorter;
 
-    final JLabel lblEquipment = new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment"));
-    final JScrollPane scrTableEquipment = new JScrollPane();
-    final SearchableTable tblEquipment;
-    final EquipmentTableModel equipmentModel;
-    final TableRowSorter<EquipmentTableModel> equipmentSorter;
+    private final SearchableTable tblEquipment;
+    private final EquipmentTableModel equipmentModel;
+    private final TableRowSorter<EquipmentTableModel> equipmentSorter;
 
-    final JLabel lblWeaponClass = new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponClass"));
-    final JSpinner weaponClassCount;
-    final JComboBox<WeaponClass> weaponClassChooser;
+    private final JComboBox<AdvancedSearchEquipmentClass> weaponClassChooser = new JComboBox<>(AdvancedSearchEquipmentClass.values());
 
     private JComponent focusedSelector = null;
     private final TWAdvancedSearchPanel parentPanel;
@@ -132,13 +120,6 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         btnUnitTypeAll.addActionListener(e -> allUnitTypesClicked());
         unitTypeButtons.forEach(button -> button.setSelected(true));
 
-//        techLevelSelector.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-//        techLevelSelector.setVisibleRowCount(1);
-//        techLevelSelector.setListData(TechConstants.T_SIMPLE_NAMES);
-//        techLevelSelector.setSelectedIndices(new int[]{0, 1, 2, 3}); // all except unofficial as the default selection
-//        techLevelSelector.addListSelectionListener(e -> filterTables());
-//        techLevelSelector.setCellRenderer(new ChoiceRenderer());
-
         btnTechClassClan.setSelected(true);
         btnTechClassIS.setSelected(true);
 
@@ -146,9 +127,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         techLevelButtons.forEach(button -> button.setSelected(button != btnTechLevelUnoff));
         addToggleActionListeners();
 
-        // Set up Weapon Class chooser
-        weaponClassCount = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
-        weaponClassChooser = new JComboBox<>(WeaponClass.values());
+        equipmentCount = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
         weaponClassChooser.addFocusListener(this);
 
         // Setup Weapons Table
@@ -181,8 +160,6 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
         }
 
-        scrTableWeapons.setViewportView(tblWeapons);
-
         // Setup Equipment Table
         equipmentModel = new EquipmentTableModel(parentPanel);
         tblEquipment = new SearchableTable(equipmentModel, EquipmentTableModel.COL_NAME) {
@@ -206,8 +183,6 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         var costRenderer = new EquipmentCostRenderer();
         tblEquipment.getColumnModel().getColumn(1).setCellRenderer(costRenderer);
         tblEquipment.getColumnModel().getColumn(2).setCellRenderer(techBaseRenderer);
-
-        scrTableEquipment.setViewportView(tblEquipment);
 
         // Populate Tables
         populateWeaponsAndEquipmentChoices();
@@ -234,6 +209,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         filterClearButton.addActionListener(e -> tableFilterText.setText(""));
         filterClearButton.setToolTipText("Clear the filter text");
         filterClearButton.putClientProperty(FlatClientProperties.STYLE_CLASS, "small");
+        weaponClassFilter.addActionListener(e -> filterTables());
 
         JPanel upperPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -241,10 +217,11 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridwidth = 1;
-        gbc.insets = new Insets(5, 0, 5, 0);
-        upperPanel.add(lblTechClass, gbc);
+        gbc.insets = new Insets(2, 0, 2, 0);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechClass")), gbc);
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         JPanel techClassButtonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        techClassButtonPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
         gbc.weightx = 0;
         techClassButtonPanel.add(btnTechClassIS);
         techClassButtonPanel.add(btnTechClassClan);
@@ -253,9 +230,10 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.weightx = 0;
-        upperPanel.add(lblUnitType, gbc);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.UnitType")), gbc);
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         JPanel unitTypeButtonPanel = new JPanel(new GridLayout(1, 7, 10, 0));
+        unitTypeButtonPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
         unitTypeButtonPanel.add(btnUnitTypeAll);
         unitTypeButtonPanel.add(btnUnitTypeMek);
         unitTypeButtonPanel.add(btnUnitTypeVee);
@@ -268,9 +246,10 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.gridy++;
         gbc.gridwidth = 1;
         gbc.weightx = 0;
-        upperPanel.add(lblTechLevelBase, gbc);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TechLevel")), gbc);
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         JPanel techLevelButtonPanel = new JPanel(new GridLayout(1, 6, 10, 0));
+        techLevelButtonPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
         techLevelButtonPanel.add(btnTechLevelOfficial);
         techLevelButtonPanel.add(btnTechLevelIntro);
         techLevelButtonPanel.add(btnTechLevelStd);
@@ -281,9 +260,12 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.weightx = 0;
 
         JPanel filterPanel = new JPanel();
-        filterPanel.add(tableFilterTextLabel);
+        filterPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.TableFilter")));
         filterPanel.add(tableFilterText);
         filterPanel.add(filterClearButton);
+        filterPanel.add(Box.createHorizontalStrut(10));
+        filterPanel.add(new JLabel("Equipment Group:"));
+        filterPanel.add(weaponClassFilter);
         gbc.gridy++;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         upperPanel.add(filterPanel, gbc);
@@ -292,65 +274,67 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         gbc.gridx = GridBagConstraints.RELATIVE;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
-        upperPanel.add(lblWeapons, gbc);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Weapons")), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridy++;
-        upperPanel.add(scrTableWeapons, gbc);
+        upperPanel.add(new JScrollPane(tblWeapons), gbc);
 
         gbc.gridy++;
-        upperPanel.add(Box.createVerticalStrut(20), gbc);
+        upperPanel.add(Box.createVerticalStrut(10), gbc);
 
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridwidth = 1;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
-        upperPanel.add(lblEquipment, gbc);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Equipment")), gbc);
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridy++;
-        upperPanel.add(scrTableEquipment, gbc);
+        upperPanel.add(new JScrollPane(tblEquipment), gbc);
 
         gbc.gridy++;
-        upperPanel.add(Box.createVerticalStrut(20), gbc);
+        upperPanel.add(Box.createVerticalStrut(10), gbc);
 
-        gbc.gridwidth = 1;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 0, 0, 20);
-        upperPanel.add(lblWeaponClass, gbc);
+        upperPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponClass")), gbc);
         gbc.gridy++;
         JPanel weaponClassPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         weaponClassPanel.add(weaponClassChooser);
         upperPanel.add(weaponClassPanel, gbc);
 
-        JPanel btnPanel = new JPanel();
-        btnPanel.add(btnAtLeast);
-        btnPanel.add(btnLessThan);
-        btnPanel.add(weaponClassCount);
-        btnPanel.add(btnAdd);
-        btnPanel.add(btnAddMultiAnd);
-        btnPanel.add(btnAddMultiOr);
-        btnPanel.add(btnLeftParen);
-        btnPanel.add(btnRightParen);
-        btnPanel.add(btnAnd);
-        btnPanel.add(btnOr);
-        btnPanel.add(btnBack);
-        btnPanel.add(btnClear);
+        JPanel addBtnPanel = new JPanel();
+        addBtnPanel.add(equipmentCount);
+        addBtnPanel.add(btnAtLeast);
+        addBtnPanel.add(btnLessThan);
+        addBtnPanel.add(btnAdd);
+        addBtnPanel.add(btnAddMultiAnd);
+        addBtnPanel.add(btnAddMultiOr);
+
+        JPanel controlBtnPanel = new JPanel();
+        controlBtnPanel.add(btnLeftParen);
+        controlBtnPanel.add(btnRightParen);
+        controlBtnPanel.add(btnAnd);
+        controlBtnPanel.add(btnOr);
+        controlBtnPanel.add(btnBack);
+        controlBtnPanel.add(btnClear);
 
         Box filterExpressionPanel = Box.createHorizontalBox();
         filterExpressionPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
         filterExpressionPanel.add(lblWEEqExpTxt);
         filterExpressionPanel.add(Box.createHorizontalStrut(20));
-        filterExpressionPanel.add(expWEScroller);
+        filterExpressionPanel.add(new JScrollPane(txtWEEqExp));
 
         Box filterAssemblyPanel = Box.createVerticalBox();
         filterAssemblyPanel.add(Box.createVerticalStrut(10));
-        filterAssemblyPanel.add(btnPanel);
+        filterAssemblyPanel.add(addBtnPanel);
+        filterAssemblyPanel.add(controlBtnPanel);
         filterAssemblyPanel.add(filterExpressionPanel);
         filterAssemblyPanel.add(Box.createVerticalStrut(10));
 
@@ -374,7 +358,9 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                     boolean unitTypeMatch = matchUnitTypeToWeapon(wp);
                     boolean textFilterMatch = (tableFilterText.getText() == null) || (tableFilterText.getText().length() < 2)
                         || matchWeaponTextFilter(entry);
-                    return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch;
+                    boolean equipmentClassMatch = (weaponClassFilter.getSelectedItem() instanceof AdvancedSearchEquipmentClass equipmentclass)
+                        && equipmentclass.matches(wp.getInternalName());
+                    return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch && equipmentClassMatch;
                 }
             };
         } catch (PatternSyntaxException ignored) {
@@ -395,7 +381,9 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                     boolean unitTypeMatch = matchUnitTypeToMisc(eq);
                     boolean textFilterMatch = (tableFilterText.getText() == null) || (tableFilterText.getText().length() < 2)
                         || matchEquipmentTextFilter(entry);
-                    return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch;
+                    boolean equipmentClassMatch = (weaponClassFilter.getSelectedItem() instanceof AdvancedSearchEquipmentClass equipmentclass)
+                        && equipmentclass.matches(eq.getInternalName());
+                    return techLvlMatch && techClassMatch && unitTypeMatch && textFilterMatch && equipmentClassMatch;
                 }
             };
         } catch (PatternSyntaxException ignored) {
@@ -532,7 +520,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
     private void addFilter(boolean and) {
         boolean atleast = btnAtLeast.isSelected();
-        int qty = (int) weaponClassCount.getValue();
+        int qty = (int) equipmentCount.getValue();
         if (focusedSelector == tblEquipment) {
             int[] rows = tblEquipment.getSelectedRows();
             if (rows.length == 1) {
@@ -563,7 +551,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
                 addFilterToken(new RightParensFilterToken());
             }
         } else if ((focusedSelector == weaponClassChooser) && (weaponClassChooser.getSelectedItem() != null)) {
-            filterTokens.add(new WeaponClassFT((WeaponClass) weaponClassChooser.getSelectedItem(), qty, atleast));
+            filterTokens.add(new WeaponClassFT((AdvancedSearchEquipmentClass) weaponClassChooser.getSelectedItem(), qty, atleast));
 
         } else {
             // if something else is focused, do nothing
@@ -659,7 +647,8 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     }
 
     private boolean hasFocusedSelector() {
-        return (focusedSelector == weaponClassChooser) || (focusedSelector == tblEquipment) || (focusedSelector == tblWeapons);
+        return (focusedSelector != null)
+            && ((focusedSelector == weaponClassChooser) || (focusedSelector == tblEquipment) || (focusedSelector == tblWeapons));
     }
 
     void adaptTokenButtons() {
@@ -708,6 +697,11 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         } else if (techLevelButtons.contains(source) && ((e.getModifiers() & Event.SHIFT_MASK) == 0)) {
             removeToggleActionListeners();
             techLevelButtons.forEach(button -> button.setSelected(e.getSource() == button));
+            addToggleActionListeners();
+        } else if ((source == btnTechClassClan || source == btnTechClassIS) && ((e.getModifiers() & Event.SHIFT_MASK) == 0)) {
+            removeToggleActionListeners();
+            btnTechClassClan.setSelected(source == btnTechClassClan);
+            btnTechClassIS.setSelected(source == btnTechClassIS);
             addToggleActionListeners();
         }
         filterTables();

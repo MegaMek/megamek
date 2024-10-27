@@ -571,6 +571,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         pvTo.setEnabled(usePV.isSelected());
 
         mvBetween.setEnabled(useMV.isSelected());
+        mvMode.setEnabled(useMV.isSelected());
         mvFrom.setEnabled(useMV.isSelected());
         mvAnd.setEnabled(useMV.isSelected());
         mvTo.setEnabled(useMV.isSelected());

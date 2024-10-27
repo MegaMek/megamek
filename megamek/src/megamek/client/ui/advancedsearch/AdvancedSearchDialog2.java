@@ -18,6 +18,10 @@
  */
 package megamek.client.ui.advancedsearch;
 
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatIconColors;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.formdev.flatlaf.extras.components.FlatButton;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.ButtonEsc;
@@ -45,7 +49,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
         year = allowedYear;
         totalWarTab = new TWAdvancedSearchPanel(year);
         advancedSearchPane.addTab("Total Warfare", totalWarTab);
-        advancedSearchPane.addTab("Alpha Strike", alphaStrikeTab);
+        advancedSearchPane.addTab("Alpha Strike", new TWAdvancedSearchPanel.StandardScrollPane(alphaStrikeTab));
         initialize();
     }
 
@@ -74,13 +78,24 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
         okButton.addActionListener(this::okButtonActionPerformed);
         getRootPane().setDefaultButton(okButton);
 
+        JPanel notePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        notePanel.add(Box.createHorizontalStrut(20));
+        var noteLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.Combine"));
+        noteLabel.putClientProperty(FlatClientProperties.STYLE, "foreground: mix($Label.foreground, #afa, 60%)");
+        notePanel.add(noteLabel);
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
-        buttonPanel.setBorder(BorderFactory.createCompoundBorder(
-            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-            new EmptyBorder(10, 0, 10, 0)));
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
-        return buttonPanel;
+
+        JPanel outerPanel = new JPanel(new GridLayout(1,1));
+        outerPanel.setBorder(BorderFactory.createCompoundBorder(
+            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+            new EmptyBorder(10, 0, 10, 0)));
+        outerPanel.add(notePanel);
+        outerPanel.add(buttonPanel);
+
+        return outerPanel;
     }
 
     @Override

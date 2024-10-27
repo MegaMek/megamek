@@ -48,7 +48,7 @@ class QuirksSearchTab extends JPanel {
         listWeaponQuirkType = new TriStateItemList(new WeaponQuirks(), 17);
 
         JPanel unitQuirksPanel = new JPanel(new BorderLayout());
-        JPanel quirkIEPanel = new JPanel(new FlowLayout());
+        JPanel quirkIEPanel = new JPanel();
         quirkIEPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.Quirk")));
         quirkIEPanel.add(Box.createHorizontalStrut(15));
         quirkIEPanel.add(new JLabel("\u2611"));
@@ -57,9 +57,12 @@ class QuirksSearchTab extends JPanel {
         quirkIEPanel.add(cQuirkExclude);
         unitQuirksPanel.add(quirkIEPanel, BorderLayout.NORTH);
         unitQuirksPanel.add(new JScrollPane(listQuirkType.getComponent()), BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.add(btnQuirksClear);
+        unitQuirksPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         JPanel weaponQuirkPanel = new JPanel(new BorderLayout());
-        JPanel weaponQuirkIEPanel = new JPanel(new FlowLayout());
+        JPanel weaponQuirkIEPanel = new JPanel();
         weaponQuirkIEPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.WeaponQuirk")));
         weaponQuirkIEPanel.add(Box.createHorizontalStrut(15));
         weaponQuirkIEPanel.add(new JLabel("\u2611"));

@@ -331,7 +331,7 @@ public class MekSearchFilter {
                 currNode = new ExpNode();
             }
 
-            ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty, ft.atleast);
+            ExpNode newChild = new ExpNode(ft.equipmentClass, ft.qty, ft.atleast);
             currNode.children.add(newChild);
             return createFTFromTokensRecursively(toks, currNode);
         }
@@ -969,7 +969,7 @@ public class MekSearchFilter {
         // Base Case: See if any of the equipment matches the leaf node in
         // sufficient quantity
         if (n.children.isEmpty()) {
-            if (n.weaponClass != null) {
+            if (n.equipmentClass != null) {
                 // Since weapon classes can match across different types of equipment, we have
                 // to sum up
                 // all equipment that matches the weaponClass value.
@@ -981,7 +981,7 @@ public class MekSearchFilter {
                 // Now, stream that map, filtering on a match with the WeaponClass, then extract
                 // the quantities and sum them up.
                 int total = nameQtyPairs.stream()
-                        .filter(p -> n.weaponClass.matches(p.getKey()))
+                        .filter(p -> n.equipmentClass.matches(p.getKey()))
                         .map(Map.Entry::getValue)
                         .reduce(0, Integer::sum);
 
@@ -1088,7 +1088,7 @@ public class MekSearchFilter {
         public ExpNode parent;
         public BoolOp operation;
         public String name;
-        public WeaponClass weaponClass;
+        public AdvancedSearchEquipmentClass equipmentClass;
         public int qty;
         public List<ExpNode> children;
         public boolean atleast;
@@ -1111,7 +1111,7 @@ public class MekSearchFilter {
             // if (e.name != null) {
             name = e.name;
             // }
-            weaponClass = e.weaponClass;
+            equipmentClass = e.equipmentClass;
             Iterator<ExpNode> nodeIter = e.children.iterator();
             children = new LinkedList<>();
             while (nodeIter.hasNext()) {
@@ -1122,17 +1122,17 @@ public class MekSearchFilter {
         public ExpNode(String n, int q, boolean atleast) {
             parent = null;
             name = n;
-            weaponClass = null;
+            equipmentClass = null;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
             this.atleast = atleast;
         }
 
-        public ExpNode(WeaponClass n, int q, boolean atleast) {
+        public ExpNode(AdvancedSearchEquipmentClass n, int q, boolean atleast) {
             parent = null;
             name = null;
-            weaponClass = n;
+            equipmentClass = n;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
@@ -1149,11 +1149,11 @@ public class MekSearchFilter {
                     } else {
                         return qty + " " + name + "s";
                     }
-                } else if (weaponClass != null) {
+                } else if (equipmentClass != null) {
                     if (qty == 1) {
-                        return qty + " " + weaponClass.toString();
+                        return qty + " " + equipmentClass.toString();
                     } else {
-                        return qty + " " + weaponClass.toString() + "s";
+                        return qty + " " + equipmentClass.toString() + "s";
                     }
                 }
             }

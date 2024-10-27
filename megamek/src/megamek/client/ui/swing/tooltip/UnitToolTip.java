@@ -896,12 +896,41 @@ public final class UnitToolTip {
             return new StringBuilder();
         }
 
-        List<WeaponMounted> weapons = entity.getWeaponList();
+        HashMap<String, WeaponInfo> wpInfos = createWeaponList(entity);
+
+        // Print to Tooltip
+        String rows = "";
+
+        // Display sorted by weapon name
+        var wps = new ArrayList<>(wpInfos.values());
+        wps.sort(Comparator.comparing(w -> w.sortString));
+
+        for (WeaponInfo currentEquip : wps) {
+            // This WeaponInfo is ammo
+            if (!currentEquip.ammos.isEmpty()) {
+                rows += createAmmoEntry(currentEquip).toString();
+            } else {
+                rows += createWeaponEntry(entity, currentEquip).toString();
+            }
+        }
+
+        String tbody = UIUtil.tag("TBODY", "",  rows);
+        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
+
+        return new StringBuilder().append(table);
+    }
+
+    /**
+     * Gather names, counts, Clan/IS
+     */
+    public static HashMap<String, WeaponInfo> createWeaponList(Entity entity) {
         HashMap<String, WeaponInfo> wpInfos = new HashMap<>();
-        // Gather names, counts, Clan/IS
         WeaponInfo currentWp;
+        List<WeaponMounted> weapons = entity.getWeaponList();
+
         for (WeaponMounted curWp : weapons) {
             WeaponType wtype = curWp.getType();
+
             if (isNotTTRelevant(wtype)) {
                 continue;
             }
@@ -916,9 +945,11 @@ public final class UnitToolTip {
             if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire() && !curWp.isDestroyed()) {
                 weapDesc += RAPIDFIRE;
             }
+
             if (weapDesc.startsWith("+")) {
                 weapDesc = weapDesc.substring(1);
             }
+
             if (curWp.getType().isClan()) {
                 weapDesc += CLANWP;
             }
@@ -926,11 +957,13 @@ public final class UnitToolTip {
             String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
             String msg_clanparens = Messages.getString("BoardView1.Tooltip.ClanParens");
             weapDesc = weapDesc.replace(msg_clanbrackets, "").replace(msg_clanparens, "").trim();
+
             if (wpInfos.containsKey(weapDesc)) {
                 currentWp = wpInfos.get(weapDesc);
                 currentWp.count++;
                 wpInfos.put(weapDesc, currentWp);
                 String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
+
                 if (!curWp.isDestroyed() && wpInfos.containsKey(curWp.getName() + msg_ammo)) {
                     WeaponInfo currAmmo = wpInfos.get(curWp.getName() + msg_ammo);
                     currAmmo.ammoActiveWeaponCount++;
@@ -939,37 +972,47 @@ public final class UnitToolTip {
                 currentWp = new WeaponInfo();
                 currentWp.name = weapDesc;
                 currentWp.sortString = curWp.getName();
+
                 // Sort active weapons below destroyed to keep them close to their ammo
                 if (!curWp.isDestroyed()) {
                     currentWp.sortString += "1";
                 }
-                currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
 
+                currentWp.isRapidFire = weapDesc.contains(RAPIDFIRE);
                 // Create the ranges String
                 int[] ranges;
+
                 if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);
                 }
+
                 String rangeString = " \u22EF ";
+
                 if (ranges[RangeType.RANGE_MINIMUM] > 0) {
                     rangeString += "(" + ranges[RangeType.RANGE_MINIMUM] + ") ";
                 }
+
                 int maxRange = RangeType.RANGE_LONG;
+
                 if (entity.getGame().getOptions().booleanOption(
-                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
+
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
                     rangeString += ranges[i];
+
                     if (i != maxRange) {
                         rangeString += "\u2B1D";
                     }
                 }
+
                 WeaponType wpT = ((WeaponType) curWp.getType());
+
                 if (!wpT.hasFlag(WeaponType.F_AMS)
-                        || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
+                    || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
                 }
 
@@ -980,10 +1023,10 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
-                        && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
-                        && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
-
+                    && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                    && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
+
                     if (wpInfos.containsKey(curWp.getName() + msg_ammo)) {
                         if (!curWp.isDestroyed()) {
                             WeaponInfo currAmmo = wpInfos.get(curWp.getName() + msg_ammo);
@@ -991,12 +1034,13 @@ public final class UnitToolTip {
                         }
                     } else {
                         WeaponInfo currAmmo = new WeaponInfo();
-
                         String msg_zz = Messages.getString("BoardView1.Tooltip.ZZ");
                         currAmmo.sortString = curWp.getName() + msg_zz; // Sort ammo after the weapons
                         currAmmo.ammoActiveWeaponCount = curWp.isDestroyed() ? 0 : 1;
+
                         for (Mounted<?> amounted : entity.getAmmo()) {
                             boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(curWp, (AmmoType) amounted.getType());
+
                             if (canSwitchToAmmo && !amounted.isDumping()) {
                                 String msg_antipersonnel = Messages.getString("BoardView1.Tooltip.AntiPersonnel");
                                 String msg_ap = Messages.getString("BoardView1.Tooltip.AP");
@@ -1007,9 +1051,10 @@ public final class UnitToolTip {
                                 String msg_hotloadedparens = Messages.getString("BoardView1.Tooltip.HotLoadedParens");
 
                                 String name = amounted.getName().replace(msg_antipersonnel, msg_ap)
-                                        .replace(msg_ammo, "").replace(msg_isbracket, "").replace(msg_clanbrackets, "")
-                                        .replace(msg_clanparens, "").replace(msg_halfbrackets, "").replace(msg_half, "")
-                                        .replace(curWp.getDesc(), "").trim();
+                                    .replace(msg_ammo, "").replace(msg_isbracket, "").replace(msg_clanbrackets, "")
+                                    .replace(msg_clanparens, "").replace(msg_halfbrackets, "").replace(msg_half, "")
+                                    .replace(curWp.getDesc(), "").trim();
+
                                 if (name.isBlank()) {
                                     name = msg_standard;
                                 }
@@ -1017,11 +1062,13 @@ public final class UnitToolTip {
                                 if (amounted.isHotLoaded()) {
                                     name += " " + msg_hotloadedparens;
                                 }
+
                                 int count = amounted.getUsableShotsLeft();
                                 count += currAmmo.ammos.getOrDefault(name, 0);
                                 currAmmo.ammos.put(name, count);
                             }
                         }
+
                         wpInfos.put(curWp.getName() + msg_ammo, currAmmo);
                     }
                 }
@@ -1031,6 +1078,7 @@ public final class UnitToolTip {
         // Also show hatchets and such equipment in the tooltip as weaponry
         for (MiscMounted misc : entity.getMisc()) {
             MiscType type = misc.getType();
+
             if (isNotTTRelevant(type)) {
                 continue;
             }
@@ -1040,9 +1088,11 @@ public final class UnitToolTip {
             if (GUIP.getShowWpsLocinTT() && (entity.locations() > 1)) {
                 weapDesc += " [" + entity.getLocationAbbr(misc.getLocation()) + ']';
             }
+
             if (weapDesc.startsWith("+")) {
                 weapDesc = weapDesc.substring(1);
             }
+
             if (misc.getType().isClan()) {
                 weapDesc += CLANWP;
             }
@@ -1050,6 +1100,7 @@ public final class UnitToolTip {
             String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
             String msg_clanparens = Messages.getString("BoardView1.Tooltip.ClanParens");
             weapDesc = weapDesc.replace(msg_clanbrackets, "").replace(msg_clanparens, "").trim();
+
             if (wpInfos.containsKey(weapDesc)) {
                 currentWp = wpInfos.get(weapDesc);
                 currentWp.count++;
@@ -1058,116 +1109,173 @@ public final class UnitToolTip {
                 currentWp = new WeaponInfo();
                 currentWp.name = weapDesc;
                 currentWp.sortString = misc.getName();
+
                 // Sort active weapons below destroyed to keep them close to their ammo
                 if (!misc.isDestroyed()) {
                     currentWp.sortString += "1";
                 }
+
                 currentWp.isClan = type.isClan();
                 wpInfos.put(weapDesc, currentWp);
             }
         }
 
-        // Print to Tooltip
+        return wpInfos;
+    }
+
+    private static String weaponModifier(boolean isDestroyed, WeaponInfo currentEquip) {
+        if (isDestroyed) {
+            // Ends the strikethrough that is added for destroyed weapons
+            return "";
+        } else if (currentEquip.isHotloaded) {
+            String msg_hotloaded = Messages.getString("BoardView1.Tooltip.HotLoaded");
+            String s = UIUtil.tag("I", "",  msg_hotloaded);
+            return " \u22EF" + s;
+        } else if (currentEquip.isRapidFire) {
+            String msg_rapidfire = Messages.getString("BoardView1.Tooltip.Rapidfire");
+            String s = UIUtil.tag("I", "",  msg_rapidfire);
+            return " \u22EF" + s;
+        }
+        return "";
+    }
+
+    /** Returns the weapon line(s) for the weapons type.
+     *  Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+     **/
+    private static StringBuilder createWeaponEntry(Entity entity, WeaponInfo currentEquip) {
+        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+        String col1 = "";
+        String col2 = "";
+        String row = "";
+        boolean isDestroyed = false;
+        String nameStr = currentEquip.name;
+
+        if (nameStr == null) {
+            String msg_nullweaponname = Messages.getString("BoardView1.Tooltip.NullWeaponName");
+            nameStr = msg_nullweaponname; // Happens with Vehicle Flamers!
+        }
+
+        if (nameStr.startsWith("x ")) {
+            nameStr = nameStr.substring(2);
+            isDestroyed = true;
+        }
+
+        if (nameStr.startsWith("*")) {
+            nameStr = nameStr.substring(1);
+            isDestroyed = true;
+        }
+
+        // Remove the rapid fire marker (used only to distinguish weapons set to
+        // different modes)
+        nameStr = nameStr.replace(RAPIDFIRE, "");
+        nameStr = nameStr.replace(CLANWP, "");
+        nameStr += currentEquip.range;
+        String techBase = "";
+
+        if (entity.isMixedTech()) {
+            String msg_clan = Messages.getString("BoardView1.Tooltip.Clan");
+            String msg_is = Messages.getString("BoardView1.Tooltip.IS");
+            techBase = currentEquip.isClan ? msg_clan : msg_is;
+            techBase += " ";
+        }
+
+        String destStr = "";
+
+        // group and list with a multiplier "4 x Small Laser"
+        if (currentEquip.count > 1) {
+            String msg_x = Messages.getString("BoardView1.Tooltip.X");
+            col1 = currentEquip.count + " " + msg_x + " ";
+        } else {
+            col1 = "&nbsp;";
+        }
+
+        col2 = addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr).toString();
+        col2 += weaponModifier(isDestroyed, currentEquip);
+
+        if (isDestroyed) {
+            col2 = UIUtil.tag("S", "",  col2);
+        }
+
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));
+        col1 = UIUtil.tag("FONT", attr,  col1);
+        col1 = UIUtil.tag("span", fontSizeAttr, col1);
+        col1 = UIUtil.tag("TD", "",  col1);
+
+        attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));
+        col2 = UIUtil.tag("FONT", attr,  col2);
+        col2 = UIUtil.tag("span", fontSizeAttr, col2);
+        col2 = UIUtil.tag("TD", "",  col2);
+        row = UIUtil.tag("TR", "",  col1 + col2);
+
+        return new StringBuilder().append(row);
+    }
+
+    /** Returns the ammo line(s) for the ammo of one weapon type. */
+    private static StringBuilder createAmmoEntry(WeaponInfo ammoInfo) {
         String col1 = "";
         String col2 = "";
         String row = "";
         String rows = "";
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
+        int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
 
-        // Display sorted by weapon name
-        var wps = new ArrayList<>(wpInfos.values());
-        wps.sort(Comparator.comparing(w -> w.sortString));
-        int totalWeaponCount = wpInfos.values().stream().filter(i -> i.ammos.isEmpty()).mapToInt(wp -> wp.count).sum();
-        boolean hasMultiples = wpInfos.values().stream().mapToInt(wp -> wp.count).anyMatch(c -> c > 1);
-        for (WeaponInfo currentEquip : wps) {
-            // This WeaponInfo is ammo
-            if (!currentEquip.ammos.isEmpty()) {
-                row = createAmmoEntry(currentEquip).toString();
-            } else {
-                // This WeaponInfo is a weapon
-                // Check if weapon is destroyed, text gray and strikethrough if so, remove the
-                // "x "/"*"
-                boolean isDestroyed = false;
-                String nameStr = currentEquip.name;
-                if (nameStr == null) {
-                    String msg_nullweaponname = Messages.getString("BoardView1.Tooltip.NullWeaponName");
-                    nameStr = msg_nullweaponname; // Happens with Vehicle Flamers!
-                }
-                if (nameStr.startsWith("x ")) {
-                    nameStr = nameStr.substring(2);
-                    isDestroyed = true;
-                }
+        if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
+            String msg_outofammo = Messages.getString("BoardView1.Tooltip.OutOfAmmo");
+            col1 = "&nbsp;";
+            col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
 
-                if (nameStr.startsWith("*")) {
-                    nameStr = nameStr.substring(1);
-                    isDestroyed = true;
+            col1 = UIUtil.tag("span", fontSizeAttr, col1);
+            col1 = UIUtil.tag("TD", "",  col1);
+
+            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
+            col2 = UIUtil.tag("FONT", attr,  col2);
+            col2 = UIUtil.tag("span", fontSizeAttr, col2);
+            col2 = UIUtil.tag("TD", "",  col2);
+
+            row = UIUtil.tag("TR", "",  col1 + col2);
+            rows += row;
+        } else {
+            for (Entry<String, Integer> ammo : ammoInfo.ammos.entrySet()) {
+                String msg_standard = Messages.getString("BoardView1.Tooltip.Standard");
+                String ammoName = ammo.getKey().equals(msg_standard) && ammoInfo.ammos.size() == 1 ? "" : ammo.getKey() + ": ";
+
+                // No entry when no ammo of this type left but some other type left
+                if (ammo.getValue() == 0) {
+                    continue;
                 }
 
-                // Remove the rapid fire marker (used only to distinguish weapons set to
-                // different modes)
-                nameStr = nameStr.replace(RAPIDFIRE, "");
-                nameStr = nameStr.replace(CLANWP, "");
-                nameStr += currentEquip.range;
-                String techBase = "";
+                col1 = "&nbsp;";
+                col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+                String msg_shots = Messages.getString("BoardView1.Tooltip.Shots");
 
-                if (entity.isMixedTech()) {
-                    String msg_clan = Messages.getString("BoardView1.Tooltip.Clan");
-                    String msg_is = Messages.getString("BoardView1.Tooltip.IS");
-                    techBase = currentEquip.isClan ? msg_clan : msg_is;
-                    techBase += " ";
-                }
-
-                String destStr = "";
-
-                if (totalWeaponCount > 5 && hasMultiples) {
-                    // more than 5 weapons: group and list with a multiplier "4 x Small Laser"
-                    if (currentEquip.count > 1) {
-                        String msg_x = Messages.getString("BoardView1.Tooltip.X");
-                        col1 = currentEquip.count + " " + msg_x + " ";
-                    } else {
-                        col1 = "&nbsp;";
-                    }
-
-                    col2 = addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr).toString();
-                    col2 += weaponModifier(isDestroyed, currentEquip);
-                    if (isDestroyed) {
-                        col2 = UIUtil.tag("S", "",  col2);
-                    }
+                if (ammoInfo.ammoActiveWeaponCount > 1) {
+                    // Remaining ammo and multiple weapons using it
+                    col2 += ammoName;
+                    String msg_turns = Messages.getString("BoardView1.Tooltip.Turns");
+                    col2 += ammo.getValue() / ammoInfo.ammoActiveWeaponCount + " " + msg_turns;
+                    col2 += " (" + ammo.getValue() + " " + msg_shots + ")";
                 } else {
-                    col1 = "&nbsp;";
-                    col2 = "";
-                    // few weapons: list each weapon separately
-                    for (int i = 0; i < currentEquip.count; i++) {
-                        col2 += addToTT("Weapon", false, currentEquip.count, techBase, nameStr, destStr).toString();
-                        col2 += weaponModifier(isDestroyed, currentEquip);
-                        if (isDestroyed) {
-                            col2 = UIUtil.tag("S", "",  col2);
-                        }
-                    }
+                    // Remaining ammo and only one weapon using it
+                    col2 += ammoName + ammo.getValue() + " " + msg_shots;
                 }
 
-                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));
-                col1 = UIUtil.tag("FONT", attr,  col1);
                 col1 = UIUtil.tag("span", fontSizeAttr, col1);
                 col1 = UIUtil.tag("TD", "",  col1);
 
-                attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipWeaponColor()));
+                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
                 col2 = UIUtil.tag("FONT", attr,  col2);
                 col2 = UIUtil.tag("span", fontSizeAttr, col2);
                 col2 = UIUtil.tag("TD", "",  col2);
-;
-                row = UIUtil.tag("TR", "",  col1 + col2);
-            }
 
-            rows += row;
+                row = UIUtil.tag("TR", "",  col1 + col2);
+                rows += row;
+            }
         }
 
-        String tbody = UIUtil.tag("TBODY", "",  rows);
-        String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0",  tbody);
-
-        return new StringBuilder().append(table);
+        return new StringBuilder().append(rows);
     }
 
+    /** Returns the assembled bombs loaded on unit */
     private static StringBuilder bombList(Entity entity) {
         String col1 = "";
         String col2 = "";
@@ -1225,85 +1333,6 @@ public final class UnitToolTip {
         }
 
         return new StringBuilder().append(result);
-    }
-
-    private static String weaponModifier(boolean isDestroyed, WeaponInfo currentEquip) {
-        if (isDestroyed) {
-            // Ends the strikethrough that is added for destroyed weapons
-            return "";
-        } else if (currentEquip.isHotloaded) {
-            String msg_hotloaded = Messages.getString("BoardView1.Tooltip.HotLoaded");
-            String s = UIUtil.tag("I", "",  msg_hotloaded);
-            return " \u22EF" + s;
-        } else if (currentEquip.isRapidFire) {
-            String msg_rapidfire = Messages.getString("BoardView1.Tooltip.Rapidfire");
-            String s = UIUtil.tag("I", "",  msg_rapidfire);
-            return " \u22EF" + s;
-        }
-        return "";
-    }
-
-    /** Returns the ammo line(s) for the ammo of one weapon type. */
-    private static StringBuilder createAmmoEntry(WeaponInfo ammoInfo) {
-        String col1 = "";
-        String col2 = "";
-        String row = "";
-        String rows = "";
-        String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
-
-        int totalAmmo = ammoInfo.ammos.values().stream().mapToInt(n -> n).sum();
-        if (totalAmmo == 0 && ammoInfo.ammoActiveWeaponCount > 0) {
-            String msg_outofammo = Messages.getString("BoardView1.Tooltip.OutOfAmmo");
-            col1 = "&nbsp;";
-            col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
-
-            col1 = UIUtil.tag("span", fontSizeAttr, col1);
-            col1 = UIUtil.tag("TD", "",  col1);
-
-            String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-            col2 = UIUtil.tag("FONT", attr,  col2);
-            col2 = UIUtil.tag("span", fontSizeAttr, col2);
-            col2 = UIUtil.tag("TD", "",  col2);
-
-            row = UIUtil.tag("TR", "",  col1 + col2);
-            rows += row;
-        } else {
-            for (Entry<String, Integer> ammo : ammoInfo.ammos.entrySet()) {
-                String msg_standard = Messages.getString("BoardView1.Tooltip.Standard");
-                String ammoName = ammo.getKey().equals(msg_standard) && ammoInfo.ammos.size() == 1 ? ""
-                        : ammo.getKey() + ": ";
-                // No entry when no ammo of this type left but some other type left
-                if (ammo.getValue() == 0) {
-                    continue;
-                }
-                col1 = "&nbsp;";
-                col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-                String msg_shots = Messages.getString("BoardView1.Tooltip.Shots");
-                if (ammoInfo.ammoActiveWeaponCount > 1) {
-                    // Remaining ammo and multiple weapons using it
-                    col2 += ammoName;
-                    String msg_turns = Messages.getString("BoardView1.Tooltip.Turns");
-                    col2 += ammo.getValue() / ammoInfo.ammoActiveWeaponCount + " " + msg_turns;
-                    col2 += " (" + ammo.getValue() + " " + msg_shots + ")";
-                } else {
-                    // Remaining ammo and only one weapon using it
-                    col2 += ammoName + ammo.getValue() + " " + msg_shots;
-                }
-
-                col1 = UIUtil.tag("span", fontSizeAttr, col1);
-                col1 = UIUtil.tag("TD", "",  col1);
-
-                String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getCautionColor()));
-                col2 = UIUtil.tag("FONT", attr,  col2);
-                col2 = UIUtil.tag("span", fontSizeAttr, col2);
-                col2 = UIUtil.tag("TD", "",  col2);
-
-                row = UIUtil.tag("TR", "",  col1 + col2);
-                rows += row;
-            }
-        }
-
-        return new StringBuilder().append(rows);
     }
 
     /** Returns a line showing ECM / ECCM. */

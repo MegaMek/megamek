@@ -64,6 +64,7 @@ public class MtfFile implements IMekLoader {
     private String lamType;
     private String motiveType;
     private String ejectionType;
+    private String heatSinkKit;
 
     private String heatSinks;
     private String jumpMP;
@@ -110,6 +111,7 @@ public class MtfFile implements IMekLoader {
     public static final String GYRO = "gyro:";
     public static final String MOTIVE = "motive:";
     public static final String EJECTION = "ejection:";
+    public static final String HEAT_SINK_KIT = "heat sink kit:";
     public static final String MASS = "mass:";
     public static final String ENGINE = "engine:";
     public static final String STRUCTURE = "structure:";
@@ -201,6 +203,12 @@ public class MtfFile implements IMekLoader {
             } catch (Exception ignored) {
                 fullHead = false;
             }
+            boolean riscHeatSinkKit;
+            try {
+                riscHeatSinkKit = heatSinkKit.substring(HEAT_SINK_KIT.length()).equals(Mek.RISC_HEAT_SINK_OVERRIDE_KIT);
+            } catch (Exception ignored) {
+                riscHeatSinkKit = false;
+            }
             if (chassisConfig.contains("QuadVee")) {
                 int iMotiveType;
                 try {
@@ -231,6 +239,7 @@ public class MtfFile implements IMekLoader {
                 mek = new BipedMek(iGyroType, iCockpitType);
             }
             mek.setFullHeadEject(fullHead);
+            mek.setRiscHeatSinkOverrideKit(riscHeatSinkKit);
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
@@ -1130,6 +1139,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(EJECTION)) {
             ejectionType = line;
+            return true;
+        }
+
+        if (lineLower.startsWith(HEAT_SINK_KIT)) {
+            heatSinkKit = line;
             return true;
         }
 

@@ -412,6 +412,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     @Override
     protected void processSummarize() {
         double cockpitMod = 1;
+        double riscKitMod = 1;
         String modifier = "";
         if ((mek.getCockpitType() == Mek.COCKPIT_SMALL)
                 || (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
@@ -425,17 +426,26 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             cockpitMod = 1.3;
             modifier = " (" + mek.getCockpitTypeString() + ")";
         }
-        if (cockpitMod != 1) {
+
+        if (mek.hasRiscHeatSinkOverrideKit()) {
+            riscKitMod = 1.01;
+        }
+
+        if ((cockpitMod != 1) || (riscKitMod != 1)) {
             baseBV = defensiveValue + offensiveValue;
             bvReport.addEmptyLine();
             bvReport.addSubHeader("Battle Value:");
             bvReport.addLine("Defensive BR + Offensive BR:",
                     formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue),
                     "= " + formatForReport(baseBV));
-            bvReport.addLine("Cockpit Modifier:",
-                    formatForReport(baseBV) + " x " + formatForReport(cockpitMod) + modifier,
-                    "= " + formatForReport(baseBV * cockpitMod));
-            baseBV *= cockpitMod;
+            if (cockpitMod != 1) {
+                bvReport.addLine("Cockpit Modifier:", formatForReport(baseBV) + " x " + formatForReport(cockpitMod) + modifier, "= " + formatForReport(baseBV * cockpitMod));
+                baseBV *= cockpitMod;
+            }
+            if (riscKitMod != 1) {
+                bvReport.addLine("RISC Heat Sink Override Kit: ", formatForReport(baseBV) + " x " + formatForReport(riscKitMod) + modifier, "= " + formatForReport(baseBV * riscKitMod));
+                baseBV *= riscKitMod;
+            }
             bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));
         } else {
             super.processSummarize();

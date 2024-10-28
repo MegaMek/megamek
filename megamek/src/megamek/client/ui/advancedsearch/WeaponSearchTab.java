@@ -47,34 +47,34 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
     private final JToggleButton btnLessThan = new JToggleButton("<");
     private final JToggleButton btnAtLeast = new JToggleButton("\u2265");
     private final JButton btnAdd = new JButton(Messages.getString("MekSelectorDialog.Search.add"));
-    private final JButton btnAddMultiOr = new JButton("Add [OR]");
-    private final JButton btnAddMultiAnd = new JButton("Add [AND]");
+    private final JButton btnAddMultiOr = new JButton(Messages.getString("MekSelectorDialog.Search.AddOR"));
+    private final JButton btnAddMultiAnd = new JButton(Messages.getString("MekSelectorDialog.Search.AddAND"));
     private final JButton btnAnd = new JButton(Messages.getString("MekSelectorDialog.Search.and"));
     private final JButton btnOr = new JButton(Messages.getString("MekSelectorDialog.Search.or"));
-    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Reset"));
-    private final JButton btnBack = new JButton("Back");
+    private final JButton btnClear = new JButton(Messages.getString("MekSelectorDialog.Search.Reset"));
+    private final JButton btnBack = new JButton(Messages.getString("MekSelectorDialog.Search.Back"));
     private final JLabel lblWEEqExpTxt = new JLabel(Messages.getString("MekSelectorDialog.Search.FilterExpression"));
     final JTextArea txtWEEqExp = new JTextArea("", 2, 40);
 
     private final JButton btnUnitTypeAll = new JButton("All");
-    private final JToggleButton btnUnitTypeMek = new JToggleButton("Mek");
-    private final JToggleButton btnUnitTypeVee = new JToggleButton("Veh");
-    private final JToggleButton btnUnitTypeBA = new JToggleButton("BA");
-    private final JToggleButton btnUnitTypeCI = new JToggleButton("CI");
-    private final JToggleButton btnUnitTypeAero = new JToggleButton("Aero");
-    private final JToggleButton btnUnitTypePM = new JToggleButton("PM");
+    private final JToggleButton btnUnitTypeMek = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Mek"));
+    private final JToggleButton btnUnitTypeVee = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Vee"));
+    private final JToggleButton btnUnitTypeBA = new JToggleButton(Messages.getString("MekSelectorDialog.Search.BA"));
+    private final JToggleButton btnUnitTypeCI = new JToggleButton(Messages.getString("MekSelectorDialog.Search.CI"));
+    private final JToggleButton btnUnitTypeAero = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Aero"));
+    private final JToggleButton btnUnitTypePM = new JToggleButton(Messages.getString("MekSelectorDialog.Search.PM"));
     private final List<JToggleButton> unitTypeButtons =
         List.of(btnUnitTypeMek, btnUnitTypePM, btnUnitTypeBA, btnUnitTypeCI, btnUnitTypeAero, btnUnitTypeVee);
 
     private final JToggleButton btnTechClassIS = new JToggleButton("Inner Sphere");
     private final JToggleButton btnTechClassClan = new JToggleButton("Clan");
 
-    private final JButton btnTechLevelOfficial = new JButton("Official");
-    private final JToggleButton btnTechLevelIntro = new JToggleButton("Intro");
-    private final JToggleButton btnTechLevelStd = new JToggleButton("Standard");
-    private final JToggleButton btnTechLevelAdv = new JToggleButton("Advanced");
-    private final JToggleButton btnTechLevelExp = new JToggleButton("Experimental");
-    private final JToggleButton btnTechLevelUnoff = new JToggleButton("Unofficial");
+    private final JButton btnTechLevelOfficial = new JButton(Messages.getString("MekSelectorDialog.Search.AllOfficial"));
+    private final JToggleButton btnTechLevelIntro = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Introductory"));
+    private final JToggleButton btnTechLevelStd = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Standard"));
+    private final JToggleButton btnTechLevelAdv = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Advanced"));
+    private final JToggleButton btnTechLevelExp = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Experimental"));
+    private final JToggleButton btnTechLevelUnoff = new JToggleButton(Messages.getString("MekSelectorDialog.Search.Unofficial"));
     private final List<JToggleButton> techLevelButtons =
         List.of(btnTechLevelIntro, btnTechLevelStd, btnTechLevelAdv, btnTechLevelExp, btnTechLevelUnoff);
 
@@ -207,7 +207,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
 
         tableFilterText.getDocument().addDocumentListener(this);
         filterClearButton.addActionListener(e -> tableFilterText.setText(""));
-        filterClearButton.setToolTipText("Clear the filter text");
+        filterClearButton.setToolTipText(Messages.getString("MekSelectorDialog.Search.TableFilterClear.TT"));
         filterClearButton.putClientProperty(FlatClientProperties.STYLE_CLASS, "small");
         weaponClassFilter.addActionListener(e -> filterTables());
 
@@ -264,7 +264,7 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         filterPanel.add(tableFilterText);
         filterPanel.add(filterClearButton);
         filterPanel.add(Box.createHorizontalStrut(10));
-        filterPanel.add(new JLabel("Equipment Group:"));
+        filterPanel.add(new JLabel(Messages.getString("MekSelectorDialog.Search.EquipmentGroup")));
         filterPanel.add(weaponClassFilter);
         gbc.gridy++;
         gbc.gridwidth = GridBagConstraints.REMAINDER;

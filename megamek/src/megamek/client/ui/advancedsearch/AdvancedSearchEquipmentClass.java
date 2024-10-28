@@ -22,7 +22,7 @@ import java.util.Locale;
 
 enum AdvancedSearchEquipmentClass {
     EMPTY, AUTOCANNON, RAC, ULTRA, LIGHT, MACHINE_GUN, GAUSS, BALLISTIC, PLASMA, ENERGY, LASER, PULSE, RE_ENGINEERED, PPC, TASER, FLAMER, MISSILE,
-    LRM, MRM, SRM, PHYSICAL, AMS, PRACTICAL_PHYSICAL, INFANTRY_SUIT, PROBE;
+    LRM, MRM, SRM, PHYSICAL, AMS, PRACTICAL_PHYSICAL, INFANTRY_SUIT, PROBE, ECM, CHASSIS_MOD;
 
     public boolean matches(String name) {
         if (this == EMPTY) {
@@ -59,11 +59,16 @@ enum AdvancedSearchEquipmentClass {
         } else if (this == INFANTRY_SUIT) {
             return (name.contains("suit") || name.contains(" kit") || name.contains(", standard") || name.contains(", concealed")
                 || name.contains("clothing") || name.contains("vest") || name.contains("chainmail") || name.contains("parka"))
-                && !name.contains("ecm") && !name.contains("generic") && !name.contains("suite");
+                && !name.contains("generic") && !name.contains("suite");
         } else if (this == AMS) {
             return name.contains("ams") || name.contains("antimiss");
         } else if (this == PROBE) {
-            return name.contains("probe");
+            return name.contains("probe") || name.contains("electronicwarfare") || name.contains("cews") || name.contains("watchdog");
+        } else if (this == ECM) {
+            return (name.contains("ecm") || name.contains("electronicwarfare") || name.contains("cews") || name.contains("watchdog"))
+                && !name.contains("sneak");
+        } else if (this == CHASSIS_MOD) {
+            return name.contains("chassis") || name.contains("environmental sealing") || name.contains("external power pickup");
         } else if (name.contains(name().toLowerCase(Locale.ROOT)) && !name.contains("ammo")) {
             return true;
         }
@@ -93,6 +98,8 @@ enum AdvancedSearchEquipmentClass {
             case PRACTICAL_PHYSICAL -> "Physical (weapons only)";
             case INFANTRY_SUIT -> "Infantry Armor Suits";
             case PROBE -> "Active Probes";
+            case ECM -> "ECM Systems";
+            case CHASSIS_MOD -> "Chassis Modifications";
             default -> super.toString();
         };
     }

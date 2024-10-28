@@ -31274,9 +31274,9 @@ public class TWGameManager extends AbstractGameManager {
      * */
     private Vector<Report> resolveLightningStormDamage() {
         Vector<Report> vFullReport = new Vector<>();
-        Roll roll = Compute.rollD6(1);
+        Roll rollStrike = Compute.rollD6(1);
 
-        if (roll.getIntValue() > 0) {
+        if (rollStrike.getIntValue() > 4) {
             Report.addNewline(vFullReport);
             vFullReport.add(new Report(5620, Report.PUBLIC));
 
@@ -31303,7 +31303,9 @@ public class TWGameManager extends AbstractGameManager {
                 Coords coords;
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS)) {
-                    List<Entity> entities = game.getEntitiesVector();
+                    List<Entity> entities = game.getEntitiesVector().stream()
+                        .filter(e -> e.getPosition() != null)
+                        .toList();
                     int index = Compute.randomInt(entities.size());
                     coords = entities.get(index).getPosition();
                 } else {
@@ -31321,13 +31323,11 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (rollType.getIntValue() == 6) {
                     for (Coords locationAdjacent : coords.allAdjacent()) {
-                        if (game.getBoard().getHex(locationAdjacent) != null) {
-                            r = new Report(5622);
-                            r.add(locationAdjacent.getBoardNum());
-                            vFullReport.add(r);
+                        r = new Report(5622);
+                        r.add(locationAdjacent.getBoardNum());
+                        vFullReport.add(r);
 
-                            lightningStormDamage(locationAdjacent, 5, vFullReport);
-                        }
+                        lightningStormDamage(locationAdjacent, 5, vFullReport);
                     }
                 }
             }
@@ -31341,15 +31341,16 @@ public class TWGameManager extends AbstractGameManager {
         vFullReport.addAll(newReports);
 
         Building bldg = game.getBoard().getBuildingAt(coords);
+
         if (bldg != null) {
             Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
             vFullReport.addAll(buildingReport);
         }
 
         List<Entity> hitEntities = game.getEntitiesVector().stream()
-                .filter(e -> e.getPosition().equals(coords)
-                        && !(e instanceof GunEmplacement))
-                .collect(Collectors.toList());
+                .filter(e -> coords.equals(e.getPosition())
+                    && !(e instanceof GunEmplacement))
+                .toList();
 
         for (Entity entity : hitEntities) {
             ToHitData toHit = new ToHitData();

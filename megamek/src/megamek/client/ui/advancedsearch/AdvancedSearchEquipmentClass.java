@@ -21,8 +21,8 @@ package megamek.client.ui.advancedsearch;
 import java.util.Locale;
 
 enum AdvancedSearchEquipmentClass {
-    EMPTY, AUTOCANNON, RAC, ULTRA, LIGHT, MACHINE_GUN, GAUSS, BALLISTIC, PLASMA, ENERGY, LASER, PULSE, RE_ENGINEERED, PPC, TASER, FLAMER, MISSILE,
-    LRM, MRM, SRM, PHYSICAL, AMS, PRACTICAL_PHYSICAL, INFANTRY_SUIT, PROBE, ECM, CHASSIS_MOD;
+    EMPTY, AUTOCANNON, RAC, ULTRA, LIGHT, MACHINE_GUN, GAUSS, BALLISTIC, PLASMA, ENERGY, LASER, PULSE, RE_ENGINEERED, PPC, TASER,
+    FLAMER, MISSILE, LRM, MRM, SRM, PHYSICAL, AMS, PRACTICAL_PHYSICAL, INFANTRY_SUIT, PROBE, ECM, CHASSIS_MOD, MOVE_ENHANCE;
 
     public boolean matches(String name) {
         if (this == EMPTY) {
@@ -33,11 +33,9 @@ enum AdvancedSearchEquipmentClass {
             return false;
         }
         if (this == PHYSICAL) {
-            return name.contains("backhoe") || name.contains("saw") || name.contains("whip") || name.contains("claw") ||
-                name.contains("combine") || name.contains("flail") || name.contains("hatchet") || name.contains("driver") ||
-                name.contains("lance") || name.contains("mace") || name.contains("drill") || name.contains("ram") ||
-                name.contains("blade") || name.contains("cutter") || name.contains("shield") || name.contains("welder") ||
-                name.contains("sword") || name.contains("talons") || name.contains("wrecking");
+            return PRACTICAL_PHYSICAL.matches(name) || name.contains("backhoe") || name.contains("saw") || name.contains("whip")
+                || name.contains("combine") || name.contains("driver") || name.contains("drill") || name.contains("ram")
+                || name.contains("cutter") || name.contains("welder") || name.contains("wrecking");
         } else if (this == PRACTICAL_PHYSICAL) {
             return name.contains("claw") || name.contains("flail") || name.contains("hatchet") || name.contains("lance")
                 || name.contains("mace") || name.contains("blade") || name.contains("shield") || name.contains("sword")
@@ -56,6 +54,8 @@ enum AdvancedSearchEquipmentClass {
             return name.contains("rotary");
         } else if (this == ULTRA) {
             return name.contains("ultraa");
+        } else if (this == LIGHT) {
+            return name.contains("light auto cannon");
         } else if (this == INFANTRY_SUIT) {
             return (name.contains("suit") || name.contains(" kit") || name.contains(", standard") || name.contains(", concealed")
                 || name.contains("clothing") || name.contains("vest") || name.contains("chainmail") || name.contains("parka"))
@@ -69,6 +69,9 @@ enum AdvancedSearchEquipmentClass {
                 && !name.contains("sneak");
         } else if (this == CHASSIS_MOD) {
             return name.contains("chassis") || name.contains("environmental sealing") || name.contains("external power pickup");
+        } else if (this == MOVE_ENHANCE) {
+            return (name.contains("masc") || name.contains("myomer") || name.contains("charger") || name.contains("tsm"))
+                && !name.contains("vest") && !name.contains("suit");
         } else if (name.contains(name().toLowerCase(Locale.ROOT)) && !name.contains("ammo")) {
             return true;
         }
@@ -94,12 +97,13 @@ enum AdvancedSearchEquipmentClass {
             case TASER -> "Taser";
             case FLAMER -> "Flamer";
             case MISSILE -> "Missile";
-            case PHYSICAL -> "Physical (inc. industrial equipment)";
-            case PRACTICAL_PHYSICAL -> "Physical (weapons only)";
+            case PHYSICAL -> "Physical Weapons and Gear";
+            case PRACTICAL_PHYSICAL -> "Physical Weapons";
             case INFANTRY_SUIT -> "Infantry Armor Suits";
             case PROBE -> "Active Probes";
             case ECM -> "ECM Systems";
             case CHASSIS_MOD -> "Chassis Modifications";
+            case MOVE_ENHANCE -> "Movement Enhancing Gear";
             default -> super.toString();
         };
     }

@@ -171,27 +171,27 @@ public class TROView {
         model.put("year", String.valueOf(entity.getYear()));
         model.put("techRating", entity.getFullRatingName());
         if (!entity.getFluff().getOverview().isBlank()) {
-            model.put("fluffOverview", wordWrap(entity.getFluff().getOverview(), 200));
+            model.put("fluffOverview", entity.getFluff().getOverview());
         }
 
         if (!entity.getFluff().getCapabilities().isBlank()) {
-            model.put("fluffCapabilities", wordWrap(entity.getFluff().getCapabilities(), 200));
+            model.put("fluffCapabilities", entity.getFluff().getCapabilities());
         }
 
         if (!entity.getFluff().getDeployment().isBlank()) {
-            model.put("fluffDeployment", wordWrap(entity.getFluff().getDeployment(), 200));
+            model.put("fluffDeployment", entity.getFluff().getDeployment());
         }
 
         if (!entity.getFluff().getHistory().isBlank()) {
-            model.put("fluffHistory", wordWrap(entity.getFluff().getHistory(), 200));
+            model.put("fluffHistory", entity.getFluff().getHistory());
         }
 
         if (!entity.getFluff().getManufacturer().isBlank()) {
-            model.put("manufacturerDesc", wordWrap(entity.getFluff().getManufacturer(), 200));
+            model.put("manufacturerDesc", entity.getFluff().getManufacturer());
         }
 
         if (!entity.getFluff().getPrimaryFactory().isBlank()) {
-            model.put("factoryDesc", wordWrap(entity.getFluff().getPrimaryFactory(), 200));
+            model.put("factoryDesc", entity.getFluff().getPrimaryFactory());
         }
     }
 

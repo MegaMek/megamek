@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,35 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.weapons.capitalweapons;
-
-import megamek.common.Mounted;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
-
-import java.io.Serial;
+package megamek.client.ui.advancedsearch;
 
 /**
- * Naval Gauss Weapon superclass
- * @author Jay Lawson
+ * FilterTokens subclass that represents equipment.
+ *
+ * @author Arlith
  */
-public abstract class NGaussWeapon extends GaussWeapon {
-    @Serial
-    private static final long serialVersionUID = -2800123131421584210L;
+class EquipmentTypeFT extends EquipmentFilterToken {
 
-    public NGaussWeapon() {
-        super();
-        atClass = CLASS_CAPITAL_GAUSS;
-        capital = true;
-        flags = flags.andNot(F_PROTO_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+    String internalName;
+    String fullName;
+
+    EquipmentTypeFT(String in, String fn, int q) {
+        this(in, fn, q, true);
+    }
+
+    EquipmentTypeFT(String in, String fn, int q, boolean atleast) {
+        internalName = in;
+        fullName = fn;
+        qty = q;
+        this.atleast = atleast;
     }
 
     @Override
-    public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, Mounted<?> linked) {
-        return damage;
+    public String toString() {
+        return (atleast ? "" : "less than ") + qty + " " + fullName + ((qty != 1) ? "s" : "");
     }
 }

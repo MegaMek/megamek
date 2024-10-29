@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,25 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.dialog;
+package megamek.client.ui.advancedsearch;
 
+import com.formdev.flatlaf.FlatClientProperties;
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.ButtonEsc;
+import megamek.client.ui.swing.CloseAction;
+import megamek.client.ui.swing.dialog.DialogButton;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import java.awt.*;
 
 /**
- * This is a (new) dialog for advanced unit filtering, mostly for the unit selector. It contains the old
- * TW advanced search in one tab and the new AlphaStrike search in another tab. Both searches can be used
- * simultaneously.
+ * This is the dialog for advanced unit filtering, mostly for the unit selector. It contains the TW advanced search in one tab and the
+ * AlphaStrike search in another tab. Both searches can be used simultaneously.
  */
 public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
-    final int year;
+    private final int year;
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
     private final JTabbedPane advancedSearchPane = new JTabbedPane();
@@ -44,7 +46,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
         year = allowedYear;
         totalWarTab = new TWAdvancedSearchPanel(year);
         advancedSearchPane.addTab("Total Warfare", totalWarTab);
-        advancedSearchPane.addTab("Alpha Strike", alphaStrikeTab);
+        advancedSearchPane.addTab("Alpha Strike", new TWAdvancedSearchPanel.StandardScrollPane(alphaStrikeTab));
         initialize();
     }
 
@@ -68,16 +70,34 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
-        JPanel buttonPanel = super.createButtonPanel();
-        buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.setBorder(new EmptyBorder(5, 0, 5, 0));
-        return buttonPanel;
+        JButton cancelButton = new ButtonEsc(new CloseAction(this));
+        JButton okButton = new DialogButton(Messages.getString("Ok.text"));
+        okButton.addActionListener(this::okButtonActionPerformed);
+        getRootPane().setDefaultButton(okButton);
+
+        JPanel notePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        notePanel.add(Box.createHorizontalStrut(20));
+        var noteLabel = new JLabel(Messages.getString("MekSelectorDialog.Search.Combine"));
+        noteLabel.putClientProperty(FlatClientProperties.STYLE, "foreground: mix($Label.foreground, #afa, 60%)");
+        notePanel.add(noteLabel);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+        buttonPanel.add(okButton);
+        buttonPanel.add(cancelButton);
+
+        JPanel outerPanel = new JPanel(new GridLayout(1,1));
+        outerPanel.setBorder(BorderFactory.createCompoundBorder(
+            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
+            new EmptyBorder(10, 0, 10, 0)));
+        outerPanel.add(notePanel);
+        outerPanel.add(buttonPanel);
+
+        return outerPanel;
     }
 
     @Override
     protected Container createCenterPane() {
-        JScrollPane advScrollpane = new JScrollPane(advancedSearchPane);
-        return advScrollpane;
+        return advancedSearchPane;
     }
 
     /** Deactivates the search fields in both search tabs so that no units are filtered out. */

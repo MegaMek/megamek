@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,35 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.weapons.capitalweapons;
+package megamek.client.ui.advancedsearch;
 
-import megamek.common.Mounted;
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
-import java.io.Serial;
+class TechBaseRenderer extends DefaultTableCellRenderer {
 
-/**
- * Naval Gauss Weapon superclass
- * @author Jay Lawson
- */
-public abstract class NGaussWeapon extends GaussWeapon {
-    @Serial
-    private static final long serialVersionUID = -2800123131421584210L;
-
-    public NGaussWeapon() {
+    TechBaseRenderer() {
         super();
-        atClass = CLASS_CAPITAL_GAUSS;
-        capital = true;
-        flags = flags.andNot(F_PROTO_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        setHorizontalAlignment(SwingConstants.CENTER);
     }
 
     @Override
-    public int getBattleForceClass() {
-        return BFCLASS_CAPITAL;
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, Mounted<?> linked) {
-        return damage;
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value.equals("Inner Sphere")) {
+            value = "IS";
+        }
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     }
 }

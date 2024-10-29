@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.unitSelector;
+package megamek.client.ui.advancedsearch;
 
 import java.awt.BasicStroke;
 import java.awt.Dimension;
@@ -26,6 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.Box;
@@ -149,10 +150,10 @@ public class ASAdvancedSearchPanel extends JPanel {
     IntRangeTextField mvTo = new IntRangeTextField();
 
     JCheckBox useAbility1 = new JCheckBox("Special Ability");
-    MMComboBox<BattleForceSUA> ability1 = new MMComboBox<>("Ability1", BattleForceSUA.values());
+    MMComboBox<BattleForceSUA> ability1;
 
     JCheckBox useAbility2 = new JCheckBox("Special Ability");
-    MMComboBox<BattleForceSUA> ability2 = new MMComboBox<>("Ability2", BattleForceSUA.values());
+    MMComboBox<BattleForceSUA> ability2;
 
     JCheckBox useUnitRole = new JCheckBox("Unit Role");
     JToggleButton unitRoleUndetermined = new JToggleButton(UnitRole.UNDETERMINED.toString());
@@ -201,6 +202,10 @@ public class ASAdvancedSearchPanel extends JPanel {
         add(new DottedSeparator());
         add(simplePanel(useOV, ov0, ov1, ov2, ov3, ov4));
         add(new DottedSeparator());
+        BattleForceSUA[] abilities = BattleForceSUA.values();
+        Arrays.sort(abilities, Comparator.comparing(BattleForceSUA::name, String.CASE_INSENSITIVE_ORDER));
+        ability1 = new MMComboBox<>("Ability1", abilities);
+        ability2 = new MMComboBox<>("Ability2", abilities);
         add(simplePanel(useAbility1, ability1));
         add(simplePanel(useAbility2, ability2));
         add(new DottedSeparator());
@@ -566,6 +571,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         pvTo.setEnabled(usePV.isSelected());
 
         mvBetween.setEnabled(useMV.isSelected());
+        mvMode.setEnabled(useMV.isSelected());
         mvFrom.setEnabled(useMV.isSelected());
         mvAnd.setEnabled(useMV.isSelected());
         mvTo.setEnabled(useMV.isSelected());

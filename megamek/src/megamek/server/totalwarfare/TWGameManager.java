@@ -31319,7 +31319,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.add(coords.getBoardNum());
                 vFullReport.add(r);
 
-                lightningStormDamage(coords, damage, vFullReport);
+                vFullReport.addAll(lightningStormDamage(coords, damage));
 
                 if (rollType.getIntValue() == 6) {
                     for (Coords locationAdjacent : coords.allAdjacent()) {
@@ -31327,7 +31327,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.add(locationAdjacent.getBoardNum());
                         vFullReport.add(r);
 
-                        lightningStormDamage(locationAdjacent, 5, vFullReport);
+                        vFullReport.addAll(lightningStormDamage(locationAdjacent, 5));
                     }
                 }
             }
@@ -31336,7 +31336,8 @@ public class TWGameManager extends AbstractGameManager {
         return vFullReport;
     }
 
-    private void lightningStormDamage(Coords coords, int damage, Vector<Report> vFullReport) {
+    private Vector<Report> lightningStormDamage(Coords coords, int damage) {
+        Vector<Report> vFullReport = new Vector<>();
         Vector<Report> newReports = tryClearHex(coords, damage, Entity.NONE);
         vFullReport.addAll(newReports);
 
@@ -31359,6 +31360,8 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Report> entityReport = damageEntity(entity, hit, damage);
             vFullReport.addAll(entityReport);
         }
+
+        return vFullReport;
     }
 
     /**

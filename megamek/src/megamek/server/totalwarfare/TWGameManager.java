@@ -15466,28 +15466,38 @@ public class TWGameManager extends AbstractGameManager {
                         entity.setShutDown(true);
                     } else {
                         int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
+                        TargetRoll target;
                         if (mtHeat) {
                             shutdown -= 5;
+                            target = new TargetRoll(shutdown, "Base tacops shutdown TN");
                             switch (entity.getCrew().getPiloting()) {
                                 case 0:
                                 case 1:
-                                    shutdown -= 2;
+                                    target.addModifier(-2, "Piloting skill");
                                     break;
                                 case 2:
                                 case 3:
-                                    shutdown -= 1;
+                                    target.addModifier(-1, "Piloting skill");
                                     break;
                                 case 6:
                                 case 7:
-                                    shutdown += 1;
+                                    target.addModifier(+1, "Piloting skill");
                             }
+                        } else {
+                            target = new TargetRoll(shutdown, "Base shutdown TN");
+                        }
+                        boolean riscKit = false;
+                        Mek mek = (Mek) entity;
+                        if (mek.hasRiscHeatSinkOverrideKit()) {
+                            riscKit = true;
+                            target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
                         Roll diceRoll = Compute.rollD6(2);
                         int rollValue = diceRoll.getIntValue();
                         r = new Report(5060);
                         r.subject = entity.getId();
                         r.addDesc(entity);
-                        r.add(shutdown);
+                        r.add(target);
 
                         if (entity.getCrew().hasActiveTechOfficer()) {
                             rollValue += 2;
@@ -15496,7 +15506,8 @@ public class TWGameManager extends AbstractGameManager {
                         } else {
                             r.add(diceRoll);
                         }
-                        if (rollValue >= shutdown) {
+
+                        if (rollValue >= target.getValue()) {
                             // avoided
                             r.choose(true);
                             addReport(r);
@@ -15511,6 +15522,44 @@ public class TWGameManager extends AbstractGameManager {
                             }
                             // okay, now mark shut down
                             entity.setShutDown(true);
+                        }
+
+                        if (diceRoll.getIntValue() == 2 && riscKit) {
+                            r = new Report(5545);
+                            r.subject(entity.getId());
+                            addReport(r);
+
+                            int hits = 0;
+                            Roll diceRoll2 = Compute.rollD6(2);
+                            r = new Report(6310);
+                            r.subject = entity.getId();
+                            r.add(diceRoll2);
+                            r.newlines = 0;
+                            addReport(r);
+
+                            if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
+                                hits = 1;
+                            } else if ((diceRoll2.getIntValue() == 10) || (diceRoll2.getIntValue() == 11)) {
+                                hits = 2;
+                            } else if (diceRoll2.getIntValue() == 12) {
+                                hits = 3;
+                            }
+
+                            r = new Report(6328);
+                            r.subject = entity.getId();
+                            r.add("%d+1=%d".formatted(hits, hits+1));
+                            addReport(r);
+
+                            hits++;
+
+                            for (int j = 0; (j < 12) && (hits > 0); j++) {
+                                var crit = mek.getCritical(Mek.LOC_CT, j);
+                                if ((crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                                    && (crit.getIndex() == Mek.SYSTEM_ENGINE) && crit.isHittable()) {
+                                    addReport(applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
+                                    hits--;
+                                }
+                            }
                         }
                     }
                 }

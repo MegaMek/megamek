@@ -235,7 +235,6 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
     private final Game game = new Game();
     private Board board = game.getBoard();
     private BoardView bv;
-    public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForBoardEditor();
@@ -268,7 +267,6 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2
     private int brushSize = 1;
     private int hexLeveltoDraw = -1000;
-    private final Font fontComboTerr = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 12);
     private EditorTextField texElev;
     private ScalingIconButton butElevUp;
     private ScalingIconButton butElevDown;
@@ -538,6 +536,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
                     controller.removeAllActions();
                     controller.boardEditor = null;
                 }
+                bv.dispose();
                 frame.dispose();
             }
         });
@@ -1932,7 +1931,7 @@ public class BoardEditor extends JPanel implements ItemListener, ListSelectionLi
             }
             updateWhenSelected();
         } else if (ae.getSource().equals(butTerrExits)) {
-            int exitsVal = 0;
+            int exitsVal;
 
             if (ae.getActionCommand().equals(CMD_EDIT_DEPLOYMENT_ZONES)) {
                 var dlg = new MultiIntSelectorDialog(frame, "BoardEditor.deploymentZoneSelectorName",

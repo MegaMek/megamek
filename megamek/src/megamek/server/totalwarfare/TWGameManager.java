@@ -15486,10 +15486,8 @@ public class TWGameManager extends AbstractGameManager {
                         } else {
                             target = new TargetRoll(shutdown, "Base shutdown TN");
                         }
-                        boolean riscKit = false;
                         Mek mek = (Mek) entity;
                         if (mek.hasRiscHeatSinkOverrideKit()) {
-                            riscKit = true;
                             target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
                         Roll diceRoll = Compute.rollD6(2);
@@ -15524,7 +15522,7 @@ public class TWGameManager extends AbstractGameManager {
                             entity.setShutDown(true);
                         }
 
-                        if (diceRoll.getIntValue() == 2 && riscKit) {
+                        if (diceRoll.getIntValue() == 2 && mek.hasRiscHeatSinkOverrideKit()) {
                             r = new Report(5545);
                             r.subject(entity.getId());
                             addReport(r);
@@ -15554,7 +15552,7 @@ public class TWGameManager extends AbstractGameManager {
 
                             for (int j = 0; (j < 12) && (hits > 0); j++) {
                                 var crit = mek.getCritical(Mek.LOC_CT, j);
-                                if ((crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                                if ((crit != null) && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
                                     && (crit.getIndex() == Mek.SYSTEM_ENGINE) && crit.isHittable()) {
                                     addReport(applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
                                     hits--;

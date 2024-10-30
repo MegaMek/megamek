@@ -400,7 +400,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField unitTooltipArmorMiniCriticalCharText;
     private JTextField unitTooltipArmorMiniDestroyedCharText;
     private JTextField unitTooltipArmorMiniCapArmorCharText;
-    private JTextField unitTooltipArmorMiniFontSizeModText;
+    private JComboBox<String> unitTooltipFontSizeModCbo;
     private JTextField unitTooltipArmorMiniUnitsPerBlockText;
     private JTextField unitDisplayMekArmorLargeFontSizeText;
     private JTextField unitDisplayMekArmorMediumFontSizeText;
@@ -1113,6 +1113,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(tooltipDistSupression);
         comps.add(row);
 
+        JLabel unitTooltipFontSizeModLabel = new JLabel(
+            Messages.getString("CommonSettingsDialog.unitTooltipFontSizeMod"));
+
+        unitTooltipFontSizeModCbo = new JComboBox<>();
+        unitTooltipFontSizeModCbo.addItem("large");
+        unitTooltipFontSizeModCbo.addItem("medium");
+        unitTooltipFontSizeModCbo.addItem("small");
+        unitTooltipFontSizeModCbo.addItem("x-small");
+        unitTooltipFontSizeModCbo.addItem("xx-small");
+        unitTooltipFontSizeModCbo.setSelectedItem(GUIP.getUnitToolTipFontSizeMod());
+        unitTooltipFontSizeModCbo.setMaximumSize(new Dimension(300, 60));
+
+        unitTooltipFontSizeModCbo.setToolTipText(Messages.getString("CommonSettingsDialog.unitTooltipFontSizeMod.tooltip"));
+        row = new ArrayList<>();
+        row.add(unitTooltipFontSizeModLabel);
+        row.add(unitTooltipFontSizeModCbo);
+        comps.add(row);
+
         comps.add(checkboxEntry(showWpsinTT, null));
         comps.add(checkboxEntry(showWpsLocinTT, null));
         comps.add(checkboxEntry(showPilotPortraitTT, null));
@@ -1268,18 +1286,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         row.add(unitTooltipUnitsPerBlockLabel);
         row.add(unitTooltipArmorMiniUnitsPerBlockText);
-        comps.add(row);
-
-        JLabel unitTooltipFontSizeModLabel = new JLabel(
-                Messages.getString("CommonSettingsDialog.armorMiniFontSizeMod"));
-        unitTooltipArmorMiniFontSizeModText = new JTextField(5);
-        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
-        unitTooltipArmorMiniFontSizeModText.setMaximumSize(new Dimension(150, 40));
-        unitTooltipArmorMiniFontSizeModText
-                .setToolTipText(Messages.getString("CommonSettingsDialog.armorMiniFontSizeMod.tooltip"));
-        row = new ArrayList<>();
-        row.add(unitTooltipFontSizeModLabel);
-        row.add(unitTooltipArmorMiniFontSizeModText);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2241,7 +2247,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
         unitTooltipArmorMiniCapArmorCharText.setText(GUIP.getUnitToolTipArmorMiniCapArmorChar());
         unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
-        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
+        unitTooltipFontSizeModCbo.setSelectedItem(GUIP.getUnitToolTipFontSizeMod());
 
         csbReportLinkColor.setColour(GUIP.getReportLinkColor());
         csbReportSuccessColor.setColour(GUIP.getReportSuccessColor());
@@ -2732,7 +2738,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             logger.error(ex, "");
         }
         try {
-            GUIP.setUnitToolTipArmorMiniFontSize(Integer.parseInt(unitTooltipArmorMiniFontSizeModText.getText()));
+            GUIP.setUnitToolTipFontSize((String) unitTooltipFontSizeModCbo.getSelectedItem());
         } catch (Exception ex) {
             logger.error(ex, "");
         }

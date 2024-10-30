@@ -635,7 +635,7 @@ class LobbyMekCellFormatter {
 
         // ECM
         if (entity.hasActiveECM()) {
-            result.append(fontHTML(uiC3Color(), 0.2f));
+            result.append(fontHTML(uiC3Color()));
             result.append(ECM_SIGN);
             result.append("</FONT>");
         }
@@ -643,7 +643,7 @@ class LobbyMekCellFormatter {
         // Quirk Count
         int quirkCount = entity.countQuirks() + entity.countWeaponQuirks();
         if (quirkCount > 0) {
-            result.append(fontHTML(uiQuirksColor(), 0.2f));
+            result.append(fontHTML(uiQuirksColor()));
             result.append(QUIRKS_SIGN);
             result.append("</FONT>");
         }
@@ -770,7 +770,7 @@ class LobbyMekCellFormatter {
 
         // Info tooltip sign
         if (forceView) {
-            result.append(fontHTML(uiGreen(), 0.3f));
+            result.append(fontHTML(uiGreen()));
             result.append("&nbsp;  \u24D8");
         }
 
@@ -805,7 +805,7 @@ class LobbyMekCellFormatter {
      * units are provided.
      */
     static String formatForceCompact(Force force, ChatLounge lobby) {
-        return formatForce(force, lobby, 0);
+        return formatForce(force, lobby);
     }
 
     /**
@@ -815,10 +815,10 @@ class LobbyMekCellFormatter {
      * units are provided.
      */
     static String formatForceFull(Force force, ChatLounge lobby) {
-        return formatForce(force, lobby, 0.2f);
+        return formatForce(force, lobby);
     }
 
-    private static String formatForce(Force force, ChatLounge lobby, float size) {
+    private static String formatForce(Force force, ChatLounge lobby) {
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
@@ -835,7 +835,7 @@ class LobbyMekCellFormatter {
         color = addGray(color, 128).brighter();
 
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
-        result.append(fontHTML(color, size));
+        result.append(fontHTML(color));
 
         // A top-level / subforce special char
         if (force.isTopLevel()) {
@@ -849,24 +849,24 @@ class LobbyMekCellFormatter {
 
         // ID
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            result.append(fontHTML(uiGray(), size));
+            result.append(fontHTML(uiGray()));
             result.append(" [").append(force.getId()).append("]</FONT>");
         }
 
         // Display force owner
         if ((ownerId != client.getLocalPlayerNumber()) && (owner != null)) {
-            result.append(fontHTML(size));
+            result.append(fontHTML());
             result.append(DOT_SPACER).append("</FONT>");
 
             PlayerColour ownerColour = (owner.getColour() == null) ? PlayerColour.FIRE_BRICK : owner.getColour();
-            result.append(fontHTML(ownerColour.getColour(), size));
+            result.append(fontHTML(ownerColour.getColour()));
             result.append("\u2691 ");
             result.append(owner.getName()).append("</FONT>");
         }
 
         // BV
         List<Entity> fullEntities = ForceAssignable.filterToEntityList(lobby.game().getForces().getFullEntities(force));
-        result.append(fontHTML(color, size));
+        result.append(fontHTML(color));
         result.append(DOT_SPACER);
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron())
                 .mapToInt(Entity::calculateBattleValue).sum();
@@ -876,7 +876,7 @@ class LobbyMekCellFormatter {
             // Unit Type
             long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct()
                     .count();
-            result.append(fontHTML(color, size));
+            result.append(fontHTML(color));
             result.append(DOT_SPACER);
             if (unittypes > 1) {
                 String msg_mixed = Messages.getString("ChatLounge.Mixed");
@@ -943,9 +943,8 @@ class LobbyMekCellFormatter {
         final Crew crew = entity.getCrew();
         final GameOptions options = entity.getGame().getOptions();
         final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        final float overallScale = 0f;
 
-        result.append(fontHTML(overallScale));
+        result.append(fontHTML());
 
         if (blindDrop) {
             result.append("<B>" + Messages.getString("ChatLounge.Unknown") + "</B>");
@@ -957,7 +956,7 @@ class LobbyMekCellFormatter {
                 result.append("<B>No " + crew.getCrewType().getRoleName(0) + "</B>");
             } else {
                 if ((crew.getNickname(0) != null) && !crew.getNickname(0).isEmpty()) {
-                    result.append(fontHTML(uiNickColor(), overallScale));
+                    result.append(fontHTML(uiNickColor()));
                     result.append("<B>'" + crew.getNickname(0).toUpperCase() + "'</B></FONT>");
                 } else {
                     result.append("<B>" + crew.getDesc(0) + "</B>");
@@ -973,7 +972,7 @@ class LobbyMekCellFormatter {
 
         // Advantages, MD, Edge
         if ((crew.countOptions(LVL3_ADVANTAGES) > 0) || (crew.countOptions(MD_ADVANTAGES) > 0)) {
-            result.append(fontHTML(uiQuirksColor(), overallScale));
+            result.append(fontHTML(uiQuirksColor()));
             result.append(Messages.getString("ChatLounge.abilities"));
             result.append("</FONT>");
         }

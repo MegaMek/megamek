@@ -166,7 +166,6 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.rackSize = rackSize;
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
-            Dimension spinnerSize = new Dimension(55, 25);
 
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
                     .map(Mounted::getType).findAny();
@@ -184,7 +183,6 @@ public class BayMunitionsChoicePanel extends JPanel {
             for (AmmoType atype : munitions) {
                 JSpinner spn = new JSpinner(new SpinnerNumberModel(starting.getOrDefault(atype.getInternalName(), 0),
                         0, null, 1));
-                spn.setPreferredSize(spinnerSize);
                 spn.setName(atype.getInternalName());
                 spn.addChangeListener(this);
                 if (atype.getTonnage(entity) > 1) {

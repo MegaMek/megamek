@@ -787,7 +787,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 break;
 
             case GUIPreferences.INCLINES:
-                game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
+                game.getBoard().initializeAllAutomaticTerrain();
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
@@ -2288,7 +2288,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
-    boolean useIsometric() {
+    public boolean useIsometric() {
         return drawIsometric;
     }
 
@@ -4197,7 +4197,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
-        game.getBoard().initializeAllAutomaticTerrain(GUIP.getHexInclines());
+        game.getBoard().initializeAllAutomaticTerrain();
         clearHexImageCache();
         clearShadowMap();
         boardPanel.repaint();
@@ -4296,7 +4296,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (b != null) {
                 b.addBoardListener(BoardView.this);
             }
-            game.getBoard().initializeAllAutomaticTerrain(GUIP.getHexInclines());
+            game.getBoard().initializeAllAutomaticTerrain();
             clearHexImageCache();
             updateBoard();
             clearShadowMap();
@@ -5156,11 +5156,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return fovHighlightingAndDarkening;
     }
 
-    ArrayList<WreckSprite> getWreckSprites() {
+    public ArrayList<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
 
-    ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
+    public ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
         return isometricWreckSprites;
     }
 

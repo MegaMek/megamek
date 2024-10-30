@@ -55,7 +55,7 @@ public enum BattleForceSUA {
     // Placeholders for additional unit info not otherwise present in the AS element
     TRI, QUAD, AERODYNESC
     ;
-    
+
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
     private static final String[] AS_SUA_SORTED;
 

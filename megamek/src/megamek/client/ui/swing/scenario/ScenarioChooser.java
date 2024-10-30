@@ -49,7 +49,6 @@ import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.client.ui.swing.dialog.DialogButton;
 import megamek.client.ui.swing.util.ClickableLabel;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
@@ -91,10 +90,12 @@ public class ScenarioChooser extends AbstractButtonDialog {
             return scenarioFileName;
         }
         Component selectedTab = tabbedPane.getSelectedComponent();
-        if (!(selectedTab instanceof ScenarioInfoPane) || !getResult().isConfirmed()) {
+        if (!(selectedTab instanceof ScenarioInfoPane selectedPane) || !getResult().isConfirmed()) {
             return null;
+        } else if (selectedPane.getSelectedPreset() != null) {
+            return selectedPane.getSelectedPreset().getFileName();
         } else {
-            return ((ScenarioInfoPane) selectedTab).getSelectedPreset().getFileName();
+            return null;
         }
     }
 

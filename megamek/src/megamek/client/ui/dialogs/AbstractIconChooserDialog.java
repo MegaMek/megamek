@@ -84,6 +84,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
             });
         }
         initialize();
+        setAlwaysOnTop(true);
     }
     //endregion Constructors
 

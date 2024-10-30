@@ -195,7 +195,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT = "UnitToolTipArmorMiniColorIntact";
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG = "UnitToolTipArmorMiniColorPartialDmg";
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED = "UnitToolTipArmorMiniColorDamaged";
-    public static final String UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD = "UnitToolTipArmorMiniFrontSizeMod";
+    public static final String UNIT_TOOLTIP_FONT_SIZE_MOD = "UnitToolTipFrontSizeMod";
 
     public static final String UNIT_TOOLTIP_FGCOLOR = "UnitToolTipFGColor";
     public static final String UNIT_TOOLTIP_LIGHT_FGCOLOR = "UnitToolTipLightFGColor";
@@ -616,7 +616,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT, DEFAULT_MEDIUM_GREEN);
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, DEFAULT_MEDIUM_YELLOW);
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED, DEFAULT_MEDIUM_DARK_RED);
-        store.setDefault(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, -2);
+        store.setDefault(UNIT_TOOLTIP_FONT_SIZE_MOD, "medium");
         setDefault(UNIT_TOOLTIP_FGCOLOR, new Color(0xEEE6D9));
         setDefault(UNIT_TOOLTIP_LIGHT_FGCOLOR, new Color(0x000000));
         setDefault(UNIT_TOOLTIP_BUILDING_FGCOLOR, new Color(0x000000));
@@ -2934,8 +2934,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK);
     }
 
-    public int getUnitToolTipArmorMiniFontSizeMod() {
-        return getInt(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD);
+    public String getUnitToolTipFontSizeMod() {
+        return getString(UNIT_TOOLTIP_FONT_SIZE_MOD);
     }
 
     public Color getUnitToolTipFGColor() {
@@ -3146,8 +3146,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK, i);
     }
 
-    public void setUnitToolTipArmorMiniFontSize(int i) {
-        store.setValue(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, i);
+    public void setUnitToolTipFontSize(String s) {
+        store.setValue(UNIT_TOOLTIP_FONT_SIZE_MOD, s);
     }
 
     public void setUnitToolTipFGColor(Color c) {

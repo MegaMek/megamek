@@ -523,13 +523,32 @@ public class Princess extends BotClient {
             decentFacing = deployCoords.direction(center);
         }
 
-        final Entity deployEntity = game.getEntity(entityNum);
+        final Entity deployEntity = getEntity(entityNum);
         final Hex deployHex = game.getBoard().getHex(deployCoords);
+        int deployElevation = deployEntity.getElevation();
 
-        int deployElevation = getDeployElevation(deployEntity, deployHex);
-
-        // Compensate for hex elevation where != 0...
-        deployElevation -= deployHex.getLevel();
+        if (deployEntity.isAero()) {
+            if (game.getBoard().onGround()) {
+                // keep the altitude set in the lobby, possibly starting grounded
+                deployElevation = deployEntity.getAltitude();
+            } else if (game.getBoard().inAtmosphere()) {
+                // try to keep the altitude set in the lobby, but stay above the terrain
+                var deploymentHelper = new AllowedDeploymentHelper(deployEntity, deployCoords, game.getBoard(), deployHex, game);
+                List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(DeploymentElevationType.ALTITUDE);
+                if (allowedDeployment.isEmpty()) {
+                    // that's bad, cannot deploy at all
+                    logger.error("Cannot find viable altitude to deploy to");
+                    sendDeleteEntity(entityNum);
+                    return;
+                } else {
+                    deployElevation = Math.max(deployEntity.getAltitude(), Collections.min(allowedDeployment).elevation());
+                }
+            }
+        } else {
+            deployElevation = getDeployElevation(deployEntity, deployHex);
+            // Compensate for hex elevation where != 0...
+            deployElevation -= deployHex.getLevel();
+        }
         deploy(entityNum, deployCoords, decentFacing, deployElevation);
     }
 

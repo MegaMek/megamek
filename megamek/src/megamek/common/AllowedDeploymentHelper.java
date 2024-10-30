@@ -18,6 +18,8 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,16 +29,28 @@ import static megamek.common.DeploymentElevationType.*;
 public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board, Hex hex, Game game) {
 
     /**
-     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This
-     * can be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and
-     * altitudes. For VTOLs, elevations up to 10 are always included individually if available. Above that
-     * and above all terrain features of the hex, only a single elevation is reported using the
-     * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available.
-     * Altitudes are always reported individually (0 to 10).
+     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords. This can be anything from the
+     * seafloor, swimming, ice, water surface, ground, up to elevations and altitudes. For VTOLs, elevations up to 10 are always included
+     * individually if available. Above that and above all terrain features of the hex, only a single elevation is reported using the
+     * ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available. Altitudes are always reported
+     * individually (0 to 10).
      *
      * @return All legal deployment elevations/altitudes
      */
     public List<ElevationOption> findAllowedElevations() {
+        return findAllowedElevations(null);
+    }
+
+    /**
+     * Returns a list of elevations/altitudes that the given entity can deploy to at the given coords that are of the given type. This can
+     * be anything from the seafloor, swimming, ice, water surface, ground, up to elevations and altitudes. For VTOLs, elevations up to 10
+     * are always included individually if available. Above that and above all terrain features of the hex, only a single elevation is
+     * reported using the ELEVATIONS_ABOVE marker, meaning that any elevation above the reported value is also available. Altitudes are
+     * always reported individually (0 to 10).
+     *
+     * @return All legal deployment elevations/altitudes of the given type
+     */
+    public List<ElevationOption> findAllowedElevations(@Nullable DeploymentElevationType limitToType) {
         if (board.inSpace()) {
             throw new IllegalStateException("Cannot find allowed deployment elevations in space!");
         }
@@ -52,6 +66,10 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
         if (entity.getMovementMode().isWiGE()) {
             addAirborneWigeOptions(result);
+        }
+
+        if (limitToType != null) {
+            result.removeIf(o -> o.type() != limitToType);
         }
 
         Collections.sort(result);
@@ -80,7 +98,11 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
         if (board.onGround()) {
             result.add(new ElevationOption(0, ON_GROUND));
         }
-        int startingAltitude = Math.max(0, board.inAtmosphere() ? board.getHex(coords).ceiling(true) + 1 : 1);
+        int startingAltitude = 1;
+        if (board.inAtmosphere()) {
+            // Stay above terrain on an atmospheric board, but never below altitude 1
+            startingAltitude += Math.max(0, board.getHex(coords).ceiling(true));
+        }
         for (int altitude = startingAltitude; altitude <= 10; altitude++) {
             result.add(new ElevationOption(altitude, ALTITUDE));
         }

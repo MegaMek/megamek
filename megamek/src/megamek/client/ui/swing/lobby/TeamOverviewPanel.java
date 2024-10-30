@@ -331,7 +331,6 @@ public class TeamOverviewPanel extends JPanel {
 
         @Override
         public Object getValueAt(int row, int col) {
-            float textSizeDelta = isDetached ? -0.1f : 0.2f;
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
@@ -339,12 +338,12 @@ public class TeamOverviewPanel extends JPanel {
                     boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor()
                             : GUIPreferences.getInstance().getMyUnitColor();
-                    result.append(UIUtil.fontHTML(color, textSizeDelta) + "&nbsp;");
+                    result.append(UIUtil.fontHTML(color) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
                     break;
 
                 case TONNAGE:
-                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML() + "<CENTER>");
                     double ton = (double) tons.get(row) / 1000;
                     if (ton < 10) {
                         result.append(String.format("%.2f", ton) + " Tons");
@@ -355,7 +354,7 @@ public class TeamOverviewPanel extends JPanel {
                     break;
 
                 case COST:
-                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML() + "<CENTER>");
                     if (costs.get(row) < 10_000_000) {
                         result.append(String.format("%,d", costs.get(row)) + " C-Bills");
                     } else {
@@ -368,21 +367,21 @@ public class TeamOverviewPanel extends JPanel {
                     return teams.get(row).players();
 
                 case BV:
-                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML() + "<CENTER>");
                     result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
                     result.append(relativeValue(bvs, row));
                     break;
 
                 case UNITS:
                     if (!seeTeam(row)) {
-                        return "<HTML>" + UIUtil.fontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
+                        return "<HTML>" + UIUtil.fontHTML(UIUtil.uiGray()) + "Unavailable";
                     }
-                    result.append(fontHTML(textSizeDelta - 0.1f));
+                    result.append(fontHTML());
                     result.append(units.get(row));
                     break;
 
                 case HIDDEN:
-                    result.append(fontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(fontHTML() + "<CENTER>");
                     var percentage = hidden.get(row);
                     result.append(percentage == 0 ? "--" : NumberFormat.getPercentInstance().format(percentage));
 
@@ -416,10 +415,10 @@ public class TeamOverviewPanel extends JPanel {
                     String selectedTeam = teamNames.get(selectedRow);
                     long percentage = 100 * values.get(row) / baseValue;
                     if (isDetached) {
-                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray(), -0.1f)
+                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray())
                                 + String.format("(%d %%)", percentage);
                     } else {
-                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray(), -0.1f)
+                        return "<BR>" + UIUtil.fontHTML(UIUtil.uiGray())
                                 + String.format("(%d %% of %s)", percentage, selectedTeam);
                     }
                 }

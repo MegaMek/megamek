@@ -30,11 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -482,7 +478,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pane.setBackground(TEXT_BG);
         pane.setEditable(false);
         pane.setOpaque(true);
-        pane.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
     }
 
     private void addSubdisplay(JPanel parent, JComponent child, int minHeight, int fill) {
@@ -1349,16 +1344,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     /**
-     *
-     * @return the AmmoMounted currently selected by the ammo selector combo box,
-     *         not the linked ammo per se.
+     * @return the AmmoMounted currently selected by the ammo selector combo box, if any.
+     * The returned AmmoMounted may or may not be the ammo that is linked to the weapon.
      */
-    public AmmoMounted getSelectedAmmo() {
+    public Optional<AmmoMounted> getSelectedAmmo() {
         int selected = m_chAmmo.getSelectedIndex();
-        if (selected == -1 || vAmmo == null) {
-            return null;
+        if ((selected == -1) || (vAmmo == null) || (selected >= vAmmo.size())) {
+            return Optional.empty();
+        } else {
+            return Optional.of(vAmmo.get(selected));
         }
-        return vAmmo.get(m_chAmmo.getSelectedIndex());
     }
 
     /**
@@ -1949,8 +1944,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // Update the range display to account for the selected ammo, or the loaded ammo
         // if none is selected
-        int curDisplayed = m_chAmmo.getSelectedIndex();
-        AmmoMounted mAmmo = (curDisplayed != -1 && vAmmo != null) ? vAmmo.get(curDisplayed) : mounted.getLinkedAmmo();
+        AmmoMounted mAmmo = getSelectedAmmo().orElse(mounted.getLinkedAmmo());
         if (mAmmo != null) {
             updateRangeDisplayForAmmo(mAmmo);
         }
@@ -2074,6 +2068,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                     vAmmo.add(mountedAmmo);
                     m_chAmmo.addItem(formatAmmo(mountedAmmo));
+                    int curDisplayed = m_chAmmo.getSelectedIndex();
                     if (curDisplayed != -1) {
                         nCur = curDisplayed;
                     } else if ((mounted.getLinked() != null) &&

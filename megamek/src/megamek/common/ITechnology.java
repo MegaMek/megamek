@@ -284,9 +284,6 @@ public interface ITechnology {
     }
 
     default boolean isAvailableIn(int year, boolean clan, boolean ignoreExtinction) {
-        // For technology created in the IS after the Clan Invasion, Clan availability
-        // matches IS (TO pg 33)
-        clan = clan && ITechnology.getTechEra(year) < ITechnology.ERA_CLAN;
         return year >= getIntroductionDate(clan) && (getIntroductionDate(clan) != DATE_NONE)
                 && (ignoreExtinction || !isExtinct(year, clan));
     }
@@ -297,9 +294,6 @@ public interface ITechnology {
     }
 
     default boolean isAvailableIn(int year, boolean clan, int faction) {
-        // For technology created in the IS after the Clan Invasion, Clan availability
-        // matches IS (TO pg 33)
-        clan = clan && ITechnology.getTechEra(year) < ITechnology.ERA_CLAN;
         return year >= getIntroductionDate(clan, faction)
                 && getIntroductionDate(clan, faction) != DATE_NONE  && !isExtinct(year, clan, faction);
     }
@@ -310,9 +304,6 @@ public interface ITechnology {
     }
 
     default boolean isLegal(int year, SimpleTechLevel simpleRulesLevel, boolean clanBase, boolean mixedTech, boolean ignoreExtinct) {
-        // For technology created in the IS after the Clan Invasion, Clan availability
-        // matches IS (TO pg 33)
-        clanBase = clanBase && ITechnology.getTechEra(year) < ITechnology.ERA_CLAN;
         if (mixedTech) {
             if (!isAvailableIn(year, ignoreExtinct)) {
                 return false;

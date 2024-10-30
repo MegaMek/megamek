@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.util;
 
+import com.formdev.flatlaf.FlatClientProperties;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -108,6 +109,6 @@ public final class FlatLafStyleBuilder {
         if ((fontName != null) && !fontName.isBlank()) {
             styleText += " \"" + fontName + "\"";
         }
-        component.putClientProperty(FLATLAF_STYLE_KEY, styleText);
+        component.putClientProperty(FlatClientProperties.STYLE, styleText);
     }
 }

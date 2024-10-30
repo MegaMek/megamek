@@ -6,8 +6,7 @@
 			<pctOmni>0,0</pctOmni>
 			<pctClan>10,10</pctClan>
 			<pctSL>80,80</pctSL>
-			<salvage pct='10'>
-				CCC:2,CHH:2,CSR:2,CIH:2,CSV:2,CFM:2,CCO:2,CGS:2,CSA:2,CDS:2,CW:2,CBS:1,CNC:2,CSJ:2,CJF:2,CGB:2,CB:5</salvage>
+			<salvage pct='10'>CCC:2,CHH:2,CSR:2,CIH:2,CSV:2,CFM:2,CCO:2,CGS:2,CSA:2,CDS:2,CW:2,CBS:1,CNC:2,CSJ:2,CJF:2,CGB:2,CB:5</salvage>
 		</faction>
 		<faction key='BoS'>
 			<salvage pct='10'></salvage>
@@ -36,8 +35,7 @@
 			<pctSL>100,100,100,80,25</pctSL>
 			<pctClan unitType='Vehicle'>0,0,0,15,20</pctClan>
 			<pctSL unitType='Vehicle'>100,100,100,85,80</pctSL>
-			<salvage pct='5'>
-				CHH:5,CCC:5,CSR:1,CIH:5,CSV:10,CFM:5,CCO:5,CDS:1,CW:5,CNC:10,CSJ:10,CJF:5,CB:10</salvage>
+			<salvage pct='5'>CHH:5,CCC:5,CSR:1,CIH:5,CSV:10,CFM:5,CCO:5,CDS:1,CW:5,CNC:10,CSJ:10,CJF:5,CB:10</salvage>
 		</faction>
 		<faction key='CB'>
 			<pctOmni>0,0,0,60,80</pctOmni>
@@ -45,8 +43,7 @@
 			<pctSL>90,90,60,40,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:5,CSR:4,CIH:4,CSV:5,CFM:3,CCO:5,CGS:3,CSA:4,CDS:4,CW:4,CBS:3,CNC:10,CSJ:1,CJF:4</salvage>
+			<salvage pct='10'>CCC:1,CHH:5,CSR:4,CIH:4,CSV:5,CFM:3,CCO:5,CGS:3,CSA:4,CDS:4,CW:4,CBS:3,CNC:10,CSJ:1,CJF:4</salvage>
 			<weightDistribution era='2950' unitType='Mek'>3,4,2,1</weightDistribution>
 			<weightDistribution era='2950' unitType='Tank'>4,1,3,2</weightDistribution>
 		</faction>
@@ -56,8 +53,7 @@
 			<pctSL>100,100,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CHH:2,CSR:3,CIH:3,CSV:3,CFM:3,CCO:7,CGS:2,CSA:7,CDS:1,CW:7,CBS:2,CNC:10,CJF:5,CGB:2,CB:3</salvage>
+			<salvage pct='10'>CHH:2,CSR:3,CIH:3,CSV:3,CFM:3,CCO:7,CGS:2,CSA:7,CDS:1,CW:7,CBS:2,CNC:10,CJF:5,CGB:2,CB:3</salvage>
 		</faction>
 		<faction key='CCO'>
 			<pctOmni>6,6,7,70,80</pctOmni>
@@ -65,8 +61,7 @@
 			<pctSL>60,60,60,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CHH:1,CCC:3,CIH:7,CSR:3,CSV:5,CFM:2,CGS:2,CSA:7,CDS:2,CW:1,CBS:1,CNC:10,CSJ:3,CJF:7,CB:7</salvage>
+			<salvage pct='10'>CHH:1,CCC:3,CIH:7,CSR:3,CSV:5,CFM:2,CGS:2,CSA:7,CDS:2,CW:1,CBS:1,CNC:10,CSJ:3,CJF:7,CB:7</salvage>
 			<weightDistribution era='2950' unitType='Mek'>2,3,4,2</weightDistribution>
 			<weightDistribution era='2950' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
@@ -76,8 +71,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:10,CCO:1,CGS:10,CSA:10,CDS:1,CW:1,CBS:1,CNC:3,CSJ:8,CJF:10,CGB:1,CB:3</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:10,CCO:1,CGS:10,CSA:10,CDS:1,CW:1,CBS:1,CNC:3,CSJ:8,CJF:10,CGB:1,CB:3</salvage>
 		</faction>
 		<faction key='CGB'>
 			<pctOmni>0,0,20,70,80</pctOmni>
@@ -85,8 +79,7 @@
 			<pctSL>70,70,40,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CHH:10,CCC:2,CIH:10,CSV:5,CFM:3,CGS:2,CCO:1,CSA:5,CDS:1,CW:5,CNC:8,CSJ:3,CJF:8</salvage>
+			<salvage pct='10'>CHH:10,CCC:2,CIH:10,CSV:5,CFM:3,CGS:2,CCO:1,CSA:5,CDS:1,CW:5,CNC:8,CSJ:3,CJF:8</salvage>
 			<weightDistribution era='2950' unitType='Mek'>2,3,4,2</weightDistribution>
 			<weightDistribution era='2950' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
@@ -96,8 +89,7 @@
 			<pctSL>100,100,60,50,40</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:1,CIH:9,CSV:6,CFM:10,CCO:1,CSA:3,CDS:1,CW:1,CNC:5,CSJ:4,CJF:9,CGB:1,CB:3</salvage>
+			<salvage pct='10'>CCC:1,CHH:1,CIH:9,CSV:6,CFM:10,CCO:1,CSA:3,CDS:1,CW:1,CNC:5,CSJ:4,CJF:9,CGB:1,CB:3</salvage>
 		</faction>
 		<faction key='CHH'>
 			<pctOmni>0,0,10,60,70</pctOmni>
@@ -105,8 +97,7 @@
 			<pctSL>90,90,50,40,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,40,50</pctClan>
 			<pctSL unitType='Vehicle'>100,100,60,60,50</pctSL>
-			<salvage pct='10'>
-				CCC:1,CSR:1,CIH:3,CSV:4,CFM:5,CCO:1,CGS:3,CSA:3,CDS:7,CW:1,CBS:1,CNC:3,CSJ:3,CJF:3,CGB:10,CB:6</salvage>
+			<salvage pct='10'>CCC:1,CSR:1,CIH:3,CSV:4,CFM:5,CCO:1,CGS:3,CSA:3,CDS:7,CW:1,CBS:1,CNC:3,CSJ:3,CJF:3,CGB:10,CB:6</salvage>
 		</faction>
 		<faction key='CIH'>
 			<pctOmni>0,0,0,60,80</pctOmni>
@@ -114,8 +105,7 @@
 			<pctSL>90,90,60,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:2,CHH:1,CSR:2,CSV:8,CFM:6,CCO:4,CGS:7,CSA:5,CDS:3,CW:4,CBS:1,CNC:3,CSJ:5,CJF:10,CGB:4,CB:3</salvage>
+			<salvage pct='10'>CCC:2,CHH:1,CSR:2,CSV:8,CFM:6,CCO:4,CGS:7,CSA:5,CDS:3,CW:4,CBS:1,CNC:3,CSJ:5,CJF:10,CGB:4,CB:3</salvage>
 			<weightDistribution era='2950' unitType='Mek'>5,4,2,1</weightDistribution>
 			<weightDistribution era='2950' unitType='Tank'>5,2,3,1</weightDistribution>
 		</faction>
@@ -125,8 +115,7 @@
 			<pctSL>70,70,40,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,15,15,15</pctClan>
 			<pctSL unitType='Vehicle'>100,100,85,85,85</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:1,CSR:1,CIH:6,CSV:10,CFM:5,CCO:3,CGS:4,CSA:3,CDS:1,CW:3,CBS:1,CNC:1,CSJ:3,CGB:2,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:1,CSR:1,CIH:6,CSV:10,CFM:5,CCO:3,CGS:4,CSA:3,CDS:1,CW:3,CBS:1,CNC:1,CSJ:3,CGB:2,CB:1</salvage>
 		</faction>
 		<faction key='CNC'>
 			<pctOmni>5,5,30,60,80</pctOmni>
@@ -134,8 +123,7 @@
 			<pctSL>90,90,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:5,CHH:2,CSR:8,CIH:5,CSV:2,CFM:3,CCO:10,CGS:7,CSA:5,CDS:2,CW:5,CBS:3,CSJ:2,CJF:2,CGB:5,CB:10</salvage>
+			<salvage pct='10'>CCC:5,CHH:2,CSR:8,CIH:5,CSV:2,CFM:3,CCO:10,CGS:7,CSA:5,CDS:2,CW:5,CBS:3,CSJ:2,CJF:2,CGB:5,CB:10</salvage>
 		</faction>
 		<faction key='CDS'>
 			<pctOmni>0,0,0,70,80</pctOmni>
@@ -143,8 +131,7 @@
 			<pctSL>90,90,50,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='12'>
-				CCC:1,CHH:5,CSR:7,CIH:10,CSV:7,CFM:3,CCO:4,CGS:3,CSA:7,CW:3,CNC:3,CSJ:3,CJF:7,CB:7,CGB:1</salvage>
+			<salvage pct='12'>CCC:1,CHH:5,CSR:7,CIH:10,CSV:7,CFM:3,CCO:4,CGS:3,CSA:7,CW:3,CNC:3,CSJ:3,CJF:7,CB:7,CGB:1</salvage>
 		</faction>
 		<faction key='CSJ'>
 			<pctOmni>10,10,25,60,80</pctOmni>
@@ -152,8 +139,7 @@
 			<pctSL>90,90,60,10,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CHH:5,CSR:1,CIH:9,CSV:3,CFM:9,CCO:10,CGS:3,CSA:3,CDS:4,CW:8,CNC:4,CJF:5,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CHH:5,CSR:1,CIH:9,CSV:3,CFM:9,CCO:10,CGS:3,CSA:3,CDS:4,CW:8,CNC:4,CJF:5,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CSR'>
 			<pctOmni>25,25,50,60,80</pctOmni>
@@ -169,8 +155,7 @@
 			<pctSL>50,50,50,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,40,40</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,60,60</pctSL>
-			<salvage pct='10'>
-				CCC:3,CHH:1,CSR:1,CIH:6,CSV:5,CFM:10,CCO:5,CGS:3,CDS:3,CW:1,CNC:4,CSJ:5,CJF:6,CGB:2,CB:4</salvage>
+			<salvage pct='10'>CCC:3,CHH:1,CSR:1,CIH:6,CSV:5,CFM:10,CCO:5,CGS:3,CDS:3,CW:1,CNC:4,CSJ:5,CJF:6,CGB:2,CB:4</salvage>
 			<weightDistribution era='2950' unitType='Mek'>2,3,4,2</weightDistribution>
 			<weightDistribution era='2950' unitType='Tank'>3,1,3,2</weightDistribution>
 		</faction>
@@ -180,8 +165,7 @@
 			<pctSL>50,50,30,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:2,CSR:1,CIH:6,CFM:4,CCO:3,CGS:3,CSA:6,CDS:5,CW:4,CBS:1,CNC:1,CSJ:1,CJF:10,CGB:3,CB:2</salvage>
+			<salvage pct='10'>CCC:1,CHH:2,CSR:1,CIH:6,CFM:4,CCO:3,CGS:3,CSA:6,CDS:5,CW:4,CBS:1,CNC:1,CSJ:1,CJF:10,CGB:3,CB:2</salvage>
 		</faction>
 		<faction key='CW'>
 			<pctOmni>0,0,10,70,80</pctOmni>
@@ -189,8 +173,7 @@
 			<pctSL>85,85,60,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:2,CHH:1,CSR:5,CIH:10,CSV:5,CFM:3,CCO:1,CGS:2,CSA:3,CDS:2,CNC:8,CSJ:10,CJF:10,CGB:5,CB:3</salvage>
+			<salvage pct='10'>CCC:2,CHH:1,CSR:5,CIH:10,CSV:5,CFM:3,CCO:1,CGS:2,CSA:3,CDS:2,CNC:8,CSJ:10,CJF:10,CGB:5,CB:3</salvage>
 		</faction>
 		<faction key='CS'>
 			<pctSL>50,75</pctSL>
@@ -385,8 +368,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.FT'>
 			<pctOmni>0,0,3,50,80</pctOmni>
@@ -394,8 +376,7 @@
 			<pctSL>85,85,65,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.Kl'>
 			<pctOmni>0,0,0,10,70</pctOmni>
@@ -403,8 +384,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.MaC'>
 			<pctOmni>0,0,3,50,80</pctOmni>
@@ -412,8 +392,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.MiKr'>
 			<pctOmni>0,0,5,40,80</pctOmni>
@@ -421,8 +400,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.P'>
 			<pctOmni>0,0,3,40,80</pctOmni>
@@ -430,8 +408,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CFM.P:8,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CFM.P:8,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='CFM.S'>
 			<pctOmni>0,0,5,70,80</pctOmni>
@@ -439,8 +416,7 @@
 			<pctSL>85,85,70,20,10</pctSL>
 			<pctClan unitType='Vehicle'>0,0,30,30,30</pctClan>
 			<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
-			<salvage pct='10'>
-				CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CFM.P:8,CJF:9,CGB:1,CB:1</salvage>
+			<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CFM.P:8,CJF:9,CGB:1,CB:1</salvage>
 		</faction>
 		<faction key='DC.LV' />
 		<faction key='CC.LL'>
@@ -565,23 +541,21 @@
 			</model>
 		</chassis>
 		<chassis name='AC/2 Carrier' unitType='Tank'>
-			<availability>
-				CC:4,MOC:3,HL:2,IS:4,Periphery.Deep:4,FS:5,CIR:4,Periphery:4,TC:4,CS:3,OA:4,LA:5,FWL:4,NIOPS:3,DC:5</availability>
+			<availability>MOC:3,HL:2,IS:4,Periphery.Deep:4,FS:5,Periphery:4,CS:3,LA:5,NIOPS:3,DC:5</availability>
 			<model name=''>
 				<roles>fire_support</roles>
 				<availability>HL:4,General:6,Periphery.Deep:5,Periphery:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Achilles' unitType='Dropship'>
-			<availability>
-				MOC:2,CC:2,CLAN:3,IS:2,FS:2,BAN:5,TC:2,Periphery:1,CS:6,OA:2,LA:2,FWL:2,NIOPS:6,DC:5</availability>
+			<availability>MOC:2,CLAN:3,IS:2,BAN:5,TC:2,Periphery:1,CS:6,OA:2,NIOPS:6,DC:5</availability>
 			<model name='(2582)'>
 				<roles>assault</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Aegis Heavy Cruiser' unitType='Warship'>
-			<availability>CSA:2,CCC:2,CIH:2,CSR:6,CDS:2,CBS:2,CSV:2,CNC:4,CLAN:2,CGS:2,CJF:5,CB:2</availability>
+			<availability>CSR:6,CNC:4,CLAN:2,CJF:5</availability>
 			<model name='(2582)'>
 				<roles>cruiser</roles>
 				<availability>CS:8</availability>
@@ -655,7 +629,7 @@
 			</model>
 		</chassis>
 		<chassis name='Archer' unitType='Mek'>
-			<availability>CC:7,CS:5-,HL:3,LA:9,IS:8,FWL:9,NIOPS:5-,Periphery.Deep:5,FS:8,Periphery:5,DC:8</availability>
+			<availability>CC:7,CS:5-,HL:3,LA:9,IS:8,FWL:9,NIOPS:5-,Periphery.Deep:5,Periphery:5</availability>
 			<model name='ARC-2K'>
 				<roles>fire_support</roles>
 				<availability>DC:8</availability>
@@ -674,7 +648,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
-			<availability>MOC:8,MERC.KH:5,OA:8,MERC.WD:5,CLAN:4,IS:8,MERC:7,Periphery:8,TC:8,BAN:3</availability>
+			<availability>MERC.KH:5,MERC.WD:5,CLAN:4,IS:8,MERC:7,Periphery:8,BAN:3</availability>
 			<model name='Mark VII'>
 				<availability>IS:8</availability>
 			</model>
@@ -706,8 +680,7 @@
 			</model>
 		</chassis>
 		<chassis name='Armored Personnel Carrier' unitType='Tank'>
-			<availability>
-				CC:10,MOC:10,CHH:8,HL:8,CLAN:6,IS:9,Periphery.Deep:9,CIR:10,DC:8,Periphery:10,TC:10</availability>
+			<availability>CC:10,CHH:8,HL:8,CLAN:6,IS:9,Periphery.Deep:9,DC:8,Periphery:10</availability>
 			<model name='(Hover LRM)'>
 				<roles>recon,fire_support</roles>
 				<availability>PIR:4-,IS.pm:3,Periphery.Deep:3-,Periphery:3-</availability>
@@ -798,8 +771,7 @@
 			</model>
 		</chassis>
 		<chassis name='Atlas' unitType='Mek'>
-			<availability>
-				MOC:1,CC:3,CSV:2-,IS:3,FS:5,Periphery:1,TC:1,CS:4-,OA:1,CW:2-,LA:4,FWL:3,NIOPS:4-,CSJ:2-,DC:5,CB:2-</availability>
+			<availability>CSV:2-,IS:3,FS:5,Periphery:1,CS:4-,CW:2-,LA:4,NIOPS:4-,CSJ:2-,DC:5,CB:2-</availability>
 			<model name='AS7-A'>
 				<availability>CC:2,FWL:2,MERC:2</availability>
 			</model>
@@ -847,15 +819,14 @@
 			</model>
 		</chassis>
 		<chassis name='Avenger' unitType='Dropship'>
-			<availability>CC:3,MOC:3,OA:3,LA:4,IS:3,FWL:2,FS:4,CIR:3,TC:3,Periphery:2,DC:2</availability>
+			<availability>MOC:3,OA:3,LA:4,IS:3,FWL:2,FS:4,CIR:3,TC:3,Periphery:2,DC:2</availability>
 			<model name='(2816)'>
 				<roles>assault</roles>
 				<availability>LA:8,General:8,FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Awesome' unitType='Mek'>
-			<availability>
-				MOC:8,CC:7,HL:6,CLAN:2-,IS:7,Periphery.Deep:7,FS:7,CIR:8,Periphery:8,TC:8,CS:8,OA:8,LA:7,FWL:10,NIOPS:8,DC:7</availability>
+			<availability>HL:6,CLAN:2-,IS:7,Periphery.Deep:7,Periphery:8,CS:8,FWL:10,NIOPS:8</availability>
 			<model name='AWS-8Q'>
 				<availability>HL:6,General:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -938,8 +909,7 @@
 			</model>
 		</chassis>
 		<chassis name='Banshee' unitType='Mek'>
-			<availability>
-				MOC:9-,CC:4-,HL:7-,IS:6-,Periphery.Deep:9-,FS:5-,CIR:9-,MERC:6-,Periphery:9-,TC:9-,CS:2-,OA:9-,LA:6-,FWL:5-,NIOPS:2-,MH:9-,DC:5-</availability>
+			<availability>CC:4-,HL:7-,IS:6-,Periphery.Deep:9-,FS:5-,MERC:6-,Periphery:9-,CS:2-,FWL:5-,NIOPS:2-,DC:5-</availability>
 			<model name='BNC-3E'>
 				<availability>HL:6,General:8,Periphery.Deep:7,MERC:8,Periphery:8</availability>
 			</model>
@@ -985,8 +955,7 @@
 			</model>
 		</chassis>
 		<chassis name='BattleMaster' unitType='Mek'>
-			<availability>
-				CC:6,MOC:6,HL:3,CLAN:2,IS:5,FS:5,Periphery:5,TC:6,CS:8-,LA:7,PIR:6,FWL:8,NIOPS:8-,CJF:2,DC:5</availability>
+			<availability>CC:6,MOC:6,HL:3,CLAN:2,IS:5,Periphery:5,TC:6,CS:8-,LA:7,PIR:6,FWL:8,NIOPS:8-</availability>
 			<model name='BLR-1D'>
 				<availability>FS:8</availability>
 			</model>
@@ -1072,7 +1041,7 @@
 			</model>
 		</chassis>
 		<chassis name='Black Hawk (Nova)' unitType='Mek' omni='Clan'>
-			<availability>CHH:8,CSR:5,CLAN:5,CFM:7,CGS:7,CCO:7,BAN:5,CSA:7,CDS:7,CW:7,CBS:4,CJF:7,CGB:7</availability>
+			<availability>CHH:8,CLAN:5,CFM:7,CGS:7,CCO:7,BAN:5,CSA:7,CDS:7,CW:7,CBS:4,CJF:7,CGB:7</availability>
 			<model name='A'>
 				<availability>CDS:8,CNC:8,General:7,CJF:9,CGB:8</availability>
 			</model>
@@ -1090,8 +1059,7 @@
 			</model>
 		</chassis>
 		<chassis name='Black Knight' unitType='Mek'>
-			<availability>
-				CHH:7,CSR:7,CSV:7,CLAN:8,CFM:7,FWL.OH:4,CGS:9,CS:7,CDS:7,CW:9,CBS:9,LA:1,CNC:9,FWL:2,NIOPS:7,CJF:7,CGB:9</availability>
+			<availability>CHH:7,CSR:7,CSV:7,CLAN:8,CFM:7,FWL.OH:4,CGS:9,CS:7,CDS:7,CW:9,CBS:9,LA:1,CNC:9,FWL:2,NIOPS:7,CJF:7,CGB:9</availability>
 			<model name='BL-6-KNT'>
 				<availability>CS:8,CLAN:6,NIOPS:8,BAN:6</availability>
 			</model>
@@ -1099,7 +1067,7 @@
 				<availability>CS:4,CLAN:6,NIOPS:4,CGS:7,BAN:3</availability>
 			</model>
 			<model name='BL-7-KNT'>
-				<availability>:0,LA:8,FWL:4,MERC:8,FS:8,DC:8</availability>
+				<availability>LA:8,FWL:4,MERC:8,FS:8,DC:8</availability>
 			</model>
 			<model name='BL-7-KNT-L'>
 				<availability>FWL:8</availability>
@@ -1180,8 +1148,7 @@
 			</model>
 		</chassis>
 		<chassis name='Bulldog Medium Tank' unitType='Tank'>
-			<availability>
-				CC:9,MOC:8,HL:5,IS:7,Periphery.Deep:6,FS:6,CIR:7,MERC:7,Periphery:7,TC:8,LA:7,FWL:7,DC:8</availability>
+			<availability>CC:9,MOC:8,HL:5,IS:7,Periphery.Deep:6,FS:6,MERC:7,Periphery:7,TC:8,DC:8</availability>
 			<model name=''>
 				<availability>LA:8,General:8,FS:8,MERC:8,DC:8</availability>
 			</model>
@@ -1228,7 +1195,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cameron Battlecruiser' unitType='Warship'>
-			<availability>CS:1,CHH:1,CCC:1,CSR:2,CW:2,CSV:1,CLAN:1,NIOPS:1,CGS:2,CCO:1,CJF:1,CGB:1</availability>
+			<availability>CS:1,CSR:2,CW:2,CLAN:1,NIOPS:1,CGS:2</availability>
 			<model name='(2688)'>
 				<roles>cruiser</roles>
 				<availability>General:8</availability>
@@ -1257,15 +1224,14 @@
 			</model>
 		</chassis>
 		<chassis name='Catapult' unitType='Mek'>
-			<availability>
-				MOC:1,CC:4,IS:2,MERC:1,FS:2,CIR:1,Periphery:1,TC:1,CS:2,LA:2,FWL:2,NIOPS:2,MH:1,DC:5</availability>
+			<availability>CC:4,IS:2,MERC:1,Periphery:1,CS:2,NIOPS:2,DC:5</availability>
 			<model name='CPLT-A1'>
 				<roles>fire_support</roles>
 				<availability>CC:4</availability>
 			</model>
 			<model name='CPLT-C1'>
 				<roles>fire_support</roles>
-				<availability>CC:8,HL:6,CLAN:4,IS:8,Periphery.Deep:7,MERC:8,BAN:6,Periphery:8</availability>
+				<availability>HL:6,CLAN:4,IS:8,Periphery.Deep:7,MERC:8,BAN:6,Periphery:8</availability>
 			</model>
 			<model name='CPLT-C1b'>
 				<roles>fire_support</roles>
@@ -1293,8 +1259,7 @@
 			</model>
 		</chassis>
 		<chassis name='Centurion' unitType='Mek'>
-			<availability>
-				CC:2,IS:3,FS:9,Periphery.OS:4,MERC:3,Periphery:2,CS:2-,LA:2,Periphery.HR:4,FWL:2,NIOPS:2-,MH:2,DC:2</availability>
+			<availability>CC:2,IS:3,FS:9,Periphery.OS:4,MERC:3,Periphery:2,CS:2-,LA:2,Periphery.HR:4,FWL:2,NIOPS:2-,DC:2</availability>
 			<model name='CN9-A'>
 				<deployedWith>Trebuchet</deployedWith>
 				<availability>HL:6,General:8,FWL:8,Periphery.Deep:7,FS:8,MERC:8,Periphery:8</availability>
@@ -1340,7 +1305,7 @@
 			</model>
 		</chassis>
 		<chassis name='Champion' unitType='Mek'>
-			<availability>CC:3,CS:5,CHH:5,LA:3,CLAN:2,IS:2,FWL:2,NIOPS:5,MERC:2,FS:2,CGB:5,DC:2</availability>
+			<availability>CC:3,CS:5,CHH:5,LA:3,CLAN:2,IS:2,NIOPS:5,MERC:2,CGB:5</availability>
 			<model name='C'>
 				<availability>CHH:6,CLAN:8,CGB:6</availability>
 			</model>
@@ -1373,8 +1338,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cheetah' unitType='AeroSpaceFighter'>
-			<availability>
-				CC:3,MOC:5,HL:1,MERC:3,CIR:4,Periphery:3,TC:5,CS:3,OA:4,LA:4,Periphery.MW:4,Periphery.ME:4,FWL:10,NIOPS:3,DC:3</availability>
+			<availability>CC:3,MOC:5,HL:1,MERC:3,CIR:4,Periphery:3,TC:5,CS:3,OA:4,LA:4,Periphery.MW:4,Periphery.ME:4,FWL:10,NIOPS:3,DC:3</availability>
 			<model name='F-10'>
 				<roles>recon</roles>
 				<availability>CC:8,HL:6,General:8,FWL:8,Periphery.Deep:7,MERC:8,Periphery:8</availability>
@@ -1408,12 +1372,12 @@
 			</model>
 		</chassis>
 		<chassis name='Chippewa' unitType='AeroSpaceFighter'>
-			<availability>MOC:2,CC:2,OA:2,LA:6,CLAN:1,FWL:4,MERC:3,FS:3,CIR:2,Periphery:2,TC:2,DC:3</availability>
+			<availability>CC:2,LA:6,CLAN:1,FWL:4,MERC:3,FS:3,Periphery:2,DC:3</availability>
 			<model name='CHP-W10'>
 				<availability>HL:2,FS:8,TC:4,Periphery:4</availability>
 			</model>
 			<model name='CHP-W5'>
-				<availability>:0,HL:6,LA:8,IS:8,Periphery.Deep:7,MERC:8,BAN:3,Periphery:8</availability>
+				<availability>HL:6,IS:8,Periphery.Deep:7,MERC:8,BAN:3,Periphery:8</availability>
 			</model>
 			<model name='CHP-W5b'>
 				<availability>CLAN:6,CGS:6,BAN:3</availability>
@@ -1592,8 +1556,7 @@
 			</model>
 		</chassis>
 		<chassis name='Clint' unitType='Mek'>
-			<availability>
-				CC:5,MOC:1,IS:4,FS:5,MERC:4,TC:1,Periphery:1,CS:3-,OA:1,LA:4,FWL:4,NIOPS:3-,MH:1,DC:4</availability>
+			<availability>CC:5,IS:4,FS:5,MERC:4,Periphery:1,CS:3-,NIOPS:3-</availability>
 			<model name='CLNT-1-2R'>
 				<availability>CC:1,FS:1</availability>
 			</model>
@@ -1630,8 +1593,7 @@
 			</model>
 		</chassis>
 		<chassis name='Commando' unitType='Mek'>
-			<availability>
-				HL:3,CIR:4,MERC:4,CGS:1,TC:6,Periphery:3,Periphery.R:4,LA:9,Periphery.CM:5,Periphery.HR:5,Periphery.ME:4,MH:3,CSJ:1</availability>
+			<availability>HL:3,CIR:4,MERC:4,CGS:1,TC:6,Periphery:3,Periphery.R:4,LA:9,Periphery.CM:5,Periphery.HR:5,Periphery.ME:4,CSJ:1</availability>
 			<model name='COM-1D'>
 				<roles>recon</roles>
 				<deployedWith>Commando</deployedWith>
@@ -1711,7 +1673,7 @@
 			</model>
 		</chassis>
 		<chassis name='Corsair' unitType='AeroSpaceFighter'>
-			<availability>MOC:2,CC:2,OA:3,LA:2,CLAN:5,FWL:2,FS:8,MERC:3,CIR:2,DC:2,TC:2,Periphery:2</availability>
+			<availability>CC:2,OA:3,LA:2,CLAN:5,FWL:2,FS:8,MERC:3,DC:2,Periphery:2</availability>
 			<model name='CSR-V12'>
 				<availability>HL:6,CLAN:1,IS:8,Periphery.Deep:7,BAN:4,Periphery:8</availability>
 			</model>
@@ -1741,8 +1703,7 @@
 			</model>
 		</chassis>
 		<chassis name='Crab' unitType='Mek'>
-			<availability>
-				CHH:3,CSR:3,CLAN:4,IS:2,CFM:3,MERC:2,CGS:5,Periphery:2,CS:5,CDS:5,CW:5,CBS:5,NIOPS:5,FWL:2,CJF:3,CGB:3,DC:2</availability>
+			<availability>CHH:3,CSR:3,CLAN:4,IS:2,CFM:3,MERC:2,CGS:5,Periphery:2,CS:5,CDS:5,CW:5,CBS:5,NIOPS:5,CJF:3,CGB:3</availability>
 			<model name='CRB-20'>
 				<roles>raider</roles>
 				<availability>HL:6,IS:8,Periphery.Deep:7,NIOPS:0,Periphery:8</availability>
@@ -1800,7 +1761,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cyclops' unitType='Mek'>
-			<availability>CC:5,MOC:2,IS:3,FS:5,CIR:2,TC:2,Periphery:2,CS:3,OA:2,LA:5,FWL:4,NIOPS:3,DC:5</availability>
+			<availability>CC:5,IS:3,FS:5,Periphery:2,CS:3,LA:5,FWL:4,NIOPS:3,DC:5</availability>
 			<model name='CP-10-HQ'>
 				<availability>IS:2</availability>
 			</model>
@@ -1857,7 +1818,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dasher (Fire Moth)' unitType='Mek' omni='Clan'>
-			<availability>CSA:4,CHH:6,CCC:6,CIH:5,CDS:5,CLAN:5,CCO:4,CJF:4,BAN:4,CGB:9,CB:6</availability>
+			<availability>CSA:4,CHH:6,CCC:6,CLAN:5,CCO:4,CJF:4,BAN:4,CGB:9,CB:6</availability>
 			<model name='A'>
 				<roles>recon,spotter</roles>
 				<availability>CSA:2,CIH:4,CDS:5,CSV:2,General:3,CCO:2,CJF:4,CGB:2,CB:4</availability>
@@ -1877,8 +1838,7 @@
 			</model>
 		</chassis>
 		<chassis name='Demolisher Heavy Tank' unitType='Tank'>
-			<availability>
-				CC:7,MOC:10,HL:7,IS:7,Periphery.Deep:8,FS:7,CIR:8,Periphery:9,TC:10,CS:6-,OA:10,LA:9,FWL:8,NIOPS:6-,DC:7</availability>
+			<availability>MOC:10,HL:7,IS:7,Periphery.Deep:8,CIR:8,Periphery:9,TC:10,CS:6-,OA:10,LA:9,FWL:8,NIOPS:6-</availability>
 			<model name='(Defensive)'>
 				<availability>IS:2,Periphery:2</availability>
 			</model>
@@ -1910,8 +1870,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dervish' unitType='Mek'>
-			<availability>
-				MOC:4,CC:4,HL:2,IS:4,Periphery.Deep:5,FS:8,MERC:4,Periphery.OS:6,Periphery:4,TC:4,OA:4,LA:4,Periphery.HR:6,DC:4</availability>
+			<availability>HL:2,IS:4,Periphery.Deep:5,FS:8,MERC:4,Periphery.OS:6,Periphery:4,Periphery.HR:6</availability>
 			<model name='DV-6M'>
 				<availability>HL:6,CLAN:4,IS:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -1938,7 +1897,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dragonfly (Viper)' unitType='Mek' omni='Clan'>
-			<availability>CSA:4,CHH:4,CIH:4,CDS:4,CSV:3,CLAN:4,CFM:5,CSJ:3,CJF:4,CGB:3,CB:4</availability>
+			<availability>CSV:3,CLAN:4,CFM:5,CSJ:3,CGB:3</availability>
 			<model name='A'>
 				<availability>CDS:8,General:6,CJF:8,CGB:6</availability>
 			</model>
@@ -1949,8 +1908,7 @@
 				<availability>CDS:6,CW:5,General:5,CFM:6,CJF:6,CGB:6,CB:6</availability>
 			</model>
 			<model name='D'>
-				<availability>
-					CHH:7,CCC:7,CIH:7,CSR:7,CFM:7,CGS:7,CSA:7,CDS:8,CBS:7,General:6,CJF:8,CGB:7,CB:7</availability>
+				<availability>CHH:7,CCC:7,CIH:7,CSR:7,CFM:7,CGS:7,CSA:7,CDS:8,CBS:7,General:6,CJF:8,CGB:7,CB:7</availability>
 			</model>
 			<model name='Prime'>
 				<availability>CDS:9,General:8,CJF:9,CGB:9</availability>
@@ -1984,8 +1942,7 @@
 			</model>
 		</chassis>
 		<chassis name='Eagle' unitType='AeroSpaceFighter'>
-			<availability>
-				CC:5,MOC:5,HL:1,CLAN:3,IS:4,FS:6,CIR:5,TC:4,Periphery:3,CS:5-,OA:4,LA:5,FWL:7,NIOPS:5-,DC:5</availability>
+			<availability>CC:5,MOC:5,HL:1,CLAN:3,IS:4,FS:6,CIR:5,TC:4,Periphery:3,CS:5-,OA:4,LA:5,FWL:7,NIOPS:5-,DC:5</availability>
 			<model name='EGL-R10'>
 				<roles>ground_support</roles>
 				<availability>LA:4,FS:4</availability>
@@ -2077,7 +2034,7 @@
 			</model>
 		</chassis>
 		<chassis name='Essex II Destroyer' unitType='Warship'>
-			<availability>CSA:1,CIH:1,CSR:1,CDS:3,CSV:1,CLAN:1,CSJ:3,CGS:1,CCO:1,CGB:3,CB:1</availability>
+			<availability>CDS:3,CLAN:1,CSJ:3,CGB:3</availability>
 			<model name='(2711)'>
 				<roles>destroyer</roles>
 				<availability>IS:8</availability>
@@ -2088,7 +2045,7 @@
 			</model>
 		</chassis>
 		<chassis name='Excalibur' unitType='Dropship'>
-			<availability>CC:5,MOC:3,IS:5,FS:4,CIR:2,Periphery:2,TC:3,CS:5,OA:2,LA:5,FWL:5,NIOPS:5,DC:6</availability>
+			<availability>MOC:3,IS:5,FS:4,Periphery:2,TC:3,CS:5,NIOPS:5,DC:6</availability>
 			<model name='(2786)'>
 				<roles>troop_carrier</roles>
 				<availability>General:8</availability>
@@ -2157,7 +2114,7 @@
 			</model>
 		</chassis>
 		<chassis name='Fenris (Ice Ferret)' unitType='Mek' omni='Clan'>
-			<availability>CHH:2,CIH:7,CDS:5,CW:8,CSV:2,CNC:4,CLAN:2,CSJ:4,CJF:6,CGB:2</availability>
+			<availability>CIH:7,CDS:5,CW:8,CNC:4,CLAN:2,CSJ:4,CJF:6</availability>
 			<model name='A'>
 				<availability>CDS:7,CSV:5,CNC:4,General:6,CSJ:5,CJF:7</availability>
 			</model>
@@ -2262,10 +2219,9 @@
 			</model>
 		</chassis>
 		<chassis name='Flashman' unitType='Mek'>
-			<availability>
-				CHH:4,CSV:6,CLAN:5,CFM:6,CGS:4,CS:5,Periphery.R:2,CDS:4,LA:6,CBS:4,NIOPS:5,CJF:6,CGB:4</availability>
+			<availability>CHH:4,CSV:6,CLAN:5,CFM:6,CGS:4,CS:5,Periphery.R:2,CDS:4,LA:6,CBS:4,NIOPS:5,CJF:6,CGB:4</availability>
 			<model name='FLS-7K'>
-				<availability>:0,LA:8</availability>
+				<availability>LA:8</availability>
 			</model>
 			<model name='FLS-8K'>
 				<availability>CS:8,CLAN:8,NIOPS:8,BAN:8</availability>
@@ -2413,8 +2369,7 @@
 			</model>
 		</chassis>
 		<chassis name='Fury' unitType='Dropship'>
-			<availability>
-				MOC:4,CC:4,CHH:3,HL:1,CLAN:1,IS:4,FS:3,CIR:4,BAN:4,Periphery:3,TC:4,CS:4,OA:4,LA:4,CBS:3,FWL:5,NIOPS:4,DC:3</availability>
+			<availability>MOC:4,CHH:3,HL:1,CLAN:1,IS:4,FS:3,CIR:4,BAN:4,Periphery:3,TC:4,CS:4,OA:4,CBS:3,FWL:5,NIOPS:4,DC:3</availability>
 			<model name='(2638)'>
 				<roles>vee_carrier,infantry_carrier</roles>
 				<availability>CC:8,General:8,FWL:8</availability>
@@ -2443,8 +2398,7 @@
 			</model>
 		</chassis>
 		<chassis name='Galleon Light Tank' unitType='Tank'>
-			<availability>
-				MOC:6,CC:4,HL:2,CLAN:5,IS:6,Periphery.Deep:4,FS:8,CIR:6,Periphery:4,TC:6,CS:6,OA:8,LA:5,FWL:6,NIOPS:6,CJF:4,DC:8</availability>
+			<availability>MOC:6,CC:4,HL:2,CLAN:5,IS:6,Periphery.Deep:4,FS:8,CIR:6,Periphery:4,TC:6,CS:6,OA:8,LA:5,NIOPS:6,CJF:4,DC:8</availability>
 			<model name='GAL-100'>
 				<deployedWith>Harasser</deployedWith>
 				<availability>General:8</availability>
@@ -2454,15 +2408,14 @@
 			</model>
 		</chassis>
 		<chassis name='Gazelle' unitType='Dropship'>
-			<availability>
-				CS:4,CHH:3,HL:4,CBS:3,CLAN:1,CNC:1,IS:6,NIOPS:4,Periphery.Deep:5,BAN:3,Periphery:6</availability>
+			<availability>CS:4,CHH:3,HL:4,CBS:3,CLAN:1,IS:6,NIOPS:4,Periphery.Deep:5,BAN:3,Periphery:6</availability>
 			<model name='(2531)'>
 				<roles>vee_carrier</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Goblin Medium Tank' unitType='Tank'>
-			<availability>CC:1,MOC:3,OA:3,HL:1,LA:2,FS.CH:7,FS:6,MERC:2,CIR:4,Periphery:3,TC:3,DC:2</availability>
+			<availability>CC:1,HL:1,LA:2,FS.CH:7,FS:6,MERC:2,CIR:4,Periphery:3,DC:2</availability>
 			<model name=''>
 				<roles>apc,urban</roles>
 				<availability>General:8</availability>
@@ -2481,10 +2434,10 @@
 			</model>
 		</chassis>
 		<chassis name='Goliath' unitType='Mek'>
-			<availability>MOC:1,CS:2,OA:1,LA:4,Periphery.MW:1,FWL:5,MERC:1,TC:1,Periphery:1</availability>
+			<availability>CS:2,LA:4,FWL:5,MERC:1,Periphery:1</availability>
 			<model name='GOL-1H'>
 				<roles>fire_support</roles>
-				<availability>CC:8,HL:6,LA:8,FWL:8,Periphery.Deep:7,IS:8,MERC:8,Periphery:8</availability>
+				<availability>HL:6,Periphery.Deep:7,IS:8,MERC:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
@@ -2520,16 +2473,14 @@
 				<availability>CLAN:1,BAN:1</availability>
 			</model>
 			<model name='GTHA-500'>
-				<availability>
-					CS:6,CDS:1,HL:4,CLAN:1,CNC:1,FWL:6,NIOPS:6,Periphery.Deep:5,MERC:6,BAN:2,Periphery:6</availability>
+				<availability>CS:6,HL:4,CLAN:1,FWL:6,NIOPS:6,Periphery.Deep:5,MERC:6,BAN:2,Periphery:6</availability>
 			</model>
 			<model name='GTHA-500b'>
 				<availability>CLAN:6,BAN:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Grasshopper' unitType='Mek'>
-			<availability>
-				CS:4-,MOC:6,OA:6,HL:4,IS:6,NIOPS:4-,Periphery.Deep:5,MERC:7,Periphery:6,DC:6,TC:6</availability>
+			<availability>CS:4-,HL:4,IS:6,NIOPS:4-,Periphery.Deep:5,MERC:7,Periphery:6</availability>
 			<model name='GHR-5H'>
 				<availability>HL:6,IS:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -2550,8 +2501,7 @@
 			</model>
 		</chassis>
 		<chassis name='Griffin' unitType='Mek'>
-			<availability>
-				CC:7,MOC:4,HL:4,CLAN:3,IS:9,Periphery.Deep:5,MERC:9,TC:7,Periphery:6,CS:4,OA:3,LA:9,CNC:3,NIOPS:4,DC:8</availability>
+			<availability>CC:7,MOC:4,HL:4,CLAN:3,IS:9,Periphery.Deep:5,MERC:9,TC:7,Periphery:6,CS:4,OA:3,NIOPS:4,DC:8</availability>
 			<model name='GRF-1N'>
 				<availability>HL:6,General:8,CLAN:2-,Periphery.Deep:7,BAN:4,Periphery:8</availability>
 			</model>
@@ -2582,7 +2532,7 @@
 			</model>
 		</chassis>
 		<chassis name='Guillotine' unitType='Mek'>
-			<availability>CC:4,CS:7,CHH:6,CSR:6,CLAN:4,IS:4,FWL:4,NIOPS:7,FS:3,MERC:4,DC:4,Periphery:3</availability>
+			<availability>CS:7,CHH:6,CSR:6,CLAN:4,IS:4,NIOPS:7,FS:3,MERC:4,Periphery:3</availability>
 			<model name='GLT-3N'>
 				<roles>raider</roles>
 				<availability>CS:8,CLAN:8,NIOPS:8,BAN:8</availability>
@@ -2652,8 +2602,7 @@
 			</model>
 		</chassis>
 		<chassis name='Harasser Missile Platform' unitType='Tank'>
-			<availability>
-				MOC:5,CC:5,HL:2,Periphery.Deep:4,MERC:5,Periphery:4,FWL.pm:8,Periphery.CM:5,Periphery.MW:6,Periphery.ME:6,FWL:6,MH:6,DC:5</availability>
+			<availability>MOC:5,CC:5,HL:2,Periphery.Deep:4,MERC:5,Periphery:4,FWL.pm:8,Periphery.CM:5,Periphery.MW:6,Periphery.ME:6,FWL:6,MH:6,DC:5</availability>
 			<model name=''>
 				<availability>General:8</availability>
 			</model>
@@ -2767,7 +2716,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hellcat' unitType='AeroSpaceFighter'>
-			<availability>MOC:3-,OA:3-,HL:1,LA:5-,Periphery.Deep:3-,FS:4-,MERC:5-,Periphery:3-,TC:3-,DC:1-</availability>
+			<availability>HL:1,LA:5-,Periphery.Deep:3-,FS:4-,MERC:5-,Periphery:3-,DC:1-</availability>
 			<model name='HCT-213'>
 				<availability>General:7</availability>
 			</model>
@@ -2806,11 +2755,11 @@
 			<availability>CS:3,CHH:4,CLAN:2,FWL:2,NIOPS:3,CGB:4,CB:4</availability>
 			<model name='HER-1A'>
 				<roles>recon</roles>
-				<availability>:0,FWL:8</availability>
+				<availability>FWL:8</availability>
 			</model>
 			<model name='HER-1B'>
 				<roles>recon</roles>
-				<availability>:0,FWL:6</availability>
+				<availability>FWL:6</availability>
 			</model>
 			<model name='HER-1S'>
 				<roles>recon</roles>
@@ -2870,8 +2819,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hornet' unitType='Mek'>
-			<availability>
-				MOC:2,OA:2,Periphery.HR:2,FS.CMM:2,FS.DMM:2,FS:1,MERC:3,Periphery.OS:2,FS.CrMM:2,Periphery:2,TC:2</availability>
+			<availability>Periphery.HR:2,FS.CMM:2,FS.DMM:2,FS:1,MERC:3,Periphery.OS:2,FS.CrMM:2,Periphery:2</availability>
 			<model name='HNT-151'>
 				<roles>recon,urban</roles>
 				<availability>General:8</availability>
@@ -2901,8 +2849,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hunchback' unitType='Mek'>
-			<availability>
-				MOC:5,CC:6,HL:3,IS:5,Periphery.Deep:5,FS:5,CIR:5,Periphery:5,TC:5,CS:5-,OA:5,LA:5,Periphery.MW:6,Periphery.ME:6,FWL:9,NIOPS:5-,DC:6</availability>
+			<availability>CC:6,HL:3,IS:5,Periphery.Deep:5,Periphery:5,CS:5-,Periphery.MW:6,Periphery.ME:6,FWL:9,NIOPS:5-,DC:6</availability>
 			<model name='HBK-4G'>
 				<availability>HL:6,General:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -2929,7 +2876,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hunter Light Support Tank' unitType='Tank'>
-			<availability>CC:6,MOC:4,HL:3,IS:5,FS:5,MERC:5,CIR:4,TC:5,Periphery:5,OA:5,LA:7,FWL:4,DC:5</availability>
+			<availability>CC:6,MOC:4,HL:3,IS:5,MERC:5,CIR:4,Periphery:5,LA:7,FWL:4</availability>
 			<model name=''>
 				<roles>fire_support</roles>
 				<availability>General:8</availability>
@@ -2998,8 +2945,7 @@
 			</model>
 		</chassis>
 		<chassis name='Intruder' unitType='Dropship'>
-			<availability>
-				CC:4,MOC:4,HL:1,CLAN:2,IS:4,FS:3,CIR:4,BAN:4,Periphery:3,TC:3,CS:4,LA:4,FWL:5,NIOPS:4,DC:3</availability>
+			<availability>MOC:4,HL:1,CLAN:2,IS:4,FS:3,CIR:4,BAN:4,Periphery:3,CS:4,FWL:5,NIOPS:4,DC:3</availability>
 			<model name='(2655)'>
 				<roles>assault</roles>
 				<availability>General:8</availability>
@@ -3092,8 +3038,7 @@
 			</model>
 		</chassis>
 		<chassis name='J. Edgar Light Hover Tank' unitType='Tank'>
-			<availability>
-				CC:3,MOC:5,HL:3,IS:4,Periphery.Deep:5,FS:3,CIR:4,Periphery:5,TC:7,CS:4-,OA:5,LA:4,FWL:3,NIOPS:4-,DC:6</availability>
+			<availability>CC:3,HL:3,IS:4,Periphery.Deep:5,FS:3,CIR:4,Periphery:5,TC:7,CS:4-,FWL:3,NIOPS:4-,DC:6</availability>
 			<model name=''>
 				<availability>HL:3,General:8,Periphery.Deep:6,Periphery:5</availability>
 			</model>
@@ -3134,8 +3079,7 @@
 			</model>
 		</chassis>
 		<chassis name='Javelin' unitType='Mek'>
-			<availability>
-				MOC:4,OA:4,HL:2,LA:4,Periphery.HR:6,IS:4,Periphery.Deep:4,FS:9,MERC:6,Periphery.OS:6,Periphery:4,TC:4</availability>
+			<availability>HL:2,Periphery.HR:6,IS:4,Periphery.Deep:4,FS:9,MERC:6,Periphery.OS:6,Periphery:4</availability>
 			<model name='JVN-10F &apos;Fire Javelin&apos;'>
 				<roles>recon</roles>
 				<availability>MOC:2,IS:2,FS:5,MERC:2,TC:2,Periphery:2</availability>
@@ -3146,8 +3090,7 @@
 			</model>
 		</chassis>
 		<chassis name='Jenner' unitType='Mek'>
-			<availability>
-				CC:3,Periphery.DD:5,FS.RR:5,HL:1,IS:2,MERC:4,Periphery.OS:5,FS:2,Periphery:3,OA:3,FS.DMM:5,FWL:3,DC:8</availability>
+			<availability>CC:3,Periphery.DD:5,FS.RR:5,HL:1,IS:2,MERC:4,Periphery.OS:5,Periphery:3,FS.DMM:5,FWL:3,DC:8</availability>
 			<model name='JR7-D'>
 				<roles>raider</roles>
 				<availability>HL:6,General:8,Periphery.Deep:7,Periphery:8</availability>
@@ -3235,7 +3178,7 @@
 			</model>
 		</chassis>
 		<chassis name='King Crab' unitType='Mek'>
-			<availability>CC:2+,CS:6,LA:2+,CLAN:5,IS:2+,FWL:1+,NIOPS:6,FS:2+,MERC:2+,CGS:6,CGB:6,DC:2+</availability>
+			<availability>CS:6,CLAN:5,IS:2+,FWL:1+,NIOPS:6,MERC:2+,CGS:6,CGB:6,</availability>
 			<model name='KGC-000'>
 				<availability>CS:8,CIH:5,CLAN:6,NIOPS:8,BAN:8,CB:5</availability>
 			</model>
@@ -3277,7 +3220,7 @@
 		<chassis name='Kintaro' unitType='Mek'>
 			<availability>CS:7,CHH:5,CDS:5,CSV:5,CLAN:4,NIOPS:7,FS:6</availability>
 			<model name='KTO-18'>
-				<availability>:0,FS:6</availability>
+				<availability>FS:6</availability>
 			</model>
 			<model name='KTO-19'>
 				<availability>CS:8,CLAN:6,NIOPS:8,BAN:7</availability>
@@ -3322,8 +3265,7 @@
 			</model>
 		</chassis>
 		<chassis name='Koshi (Mist Lynx)' unitType='Mek' omni='Clan'>
-			<availability>
-				CHH:5,CIH:5,CSR:5,CSV:5,CLAN:5,CCO:5,CGS:5,BAN:5,CSA:5,CDS:5,CW:5,CBS:5,CSJ:9,CJF:4,CB:5</availability>
+			<availability>CLAN:5,CSJ:9,CJF:4</availability>
 			<model name='A'>
 				<roles>recon,spotter</roles>
 				<availability>CIH:6,CDS:7,CW:6,CSV:6,General:5,CGB:7</availability>
@@ -3352,7 +3294,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ku Wheeled Assault Tank' unitType='Tank'>
-			<availability>CSA:6,CHH:6,CIH:6,CSR:6,CDS:5,CW:6,CSV:6,CLAN:5,CNC:5,CGS:6,CJF:6,CGB:6</availability>
+			<availability>CSA:6,CHH:6,CIH:6,CSR:6,CW:6,CSV:6,CLAN:5,CGS:6,CJF:6,CGB:6</availability>
 			<model name=''>
 				<availability>CLAN:8</availability>
 			</model>
@@ -3402,8 +3344,7 @@
 			</model>
 		</chassis>
 		<chassis name='Leopard' unitType='Dropship'>
-			<availability>
-				MOC:8,CC:7,HL:6,IS:8,Periphery.Deep:7,FS:7,CIR:8,BAN:4,TC:8,Periphery:8,CS:4,OA:8,LA:7,FWL:7,NIOPS:4,DC:7</availability>
+			<availability>CC:7,HL:6,IS:8,Periphery.Deep:7,FS:7,BAN:4,Periphery:8,CS:4,LA:7,FWL:7,NIOPS:4,DC:7</availability>
 			<model name='(2537)'>
 				<roles>mek_carrier</roles>
 				<availability>General:8</availability>
@@ -3499,7 +3440,7 @@
 			</model>
 		</chassis>
 		<chassis name='Loki (Hellbringer)' unitType='Mek' omni='Clan'>
-			<availability>CHH:9,CDS:7,CW:6,CBS:7,CSV:6,CLAN:7,CFM:7,CSJ:6,CJF:7,BAN:6,CGB:6,CB:7</availability>
+			<availability>CHH:9,CW:6,CSV:6,CLAN:7,CSJ:6,BAN:6,CGB:6</availability>
 			<model name='A'>
 				<roles>fire_support</roles>
 				<availability>General:7,CGB:8</availability>
@@ -3512,8 +3453,7 @@
 			</model>
 		</chassis>
 		<chassis name='Lola III Destroyer' unitType='Warship'>
-			<availability>
-				CCC:2,CHH:3,CSR:4,CIH:3,CSV:3,CLAN:2,CFM:3,CCO:3,CGS:3,CSA:4,CDS:3,CW:2,CBS:2,CNC:1,CSJ:3,CGB:3,CB:3</availability>
+			<availability>CHH:3,CSR:4,CIH:3,CSV:3,CLAN:2,CFM:3,CCO:3,CGS:3,CSA:4,CDS:3,CNC:1,CSJ:3,CGB:3,CB:3</availability>
 			<model name='(2662)'>
 				<roles>destroyer</roles>
 				<availability>General:8</availability>
@@ -3534,8 +3474,7 @@
 			</model>
 		</chassis>
 		<chassis name='Longbow' unitType='Mek'>
-			<availability>
-				MOC:7,CC:6,HL:5,CLAN:1,IS:7,Periphery.Deep:6,FS:8,TC:7,Periphery:7,CS:4,OA:7,LA:7,FWL:9,NIOPS:4,DC:5</availability>
+			<availability>CC:6,HL:5,CLAN:1,IS:7,Periphery.Deep:6,FS:8,Periphery:7,CS:4,FWL:9,NIOPS:4,DC:5</availability>
 			<model name='LGB-0W'>
 				<roles>fire_support</roles>
 				<availability>General:8</availability>
@@ -3558,8 +3497,7 @@
 			</model>
 		</chassis>
 		<chassis name='Lucifer' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:2,Periphery.R:4,OA:2,HL:3,LA:10,Periphery.MW:3,MERC:5,CIR:3,FS:3,Periphery:2,TC:2,DC:5</availability>
+			<availability>Periphery.R:4,HL:3,LA:10,Periphery.MW:3,MERC:5,CIR:3,FS:3,Periphery:2,DC:5</availability>
 			<model name='LCF-R15'>
 				<availability>HL:2,LA:4,General:4,Periphery.Deep:4,MERC:8,Periphery:4,DC:2</availability>
 			</model>
@@ -3614,7 +3552,7 @@
 			<availability>CC:10,CS:10,LA:10,CLAN:10,FWL:10,IS:9,NIOPS:10,FS:10,DC:10,Periphery:8</availability>
 		</chassis>
 		<chassis name='Mad Cat (Timber Wolf)' unitType='Mek' omni='Clan'>
-			<availability>CSA:4,CHH:4,CIH:2,CDS:4,CW:9,CBS:2,CLAN:2,CSJ:4,CCO:4,CJF:4,CB:2</availability>
+			<availability>CSA:4,CHH:4,CDS:4,CW:9,CLAN:2,CSJ:4,CCO:4,CJF:4</availability>
 			<model name='A'>
 				<availability>CDS:8,CW:6,General:7,CJF:8,CGB:8</availability>
 			</model>
@@ -3651,7 +3589,7 @@
 			</model>
 		</chassis>
 		<chassis name='Man O&apos; War (Gargoyle)' unitType='Mek' omni='Clan'>
-			<availability>CHH:5,CIH:7,CDS:7,CW:9,CBS:4,CSV:6,CNC:7,CLAN:4,CSJ:5,CJF:8,CGB:4</availability>
+			<availability>CHH:5,CIH:7,CDS:7,CW:9,CSV:6,CNC:7,CLAN:4,CSJ:5,CJF:8</availability>
 			<model name='A'>
 				<availability>CDS:4,CW:7,CSV:5,CNC:8,General:7,CJF:9,CGB:9</availability>
 			</model>
@@ -3682,8 +3620,7 @@
 			</model>
 		</chassis>
 		<chassis name='Manticore Heavy Tank' unitType='Tank'>
-			<availability>
-				CC:8,MOC:8,HL:7,IS:9,Periphery.Deep:8,FS:9,MERC:9,CIR:8,Periphery:9,TC:9,CS:9,OA:9,LA:10,FWL:8,NIOPS:9,DC:10</availability>
+			<availability>CC:8,MOC:8,HL:7,IS:9,Periphery.Deep:8,MERC:9,CIR:8,Periphery:9,CS:9,LA:10,FWL:8,NIOPS:9,DC:10</availability>
 			<model name=''>
 				<availability>HL:4,LA:6,General:6,Periphery.Deep:5,FS:6,DC:6,Periphery:6</availability>
 			</model>
@@ -3698,7 +3635,7 @@
 			</model>
 		</chassis>
 		<chassis name='Marauder' unitType='Mek'>
-			<availability>CC:4,MOC:1,CLAN:4,IS:4,FS:5,TC:3,Periphery:1,CS:8,LA:5,FWL:4,NIOPS:8,DC:5,CGB:4</availability>
+			<availability>CLAN:4,IS:4,FS:5,TC:3,Periphery:1,CS:8,LA:5,NIOPS:8,DC:5</availability>
 			<model name='MAD-1R'>
 				<availability>CS:8,CLAN:2,NIOPS:8,MERC:0,BAN:3</availability>
 			</model>
@@ -3775,8 +3712,7 @@
 			</model>
 		</chassis>
 		<chassis name='Maxim Heavy Hover Transport' unitType='Tank'>
-			<availability>
-				MOC:5,CC:6,HL:3,IS:5,Periphery.Deep:5,MERC:5,FS:5,CIR:5,Periphery:5,TC:5,CS:6-,OA:5,LA:7,FWL:6,NIOPS:6-,DC:6</availability>
+			<availability>CC:6,HL:3,IS:5,Periphery.Deep:5,MERC:5,Periphery:5,CS:6-,LA:7,FWL:6,NIOPS:6-,DC:6</availability>
 			<model name=''>
 				<roles>apc</roles>
 				<availability>HL:6,IS:8,Periphery.Deep:7,Periphery:8</availability>
@@ -3883,8 +3819,7 @@
 			<availability>CC:5,MOC:2,Periphery.CM:2,Periphery.ME:2</availability>
 		</chassis>
 		<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
-			<availability>
-				MOC:6,CC:4,HL:4,CLAN:4,IS:5,Periphery.Deep:5,MERC:6,FS:5,CIR:5,BAN:4,Periphery:6,TC:6,OA:5,LA:6,FWL:5,DC:5</availability>
+			<availability>CC:4,HL:4,CLAN:4,IS:5,Periphery.Deep:5,MERC:6,CIR:5,BAN:4,Periphery:6,OA:5,LA:6</availability>
 		</chassis>
 		<chassis name='Medium Strike Fighter Kaiseradler' unitType='Conventional Fighter'>
 			<availability>Periphery.R:2,LA:5,MERC:1</availability>
@@ -4272,8 +4207,7 @@
 			</model>
 		</chassis>
 		<chassis name='Orion' unitType='Mek'>
-			<availability>
-				MOC:5,CC:5,HL:2,CLAN:2,IS:5,Periphery.Deep:4,FS:5,CIR:5,Periphery:4,TC:5,CS:5-,OA:5,CW:3,LA:6,Periphery.MW:6,Periphery.ME:6,FWL:9,NIOPS:5-,DC:5</availability>
+			<availability>MOC:5,HL:2,CLAN:2,IS:5,Periphery.Deep:4,CIR:5,Periphery:4,TC:5,CS:5-,OA:5,CW:3,LA:6,Periphery.MW:6,Periphery.ME:6,FWL:9,NIOPS:5-</availability>
 			<model name='ON1-K'>
 				<availability>HL:6,General:8,CLAN:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -4295,8 +4229,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ostroc' unitType='Mek'>
-			<availability>
-				CC:5,MOC:3,CS:4,HL:1,LA:5,CLAN:3-,IS:5,Periphery.Deep:4,NIOPS:4,Periphery:3,TC:3,DC:6</availability>
+			<availability>CS:4,HL:1,CLAN:3-,IS:5,Periphery.Deep:4,NIOPS:4,Periphery:3,DC:6</availability>
 			<model name='OSR-2C'>
 				<roles>urban</roles>
 				<availability>HL:6,CLAN:1,IS:8,Periphery.Deep:7,MERC:8,BAN:3,Periphery:8</availability>
@@ -4319,7 +4252,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ostscout' unitType='Mek'>
-			<availability>CC:4,CS:4,LA:4,CLAN:3-,FWL:4,IS:4,NIOPS:4,FS:4,MERC:4,DC:4,Periphery:2</availability>
+			<availability>CS:4,CLAN:3-,IS:4,NIOPS:4,MERC:4,Periphery:2</availability>
 			<model name='OTT-7J'>
 				<roles>recon</roles>
 				<availability>General:8,CLAN:2-,BAN:4</availability>
@@ -4346,24 +4279,21 @@
 			</model>
 		</chassis>
 		<chassis name='Overlord' unitType='Dropship'>
-			<availability>
-				MOC:5,CC:6,CHH:7,HL:2,CLAN:8,IS:5,Periphery.Deep:4,FS:6,CIR:5,BAN:4,Periphery:4,TC:5,CS:7,OA:5,LA:6,CBS:7,FWL:6,NIOPS:7,MH:4,DC:6</availability>
+			<availability>MOC:5,CC:6,CHH:7,HL:2,CLAN:8,IS:5,Periphery.Deep:4,FS:6,CIR:5,BAN:4,Periphery:4,TC:5,CS:7,OA:5,LA:6,CBS:7,FWL:6,NIOPS:7,MH:4,DC:6</availability>
 			<model name='(2762)'>
 				<roles>mek_carrier</roles>
 				<availability>General:8,BAN:1</availability>
 			</model>
 		</chassis>
 		<chassis name='Packrat LRPV' unitType='Tank'>
-			<availability>
-				MOC:3,CC:4,HL:2,IS:4,Periphery.Deep:4,FS:4,CIR:4,FS.CrMM:6,Periphery:4,TC:3,CS:6,OA:3,LA:6,FS.CMM:6,FS.DMM:6,FWL:4,NIOPS:6,DC:5</availability>
+			<availability>MOC:3,HL:2,IS:4,Periphery.Deep:4,FS.CrMM:6,Periphery:4,TC:3,CS:6,OA:3,LA:6,FS.CMM:6,FS.DMM:6,NIOPS:6,DC:5</availability>
 			<model name='PKR-T5'>
 				<roles>recon,raider</roles>
 				<availability>HL:3,General:8,Periphery.Deep:6,Periphery:5</availability>
 			</model>
 			<model name='PKR-T5 (ICE)'>
 				<roles>recon,raider</roles>
-				<availability>
-					CC:4,HL:4,PIR:4,General:4,IS:4,FWL:4,Periphery.Deep:5,FS:4,MERC:4,Periphery:6,DC:4</availability>
+				<availability>HL:4,PIR:4,General:4,IS:4,Periphery.Deep:5,MERC:4,Periphery:6</availability>
 			</model>
 			<model name='PKR-T5 (ML)'>
 				<roles>recon,raider</roles>
@@ -4386,8 +4316,7 @@
 			</model>
 		</chassis>
 		<chassis name='Panther' unitType='Mek'>
-			<availability>
-				CC:3,Periphery.DD:5,FS.RR:5,HL:1,MERC:5,Periphery.OS:5,FS:3,BAN:1,Periphery:3,CS:2,LA:3,FS.DMM:5,FWL:3,NIOPS:2,DC:10</availability>
+			<availability>CC:3,Periphery.DD:5,FS.RR:5,HL:1,MERC:5,Periphery.OS:5,FS:3,BAN:1,Periphery:3,CS:2,LA:3,FS.DMM:5,FWL:3,NIOPS:2,DC:10</availability>
 			<model name='PNT-8Z'>
 				<availability>CC:4,LA:4,TC:4</availability>
 			</model>
@@ -4403,8 +4332,7 @@
 			</model>
 		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>
-			<availability>
-				CC:6,MOC:9,HL:7,IS:8,Periphery.Deep:8,FS:7,CIR:6,Periphery:9,TC:9,OA:5,LA:8,FWL:7,DC:6</availability>
+			<availability>CC:6,HL:7,IS:8,Periphery.Deep:8,FS:7,CIR:6,Periphery:9,OA:5,FWL:7,DC:6</availability>
 			<model name=''>
 				<availability>General:8</availability>
 			</model>
@@ -4421,8 +4349,7 @@
 			</model>
 		</chassis>
 		<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
-			<availability>
-				CC:9,MOC:8,HL:6,IS:9,Periphery.Deep:7,FS:9,CIR:8,Periphery:8,TC:8,OA:8,LA:9,FWL:10,DC:8</availability>
+			<availability>HL:6,IS:9,Periphery.Deep:7,Periphery:8,FWL:10,DC:8</availability>
 			<model name=''>
 				<roles>recon</roles>
 				<availability>General:8</availability>
@@ -4484,7 +4411,7 @@
 			</model>
 		</chassis>
 		<chassis name='Phoenix Hawk' unitType='Mek'>
-			<availability>CS:7,HL:2,CLAN:2,IS:9,FWL:10,NIOPS:7,Periphery.Deep:4,Periphery:4,CGB:2</availability>
+			<availability>CS:7,HL:2,CLAN:2,IS:9,FWL:10,NIOPS:7,Periphery.Deep:4,Periphery:4</availability>
 			<model name='PXH-1'>
 				<roles>recon</roles>
 				<availability>General:8,BAN:6,Periphery:8</availability>
@@ -4517,8 +4444,7 @@
 			</model>
 		</chassis>
 		<chassis name='Pike Support Vehicle' unitType='Tank'>
-			<availability>
-				CC:4,MOC:7,HL:2,IS:5,FS:5,MERC:5,CIR:4,TC:5,Periphery:4,CS:6-,OA:5,LA:5,FWL:4,MH:4,DC:5</availability>
+			<availability>CC:4,MOC:7,HL:2,IS:5,MERC:5,TC:5,Periphery:4,CS:6-,OA:5,FWL:4</availability>
 			<model name=''>
 				<availability>HL:6,IS:8,Periphery.Deep:6,Periphery:8</availability>
 			</model>
@@ -4547,8 +4473,7 @@
 			</model>
 		</chassis>
 		<chassis name='Potemkin Troop Cruiser' unitType='Warship'>
-			<availability>
-				CHH:2,CCC:3,CIH:2,CSR:5,CSV:3,CLAN:1,CFM:2,CGS:4,CCO:3,CSA:2,CS:1,CDS:5,CW:2,NIOPS:1,CSJ:2</availability>
+			<availability>CHH:2,CCC:3,CIH:2,CSR:5,CSV:3,CLAN:1,CFM:2,CGS:4,CCO:3,CSA:2,CS:1,CDS:5,CW:2,NIOPS:1,CSJ:2</availability>
 			<model name='(2611)'>
 				<roles>cruiser</roles>
 				<availability>General:8</availability>
@@ -4659,8 +4584,7 @@
 			</model>
 		</chassis>
 		<chassis name='Quickdraw' unitType='Mek'>
-			<availability>
-				CC:3,MOC:5,HL:2,IS:5,Periphery.Deep:4,FS:3,CIR:4,Periphery:4,TC:5,CS:3-,OA:5,LA:5,FWL:8,NIOPS:3-,DC:7</availability>
+			<availability>CC:3,MOC:5,HL:2,IS:5,Periphery.Deep:4,FS:3,CIR:4,Periphery:4,TC:5,CS:3-,OA:5,FWL:8,NIOPS:3-,DC:7</availability>
 			<model name='QKD-4G'>
 				<availability>MOC:8,OA:8,HL:6,Periphery.Deep:7,FWL:8,IS:8,Periphery:8,DC:8,TC:8</availability>
 			</model>
@@ -4688,8 +4612,7 @@
 			</model>
 		</chassis>
 		<chassis name='Rhino Fire Support Tank' unitType='Tank'>
-			<availability>
-				MOC:8,HL:8,CLAN:8,Periphery.Deep:9,IS:7,FS:7,CIR:8,MERC:8,TC:8,Periphery:10,CS:9,OA:8,LA:9,NIOPS:9,DC:7</availability>
+			<availability>MOC:8,HL:8,CLAN:8,Periphery.Deep:9,IS:7,CIR:8,MERC:8,TC:8,Periphery:10,CS:9,OA:8,LA:9,NIOPS:9</availability>
 			<model name=''>
 				<availability>CHH:4,CW:4,General:8,CLAN:2,CNC:4</availability>
 			</model>
@@ -4711,8 +4634,7 @@
 			</model>
 		</chassis>
 		<chassis name='Riever' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:3,CC:5,LA:5,Periphery.MW:3,Periphery.ME:3,FWL:8,MERC:2,CIR:3,DC:5,Periphery:2,TC:3</availability>
+			<availability>MOC:3,CC:5,LA:5,Periphery.MW:3,Periphery.ME:3,FWL:8,MERC:2,CIR:3,DC:5,Periphery:2,TC:3</availability>
 			<model name='F-100'>
 				<availability>CC:8,HL:6,LA:2,FWL:8,Periphery.Deep:7,MERC:8,DC:2,Periphery:8</availability>
 			</model>
@@ -4740,8 +4662,7 @@
 			</model>
 		</chassis>
 		<chassis name='Rifleman' unitType='Mek'>
-			<availability>
-				CC:9-,CCC:2,HL:3,CSV:2,CLAN:2,IS:8-,Periphery.Deep:5,CFM:2,FS:9-,CIR:1,CGS:2,Periphery:5,CSA:2,CS:6-,Clan.IS:2,FWL:8-,NIOPS:6-,CJF:2,CB:2</availability>
+			<availability>CC:9-,HL:3,CLAN:2,IS:8-,Periphery.Deep:5,FS:9-,CIR:1,Periphery:5,CS:6-,Clan.IS:2,NIOPS:6-</availability>
 			<model name='RFL-3N'>
 				<roles>fire_support,anti_aircraft</roles>
 				<availability>HL:6,CLAN:2-,General:8,Periphery.Deep:7,BAN:3,Periphery:8</availability>
@@ -4785,7 +4706,7 @@
 			</model>
 		</chassis>
 		<chassis name='Ryoken (Stormcrow)' unitType='Mek' omni='Clan'>
-			<availability>CHH:8,CSR:9,CDS:8,CW:8,CBS:9,CSV:7,CLAN:8,CNC:8,CSJ:9,CJF:9,BAN:6</availability>
+			<availability>CSR:9,CBS:9,CSV:7,CLAN:8,CSJ:9,CJF:9,BAN:6</availability>
 			<model name='A'>
 				<availability>CDS:9,CW:5,CSV:8,General:6,CSJ:7,CJF:5,CGB:5</availability>
 			</model>
@@ -4829,8 +4750,7 @@
 			</model>
 		</chassis>
 		<chassis name='Sabre' unitType='AeroSpaceFighter'>
-			<availability>
-				CC:4-,MOC:4-,HL:2-,CLAN:4,IS:4-,Periphery.Deep:4-,FS:4-,MERC:4-,Periphery:4-,OA:4-,LA:4-,FWL:4-,DC:5-</availability>
+			<availability>HL:2-,CLAN:4,IS:4-,Periphery.Deep:4-,MERC:4-,Periphery:4-,DC:5-</availability>
 			<model name='SB-27'>
 				<availability>General:8,CLAN:1</availability>
 			</model>
@@ -4842,8 +4762,7 @@
 			</model>
 		</chassis>
 		<chassis name='Saladin Assault Hover Tank' unitType='Tank'>
-			<availability>
-				CC:8,Periphery.DD:8,LA:6,DC.AL:10,IS:7,FWL:7,MERC:7,Periphery.OS:8,FS:7,CIR:7,Periphery:8,DC:9</availability>
+			<availability>CC:8,LA:6,DC.AL:10,IS:7,MERC:7,CIR:7,Periphery:8,DC:9</availability>
 			<model name=''>
 				<availability>IS:8,Periphery:8</availability>
 			</model>
@@ -4863,8 +4782,7 @@
 			</model>
 		</chassis>
 		<chassis name='Saracen Medium Hover Tank' unitType='Tank'>
-			<availability>
-				MOC:6,CC:8-,Periphery.DD:6,HL:4,IS:6-,Periphery.Deep:4,Periphery.OS:6,FS:7-,CIR:6,Periphery:6,TC:6,OA:6,FWL.MM:10,LA:6-,FWL:8-,DC:8-</availability>
+			<availability>CC:8-,HL:4,IS:6-,Periphery.Deep:4,FS:7-,Periphery:6,FWL.MM:10,LA:6-,FWL:8-,DC:8-</availability>
 			<model name=''>
 				<availability>General:8</availability>
 			</model>
@@ -4877,14 +4795,13 @@
 			</model>
 		</chassis>
 		<chassis name='Schrek AC Carrier' unitType='Tank'>
-			<availability>MOC:3,CC:1,OA:3,HL:1,LA:2,IS:3,FWL:1,FS:1,TC:3,Periphery:3,DC:1</availability>
+			<availability>CC:1,HL:1,LA:2,IS:3,FWL:1,FS:1,Periphery:3,DC:1</availability>
 			<model name=''>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Schrek PPC Carrier' unitType='Tank'>
-			<availability>
-				MOC:4+,CC:2+,HL:2+,IS:4+,Periphery.Deep:5,MERC:4+,FS:4+,CIR:4+,Periphery:4+,TC:4+,CS:5,OA:4+,LA:4+,FWL:4+,DC:2+</availability>
+			<availability>CC:2+,HL:2+,IS:4+,Periphery.Deep:5,MERC:4+,Periphery:4+,CS:5,DC:2+</availability>
 			<model name=''>
 				<roles>fire_support</roles>
 				<availability>General:8</availability>
@@ -4895,8 +4812,7 @@
 			</model>
 		</chassis>
 		<chassis name='Scimitar Medium Hover Tank' unitType='Tank'>
-			<availability>
-				MOC:6,CC:8,Periphery.DD:6,HL:4,IS:6,Periphery.Deep:4,MERC:6,Periphery.OS:6,FS:7,CIR:6,TC:6,Periphery:6,OA:6,LA:6,FWL:6,DC:9</availability>
+			<availability>CC:8,HL:4,IS:6,Periphery.Deep:4,MERC:6,FS:7,Periphery:6,DC:9</availability>
 			<model name=''>
 				<availability>General:8</availability>
 			</model>
@@ -4920,8 +4836,7 @@
 			</model>
 		</chassis>
 		<chassis name='Scorpion' unitType='Mek'>
-			<availability>
-				CC:4-,HL:2-,IS:3-,Periphery.Deep:4-,FS:3-,MERC:4-,Periphery:4-,BAN:1-,CS:3-,LA:4-,FWL:4-,NIOPS:3-,DC:4-</availability>
+			<availability>CC:4-,HL:2-,IS:3-,Periphery.Deep:4-,MERC:4-,Periphery:4-,BAN:1-,CS:3-,LA:4-,FWL:4-,NIOPS:3-,DC:4-</availability>
 			<model name='SCP-1N'>
 				<availability>HL:6,LA:8,General:8,Periphery.Deep:7,MERC:8,Periphery:8</availability>
 			</model>
@@ -4998,8 +4913,7 @@
 			</model>
 		</chassis>
 		<chassis name='Seydlitz' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:2,Periphery.R:6,OA:2,HL:5,LA:9,Periphery.Deep:4,MH:2,CIR:3,FS:1,Periphery:4,TC:2</availability>
+			<availability>MOC:2,Periphery.R:6,OA:2,HL:5,LA:9,Periphery.Deep:4,MH:2,CIR:3,FS:1,Periphery:4,TC:2</availability>
 			<model name='SYD-21'>
 				<roles>interceptor</roles>
 				<availability>HL:2,LA:4,Periphery.Deep:4,FS:4,MERC:4,Periphery:4</availability>
@@ -5023,7 +4937,7 @@
 			</model>
 		</chassis>
 		<chassis name='Shadow Hawk' unitType='Mek'>
-			<availability>CS:6-,HL:3,LA:6,CLAN:2,IS:7,NIOPS:6-,Periphery.Deep:5,BAN:3,Periphery:5,CGB:2</availability>
+			<availability>CS:6-,HL:3,LA:6,CLAN:2,IS:7,NIOPS:6-,Periphery.Deep:5,BAN:3,Periphery:5</availability>
 			<model name='SHD-2D'>
 				<availability>FS:10</availability>
 			</model>
@@ -5102,8 +5016,7 @@
 			</model>
 		</chassis>
 		<chassis name='Skulker Wheeled Scout Tank' unitType='Tank'>
-			<availability>
-				CC:3,Periphery.DD:3,IS:4,MERC:4,Periphery.OS:3,FS:4,Periphery:2,CS:3,OA:3,LA:4,FWL:4,NIOPS:3,DC:8</availability>
+			<availability>CC:3,Periphery.DD:3,IS:4,MERC:4,Periphery.OS:3,Periphery:2,CS:3,OA:3,NIOPS:3,DC:8</availability>
 			<model name=''>
 				<roles>recon</roles>
 				<availability>General:8</availability>
@@ -5118,7 +5031,7 @@
 			</model>
 		</chassis>
 		<chassis name='Slayer' unitType='AeroSpaceFighter'>
-			<availability>MOC:2,Periphery.DD:3,OA:3,LA:4,MERC:3,CIR:2,Periphery.OS:3,DC:8,Periphery:2,TC:2</availability>
+			<availability>Periphery.DD:3,OA:3,LA:4,MERC:3,Periphery.OS:3,DC:8,Periphery:2</availability>
 			<model name='SL-15'>
 				<availability>HL:6,IS:8,Periphery.Deep:7,FS:0,Periphery:8</availability>
 			</model>
@@ -5179,8 +5092,7 @@
 			</model>
 		</chassis>
 		<chassis name='Sparrowhawk' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:2,CC:3,HL:2,Periphery.Deep:4,FS:9,MERC:5,CIR:2,Periphery.OS:4,Periphery:4,TC:2,CS:3,OA:2,LA:2,Periphery.HR:4,NIOPS:3,DC:4</availability>
+			<availability>MOC:2,CC:3,HL:2,Periphery.Deep:4,FS:9,MERC:5,CIR:2,Periphery:4,TC:2,CS:3,OA:2,LA:2,NIOPS:3,DC:4</availability>
 			<model name='SPR-8H'>
 				<roles>interceptor</roles>
 				<availability>FS.CMM:3</availability>
@@ -5214,8 +5126,7 @@
 			</model>
 		</chassis>
 		<chassis name='Spider' unitType='Mek'>
-			<availability>
-				CC:5,MOC:2,IS:2,FS:5,MERC:4,Periphery:2,TC:2,CS:4,OA:2,LA:2,Periphery.MW:4,Periphery.ME:4,FWL:7,NIOPS:4,DC:6</availability>
+			<availability>CC:5,IS:2,FS:5,MERC:4,Periphery:2,CS:4,LA:2,Periphery.MW:4,Periphery.ME:4,FWL:7,NIOPS:4,DC:6</availability>
 			<model name='SDR-5D'>
 				<roles>anti_infantry</roles>
 				<availability>FS:8</availability>
@@ -5229,8 +5140,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stalker' unitType='Mek'>
-			<availability>
-				MOC:10,CC:7,HL:8,CLAN:5,IS:9,Periphery.Deep:9,FS:7,CIR:10,TC:10,Periphery:10,CS:6,OA:10,LA:9,FWL:10,NIOPS:6,DC:7</availability>
+			<availability>CC:7,HL:8,CLAN:5,IS:9,Periphery.Deep:9,FS:7,Periphery:10,CS:6,FWL:10,NIOPS:6,DC:7</availability>
 			<model name='STK-3F'>
 				<availability>HL:6,IS:8,Periphery.Deep:7,Periphery:8</availability>
 			</model>
@@ -5271,8 +5181,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stinger' unitType='Mek'>
-			<availability>
-				MOC:6,CS:4-,HL:4,CLAN:1-,IS:9,NIOPS:4-,Periphery.Deep:5,MERC:8,Periphery:6,DC:6,CGB:1-</availability>
+			<availability>CS:4-,HL:4,CLAN:1-,IS:9,NIOPS:4-,Periphery.Deep:5,MERC:8,Periphery:6,DC:6</availability>
 			<model name='STG-3G'>
 				<roles>recon</roles>
 				<availability>HL:2,IS:4,Periphery.Deep:4,BAN:1,Periphery:4</availability>
@@ -5287,8 +5196,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stingray' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:2,CC:3,FS:2,MERC:3,CIR:2,TC:1,Periphery:1,CS:3,OA:1,LA:3,Periphery.MW:2,Periphery.ME:2,FWL:8,NIOPS:3,MH:2</availability>
+			<availability>MOC:2,CC:3,FS:2,MERC:3,CIR:2,Periphery:1,CS:3,LA:3,Periphery.MW:2,Periphery.ME:2,FWL:8,NIOPS:3,MH:2</availability>
 			<model name='F-90'>
 				<availability>CS:8,LA:5,IS:8,FS:8,Periphery:8</availability>
 			</model>
@@ -5309,7 +5217,7 @@
 				<availability>General:7</availability>
 			</model>
 			<model name='Prime'>
-				<availability>:0,General:8</availability>
+				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
@@ -5335,8 +5243,7 @@
 			</model>
 		</chassis>
 		<chassis name='Stuka' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:2,OA:2,LA:1,Periphery.HR:2,CLAN:6,MERC:4,Periphery.OS:2,FS:9,CIR:1,Periphery:1,TC:2,DC:3</availability>
+			<availability>MOC:2,OA:2,LA:1,Periphery.HR:2,CLAN:6,MERC:4,Periphery.OS:2,FS:9,Periphery:1,TC:2,DC:3</availability>
 			<model name='STU-K10'>
 				<availability>OA:4,FS.DMM:8</availability>
 			</model>
@@ -5450,8 +5357,7 @@
 			</model>
 		</chassis>
 		<chassis name='Thor (Summoner)' unitType='Mek' omni='Clan'>
-			<availability>
-				CHH:7,CSR:6,CIH:4,CLAN:6,CCO:7,BAN:6,CSA:6,CDS:7,CW:7,CNC:6,CSJ:7,CJF:10,CGB:7,CB:5</availability>
+			<availability>CHH:7,CIH:4,CLAN:6,CCO:7,BAN:6,CDS:7,CW:7,CSJ:7,CJF:10,CGB:7,CB:5</availability>
 			<model name='A'>
 				<availability>CHH:8,CDS:8,CW:7,CNC:6,General:7,CSJ:6,CJF:8,CGB:6</availability>
 			</model>
@@ -5501,16 +5407,14 @@
 			</model>
 		</chassis>
 		<chassis name='Thrush' unitType='AeroSpaceFighter'>
-			<availability>
-				CC:9,MOC:4,OA:3,HL:1,Periphery.CM:4,Periphery.ME:4,FWL:5,MH:2,FS:4,MERC:3,Periphery:3,TC:4</availability>
+			<availability>CC:9,MOC:4,HL:1,Periphery.CM:4,Periphery.ME:4,FWL:5,MH:2,FS:4,MERC:3,Periphery:3,TC:4</availability>
 			<model name='TR-7'>
 				<roles>escort,interceptor</roles>
 				<availability>CC:8,HL:6,General:8,FWL:8,Periphery.Deep:7,MERC:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Thug' unitType='Mek'>
-			<availability>
-				CHH:6,CSV:8,CLAN:7,IS:2,CFM:9,CS:7,CDS:6,CW:8,CBS:6,CNC:6,FWL:4,NIOPS:7,CJF:8,CGB:8</availability>
+			<availability>CHH:6,CSV:8,CLAN:7,IS:2,CFM:9,CS:7,CDS:6,CW:8,CBS:6,CNC:6,FWL:4,NIOPS:7,CJF:8,CGB:8</availability>
 			<model name='THG-10E'>
 				<availability>FWL:8,DC:8</availability>
 			</model>
@@ -5544,8 +5448,7 @@
 			</model>
 		</chassis>
 		<chassis name='Thunderbird' unitType='AeroSpaceFighter'>
-			<availability>
-				MOC:5,CC:5,HL:3,CLAN:4,IS:5,Periphery.Deep:5,FS:6,CIR:5,Periphery:5,TC:6,CS:5-,OA:5,LA:7,FWL:5,NIOPS:5-,DC:5</availability>
+			<availability>HL:3,CLAN:4,IS:5,Periphery.Deep:5,FS:6,Periphery:5,TC:6,CS:5-,LA:7,NIOPS:5-</availability>
 			<model name='TRB-D36'>
 				<roles>escort,ground_support</roles>
 				<availability>General:8,CLAN:1</availability>
@@ -5560,8 +5463,7 @@
 			</model>
 		</chassis>
 		<chassis name='Thunderbolt' unitType='Mek'>
-			<availability>
-				CC:8,CCC:2-,CHH:1-,CSR:2-,HL:3,CLAN:1-,IS:8,Periphery.Deep:6,FS:7,MERC:8,CGS:2-,Periphery:5,TC:5,CS:5-,CSA:1-,LA:8,CBS:2,NIOPS:5-,MH:5,CSJ:1-,CJF:1-,DC:8,CB:2</availability>
+			<availability>CC:8,CCC:2-,CSR:2-,HL:3,CLAN:1-,IS:8,Periphery.Deep:6,FS:7,MERC:8,CGS:2-,Periphery:5,CS:5-,CBS:2,NIOPS:5-,CB:2</availability>
 			<model name='C'>
 				<availability>CSA:1-,CCC:2-,CHH:1-,CSR:2-,CBS:2,CSJ:1-,CGS:2-,CJF:1-,CB:2</availability>
 			</model>
@@ -5665,8 +5567,7 @@
 			</model>
 		</chassis>
 		<chassis name='Trebuchet' unitType='Mek'>
-			<availability>
-				CC:5,MOC:5,IS:5,FS:4,MERC:5,Periphery:5,TC:5,CS:5-,OA:5,LA:5,Periphery.MW:6,Periphery.ME:6,FWL:8,NIOPS:5-,DC:5</availability>
+			<availability>IS:5,FS:4,MERC:5,Periphery:5,CS:5-,Periphery.MW:6,Periphery.ME:6,FWL:8,NIOPS:5-</availability>
 			<model name='TBT-3C'>
 				<roles>fire_support</roles>
 				<availability>CS:6,NIOPS:6</availability>
@@ -5676,14 +5577,14 @@
 			</model>
 			<model name='TBT-5N'>
 				<roles>fire_support</roles>
-				<availability>CC:6,CS:2,MOC:6,LA:6,FWL:6,IS:6,NIOPS:2,FS:6,MERC:6,DC:6,Periphery:6</availability>
+				<availability>CS:2,IS:6,NIOPS:2,MERC:6,Periphery:6</availability>
 			</model>
 			<model name='TBT-5S'>
-				<availability>MOC:4,HL:2,IS:4,Periphery.Deep:4,FWL:4,MERC:4,Periphery:4,TC:4</availability>
+				<availability>MOC:4,HL:2,IS:4,Periphery.Deep:4,MERC:4,Periphery:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Trident' unitType='AeroSpaceFighter'>
-			<availability>CC:1,MOC:1,CS:7,OA:3,CSR:2,CLAN:2,NIOPS:7,FS:1,MERC:1,DC:1,TC:1</availability>
+			<availability>CC:1,MOC:1,CS:7,OA:3,CLAN:2,NIOPS:7,FS:1,MERC:1,DC:1,TC:1</availability>
 			<model name='TRN-3T'>
 				<availability>CS:8,CLAN:6,NIOPS:8,BAN:8</availability>
 			</model>
@@ -5718,8 +5619,7 @@
 			</model>
 		</chassis>
 		<chassis name='Uller (Kit Fox)' unitType='Mek' omni='Clan'>
-			<availability>
-				CCC:9,CHH:3,CIH:3,CSR:7,CSV:2,CLAN:4,CCO:3,CDS:2,CW:3,CBS:5,CNC:2,CSJ:3,CJF:7,CGB:3</availability>
+			<availability>CCC:9,CHH:3,CIH:3,CSR:7,CSV:2,CLAN:4,CCO:3,CDS:2,CW:3,CBS:5,CNC:2,CSJ:3,CJF:7,CGB:3</availability>
 			<model name='A'>
 				<availability>CHH:6,CIH:6,CDS:6,CW:5,General:5,CCO:4,CJF:6,CGB:6</availability>
 			</model>
@@ -5796,8 +5696,7 @@
 			</model>
 		</chassis>
 		<chassis name='UrbanMech' unitType='Mek'>
-			<availability>
-				MOC:3-,CC:6-,HL:1-,CLAN:1-,IS:4-,FS:4-,CIR:3-,Periphery:3-,TC:3-,CS:4-,OA:3-,LA:4-,FS.CMM:5-,FWL:5-,NIOPS:4-,DC:5-</availability>
+			<availability>CC:6-,HL:1-,CLAN:1-,IS:4-,Periphery:3-,CS:4-,FS.CMM:5-,FWL:5-,NIOPS:4-,DC:5-</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
 				<availability>CC:8,HL:6,General:8,Periphery.Deep:7,Periphery:8</availability>
@@ -5849,15 +5748,14 @@
 			</model>
 		</chassis>
 		<chassis name='Vengeance' unitType='Dropship'>
-			<availability>CC:3,MOC:1,CS:5,OA:2,LA:3,FWL:3,IS:2,NIOPS:5,FS:3,DC:3,Periphery:1,TC:1</availability>
+			<availability>CC:3,CS:5,OA:2,LA:3,FWL:3,IS:2,NIOPS:5,FS:3,DC:3,Periphery:1</availability>
 			<model name='(2682)'>
 				<roles>asf_carrier</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Victor' unitType='Mek'>
-			<availability>
-				MOC:4,CC:5,HL:2,IS:4,Periphery.Deep:4,FS:9,CIR:4,Periphery.OS:4,TC:4,Periphery:4,CS:5-,OA:4,LA:4,Periphery.HR:4,FWL:4,NIOPS:5-,DC:4</availability>
+			<availability>CC:5,HL:2,IS:4,Periphery.Deep:4,FS:9,Periphery:4,CS:5-,NIOPS:5-</availability>
 			<model name='VTR-9A'>
 				<availability>CC:1,CS:1,FS:1</availability>
 			</model>
@@ -5869,7 +5767,7 @@
 			</model>
 		</chassis>
 		<chassis name='Vincent Corvette' unitType='Warship'>
-			<availability>CSA:2,CCC:1,CSR:3,CW:4,CSV:2,CNC:2,CLAN:2,CFM:2,CSJ:5,CJF:2,CB:2</availability>
+			<availability>CCC:1,CSR:3,CW:4,CLAN:2,CSJ:5</availability>
 			<model name='Mk 39'>
 				<roles>corvette</roles>
 				<availability>CLAN:6,IS:8</availability>
@@ -5928,7 +5826,7 @@
 			</model>
 		</chassis>
 		<chassis name='Volga Transport' unitType='Warship'>
-			<availability>CSA:2,CS:1,CHH:1,CSR:2,CDS:2,CW:1,CLAN:1,NIOPS:1,CGS:1,CGB:1,CB:1</availability>
+			<availability>CSA:2,CS:1,CSR:2,CDS:2,CLAN:1,NIOPS:1</availability>
 			<model name='(2709)'>
 				<roles>cargo</roles>
 				<availability>General:8</availability>
@@ -5951,7 +5849,7 @@
 			</model>
 		</chassis>
 		<chassis name='Vulcan' unitType='Mek'>
-			<availability>CC:4,CS:3,MOC:5,LA:7,FWL:7,IS:5,NIOPS:3,CIR:5,Periphery:5,TC:5</availability>
+			<availability>CC:4,CS:3,LA:7,FWL:7,IS:5,NIOPS:3,Periphery:5</availability>
 			<model name='VL-2T'>
 				<roles>anti_infantry</roles>
 				<availability>General:8,FS:4</availability>
@@ -5962,7 +5860,7 @@
 			</model>
 		</chassis>
 		<chassis name='Vulture (Mad Dog)' unitType='Mek' omni='Clan'>
-			<availability>CHH:9,CIH:7,CW:7,CSV:7,CLAN:8,CNC:8,CCO:7,CJF:7,BAN:7,CGB:9,CB:7</availability>
+			<availability>CHH:9,CIH:7,CW:7,CSV:7,CLAN:8,CCO:7,CJF:7,BAN:7,CGB:9,CB:7</availability>
 			<model name='A'>
 				<availability>CDS:7,CW:6,CNC:7,General:6,CSJ:7,CGB:6</availability>
 			</model>
@@ -6009,7 +5907,7 @@
 			</model>
 		</chassis>
 		<chassis name='Warhammer' unitType='Mek'>
-			<availability>CS:6-,HL:4,LA:9,CLAN:4,IS:8,FWL:9,NIOPS:6-,Periphery.Deep:5,TC:6,Periphery:6</availability>
+			<availability>CS:6-,HL:4,LA:9,CLAN:4,IS:8,FWL:9,NIOPS:6-,Periphery.Deep:5,Periphery:6</availability>
 			<model name='C 3'>
 				<availability>CLAN:4</availability>
 			</model>
@@ -6033,8 +5931,7 @@
 			</model>
 		</chassis>
 		<chassis name='Warrior Attack Helicopter' unitType='VTOL'>
-			<availability>
-				MOC:6,CC:6,HL:4,FS.CH:7,IS:6,Periphery.Deep:4,FWL.FWG:7,FS:5,CIR:5,CC.CHG:8,Periphery:6,TC:6,CS:5-,OA:6,LA:8,FWL:5,DC:6</availability>
+			<availability>HL:4,FS.CH:7,IS:6,Periphery.Deep:4,FWL.FWG:7,FS:5,CIR:5,CC.CHG:8,Periphery:6,CS:5-,LA:8,FWL:5</availability>
 			<model name='H-7'>
 				<availability>HL:5,IS:7,Periphery.Deep:5,Periphery:7</availability>
 			</model>
@@ -6102,8 +5999,7 @@
 			</model>
 		</chassis>
 		<chassis name='Whitworth' unitType='Mek'>
-			<availability>
-				MOC:1,Periphery.DD:2,CLAN:1-,IS:3,FS:5,MERC:3,Periphery.OS:2,Periphery:1,TC:1,CS:3-,OA:1,FS.CMM:5,NIOPS:3-,DC:6</availability>
+			<availability>Periphery.DD:2,CLAN:1-,IS:3,FS:5,MERC:3,Periphery.OS:2,Periphery:1,CS:3-,FS.CMM:5,NIOPS:3-,DC:6</availability>
 			<model name='WTH-1'>
 				<roles>fire_support</roles>
 				<availability>HL:6,General:8,Periphery.Deep:7,MERC:8,Periphery:8</availability>
@@ -6114,8 +6010,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wolverine' unitType='Mek'>
-			<availability>
-				CC:7,HL:3,IS:7,Periphery.Deep:5,FS:8,Periphery:5,TC:5,CS:5-,LA:7,FWL:10,NIOPS:5-,MH:4,DC:7</availability>
+			<availability>HL:3,IS:7,Periphery.Deep:5,FS:8,Periphery:5,CS:5-,FWL:10,NIOPS:5-,MH:4</availability>
 			<model name='WVR-6D'>
 				<availability>FS:2</availability>
 			</model>
@@ -6149,7 +6044,7 @@
 			</model>
 		</chassis>
 		<chassis name='Wyvern' unitType='Mek'>
-			<availability>CS:6,CC:5,CIH:3,CLAN:4,IS:5,NIOPS:6,CFM:5,FS:6,MERC:5,Periphery:2,DC:5,TC:3</availability>
+			<availability>CS:6,CIH:3,CLAN:4,IS:5,NIOPS:6,CFM:5,FS:6,MERC:5,Periphery:2,TC:3</availability>
 			<model name='WVE-5N'>
 				<roles>urban</roles>
 				<availability>CS:8,CLAN:3,NIOPS:8,CFM:5,BAN:5</availability>

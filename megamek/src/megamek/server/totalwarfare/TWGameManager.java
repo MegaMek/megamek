@@ -14948,6 +14948,16 @@ public class TWGameManager extends AbstractGameManager {
         return psr;
     }
 
+    void resolveWeather() {
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        if (conditions.isBlowingSandActive()) {
+            addReport(resolveBlowingSandDamage());
+        }
+        if (conditions.getWeather().isLightningStorm()) {
+            addReport(resolveLightningStormDamage());
+        }
+    }
+
     /**
      * Each mek sinks the amount of heat appropriate to its current heat
      * capacity.
@@ -15456,28 +15466,36 @@ public class TWGameManager extends AbstractGameManager {
                         entity.setShutDown(true);
                     } else {
                         int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
+                        TargetRoll target;
                         if (mtHeat) {
                             shutdown -= 5;
+                            target = new TargetRoll(shutdown, "Base tacops shutdown TN");
                             switch (entity.getCrew().getPiloting()) {
                                 case 0:
                                 case 1:
-                                    shutdown -= 2;
+                                    target.addModifier(-2, "Piloting skill");
                                     break;
                                 case 2:
                                 case 3:
-                                    shutdown -= 1;
+                                    target.addModifier(-1, "Piloting skill");
                                     break;
                                 case 6:
                                 case 7:
-                                    shutdown += 1;
+                                    target.addModifier(+1, "Piloting skill");
                             }
+                        } else {
+                            target = new TargetRoll(shutdown, "Base shutdown TN");
+                        }
+                        Mek mek = (Mek) entity;
+                        if (mek.hasRiscHeatSinkOverrideKit()) {
+                            target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
                         Roll diceRoll = Compute.rollD6(2);
                         int rollValue = diceRoll.getIntValue();
                         r = new Report(5060);
                         r.subject = entity.getId();
                         r.addDesc(entity);
-                        r.add(shutdown);
+                        r.add(target);
 
                         if (entity.getCrew().hasActiveTechOfficer()) {
                             rollValue += 2;
@@ -15486,7 +15504,8 @@ public class TWGameManager extends AbstractGameManager {
                         } else {
                             r.add(diceRoll);
                         }
-                        if (rollValue >= shutdown) {
+
+                        if (rollValue >= target.getValue()) {
                             // avoided
                             r.choose(true);
                             addReport(r);
@@ -15501,6 +15520,44 @@ public class TWGameManager extends AbstractGameManager {
                             }
                             // okay, now mark shut down
                             entity.setShutDown(true);
+                        }
+
+                        if (diceRoll.getIntValue() == 2 && mek.hasRiscHeatSinkOverrideKit()) {
+                            r = new Report(5545);
+                            r.subject(entity.getId());
+                            addReport(r);
+
+                            int hits = 0;
+                            Roll diceRoll2 = Compute.rollD6(2);
+                            r = new Report(6310);
+                            r.subject = entity.getId();
+                            r.add(diceRoll2);
+                            r.newlines = 0;
+                            addReport(r);
+
+                            if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
+                                hits = 1;
+                            } else if ((diceRoll2.getIntValue() == 10) || (diceRoll2.getIntValue() == 11)) {
+                                hits = 2;
+                            } else if (diceRoll2.getIntValue() == 12) {
+                                hits = 3;
+                            }
+
+                            r = new Report(6328);
+                            r.subject = entity.getId();
+                            r.add("%d+1=%d".formatted(hits, hits+1));
+                            addReport(r);
+
+                            hits++;
+
+                            for (int j = 0; (j < 12) && (hits > 0); j++) {
+                                var crit = mek.getCritical(Mek.LOC_CT, j);
+                                if ((crit != null) && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                                    && (crit.getIndex() == Mek.SYSTEM_ENGINE) && crit.isHittable()) {
+                                    addReport(applyCriticalHit(entity, Mek.LOC_CT, crit, true, 0, false));
+                                    hits--;
+                                }
+                            }
                         }
                     }
                 }
@@ -29704,6 +29761,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         Hex targetHex = game.getBoard().getHex(targetCoords);
         // Terrain modifiers should only apply if the unit is on the ground...
+        // TO:AR 6th ed p165
         if (!entity.isSpaceborne() && !entity.isAirborne()) {
             if (targetHex != null) {
                 if ((targetHex.terrainLevel(Terrains.WATER) > 0)
@@ -29741,6 +29799,7 @@ public class TWGameManager extends AbstractGameManager {
             // battle, but it shouldn't
             // That's a fix for another day, probably when I get around to space terrain and
             // 'weather'
+            // TO:AR 6th ed p165
             if (conditions.getGravity() == 0) {
                 rollTarget.addModifier(3, "Zero-G");
             } else if (conditions.getGravity() < 0.8) {
@@ -29752,6 +29811,7 @@ public class TWGameManager extends AbstractGameManager {
             // Vacuum shouldn't apply to ASF ejection since they're designed for it, but the
             // rules don't specify
             // High and low pressures make more sense to apply to all
+            // TO:AR 6th ed p165
             if (conditions.getAtmosphere().isVacuum()) {
                 rollTarget.addModifier(3, "Vacuum");
             } else if (conditions.getAtmosphere().isVeryHigh()) {
@@ -29761,11 +29821,13 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        if (conditions.getWeather().isDownpourOrHeavySnowOrIceStorm()
+        // TO:AR 6th ed p165
+        if (conditions.getWeather().isDownpourOrHeavySnowOrIceStormOrLightningStorm()
                 || conditions.getWind().isStrongGale()) {
             rollTarget.addModifier(2, "Bad Weather");
         }
 
+        // TO:AR 6th ed p165
         if (conditions.getWind().isStrongerThan(Wind.STRONG_GALE)
                 || (conditions.getWeather().isHeavySnow() && conditions.getWind().isStrongGale())) {
             rollTarget.addModifier(3, "Really Bad Weather");
@@ -31251,6 +31313,102 @@ public class TWGameManager extends AbstractGameManager {
 
     public List<SmokeCloud> getSmokeCloudList() {
         return game.getSmokeCloudList();
+    }
+
+    /**
+     * Check to see if Lightning Storm caused damage
+     * TO:AR 6th ed. p. 57
+     * */
+    private Vector<Report> resolveLightningStormDamage() {
+        Vector<Report> vFullReport = new Vector<>();
+        Roll rollStrike = Compute.rollD6(1);
+
+        if (rollStrike.getIntValue() > 4) {
+            Report.addNewline(vFullReport);
+            vFullReport.add(new Report(5620, Report.PUBLIC));
+
+            Roll rollNumber = Compute.rollD6(1);
+            int numberOfStrikes = Math.max(1, rollNumber.getIntValue() / 2);
+
+            for (int i = 0; i < numberOfStrikes; i++) {
+                Roll rollType = Compute.rollD6(1);
+                int damage;
+                switch (rollType.getIntValue()) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        damage = 5;
+                        break;
+                    case 4:
+                    case 5:
+                        damage = 10;
+                        break;
+                    default:
+                        damage = 15;
+                }
+
+                Coords coords;
+
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS)) {
+                    List<Entity> entities = game.getEntitiesVector().stream()
+                        .filter(e -> e.getPosition() != null)
+                        .toList();
+                    int index = Compute.randomInt(entities.size());
+                    coords = entities.get(index).getPosition();
+                } else {
+                    int x = Compute.randomInt(game.getBoard().getWidth());
+                    int y = Compute.randomInt(game.getBoard().getHeight());
+                    coords = new Coords(x, y);
+                }
+
+                Report r;
+                r = new Report(5621);
+                r.add(coords.getBoardNum());
+                vFullReport.add(r);
+
+                vFullReport.addAll(lightningStormDamage(coords, damage));
+
+                if (rollType.getIntValue() == 6) {
+                    for (Coords locationAdjacent : coords.allAdjacent()) {
+                        r = new Report(5622);
+                        r.add(locationAdjacent.getBoardNum());
+                        vFullReport.add(r);
+
+                        vFullReport.addAll(lightningStormDamage(locationAdjacent, 5));
+                    }
+                }
+            }
+        }
+
+        return vFullReport;
+    }
+
+    private Vector<Report> lightningStormDamage(Coords coords, int damage) {
+        Vector<Report> vFullReport = new Vector<>();
+        Vector<Report> newReports = tryClearHex(coords, damage, Entity.NONE);
+        vFullReport.addAll(newReports);
+
+        Building bldg = game.getBoard().getBuildingAt(coords);
+
+        if (bldg != null) {
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
+            vFullReport.addAll(buildingReport);
+        }
+
+        List<Entity> hitEntities = game.getEntitiesVector().stream()
+                .filter(e -> coords.equals(e.getPosition())
+                    && !(e instanceof GunEmplacement))
+                .toList();
+
+        for (Entity entity : hitEntities) {
+            ToHitData toHit = new ToHitData();
+            toHit.setSideTable(ToHitData.SIDE_RANDOM);
+            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, toHit.getSideTable());
+            Vector<Report> entityReport = damageEntity(entity, hit, damage);
+            vFullReport.addAll(entityReport);
+        }
+
+        return vFullReport;
     }
 
     /**

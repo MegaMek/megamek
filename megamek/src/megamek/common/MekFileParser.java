@@ -504,13 +504,6 @@ public class MekFileParser {
                 }
             }
 
-            if ((ent instanceof Mek) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
-                    || m.getType().hasFlag(MiscType.F_CASEP)
-
-            )) {
-                ((Mek) ent).setAutoEject(false);
-            }
-
             if ((ent instanceof Mek)
                     && m.getType().hasFlag(
                             MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {

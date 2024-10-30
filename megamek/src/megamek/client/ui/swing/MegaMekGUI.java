@@ -44,7 +44,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
@@ -335,11 +334,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(scenB, gridbag, c);
         c.gridy++;
         addBag(connectB, gridbag, c);
+//        Connecting to an SBF game is not useful (yet)
+//        c.gridy++;
+//        addBag(connectSBF, gridbag, c);
         c.gridy++;
-        addBag(connectSBF, gridbag, c);
-        c.gridy++;
-        // addBag(botB, gridbag, c);
-        // c.gridy++;
+//        Connecting as a bot was deemed not useful; leaving this for now to uncomment if necessary
+//        addBag(botB, gridbag, c);
+//        c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);
@@ -1207,22 +1208,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
-            updateAfterUiChange();
+            UIUtil.updateAfterUiChange();
         } catch (Exception ex) {
             logger.error("setLookAndFeel() Exception", ex);
-        }
-    }
-
-    /**
-     * Updates all existing windows and frames. Use after a gui scale change or look-and-feel change.
-     */
-    public static void updateAfterUiChange() {
-        for (Window window : Window.getWindows()) {
-            SwingUtilities.updateComponentTreeUI(window);
-            window.invalidate();
-            window.validate();
-            window.pack();
-            window.repaint();
         }
     }
 }

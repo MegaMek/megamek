@@ -41,7 +41,6 @@ map:
       newlevel: 3
 
 factions:
-- name: obser
 
 - name: Thirtieth Marik Militia
   camo: Free Worlds League/Marik Militia/Marik Militia.jpg

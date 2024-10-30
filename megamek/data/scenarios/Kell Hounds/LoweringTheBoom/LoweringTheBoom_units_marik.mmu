@@ -69,6 +69,7 @@
         shots: 3
   crew:
     name: Lt. Alicia Devon
+    portrait: Female/MekWarrior/MW_F_35.png
     piloting: 4
     gunnery: 4
 
@@ -86,6 +87,7 @@
         shots: 4
   crew:
     name: Sgt. Jonathan Taylor
+    portrait: Male/MekWarrior/MW_M_78.png
     piloting: 4
     gunnery: 4
 
@@ -94,6 +96,7 @@
   at: [ 5, 30 ]
   crew:
     name: Samantha Blaustein
+    portrait: Female/MekWarrior/MW_F_25.png
     piloting: 4
     gunnery: 4
 
@@ -102,5 +105,6 @@
   at: [ 2, 29 ]
   crew:
     name: Deborah Ryan
+    portrait: Female/MekWarrior/MW_F_83.png
     piloting: 4
     gunnery: 4

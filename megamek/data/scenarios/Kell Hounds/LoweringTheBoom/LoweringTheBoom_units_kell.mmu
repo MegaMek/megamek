@@ -23,6 +23,7 @@
   deploymentround: 2
   crew:
     name: Maj. Salome Ward
+    portrait: Female/MekWarrior/MW_F_34.png
     piloting: 4
     gunnery: 3
 
@@ -30,6 +31,7 @@
   id: 202
   crew:
     name: Lee Kennedy
+    portrait: Male/MekWarrior/MW_M_20.png
     piloting: 4
     gunnery: 4
 
@@ -45,6 +47,7 @@
         shots: 4
   crew:
     name: Brian Martell
+    portrait: Male/MekWarrior/MW_M_90.png
     piloting: 4
     gunnery: 4
 
@@ -53,6 +56,7 @@
   deploymentround: 2
   crew:
     name: Judith Nesmith
+    portrait: Female/MekWarrior/MW_F_4.png
     piloting: 4
     gunnery: 4
 
@@ -60,6 +64,7 @@
   id: 205
   crew:
     name: Nathan Mack
+    portrait: Male/MekWarrior/MW_M_64.png
     piloting: 4
     gunnery: 4
 
@@ -67,6 +72,7 @@
   id: 206
   crew:
     name: Stuart O'Grady
+    portrait: Male/MekWarrior/MW_M_16.png
     piloting: 4
     gunnery: 4
 
@@ -74,5 +80,6 @@
   id: 207
   crew:
     name: Sarah Jette
+    portrait: Female/MekWarrior/MW_F_45.png
     piloting: 4
     gunnery: 4

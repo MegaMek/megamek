@@ -31,8 +31,6 @@ import java.util.Objects;
  */
 public final class FlatLafStyleBuilder {
 
-    public static final String FLATLAF_STYLE_KEY = "FlatLaf.style";
-
     private String fontName = "";
     private double size = 1;
     private boolean bold = false;

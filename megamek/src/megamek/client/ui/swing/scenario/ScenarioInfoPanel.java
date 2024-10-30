@@ -20,15 +20,13 @@ package megamek.client.ui.swing.scenario;
 
 import megamek.client.ui.MMMarkdownRenderer;
 import megamek.client.ui.swing.util.*;
-import megamek.common.scenario.ScenarioV1;
 import megamek.common.scenario.Scenario;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * This panel displays a single {@link ScenarioV1} object in a well-formatted manner for display in the
- * {@link ScenarioChooser}.
+ * This panel displays a single {@link Scenario} object in a well-formatted manner for display in the {@link ScenarioChooser}.
  */
 public class ScenarioInfoPanel extends JPanel {
 

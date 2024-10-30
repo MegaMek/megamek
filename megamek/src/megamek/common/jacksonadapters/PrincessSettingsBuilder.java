@@ -20,7 +20,6 @@ package megamek.common.jacksonadapters;
 
 import com.fasterxml.jackson.annotation.*;
 import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.PrincessException;
 import megamek.common.annotations.Nullable;
@@ -71,7 +70,7 @@ public class PrincessSettingsBuilder {
     private boolean hasFleeValue = false;
 
     @JsonAlias(PRINCESS_FLEE)
-    private boolean doFlee;
+    private boolean doFlee = false;
 
     @JsonAlias(PRINCESS_DESTINATION)
     private CardinalEdge fleeDestinationEdge;
@@ -157,7 +156,7 @@ public class PrincessSettingsBuilder {
      * @return New BehaviorSettings that incorporate the settings of this builder
      */
     public BehaviorSettings build(@Nullable BehaviorSettings previousSettings) {
-        BehaviorSettings settings = BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR;
+        BehaviorSettings settings = new BehaviorSettings();
         if (previousSettings != null) {
             try {
                 settings = previousSettings.getCopy();

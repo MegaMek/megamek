@@ -29,7 +29,7 @@ ${formatBasicDataRow("Engine", engineName, engineMass)}
 	${qvType} Cruising MP: ${qvCruise}
 	${qvType} Flanking MP: ${qvFlank}
 </#if>
-${formatBasicDataRow(hsType, hsCount, hsMass)}
+${formatBasicDataRow(hsType, hsCount, hsMass)}<#if riscKit> w/ RISC Heat Sink Override Kit</#if>
 ${formatBasicDataRow(gyroType, "", gyroMass)}
 ${formatBasicDataRow(cockpitType, "", cockpitMass)}
 ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}

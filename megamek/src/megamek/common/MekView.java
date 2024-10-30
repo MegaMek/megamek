@@ -471,6 +471,9 @@ public class MekView {
             if (!aMek.formatHeat().equals(Integer.toString(aMek.heatSinks()))) {
                 hsString.append(" [").append(aMek.formatHeat()).append("]");
             }
+            if (aMek.hasRiscHeatSinkOverrideKit()) {
+                hsString.append(" w/ RISC Heat Sink Override Kit");
+            }
             if (aMek.damagedHeatSinks() > 0) {
                 hsString.append(" ").append(warningStart()).append("(")
                         .append(aMek.damagedHeatSinks())

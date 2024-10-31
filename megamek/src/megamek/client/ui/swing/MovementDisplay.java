@@ -124,7 +124,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_SEARCHLIGHT("moveSearchlight", CMD_GROUND),
         MOVE_LAY_MINE("moveLayMine", CMD_TANK | CMD_INF),
         MOVE_HULL_DOWN("moveHullDown", CMD_MEK | CMD_TANK),
-        MOVE_CLIMB_MODE("moveClimbMode", CMD_MEK | CMD_TANK | CMD_INF),
+        MOVE_CLIMB_MODE("moveClimbMode", CMD_MEK | CMD_TANK | CMD_INF | CMD_PROTOMEK),
         MOVE_SWIM("moveSwim", CMD_MEK),
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
         MOVE_BRACE("moveBrace", CMD_MEK),

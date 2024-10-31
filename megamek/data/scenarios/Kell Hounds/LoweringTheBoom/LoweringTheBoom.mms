@@ -255,12 +255,7 @@ messages:
       Be careful! Some of your Meks have already sustained damage.
     image: loweringboom_map.png
     trigger:
-      type: and
-      triggers:
-        - type: phasestart
-          phase: movement
-        - type: round
-          round: 1
+      type: gamestart
 
   - header: One Unit Safe
     text: Congratulations, one of your Meks has safely left the battlefield!

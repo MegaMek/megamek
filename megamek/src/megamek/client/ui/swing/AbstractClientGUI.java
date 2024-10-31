@@ -56,6 +56,9 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     protected final JFrame frame = new JFrame(Messages.getString("ClientGUI.title"));
 
+    /** Temporarily stores story dialogs so they can be shown one after the other */
+    private final List<JDialog> queuedStoryDialogs = new ArrayList<>();
+
     protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
     // BoardViews
@@ -190,6 +193,23 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     }
 
     protected void showScriptedMessage(GameScriptedMessageEvent event) {
-        new MMNarrativeStoryDialog(frame, event).setVisible(true);
+        queuedStoryDialogs.add(new MMNarrativeStoryDialog(frame, event));
+        showDialogs();
+    }
+
+    /**
+     * Shows a queued story dialog if no other is shown at this time. Normally, not more than one modal dialog (and its child dialogs) can
+     * be shown at any one time as Swing blocks access to buttons outside a first modal dialog. In MM, this is different as the server may
+     * send multiple story dialog packets which will all be processed and shown without user input. This method prevents that behavior so
+     * that only one story dialog is shown at one time. Note that when story dialogs trigger at the same time, their order is likely to be
+     * the order they were added to the game but packet transport can make them arrive at the client in a different order.
+     */
+    private void showDialogs() {
+        if (!UIUtil.isModalDialogDisplayed()) {
+            while (!queuedStoryDialogs.isEmpty()) {
+                JDialog dialog = queuedStoryDialogs.remove(0);
+                dialog.setVisible(true);
+            }
+        }
     }
 }

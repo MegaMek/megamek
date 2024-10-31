@@ -9666,10 +9666,8 @@ public class TWGameManager extends AbstractGameManager {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
 
-            // for artillery attacks, the attacking entity
-            // might no longer be in the game.
-            // TODO : Yeah, I know there's an exploit here, but better able to shoot some
-            // ArrowIVs than none, right?
+            // for artillery attacks, the attacking entity might no longer be in the game.
+            // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
                 logger.info("Can't Assign AMS: Artillery firer is null!");
                 continue;
@@ -9677,8 +9675,7 @@ public class TWGameManager extends AbstractGameManager {
 
             Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
-            // Only entities can have AMS. Arrow IV doesn't target an entity until later, so
-            // we have to ignore them
+            // Only entities can have AMS. Arrow IV doesn't target an entity until later, so we have to ignore them
             if (!(waa instanceof ArtilleryAttackAction) && (Targetable.TYPE_ENTITY != waa.getTargetType())) {
                 continue;
             }
@@ -9688,9 +9685,7 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV
-            // homing missiles,
-            // but lack the flag
+            // Can only use AMS versus missiles. Artillery Bays might be firing Arrow IV homing missiles, but lack the flag
             boolean isHomingMissile = false;
             if (wh instanceof ArtilleryWeaponIndirectHomingHandler
                     || wh instanceof ArtilleryBayWeaponIndirectHomingHandler) {
@@ -9701,7 +9696,8 @@ public class TWGameManager extends AbstractGameManager {
                     isHomingMissile = true;
                 }
             }
-            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !isHomingMissile) {
+            if ((!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !isHomingMissile)
+                || weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)) {
                 continue;
             }
 
@@ -9797,32 +9793,27 @@ public class TWGameManager extends AbstractGameManager {
         // Create a list of valid assignments for this APDS
         List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
         for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(),
-                    e.getEquipmentNum(apds),
-                    game.getEntity(wr.waa.getEntityId()));
-            boolean isInRange = e.getPosition().distance(
-                    wr.getWaa().getTarget(game).getPosition()) <= 3;
+            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(), e.getEquipmentNum(apds), game.getEntity(wr.waa.getEntityId()));
+            boolean isInRange = e.getPosition().distance(wr.getWaa().getTarget(game).getPosition()) <= 3;
             if (isInArc && isInRange) {
                 vAttacksInArc.add(wr.waa);
             }
         }
 
         // If there are no valid attacks left, don't bother
-        if (vAttacksInArc.size() < 1) {
+        if (vAttacksInArc.isEmpty()) {
             return null;
         }
 
         WeaponAttackAction targetedWAA = null;
 
         if (apds.curMode().equals("Automatic")) {
-            targetedWAA = Compute.getHighestExpectedDamage(game,
-                    vAttacksInArc, true);
+            targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
         } else {
             // Send a client feedback request
             List<Integer> apdsDists = new ArrayList<>();
             for (WeaponAttackAction waa : vAttacksInArc) {
-                apdsDists.add(waa.getTarget(game).getPosition()
-                        .distance(e.getPosition()));
+                apdsDists.add(waa.getTarget(game).getPosition().distance(e.getPosition()));
             }
             sendAPDSAssignCFR(e, apdsDists, vAttacksInArc);
             synchronized (cfrPacketQueue) {
@@ -9865,9 +9856,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param vAttacks
      *                 List of missile attacks directed at e
      */
-    private void manuallyAssignAMSTarget(Entity e,
-            Vector<WeaponHandler> vAttacks) {
-        // Fix for bug #1051 - don't send the targeting nag for a shutdown unit
+    private void manuallyAssignAMSTarget(Entity e, Vector<WeaponHandler> vAttacks) {
         if (e.isShutDown()) {
             return;
         }
@@ -9883,15 +9872,13 @@ public class TWGameManager extends AbstractGameManager {
             List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
                 if (!amsTargets.contains(wr.waa)
-                        && Compute.isInArc(game, e.getId(),
-                                e.getEquipmentNum(ams),
-                                game.getEntity(wr.waa.getEntityId()))) {
+                        && Compute.isInArc(game, e.getId(), e.getEquipmentNum(ams), game.getEntity(wr.waa.getEntityId()))) {
                     vAttacksInArc.add(wr.waa);
                 }
             }
 
             // If there are no valid attacks left, don't bother
-            if (vAttacksInArc.size() < 1) {
+            if (vAttacksInArc.isEmpty()) {
                 continue;
             }
 

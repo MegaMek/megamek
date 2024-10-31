@@ -21169,7 +21169,7 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(6225);
             r.subject = pm.getId();
             r.indent(3);
-            r.add(ProtoMek.systemNames[cs.getIndex()]);
+            r.add(ProtoMek.SYSTEM_NAMES[cs.getIndex()]);
             reports.addElement(r);
         }
         switch (cs.getIndex()) {

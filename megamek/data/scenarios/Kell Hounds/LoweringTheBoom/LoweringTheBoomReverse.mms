@@ -40,6 +40,9 @@ map:
       terrain: water
       newlevel: 3
 
+options:
+  file: gameoptions3025.xml
+
 factions:
 
   - name: Kell Hounds, First Battalion
@@ -124,6 +127,8 @@ messages:
       escape from this edge with as many Meks as possible.
       
       Some of their Meks have already sustained damage.
+      
+      *This game uses basic game rules.*
     image: loweringboom_map_reverse.png
     trigger:
       type: and

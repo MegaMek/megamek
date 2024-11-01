@@ -40,6 +40,9 @@ map:
       terrain: water
       newlevel: 3
 
+options:
+  file: gameoptions3025.xml
+
 factions:
 
 - name: Thirtieth Marik Militia
@@ -134,6 +137,8 @@ messages:
       as many Meks as possible.
 
       Be careful! Some of your Meks have already sustained damage.
+      
+      *This game uses basic game rules.*
     image: loweringboom_map.png
     trigger:
       type: and

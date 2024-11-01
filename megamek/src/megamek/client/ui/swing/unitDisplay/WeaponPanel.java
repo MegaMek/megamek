@@ -1988,6 +1988,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // update ammo selector; reset to currently-displayed item if set.
+        int currentAmmoSelectionIndex = m_chAmmo.getSelectedIndex();
         ((DefaultComboBoxModel<String>) m_chAmmo.getModel()).removeAllElements();
         WeaponMounted oldmount = mounted;
         if (wtype instanceof BayWeapon) {
@@ -2020,18 +2021,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chAmmo.setSelectedIndex(0);
             m_chAmmo.setEnabled(count > 0);
 
-            // this is the situation where there's some kind of ammo but it's not changeable
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            // this is the situation where there's some kind of ammo but it's not changeable
             m_chAmmo.setEnabled(false);
             Mounted<?> mountedAmmo = mounted.getLinked();
             if (mountedAmmo != null) {
                 m_chAmmo.addItem(formatAmmo(mountedAmmo));
             }
+
         } else {
             m_chAmmo.setEnabled(true);
             vAmmo = new ArrayList<>();
-            int nCur = -1;
-            int i = 0;
             // Ammo sharing between adjacent trailers
             List<AmmoMounted> fullAmmoList = new ArrayList<>(entity.getAmmo());
             if (entity.getTowedBy() != Entity.NONE) {
@@ -2042,44 +2042,40 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 Entity behind = entity.getGame().getEntity(entity.getTowing());
                 fullAmmoList.addAll(behind.getAmmo());
             }
-            for (AmmoMounted mountedAmmo : fullAmmoList) {
-                AmmoType atype = mountedAmmo.getType();
-                // for all aero units other than fighters,
-                // ammo must be located in the same place to be usable
-                boolean same = true;
-                if ((entity instanceof SmallCraft)
-                        || (entity instanceof Jumpship)) {
-                    same = (mounted.getLocation() == mountedAmmo
-                            .getLocation());
+            int newSelectedIndex = -1;
+            int i = 0;
+            for (AmmoMounted ammo : fullAmmoList) {
+                AmmoType atype = ammo.getType();
+                // for all aero units other than fighters, ammo must be located in the same place to be usable
+                boolean sameLocationIfLargeAero = true;
+                if ((entity instanceof SmallCraft) || (entity instanceof Jumpship)) {
+                    sameLocationIfLargeAero = (mounted.getLocation() == ammo.getLocation());
                 }
-
                 boolean rightBay = true;
                 if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
-                    rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
+                    rightBay = oldmount.ammoInBay(entity.getEquipmentNum(ammo));
                 }
 
                 // covers the situation where a weapon using non-caseless ammo should
                 // not be able to switch to caseless on the fly and vice versa
                 boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
-                if (mountedAmmo.isAmmoUsable() && same && rightBay && canSwitchToAmmo
+                if (ammo.isAmmoUsable() && sameLocationIfLargeAero && rightBay && canSwitchToAmmo
                         && (atype.getAmmoType() == wtype.getAmmoType())
                         && (atype.getRackSize() == wtype.getRackSize())) {
 
-                    vAmmo.add(mountedAmmo);
-                    m_chAmmo.addItem(formatAmmo(mountedAmmo));
-                    int curDisplayed = m_chAmmo.getSelectedIndex();
-                    if (curDisplayed != -1) {
-                        nCur = curDisplayed;
-                    } else if ((mounted.getLinked() != null) &&
-                            mounted.getLinked().equals(mountedAmmo)) {
-                        nCur = i;
+                    vAmmo.add(ammo);
+                    m_chAmmo.addItem(formatAmmo(ammo));
+                    if (currentAmmoSelectionIndex != -1) {
+                        newSelectedIndex = currentAmmoSelectionIndex;
+                    } else if ((mounted.getLinked() != null) && mounted.getLinked().equals(ammo)) {
+                        newSelectedIndex = i;
                     }
                     i++;
                 }
             }
-            if (nCur != -1 && nCur < m_chAmmo.getItemCount()) {
-                m_chAmmo.setSelectedIndex(nCur);
+            if ((newSelectedIndex != -1) && (newSelectedIndex < m_chAmmo.getItemCount())) {
+                m_chAmmo.setSelectedIndex(newSelectedIndex);
             }
         }
 

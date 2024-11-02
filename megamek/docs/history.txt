@@ -1,14 +1,15 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.50.01-SNAPSHOT
-+ PR #5962, #5964, #5966, #5974, #5931, #5983, #6154: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources)
++ PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),
+    Protomek code modernization
 + PR #6004, #6018: Internal changes (Entity cleanup, added JavaDoc building in Actions, editor configuration)
 + Fix #5960: BA Flamers flagged as illegal on Battle Armor
 + PR #5948: Implemented StratCon specific Skill Generator - megamek support
 + PR #5937: The Cowl quirk armor is now now correctly ignored only when an attack comes from the precise hex row the Mek is looking down
 + PR #5867: Advanced Atmospheric Control Roll Errata
 + PR #5979: MegaMek now has a recent boards list for easier access
-+ PR #5889: Various upgrades to MM scenarios; Adapted scenario "Lowering the Boom", folder "Kell Hounds"
++ PR #5889, #5982, #6156, #6157: Various upgrades to MM scenarios; Adapted scenario "Lowering the Boom", folder "Kell Hounds"
 + PR #5924: Custom deployment zones can be defined in map editor and selected for players or units in lobby
 + PR #5918: Avoid penalizing Improved Heavy Lasers in weapon bays
 + Fix #5951: Orphaned ghost entity sprites in (double blind) deployment when pressing 'next unit'
@@ -66,12 +67,16 @@ MEGAMEK VERSION HISTORY:
 + Fix #6126: Fix issue with miss matched tag
 + Fix #6124: Use elevation of source hex when checking for leaving prohibited terrain
 + FIx #6142: Always group multiple of same type / location of weapon together
-+ PR #6149: Add RISC Heat Sink Override Kit (Construction Only)
++ PR #6149, #6153: Add RISC Heat Sink Override Kit (construction and gameplay)
 + PR #5436: lightning storm updates (With option to target units:) )
 + PR #6131: Advanced Search updates
 + PR #6150: TRO View problem
-+ PR #6153: RISC HS Override Kit now works in gameplay
-+ Fix #6138: Weapon panel ammo selector #6165
++ Fix #6138: The weapon panel ammo selector will actually switch to selected ammo again
++ Fix #6145: Units should no longer crash (as in: hit the ground) in space
++ PR #6164: The game will now prompt to save remaining units to a MUL file even if the player has no remaining units (or never had any)
++ PR #6163: Custom unit definitions can now be stored in and loaded from MUL files (GUI access to this feature coming in future updates)
++ Fix #5985: AMS may no longer target mortar shells
++ Fix #6067: Protomeks can now set the climb mode during movement, enabling them to enter buildings
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

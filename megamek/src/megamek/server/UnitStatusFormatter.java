@@ -100,7 +100,7 @@ public abstract class UnitStatusFormatter {
                     if (e instanceof Mek) {
                         sb.append(((Mek) e).getSystemName(cs.getIndex()));
                     } else if (e instanceof ProtoMek) {
-                        sb.append(ProtoMek.systemNames[cs.getIndex()]);
+                        sb.append(ProtoMek.SYSTEM_NAMES[cs.getIndex()]);
                     }
                 } else if (cs.getType() == CriticalSlot.TYPE_EQUIPMENT) {
                     Mounted<?> m = cs.getMount();

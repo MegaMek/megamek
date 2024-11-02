@@ -18,17 +18,15 @@
  */
 package megamek.client.ui.swing.scenario;
 
+import megamek.client.ui.MMMarkdownRenderer;
 import megamek.client.ui.swing.util.*;
-import megamek.common.scenario.ScenarioV1;
 import megamek.common.scenario.Scenario;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * This panel displays a single {@link ScenarioV1} object in a well-formatted manner for display in the
- * {@link ScenarioChooser}.
+ * This panel displays a single {@link Scenario} object in a well-formatted manner for display in the {@link ScenarioChooser}.
  */
 public class ScenarioInfoPanel extends JPanel {
 
@@ -36,7 +34,7 @@ public class ScenarioInfoPanel extends JPanel {
     static final int BASE_MINIMUM_HEIGHT = 100;
 
     private final JLabel lblTitle = new JLabel();
-    private final DescriptionLabel textDescription2 = new DescriptionLabel();
+    private final JTextPane textDescription2 = new DescriptionPane();
 
     public ScenarioInfoPanel() {
         setBorder(BorderFactory.createCompoundBorder(
@@ -52,25 +50,33 @@ public class ScenarioInfoPanel extends JPanel {
         add(lblTitle);
         add(Box.createVerticalStrut(10));
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));
-        add(Box.createVerticalStrut(10));
-
         new FlatLafStyleBuilder().font(FontHandler.notoFont()).apply(textDescription2);
-        textDescription2.setAlignmentX(0.5f);
-        textDescription2.setVerticalAlignment(SwingConstants.TOP);
-        textDescription2.setBorder(new EmptyBorder(0, 10, 0, 10));
         add(textDescription2);
     }
 
     protected void updateFromPreset(final Scenario preset) {
         lblTitle.setText(preset.getName());
-        textDescription2.setText("<HTML>" + preset.getDescription());
+        String description = MMMarkdownRenderer.getRenderedHtml(preset.getDescription());
+        // bring the paragraph top margin in line (and scale it)
+        int margin = UIUtil.scaleForGUI(8);
+        textDescription2.setText("<HTML><HEAD><STYLE>p { margin-top: %d; }</STYLE></HEAD><BODY>%s".formatted(margin, description));
     }
 
-    private static class DescriptionLabel extends JLabel {
+    private static class DescriptionPane extends JTextPane {
+
+        public DescriptionPane() {
+            setEditable(false);
+            setContentType("text/html");
+            setCaretPosition(0);
+            setAlignmentX(0.5f);
+            setBackground(null);
+            setMargin(new Insets(0, 10, 0, 10));
+        }
+
         @Override
         public Dimension getMaximumSize() {
             // Fixed sizes do not get scaled by FlatLaf
-            return new Dimension(UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH), UIUtil.scaleForGUI(BASE_MINIMUM_HEIGHT));
+            return UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH, BASE_MINIMUM_HEIGHT);
         }
 
         @Override

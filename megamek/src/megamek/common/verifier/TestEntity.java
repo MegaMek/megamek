@@ -1508,7 +1508,7 @@ public abstract class TestEntity implements TestEntityOption {
                             || !(m.getLinked().getType() instanceof WeaponType)
                             || !m.getLinked().getType().hasFlag(WeaponType.F_LASER)
                             || m.getLinked().getType().hasFlag(WeaponType.F_PULSE))) {
-                buff.append("Laser insulator requires a non-pulse laser in the same location.\n");
+                buff.append("RISC Laser Pulse Module requires a non-pulse laser in the same location.\n");
                 illegal = true;
             }
         }

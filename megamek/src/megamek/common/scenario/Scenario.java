@@ -20,6 +20,7 @@ package megamek.common.scenario;
 
 import megamek.common.GameType;
 import megamek.common.IGame;
+import megamek.common.jacksonadapters.BotParser;
 import megamek.server.IGameManager;
 
 import java.io.IOException;
@@ -108,5 +109,13 @@ public interface Scenario {
             }
         }
         return -1;
+    }
+
+    default boolean hasBotInfo(String playerName) {
+        return getBotInfo(playerName) != null;
+    }
+
+    default BotParser.BotInfo getBotInfo(String playerName) {
+        return null;
     }
 }

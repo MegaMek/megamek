@@ -41,8 +41,6 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
@@ -51,8 +49,6 @@ import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.*;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -406,7 +402,7 @@ class SystemPanel extends PicMap
                         }
                         // Protomeks have different system names.
                         if (en instanceof ProtoMek) {
-                            sb.append(ProtoMek.systemNames[cs.getIndex()]);
+                            sb.append(ProtoMek.SYSTEM_NAMES[cs.getIndex()]);
                         } else {
                             sb.append(((Mek) en).getSystemName(cs
                                     .getIndex()));

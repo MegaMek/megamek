@@ -19,20 +19,26 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
+import megamek.common.loaders.BLKFile;
+import megamek.common.loaders.EntitySavingException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * This class provides static methods to save a list of <code>Entity</code>s to,
  * and load a list of <code>Entity</code>s from a file.
  */
 public class EntityListFile {
+    private static final MMLogger logger = MMLogger.create(EntityListFile.class);
 
     /**
      * Produce a string describing this armor value. Valid output values are any
@@ -516,7 +522,7 @@ public class EntityListFile {
      * other campaign-related information are retained, but data specific to a
      * particular game is ignored. This method is a simpler version of the
      * overloaded method {@code saveTo}, with a default generic battle value of 0
-     * (this causes GBV to be ignored).
+     * (this causes GBV to be ignored), and with unit embedding off.
      *
      * @param file
      *             - The current contents of the file will be discarded and all
@@ -528,7 +534,56 @@ public class EntityListFile {
      *             - Is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list) throws IOException {
-        saveTo(file, list, 0);
+        saveTo(file, list, 0, false);
+    }
+
+    /**
+     * Save the <code>Entity</code>s in the list to the given file.
+     * <p>
+     * The <code>Entity</code>s' pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained, but data specific to a
+     * particular game is ignored. This method is a simpler version of the
+     * overloaded method {@code saveTo}, with a default generic battle value of 0
+     * (this causes GBV to be ignored).
+     *
+     * @param file
+     *             - The current contents of the file will be discarded and all
+     *             <code>Entity</code>s in the list will be written to the file.
+     * @param list
+     *             - An <code>ArrayList</code> containing <code>Entity</code>s to be
+     *             stored in a file.
+     * @param embedUnits
+     *             - Set to <code>true</code> to embed the unit file of custom units (blk/mtf data) into the file.
+     *             This allows the resulting file to be loaded by someone who doesn't have those custom units available.
+     * @throws IOException
+     *             - Is thrown on any error.
+     */
+    public static void saveTo(File file, ArrayList<Entity> list, boolean embedUnits) throws IOException {
+        saveTo(file, list, 0, embedUnits);
+    }
+
+    /**
+     * Save the <code>Entity</code>s in the list to the given file.
+     * <p>
+     * The <code>Entity</code>s' pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained, but data specific to a
+     * particular game is ignored.
+     * Unit embedding is off, see {@link #saveTo(File, ArrayList, int, boolean) the overloaded version of this function}
+     *
+     * @param file
+     *             - The current contents of the file will be discarded and all
+     *             <code>Entity</code>s in the list will be written to the file.
+     * @param list
+     *             - A <code>ArrayList</code> containing <code>Entity</code>s to be
+     *             stored in a file.
+     * @param genericBattleValue
+     *             - An <code>Integer</code> representing the generic battle value. If it
+     *               is greater than 0, it will be written into the XML.
+     * @throws IOException
+     *             - Is thrown on any error.
+     */
+    public static void saveTo(File file, ArrayList<Entity> list, int genericBattleValue) throws IOException {
+        saveTo(file, list, genericBattleValue, false);
     }
 
     /**
@@ -547,10 +602,13 @@ public class EntityListFile {
      * @param genericBattleValue
      *             - An <code>Integer</code> representing the generic battle value. If it
      *               is greater than 0, it will be written into the XML.
+     * @param embedUnits
+     *             - Set to <code>true</code> to embed the unit file of custom units (blk/mtf data) into the file.
+     *             This allows the resulting file to be loaded by someone who doesn't have those custom units available.
      * @throws IOException
      *             - Is thrown on any error.
      */
-    public static void saveTo(File file, ArrayList<Entity> list, int genericBattleValue) throws IOException {
+    public static void saveTo(File file, ArrayList<Entity> list, int genericBattleValue, boolean embedUnits) throws IOException {
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), StandardCharsets.UTF_8));
@@ -563,7 +621,7 @@ public class EntityListFile {
             output.write("<TotalGenericBattleValue>" + genericBattleValue + "</TotalGenericBattleValue>\n\n");
         }
 
-        writeEntityList(output, list);
+        writeEntityList(output, list, embedUnits);
 
         // Finish writing.
         output.write("</" + MULParser.ELE_UNIT + ">\n");
@@ -731,6 +789,10 @@ public class EntityListFile {
     }
 
     public static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+        writeEntityList(output, list, false);
+    }
+
+    public static void writeEntityList(Writer output, ArrayList<Entity> list, boolean embedUnits) throws IOException {
         // Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {
@@ -1175,6 +1237,42 @@ public class EntityListFile {
                         + "=\"" + eCrew.getOInternal(Infantry.LOC_INFANTRY));
                 output.write("\"/>\n");
             }
+
+            // Write out the mtf/blk file for the unit
+            String data = null;
+            if (embedUnits && !entity.isCanon()) {
+                if (entity instanceof Mek mek) {
+                    data = mek.getMtf();
+                } else {
+                    try {
+                        data = String.join("\n", BLKFile.getBlock(entity).getAllDataAsString());
+                    } catch (EntitySavingException e) {
+                        logger.error("Error writing unit: {}", entity);
+                        logger.error(e);
+                    }
+                }
+            }
+
+            if (data != null) {
+                String fileName = (entity.getChassis() + ' ' + entity.getModel()).trim();
+                fileName = fileName.replaceAll("[/\\\\<>:\"|?*]", "_");
+                fileName = fileName + ((entity instanceof Mek) ? ".mtf" : ".blk");
+
+
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_CONSTRUCTION_DATA  + ' ' + MULParser.ATTR_FILENAME
+                    + "=\"" + fileName + "\">\n");
+
+                output.write(indentStr(indentLvl + 2));
+
+                var dataStream = new ByteArrayOutputStream();
+                var ps = new PrintStream(new GZIPOutputStream(Base64.getEncoder().wrap(dataStream), true));
+                ps.print(data);
+                ps.close();
+
+                output.write(dataStream.toString());
+                output.write('\n' + indentStr(indentLvl + 1) + "</" + MULParser.ELE_CONSTRUCTION_DATA + ">\n");
+            }
+
 
             // Finish writing this entity to the file.
             output.write(indentStr(indentLvl) + "</" + MULParser.ELE_ENTITY + ">\n\n");

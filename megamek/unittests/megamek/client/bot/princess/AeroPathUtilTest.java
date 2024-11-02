@@ -84,4 +84,18 @@ class AeroPathUtilTest {
 		boolean result = AeroPathUtil.willCrash(mockPath);
 		assertFalse(result);
 	}
+
+	@Test
+	void testAssertWillCrashNoAtmosphere() {
+		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+
+		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+		when(mockPath.getFinalVelocity()).thenReturn(1);
+		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
+		
+		boolean result = AeroPathUtil.willCrash(mockPath);
+		assertFalse(result);
+	}
+
+
 }

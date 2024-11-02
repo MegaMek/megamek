@@ -279,11 +279,7 @@ public class ServerHelper {
                     int roll = Compute.d6(2);
                     if (roll >= 8) {
                         entity.setTaserShutdownRounds(0);
-                        if (!(
-                            // game.getOptions().booleanOption(
-                            //     OptionsConstants.RPG_MANUAL_SHUTDOWN)
-                            //     && 
-                                entity.isManualShutdown())) {
+                        if (!(entity.isManualShutdown())) {
                             entity.setShutDown(false);
                         }
                         entity.setBATaserShutdown(false);

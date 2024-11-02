@@ -1500,7 +1500,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        if (getConversionMode() != CONV_MODE_FIGHTER) {
+        if (getConversionMode() == CONV_MODE_MEK) {
             return super.rollHitLocation(table, side);
         }
 

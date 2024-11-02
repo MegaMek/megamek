@@ -9,7 +9,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5937: The Cowl quirk armor is now now correctly ignored only when an attack comes from the precise hex row the Mek is looking down
 + PR #5867: Advanced Atmospheric Control Roll Errata
 + PR #5979: MegaMek now has a recent boards list for easier access
-+ PR #5889: Various upgrades to MM scenarios; Adapted scenario "Lowering the Boom", folder "Kell Hounds"
++ PR #5889, #5982, #6156, #6157: Various upgrades to MM scenarios; Adapted scenario "Lowering the Boom", folder "Kell Hounds"
 + PR #5924: Custom deployment zones can be defined in map editor and selected for players or units in lobby
 + PR #5918: Avoid penalizing Improved Heavy Lasers in weapon bays
 + Fix #5951: Orphaned ghost entity sprites in (double blind) deployment when pressing 'next unit'

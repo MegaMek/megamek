@@ -21,11 +21,21 @@ end:
       round: 4
 
 messages:
-  - header: Scenario Messages
+  - header: Scenario Messages 1
     text: |
       In this test setup scenario, several messages are shown at various points of the game.
 
       This is supposed to be a test for the message system and the trigger system.
+    trigger:
+      type: gamestart
+
+  - header: Scenario Messages 2
+    text: Second test message
+    trigger:
+      type: gamestart
+
+  - header: Scenario Messages 3
+    text: Second test message
     trigger:
       type: gamestart
 

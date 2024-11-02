@@ -526,7 +526,7 @@ public class OptionsConstants {
     public static final String RPG_ARTILLERY_SKILL = "artillery_skill";
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
-    public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
+    // public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
     private OptionsConstants() { }

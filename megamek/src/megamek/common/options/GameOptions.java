@@ -303,7 +303,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
         addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
         addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
-        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false);
+        // addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false);
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 

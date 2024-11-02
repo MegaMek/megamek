@@ -118,7 +118,7 @@ public final class DebugEntity {
                             if (entity instanceof Mek) {
                                 result.append(((Mek) entity).getSystemName(criticalSlot.getIndex()));
                             } else if (entity instanceof ProtoMek) {
-                                result.append(ProtoMek.systemNames[criticalSlot.getIndex()]);
+                                result.append(ProtoMek.SYSTEM_NAMES[criticalSlot.getIndex()]);
                             }
                             result.append(")");
                         }

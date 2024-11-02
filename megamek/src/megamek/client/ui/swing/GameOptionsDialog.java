@@ -483,14 +483,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 //Set to the maximum velocity if over
                 option.setValue(CapitalMissileBayWeapon.CAPITAL_MISSILE_MAX_VELOCITY);
             }
-        } 
-        // else if (option.getName().equals(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
-        //     if ((options.getOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)).booleanValue()) {
-        //         optionComp.setEditable(editable);
-        //     } else {
-        //         optionComp.setEditable(false);
-        //     }
-        // } 
+        }
         else if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             if ((options.getOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)).booleanValue()) {
                 optionComp.setEditable(editable);
@@ -731,13 +724,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                 comp_i.resetToDefault();
             }
         }
-        // if (option.getName().equals(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
-        //     comps = optionComps.get(OptionsConstants.RPG_BEGIN_SHUTDOWN);
-        //     for (DialogOptionComponent comp_i : comps) {
-        //         comp_i.setEditable(state);
-        //         comp_i.setSelected(false);
-        //     }
-        // }
         if (option.getName().equals(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             comps = optionComps.get(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
             for (DialogOptionComponent comp_i : comps) {

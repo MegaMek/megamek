@@ -67,6 +67,7 @@ class AeroPathUtilTest {
 
         final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
         when(mockPath.getFinalVelocity()).thenReturn(1);
+        when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
 
         boolean result = AeroPathUtil.willCrash(mockPath);
         assertTrue(result);

@@ -842,6 +842,7 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Destination Edge: ").append(getDestinationEdge());
         out.append("\n\t Retreat Edge: ").append(getRetreatEdge());
         out.append("\n\t Forced Withdrawal: ").append(isForcedWithdrawal());
+        out.append("\n\t Flee: ").append(autoFlee);
         out.append("\n\t Self Preservation: ").append(getSelfPreservationIndex()).append(":")
                 .append(getSelfPreservationValue(getSelfPreservationIndex()));
         out.append("\n\t Hyper Aggression: ").append(getHyperAggressionIndex()).append(":")

@@ -18,11 +18,7 @@
  */
 package megamek.server.trigger;
 
-import megamek.common.Game;
-import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.MekWarrior;
-import megamek.common.TeleMissile;
+import megamek.common.*;
 import megamek.logging.MMLogger;
 
 /**
@@ -40,7 +36,7 @@ public class BattlefieldControlTrigger implements Trigger {
             return twGame.getEntitiesVector().stream()
                     .filter(e -> !e.isOffBoard())
                     .filter(e -> e.getPosition() != null)
-                    .filter(e -> !(e instanceof MekWarrior))
+                    .filter(e -> !(e instanceof EjectedCrew))
                     .filter(e -> !(e instanceof TeleMissile))
                     .filter(e -> !(e instanceof GunEmplacement))
                     .map(unit -> game.getPlayer(unit.getOwnerId()).getTeam())

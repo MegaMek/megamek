@@ -18,13 +18,13 @@
 #
 # Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: Lowering the Boom [Flee]
+name: Lowering the Boom [Hunt]
 planet: Castor
-description: | 
-  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner 
+description: |
+  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner
   has authorized an attack to remove the weapons and provide the Kell Hounds with action.
-  
-  *Goal: Playing as the Marik force, escape the Kell Hounds.*
+
+  *Goal: Playing as the Kell Hounds force, catch the Marik forces before they can flee.*
 
 map:
   boardrows: 2
@@ -42,59 +42,49 @@ map:
 
 factions:
 
-- name: Thirtieth Marik Militia
-  camo: Free Worlds League/Marik Militia/Marik Militia.jpg
-  deploy: N
+  - name: Kell Hounds, First Battalion
+    camo: MERC - 1st Kell Hounds.gif
+    deploy:
+      edge: S
 
-  victory:
-    - trigger:
-        type: fledunits
-        modify: atend
-        units: [ 101, 102, 103, 104, 105, 106 ]
-        atleast: 4
-      modify: onlyatend
+    victory:
+      - modify: onlyatend
+        trigger:
+          type: fledunits
+          modify: atend
+          units: [ 101, 102, 103, 104, 105, 106 ]
+          atmost: 2
 
-  fleefrom:
-    border: north
+    units:
+      include: LoweringTheBoom_units_kell.mmu
 
-  bot:
-    # try to get away
-    selfpreservation: 8
-    fallshame: 8
-    hyperaggression: 4
-    herdmentality: 1
-    bravery: 3
-    # Princess respects the edge she is set to flee from
-    fleeto: north
-    flee: true
+  # OPFOR ----------------------------
+  - name: Thirtieth Marik Militia
+    camo: Free Worlds League/Marik Militia/Marik Militia.jpg
+    deploy: N
 
-  units:
-    include: LoweringTheBoom_units_marik.mmu
+    bot:
+      # try to get away
+      selfpreservation: 8
+      fallshame: 8
+      hyperaggression: 4
+      herdmentality: 1
+      bravery: 3
+      # Princess respects the edge she is set to flee from
+      fleeto: north
+      flee: true
 
-- name: Kell Hounds, First Battalion
-  camo: MERC - 1st Kell Hounds.gif
-  deploy:
-    edge: S
+    victory:
+      - trigger:
+          type: fledunits
+          modify: atend
+          units: [ 101, 102, 103, 104, 105, 106 ]
+          atleast: 4
+        modify: onlyatend
 
-  bot:
-    # must be pretty berserk to hunt down the Mariks in this scenario
-    selfpreservation: 2
-    fallshame: 2
-    hyperaggression: 9
-    herdmentality: 3
-    bravery: 8
-    forcedwithdrawal: false
+    units:
+      include: LoweringTheBoom_units_marik.mmu
 
-  victory:
-    - modify: onlyatend
-      trigger:
-        type: fledunits
-        modify: atend
-        units: [ 101, 102, 103, 104, 105, 106 ]
-        atmost: 2
-
-  units:
-    include: LoweringTheBoom_units_kell.mmu
 
 messages:
   - header: Situation
@@ -113,13 +103,13 @@ messages:
       unit to the test in battle. With Lyran intelligence uncovering a cache of illegal atomic weapons on
       Castor, Katrina Steiner sanctioned the raid. The operation aimed to eliminate the weapons, secure the
       eggs for Snord, and provide combat experience for the Kell Hounds.
-
-      Colonel Nage recognized the battle was lost and retreated with his command company, aiming to reach the
-      atomic weapons and unleash them on the mercenaries. Colonel Kell dispatched Salome Ward and her
-      Relentless Wolves to intercept him. Ward's company caught up with Nage just as he was nearing the depot.
-      She launched an attack as the Second Battalion's LAMs bombed the depot.
-
-      *This scenario is based on Battlecorps Scenario 3011, "Lowering the Boom", originally published in
+      
+      Colonel Nage recognized the battle was lost and retreated with his command company, aiming to reach the 
+      atomic weapons and unleash them on the mercenaries. Colonel Kell dispatched Salome Ward and her 
+      Relentless Wolves to intercept him. Ward's company caught up with Nage just as he was nearing the depot. 
+      She launched an attack as the Second Battalion's LAMs bombed the depot. 
+      
+      *This scenario is based on Battlecorps Scenario 3011, "Lowering the Boom", originally published in 
       the "Kell Hounds" sourcebook, FASA 01652.*
     image: loweringboom_splash.png
     trigger:
@@ -128,13 +118,13 @@ messages:
   - header: Defender's Task
     text: |
       ## Defender's Task
-
-      In this scenario, it is your task to save Col. Oliver Nage and his elements of 1st Company, 1st Battalion
-      from the attacking Kell Hounds. Try to escape by retreating off the north edge of the map with
-      as many Meks as possible.
-
-      Be careful! Some of your Meks have already sustained damage.
-    image: loweringboom_map.png
+      
+      In this scenario, it is your task to stop Col. Oliver Nage and his elements of 1st Company, 1st Battalion 
+      from reaching the weapons depot which lies beyond the north edge of the map. They will try to reach and
+      escape from this edge with as many Meks as possible.
+      
+      Some of their Meks have already sustained damage.
+    image: loweringboom_map_reverse.png
     trigger:
       type: and
       triggers:
@@ -162,14 +152,14 @@ messages:
   - header: Decisive Defeat
     text: |
       ## Decisive Defeat
-
+      
       Not more than one Marik Mek managed to evade the Kell Hounds forces. The Kell Hounds
       have won a decivise victory.
-
-      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising
-      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless
+      
+      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising 
+      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless 
       pursuit of the Wolves close behind.
-
+      
     image: loweringboom_splash.png
     trigger:
       type: fledunits
@@ -180,11 +170,11 @@ messages:
   - header: Marginal Defeat
     text: |
       ## Marginal Defeat
-
+      
       Only two Marik Meks managed to evade the Kell Hounds forces.
-
-      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising
-      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless
+      
+      Ward's Wolves inflicted significant losses on the Marik Meks. Witnessing the smoke rising 
+      from the depot and his units sustaining severe damage, Nage decided to flee, with the relentless 
       pursuit of the Wolves close behind.
     image: loweringboom_splash.png
     trigger:
@@ -196,7 +186,7 @@ messages:
   - header: Decisive Marik Victory
     text: At least five Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a decivise victory.
-
+    
       Ward's Wolves failed to inflict significant losses on the Marik Meks. With the atomic weapons supply
       depot bombarded, Nage decided to withdraw.
     image: loweringboom_splash.png
@@ -209,7 +199,7 @@ messages:
   - header: A Draw!
     text: Three Marik Meks managed to evade the Kell Hounds forces. This result is considered
       a draw.
-
+    
       Both sides suffered significant losses. With the atomic weapons supply
       depot bombarded, Col. Nage decided to withdraw.
     image: loweringboom_splash.png
@@ -222,7 +212,7 @@ messages:
   - header: Marginal Marik Victory
     text: Four Marik Meks managed to evade the Kell Hounds forces. The FWL
       has won a marginal victory.
-
+    
       Ward's Wolves failed to inflict significant losses on the Marik Meks. With the atomic weapons supply
       depot bombarded, Col. Nage decided to withdraw.
     image: loweringboom_splash.png
@@ -235,3 +225,4 @@ messages:
 end:
   - trigger:
       type: battlefieldcontrol
+

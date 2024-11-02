@@ -60,18 +60,12 @@ public class MessageDeserializer extends StdDeserializer<MessageTriggeredActiveE
     }
 
     /**
-     * Parses the given map: or maps: node to return a list of one or more boards
-     * (the list should
-     * ideally never be empty, an exception being thrown instead). Board files are
-     * tried first
-     * in the given basePath; if not found there, MM's data/boards/ is tried
-     * instead.
-     *
-     * @param messageNode a map: or maps: node from a YAML definition file
-     * @param basePath    a path to search board files in (e.g. scenario path)
-     * @return a list of parsed boards
-     * @throws IllegalArgumentException for illegal node combinations and other
-     *                                  errors
+     * Parses the given messages: node to return a list of one or more message events.
+
+     * @param messageNode a messages: node
+     * @param basePath a path to search image files in (e.g. scenario path)
+     * @return a list of parsed message events
+     * @throws IllegalArgumentException for illegal node combinations and other errors
      */
     public static MessageTriggeredActiveEvent parse(JsonNode messageNode, File basePath) {
         requireFields("MessageScriptedEvent", messageNode, TEXT, HEADER, TRIGGER);

@@ -7762,21 +7762,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN)
                 || (overallMoveType == EntityMovementType.MOVE_SPRINT);
         if ((prevHex != null)
-                && prevHex.containsTerrain(Terrains.ICE)
-                && iceCheck
-                && (prevFacing != curFacing)
-                && !lastPos.equals(curPos)) {
+            && prevHex.containsTerrain(Terrains.ICE)
+            && (currStep.getElevation() == 0)
+            && iceCheck
+            && (prevFacing != curFacing)
+            && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else if ((prevHex != null)
-                && prevHex.containsTerrain(Terrains.BLACK_ICE)
-                && iceCheck
-                && (prevFacing != curFacing)
-                && !lastPos.equals(curPos)) {
+            && prevHex.containsTerrain(Terrains.BLACK_ICE)
+            && (currStep.getElevation() == 0)
+            && iceCheck
+            && (prevFacing != curFacing)
+            && !lastPos.equals(curPos)) {
             addPilotingModifierForTerrain(roll, lastPos);
-            roll.append(
-                    new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else if (prevStepPavement

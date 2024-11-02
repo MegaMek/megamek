@@ -118,6 +118,7 @@ public class AeroPathUtil {
      */
     public static boolean willCrash(MovePath movePath) {
         return movePath.getEntity().isAero() &&
+                movePath.isOnAtmosphericGroundMap() &&
                 (movePath.getFinalAltitude() < 1) &&
                 !movePath.contains(MoveStepType.VLAND) &&
                 !movePath.contains(MoveStepType.LAND);

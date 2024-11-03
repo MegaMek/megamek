@@ -7716,7 +7716,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             addPilotingModifierForTerrain(roll, lastPos);
         }
 
-        boolean prevStepPavement = (prevStep != null) ? prevStep.isPavementStep() : prevHex.hasPavement();
+        boolean prevStepPavement = (prevStep != null) ? prevStep.isPavementStep() : ((prevHex != null) && prevHex.hasPavement());
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         boolean affectedByIce = !movementMode.isHoverOrWiGE() || conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
         boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);

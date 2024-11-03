@@ -84,8 +84,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
-import static megamek.common.EquipmentTypeLookup.TSM;
-
 /**
  * Entity is a master class for basically anything on the board except terrain.
  */
@@ -7124,25 +7122,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll;
 
         // Crew dead?
-        if (getCrew().isDead() || getCrew().isDoomed()
-                || (getCrew().getHits() >= 6)) {
+        if (getCrew().isDead() || getCrew().isDoomed() || (getCrew().getHits() >= 6)) {
             // Following line switched from impossible to automatic failure
             // -- bug fix for dead units taking PSRs
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    "Pilot dead");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, "Pilot dead");
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE,
-                    "Pilot unconscious");
+            return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE, "Pilot unconscious");
         }
         // gyro operational? does not apply if using tracked/quadvee vehicle/lam fighter
         // movement
         if (isGyroDestroyed() && canFall()
                 && moveType != EntityMovementType.MOVE_VTOL_WALK
                 && moveType != EntityMovementType.MOVE_VTOL_RUN) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    getCrew().getPiloting() + 6, "Gyro destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // both legs present?
@@ -7150,14 +7144,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && (((BipedMek) this).countBadLegs() == 2)
                 && (moveType != EntityMovementType.MOVE_VTOL_WALK)
                 && (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
-            return new PilotingRollData(entityId,
-                    TargetRoll.AUTOMATIC_FAIL,
-                    getCrew().getPiloting() + 10, "Both legs destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
+                getCrew().getPiloting() + 10, "Both legs destroyed");
         } else if (this instanceof QuadMek) {
             if (((QuadMek) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
-                        TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting()
-                                + (((Mek) this).countBadLegs() * 5),
+                        TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + (((Mek) this).countBadLegs() * 5),
                         ((Mek) this).countBadLegs() + " legs destroyed");
             }
         }
@@ -7166,17 +7158,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
                     getCrew().getPiloting() + 3, "Reactor shut down");
         } else if (isShutDown()) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                    TargetRoll.IMPOSSIBLE, "Reactor shut down");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, TargetRoll.IMPOSSIBLE, "Reactor shut down");
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType),
-                "Base piloting skill");
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType), "Base piloting skill");
 
-        // Let's see if we have a modifier to our piloting skill roll. We'll
-        // pass in the roll
-        // object and adjust as necessary
+        // Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll object and adjust as necessary
         roll = addEntityBonuses(roll);
 
         // add planetary condition modifiers
@@ -7199,8 +7187,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-                && crew.isPilotingFatigued()) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE) && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
 
@@ -7702,105 +7689,61 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Checks if the entity might skid on pavement. If so, returns the target
-     * roll for the piloting skill check.
+     * Checks if the entity might skid. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex,
             EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
-
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        // If we aren't traveling along a road, apply terrain modifiers
-        // Unless said pavement has black ice
-        if (!((prevStep == null || prevStep.isPavementStep()) && currStep.isPavementStep())) {
-            addPilotingModifierForTerrain(roll, lastPos);
-        }
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: flying entities don't skid");
-            return roll;
-        }
-
-        if (isInfantry) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: infantry don't skid");
-            return roll;
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "flying units don't skid");
         }
 
         if (moveType == EntityMovementType.MOVE_JUMP) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: jumping entities don't skid");
-            return roll;
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "jumping units don't skid");
         }
 
         if ((null != prevStep) && prevStep.isHasJustStood()) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: getting up entities don't skid");
-            return roll;
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
-        /*
-         * Hex curHex = null; if (null != curPos) { curHex =
-         * game.getBoard().getHex(curPos); }
-         */
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        boolean prevStepPavement;
-        if (prevStep != null) {
-            prevStepPavement = prevStep.isPavementStep();
-        } else {
-            prevStepPavement = prevHex.hasPavement();
-        }
-
-        // TODO: add check for elevation of pavement, road,
-        // or bridge matches entity elevation.
-        boolean hoverOrWigeStrongGale = movementMode.isHoverOrWiGE()
-                && conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
-        boolean iceCheck = !movementMode.isHoverOrWiGE() || hoverOrWigeStrongGale;
-        boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN)
-                || (overallMoveType == EntityMovementType.MOVE_SPRINT);
-        if ((prevHex != null)
-            && prevHex.containsTerrain(Terrains.ICE)
-            && (currStep.getElevation() == 0)
-            && iceCheck
-            && (prevFacing != curFacing)
-            && !lastPos.equals(curPos)) {
-            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
-            adjustDifficultTerrainPSRModifier(roll);
-            return roll;
-        } else if ((prevHex != null)
-            && prevHex.containsTerrain(Terrains.BLACK_ICE)
-            && (currStep.getElevation() == 0)
-            && iceCheck
-            && (prevFacing != curFacing)
-            && !lastPos.equals(curPos)) {
+        // If we aren't traveling along a road, apply terrain modifiers
+        boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
+        if (!previousStepCountsAsPavement || !currStep.isPavementStep()) {
             addPilotingModifierForTerrain(roll, lastPos);
-            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
-            adjustDifficultTerrainPSRModifier(roll);
-            return roll;
-        } else if (prevStepPavement
-                && runOrSprint
-                && !movementMode.isHoverOrWiGE()
-                && (prevFacing != curFacing)
-                && !lastPos.equals(curPos)) {
-            if (this instanceof Mek) {
-                roll.append(new PilotingRollData(getId(),
-                        getMovementBeforeSkidPSRModifier(distance),
-                        "running & turning on pavement"));
-            } else {
-                roll.append(new PilotingRollData(getId(),
-                        getMovementBeforeSkidPSRModifier(distance),
-                        "reckless driving on pavement"));
-            }
-            adjustDifficultTerrainPSRModifier(roll);
-            return roll;
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not apparently skidding");
-            return roll;
         }
+
+        boolean prevStepPavement = (prevStep != null) ? prevStep.isPavementStep() : prevHex.hasPavement();
+        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean affectedByIce = !movementMode.isHoverOrWiGE() || conditions.getWind().isStrongerThan(Wind.STRONG_GALE);
+        boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
+        boolean unitTouchesIce = (prevHex != null) && prevHex.containsTerrain(Terrains.ICE) && (currStep.getElevation() == 0);
+        boolean unitTouchesBlackIce = (prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
+            && ((currStep.getElevation() == 0)
+            || (prevHex.containsTerrain(Terrains.BRIDGE_ELEV) && currStep.getElevation() == prevHex.terrainLevel(Terrains.BRIDGE_ELEV)));
+        boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
+
+        if (unitTouchesIce && affectedByIce && isMoveAndTurn) {
+            // Turning on ice
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
+
+        } else if (unitTouchesBlackIce && affectedByIce && isMoveAndTurn) {
+            // Turning on black ice
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on black ice"));
+
+        } else if (prevStepPavement && runOrSprint && !movementMode.isHoverOrWiGE() && isMoveAndTurn) {
+            // Running & turning on pavement
+            String description = isMek() ? "running & turning on pavement" : "reckless driving on pavement";
+            roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), description));
+
+        } else {
+            return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "unit doesn't skid");
+        }
+        adjustDifficultTerrainPSRModifier(roll);
+        return roll;
     }
 
     /**
@@ -11172,8 +11115,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param c              the coordinates where the PSR happens
      * @param enteringRubble True if entering rubble, else false
      */
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c,
-            boolean enteringRubble) {
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
         if ((c == null) || (roll == null)) {
             return;
         }
@@ -11181,7 +11123,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
         Hex hex = game.getBoard().getHex(c);
-        hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
+        hex.applyTerrainPilotingModifiers(getMovementMode(), roll, enteringRubble);
 
         if (hex.containsTerrain(Terrains.JUNGLE) && hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
             roll.addModifier(-1, "Forest Ranger");

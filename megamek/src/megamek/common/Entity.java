@@ -7722,8 +7722,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         boolean runOrSprint = (overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT);
         boolean unitTouchesIce = (prevHex != null) && prevHex.containsTerrain(Terrains.ICE) && (currStep.getElevation() == 0);
         boolean unitTouchesBlackIce = (prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
-            && ((currStep.getElevation() == 0)
-            || (prevHex.containsTerrain(Terrains.BRIDGE_ELEV) && currStep.getElevation() == prevHex.terrainLevel(Terrains.BRIDGE_ELEV)));
+            && (((currStep.getElevation() == 0) && prevHex.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT))
+            || (prevHex.containsTerrain(Terrains.BRIDGE_ELEV) && (currStep.getElevation() == prevHex.terrainLevel(Terrains.BRIDGE_ELEV))));
         boolean isMoveAndTurn = (prevFacing != curFacing) && !Objects.equals(curPos, lastPos);
 
         if (unitTouchesIce && affectedByIce && isMoveAndTurn) {

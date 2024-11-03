@@ -244,10 +244,12 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting() - 2;
+        int base = ae.getCrew().getPiloting();
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
+
+        toHit.addModifier(-2, "Kick");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 

@@ -282,13 +282,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
          * @return An array of valid commands for the given parameters
          */
         public static MoveCommand[] values(int f, GameOptions opts, boolean forwardIni) {
-            boolean manualShutdown = false;
+            boolean manualShutdown = true;
             boolean selfDestruct = false;
             boolean advVehicle = false;
             boolean vtolStrafe = false;
 
             if (opts != null) {
-                manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
                 advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
                 vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
@@ -2616,11 +2615,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if (!clientgui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
-            return;
-        }
-
         if (ce instanceof Infantry) {
             return;
         }
@@ -2632,11 +2626,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Entity ce = ce();
 
         if (null == ce) {
-            return;
-        }
-
-        if (!clientgui.getClient().getGame().getOptions()
-                .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 

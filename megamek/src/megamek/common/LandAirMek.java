@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -1499,10 +1500,21 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * Hit location table for fighter mode
      */
     @Override
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+            int cover) {
+                if (getConversionMode() != CONV_MODE_FIGHTER) {
+                    return super.rollHitLocation( table, side, aimedLocation, aimingMode,
+                    cover);
+                }
+        return rollHitLocation(table, side);
+    }
+    
+    @Override
     public HitData rollHitLocation(int table, int side) {
-        if (getConversionMode() == CONV_MODE_MEK) {
+        if (getConversionMode() != CONV_MODE_FIGHTER) {
             return super.rollHitLocation(table, side);
         }
+
 
         int roll = Compute.d6(2);
 

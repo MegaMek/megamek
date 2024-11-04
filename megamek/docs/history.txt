@@ -77,6 +77,10 @@ MEGAMEK VERSION HISTORY:
 + PR #6163: Custom unit definitions can now be stored in and loaded from MUL files (GUI access to this feature coming in future updates)
 + Fix #5985: AMS may no longer target mortar shells
 + Fix #6067: Protomeks can now set the climb mode during movement, enabling them to enter buildings
++ PR #6167: MM Scenarios: Improve game options parsing
++ Fix #6086: Manual Shutdown should be a standard rule
++ Fix #6152: Added check for Repeating TSEMP
++ Fix #6169: Seperated physical modifiers from base and show them in toHit tooltip
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

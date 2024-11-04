@@ -4150,8 +4150,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Manei Domini Upgrades
 
         // VDNI
-        if (ae.hasAbility(OptionsConstants.MD_VDNI)
-                || ae.hasAbility(OptionsConstants.MD_BVDNI)) {
+        if (ae.hasAbility(OptionsConstants.MD_VDNI) && ae.hasQuirk("animalistic")
+                || ae.hasAbility(OptionsConstants.MD_BVDNI)
+                && ae.hasQuirk("animalistic")){
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 

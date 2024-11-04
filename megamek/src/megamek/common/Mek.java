@@ -3301,7 +3301,8 @@ public abstract class Mek extends Entity {
 
         // VDNI bonus?
         if (hasAbility(OptionsConstants.MD_VDNI)
-                && !hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !hasAbility(OptionsConstants.MD_BVDNI)
+                && hasQuirk("animalistic")) {
             roll.addModifier(-1, "VDNI");
         }
 

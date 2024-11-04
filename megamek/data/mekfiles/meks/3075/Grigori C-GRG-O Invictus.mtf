@@ -16,6 +16,7 @@ quirk:imp_com
 quirk:imp_sensors
 quirk:bad_rep_clan
 quirk:bad_rep_is
+quirk:animalistic
 
 
 Mass:60
@@ -126,7 +127,7 @@ Cockpit
 Sensors
 Light PPC (omnipod)
 Light PPC (omnipod)
--Empty-
+Neural Interface
 -Empty-
 -Empty-
 -Empty-

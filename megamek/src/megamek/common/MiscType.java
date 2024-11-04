@@ -4283,6 +4283,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
+        misc.setInternalName("Neural Interface");
         misc.tonnage = 0.0;
         misc.criticals = 0;
         misc.cost = 500000;

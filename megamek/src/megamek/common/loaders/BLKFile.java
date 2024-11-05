@@ -1230,6 +1230,7 @@ public class BLKFile {
                                     new SmallCraftBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), hasARTS),
                                     isPod);
                             break;
+                        case "mekbay":
                         case "mechbay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new MekBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);

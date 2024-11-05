@@ -123,11 +123,6 @@ class BattleArmorHandles implements Transporter {
     }
 
     @Override
-    public int getCargoMpReduction(Entity carrier) {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return "BattleArmorHandles - troopers:" + carriedUnit;
     }

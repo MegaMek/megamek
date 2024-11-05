@@ -198,25 +198,6 @@ public class TankTrailerHitch implements Transporter {
     }
 
     /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
-     *
-     * @param loc
-     *            - the <code>int</code> location attempting to fire.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
-     */
-    @Override
-    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        // Assume that the weapon is not blocked. See Entity.isWeaponBlockedByTowing() instead.
-        return false;
-    }
-
-    /**
      * If a unit is being transported on the outside of the transporter, it can
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
@@ -245,11 +226,6 @@ public class TankTrailerHitch implements Transporter {
             rv.add(game.getEntity(towed));
         }
         return Collections.unmodifiableList(rv);
-    }
-
-    @Override
-    public int getCargoMpReduction(Entity carrier) {
-        return 0;
     }
 
     @Override

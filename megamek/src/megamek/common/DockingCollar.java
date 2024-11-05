@@ -134,11 +134,6 @@ public class DockingCollar implements Transporter {
     }
 
     @Override
-    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        return false;
-    }
-
-    @Override
     public @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
@@ -146,11 +141,6 @@ public class DockingCollar implements Transporter {
     @Override
     public final List<Entity> getExternalUnits() {
         return new ArrayList<>();
-    }
-
-    @Override
-    public int getCargoMpReduction(Entity carrier) {
-        return 0;
     }
 
     public boolean isDamaged() {

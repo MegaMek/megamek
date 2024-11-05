@@ -289,11 +289,6 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        return false;
-    }
-
-    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
@@ -301,11 +296,6 @@ public class Bay implements Transporter, ITechnology {
     @Override
     public final List<Entity> getExternalUnits() {
         return new ArrayList<>(1);
-    }
-
-    @Override
-    public int getCargoMpReduction(Entity carrier) {
-        return 0;
     }
 
     public String getType() {

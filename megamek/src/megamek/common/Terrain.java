@@ -283,7 +283,7 @@ public class Terrain implements Serializable {
      * @param roll the piloting roll
      * @param enteringRubble if the entered terrain contains rubble
      */
-    public void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+    public void applyPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         switch (type) {
             case JUNGLE:
                 if (level == 3) {

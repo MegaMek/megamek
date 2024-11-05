@@ -251,6 +251,10 @@ public class BLKFile {
                             }
                         }
                         if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = MtfFile.extractLegacySize(equipName);
+                            }
+
                             mount.setSize(size);
                         } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
                                 && size > 1) {

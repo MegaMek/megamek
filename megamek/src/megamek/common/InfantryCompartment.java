@@ -23,14 +23,14 @@ import java.util.Vector;
  * Represents a volume of space set aside for carrying troops and their equipment under battle
  * conditions. Typically, a component of an APC.
  */
-public final class TroopSpace implements Transporter {
+public final class InfantryCompartment implements Transporter {
     private static final long serialVersionUID = 7837499891552862932L;
 
     /**
      * The troops being carried.
      */
     Map<Integer, Double> troops = new HashMap<>();
-    
+
     /**
      * The total amount of space available for troops.
      */
@@ -46,7 +46,7 @@ public final class TroopSpace implements Transporter {
     /**
      * The default constructor is only for serialization.
      */
-    private TroopSpace() {
+    private InfantryCompartment() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -58,7 +58,7 @@ public final class TroopSpace implements Transporter {
      *
      * @param space The weight of troops (in tons) this space can carry.
      */
-    public TroopSpace(double space) {
+    public InfantryCompartment(double space) {
         totalSpace = space;
         currentSpace = space;
     }
@@ -125,7 +125,7 @@ public final class TroopSpace implements Transporter {
         for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
             Entity entity = game.getEntity(key);
-            
+
             if (entity != null) {
                 loaded.add(entity);
             }
@@ -240,7 +240,7 @@ public final class TroopSpace implements Transporter {
     public void setGame(Game game) {
         this.game = game;
     }
-    
+
     @Override
     public void resetTransporter() {
         troops = new HashMap<>();

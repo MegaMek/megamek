@@ -2498,7 +2498,7 @@ public class Tank extends Entity {
         // total)
         boolean infantryBayCounted = false;
         for (Transporter transport : getTransports()) {
-            if (transport instanceof TroopSpace) {
+            if (transport instanceof InfantryCompartment) {
                 usedSlots++;
                 infantryBayCounted = true;
                 break;

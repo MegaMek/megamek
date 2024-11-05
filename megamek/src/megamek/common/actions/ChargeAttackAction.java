@@ -236,6 +236,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         int base = ae.getCrew().getPiloting();
 
         toHit = new ToHitData(base, "base");
+        toHit.addModifier(0, "Charge");
 
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, ae.getId(), movement));

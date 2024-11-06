@@ -33,7 +33,7 @@ public class KillCommand extends ServerCommand {
     /** Creates new KillCommand */
     public KillCommand(Server server, TWGameManager gameManager) {
         super(server, "kill", "Allows a GM to destroy a single unit instantly" +
-                "Allowed format:"+
+                "Usage: "+
                 "/kill <id> " +
                 "where id is the units ID. The units ID can be found by hovering over the unit.");
         this.gameManager = gameManager;

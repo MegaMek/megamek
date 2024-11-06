@@ -187,6 +187,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CheckBVCommand(server));
         commands.add(new CheckBVTeamCommand(server));
         commands.add(new NukeCommand(server, this));
+        commands.add(new KillCommand(server, this));
         commands.add(new TraitorCommand(server, this));
         commands.add(new ListEntitiesCommand(server, this));
         commands.add(new AssignNovaNetServerCommand(server, this));

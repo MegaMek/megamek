@@ -188,6 +188,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CheckBVTeamCommand(server));
         commands.add(new NukeCommand(server, this));
         commands.add(new KillCommand(server, this));
+        commands.add(new ChangeOwnershipCommand(server, this));
+        commands.add(new DisasterCommand(server, this));
         commands.add(new RemoveSmokeCommand(server, this));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));

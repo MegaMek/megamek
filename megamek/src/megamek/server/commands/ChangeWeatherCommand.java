@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2024 Luana Scoppio (luana.coppio@gmail.com)
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.

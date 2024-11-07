@@ -45,6 +45,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 
+import megamek.client.AbstractClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyBindReceiver;
@@ -157,8 +158,24 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         KeyBindParser.addPreferenceChangeListener(this);
 
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.UNPAUSE.cmd,
+            () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
     }
 
+    private void pauseGameWhenOnlyBotUnitsRemain() {
+        if (isIgnoringEvents() || !isVisible()) {
+            return;
+        }
+        IGame game = getClientgui().getClient().getGame();
+        List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
+        boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
+        if (liveUnitsRemaining) {
+            clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
+        } else {
+            ((AbstractClient) clientgui.getClient()).sendPause();
+        }
+    }
 
     /** Returns the list of buttons that should be displayed. */
     protected abstract List<MegaMekButton> getButtonList();

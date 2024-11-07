@@ -173,6 +173,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (liveUnitsRemaining) {
             clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
         } else {
+            clientgui.getClient().sendChat("Requesting game pause.");
             ((AbstractClient) clientgui.getClient()).sendPause();
         }
     }

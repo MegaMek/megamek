@@ -25,7 +25,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * @author Luana Scoppio
  */
-public class KillCommand extends ServerCommand {
+public class KillCommand extends ServerCommand implements IsGM {
 
     private final TWGameManager gameManager;
 
@@ -49,7 +49,7 @@ public class KillCommand extends ServerCommand {
             server.sendServerChat(connId, "Command-line kill is not enabled in this game.");
             return;
         }
-        if (!server.getPlayer(connId).getGameMaster()) {
+        if (!isGM(connId)) {
             server.sendServerChat(connId, "You are not a Game Master.");
             return;
         }
@@ -73,5 +73,10 @@ public class KillCommand extends ServerCommand {
             // Error out; it's not a valid call.
             server.sendServerChat(connId, "Kill command failed (1).  Proper format is \"/kill <id>\" where id is the units ID");
         }
+    }
+
+    @Override
+    public TWGameManager getGameManager() {
+        return gameManager;
     }
 }

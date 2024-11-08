@@ -28,7 +28,7 @@ import megamek.server.totalwarfare.TWGameManager;
  *
  * @author Luana Scoppio
  */
-public class ChangeOwnershipCommand extends ServerCommand {
+public class ChangeOwnershipCommand extends ServerCommand implements IsGM {
 
     private final TWGameManager gameManager;
 
@@ -49,8 +49,7 @@ public class ChangeOwnershipCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         try {
-            var currentPlayer =  server.getGame().getPlayer(connId);
-            if (!currentPlayer.isGameMaster()) {
+            if (!isGM(connId)) {
                 server.sendServerChat(connId, "You are not a Game Master.");
                 return;
             }
@@ -73,4 +72,8 @@ public class ChangeOwnershipCommand extends ServerCommand {
         }
     }
 
+    @Override
+    public TWGameManager getGameManager() {
+        return gameManager;
+    }
 }

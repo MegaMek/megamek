@@ -73,6 +73,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
+import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
 
 /**
@@ -101,6 +102,7 @@ public class TWGameManager extends AbstractGameManager {
     private final List<DynamicTerrainProcessor> terrainProcessors = new ArrayList<>();
 
     private ArrayList<int[]> scheduledNukes = new ArrayList<>();
+    private ArrayList<OrbitalBombardment> scheduledOrbitalBombardment = new ArrayList<>();
 
     /**
      * Stores a set of <code>Coords</code> that have changed during this phase.
@@ -19736,7 +19738,7 @@ public class TWGameManager extends AbstractGameManager {
             int[] damages = { (int) Math.floor(damage_orig / 10.0),
                     (int) Math.floor(damage_orig / 20.0) };
             doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5,
-                    te.getId(), false);
+                    te.getId(), false, false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -20018,7 +20020,7 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10), (engineRating / 20),
                 (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true, false);
     }
 
     /**
@@ -20026,7 +20028,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void doExplosion(int damage, int degradation, boolean autoDestroyInSameHex,
             Coords position, boolean allowShelter, Vector<Report> vDesc,
-            Vector<Integer> vUnits, int excludedUnitId) {
+            Vector<Integer> vUnits, int excludedUnitId, boolean canDamageVtol) {
         if (degradation < 1) {
             return;
         }
@@ -20042,15 +20044,16 @@ public class TWGameManager extends AbstractGameManager {
             myDamages[x] = myDamages[x - 1] - degradation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter, vDesc, vUnits,
-                5, excludedUnitId, false);
+                5, excludedUnitId, false, canDamageVtol);
     }
 
     /**
      * General function to cause explosions in areas.
+     * TODO Luana: Refactor this function so it is less of a mess
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position,
             boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
-            int clusterAmt, int excludedUnitId, boolean engineExplosion) {
+            int clusterAmt, int excludedUnitId, boolean engineExplosion, boolean canDamageVtol) {
         if (vDesc == null) {
             vDesc = new Vector<>();
         }
@@ -20137,9 +20140,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Now we damage people near the explosion.
         List<Entity> loaded = new ArrayList<>();
-        for (Iterator<Entity> ents = game.getEntities(); ents.hasNext();) {
-            Entity entity = ents.next();
-
+        for (var entity : game.inGameTWEntities()) {
             if (entitiesHit.contains(entity)) {
                 continue;
             }
@@ -20154,12 +20155,6 @@ public class TWGameManager extends AbstractGameManager {
                 // This means, incidentally, that salvage is never affected by
                 // explosions
                 // as long as it was destroyed before the explosion.
-                continue;
-            }
-
-            // We are going to assume that explosions are on the ground here so
-            // flying entities should be unaffected
-            if (entity.isAirborne()) {
                 continue;
             }
 
@@ -20178,10 +20173,28 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 continue;
             }
+
             int range = position.distance(entityPos);
 
             if (range >= damages.length) {
                 // Yeah, this is fine. It's outside the blast radius.
+                continue;
+            }
+
+            // We are going to assume that explosions are on the ground here so
+            // flying entities should be unaffected, except VTOL or WiGE
+            if (entity.isAirborne() && !canDamageVtol) {
+                continue;
+            } else if (entity.isAirborne() && canDamageVtol && entity.isAirborneVTOLorWIGE()) {
+                if (entity.getElevation() > damages.length) {
+                    continue;
+                }
+                if ((range + entity.getElevation()) > damages.length) {
+                    continue;
+                } else {
+                    range += entity.getElevation();
+                }
+            } else {
                 continue;
             }
 
@@ -20267,20 +20280,51 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(e);
                 r.add(damage);
                 vDesc.addElement(r);
-
-                while (damage > 0) {
-                    int cluster = Math.min(5, damage);
-                    int table = ToHitData.HIT_NORMAL;
-                    if (e instanceof ProtoMek) {
-                        table = ToHitData.HIT_SPECIAL_PROTO;
-                    }
-                    HitData hit = e.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    vDesc.addAll(damageEntity(e, hit, cluster, false,
-                            DamageType.IGNORE_PASSENGER, false, true));
-                    damage -= cluster;
+                if (canDamageVtol) {
+                    orbitalBombardmentDamage(position, vDesc, e, damage);
+                } else {
+                    explosionDamage(position, vDesc, e, damage);
                 }
                 Report.addNewline(vDesc);
             }
+        }
+    }
+
+    private void explosionDamage(Coords position, Vector<Report> vDesc, Entity e, int damage) {
+        while (damage > 0) {
+            int cluster = Math.min(5, damage);
+            int table = ToHitData.HIT_NORMAL;
+            if (e instanceof ProtoMek) {
+                table = ToHitData.HIT_SPECIAL_PROTO;
+            }
+            HitData hit = e.rollHitLocation(table, ToHitData.SIDE_FRONT);
+            vDesc.addAll(damageEntity(e, hit, cluster, false,
+                DamageType.IGNORE_PASSENGER, false, true));
+            damage -= cluster;
+        }
+    }
+
+    private void orbitalBombardmentDamage(Coords position, Vector<Report> vDesc, Entity e, int damage) {
+        while (damage > 0) {
+            int cluster = Math.min(5, damage);
+            int table = ToHitData.HIT_NORMAL;
+            int hitSide = ToHitData.SIDE_RANDOM;
+            if (e instanceof ProtoMek) {
+                table = ToHitData.HIT_SPECIAL_PROTO;
+            } else if (e instanceof Mek) {
+                table = ToHitData.HIT_ABOVE;
+                hitSide = e.sideTable(position);
+            } else if (e instanceof Tank) {
+                if (e.isAirborneVTOLorWIGE()) {
+                    table = ToHitData.HIT_ABOVE;
+                }
+                hitSide = e.sideTable(position);
+            }
+
+            HitData hit = e.rollHitLocation(table, hitSide);
+            vDesc.addAll(damageEntity(e, hit, cluster, false,
+                DamageType.IGNORE_PASSENGER, false, true));
+            damage -= cluster;
         }
     }
 
@@ -20344,6 +20388,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * add an orbital bombardment to hit the board in the next weapons attack phase
+     *
+     * @param orbitalBombardment this is an #OrbitalBombardment object, its immutable and must be constructed
+     *             through it's builder.
+     */
+    public void addScheduledOrbitalBombardment(OrbitalBombardment orbitalBombardment) {
+        scheduledOrbitalBombardment.add(orbitalBombardment);
+    }
+
+    /**
      * explode any scheduled nukes
      */
     void resolveScheduledNukes() {
@@ -20358,6 +20412,15 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         scheduledNukes.clear();
+    }
+
+    /**
+     * explode any scheduled orbital bombardments
+     */
+    void resolveScheduledOrbitalBombardments() {
+        scheduledOrbitalBombardment
+            .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamageFactor(), ob.getRadius(), vPhaseReport));
+        scheduledOrbitalBombardment.clear();
     }
 
     /**
@@ -20376,6 +20439,72 @@ public class TWGameManager extends AbstractGameManager {
 
         doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
                 nukeStats.craterDepth, vDesc);
+    }
+
+    /**
+     * do an orbital bombardment
+     * @param position  the position that will be hit by the orbital bombardment
+     * @param damageFactor the factor by which the base damage will be multiplied
+     * @param radius the radius which the damage will hit
+     * @param vDesc  a vector that contains the output report
+     */
+    public void doOrbitalBombardment(Coords position, int damageFactor, int radius, Vector<Report> vDesc) {
+        // Just in case.
+        if (vDesc == null) {
+            vDesc = new Vector<>();
+        }
+
+        Report r = new Report(1300, Report.PUBLIC);
+
+        r.indent();
+        r.add(position.getBoardNum(), true);
+        vDesc.add(r);
+
+        // Then, do actual blast damage.
+        // Use the standard blast function for this.
+        Vector<Report> tmpV = new Vector<>();
+        Vector<Integer> blastedUnitsVec = new Vector<>();
+        int range = radius + 1;
+        int baseDamage = damageFactor * 10;
+        var degradation = baseDamage / range;
+        doExplosion(baseDamage, degradation , false, position, true, tmpV,
+            blastedUnitsVec, -1, true);
+        Report.indentAll(tmpV, 2);
+        vDesc.addAll(tmpV);
+
+        // Next, for whatever's left, do terrain effects
+        // such as clearing, roughing, and boiling off water.
+        boolean damageFlag = true;
+
+        // Lastly, do secondary effects.
+        for (Entity entity : game.getEntitiesVector()) {
+            // loaded units and off board units don't have a position,
+            // so we don't count 'em here
+            if ((entity.getTransportId() != Entity.NONE) || (entity.getPosition() == null)) {
+                continue;
+            }
+
+            // If it's already destroyed...
+            if ((entity.isDoomed()) || (entity.isDestroyed())) {
+                continue;
+            }
+
+            // If it's too far away for this...
+            if (position.distance(entity.getPosition()) > radius) {
+                continue;
+            }
+
+            // Actually do secondary effects against it.
+            // Since the effects are unit-dependant, we'll just define it in the
+            // entity.
+//            applySecondaryNuclearEffects(entity, position, vDesc);
+        }
+
+        // All right. We're done.
+        r = new Report(1216, Report.PUBLIC);
+        r.indent();
+        r.newlines = 2;
+        vDesc.add(r);
     }
 
     /**
@@ -20472,8 +20601,9 @@ public class TWGameManager extends AbstractGameManager {
         // Use the standard blast function for this.
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
+
         doExplosion(baseDamage, degradation, true, position, true, tmpV,
-                blastedUnitsVec, -1);
+                blastedUnitsVec, -1, false);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
@@ -28374,7 +28504,7 @@ public class TWGameManager extends AbstractGameManager {
                         Vector<Report> vRep = new Vector<>();
                         doExplosion(((FuelTank) bldg).getMagnitude(), 10,
                                 false, bldg.getCoords().nextElement(), true,
-                                vRep, null, -1);
+                                vRep, null, -1, false);
                         Report.indentAll(vRep, 2);
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
@@ -28571,7 +28701,7 @@ public class TWGameManager extends AbstractGameManager {
                     Vector<Report> vRep = new Vector<>();
                     doExplosion(((FuelTank) bldg).getMagnitude(), 10, false,
                             bldg.getCoords().nextElement(), true, vRep, null,
-                            -1);
+                            -1, false);
                     Report.indentAll(vRep, 2);
                     vDesc.addAll(vRep);
                     return vPhaseReport;

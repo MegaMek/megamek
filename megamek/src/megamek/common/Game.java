@@ -760,6 +760,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * @return an enumeration of all the entities in the game.
+     * @deprecated Use {@link #inGameTWEntities()} instead.
      */
     @Deprecated
     public Iterator<Entity> getEntities() {

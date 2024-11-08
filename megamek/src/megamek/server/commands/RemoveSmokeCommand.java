@@ -27,7 +27,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * @author Luana Scoppio
  */
-public class RemoveSmokeCommand extends ServerCommand {
+public class RemoveSmokeCommand extends ServerCommand implements IsGM {
 
     private final TWGameManager gameManager;
 
@@ -42,7 +42,7 @@ public class RemoveSmokeCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        if (!server.getPlayer(connId).getGameMaster()) {
+        if (!isGM(connId)) {
             server.sendServerChat(connId, "You are not a Game Master.");
             return;
         }
@@ -56,5 +56,10 @@ public class RemoveSmokeCommand extends ServerCommand {
             // Error out; it's not a valid call.
             server.sendServerChat(connId, "nosmoke command failed (1).");
         }
+    }
+
+    @Override
+    public TWGameManager getGameManager() {
+        return gameManager;
     }
 }

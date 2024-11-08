@@ -246,9 +246,10 @@ public class PushAttackAction extends DisplacementAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting() - 1;
+        int base = ae.getCrew().getPiloting();
 
         toHit = new ToHitData(base, "base");
+        toHit.addModifier(-1, "Push");
 
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));

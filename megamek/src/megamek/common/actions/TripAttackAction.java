@@ -160,10 +160,11 @@ public class TripAttackAction extends PhysicalAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting() - 1;
+        int base = ae.getCrew().getPiloting();
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
+        toHit.addModifier(-1, "Trip");
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 

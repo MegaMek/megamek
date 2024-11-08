@@ -1933,4 +1933,11 @@ public class Infantry extends Entity {
     public boolean hasPatchworkArmor() {
         return false;
     }
+
+    @Override
+    public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType, MoveStep prevStep,
+                                      MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+                                      boolean isInfantry, int distance) {
+        return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "Infantry can't skid");
+    }
 }

@@ -3150,14 +3150,10 @@ public class MoveStep implements Serializable {
             if (destHex.containsTerrain(Terrains.BLACK_ICE)) {
                 mp++;
             }
-            if (destHex.containsTerrain(Terrains.BLACK_ICE)
-                    && !isCareful()
-                    && (nDestEl == destHex.getLevel())) {
+            if (destHex.containsTerrain(Terrains.BLACK_ICE) && !isCareful() && (nDestEl == destHex.getLevel())) {
                 mp--;
             }
-            if (isPavementStep
-                    && !destHex.containsTerrain(Terrains.BLACK_ICE)
-                    && isCareful()) {
+            if (isPavementStep && !destHex.containsTerrain(Terrains.BLACK_ICE) && isCareful()) {
                 mp++;
             }
 

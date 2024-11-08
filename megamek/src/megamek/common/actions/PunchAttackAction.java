@@ -215,6 +215,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         toHit = new ToHitData(base, "base");
 
+        toHit.addModifier(0, "Punch");
+
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // Prone Meks can only punch vehicles in the same hex.

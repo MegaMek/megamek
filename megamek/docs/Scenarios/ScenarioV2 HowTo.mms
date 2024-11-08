@@ -135,13 +135,18 @@ map:
       # obviously, at least one of newterrain and newlevel must be given
 
 # Optional: game options
-# when not given, user-set options are used
-options:                                    # default: MM's default options
+# when not given, the options from the latest game are used
+options:
   #from: Example_options.xml
-  #fixed: no                                 # default: yes; in this case, the Game Options Dialog is
-                                            # not shown before the scenario starts
-  # Activate options by listing them; the values must be those from OptionsConstants, as used for the game type
-  - double_blind
+  file: Example_options.xml
+  # The file is always loaded first, the following list overrides individual settings
+  on:
+    # Activate options by listing them; the values must be those from OptionsConstants, as used for the game type
+    - double_blind
+    - single_blind_bots
+  off:
+    # Deactivate settings
+    - tacops_fatigue
 
 
 # Planetary Conditions -----------------------------------------------------------------------------------

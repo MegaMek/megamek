@@ -105,10 +105,10 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((ae instanceof Infantry) && (nRange == 0)) {
             InfantryMount mount = ((Infantry) ae).getMount();
             if (mount != null) {
-                if (target.isConventionalInfantry()) {
-                    damageDealt += Compute.d6(mount.getBurstDamageDice());
-                } else {
+                if (!target.isConventionalInfantry()) {
                     damageDealt += mount.getVehicleDamage();
+                } else if (mount.getBurstDamageDice() > 0){
+                    damageDealt += Compute.d6(mount.getBurstDamageDice());
                 }
             }
         }

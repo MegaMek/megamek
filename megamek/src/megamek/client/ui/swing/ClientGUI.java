@@ -2069,6 +2069,71 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    public void printList(ArrayList<Entity> unitList, JButton button) {
+        if ((unitList == null) || unitList.isEmpty()) {
+            return;
+        }
+
+        var mmlPath = CP.getMmlPath();
+        var autodetect = false;
+        if (null == mmlPath || mmlPath.isBlank()) {
+            autodetect = true;
+            if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                mmlPath = "MegaMekLab.exe";
+            } else {
+                mmlPath = "MegaMekLab.sh";
+            }
+        }
+
+        var mml = new File(mmlPath);
+
+        if (!mml.canExecute()) {
+            if (autodetect) {
+                logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
+            } else {
+                logger.error("%s does not appear to be an executable! Please configure the path to the MegaMekLab executable in the settings.".formatted(mml.getName()), "Error printing unit list");
+            }
+            return;
+        }
+
+        try {
+            var unitFile = File.createTempFile("MegaMekPrint", ".mul");
+            EntityListFile.saveTo(unitFile, unitList);
+            String[] command;
+            if (mml.getName().toLowerCase().contains("gradle")) {
+                command = new String[] {
+                    mml.getAbsolutePath(),
+                    "run",
+                    "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
+                };
+            } else {
+                command = new String[] {
+                    mml.getAbsolutePath(),
+                    unitFile.getAbsolutePath(),
+                    "--no-startup"
+                };
+            }
+            button.setText(Messages.getString("ChatLounge.butPrintList.printing"));
+            logger.info("Running command: {}", String.join(" ", command));
+            var p = new ProcessBuilder(command)
+                .directory(mml.getAbsoluteFile().getParentFile())
+                .inheritIO()
+                .start();
+            new Thread(() -> {
+                try {
+                    p.waitFor();
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                } finally {
+                    button.setText(Messages.getString("ChatLounge.butPrintList"));
+                }
+            }).start();
+
+        } catch (Exception e) {
+            logger.error(e, "Operation failed", "Error printing unit list");
+        }
+    }
+
     protected void saveVictoryList() {
         String filename = client.getLocalPlayer().getName();
 

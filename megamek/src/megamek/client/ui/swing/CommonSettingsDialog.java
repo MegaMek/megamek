@@ -212,6 +212,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField tfSoundMuteOthersFileName;
 
     private JTextField userDir;
+    private JTextField mmlPath;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
@@ -1724,6 +1725,23 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
+        JLabel mmlPathLabel = new JLabel(Messages.getString("CommonSettingsDialog.mmlPath"));
+        mmlPathLabel.setToolTipText(Messages.getString("CommonSettingsDialog.mmlPath.tooltip"));
+        mmlPath = new JTextField(20);
+        mmlPath.setMaximumSize(new Dimension(250, 40));
+        mmlPath.setToolTipText(Messages.getString("CommonSettingsDialog.mmlPath.tooltip"));
+        JButton mmlPathChooser = new JButton("...");
+        mmlPathChooser.addActionListener(e ->
+            fileChoose(mmlPath, getFrame(), Messages.getString("CommonSettingsDialog.mmlPath.chooser.title"), false));
+        row = new ArrayList<>();
+        row.add(mmlPathLabel);
+        row.add(mmlPath);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(mmlPathChooser);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         // UI Theme
         uiThemes = new JComboBox<>();
         uiThemes.setMaximumSize(new Dimension(400, uiThemes.getMaximumSize().height));
@@ -1944,6 +1962,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CP.getGameLogFilename());
             userDir.setText(CP.getUserDir());
+            mmlPath.setText(CP.getMmlPath());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CP.getStampFormat());
@@ -2421,6 +2440,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         CP.setKeepGameLog(keepGameLog.isSelected());
         CP.setGameLogFilename(gameLogFilename.getText());
         CP.setUserDir(userDir.getText());
+        CP.setMmlPath(mmlPath.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
         CP.setReportKeywords(reportKeywordsTextPane.getText());
@@ -3452,13 +3472,19 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
      * @param parent           The parent JFrame of the settings dialog
      */
     public static void fileChooseUserDir(JTextField userDirTextField, JFrame parent) {
-        JFileChooser userDirChooser = new JFileChooser(userDirTextField.getText());
-        userDirChooser.setDialogTitle(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
-        userDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChoose(userDirTextField, parent, Messages.getString("CommonSettingsDialog.userDir.chooser.title"),true);
+    }
+
+    private static void fileChoose(JTextField textField, JFrame parent, String title, boolean directories) {
+        JFileChooser userDirChooser = new JFileChooser(textField.getText());
+        userDirChooser.setDialogTitle(title);
+        if (directories) {
+            userDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        }
         int returnVal = userDirChooser.showOpenDialog(parent);
         if ((returnVal == JFileChooser.APPROVE_OPTION) && (userDirChooser.getSelectedFile() != null)
-                && userDirChooser.getSelectedFile().isDirectory()) {
-            userDirTextField.setText(userDirChooser.getSelectedFile().toString());
+            && (directories ? userDirChooser.getSelectedFile().isDirectory() : userDirChooser.getSelectedFile().isFile())) {
+            textField.setText(userDirChooser.getSelectedFile().toString());
         }
     }
 }

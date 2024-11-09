@@ -1,37 +1,37 @@
-chassis:Chaffee Servicemech
-model:BT1
-mul id:7151
+chassis:Exo
+model:HMX-3 HaulerMech
+mul id:7842
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3081
-Source:TRO: Vehicle Annex (Revised)
-Rules Level:3
-role:Scout
+techbase:Inner Sphere
+era:3081
+source:TRO: Irregulars
+rules level:3
+role:None
 
-Mass:15
-Engine:75 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Industrial Triple-Strength
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+mass:10
+engine:40 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Industrial Triple-Strength
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:5
-Jump MP:0
+heat sinks:1 Single
+walk mp:4
+jump mp:0
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:4
-RA Armor:4
-LT Armor:5
-RT Armor:5
-CT Armor:6
-HD Armor:6
-LL Armor:5
-RL Armor:5
-RTL Armor:2
-RTR Armor:2
-RTC Armor:4
+armor:Heavy Industrial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:0
 
@@ -40,8 +40,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Paramedic Equipment
 Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -54,8 +54,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Paramedic Equipment
 Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -65,12 +65,12 @@ Environmental Sealing
 
 Left Torso:
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -79,12 +79,12 @@ Industrial TSM
 
 Right Torso:
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
-Industrial TSM
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -102,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Searchlight
 Environmental Sealing
+-Empty-
 
 Head:
 Life Support

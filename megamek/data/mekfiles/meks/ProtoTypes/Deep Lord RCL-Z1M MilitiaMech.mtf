@@ -1,48 +1,45 @@
-chassis:Deep Lord MilitiaMech
-model:RCL-Z1M
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Deep Lord
+model:RCL-Z1M MilitiaMech
 mul id:4057
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3085
-Rules Level:4
+techbase:Inner Sphere
+era:3085
+source:TRO: Prototypes
+rules level:4
 role:Juggernaut
-Source:TRO: Prototypes 
 
-
-
-
-quirk:pro_actuator
 quirk:imp_life_support
-weaponquirk:jettison_capable:RA:5:Mace
+quirk:pro_actuator
+weaponquirk:jettison_capable:RA:4:Mace
 
+mass:65
+engine:195 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Mass:65
-Engine:195 Fuel Cell Engine(IS)
-Structure:Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
+heat sinks:7 Single
+walk mp:3
+jump mp:0
 
-Heat Sinks:7 Single
-Walk MP:3
-Jump MP:0
-
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:14
-RT Armor:14
-CT Armor:16
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:2
-Heavy Rifle, Left Torso
+Rifle (Cannon, Heavy), Left Torso
 SRM 6, Right Torso
 
 Left Arm:
@@ -74,9 +71,9 @@ Mace
 -Empty-
 
 Left Torso:
-Heavy Rifle (T)
-Heavy Rifle (T)
-Heavy Rifle (T)
+Rifle (Cannon, Heavy) (T)
+Rifle (Cannon, Heavy) (T)
+Rifle (Cannon, Heavy) (T)
 ISShoulderTurret
 IS Ammo Heavy Rifle
 IS Ammo Heavy Rifle

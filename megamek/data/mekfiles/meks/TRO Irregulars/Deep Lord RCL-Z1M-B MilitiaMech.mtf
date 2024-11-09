@@ -1,49 +1,51 @@
-chassis:Rock Hound ProspectorMech
-model:AM-PRM-RH7
-mul id:4926
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Deep Lord
+model:RCL-Z1M-B MilitiaMech
+mul id:7830
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3042
-Rules Level:2
-role:None
-source:Handbook: Major Periphery States
+techbase:Inner Sphere
+era:3118
+source:TRO: Irregulars
+rules level:3
+role:Juggernaut
 
-Mass:40
-Engine:160 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
 
-Heat Sinks:2 Single
-Walk MP:4
-Jump MP:0
+mass:65
+engine:195 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:8
-LL Armor:13
-RL Armor:13
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+heat sinks:6 Single
+walk mp:3
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:2
-SRM 4, Left Torso
-SRM 4, Right Torso
+Ultra AC/5, Left Torso
+Streak SRM 6, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
--Empty-
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
 -Empty-
 -Empty-
 -Empty-
@@ -53,10 +55,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MiningDrill
-MiningDrill
-MiningDrill
-MiningDrill
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -64,13 +66,13 @@ MiningDrill
 -Empty-
 
 Left Torso:
-SRM 4
-IS Ammo SRM-4
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -78,10 +80,10 @@ IS Ammo SRM-4
 -Empty-
 
 Right Torso:
-SRM 4
--Empty-
--Empty-
--Empty-
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+IS Streak SRM 6 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -102,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Searchlight
+-Empty-
 -Empty-
 
 Head:

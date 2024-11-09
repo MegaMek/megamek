@@ -1,19 +1,10 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.1-SNAPSHOT on 2024-11-09
 <UnitType>
 Warship
 </UnitType>
 
 <Name>
-Monsoon Battleship (LF)
+Monsoon Battleship
 </Name>
 
 <Model>
@@ -45,17 +36,17 @@ Aerodyne
 </motion_type>
 
 <transporters>
-asfbay:18.0:2:1
-smallcraftbay:8.0:2:2
+asfbay:18.0:2:1::-1:0
+smallcraftbay:8.0:2:2::-1:0
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-1stclassquarters:1020.0:0
-crewquarters:3325.0:0
-cargobay:282505.5:2:5
+1stclassquarters:1020.0:0:-1::-1:0
+crewquarters:3325.0:0:-1::-1:0
+cargobay:295605.5:1:11::-1:0
 </transporters>
 
 <SafeThrust>
@@ -82,9 +73,9 @@ cargobay:282505.5:2:5
 41
 </armor_type>
 
-<armor_tech>
-5
-</armor_tech>
+<armor_tech_rating>
+0
+</armor_tech_rating>
 
 <armor>
 187
@@ -196,10 +187,6 @@ TRO3057R - Age of War
 1
 </kf_core>
 
-<lithium-fusion>
-1
-</lithium-fusion>
-
 <sail>
 1
 </sail>
@@ -209,6 +196,10 @@ TRO3057R - Age of War
 65
 55
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 653
@@ -241,3 +232,4 @@ TRO3057R - Age of War
 <escape_pod>
 12
 </escape_pod>
+

@@ -1,5 +1,6 @@
-chassis:Peacemaker PM-6 PoliceMech
-model:
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Peacemaker
+model:PM-6 PoliceMech
 mul id:7173
 
 Config:Biped
@@ -8,6 +9,7 @@ era:3067
 source:TRO: Vehicle Annex
 rules level:4
 role:Ambusher
+
 
 mass:35
 engine:140 Fusion Engine(IS)

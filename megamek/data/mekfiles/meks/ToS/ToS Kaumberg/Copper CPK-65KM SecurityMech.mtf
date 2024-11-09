@@ -1,40 +1,41 @@
-chassis:Copper SecurityMech
-model:CPK-65
-mul id:3994
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Copper
+model:CPK-65KM SecurityMech
+mul id:7465
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3065
-Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
-Rules Level:2
+techbase:Inner Sphere
+era:3065
+source:Touring the Stars: Kaumberg
+rules level:2
 role:Ambusher
 
-Mass:25
-Engine:100 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
 
-Heat Sinks:3 Single
-Walk MP:4
-Jump MP:0
+mass:25
+engine:100 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:7
-RA Armor:7
-LT Armor:8
-RT Armor:8
-CT Armor:10
-HD Armor:6
-LL Armor:10
-RL Armor:10
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+heat sinks:3 Single
+walk mp:4
+jump mp:0
 
-Weapons:3
-Machine Gun, Right Arm
-Machine Gun, Right Arm
+armor:Heavy Industrial(Inner Sphere)
+LA armor:7
+RA armor:7
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:6
+LL armor:10
+RL armor:10
+RTL armor:4
+RTR armor:4
+RTC armor:6
+
+Weapons:2
 SRM 2, Left Arm
+SRM 2, Right Arm
 
 Left Arm:
 Shoulder
@@ -54,9 +55,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Machine Gun
-Machine Gun
-IS Ammo MG - Full
+SRM 2
+IS Ammo SRM-2
+-Empty-
 -Empty-
 -Empty-
 -Empty-

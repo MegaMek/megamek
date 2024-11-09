@@ -1,50 +1,57 @@
-chassis:Copper SecurityMech
-model:CPK-19
-mul id:3993
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Patron
+model:PTN-2 MilitiaMech
+mul id:4794
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2619
-Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
-Rules Level:2
-role:None
+techbase:Inner Sphere
+era:3076
+source:XTR: RetroTech
+rules level:2
+role:Sniper
 
-Mass:25
-Engine:100 ICE Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
 
-Heat Sinks:0 Single
-Walk MP:4
-Jump MP:0
+mass:15
+engine:30 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:7
-RA Armor:7
-LT Armor:8
-RT Armor:8
-CT Armor:10
-HD Armor:6
-LL Armor:10
-RL Armor:10
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+heat sinks:1 Single
+walk mp:2
+jump mp:0
 
-Weapons:4
-Machine Gun, Left Arm
-Machine Gun, Left Arm
-Machine Gun, Right Arm
-Machine Gun, Right Arm
+armor:Commercial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:9
+Light Machine Gun, Left Arm
+Light Machine Gun, Left Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Machine Gun
-Machine Gun
-IS Ammo MG - Full
--Empty-
+Hand Actuator
+Light Machine Gun
+Light Machine Gun
+IS Light Machine Gun Ammo - Half
 -Empty-
 -Empty-
 -Empty-
@@ -55,9 +62,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Machine Gun
-Machine Gun
-IS Ammo MG - Full
+Hand Actuator
+Light Machine Gun
+Light Machine Gun
 -Empty-
 -Empty-
 -Empty-
@@ -80,11 +87,11 @@ Searchlight
 -Empty-
 
 Right Torso:
-Searchlight
--Empty-
--Empty-
--Empty-
--Empty-
+RL10
+RL10
+RL10
+RL10
+RL10
 -Empty-
 -Empty-
 -Empty-

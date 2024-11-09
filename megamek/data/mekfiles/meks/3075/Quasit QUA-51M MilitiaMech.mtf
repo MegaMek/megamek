@@ -1,41 +1,42 @@
-chassis:Quasit MilitiaMech
-model:QUA-51M
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Quasit
+model:QUA-51M MilitiaMech
 mul id:2607
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3073
-Source:TRO: 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3073
+source:TRO: 3075
+rules level:2
 role:Brawler
 
-Mass:45
-Engine:225 Fusion Engine
-Structure:Industrial
-Myomer:Standard
-Gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:0
+mass:45
+engine:225 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Heavy Industrial
-LA Armor:10
-RA Armor:10
-LT Armor:13
-RT Armor:13
-CT Armor:20
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+heat sinks:10 Single
+walk mp:5
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:13
+RT armor:13
+CT armor:20
+HD armor:8
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
-Medium Laser, Right Arm
-Medium Laser, Right Arm
 MML 5, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
 Machine Gun, Right Torso
 
 Left Arm:

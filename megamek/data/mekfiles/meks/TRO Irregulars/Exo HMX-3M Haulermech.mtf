@@ -1,49 +1,47 @@
-chassis:Deep Lord MilitiaMech
-model:RCL-Z1M-B
-mul id:7830
+chassis:Exo
+model:HMX-3M HaulerMech
+mul id:7843
 
 Config:Biped
 techbase:Inner Sphere
-era:3118
+era:3132
 source:TRO: Irregulars
 rules level:3
-role:Juggernaut
+role:None
 
-mass:65
-engine:195 Fuel Cell Engine(IS)
+mass:10
+engine:40 Fuel Cell Engine(IS)
 structure:IS Industrial
-myomer:Standard
+myomer:Industrial Triple-Strength
 
-heat sinks:6 Single
-walk mp:3
+heat sinks:1 Single
+walk mp:4
 jump mp:0
 
 armor:Heavy Industrial(Inner Sphere)
-LA armor:16
-RA armor:16
-LT armor:14
-RT armor:14
-CT armor:16
-HD armor:9
-LL armor:16
-RL armor:16
-RTL armor:3
-RTR armor:3
-RTC armor:5
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
-Weapons:2
-Ultra AC/5, Left Torso
-Streak SRM 6, Right Torso
+Weapons:0
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISClaw
-ISClaw
-ISClaw
-ISClaw
-ISClaw
+Hand Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -54,7 +52,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
+Environmental Sealing
 -Empty-
 -Empty-
 -Empty-
@@ -64,13 +62,13 @@ Hand Actuator
 -Empty-
 
 Left Torso:
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-IS Ultra AC/5 Ammo
-IS Ultra AC/5 Ammo
+Environmental Sealing
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -78,13 +76,13 @@ IS Ultra AC/5 Ammo
 -Empty-
 
 Right Torso:
-ISStreakSRM6
-ISStreakSRM6
-IS Streak SRM 6 Ammo
-IS Streak SRM 6 Ammo
--Empty-
--Empty-
--Empty-
+Environmental Sealing
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
+Industrial Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +100,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+Environmental Sealing
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ejection Seat (Industrial Mech)
+Environmental Sealing
 Sensors
 Life Support
 -Empty-
@@ -124,7 +122,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+Environmental Sealing
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +136,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+Environmental Sealing
 -Empty-
 -Empty-
 -Empty-

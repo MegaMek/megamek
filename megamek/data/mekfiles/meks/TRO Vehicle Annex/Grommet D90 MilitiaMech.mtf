@@ -1,41 +1,43 @@
-chassis:Grommet D90 MilitiaMech
-model:
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Grommet
+model:D90 MilitiaMech
 mul id:7180
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3000
-Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
-Rules Level:2
+techbase:Inner Sphere
+era:3000
+source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
+rules level:2
 role:Brawler
 
-Mass:75
-Engine:225 Fusion Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
 
-Heat Sinks:11 Single
-Walk MP:3
-Jump MP:0
+mass:75
+engine:225 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:20
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+heat sinks:11 Single
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:20
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:5
 Large Laser, Left Arm
-Vehicle Flamer, Left Arm
-Vehicle Flamer, Left Arm
-Vehicle Flamer, Left Arm
+Flamer (Vehicle), Left Arm
+Flamer (Vehicle), Left Arm
+Flamer (Vehicle), Left Arm
 AC/5, Right Arm
 
 Left Arm:
@@ -44,9 +46,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Large Laser
 Large Laser
-Vehicle Flamer
-Vehicle Flamer
-Vehicle Flamer
+Flamer (Vehicle)
+Flamer (Vehicle)
+Flamer (Vehicle)
 Combine
 Combine
 Combine
@@ -70,10 +72,10 @@ Left Torso:
 IS Vehicle Flamer Ammo
 IS Vehicle Flamer Ammo
 IS Vehicle Flamer Ammo
-Cargo (4 tons)
-Cargo (4 tons)
-Cargo (4 tons)
-Cargo (4 tons)
+Cargo:SIZE:4.0
+Cargo:SIZE:4.0
+Cargo:SIZE:4.0
+Cargo:SIZE:4.0
 Dumper (Front)
 -Empty-
 -Empty-
@@ -81,9 +83,9 @@ Dumper (Front)
 -Empty-
 
 Right Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 IS Ammo AC/5
 -Empty-
 -Empty-

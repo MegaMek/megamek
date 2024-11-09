@@ -1,48 +1,51 @@
-chassis:Space Hound ProspectorMech
-model:AM-PRM-SH1
-mul id:5101
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Rock Hound
+model:AM-PRM-RH7 ProspectorMech
+mul id:4926
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3047
-Rules Level:2
-role:None
+techbase:Inner Sphere
+era:3042
 source:Handbook: Major Periphery States
+rules level:2
+role:None
 
-Mass:40
-Engine:160 Fusion Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:1
+mass:40
+engine:160 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:8
-LL Armor:13
-RL Armor:13
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+heat sinks:2 Single
+walk mp:4
+jump mp:0
 
-Weapons:1
-Small Laser, Right Arm
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:8
+LL armor:13
+RL armor:13
+RTL armor:6
+RTR armor:6
+RTC armor:6
+
+Weapons:2
+SRM 4, Left Torso
+SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
-Environmental Sealing
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -56,15 +59,15 @@ MiningDrill
 MiningDrill
 MiningDrill
 MiningDrill
-Small Laser
-Heat Sink
-Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Cargo (1 ton)
-Environmental Sealing
+SRM 4
+IS Ammo SRM-4
 -Empty-
 -Empty-
 -Empty-
@@ -77,11 +80,11 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-Cargo (1 ton)
-Cargo (1 ton)
-Jump Jet
-Heat Sink
-Environmental Sealing
+SRM 4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -102,13 +105,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Searchlight
-Environmental Sealing
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Environmental Sealing
+Ejection Seat (Industrial Mech)
 Sensors
 Life Support
 -Empty-
@@ -123,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Environmental Sealing
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -137,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Environmental Sealing
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

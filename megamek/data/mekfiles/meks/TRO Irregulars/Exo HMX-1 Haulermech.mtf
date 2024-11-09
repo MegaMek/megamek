@@ -1,48 +1,49 @@
-chassis:Rock Hound ProspectorMech
-model:AM-PRM-RH7A 'Rock Otter'
-mul id:4927
+chassis:Exo
+model:HMX-1 HaulerMech
+mul id:7840
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3043
-Rules Level:2
+techbase:Inner Sphere
+era:3080
+source:TRO: Irregulars
+rules level:3
 role:None
-source:Handbook: Major Periphery States
 
-Mass:40
-Engine:160 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
+mass:10
+engine:40 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:4
-Jump MP:0
+heat sinks:0 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:9
-RA Armor:9
-LT Armor:10
-RT Armor:10
-CT Armor:10
-HD Armor:8
-LL Armor:11
-RL Armor:11
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Industrial (Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:0
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
-Weapons:1
-SRM 4, Left Torso
+Weapons:0
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
-Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -52,20 +53,20 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MiningDrill
-MiningDrill
-MiningDrill
-MiningDrill
-Environmental Sealing
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-SRM 4
-IS Ammo SRM-4
-Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -77,7 +78,7 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -101,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Searchlight
-Environmental Sealing
+-Empty-
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Environmental Sealing
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -123,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -137,7 +138,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-

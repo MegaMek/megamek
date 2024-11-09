@@ -89,7 +89,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6192: Fix beast-mounted infantry bonus damage.
 + PR #6194: Map Set 8 rename to use lowercase x and small updates to boards
 + PR #6195: Correct issue with lobby map help, path and dialog sizing
-+ Data: Fixes for #6184, #6155, #6141,#6134,#6129,#6047,#6044,#6036,#6035,#6022,#5580,#5554
++ Data: Fixes for #6184, #6155, #6141,#6134,#6129,#6047,#6044,#6036,#6035,#6022,#5580,#5554, #3919
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

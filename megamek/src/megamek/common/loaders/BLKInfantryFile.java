@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -23,7 +23,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKInfantryFile extends BLKFile implements IMechLoader {
+public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -95,9 +95,10 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             infantry.setSecondaryWeapon((InfantryWeapon) stype);
         }
 
-        // if there is more than one secondary weapon per squad, then add that to the unit
+        // if there is more than one secondary weapon per squad, then add that to the
+        // unit
         // otherwise add the primary weapon
-        Mounted m;
+        Mounted<?> m;
         try {
             if ((infantry.getSecondaryWeaponsPerSquad() > 1)) {
                 m = new InfantryWeaponMounted(infantry, (InfantryWeapon) stype, (InfantryWeapon) ptype);
@@ -125,7 +126,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             }
         }
 
-        // backward compatibility: armor kits should now be saved and loaded as part of LOC_INFANTRY equipment
+        // backward compatibility: armor kits should now be saved and loaded as part of
+        // LOC_INFANTRY equipment
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName);
@@ -146,7 +148,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException("Could not read specialization");
             }
         }
-        
+
         if (dataFile.exists("encumberingarmor")) {
             infantry.setArmorEncumbering(true);
         }
@@ -184,7 +186,8 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 .findFirst()
                 .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
 
-        // backward compatibility: if an antimek better than 8 entry exists, assume anti-mek gear
+        // backward compatibility: if an antimek better than 8 entry exists, assume
+        // anti-mek gear
         if (dataFile.exists("antimek")) {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
@@ -195,8 +198,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 }
             }
         }
-        
-        // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official unit description.
+
+        // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the
+        // official unit description.
         if (dataFile.exists("augmentation")) {
             String[] augmentations = dataFile.getDataAsString("augmentation");
             for (String aug : augmentations) {

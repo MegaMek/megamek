@@ -19,6 +19,19 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.EnumSet;
+import java.util.Vector;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
@@ -27,24 +40,12 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.EnumSet;
-import java.util.Vector;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/3/14 3:36 PM
  */
-public class FiringPlanTest {
+class FiringPlanTest {
 
     private static final double TOLERANCE = 0.0001;
 
@@ -60,7 +61,7 @@ public class FiringPlanTest {
     private static FiringPlan testFiringPlan;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         mockTarget = mock(Targetable.class);
 
         testFiringPlan = spy(new FiringPlan(mockTarget));
@@ -88,7 +89,7 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testGetHeat() {
+    void testGetHeat() {
         when(mockWeaponFireInfoMG.getHeat()).thenReturn(0);
         when(mockWeaponFireInfoPPC.getHeat()).thenReturn(10);
         when(mockWeaponFireInfoERML.getHeat()).thenReturn(5);
@@ -98,7 +99,7 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testGetExpectedDamage() {
+    void testGetExpectedDamage() {
         when(mockWeaponFireInfoMG.getExpectedDamageOnHit()).thenReturn(2.0);
         when(mockWeaponFireInfoMG.getProbabilityToHit()).thenReturn(0.1666);
         when(mockWeaponFireInfoPPC.getExpectedDamageOnHit()).thenReturn(10.0);
@@ -111,7 +112,7 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testGetExpectedCriticals() {
+    void testGetExpectedCriticals() {
         when(mockWeaponFireInfoMG.getExpectedCriticals()).thenReturn(0.0);
         when(mockWeaponFireInfoPPC.getExpectedCriticals()).thenReturn(0.423);
         when(mockWeaponFireInfoERML.getExpectedCriticals()).thenReturn(0.015);
@@ -121,12 +122,12 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testGetKillProbability() {
+    void testGetKillProbability() {
         when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(0.0);
         when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
 
-        //noinspection PointlessArithmeticExpression
+        // noinspection PointlessArithmeticExpression
         double expected = 1 - ((1 - 0) * (1 - 0.0024) * (1 - 0));
         assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
 
@@ -134,7 +135,7 @@ public class FiringPlanTest {
         when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
 
-        //noinspection PointlessArithmeticExpression
+        // noinspection PointlessArithmeticExpression
         expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));
         assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
 
@@ -147,7 +148,7 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testContainsWeapon() {
+    void testContainsWeapon() {
         // Test a weapon that is in the plan.
         assertTrue(testFiringPlan.containsWeapon(mockPPC));
 
@@ -156,7 +157,7 @@ public class FiringPlanTest {
     }
 
     @Test
-    public void testGetEntityActionVector() {
+    void testGetEntityActionVector() {
         // Test a no-twist plan.
         when(testFiringPlan.getTwist()).thenReturn(0);
         Vector<EntityAction> expected = new Vector<>(3);
@@ -168,14 +169,14 @@ public class FiringPlanTest {
         // todo Test torso-twists.
 
         // Test an empty firing plan.
-        //noinspection MismatchedQueryAndUpdateOfCollection
+        // noinspection MismatchedQueryAndUpdateOfCollection
         FiringPlan emptyPlan = new FiringPlan(mockTarget);
         expected = new Vector<>(0);
         assertEquals(expected, emptyPlan.getEntityActionVector());
     }
 
     @Test
-    public void testSortPlan() {
+    void testSortPlan() {
         WeaponFireInfo mockInfoLL = mock(WeaponFireInfo.class);
         WeaponMounted mockLL = mock(WeaponMounted.class);
         when(mockLL.getName()).thenReturn("LL");

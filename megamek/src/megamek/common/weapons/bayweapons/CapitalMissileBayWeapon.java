@@ -18,7 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -26,12 +26,13 @@ import megamek.server.GameManager;
  */
 public class CapitalMissileBayWeapon extends AmmoBayWeapon {
     private static final long serialVersionUID = 8756042527483383101L;
-    
-    //There's no RAW minimum, but it can't be 0...
+
+    // There's no RAW minimum, but it can't be 0...
     public static final int CAPITAL_MISSILE_MIN_VELOCITY = 1;
-    //This is the default flight speed, RAW
+    // This is the default flight speed, RAW
     public static final int CAPITAL_MISSILE_DEFAULT_VELOCITY = 50;
-    //And this is useful at long bearings-only ranges, just for improved playability
+    // And this is useful at long bearings-only ranges, just for improved
+    // playability
     public static final int CAPITAL_MISSILE_MAX_VELOCITY = 500;
 
     public CapitalMissileBayWeapon() {
@@ -55,25 +56,25 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
+        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         if (weapon.isInBearingsOnlyMode()
                 && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
             return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
-        } else {    
+        } else {
             return new CapitalMissileBayHandler(toHit, waa, game, manager);
         }
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL_MISSILE;

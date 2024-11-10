@@ -34,7 +34,7 @@ import megamek.common.weapons.MekMortarAntiPersonnelHandler;
 import megamek.common.weapons.MekMortarFlareHandler;
 import megamek.common.weapons.MekMortarHandler;
 import megamek.common.weapons.MekMortarSmokeHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -48,13 +48,13 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_MEK_MORTAR;
         damage = DAMAGE_BY_CLUSTERTABLE;
         atClass = CLASS_MORTAR;
-        flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MECH_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
 
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();

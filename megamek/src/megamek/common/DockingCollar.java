@@ -14,20 +14,23 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 /**
- * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a JumpShip,
+ * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a
+ * JumpShip,
  * WarShip, Space Station or Mobile Structure can carry one DropShip.
  */
 public class DockingCollar implements Transporter {
+    private static final MMLogger logger = MMLogger.create(DockingCollar.class);
+
     private static final long serialVersionUID = -4699786673513410716L;
 
     private final Set<Integer> dockedUnits = new HashSet<>();
@@ -82,21 +85,24 @@ public class DockingCollar implements Transporter {
     }
 
     /**
-     * Cleans out docked unit IDs that no longer match an active entity. This is a precaution
+     * Cleans out docked unit IDs that no longer match an active entity. This is a
+     * precaution
      * that ideally shouldn't be necessary.
      */
     private void correctDockedUnitList() {
         if (dockedUnits.removeIf(id -> game.getEntity(id) == null)) {
-            LogManager.getLogger().warn("Unit IDs mapping to a null Entity found in this docking collar.");
+            logger.warn("Unit IDs mapping to a null Entity found in this docking collar.");
         }
     }
 
     /**
-     * DropShips launchable from this Docking Collar. This is different from loaded in that
+     * DropShips launchable from this Docking Collar. This is different from loaded
+     * in that
      * units in recovery cannot launch.
      *
-     * @return A list of DropShips that can launch from this Docking Collar. The list may be empty
-     * but not null.
+     * @return A list of DropShips that can launch from this Docking Collar. The
+     *         list may be empty
+     *         but not null.
      */
     public List<Entity> getLaunchableUnits() {
         if (damaged) {
@@ -174,7 +180,7 @@ public class DockingCollar implements Transporter {
     public String toString() {
         return "dockingcollar";
     }
-    
+
     public int getCollarNumber() {
         return collarId;
     }

@@ -80,4 +80,13 @@ public class CollapseWarningSprite extends HexSprite {
         graph.setFont(FontHandler.symbolFont());
         return graph;
     }
+
+    /*
+     * The Collapse Warning sprite should be displayed on top of bridges and buildings in
+     * isometric view.
+     */
+    @Override
+    protected boolean isBehindTerrain() {
+        return false;
+    }
 }

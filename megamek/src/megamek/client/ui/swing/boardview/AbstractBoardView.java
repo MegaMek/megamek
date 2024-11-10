@@ -40,7 +40,7 @@ public abstract class AbstractBoardView implements IBoardView {
         for (BoardViewListener l : new ArrayList<>(boardViewListeners)) {
             switch (event.getType()) {
                 case BoardViewEvent.BOARD_HEX_CLICKED:
-                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
+                case BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED:
                 case BoardViewEvent.BOARD_HEX_DRAGGED:
                 case BoardViewEvent.BOARD_HEX_POPUP:
                     l.hexMoused(event);

@@ -13,19 +13,22 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
+import javax.swing.JOptionPane;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.util.Vector;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class StreakHandler extends MissileWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(StreakHandler.class);
+
     private static final long serialVersionUID = 4122111574368642492L;
     boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
 
@@ -35,7 +38,7 @@ public class StreakHandler extends MissileWeaponHandler {
      * @param g
      * @param m
      */
-    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -75,7 +78,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
         int missilesHit;
         int amsMod = getAMSHitsMod(vPhaseReport);
-        
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                     : null;
@@ -87,7 +90,7 @@ public class StreakHandler extends MissileWeaponHandler {
         if (amsMod == 0 && allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod+nMissilesModifier,
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod + nMissilesModifier,
                     weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
             if (amsMod != 0) {
                 Report r;
@@ -124,7 +127,7 @@ public class StreakHandler extends MissileWeaponHandler {
         checkAmmo();
         if (ammo == null) {
             final String message = "Handler can't find any ammo! This should be impossible!";
-            LogManager.getLogger().error(message, new Exception());
+            logger.error(message, new Exception());
             JOptionPane.showMessageDialog(null, message, "Unknown Ammo Exception",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -164,7 +167,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
-                                        Building bldg, Vector<Report> vPhaseReport) {
+            Building bldg, Vector<Report> vPhaseReport) {
         return false;
     }
 }

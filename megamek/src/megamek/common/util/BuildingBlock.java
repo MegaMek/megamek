@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2024 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -13,22 +13,31 @@
  */
 package megamek.common.util;
 
-import megamek.SuiteConstants;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.SuiteConstants;
+import megamek.logging.MMLogger;
+
 /**
  * buildingBlock is based on a file format I used in an online game. The
  * original was written in PHP, this one is more robust, and written in Java.
+ *
  * @author Nate Rowden
  * @since April 2, 2002, 1:57 PM
  */
 public class BuildingBlock {
+    private static final MMLogger logger = MMLogger.create(BuildingBlock.class);
 
     private Vector<String> rawData;
     private static final int version = 1;
@@ -47,9 +56,9 @@ public class BuildingBlock {
      * array.
      *
      * @param data
-     *            This is most useful for storing one block file inside
-     *            another...but <I>data</I> can be an array of anything...such
-     *            as comments.
+     *             This is most useful for storing one block file inside
+     *             another...but <I>data</I> can be an array of anything...such
+     *             as comments.
      */
     public BuildingBlock(String[] data) {
         rawData = new Vector<>();
@@ -60,7 +69,7 @@ public class BuildingBlock {
      * Creates a new buildingBlock and fills it with the Vector.
      *
      * @param data
-     *            The Vector can be filled with anything.
+     *             The Vector can be filled with anything.
      */
     public BuildingBlock(Vector<String> data) {
         rawData = data;
@@ -77,7 +86,7 @@ public class BuildingBlock {
         rawData.clear();
 
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(isr)) {
+                BufferedReader br = new BufferedReader(isr)) {
             // read the file till can't read anymore...
             while (br.ready()) {
                 data = br.readLine();
@@ -93,7 +102,7 @@ public class BuildingBlock {
                 }
             }
         } catch (Exception ignored) {
-            LogManager.getLogger().error("An Exception occurred while attempting to read a BuildingBlock stream.");
+            logger.error("An Exception occurred while attempting to read a BuildingBlock stream.");
             return false;
         }
 
@@ -106,7 +115,7 @@ public class BuildingBlock {
      * want to do with the <CODE>rawData</CODE> Vector.
      *
      * @param blockName
-     *            The name of the data block to locate.
+     *                  The name of the data block to locate.
      * @return Returns the start index of the block data. Or -1 if not found.
      */
     public int findStartIndex(String blockName) {
@@ -129,7 +138,7 @@ public class BuildingBlock {
                     break;
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(String.format(
+                logger.error(String.format(
                         "Was looking for %s and caught an Exception parsing line \n\"%s\" \nat rawData index number %s",
                         key, line, lineNum), ex);
             }
@@ -143,7 +152,7 @@ public class BuildingBlock {
      * want to do with the <CODE>rawData</CODE> Vector.
      *
      * @param blockName
-     *            The name of the data block to locate.
+     *                  The name of the data block to locate.
      * @return Returns the end index of the block data. Or -1 if not found.
      */
     public int findEndIndex(String blockName) {
@@ -166,7 +175,7 @@ public class BuildingBlock {
                     break;
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error(String.format(
+                logger.error(String.format(
                         "Was looking for %s and caught an Exception parsing line \n\"%s\" \nwith rawData index number %s",
                         key, line, lineNum));
             }
@@ -178,7 +187,7 @@ public class BuildingBlock {
      * Gets data from inside a block.
      *
      * @param blockName
-     *            The name of the block to grab the data from.
+     *                  The name of the block to grab the data from.
      * @return Returns an array of data.
      */
     public String[] getDataAsString(String blockName) {
@@ -238,7 +247,8 @@ public class BuildingBlock {
         int size = endIndex - startIndex;
 
         if (size == 0) {
-            // data = new int[size + 1]; // add one, so we always have at least a size 1 array...
+            // data = new int[size + 1]; // add one, so we always have at least a size 1
+            // array...
             data = new int[1];
             return data;
         }
@@ -261,7 +271,7 @@ public class BuildingBlock {
                 dataRecord++;
             } catch (NumberFormatException ex) {
                 data[0] = 0;
-                LogManager.getLogger().error("getDataAsInt(\"" + blockName + "\") failed.", ex);
+                logger.error("getDataAsInt(\"" + blockName + "\") failed.", ex);
             }
         }
         return data; // hand back the goods...
@@ -308,7 +318,7 @@ public class BuildingBlock {
                 dataRecord++;
             } catch (NumberFormatException ex) {
                 data[0] = 0;
-                LogManager.getLogger().error("getDataAsFloat(\"" + blockName + "\") failed.");
+                logger.error("getDataAsFloat(\"" + blockName + "\") failed.");
             }
         }
 
@@ -322,14 +332,14 @@ public class BuildingBlock {
         startIndex = findStartIndex(blockName);
         endIndex = findEndIndex(blockName);
         if ((startIndex == -1) || (endIndex == -1)) {
-            return new double[]{0};
+            return new double[] { 0 };
         }
 
         // calculate the size of our data array by subtracting the two indexes
         int size = endIndex - startIndex;
 
         if (size == 0) {
-            return new double[]{0};
+            return new double[] { 0 };
         }
         data = new double[size];
         int dataRecord = 0;
@@ -338,10 +348,10 @@ public class BuildingBlock {
         for (int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
             try {
                 data[dataRecord] = Double.parseDouble(rawData.get(rawRecord));
-                dataRecord ++;
+                dataRecord++;
             } catch (NumberFormatException ex) {
                 data[0] = 0;
-                LogManager.getLogger().error("getDataAsDouble(\"" + blockName + "\") failed.");
+                logger.error("getDataAsDouble(\"" + blockName + "\") failed.");
             }
         }
         return data; // hand back the goods...
@@ -351,7 +361,7 @@ public class BuildingBlock {
      * Gets data from a block.
      *
      * @param blockName
-     *            Name of the block to get data from.
+     *                  Name of the block to get data from.
      * @return Returns the data as a Vector.
      */
     public List<String> getDataAsVector(String blockName) {
@@ -375,17 +385,14 @@ public class BuildingBlock {
     /**
      * Clears the <CODE>rawData</CODE> Vector and inserts a default comment and
      * <I>BlockVersion</I> information.
-     *
-     * @return Returns true on success.
      */
-    public boolean createNewBlock() {
+    public void createNewBlock() {
         rawData.clear();
         writeBlockComment("Saved from version " + SuiteConstants.VERSION + " on " + LocalDate.now());
-        return true;
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, String blockData) {
         String[] temp = new String[1];
@@ -395,7 +402,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, int blockData) {
         String[] temp = new String[1];
@@ -404,7 +411,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, int[] blockData) {
         String[] temp = new String[blockData.length];
@@ -416,7 +423,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, float blockData) {
         String[] temp = new String[1];
@@ -425,7 +432,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, double blockData) {
         String[] temp = new String[1];
@@ -433,9 +440,8 @@ public class BuildingBlock {
         return writeBlockData(blockName, makeVector(temp));
     }
 
-
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, float[] blockData) {
         String[] temp = new String[blockData.length];
@@ -446,7 +452,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, String[] blockData) {
         return writeBlockData(blockName, makeVector(blockData));
@@ -456,9 +462,9 @@ public class BuildingBlock {
      * Writes a data block to the <CODE>rawData</CODE> vector.
      *
      * @param blockName
-     *            Name of the block to be created.
+     *                  Name of the block to be created.
      * @param blockData
-     *            Data to be written inside the block.
+     *                  Data to be written inside the block.
      * @return Returns true on success.
      */
     public boolean writeBlockData(String blockName, List<String> blockData) {
@@ -488,22 +494,21 @@ public class BuildingBlock {
     /**
      * Writes the buildingBlock data to a file.
      *
-     * @param fileName File to write. Overwrites existing files.
+     * @param file File to write. Overwrites existing files.
      * @return true on success.
      */
-    public boolean writeBlockFile(String fileName) {
-        File file = new File(fileName);
+    public boolean writeBlockFile(File file) {
 
         if (file.exists()) {
             if (!file.delete()) {
-                LogManager.getLogger().error("Unable to delete file with name " + fileName);
+                logger.error("Unable to delete file with name " + file);
                 return false;
             }
         }
 
         try (OutputStream fos = new FileOutputStream(file);
-             OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-             BufferedWriter bw = new BufferedWriter(osw)) {
+                OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+                BufferedWriter bw = new BufferedWriter(osw)) {
             for (String rawDatum : rawData) {
                 bw.write(rawDatum);
                 bw.newLine();
@@ -511,7 +516,7 @@ public class BuildingBlock {
 
             bw.flush();
         } catch (Exception e) {
-            LogManager.getLogger().error("Unable to save block file " + fileName, e);
+            logger.error("Unable to save block file " + file.getPath(), e);
             return false;
         }
 
@@ -542,7 +547,7 @@ public class BuildingBlock {
      * Converts a String array into a Vector.
      *
      * @param stringArray
-     *            The String array to convert.
+     *                    The String array to convert.
      * @return Returns the Vector created by the String[]
      */
     public Vector<String> makeVector(String[] stringArray) {
@@ -605,7 +610,7 @@ public class BuildingBlock {
     /**
      * Just about the same as the <CODE>getVector()</CODE> command.
      *
-     * @see getVector ()
+     * @see #getVector()
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
     public Vector<String> getAllDataAsVector() {
@@ -621,7 +626,7 @@ public class BuildingBlock {
      * number in the [0] position.
      *
      * @param array
-     *            The array to get the size of.
+     *              The array to get the size of.
      * @return Returns the number in the [0] position.
      */
     public int getReturnedArraySize(String[] array) {
@@ -629,21 +634,22 @@ public class BuildingBlock {
             return Integer.parseInt(array[0]);
         } catch (Exception ignored) {
             // couldn't parse it...
-            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
+            logger.error(
+                    "Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
     }
 
     // for those of us who like doing things indirectly ; -?
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(int[] array) {
         return array[0];
     }
 
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      * @return Returns <CODE>array.size()</CODE>
      */
     public int getReturnedArraySize(Vector<Object> array) {
@@ -651,13 +657,13 @@ public class BuildingBlock {
     }
 
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(float[] array) {
         try {
             return Integer.parseInt("" + array[0]);
         } catch (Exception ignored) {
-            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
+            logger.error("Couldn't find array size at [0], is this an array I returned? Trying to find the size anyway");
             return this.countArray(array);
         }
     }
@@ -666,7 +672,7 @@ public class BuildingBlock {
      * Counts the size of an array.
      *
      * @param array
-     *            The array to count.
+     *              The array to count.
      * @return Returns the array's size.
      */
     public int countArray(String[] array) {
@@ -674,7 +680,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see countArray( String[] )
+     * @see #countArray( String[] )
      */
     public int countArray(float[] array) {
 
@@ -682,7 +688,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see countArray( String[] )
+     * @see #countArray( String[] )
      */
     public int countArray(int[] array) {
 
@@ -705,10 +711,10 @@ public class BuildingBlock {
     }
 
     /**
-     *  Checks if a block exists and has data.
+     * Checks if a block exists and has data.
      */
     public boolean containsData(String blockName) {
-        if(!exists(blockName)){
+        if (!exists(blockName)) {
             return false;
         }
         // If the end index is the next line after the start index,

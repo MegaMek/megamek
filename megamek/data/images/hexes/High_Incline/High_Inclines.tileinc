@@ -1,4 +1,4 @@
-# Incline gfx, > 2 level inclines 
+# Incline gfx, > 2 level inclines
 
 # Snow theme
 super * "incline_high_top:1:01" "snow" "High_Incline/Snow/High_Incline_Top_Snow_01.png"
@@ -456,5 +456,3 @@ super * "incline_high_top:1:62" "" "High_Incline/Default/High_Incline_Top_Grass_
 super * "incline_high_top:1:63" "" "High_Incline/Default/High_Incline_Top_Grass_63.png"
 
 super * "incline_high_bottom:*" "" "saxarba/misc/blank.png"
-
-

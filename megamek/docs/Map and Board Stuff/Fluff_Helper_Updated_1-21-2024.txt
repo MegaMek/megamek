@@ -63,7 +63,7 @@ fluff:30:1-4
 
 Landing Pads ---------------
 
-fluff:40:1-6 - VTOL landing pads 
+fluff:40:1-6 - VTOL landing pads
 fluff:41:1-6 - Medical landing pads
 fluff:42:1-12 - Aero landing pads
 fluff:43:1-6 - Multihex dropship landing pads
@@ -80,5 +80,3 @@ SeaPort ---------------------
 woods:1;fluff:80:1-29 - Containers
 woods:1;fluff:81:1-48 - Cranes
 fluff:82:1-6 - Crane tips
-
-

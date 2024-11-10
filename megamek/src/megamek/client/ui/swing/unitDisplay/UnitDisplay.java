@@ -14,8 +14,25 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+
+import megamek.client.event.MekDisplayEvent;
+import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
@@ -24,28 +41,24 @@ import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.MekPanelTabStrip;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import megamek.logging.MMLogger;
 
 /**
- * Displays the info for a mech. This is also a sort of interface for special
+ * Displays the info for a mek. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
+public class UnitDisplay extends JPanel {
+    private static final MMLogger logger = MMLogger.create(UnitDisplay.class);
+
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
@@ -61,7 +74,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private JSplitPane splitA1;
     private JSplitPane splitB1;
     private JSplitPane splitC1;
-    private MechPanelTabStrip tabStrip;
+    private MekPanelTabStrip tabStrip;
     private JPanel displayP;
     private SummaryPanel mPan;
     private PilotPanel pPan;
@@ -72,7 +85,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private ClientGUI clientgui;
     private Entity currentlyDisplaying;
     private JLabel labTitle;
-    private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
+    private ArrayList<MekDisplayListener> eventListeners = new ArrayList<>();
 
     public static final String NON_TABBED_GENERAL = "General";
     public static final String NON_TABBED_PILOT = "Pilot";
@@ -99,12 +112,12 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
 
     /**
-     * Creates and lays out a new mech display.
+     * Creates and lays out a new mek display.
      *
      * @param clientgui
-     *            The ClientGUI for the GUI that is creating this UnitDisplay.
-     *            This could be null, if there is no ClientGUI, such as with
-     *            MekWars.
+     *                  The ClientGUI for the GUI that is creating this UnitDisplay.
+     *                  This could be null, if there is no ClientGUI, such as with
+     *                  MekWars.
      */
     public UnitDisplay(@Nullable ClientGUI clientgui) {
         this(clientgui, null);
@@ -117,9 +130,10 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
         labTitle = new JLabel("Title");
 
-        tabStrip = new MechPanelTabStrip(this);
+        tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
-        Image tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+        Image tile = getToolkit()
+                .getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
@@ -239,8 +253,10 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
                         GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
                         GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
                         GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
-                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
-                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(),
+                                GUIP.getUnitDisplayNontabbedPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(),
+                                GUIP.getUnitDisplayNonTabbedSizeHeight());
                         setDisplayNonTabbed();
                     }
                 }
@@ -256,13 +272,9 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             setDisplayTabbed();
-        }
-        else {
+        } else {
             setDisplayNonTabbed();
         }
-
-        adaptToGUIScale();
-        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -280,14 +292,14 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         panC1.removeAll();
         panC2.removeAll();
 
-        displayP.add(MechPanelTabStrip.SUMMARY, mPan);
-        displayP.add(MechPanelTabStrip.PILOT, pPan);
-        displayP.add(MechPanelTabStrip.ARMOR, aPan);
-        displayP.add(MechPanelTabStrip.WEAPONS, wPan);
-        displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
-        displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+        displayP.add(MekPanelTabStrip.SUMMARY, mPan);
+        displayP.add(MekPanelTabStrip.PILOT, pPan);
+        displayP.add(MekPanelTabStrip.ARMOR, aPan);
+        displayP.add(MekPanelTabStrip.WEAPONS, wPan);
+        displayP.add(MekPanelTabStrip.SYSTEMS, sPan);
+        displayP.add(MekPanelTabStrip.EXTRAS, ePan);
 
-        tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
 
         displayP.revalidate();
         displayP.repaint();
@@ -333,9 +345,9 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     }
 
     /**
-    * Save splitter locations to preferences
-    *
-    */
+     * Save splitter locations to preferences
+     *
+     */
     public void saveSplitterLoc() {
         GUIP.setUnitDisplaySplitABCLoc(splitABC.getDividerLocation());
         GUIP.setUnitDisplaySplitBCLoc(splitBC.getDividerLocation());
@@ -411,17 +423,17 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     private void registerKeyboardCommands(final UnitDisplay ud,
             final MegaMekController controller) {
         controller.registerCommandAction(KeyCommandBind.UD_GENERAL, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.SUMMARY));
+                () -> showPanel(MekPanelTabStrip.SUMMARY));
         controller.registerCommandAction(KeyCommandBind.UD_PILOT, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.PILOT));
+                () -> showPanel(MekPanelTabStrip.PILOT));
         controller.registerCommandAction(KeyCommandBind.UD_ARMOR, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.ARMOR));
+                () -> showPanel(MekPanelTabStrip.ARMOR));
         controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.SYSTEMS));
+                () -> showPanel(MekPanelTabStrip.SYSTEMS));
         controller.registerCommandAction(KeyCommandBind.UD_WEAPONS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.WEAPONS));
+                () -> showPanel(MekPanelTabStrip.WEAPONS));
         controller.registerCommandAction(KeyCommandBind.UD_EXTRAS, ud::isVisible,
-                () -> showPanel(MechPanelTabStrip.EXTRAS));
+                () -> showPanel(MekPanelTabStrip.EXTRAS));
     }
 
     @Override
@@ -438,13 +450,15 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      */
     public void displayEntity(Entity en) {
         if ((en == null) || (currentlyDisplaying == en)) {
-            // Issue #5650 - this method should not be executed if the currently displayed entity hasn't changed. 
+            // Issue #5650 - this method should not be executed if the currently displayed
+            // entity hasn't changed.
             return;
         }
         currentlyDisplaying = en;
         updateDisplay();
         if (clientgui != null) {
             clientgui.clearFieldOfFire();
+            clientgui.hideFleeZone();
         }
     }
 
@@ -456,12 +470,12 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
             labTitle.setText(enName);
         }
 
-        mPan.displayMech(currentlyDisplaying);
-        pPan.displayMech(currentlyDisplaying);
-        aPan.displayMech(currentlyDisplaying);
-        wPan.displayMech(currentlyDisplaying);
-        sPan.displayMech(currentlyDisplaying);
-        ePan.displayMech(currentlyDisplaying);
+        mPan.displayMek(currentlyDisplaying);
+        pPan.displayMek(currentlyDisplaying);
+        aPan.displayMek(currentlyDisplaying);
+        wPan.displayMek(currentlyDisplaying);
+        sPan.displayMek(currentlyDisplaying);
+        ePan.displayMek(currentlyDisplaying);
     }
 
     /**
@@ -479,58 +493,60 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
             ((CardLayout) displayP.getLayout()).show(displayP, s);
         }
 
-        if (MechPanelTabStrip.SUMMARY.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
-        } else if (MechPanelTabStrip.PILOT.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
-        } else if (MechPanelTabStrip.ARMOR.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
-        } else if (MechPanelTabStrip.WEAPONS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
-        } else if (MechPanelTabStrip.SYSTEMS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
-        } else if (MechPanelTabStrip.EXTRAS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
+        if (MekPanelTabStrip.SUMMARY.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.SUMMARY_INDEX);
+        } else if (MekPanelTabStrip.PILOT.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.PILOT_INDEX);
+        } else if (MekPanelTabStrip.ARMOR.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.ARMOR_INDEX);
+        } else if (MekPanelTabStrip.WEAPONS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.WEAPONS_INDEX);
+        } else if (MekPanelTabStrip.SYSTEMS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
+        } else if (MekPanelTabStrip.EXTRAS.equals(s)) {
+            tabStrip.setTab(MekPanelTabStrip.EXTRAS_INDEX);
         }
     }
 
     /**
      * Used to force the display to the Systems tab, on a specific location
+     *
      * @param loc
      */
     public void showSpecificSystem(int loc) {
         if (GUIP.getUnitDisplayStartTabbed()) {
-            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+            ((CardLayout) displayP.getLayout()).show(displayP, MekPanelTabStrip.SYSTEMS);
         }
 
-        tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
+        tabStrip.setTab(MekPanelTabStrip.SYSTEMS_INDEX);
         sPan.selectLocation(loc);
     }
 
     /**
-     * Adds the specified mech display listener to receive events from this
+     * Adds the specified mek display listener to receive events from this
      * view.
      *
      * @param listener the listener.
      */
-    public void addMechDisplayListener(MechDisplayListener listener) {
+    public void addMekDisplayListener(MekDisplayListener listener) {
         eventListeners.add(listener);
     }
 
     /**
      * Notifies attached listeners of the event.
      *
-     * @param event the mech display event.
+     * @param event the mek display event.
      */
-    void processMechDisplayEvent(MechDisplayEvent event) {
+    void processMekDisplayEvent(MekDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
-            MechDisplayListener lis = eventListeners.get(i);
+            MekDisplayListener lis = eventListeners.get(i);
             switch (event.getType()) {
-                case MechDisplayEvent.WEAPON_SELECTED:
+                case MekDisplayEvent.WEAPON_SELECTED:
                     lis.weaponSelected(event);
                     break;
                 default:
-                    LogManager.getLogger().error("Received unknown event " + event.getType() + " in processMechDisplayEvent");
+                    logger
+                            .error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
                     break;
             }
         }
@@ -538,22 +554,11 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Returns the UnitDisplay's ClientGUI reference, which can be null.
+     *
      * @return
      */
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
-    }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        // Update the text size when the GUI scaling changes
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
-        }
     }
 }

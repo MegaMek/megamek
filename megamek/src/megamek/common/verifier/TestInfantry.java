@@ -14,27 +14,35 @@
  */
 package megamek.common.verifier;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.calculationReport.TextCalculationReport;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.Infantry;
+import megamek.common.InfantryMount;
+import megamek.common.LocationFullException;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 /**
  * @author Jay Lawson (Taharqa)
  */
 public class TestInfantry extends TestEntity {
     private Infantry infantry;
-    
+
     public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null);
         this.infantry = infantry;
         this.fileString = fileString;
     }
-    
+
     @Override
     public Entity getEntity() {
         return infantry;
@@ -46,27 +54,27 @@ public class TestInfantry extends TestEntity {
     }
 
     @Override
-    public boolean isMech() {
+    public boolean isMek() {
         return false;
     }
-    
+
     @Override
     public boolean isAero() {
         return false;
     }
-    
+
     @Override
     public boolean isSmallCraft() {
         return false;
     }
-    
+
     @Override
     public boolean isAdvancedAerospace() {
         return false;
     }
-    
+
     @Override
-    public boolean isProtomech() {
+    public boolean isProtoMek() {
         return false;
     }
 
@@ -89,17 +97,17 @@ public class TestInfantry extends TestEntity {
     public double getWeightEngine() {
         return 0;
     }
-    
+
     @Override
     public double getWeightStructure() {
         return 0;
     }
-    
+
     @Override
     public double getWeightArmor() {
         return 0;
     }
-    
+
     @Override
     public boolean hasDoubleHeatSinks() {
         return false;
@@ -198,7 +206,7 @@ public class TestInfantry extends TestEntity {
         }
         return correct;
     }
-    
+
     public static int maxSecondaryWeapons(Infantry inf) {
         int max;
         if (inf.getMount() != null) {
@@ -227,10 +235,10 @@ public class TestInfantry extends TestEntity {
         }
         return max;
     }
-    
+
     /**
      * Maximum squad size based on motive type
-     * 
+     *
      * @param movementMode  The platoon's movement mode
      * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
      * @param mount         The mount if the unit is beast-mounted, otherwise null.
@@ -259,7 +267,7 @@ public class TestInfantry extends TestEntity {
             return mount.getSize().troopsPerCreature;
         }
     }
-    
+
     public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain,
                                   InfantryMount mount) {
         int max;
@@ -301,7 +309,7 @@ public class TestInfantry extends TestEntity {
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
-        buff.append("Mech: ").append(infantry.getDisplayName()).append("\n");
+        buff.append("Mek: ").append(infantry.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append("Intro year: ").append(infantry.getYear()).append("\n");
@@ -324,7 +332,7 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public String getName() {
-        return "Infantry: " + infantry.getDisplayName();    
+        return "Infantry: " + infantry.getDisplayName();
     }
 
     @Override

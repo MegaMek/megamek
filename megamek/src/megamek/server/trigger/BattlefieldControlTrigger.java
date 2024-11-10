@@ -19,13 +19,16 @@
 package megamek.server.trigger;
 
 import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
- * This trigger reacts when only units of a single team remain alive and on board (this trigger
- * disregards undeployed units, offboard units, TeleMissiles, GunEmplacements and MechWarriors!).
+ * This trigger reacts when only units of a single team remain alive and on
+ * board (this trigger
+ * disregards undeployed units, offboard units, TeleMissiles, GunEmplacements
+ * and MekWarriors!).
  */
 public class BattlefieldControlTrigger implements Trigger {
+    private static final MMLogger logger = MMLogger.create(BattlefieldControlTrigger.class);
 
     @Override
     public boolean isTriggered(IGame game, TriggerSituation event) {
@@ -33,14 +36,14 @@ public class BattlefieldControlTrigger implements Trigger {
             return twGame.getEntitiesVector().stream()
                     .filter(e -> !e.isOffBoard())
                     .filter(e -> e.getPosition() != null)
-                    .filter(e -> !(e instanceof MechWarrior))
+                    .filter(e -> !(e instanceof EjectedCrew))
                     .filter(e -> !(e instanceof TeleMissile))
                     .filter(e -> !(e instanceof GunEmplacement))
                     .map(unit -> game.getPlayer(unit.getOwnerId()).getTeam())
                     .distinct()
                     .count() == 1;
         } else {
-            LogManager.getLogger().warn("BattlefieldControlTrigger is currently only available for TW games.");
+            logger.warn("BattlefieldControlTrigger is currently only available for TW games.");
             return false;
         }
     }

@@ -146,6 +146,8 @@ public class Terrains implements Serializable {
 
     // This is for low atmosphere maps to indicate that an empty hex is to be drawn as sky, not grassland
     public static final int SKY = 56;
+    
+    public static final int DEPLOYMENT_ZONE = 57;
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -158,7 +160,8 @@ public class Terrains implements Serializable {
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
-            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky" };
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
+            "deployment_zone" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -388,6 +391,8 @@ public class Terrains implements Serializable {
                 } else {
                     return "Extremely high metal content";
                 }
+            case DEPLOYMENT_ZONE:
+                return "Deployment Zone";
             default:
                 return null;
         }

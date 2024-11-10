@@ -22,24 +22,23 @@ package megamek.client.bot.princess;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 8/31/13 1:10 PM
  */
-public class BehaviorSettingsTestConstants {
-    public static final String GOOD_BEHAVIOR_NAME = "DEFAULT";
-    public static final CardinalEdge GOOD_HOME_EDGE = CardinalEdge.NORTH;
-    public static final CardinalEdge GOOD_DESTINATION_EDGE = CardinalEdge.NORTH;
-    public static final boolean GOOD_FORCED_WITHDRAWAL = true;
-    public static final boolean GOOD_AUTO_FLEE = false;
-    public static final int GOOD_FALL_SHAME_INDEX = 5;
-    public static final int GOOD_HYPER_AGGRESSION_INDEX = 5;
-    public static final int GOOD_SELF_PRESERVATION_INDEX = 5;
-    public static final int GOOD_HERD_MENTALITY_INDEX = 5;
-    public static final int GOOD_BRAVERY_INDEX = 5;
-    public static final String STRATEGIC_TARGET_1 = "1234";
-    public static final String STRATEGIC_TARGET_2 = "9876";
-    public static final int PRORITY_TARGET = 100;
-    public static final int BAD_INDEX_BIG = Integer.MAX_VALUE;
-    public static final int BAD_INDEX_SMALL = Integer.MIN_VALUE;
-    public static final String GOOD_BEHAVIOR_XML =
-            "<behavior>\n" +
+class BehaviorSettingsTestConstants {
+    static final String GOOD_BEHAVIOR_NAME = "DEFAULT";
+    static final CardinalEdge GOOD_HOME_EDGE = CardinalEdge.NORTH;
+    static final CardinalEdge GOOD_DESTINATION_EDGE = CardinalEdge.NORTH;
+    static final boolean GOOD_FORCED_WITHDRAWAL = true;
+    static final boolean GOOD_AUTO_FLEE = false;
+    static final int GOOD_FALL_SHAME_INDEX = 5;
+    static final int GOOD_HYPER_AGGRESSION_INDEX = 5;
+    static final int GOOD_SELF_PRESERVATION_INDEX = 5;
+    static final int GOOD_HERD_MENTALITY_INDEX = 5;
+    static final int GOOD_BRAVERY_INDEX = 5;
+    static final String STRATEGIC_TARGET_1 = "1234";
+    static final String STRATEGIC_TARGET_2 = "9876";
+    static final int PRIORITY_TARGET = 100;
+    static final int BAD_INDEX_BIG = Integer.MAX_VALUE;
+    static final int BAD_INDEX_SMALL = Integer.MIN_VALUE;
+    static final String GOOD_BEHAVIOR_XML = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -53,11 +52,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_NULL_NAME =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_NULL_NAME = "<behavior>\n" +
             "    <name>" + null + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -71,11 +69,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_EMPTY_NAME =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_EMPTY_NAME = "<behavior>\n" +
             "    <name></name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -89,11 +86,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_NULL_HOME_EDGE =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_NULL_HOME_EDGE = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + null + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -107,11 +103,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_NULL_FORCED_WITHDRAWAL = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -125,11 +120,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_NULL_AUTO_FLEE =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_NULL_AUTO_FLEE = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -143,11 +137,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_TOO_BIG_FALL_SHAME =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_TOO_BIG_FALL_SHAME = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -161,11 +154,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_TOO_SMALL_FALL_SHAME =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_TOO_SMALL_FALL_SHAME = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -179,11 +171,10 @@ public class BehaviorSettingsTestConstants {
             "    <strategicTargets>\n" +
             "        <target>" + STRATEGIC_TARGET_1 + "</target>\n" +
             "        <target>" + STRATEGIC_TARGET_2 + "</target>\n" +
-            "        <unit>" + PRORITY_TARGET + "</unit>\n" +
+            "        <unit>" + PRIORITY_TARGET + "</unit>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_NULL_STRATEGIC_TARGET =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_NULL_STRATEGIC_TARGET = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -198,8 +189,7 @@ public class BehaviorSettingsTestConstants {
             "        <target>" + null + "</target>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET =
-            "<behavior>\n" +
+    static final String BEHAVIOR_XML_EMPTY_STRATEGIC_TARGET = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +
@@ -214,8 +204,7 @@ public class BehaviorSettingsTestConstants {
             "        <target></target>\n" +
             "    </strategicTargets>\n" +
             "</behavior>";
-    public static final String GOOD_BEHAVIOR_XML_NO_TARGETS =
-            "<behavior>\n" +
+    static final String GOOD_BEHAVIOR_XML_NO_TARGETS = "<behavior>\n" +
             "    <name>" + GOOD_BEHAVIOR_NAME + "</name>\n" +
             "    <retreatEdge>" + GOOD_HOME_EDGE + "</retreatEdge>\n" +
             "    <destinationEdge>" + GOOD_DESTINATION_EDGE + "</destinationEdge>\n" +

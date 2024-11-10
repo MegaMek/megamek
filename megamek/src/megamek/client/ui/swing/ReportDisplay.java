@@ -13,17 +13,17 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.common.enums.GamePhase;
-import megamek.common.event.GamePhaseChangeEvent;
-
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final long serialVersionUID = 6185643976857892270L;
@@ -77,7 +77,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     }
 
     // buttons
-    private Map<ReportCommand, MegamekButton> buttons;
+    private Map<ReportCommand, MegaMekButton> buttons;
     private boolean rerolled; // have we rerolled an init?
 
     private static final String RD_REPORTDISPLAY = "ReportDisplay.";
@@ -129,8 +129,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         ReportCommand[] commands = ReportCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);

@@ -30,11 +30,11 @@ import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.TipTextField;
 
-/** A dialog for entering one or more entity IDs that are to be used as strategic targets by Princess. */ 
+/** A dialog for entering one or more entity IDs that are to be used as strategic targets by Princess. */
 public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
-    
+
     private static final String OK_ACTION = "Ok_Action";
-    
+
     private final TipTextField unitIDField = new TipTextField(5, "..., ...");
     private final JLabel unitIDLabel = new JLabel(Messages.getString("BotConfigDialog.unitIdLabel"));
     private final JLabel noteLabel = new JLabel("<HTML><CENTER>" + Messages.getString("BotConfigDialog.noteLabel"));
@@ -42,7 +42,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
     protected BotConfigTargetUnitDialog(JFrame frame) {
         super(frame, "BotConfigTargetUnitDialog", "BotConfigDialog.bctudTitle");
         initialize();
-        // Catch the Enter key as "OK" 
+        // Catch the Enter key as "OK"
         final KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter, OK_ACTION);
         getRootPane().getInputMap(JComponent.WHEN_FOCUSED).put(enter, OK_ACTION);
@@ -58,7 +58,6 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
                 unitIDField.requestFocus();
             }
         });
-        adaptToGUIScale();
     }
 
     @Override
@@ -66,14 +65,14 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         JPanel result = new JPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         result.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
+
         JPanel unitIDPanel = new UIUtil.FixedYPanel();
         unitIDField.setToolTipText(Messages.getString("BotConfigDialog.unitIdTip"));
         unitIDLabel.setLabelFor(unitIDField);
         unitIDLabel.setDisplayedMnemonic(KeyEvent.VK_I);
         unitIDPanel.add(unitIDLabel);
         unitIDPanel.add(unitIDField);
-        
+
         noteLabel.setBorder(new EmptyBorder(0, 20, 0, 20));
         noteLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
@@ -83,7 +82,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         result.add(noteLabel);
         return result;
     }
-    
+
     /** Returns a list of entered entity IDs. The list may be empty but not null. */
     public Set<Integer> getSelectedIDs() {
         Set<Integer> result = new HashSet<>();
@@ -96,9 +95,5 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
             }
         }
         return result;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

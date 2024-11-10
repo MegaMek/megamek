@@ -18,21 +18,22 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import megamek.common.*;
-import megamek.common.icons.Camouflage;
-import megamek.common.scenario.Scenario;
+import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
+import static megamek.common.jacksonadapters.MMUReader.requireFields;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.common.jacksonadapters.ASElementSerializer.FULL_NAME;
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import megamek.common.*;
+import megamek.common.icons.Camouflage;
+import megamek.common.scenario.Scenario;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -54,6 +55,12 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String ARMOR = "armor";
     private static final String INTERNAL = "internal";
     private static final String FORCE = "force";
+    private static final String CRITS = "crits";
+    private static final String AMMO = "ammo";
+    private static final String SLOT = "slot";
+    private static final String SHOTS = "shots";
+    public static final String FLEE_AREA = "fleefrom";
+    private static final String AREA = "area";
 
     public EntityDeserializer() {
         this(null);
@@ -82,6 +89,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         assignForce(entity, node);
         CrewDeserializer.parseCrew(node, entity);
         assignRemaining(entity, node);
+        assignCrits(entity, node);
+        assignAmmos(entity, node);
+        assignFleeArea(entity, node);
         return entity;
     }
 
@@ -93,7 +103,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private Entity loadEntity(JsonNode node) {
         String fullName = node.get(FULL_NAME).textValue();
-        Entity entity = MechSummary.loadEntity(fullName);
+        Entity entity = MekSummary.loadEntity(fullName);
         if (entity == null) {
             throw new IllegalArgumentException("Could not retrieve unit " + fullName + " from cache!");
         }
@@ -103,13 +113,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private void assignPosition(Entity entity, JsonNode node) {
         try {
             if (node.has(AT)) {
-                List<Integer> xyList = new ArrayList<>();
-                node.get(AT).elements().forEachRemaining(n -> xyList.add(n.asInt()));
-                setDeployedPosition(entity, new Coords(xyList.get(0), xyList.get(1)));
-
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node.get(AT)));
             } else if (node.has(X) || node.has(Y)) {
-                requireFields("Entity", node, X, Y);
-                setDeployedPosition(entity, new Coords(node.get(X).asInt(), node.get(Y).asInt()));
+                setDeployedPosition(entity, CoordsDeserializer.parseNode(node));
             }
         } catch (Exception e) {
             throw new IllegalArgumentException("Illegal position information for entity " + entity, e);
@@ -161,7 +167,17 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 for (int location = 0; location < entity.locations(); location++) {
                     String locationAbbr = entity.getLocationAbbr(location);
                     if (armorNode.has(locationAbbr)) {
-                        entity.setArmor(armorNode.get(locationAbbr).intValue(), location);
+                        // don't allow more than the maximum armor
+                        int newArmor = Math.min(armorNode.get(locationAbbr).intValue(), entity.getArmor(location));
+                        entity.setArmor(newArmor, location);
+                    }
+                    if (entity.hasRearArmor(location)) {
+                        String rearLocationAbbr = entity.getLocationAbbr(location) + "R";
+                        if (armorNode.has(rearLocationAbbr)) {
+                            int newArmor = Math.min(armorNode.get(rearLocationAbbr).intValue(),
+                                    entity.getArmor(location, true));
+                            entity.setArmor(newArmor, location, true);
+                        }
                     }
                 }
             }
@@ -170,7 +186,9 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 for (int location = 0; location < entity.locations(); location++) {
                     String locationAbbr = entity.getLocationAbbr(location);
                     if (internalNode.has(locationAbbr)) {
-                        entity.setInternal(internalNode.get(locationAbbr).intValue(), location);
+                        int newIS = Math.min(internalNode.get(locationAbbr).intValue(),
+                                entity.getInternal(location));
+                        entity.setInternal(newIS, location);
                     }
                 }
             }
@@ -243,5 +261,91 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             ((IAero) entity).setCurrentVelocity(velocity);
             ((IAero) entity).setNextVelocity(velocity);
         }
+    }
+
+    private void assignCrits(Entity entity, JsonNode node) {
+        if (!(entity instanceof Mek) || !node.has(CRITS)) {
+            // Implementation very different for different entities; for now: Meks
+            return;
+        }
+        JsonNode critsNode = node.get(CRITS);
+        for (int location = 0; location < entity.locations(); location++) {
+            String locationAbbr = entity.getLocationAbbr(location);
+            if (critsNode.has(locationAbbr)) {
+                for (int slot : parseArrayOrSingleNode(critsNode.get(locationAbbr))) {
+                    int zeroBasedSlot = slot - 1;
+                    CriticalSlot cs = entity.getCritical(location, zeroBasedSlot);
+                    if ((cs == null) || !cs.isHittable()) {
+                        throw new IllegalArgumentException("Invalid slot " + location + ":" + slot + " on " + entity);
+                    } else {
+                        cs.setHit(true);
+                        if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mek.SYSTEM_ENGINE)) {
+                            entity.engineHitsThisPhase++;
+                        } else {
+                            Mounted<?> mounted = cs.getMount();
+                            mounted.setDestroyed(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void assignAmmos(Entity entity, JsonNode node) {
+        if (node.has(AMMO)) {
+            JsonNode critsNode = node.get(AMMO);
+            for (int location = 0; location < entity.locations(); location++) {
+                String locationAbbr = entity.getLocationAbbr(location);
+                final int finalLoc = location;
+                if (critsNode.has(locationAbbr)) {
+                    critsNode.get(locationAbbr).iterator().forEachRemaining(n -> assignAmmo(entity, n, finalLoc));
+                }
+            }
+        }
+    }
+
+    private void assignAmmo(Entity entity, JsonNode node, int location) {
+        int slot = node.get(SLOT).asInt() - 1;
+        int shots = node.get(SHOTS).asInt();
+        CriticalSlot cs = entity.getCritical(location, slot);
+        if (cs != null) {
+            Mounted<?> ammo = cs.getMount();
+            if (ammo.getType() instanceof AmmoType) {
+                // Also make sure we dont exceed the max allowed
+                ammo.setShotsLeft(Math.min(shots, ammo.getBaseShotsLeft()));
+            } else {
+                throw new IllegalArgumentException("Invalid ammo slot " + location + ":" + (slot + 1) + " on " + entity);
+            }
+        }
+    }
+
+    private void assignFleeArea(Entity entity, JsonNode node) {
+        if (node.has(FLEE_AREA)) {
+            // allow using or omitting "area:"
+            if (node.get(FLEE_AREA).has(AREA)) {
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA).get(AREA)));
+            } else {
+                entity.setFleeZone(HexAreaDeserializer.parseShape(node.get(FLEE_AREA)));
+            }
+        }
+    }
+
+    /**
+     * Returns all Integers of a node as a List. The node may be either of the form "node: singleNumber", in
+     * which case the List will only contain singleNumber, or it may be an array node of the form
+     * "node: [ firstNumber, secondNumber ]" (or the multi-line form using dashes) in which case the list
+     * contains all the given numbers.
+     *
+     * @param node The node to parse
+     * @return A list of the given numbers of the node
+     */
+    public static List<Integer> parseArrayOrSingleNode(JsonNode node) {
+        List<Integer> result = new ArrayList<>();
+        if (node.isArray()) {
+            node.iterator().forEachRemaining(n -> result.add(n.asInt()));
+        } else {
+            result.add(node.asInt());
+        }
+        return result;
     }
 }

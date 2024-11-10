@@ -13,14 +13,14 @@
  */
 package megamek.common.actions;
 
-import megamek.common.BipedMech;
+import megamek.common.BipedMek;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Hex;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Terrains;
-import megamek.common.TripodMech;
+import megamek.common.TripodMek;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -43,15 +43,15 @@ public class FindClubAction extends AbstractEntityAction {
      * @param game The current {@link Game}
      * @return whether an entity can find a club in its current location
      */
-    public static boolean canMechFindClub(Game game, int entityId) {
+    public static boolean canMekFindClub(Game game, int entityId) {
         final Entity entity = game.getEntity(entityId);
         if ((null == entity) || null == (entity.getPosition())) {
             return false;
         }
         final Hex hex = game.getBoard().getHex(entity.getPosition());
 
-        // Only biped and tripod 'Mechs qualify at all.
-        if (!(entity instanceof BipedMech || entity instanceof TripodMech)) {
+        // Only biped and tripod 'Meks qualify at all.
+        if (!(entity instanceof BipedMek || entity instanceof TripodMek)) {
             return false;
         }
 
@@ -79,10 +79,10 @@ public class FindClubAction extends AbstractEntityAction {
 
         // also, need shoulders and hands
         // Claws can substitute as hands --Torren
-        if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-                || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((Mech) entity).hasClaw(Mech.LOC_RARM))
-                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((Mech) entity).hasClaw(Mech.LOC_LARM))) {
+        if (!entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
+                || !entity.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)
+                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM) && !((Mek) entity).hasClaw(Mek.LOC_RARM))
+                || (!entity.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM) && !((Mek) entity).hasClaw(Mek.LOC_LARM))) {
             return false;
         }
 

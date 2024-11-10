@@ -13,21 +13,23 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author arlith
  */
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(MekMortarAirburstHandler.class);
+
     private static final long serialVersionUID = -2073773899108954657L;
 
-    public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -39,10 +41,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))) {
-            LogManager.getLogger().error("Not using airburst ammo!");
+            logger.error("Not using airburst ammo!");
             return true;
         }
 
@@ -189,7 +191,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     adjustReports(newReports);
                     vPhaseReport.addAll(newReports);
                     continue;
-                // Battlarmor take damage to each trooper
+                    // Battlarmor take damage to each trooper
                 } else if (target instanceof BattleArmor) {
                     newReports = new Vector<>();
                     for (int loc = 0; loc < target.locations(); loc++) {
@@ -225,7 +227,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
 
     /**
      * Indents all reports in the collection, and adds a new line to the last
-     * one.  This is used to make nested reports line-up and look nicer.
+     * one. This is used to make nested reports line-up and look nicer.
      *
      * @param reports
      */

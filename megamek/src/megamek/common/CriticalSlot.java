@@ -26,7 +26,7 @@ public class CriticalSlot implements Serializable {
     /**
      * Determines what the type of this CriticalSlot is, either system or
      * equipment. Systems represent core components of a unit that are located
-     * in specific criticals, such as gyros, engines, and cockpits.  Equipment
+     * in specific criticals, such as gyros, engines, and cockpits. Equipment
      * represents everything else, and will have an entry in an EquipmentType
      * subclass.
      */
@@ -37,8 +37,8 @@ public class CriticalSlot implements Serializable {
      * index into a collection to determine what the system actually is.
      */
     private int index = -1;
-    private Mounted mount;
-    private Mounted mount2;
+    private Mounted<?> mount;
+    private Mounted<?> mount2;
 
     private boolean hit = false; // hit
     private boolean missing = false; // location destroyed
@@ -64,7 +64,7 @@ public class CriticalSlot implements Serializable {
         }
     }
 
-    public CriticalSlot(Mounted mount) {
+    public CriticalSlot(Mounted<?> mount) {
         this(TYPE_EQUIPMENT, -1, mount.getType().isHittable(), mount.isArmored());
         this.mount = mount;
     }
@@ -174,7 +174,8 @@ public class CriticalSlot implements Serializable {
         CriticalSlot other = (CriticalSlot) object;
         return ((other.getType() == type) && (other.getIndex() == index) && (((other
                 .getMount() != null) && (mount != null) && other.getMount()
-                .equals(mount)) || ((mount == null) && (other.getMount() == null))));
+                        .equals(mount))
+                || ((mount == null) && (other.getMount() == null))));
     }
 
     @Override
@@ -185,28 +186,28 @@ public class CriticalSlot implements Serializable {
     /**
      * @param mount the mount to set
      */
-    public void setMount(Mounted mount) {
+    public void setMount(Mounted<?> mount) {
         this.mount = mount;
     }
 
     /**
      * @return the mount
      */
-    public Mounted getMount() {
+    public Mounted<?> getMount() {
         return mount;
     }
 
     /**
      * @param mount the mount to set
      */
-    public void setMount2(Mounted mount) {
+    public void setMount2(Mounted<?> mount) {
         mount2 = mount;
     }
 
     /**
      * @return the mount
      */
-    public Mounted getMount2() {
+    public Mounted<?> getMount2() {
         return mount2;
     }
 
@@ -230,19 +231,30 @@ public class CriticalSlot implements Serializable {
     public String toString() {
         String typeString = type == 0 ? "System Slot" : "Equipment Slot";
         List<String> state = new ArrayList<>();
-        if (type == 0) state.add("System No: " + index);
-        if (mount != null) state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
-                + (mount.isWeaponGroup() ? " -Group-" : ""));
-        if (mount2 != null) state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName()
-                + (mount2.isWeaponGroup() ? " -Group-" : ""));
-        if (destroyed) state.add("Destroyed");
-        if (hit) state.add("Hit");
-        if (!hittable) state.add("Not hittable");
-        if (breached) state.add("Breached");
-        if (missing) state.add("Missing");
-        if (armored) state.add("Armored");
-        if (repairing) state.add("Repairing");
-        if (!repairable) state.add("Not repairable");
+        if (type == 0)
+            state.add("System No: " + index);
+        if (mount != null)
+            state.add("[" + mount.equipmentIndex() + "] " + mount.getType().getInternalName()
+                    + (mount.isWeaponGroup() ? " -Group-" : ""));
+        if (mount2 != null)
+            state.add("Mount 2: [" + mount2.equipmentIndex() + "] " + mount2.getType().getInternalName()
+                    + (mount2.isWeaponGroup() ? " -Group-" : ""));
+        if (destroyed)
+            state.add("Destroyed");
+        if (hit)
+            state.add("Hit");
+        if (!hittable)
+            state.add("Not hittable");
+        if (breached)
+            state.add("Breached");
+        if (missing)
+            state.add("Missing");
+        if (armored)
+            state.add("Armored");
+        if (repairing)
+            state.add("Repairing");
+        if (!repairable)
+            state.add("Not repairable");
         return typeString + " { " + String.join(", ", state) + " }";
     }
 }

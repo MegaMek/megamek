@@ -1,18 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
@@ -28,21 +35,16 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class SRMInfernoHandler extends SRMHandler {
+    @Serial
     private static final long serialVersionUID = 826674238068613732L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";
@@ -165,19 +167,10 @@ public class SRMInfernoHandler extends SRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once, if not missed
-        if (!bMissed) {
-            vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target, hits,
-                    weapon.getCalledShot().getCall()));
-        }
+        vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit with all missiles

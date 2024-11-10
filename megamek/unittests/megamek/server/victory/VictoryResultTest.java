@@ -1,8 +1,22 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.server.victory;
-
-import megamek.common.Game;
-import megamek.common.Player;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -12,10 +26,15 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class VictoryResultTest {
+import org.junit.jupiter.api.Test;
+
+import megamek.common.Game;
+import megamek.common.Player;
+
+class VictoryResultTest {
 
     @Test
-    public void testGetWinningPlayer() {
+    void testGetWinningPlayer() {
         // Trivial case: no players
         VictoryResult testResult = new VictoryResult(false);
         assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
@@ -39,7 +58,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testGetWinningTeam() {
+    void testGetWinningTeam() {
         // Trivial case: no team
         VictoryResult testResult = new VictoryResult(false);
         assertSame(Player.TEAM_NONE, testResult.getWinningTeam());
@@ -63,7 +82,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testProcessVictory() {
+    void testProcessVictory() {
         // Trivial cases
         VictoryResult victoryResult = new VictoryResult(true);
 
@@ -103,14 +122,14 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testGetPlayerScoreNull() {
+    void testGetPlayerScoreNull() {
         VictoryResult victoryResult = new VictoryResult(true);
 
         assertEquals(0.0, victoryResult.getPlayerScore(1), 0.0);
     }
 
     @Test
-    public void testGetPlayerScore() {
+    void testGetPlayerScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setPlayerScore(1, 3);
 
@@ -118,7 +137,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testUpdateHiScore_Player() {
+    void testUpdateHiScore_Player() {
         VictoryResult victoryResult = new VictoryResult(false);
         victoryResult.setPlayerScore(1, 1);
         victoryResult.setPlayerScore(2, 2);
@@ -128,7 +147,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testUpdateHiScore_Team() {
+    void testUpdateHiScore_Team() {
         VictoryResult victoryResult = new VictoryResult(false);
         victoryResult.setTeamScore(1, 1);
         victoryResult.setTeamScore(2, 2);
@@ -138,7 +157,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testSetPlayerScore() {
+    void testSetPlayerScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setPlayerScore(1, 3);
 
@@ -147,7 +166,7 @@ public class VictoryResultTest {
     }
 
     @Test
-    public void testSetTeamScore() {
+    void testSetTeamScore() {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.setTeamScore(1, 3);
 

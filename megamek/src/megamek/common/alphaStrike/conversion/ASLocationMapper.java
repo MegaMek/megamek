@@ -18,12 +18,17 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import static megamek.common.MiscType.F_HEAD_TURRET;
+import static megamek.common.MiscType.F_QUAD_TURRET;
+import static megamek.common.MiscType.F_SHOULDER_TURRET;
+
 import megamek.common.*;
-import static megamek.common.MiscType.*;
 
 /**
- * This class provides AlphaStrike conversion utilities for converting all sorts of locations
- * of TW units to the damage conversion location index. Not useful for anything outside
+ * This class provides AlphaStrike conversion utilities for converting all sorts
+ * of locations
+ * of TW units to the damage conversion location index. Not useful for anything
+ * outside
  * of AlphaStrike conversion.
  */
 public class ASLocationMapper {
@@ -39,9 +44,9 @@ public class ASLocationMapper {
             } else {
                 return 4;
             }
-        } else if ((en instanceof TripodMech) || (en instanceof QuadVee)) {
+        } else if ((en instanceof TripodMek) || (en instanceof QuadVee)) {
             return 3;
-        } else if (en instanceof Mech) {
+        } else if (en instanceof Mek) {
             return (en.hasMisc(F_QUAD_TURRET) || en.hasMisc(F_SHOULDER_TURRET) || en.hasMisc(F_HEAD_TURRET)) ? 3 : 2;
         } else if (en instanceof Aero) {
             return 2;
@@ -54,8 +59,8 @@ public class ASLocationMapper {
         }
     }
 
-    public static double damageLocationMultiplier(Entity en, int loc, Mounted mount) {
-        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
+    public static double damageLocationMultiplier(Entity en, int loc, Mounted<?> mount) {
+        if (locationName(en, loc).startsWith("TUR") && (en instanceof Mek) && mount.isMekTurretMounted()) {
             return 1;
         } else if (en instanceof Warship) {
             return getWarShipLocationMultiplier(loc, mount.getLocation());
@@ -74,17 +79,19 @@ public class ASLocationMapper {
         } else if (en instanceof Aero) {
             return getAeroLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof BattleArmor) {
-            // A few weapons (e.g. Narc) are present in the weapon list for every trooper, count only the first (loc = 1)
+            // A few weapons (e.g. Narc) are present in the weapon list for every trooper,
+            // count only the first (loc = 1)
             // Don't count squad support weapons, these are handled separately
             return ((mount.getLocation() <= 1) && !mount.isSquadSupportWeapon()) ? 1 : 0;
         } else if (en instanceof Infantry) {
-            // CI only ever have loc == 0 (no TUR, REAR, arcs); do not count standard weapons when it has field guns
+            // CI only ever have loc == 0 (no TUR, REAR, arcs); do not count standard
+            // weapons when it has field guns
             return (!((Infantry) en).hasFieldWeapon() || (mount.getLocation() == Infantry.LOC_FIELD_GUNS)) ? 1 : 0;
-        } else if (en instanceof TripodMech) {
+        } else if (en instanceof TripodMek) {
             return getTripodMekLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof QuadVee) {
             return getQuadVeeLocationMultiplier(loc, mount.isRearMounted());
-        } else if (en instanceof Mech) {
+        } else if (en instanceof Mek) {
             return getMekLocationMultiplier(loc, mount.isRearMounted());
         } else {
             return 1;
@@ -92,21 +99,28 @@ public class ASLocationMapper {
     }
 
     /**
-     * Returns the value multiplier for the given Mounted of the given entity in the AS conversion location loc.
-     * The AS conversion location is an {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling
-     * the specials for the unit, a TUR ability, REAR and the arcs of large units, not the
-     * mounted's location on the entity. This multiplier is only correct for weapon-based special abilities
+     * Returns the value multiplier for the given Mounted of the given entity in the
+     * AS conversion location loc.
+     * The AS conversion location is an
+     * {@link megamek.common.alphaStrike.ASSpecialAbilityCollection} assembling
+     * the specials for the unit, a TUR ability, REAR and the arcs of large units,
+     * not the
+     * mounted's location on the entity. This multiplier is only correct for
+     * weapon-based special abilities
      * like MHQ, C3M, NARC or ART-x abilities.
      *
-     * @param en The entity
-     * @param loc The conversion location index, see locations[] in ASDamageConverter
+     * @param en    The entity
+     * @param loc   The conversion location index, see locations[] in
+     *              ASDamageConverter
      * @param mount the weapon
-     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning "doesnt count"
+     * @return The value multiplier, 1 meaning "counts for this location", 0 meaning
+     *         "doesnt count"
      */
-    public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted mount) {
+    public static double damageLocationMultiplierForSpecials(Entity en, int loc, Mounted<?> mount) {
         if (en.isFighter() || en.isProtoMek() || en.isMek()) {
             if ((loc == 0) && (mount.isRearMounted() || (en.isFighter() && mount.getLocation() == Aero.LOC_AFT))) {
-                // Special abilities like MHQ or ART must count for loc 0 (standard specials) even if in rear locations
+                // Special abilities like MHQ or ART must count for loc 0 (standard specials)
+                // even if in rear locations
                 return 1;
             } else if (locationName(en, loc).equals("REAR")) {
                 return 0;
@@ -149,7 +163,7 @@ public class ASLocationMapper {
                 return "";
             }
             return en.getLocationAbbrs()[index];
-        } else if ((en instanceof Mech) || (en instanceof Tank)) {
+        } else if ((en instanceof Mek) || (en instanceof Tank)) {
             if (index == 1) {
                 return "REAR";
             } else if (index == 2) {
@@ -296,7 +310,7 @@ public class ASLocationMapper {
         if ((index == 0 && !rearMounted || (index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            if (location != TripodMech.LOC_CLEG && location != TripodMech.LOC_RLEG && location != TripodMech.LOC_LLEG) {
+            if (location != TripodMek.LOC_CLEG && location != TripodMek.LOC_RLEG && location != TripodMek.LOC_LLEG) {
                 return 1;
             }
         }
@@ -318,11 +332,13 @@ public class ASLocationMapper {
             return 1;
         } else if ((index == 1) && (location == SuperHeavyTank.LOC_REAR)) {
             return 1;
-        } else if ((index == 2) && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
+        } else if ((index == 2)
+                && ((location == SuperHeavyTank.LOC_TURRET) || (location == SuperHeavyTank.LOC_TURRET_2))) {
             return 1;
         }
         return 0;
     }
 
-    private ASLocationMapper() { }
+    private ASLocationMapper() {
+    }
 }

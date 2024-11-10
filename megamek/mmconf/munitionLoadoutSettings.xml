@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-    <properties>
+<properties>
     <comment>Used by TeamLoadoutGenerator and MunitionWeightCollection</comment>
     <entry key="commentStartMunitionTreeArea">The following entries are used by MunitionTree</entry>
     <entry key="mtReducingAmmoReduceIfUnderFactor">2.0</entry>
@@ -17,12 +17,13 @@
     <entry key="mtGuidedAmmoFriendlyTAGThreshold">1.0</entry>
     <entry key="mtGuidedAmmoFriendlyNARCThreshold">1.0</entry>
     <entry key="mtGuidedAmmoFriendlyMissileBoatFractionDivisor">3.0</entry>
-    <entry key="mtUtilityAmmoOffboardUnitsThreshold">2.0</entry>
+    <entry key="mtUtilityAmmoOffBoardUnitsThreshold">2.0</entry>
     <entry key="mtUtilityAmmoFriendlyVsEnemyFractionDivisor">1.0</entry>
     <entry key="mtEnergyBoatEnemyFractionDivisor">4.0</entry>
     <entry key="mtSeekingAmmoEnemyTSMExceedThreshold">1.0</entry>
-    <entry key="commentTopMunitionsSubsetCount">This count determines how many munition types (out of all options) are actually selected</entry>
-    <entry key="mtTopMunitionsSubsetCount">4</entry>
+    <entry key="commentTopMunitionsSubsetCount">This count determines how many munition types (out
+        of all options) are actually selected</entry>
+    <entry key="mtTopMunitionsSubsetCount">8</entry>
     <entry key="commentStartTLGBombArea">The following entries are used by Bombs:</entry>
     <entry key="bombMapGroundSpreadNormal">6</entry>
     <entry key="bombMapGroundSpreadAnti-Mek">3</entry>
@@ -77,7 +78,7 @@
     <entry key="defaultStandardMunitionWeight">2.0</entry>
     <entry key="defaultMissileStandardMunitionWeight">2.0</entry>
     <entry key="defaultDeadFireMunitionWeight">3.0</entry>
-    <entry key="defaultArtemiscapableMunitionWeight">0.0</entry>
+    <entry key="defaultArtemisCapableMunitionWeight">0.0</entry>
     <entry key="defaultATMMunitionWeight">2.0</entry>
     <entry key="defaultATMStandardWeight">1.0</entry>
     <entry key="increaseWeightFactor">2.0</entry>
@@ -87,7 +88,8 @@
     <entry key="commentPercentBombers">Sets the minimum + (0 ~ N) range of bomber units to equip.</entry>
     <entry key="percentBombersToEquipMin">40</entry>
     <entry key="percentBombersToEquipRange">60</entry>
-    <entry key="commentFighterCAPThreshold">For each Aerospace unit, if 1d6 is equal or below threshold, equip for CAP</entry>
+    <entry key="commentFighterCAPThreshold">For each Aerospace unit, if 1d6 is equal or below
+        threshold, equip for CAP</entry>
     <entry key="fightersLoadForCAPRollTargetThreshold">1</entry>
     <entry key="bomberMinUnarmedSafeThrustValue">2</entry>
     <entry key="bomberMinArmedSafeThrustValue">3</entry>
@@ -100,8 +102,9 @@
     <entry key="bombersToAddTagMaxCount">3</entry>
     <entry key="bomberRandomThresholdMaxPercent">100</entry>
     <entry key="fighterCAPRandomPercentageRange">100</entry>
-    <entry key="fighterCAPAntiShipLoadoutRandomPercentageMax">20</entry>
-    <entry key="commentReplacementBomb">If a munition must be replaced, range and threshold of RL vs HE</entry>
+    <entry key="fighterCAPAntiShipLoadOutRandomPercentageMax">20</entry>
+    <entry key="commentReplacementBomb">If a munition must be replaced, range and threshold of RL vs
+        HE</entry>
     <entry key="bombReplacementIntRange">2</entry>
     <entry key="bombReplacementRLThreshold">0</entry>
     <entry key="maxBombApplicationLoopCount">10</entry>
@@ -112,8 +115,10 @@
     <entry key="bombRandomReplaceRating1PlusThreshold">40</entry>
     <entry key="bombRandomReplaceRating0PlusThreshold">80</entry>
     <entry key="commentPirateBinFillRatio">Pirates and Rebels get ammo bins filled at random ratios</entry>
-    <entry key="commentPirateBinFillRatio2">Min(maxAllowed, Max(minAllowed, random/rangeDivisor + quality/qualityDivisor))</entry>
-    <entry key="commentPirateBinFillRatio3">E.g. the defaults give a range of 20% to 100%, with Quality Rating 0 giving ~20% and Rating 5 giving ~75% on average</entry>
+    <entry key="commentPirateBinFillRatio2">Min(maxAllowed, Max(minAllowed, random/rangeDivisor +
+        quality/qualityDivisor))</entry>
+    <entry key="commentPirateBinFillRatio3">E.g. the defaults give a range of 20% to 100%, with
+        Quality Rating 0 giving ~20% and Rating 5 giving ~75% on average</entry>
     <entry key="pirateMaxAllowedBinFillRatio">1.0</entry>
     <entry key="pirateMinAllowedBinFillRatio">0.2</entry>
     <entry key="pirateRandomRangeDivisor">4.0</entry>

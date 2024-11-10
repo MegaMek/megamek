@@ -18,27 +18,30 @@
  */
 package megamek.client.ui.preferences;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import megamek.logging.MMLogger;
+
 /**
- * Represents a group of {@link PreferenceElement}s that are part of the same Class.
+ * Represents a group of {@link PreferenceElement}s that are part of the same
+ * Class.
  *
  * This class is not thread-safe.
  */
 public class PreferencesNode {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(PreferencesNode.class);
+
+    // region Variable Declarations
     private final Class<?> node;
     private final Map<String, PreferenceElement> elements;
     private Map<String, String> initialValues;
     private boolean initialized;
     private boolean finalized;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public PreferencesNode(final Class<?> node) {
         this.node = Objects.requireNonNull(node);
         this.elements = new HashMap<>();
@@ -46,9 +49,9 @@ public class PreferencesNode {
         setInitialized(false);
         setFinalized(false);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public Class<?> getNode() {
         return node;
     }
@@ -80,12 +83,14 @@ public class PreferencesNode {
     public void setFinalized(final boolean finalized) {
         this.finalized = finalized;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
     /**
      * Adds new elements to be managed by this node.
-     * If there are initial values set for this node, we will try to set an initial value
+     * If there are initial values set for this node, we will try to set an initial
+     * value
      * for each element.
+     *
      * @param elements the elements to manage.
      */
     public void manage(final PreferenceElement... elements) {
@@ -102,7 +107,7 @@ public class PreferencesNode {
                 try {
                     element.initialize(getInitialValues().get(element.getName()));
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("Failed initializing element " + element.getName(), ex);
+                    logger.error(ex, "Failed initializing element " + element.getName());
                 }
             }
         }
@@ -111,6 +116,7 @@ public class PreferencesNode {
     /**
      * Sets the initial values for elements managed for this node.
      * This method should only be called once.
+     *
      * @param initialValues the initial values for the elements.
      * @throws Exception if initialization has already occurred
      */
@@ -124,6 +130,7 @@ public class PreferencesNode {
 
     /**
      * This method should only be called once.
+     *
      * @return the final values of all the elements managed by this node.
      * @throws Exception if this method is called a second time
      */

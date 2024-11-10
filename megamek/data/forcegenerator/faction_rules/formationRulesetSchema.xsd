@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-elementFormDefault="qualified">
+	elementFormDefault="qualified">
 
 	<xs:attributeGroup name="predicateAttributeGroup">
 		<xs:attribute name="ifUnitType" type="xs:string" />
@@ -18,7 +18,7 @@ elementFormDefault="qualified">
 		<xs:attribute name="ifFlags" type="xs:string" />
 		<xs:attribute name="ifIndex" type="xs:string" />
 	</xs:attributeGroup>
-	
+
 	<xs:attributeGroup name="assertionAttributeGroup">
 		<xs:attribute name="unitType" type="xs:string" />
 		<xs:attribute name="weightClass" type="xs:string" />
@@ -35,7 +35,7 @@ elementFormDefault="qualified">
 		<xs:attribute name="faction" type="xs:string" />
 		<xs:attribute name="flags" type="xs:string" />
 	</xs:attributeGroup>
-	
+
 	<xs:group name="ruleGroup">
 		<xs:choice>
 			<xs:element name="weightClass" type="optionGroupType" />
@@ -44,18 +44,18 @@ elementFormDefault="qualified">
 			<xs:element name="variant" type="optionGroupType" />
 			<xs:element name="motive" type="optionGroupType" />
 			<xs:element name="formation" type="optionGroupType" />
-			<xs:element name="role" type="optionGroupType" />	
-			<xs:element name="flags" type="optionGroupType" />	
-			<xs:element name="changeEschelon" type="optionGroupType" />	
+			<xs:element name="role" type="optionGroupType" />
+			<xs:element name="flags" type="optionGroupType" />
+			<xs:element name="changeEschelon" type="optionGroupType" />
 		</xs:choice>
 	</xs:group>
-	
+
 	<xs:element name="ruleset">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="defaults" />
-				<xs:element minOccurs="0" maxOccurs="1" ref="customRanks"/>
-				<xs:element minOccurs="0" maxOccurs="1" ref="toc"/>
+				<xs:element minOccurs="0" maxOccurs="1" ref="customRanks" />
+				<xs:element minOccurs="0" maxOccurs="1" ref="toc" />
 				<xs:element minOccurs="0" maxOccurs="unbounded" ref="force" />
 			</xs:sequence>
 			<xs:attribute name="faction" type="xs:string" />
@@ -69,7 +69,7 @@ elementFormDefault="qualified">
 			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<xs:element name="defaults">
 		<xs:complexType>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -116,22 +116,22 @@ elementFormDefault="qualified">
 			</xs:choice>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<xs:element name="toc">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="1" name="unitType" type="tocType"/>
-				<xs:element minOccurs="0" maxOccurs="1" name="eschelon" type="tocType"/>
-				<xs:element minOccurs="0" maxOccurs="1" name="rating" type="tocType"/>				
-				<xs:element minOccurs="0" maxOccurs="1" name="flags" type="tocType"/>
+				<xs:element minOccurs="0" maxOccurs="1" name="unitType" type="tocType" />
+				<xs:element minOccurs="0" maxOccurs="1" name="eschelon" type="tocType" />
+				<xs:element minOccurs="0" maxOccurs="1" name="rating" type="tocType" />
+				<xs:element minOccurs="0" maxOccurs="1" name="flags" type="tocType" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<xs:element name="customRanks">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" name="base" type="xs:string"/>
+				<xs:element minOccurs="0" name="base" type="xs:string" />
 				<xs:element maxOccurs="unbounded" name="rank">
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
@@ -142,12 +142,12 @@ elementFormDefault="qualified">
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	
+
 	<xs:element name="force">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="name" minOccurs="0"
-						maxOccurs="unbounded">
+					maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:simpleContent>
 							<xs:extension base="xs:string">
@@ -165,35 +165,35 @@ elementFormDefault="qualified">
 					minOccurs="0" maxOccurs="unbounded" />
 				<xs:element name="ruleGroup" type="ruleGroupType"
 					minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="subforces" type="subforcesType" 
+				<xs:element name="subforces" type="subforcesType"
 					minOccurs="0" maxOccurs="unbounded" />
 				<xs:element name="attachedForces"
 					type="subforcesType"
 					minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 
-			<xs:attribute name="eschelon" type="xs:string" use="required"/>
+			<xs:attribute name="eschelon" type="xs:string" use="required" />
 			<xs:attribute name="eschName" type="xs:string" />
 			<xs:attributeGroup ref="predicateAttributeGroup" />
 		</xs:complexType>
 	</xs:element>
-	
+
 	<xs:complexType name="tocType">
 		<xs:sequence>
 			<xs:element name="option" type="tocOptionType"
 				maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:complexType name="tocOptionType">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute name="ifEschelon" type="xs:string"/>
-				<xs:attributeGroup ref="predicateAttributeGroup"/>
+				<xs:attribute name="ifEschelon" type="xs:string" />
+				<xs:attributeGroup ref="predicateAttributeGroup" />
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="commanderType">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
@@ -204,25 +204,26 @@ elementFormDefault="qualified">
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="ruleGroupType">
 		<xs:sequence>
 			<xs:group ref="ruleGroup" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
-	
+
 	<xs:complexType name="optionGroupType">
 		<xs:sequence>
 			<xs:element name="option" type="optionType"
 				maxOccurs="unbounded" />
 		</xs:sequence>
-		
+
 		<xs:attributeGroup ref="predicateAttributeGroup" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="optionType">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
+				<xs:attribute name="ifYearBetween" type="xs:string" />
 				<xs:attribute name="weight" type="xs:integer"
 					default="1" />
 				<xs:attribute name="num" type="xs:integer" />
@@ -231,7 +232,7 @@ elementFormDefault="qualified">
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="subforcesType">
 		<xs:choice>
 			<xs:element name="asFaction" type="xs:string" />
@@ -242,11 +243,11 @@ elementFormDefault="qualified">
 					type="subforceOptionType" />
 			</xs:choice>
 		</xs:choice>
-		
+
 		<xs:attributeGroup ref="predicateAttributeGroup" />
 		<xs:attribute name="generate" type="generateType" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="subforceType">
 		<xs:simpleContent>
 			<xs:extension base="eschelonDefinition">
@@ -257,7 +258,7 @@ elementFormDefault="qualified">
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<xs:simpleType name="generateType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="model" />
@@ -267,11 +268,11 @@ elementFormDefault="qualified">
 			<xs:enumeration value="" />
 		</xs:restriction>
 	</xs:simpleType>
-			
+
 	<xs:simpleType name="eschelonDefinition">
-			<xs:restriction base="xs:string">
-				<xs:pattern value="([0-9]+|%[A-Z_]+%)[+-^]?" />
-			</xs:restriction>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([0-9]+|%[A-Z_]+%)[+-^]?" />
+		</xs:restriction>
 	</xs:simpleType>
 
 	<xs:complexType name="subforceOptionType">

@@ -201,14 +201,15 @@ public class SupportTank extends Tank {
             case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
                         || (hex.terrainLevel(Terrains.ROUGH) > 1)
                         || (hex.terrainLevel(Terrains.RUBBLE) > 5);
             case WHEELED:
-                return hex.containsTerrain(Terrains.WOODS)
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
                         || hex.containsTerrain(Terrains.ROUGH)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
                                 && !hex.containsTerrain(Terrains.ICE) 
@@ -219,7 +220,8 @@ public class SupportTank extends Tank {
                         || (hex.terrainLevel(Terrains.SNOW) > 1)
                         || (hex.terrainLevel(Terrains.GEYSER) == 2);
             case HOVER:
-                return hex.containsTerrain(Terrains.WOODS)
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
                         || (hex.terrainLevel(Terrains.ROUGH) > 1)
@@ -239,6 +241,10 @@ public class SupportTank extends Tank {
             default:
                 return false;
         }
+    }
+
+    public boolean isMonoCycleOrBicycle() {
+        return hasWorkingMisc(MiscType.F_BICYCLE) || hasWorkingMisc(MiscType.F_MONOCYCLE);
     }
 
     @Override

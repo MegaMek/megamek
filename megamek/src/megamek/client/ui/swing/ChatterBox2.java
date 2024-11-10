@@ -14,6 +14,22 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
@@ -33,21 +49,15 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Enumeration;
-import java.util.Vector;
+import megamek.logging.MMLogger;
 
 /**
  * A graphical chatterbox within the boardview.
+ *
  * @author beerockxs2
  */
 public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChangeListener {
+    private final static MMLogger logger = MMLogger.create(ChatterBox2.class);
 
     private static final String FILENAME_BUTTON_UP = "upbutton.gif";
     private static final String FILENAME_BUTTON_DOWN = "downbutton.gif";
@@ -132,7 +142,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
                 if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
-                    addChatMessage("MegaMek: " + e.getNumberOfEntities() + 
+                    addChatMessage("MegaMek: " + e.getNumberOfEntities() +
                             " Entities added.");
                 }
             }
@@ -149,19 +159,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         adaptToGUIScale();
 
         Toolkit toolkit = bv.getPanel().getToolkit();
-        upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client.getMainPanel());
-        downbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        downbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, client.getMainPanel());
-        minbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        minbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, client.getMainPanel());
-        maxbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        maxbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, client.getMainPanel());
-        resizebutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
+        resizebutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(),
                 FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client.getMainPanel());
 
@@ -193,11 +203,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             lockOpen = false;
             return true;
         }
-        
+
         if (isHit) {
             isHit = false;
             return true;
-        }            
+        }
         return false;
     }
 
@@ -310,7 +320,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             resize(p, size);
             return true;
         }
-        
+
         int xMin = DIST_SIDE;
         int xMax = xMin + width;
         int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset;
@@ -323,7 +333,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     @Override
     public boolean isBeingDragged() {
-        return scrolling || resizing ;
+        return scrolling || resizing;
     }
 
     @Override
@@ -336,11 +346,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         boolean mouseOver = (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
                 && (p.y < yMax);
 
-
         // Don't open on mouse over, it is annoying.
-        /*if (mouseOver && isDown()) {
-            slideUp();
-        }*/
+        /*
+         * if (mouseOver && isDown()) {
+         * slideUp();
+         * }
+         */
 
         if (mouseOver && isUp()) {
             lockOpen = true;
@@ -374,12 +385,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         }
         isHit = true;
         // Hide button
-        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18)) 
+        if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18))
                 && !isDown()) {
             slideDown();
             return true;
         }
-        
+
         bv.setChatterBoxActive(true);
         if (isDown()) {
             slideUp();
@@ -451,7 +462,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
         // Draw box.
         int yOffset = ((clipBounds.height) - height - DIST_BOTTOM) + slideOffset + clipBounds.y;
-        //graph.fillRoundRect(DIST_SIDE + clipBounds.x, yOffset, width, height, 20, 20);
+        // graph.fillRoundRect(DIST_SIDE + clipBounds.x, yOffset, width, height, 20,
+        // 20);
         graph.fillRect(DIST_SIDE + clipBounds.x, yOffset, width, height);
         graph.setColor(COLOR_TEXT_BACK);
 
@@ -486,7 +498,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
-
         // Text rows
         int rows = messages.size();
         if (rows <= max_nbr_rows) {
@@ -501,7 +512,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
                     - chatScroll); i++) {
                 if (i > -1) {
                     printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
-                           + h + (row * h));
+                            + h + (row * h));
                     row++;
                 }
             }
@@ -519,8 +530,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     }
 
     /**
-     *  Adds a line to the chat, and performs line breaking if
-     *  necessary
+     * Adds a line to the chat, and performs line breaking if
+     * necessary
+     *
      * @param line
      */
     public void addChatMessage(String line) {
@@ -558,7 +570,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     }
 
     /**
-     *  Scrolls up one line.
+     * Scrolls up one line.
      */
     public void scrollUp() {
         setIdleTime(0, false);
@@ -569,7 +581,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     }
 
     /**
-     *  Scrolls down one line.
+     * Scrolls down one line.
      */
     public void scrollDown() {
         setIdleTime(0, false);
@@ -581,6 +593,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     /**
      * resizing
+     *
      * @param p
      * @param size
      */
@@ -593,6 +606,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     /**
      * Scrolling...
+     *
      * @param p
      * @param size
      */
@@ -680,8 +694,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         if (messages.size() <= max_nbr_rows) {
             scrollBarOffset = 0;
         } else {
-            scrollBarOffset = (int) (((getMaxScrollbarHeight() - scrollBarHeight)) * (1.0f - (chatScroll / ((float) (messages
-                    .size() - max_nbr_rows)))));
+            scrollBarOffset = (int) (((getMaxScrollbarHeight() - scrollBarHeight))
+                    * (1.0f - (chatScroll / ((float) (messages
+                            .size() - max_nbr_rows)))));
         }
     }
 
@@ -707,19 +722,18 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
         if (!bv.getChatterBoxActive()) {
             return;
         }
-        
+
         if (ke.isControlDown() && (ke.getKeyCode() == KeyEvent.VK_V)) {
-            Transferable content = Toolkit.getDefaultToolkit().
-                    getSystemClipboard().getContents(null);
-            boolean hasTransferableText = (content != null) && 
+            Transferable content = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            boolean hasTransferableText = (content != null) &&
                     content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
                     addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "keyPressed");
                 }
-            }            
+            }
             return;
         }
 
@@ -768,8 +782,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
             case KeyEvent.VK_INSERT:
             case KeyEvent.VK_DELETE:
                 return;
-        }      
-        
+        }
+
         if ((isDown() || isSliding()) && (ke.getKeyCode() != KeyEvent.VK_ENTER)
                 && (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE)
                 && (ke.getKeyCode() != KeyEvent.VK_ESCAPE)) {
@@ -878,10 +892,10 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     private int getMaxSlideOffset() {
         return height - (fm.getHeight() + 10);
     }
-    
+
     public void clearMessage() {
         message = "";
-        visibleMessage ="";
+        visibleMessage = "";
     }
 
     private void adaptToGUIScale() {

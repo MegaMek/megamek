@@ -19,6 +19,27 @@
  */
 package megamek.client.ui.swing;
 
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
+import static java.awt.event.KeyEvent.*;
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.ClientGUI.*;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
+
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
@@ -28,24 +49,15 @@ import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.*;
-
-import static java.awt.event.KeyEvent.*;
-import static megamek.client.ui.Messages.getString;
-import static megamek.client.ui.swing.ClientGUI.*;
+import megamek.logging.MMLogger;
 
 /**
- * The menu bar that is used across MM, i.e. in the main menu, the board editor and
+ * The menu bar that is used across MM, i.e. in the main menu, the board editor
+ * and
  * the lobby and game.
  */
 public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferenceChangeListener {
+    private final static MMLogger logger = MMLogger.create(CommonMenuBar.class);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -87,6 +99,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The Board menu
     private final JMenuItem boardNew = new JMenuItem(getString("CommonMenuBar.fileBoardNew"));
     private final JMenuItem boardOpen = new JMenuItem(getString("CommonMenuBar.fileBoardOpen"));
+    private final JMenu boardRecent = new JMenu(getString("CommonMenuBar.fileBoardRecent"));
     private final JMenuItem boardSave = new JMenuItem(getString("CommonMenuBar.fileBoardSave"));
     private final JMenuItem boardSaveAs = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAs"));
     private final JMenuItem boardSaveAsImage = new JMenuItem(getString("CommonMenuBar.fileBoardSaveAsImage"));
@@ -110,27 +123,42 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The View menu
     private final JCheckBoxMenuItem viewMinimap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMinimap"));
     private final JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
-    private final JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewForceDisplay"));
+    private final JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewForceDisplay"));
     private final JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
-    private final JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewKeyboardShortcuts"));
-    private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlanetaryConditions"));
+    private final JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewKeyboardShortcuts"));
+    private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
     private final JMenuItem viewResetWindowPositions = new JMenuItem(getString("CommonMenuBar.viewResetWindowPos"));
-    private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleIsometric"));
-    private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleHexCoords"));
-    private final JCheckBoxMenuItem toggleSensorRange = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleSensorRange"));
-    private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFieldOfFire"));
-    private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovHighlight"));
-    private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovDarken"));
-    private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFiringSolutions"));
-    private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleCFWarning"));
-    private final JCheckBoxMenuItem viewMovementEnvelope = new JCheckBoxMenuItem(getString("CommonMenuBar.movementEnvelope"));
-    private final JCheckBoxMenuItem viewTurnDetailsOverlay  = new JCheckBoxMenuItem(getString("CommonMenuBar.turnDetailsOverlay"));
+    private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleIsometric"));
+    private final JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleHexCoords"));
+    private final JCheckBoxMenuItem toggleSensorRange = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleSensorRange"));
+    private final JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleFieldOfFire"));
+    private final JMenuItem toggleFleeZone = new JMenuItem(getString("CommonMenuBar.viewToggleFleeZone"));
+    private final JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleFovHighlight"));
+    private final JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleFovDarken"));
+    private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleFiringSolutions"));
+    private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewToggleCFWarning"));
+    private final JCheckBoxMenuItem viewMovementEnvelope = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.movementEnvelope"));
+    private final JCheckBoxMenuItem viewTurnDetailsOverlay = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.turnDetailsOverlay"));
     private final JMenuItem viewMovModEnvelope = new JMenuItem(getString("CommonMenuBar.movementModEnvelope"));
     private final JMenuItem viewLOSSetting = new JMenuItem(getString("CommonMenuBar.viewLOSSetting"));
-    private final JCheckBoxMenuItem viewUnitOverview = new JCheckBoxMenuItem(getString("CommonMenuBar.viewUnitOverview"));
+    private final JCheckBoxMenuItem viewUnitOverview = new JCheckBoxMenuItem(
+            getString("CommonMenuBar.viewUnitOverview"));
     private final JMenuItem viewClientSettings = new JMenuItem(getString("CommonMenuBar.viewClientSettings"));
     private final JMenuItem viewIncGUIScale = new JMenuItem(getString("CommonMenuBar.viewIncGUIScale"));
     private final JMenuItem viewDecGUIScale = new JMenuItem(getString("CommonMenuBar.viewDecGUIScale"));
@@ -144,7 +172,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The Firing Action menu
     private final JMenuItem fireSaveWeaponOrder = new JMenuItem(getString("CommonMenuBar.fireSaveWeaponOrder"));
 
-    /** Contains all ActionListeners that have registered themselves with this menu bar. */
+    /**
+     * Contains all ActionListeners that have registered themselves with this menu
+     * bar.
+     */
     private final List<ActionListener> actionListeners = new ArrayList<>();
 
     /** Maps the Action Command to the respective MenuItem. */
@@ -206,6 +237,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(fileRefreshCache, menu, FILE_REFRESH_CACHE);
         initMenuItem(fileUnitsBrowse, menu, FILE_UNITS_BROWSE);
+        // The accelerator overlaps with that for changing label style but they are never active at the same time
+        fileUnitsBrowse.setAccelerator(KeyStroke.getKeyStroke(VK_B, CTRL_DOWN_MASK));
         menu.addSeparator();
 
         initMenuItem(fireSaveWeaponOrder, menu, FIRE_SAVE_WEAPON_ORDER);
@@ -216,6 +249,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         add(menu);
         initMenuItem(boardNew, menu, BOARD_NEW);
         initMenuItem(boardOpen, menu, BOARD_OPEN, VK_O);
+        initMenuItem(boardRecent, menu, BOARD_OPEN, VK_O);
+        initializeRecentBoardsMenu();
         initMenuItem(boardSave, menu, BOARD_SAVE);
         initMenuItem(boardSaveAs, menu, BOARD_SAVE_AS);
         initMenuItem(boardValidate, menu, BOARD_VALIDATE);
@@ -311,6 +346,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
+        initMenuItem(toggleFleeZone, menu, VIEW_TOGGLE_FLEE_ZONE);
+        toggleFleeZone.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFleeZoneToolTip"));
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
         toggleFiringSolutions.setSelected(GUIP.getShowFiringSolutions());
@@ -319,7 +356,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
         toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
-        /* TODO: moveTraitor = createMenuItem(menu, getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
+        /*
+         * TODO: moveTraitor = createMenuItem(menu,
+         * getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);
+         */
 
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
@@ -331,10 +371,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         initMenuItem(helpAbout, menu, HELP_ABOUT);
 
-        adaptToGUIScale();
         setKeyBinds();
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
+        RecentBoardList.addListener(this);
     }
 
     /** Sets/updates the accelerators from the KeyCommandBinds preferences. */
@@ -403,25 +443,28 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         }
 
         // Pass the action on to each of our listeners.
-        // This is a source of ConcurrentModificationException errors if dialogs are open during events
-        // but closed after handling them; catching the CME does not lead to later issues.
+        // This is a source of ConcurrentModificationException errors if dialogs are
+        // open during events
+        // but closed after handling them; catching the CME does not lead to later
+        // issues.
         try {
             actionListeners.forEach(l -> l.actionPerformed(event));
         } catch (ConcurrentModificationException e) {
-            Logger l = LogManager.getLogger();
-            l.warn("Probable dialog open during Round Report handling", e);
-            l.info("Event causing this issue: " + event.getActionCommand());
+            logger.warn(e, "Probable dialog open during Round Report handling");
+            logger.info("Event causing this issue: " + event.getActionCommand());
         }
     }
 
     /**
      * Register an object that wishes to be alerted when an item on this menu
-     * bar has been selected. <p> Please note, the ActionCommand property of
+     * bar has been selected.
+     * <p>
+     * Please note, the ActionCommand property of
      * the action event will inform the listener as to which menu item that has
      * been selected. Not all listeners will be interested in all menu items.
      *
      * @param listener - the <code>ActionListener</code> that wants to
-     *            register itself.
+     *                 register itself.
      */
     public void addActionListener(ActionListener listener) {
         actionListeners.add(listener);
@@ -432,13 +475,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      * selected.
      *
      * @param listener - the <code>ActionListener</code> that wants to be
-     *            removed.
+     *                 removed.
      */
     public void removeActionListener(ActionListener listener) {
         actionListeners.remove(listener);
     }
 
-    /** Manages the enabled states of the menu items depending on where the menu is employed. */
+    /**
+     * Manages the enabled states of the menu items depending on where the menu is
+     * employed.
+     */
     private synchronized void updateEnabledStates() {
         boolean isLobby = isGame && phase.isLounge();
         boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
@@ -479,6 +525,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardSaveAsImage.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
         boardNew.setEnabled(isBoardEditor || isMainMenu);
         boardOpen.setEnabled(isBoardEditor || isMainMenu);
+        boardRecent.setEnabled((isBoardEditor || isMainMenu) && !RecentBoardList.getRecentBoards().isEmpty());
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
         fileUnitsReinforce.setEnabled((isLobby || isInGame) && isNotVictory);
@@ -504,6 +551,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewUnitOverview.setEnabled(isInGameBoardView);
         toggleSensorRange.setEnabled(isInGameBoardView);
         toggleFieldOfFire.setEnabled(isInGameBoardView);
+        toggleFleeZone.setEnabled(isInGameBoardView);
         toggleFovHighlight.setEnabled(isInGameBoardView);
         toggleFovDarken.setEnabled(isInGameBoardView);
         toggleFiringSolutions.setEnabled(isInGameBoardView);
@@ -521,8 +569,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      * Identify to the menu bar which phase is currently in progress
      *
      * @param current - the <code>int</code> value of the current phase (the
-     *            valid values for this argument are defined as constants in the
-     *            <code>Game</code> class).
+     *                valid values for this argument are defined as constants in the
+     *                <code>Game</code> class).
      */
     public synchronized void setPhase(GamePhase current) {
         phase = current;
@@ -552,8 +600,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewTurnDetailsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
@@ -568,18 +614,16 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.PLAYER_LIST_ENABLED)) {
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
+        } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
+            initializeRecentBoardsMenu();
         }
-    }
-
-    /** Adapts the menu (the font size) to the current GUI scale. */
-    private void adaptToGUIScale() {
-        UIUtil.scaleMenu(this);
     }
 
     /** Removes this as listener. */
     public void die() {
         GUIP.removePreferenceChangeListener(this);
         KeyBindParser.removePreferenceChangeListener(this);
+        RecentBoardList.removeListener(this);
     }
 
     private void initMenuItem(JMenuItem item, JMenu menu, String command) {
@@ -592,5 +636,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void initMenuItem(JMenuItem item, JMenu menu, String command, int mnemonic) {
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
+    }
+
+    /**
+     * Updates the Recent Boards submenu with the current list of recent boards
+     */
+    private void initializeRecentBoardsMenu() {
+        List<String> recentBoards = RecentBoardList.getRecentBoards();
+        boardRecent.removeAll();
+        for (String recentBoard : recentBoards) {
+            File boardFile = new File(recentBoard);
+            JMenuItem item = new JMenuItem(boardFile.getName());
+            initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
+        }
+        boardRecent.setEnabled(!recentBoards.isEmpty());
     }
 }

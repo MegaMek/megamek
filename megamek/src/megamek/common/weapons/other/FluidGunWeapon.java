@@ -19,16 +19,16 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.*;
 import megamek.common.AmmoType;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FluidGunCoolHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -46,7 +46,7 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
     public FluidGunWeapon() {
         super();
         ammoType = AmmoType.T_FLUID_GUN;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BALLISTIC);
     }
 
@@ -60,7 +60,7 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)) {
@@ -71,10 +71,10 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
-            //TODO: with corrosive ammo
-            //   return 0.4;
+            // TODO: with corrosive ammo
+            // return 0.4;
             // else
             return 0;
         } else {

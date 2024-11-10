@@ -215,13 +215,29 @@ public abstract class AbstractIcon implements Serializable {
         }
     }
 
-    protected void parseNode(final Node wn) {
-        switch (wn.getNodeName()) {
+    /**
+     * Parses a given node and performs actions based on the node name.
+     *
+     * @param workingNode The node to parse
+     */
+    protected void parseNode(final Node workingNode) {
+        switch (workingNode.getNodeName()) {
             case "category":
-                setCategory(MMXMLUtility.unEscape(wn.getTextContent().trim()));
+                // setCategory(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
+
+                //start <50.01 compatibility handlers, the above-commented code can be uncommented
+                // when the below handlers are removed
+                String category = MMXMLUtility.unEscape(workingNode.getTextContent().trim());
+                category = category.replaceAll("Aero ", "Aerospace ");
+                category = category.replaceAll("Mech ", "Mek ");
+                category = category.replaceAll("MechWarrior", "MekWarrior");
+                category = category.replaceAll("ProtoMech", "ProtoMek");
+
+                setCategory(category);
+                //end <50.01 compatibility handlers
                 break;
             case "filename":
-                setFilename(MMXMLUtility.unEscape(wn.getTextContent().trim()));
+                setFilename(MMXMLUtility.unEscape(workingNode.getTextContent().trim()));
                 break;
             default:
                 break;
@@ -240,8 +256,7 @@ public abstract class AbstractIcon implements Serializable {
             return false;
         } else if (this == other) {
             return true;
-        } else if (other instanceof AbstractIcon) {
-            final AbstractIcon dOther = (AbstractIcon) other;
+        } else if (other instanceof AbstractIcon dOther) {
             return dOther.getCategory().equals(getCategory()) && dOther.getFilename().equals(getFilename());
         } else {
             return false;

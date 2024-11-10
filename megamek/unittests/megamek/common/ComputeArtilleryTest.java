@@ -19,33 +19,26 @@
  */
 package megamek.common;
 
-import megamek.common.options.GameOptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Vector;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Martin "sleet01" Metke
  * @since 2024/02/12 2138 PST
  */
-public class ComputeArtilleryTest {
+class ComputeArtilleryTest {
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testSimpleLeadCalculations() {
+    void testSimpleLeadCalculations() {
         // Test lead from various locations against various speeds.
         Coords shooterPos = new Coords(15, 0);
         Coords targetPos = new Coords(15, 33);
@@ -85,8 +78,9 @@ public class ComputeArtilleryTest {
         when(target.getPriorPosition()).thenReturn(oldTargetPos);
 
     }
+
     @Test
-    public void testComplexCalculateLead() {
+    void testComplexCalculateLead() {
         // Mock the board
         Board mockBoard = mock(Board.class);
         Game mockGame = mock(Game.class);
@@ -115,7 +109,8 @@ public class ComputeArtilleryTest {
         assertEquals(15, leadPos.getX());
         assertEquals(13, leadPos.getY());
 
-        // Mobile target 1 map sheet away to the S (3) direction, speed 4, homing, should be closer to shooter
+        // Mobile target 1 map sheet away to the S (3) direction, speed 4, homing,
+        // should be closer to shooter
         // for better chance to catch mobile unit in TAG-able area
         setupTarget(target, new Coords(15, 25), new Coords(15, 29));
         leadPos = Compute.calculateArtilleryLead(mockGame, shooter, target, true);

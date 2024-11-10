@@ -26,7 +26,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.server.Server;
 
 /** The Connect to game (as Bot or Player) dialog */
@@ -56,7 +55,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         serverAddressField.addActionListener(this);
         setPortField(new JTextField(getClientPreferences().getLastConnectPort() + "", 4));
         getPortField().addActionListener(this);
-        
+
         JPanel middlePanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.NONE;
@@ -64,7 +63,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         c.weighty = 0.0;
         c.insets = new Insets(5, 5, 5, 5);
         c.gridwidth = 1;
-        
+
         addOptionRow(middlePanel, c, yourNameL, getPlayerNameField());
         addOptionRow(middlePanel, c, serverAddrL, serverAddressField);
         addOptionRow(middlePanel, c, portL, getPortField());
@@ -106,18 +105,5 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
         // update settings
         getClientPreferences().setLastConnectAddr(getServerAddress());
         setVisible(false);
-    }
-    
-    @Override
-    public void setVisible(boolean b) {
-        if (b) {
-            adaptToGUIScale();
-            pack();
-        }
-        super.setVisible(b);
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

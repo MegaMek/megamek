@@ -16,12 +16,18 @@ package megamek.common;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Set;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.weapons.*;
+import megamek.common.weapons.AlamoMissileWeapon;
+import megamek.common.weapons.AltitudeBombAttack;
+import megamek.common.weapons.DiveBombAttack;
+import megamek.common.weapons.LegAttack;
+import megamek.common.weapons.SpaceBombAttack;
+import megamek.common.weapons.StopSwarmAttack;
+import megamek.common.weapons.SwarmAttack;
+import megamek.common.weapons.SwarmWeaponAttack;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
 import megamek.common.weapons.battlearmor.*;
@@ -68,7 +74,7 @@ import megamek.common.weapons.unofficial.*;
 // TODO add XML support back in.
 
 /**
- * A type of mech or vehicle weapon. There is only one instance of this weapon
+ * A type of mek or vehicle weapon. There is only one instance of this weapon
  * for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
@@ -153,7 +159,7 @@ public class WeaponType extends EquipmentType {
 
     // Currently only used by MML
     public static final BigInteger F_BA_WEAPON = BigInteger.valueOf(1).shiftLeft(43);
-    public static final BigInteger F_MECH_WEAPON = BigInteger.valueOf(1).shiftLeft(44);
+    public static final BigInteger F_MEK_WEAPON = BigInteger.valueOf(1).shiftLeft(44);
     public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
     public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
@@ -441,11 +447,11 @@ public class WeaponType extends EquipmentType {
         return ammoType;
     }
 
-    public int[] getRanges(Mounted weapon) {
+    public int[] getRanges(Mounted<?> weapon) {
         return getRanges(weapon, weapon.getLinked());
     }
 
-    public int[] getRanges(Mounted weapon, Mounted ammo) {
+    public int[] getRanges(Mounted<?> weapon, Mounted<?> ammo) {
         // modify the ranges for ATM missile systems based on the ammo selected
         // FIXME: this is not the right place to hardcode these
         int minRange = getMinimumRange();
@@ -815,7 +821,7 @@ public class WeaponType extends EquipmentType {
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
      * @return - damage in BattleForce scale
      */
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return getBattleForceDamage(range);
     }
 
@@ -918,6 +924,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISVariableSpeedPulseLaserSmall());
         EquipmentType.addType(new ISVariableSpeedPulseLaserLarge());
         EquipmentType.addType(new ISBinaryLaserCannon());
+        EquipmentType.addType(new ISLBinaryLaserCannon());
         EquipmentType.addType(new ISBombastLaser());
         EquipmentType.addType(new CLERLaserLarge());
         EquipmentType.addType(new CLHeavyLaserLarge());
@@ -970,9 +977,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISAC5());
         EquipmentType.addType(new ISAC10());
         EquipmentType.addType(new ISAC20());
-        EquipmentType.addType(new CLProtoMechAC2());
-        EquipmentType.addType(new CLProtoMechAC4());
-        EquipmentType.addType(new CLProtoMechAC8());
+        EquipmentType.addType(new CLProtoMekAC2());
+        EquipmentType.addType(new CLProtoMekAC4());
+        EquipmentType.addType(new CLProtoMekAC8());
         EquipmentType.addType(new ISAC2Primitive());
         EquipmentType.addType(new ISAC5Primitive());
         EquipmentType.addType(new ISAC10Primitive());
@@ -1260,7 +1267,7 @@ public class WeaponType extends EquipmentType {
 
         // RLs
         /*
-         * This is a duplicate of the ISBARL, and not available for mechs.
+         * This is a duplicate of the ISBARL, and not available for meks.
          * EquipmentType.addType(new ISRL1());
          * EquipmentType.addType(new ISRL2());
          * EquipmentType.addType(new ISRL3());

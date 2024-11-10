@@ -1,15 +1,31 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.verifier;
 
-import megamek.common.AeroSpaceFighter;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import megamek.common.AeroSpaceFighter;
+import megamek.common.EquipmentType;
 
 class TestAeroTest {
 
@@ -33,7 +49,8 @@ class TestAeroTest {
         rating = TestAero.calculateEngineRating(aero, 25, 2);
         assertEquals(0, rating);
 
-        // 25-ton ASF desiring Safe Thrust of 5 should be 75 (tons * (desiredSafeThrust -2))
+        // 25-ton ASF desiring Safe Thrust of 5 should be 75 (tons * (desiredSafeThrust
+        // -2))
         rating = TestAero.calculateEngineRating(aero, 25, 5);
         assertEquals(75, rating);
 

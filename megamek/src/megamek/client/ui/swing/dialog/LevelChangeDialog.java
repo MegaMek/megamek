@@ -28,12 +28,12 @@ import megamek.client.ui.swing.BoardEditor;
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
-/** 
+/**
  * A Board Editor dialog asking the user for a desired level change for the board.
- * {@link #getLevelChange()} reports the result of the dialog. 
- */ 
+ * {@link #getLevelChange()} reports the result of the dialog.
+ */
 public final class LevelChangeDialog extends AbstractButtonDialog {
-    
+
     private BoardEditor.EditorTextField txtLevelChange = new BoardEditor.EditorTextField("1", 5, -10, 15);
 
     /** Constructs a modal LevelChangeDialog with frame as parent. */
@@ -50,20 +50,19 @@ public final class LevelChangeDialog extends AbstractButtonDialog {
 
         JPanel textFieldPanel = new FixedYPanel();
         textFieldPanel.add(txtLevelChange);
-        
-        JLabel labInfo = new JLabel(scaleStringForGUI("<CENTER>" + getString("LCDialog.info")), 
-                SwingConstants.CENTER);
+
+        JLabel labInfo = new JLabel("<CENTER>" + getString("LCDialog.info"), SwingConstants.CENTER);
         labInfo.setAlignmentX(CENTER_ALIGNMENT);
-        
+
         result.add(Box.createVerticalGlue());
         result.add(labInfo);
         result.add(Box.createVerticalStrut(5));
         result.add(textFieldPanel);
         result.add(Box.createVerticalGlue());
-        
+
         return result;
     }
-    
+
     /** Returns the level change entered by the user or 0, if it cannot be parsed. */
     public int getLevelChange() {
         try {

@@ -18,8 +18,6 @@ import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
-import java.util.Enumeration;
-
 public class CheckBVCommand extends ServerCommand {
 
     public CheckBVCommand(Server server) {
@@ -33,10 +31,9 @@ public class CheckBVCommand extends ServerCommand {
                 && server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         // Connection Ids match player Ids
         Player requestingPlayer = server.getGame().getPlayer(connId);
-        
-        server.sendServerChat(connId, "Remaining BV:");        
-        for (Enumeration<Player> i = server.getGame().getPlayers(); i.hasMoreElements();) {
-            Player player = i.nextElement();
+
+        server.sendServerChat(connId, "Remaining BV:");
+        for (Player player : server.getGame().getPlayersList()) {
             StringBuffer cb = new StringBuffer();
             double percentage = 0;
             if (player.getInitialBV() != 0) {

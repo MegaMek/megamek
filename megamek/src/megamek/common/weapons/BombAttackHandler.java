@@ -18,7 +18,7 @@ import megamek.common.SpecialHexDisplay.Type;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
 import java.util.Vector;
@@ -36,7 +36,7 @@ public class BombAttackHandler extends WeaponHandler {
      * @param g
      */
     public BombAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
@@ -59,11 +59,10 @@ public class BombAttackHandler extends WeaponHandler {
         for (int type = 0; type < payload.length; type++) {
             for (int i = 0; i < payload[type]; i++) {
                 // find the first mounted bomb of this type and drop it
-                for (Mounted bomb : ae.getBombs()) {
+                for (Mounted<?> bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)
-                    ) {
+                            && (((BombType) bomb.getType()).getBombType() == type)) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
                             ((IBomber) ae).increaseUsedInternalBombs(1);
@@ -99,7 +98,8 @@ public class BombAttackHandler extends WeaponHandler {
             typeModifiedToHit.setSideTable(toHit.getSideTable());
 
             // currently, only type of bomb with type-specific to-hit mods
-            // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged hex or B) a tagged target
+            // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged
+            // hex or B) a tagged target
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
@@ -108,9 +108,8 @@ public class BombAttackHandler extends WeaponHandler {
                         continue;
                     }
                     if (target.getId() == ti.target.getId()
-                        || ((ti.targetType != Targetable.TYPE_HEX_TAG)
-                            && target.getPosition().equals(ti.target.getPosition()))
-                    ) {
+                            || ((ti.targetType != Targetable.TYPE_HEX_TAG)
+                                    && target.getPosition().equals(ti.target.getPosition()))) {
                         typeModifiedToHit.addModifier(-2,
                                 "laser-guided bomb against tagged target");
                         laserGuided = true;
@@ -275,9 +274,10 @@ public class BombAttackHandler extends WeaponHandler {
                         gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
-                    hitIds = AreaEffectHelper.processFuelAirDamage(drop, EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
+                    hitIds = AreaEffectHelper.processFuelAirDamage(drop,
+                            EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
-                    hitIds= gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    hitIds = gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
 
                 // Display drifts that hit nothing separately from drifts that dealt damage
@@ -286,12 +286,12 @@ public class BombAttackHandler extends WeaponHandler {
                         game.getBoard().addSpecialHexDisplay(drop,
                                 new SpecialHexDisplay(Type.BOMB_DRIFT, game.getRoundCount(),
                                         player, Messages.getString("BombMessage.drifted")
-                                        + " " + coords.getBoardNum()));
+                                                + " " + coords.getBoardNum()));
                     } else {
                         game.getBoard().addSpecialHexDisplay(drop,
                                 new SpecialHexDisplay(Type.BOMB_HIT, game.getRoundCount(),
                                         player, Messages.getString("BombMessage.drifted")
-                                        + " " + coords.getBoardNum()));
+                                                + " " + coords.getBoardNum()));
                     }
                 }
 

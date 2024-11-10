@@ -25,8 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.loaders.MtfFile;
 import megamek.logging.MMLogger;
 
@@ -39,12 +39,12 @@ public class UnitFileMigrationTool {
     private static final MMLogger logger = MMLogger.create(UnitFileMigrationTool.class);
 
     public static void main(String... args) throws IOException {
-        MechSummaryCache cache = MechSummaryCache.getInstance(true);
-        MechSummary[] units = cache.getAllMechs();
+        MekSummaryCache cache = MekSummaryCache.getInstance(true);
+        MekSummary[] units = cache.getAllMeks();
 
         List<String> lines = null;
 
-        for (MechSummary unit : units) {
+        for (MekSummary unit : units) {
             File file = unit.getSourceFile();
 
             if (file.toString().toLowerCase().endsWith(".mtf")) {

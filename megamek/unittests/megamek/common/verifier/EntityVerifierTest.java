@@ -20,30 +20,31 @@
  */
 package megamek.common.verifier;
 
-import megamek.common.verifier.TestEntity.Ceil;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+
+import org.junit.jupiter.api.Test;
+
+import megamek.common.verifier.TestEntity.Ceil;
+
 /**
  * @author nderwin
  */
-public class EntityVerifierTest {
+class EntityVerifierTest {
 
     @Test
-    public void testEmpty() {
+    void testEmpty() {
         File file = new File(getClass().getResource("empty-verifier-options.xml").getFile());
 
         EntityVerifier result = EntityVerifier.getInstance(file);
 
         assertNotNull(result.aeroOption);
         assertNotNull(result.baOption);
-        assertNotNull(result.mechOption);
+        assertNotNull(result.mekOption);
         assertNotNull(result.tankOption);
 
         assertEquals(Ceil.HALFTON, result.aeroOption.getWeightCeilingEngine());

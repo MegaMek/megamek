@@ -18,10 +18,6 @@
  */
 package megamek.common.verifier;
 
-import megamek.common.*;
-import megamek.common.InfantryBay.PlatoonType;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,220 +25,224 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BayDataTest {
-    
+import org.junit.jupiter.api.Test;
+
+import megamek.common.*;
+import megamek.common.InfantryBay.PlatoonType;
+
+class BayDataTest {
+
     private Entity createEntity(long etype) {
         Entity entity = mock(Entity.class);
-        when(entity.hasETypeFlag(anyLong())).thenAnswer(inv ->
-            ((Long) inv.getArguments()[0] & etype) != 0);
+        when(entity.hasETypeFlag(anyLong())).thenAnswer(inv -> ((Long) inv.getArguments()[0] & etype) != 0);
         return entity;
     }
 
     @Test
-    public void testCargoBayMultiplier() {
+    void testCargoBayMultiplier() {
         final double size = 2.0;
         Bay cargoBay = BayData.CARGO.newBay(size, 0);
-        
+
         assertEquals(cargoBay.getWeight(), BayData.CARGO.getWeight() * size, 0.01);
     }
 
     @Test
-    public void testLiquidCargoBayMultiplier() {
+    void testLiquidCargoBayMultiplier() {
         final double weight = 2.0;
         Bay cargoBay = BayData.LIQUID_CARGO.newBay(weight, 0);
-        
+
         assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
-    public void testRefrigeratedCargoBayMultiplier() {
+    void testRefrigeratedCargoBayMultiplier() {
         final double weight = 2.0;
         Bay cargoBay = BayData.REFRIGERATED_CARGO.newBay(weight, 0);
-        
+
         assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
-    public void testInsulatedCargoBayMultiplier() {
+    void testInsulatedCargoBayMultiplier() {
         final double weight = 2.0;
         Bay cargoBay = BayData.INSULATED_CARGO.newBay(weight, 0);
-        
+
         assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
-    public void testLivestockCargoBayMultiplier() {
+    void testLivestockCargoBayMultiplier() {
         final double weight = 2.0;
         Bay cargoBay = BayData.LIVESTOCK_CARGO.newBay(weight, 0);
-        
+
         assertEquals(cargoBay.getWeight(), weight, 0.01);
     }
 
     @Test
-    public void identifyMechBay() {
-        Bay bay = new MechBay(1, 1, 0);
-        
-        assertEquals(BayData.getBayType(bay), BayData.MECH);
+    void identifyMekBay() {
+        Bay bay = new MekBay(1, 1, 0);
+
+        assertEquals(BayData.getBayType(bay), BayData.MEK);
     }
 
     @Test
-    public void identifyProtomechBay() {
-        Bay bay = new ProtomechBay(1, 1, 0);
-        
-        assertEquals(BayData.getBayType(bay), BayData.PROTOMECH);
+    void identifyProtoMekBay() {
+        Bay bay = new ProtoMekBay(1, 1, 0);
+
+        assertEquals(BayData.getBayType(bay), BayData.PROTOMEK);
     }
 
     @Test
-    public void identifyHeavyVehicleBay() {
+    void identifyHeavyVehicleBay() {
         Bay bay = new HeavyVehicleBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.VEHICLE_HEAVY);
     }
 
     @Test
-    public void identifyLightVehcleay() {
+    void identifyLightVehicleBay() {
         Bay bay = new LightVehicleBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.VEHICLE_LIGHT);
     }
 
     @Test
-    public void identifySuperHeavyVehicleBay() {
+    void identifySuperHeavyVehicleBay() {
         Bay bay = new SuperHeavyVehicleBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.VEHICLE_SH);
     }
 
     @Test
-    public void identifyFootInfantryBay() {
+    void identifyFootInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.FOOT);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_FOOT);
     }
 
     @Test
-    public void identifyJumpInfantryBay() {
+    void identifyJumpInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.JUMP);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_JUMP);
     }
 
     @Test
-    public void identifyMotorizedInfantryBay() {
+    void identifyMotorizedInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MOTORIZED);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MOTORIZED);
     }
 
     @Test
-    public void identifyMechanizedInfantryBay() {
+    void identifyMechanizedInfantryBay() {
         Bay bay = new InfantryBay(1, 1, 0, PlatoonType.MECHANIZED);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.INFANTRY_MECHANIZED);
     }
 
     @Test
-    public void identifyISBABay() {
+    void identifyISBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, false, false);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.IS_BATTLE_ARMOR);
     }
 
     @Test
-    public void identifyClanBABay() {
+    void identifyClanBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, true, false);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.CLAN_BATTLE_ARMOR);
     }
 
     @Test
-    public void identifyCSBABay() {
+    void identifyCSBABay() {
         Bay bay = new BattleArmorBay(1, 1, 0, false, true);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.CS_BATTLE_ARMOR);
     }
 
     @Test
-    public void identifyFighterBay() {
+    void identifyFighterBay() {
         Bay bay = new ASFBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.FIGHTER);
     }
 
     @Test
-    public void identifySmallCraftBay() {
+    void identifySmallCraftBay() {
         Bay bay = new SmallCraftBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.SMALL_CRAFT);
     }
 
     @Test
-    public void identifyCargoBay() {
+    void identifyCargoBay() {
         Bay bay = new CargoBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.CARGO);
     }
 
     @Test
-    public void identifyLiquidCargoBay() {
+    void identifyLiquidCargoBay() {
         Bay bay = new LiquidCargoBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.LIQUID_CARGO);
     }
 
     @Test
-    public void identifyRefrigeratedCargoBay() {
+    void identifyRefrigeratedCargoBay() {
         Bay bay = new RefrigeratedCargoBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.REFRIGERATED_CARGO);
     }
 
     @Test
-    public void identifyInsulatedCargoBay() {
+    void identifyInsulatedCargoBay() {
         Bay bay = new InsulatedCargoBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.INSULATED_CARGO);
     }
 
     @Test
-    public void identifyLivestockCargoBay() {
+    void identifyLivestockCargoBay() {
         Bay bay = new LivestockCargoBay(1, 1, 0);
-        
+
         assertEquals(BayData.getBayType(bay), BayData.LIVESTOCK_CARGO);
     }
 
     @Test
-    public void cargoBayLegalForMech() {
-        Entity entity = createEntity(Entity.ETYPE_MECH);
-        
+    void cargoBayLegalForMek() {
+        Entity entity = createEntity(Entity.ETYPE_MEK);
+
         assertTrue(BayData.CARGO.isLegalFor(entity));
     }
 
     @Test
-    public void livestockBayIllegalForMech() {
-        Entity entity = createEntity(Entity.ETYPE_MECH);
-        
+    void livestockBayIllegalForMek() {
+        Entity entity = createEntity(Entity.ETYPE_MEK);
+
         assertFalse(BayData.LIVESTOCK_CARGO.isLegalFor(entity));
     }
 
     @Test
-    public void cargoBayLegalForTank() {
+    void cargoBayLegalForTank() {
         Entity entity = createEntity(Entity.ETYPE_TANK);
-        
+
         assertTrue(BayData.CARGO.isLegalFor(entity));
     }
 
     @Test
-    public void livestockBayLegalForTank() {
+    void livestockBayLegalForTank() {
         Entity entity = createEntity(Entity.ETYPE_TANK);
-        
+
         assertTrue(BayData.LIVESTOCK_CARGO.isLegalFor(entity));
     }
 
     @Test
-    public void bayIllegalForInfantry() {
+    void bayIllegalForInfantry() {
         Entity entity = createEntity(Entity.ETYPE_INFANTRY);
-        
+
         assertFalse(BayData.CARGO.isLegalFor(entity));
     }
 }

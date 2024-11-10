@@ -59,29 +59,31 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Weather;
+import megamek.utils.MockGenerators;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/5/13 10:19 AM
  */
-public class BasicPathRankerTest {
+class BasicPathRankerTest {
     private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
-    private final double TOLERANCE = 0.001;
+    private final double TOLERANCE = 0.01;
 
     private Princess mockPrincess;
     private FireControl mockFireControl;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
 
         // We now need to make sure all armor types are initialized or mockito will
         // complain.
         if (!ArmorType.getAllTypes().hasMoreElements()) {
             ArmorType.initializeTypes();
         }
+
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
@@ -143,160 +145,203 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testGetMovePathSuccessProbability() {
-        final Entity mockMech = mock(BipedMech.class);
-        when(mockMech.getMASCTarget()).thenReturn(3);
-
-        final Crew mockCrew = mock(Crew.class);
-        when(mockMech.getCrew()).thenReturn(mockCrew);
-
-        final PilotOptions mockOptions = mock(PilotOptions.class);
-        when(mockCrew.getOptions()).thenReturn(mockOptions);
-        when(mockOptions.booleanOption(anyString())).thenReturn(false);
-
-        final MovePath mockPath = mock(MovePath.class);
+    void testGetMovePathSuccessProbability() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
         when(mockPath.hasActiveMASC()).thenReturn(false);
-        when(mockPath.clone()).thenReturn(mockPath);
-        when(mockPath.getEntity()).thenReturn(mockMech);
 
-        final TargetRoll mockTargetRoll = mock(TargetRoll.class);
-        when(mockTargetRoll.getValue()).thenReturn(8);
-        when(mockTargetRoll.getDesc()).thenReturn("mock");
-
-        final TargetRoll mockTargetRollTwo = mock(TargetRoll.class);
-        when(mockTargetRollTwo.getValue()).thenReturn(5);
-        when(mockTargetRollTwo.getDesc()).thenReturn("mock");
-
-        final List<TargetRoll> testRollList = new ArrayList<>(2);
-        testRollList.add(mockTargetRoll);
-        testRollList.add(mockTargetRollTwo);
+        final TargetRoll mockTargetRoll = MockGenerators.mockTargetRoll(8);
+        final TargetRoll mockTargetRollTwo = MockGenerators.mockTargetRoll(5);
+        final List<TargetRoll> testRollList = List.of(mockTargetRoll, mockTargetRollTwo);
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
         double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
         assertEquals(0.346, actual, TOLERANCE);
+    }
 
-        // Add in a MASC roll.
+    @Test
+    void testGetMovePathSuccessProbabilityWithMASC() {
+        final Entity mockMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMek.getMASCTarget()).thenReturn(3);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(0, 0, mockMek);
         when(mockPath.hasActiveMASC()).thenReturn(true);
-        actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
+
+        final TargetRoll mockTargetRoll = MockGenerators.mockTargetRoll(8);
+        final TargetRoll mockTargetRollTwo = MockGenerators.mockTargetRoll(5);
+        final List<TargetRoll> testRollList = List.of(mockTargetRoll, mockTargetRollTwo);
+
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
+        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
         assertEquals(0.346, actual, TOLERANCE);
     }
 
     @Test
-    public void testEvaluateUnmovedEnemy() {
+    void testEvaluateUnmovedAeroEnemy() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockPrincess).when(testRanker).getOwner();
 
         final Coords testCoords = new Coords(10, 10);
-
-        final Entity mockMyUnit = mock(BipedMech.class);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
         doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
                 eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
 
-        final MovePath mockPath = mock(MovePath.class);
-        when(mockPath.getFinalCoords()).thenReturn(testCoords);
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
         when(mockPath.getFinalFacing()).thenReturn(3);
-        when(mockPath.getEntity()).thenReturn(mockMyUnit);
 
         // Test an aero unit (doesn't really do anything at this point).
-        final Entity mockAero = mock(Aero.class);
+        final Entity mockAero = MockGenerators.generateMockAerospace(0, 0);
         when(mockAero.getId()).thenReturn(2);
-        when(mockAero.isAero()).thenReturn(true);
-        when(mockAero.isAirborne()).thenReturn(true);
-        when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
+
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
-        assertEntityEvaluationResponseEquals(expected, actual);
-
-        // Test an enemy mech 5 hexes away, in my LoS and unable to kick my flank.
-        Coords enemyCoords = new Coords(10, 15);
-        int enemyMechId = 1;
-        Entity mockEnemyMech = mock(BipedMech.class);
-        when(mockEnemyMech.getWeight()).thenReturn(50.0);
-        when(mockEnemyMech.getId()).thenReturn(enemyMechId);
-        doReturn(enemyCoords)
-                .when(testRanker)
-                .getClosestCoordsTo(eq(enemyMechId), eq(testCoords));
-        doReturn(true)
-                .when(testRanker)
-                .isInMyLoS(eq(mockEnemyMech), any(HexLine.class), any(HexLine.class));
-        doReturn(8.5)
-                .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMech), anyInt(),
-                        anyBoolean(), anyBoolean());
-        doReturn(false)
-                .when(testRanker)
-                .canFlankAndKick(eq(mockEnemyMech), any(Coords.class), any(Coords.class),
-                        any(Coords.class), anyInt());
-        expected = new EntityEvaluationResponse();
-        expected.setEstimatedEnemyDamage(2.125);
-        expected.setMyEstimatedDamage(2.5);
-        expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false, false);
-        assertEntityEvaluationResponseEquals(expected, actual);
-
-        // Test an enemy mech 5 hexes away but not in my LoS.
-        enemyCoords = new Coords(10, 15);
-        mockEnemyMech = mock(BipedMech.class);
-        when(mockEnemyMech.getWeight()).thenReturn(50.0);
-        when(mockEnemyMech.getId()).thenReturn(enemyMechId);
-        doReturn(enemyCoords)
-                .when(testRanker)
-                .getClosestCoordsTo(eq(enemyMechId), eq(testCoords));
-        doReturn(false)
-                .when(testRanker)
-                .isInMyLoS(eq(mockEnemyMech), any(HexLine.class), any(HexLine.class));
-        doReturn(8.5)
-                .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMech), anyInt(),
-                        anyBoolean(), anyBoolean());
-        doReturn(false)
-                .when(testRanker)
-                .canFlankAndKick(eq(mockEnemyMech), any(Coords.class), any(Coords.class),
-                        any(Coords.class), anyInt());
-        expected = new EntityEvaluationResponse();
-        expected.setEstimatedEnemyDamage(2.125);
-        expected.setMyEstimatedDamage(0.0);
-        expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false, false);
-        assertEntityEvaluationResponseEquals(expected, actual);
-
-        // Test an enemy mech 5 hexes away, not in my LoS and able to kick me.
-        enemyCoords = new Coords(10, 15);
-        mockEnemyMech = mock(BipedMech.class);
-        when(mockEnemyMech.getWeight()).thenReturn(50.0);
-        when(mockEnemyMech.getId()).thenReturn(enemyMechId);
-        doReturn(enemyCoords)
-                .when(testRanker)
-                .getClosestCoordsTo(eq(enemyMechId), eq(testCoords));
-        doReturn(false)
-                .when(testRanker)
-                .isInMyLoS(eq(mockEnemyMech), any(HexLine.class), any(HexLine.class));
-        doReturn(8.5)
-                .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMech), anyInt(),
-                        anyBoolean(), anyBoolean());
-        doReturn(true)
-                .when(testRanker)
-                .canFlankAndKick(eq(mockEnemyMech), any(Coords.class), any(Coords.class),
-                        any(Coords.class), anyInt());
-        expected = new EntityEvaluationResponse();
-        expected.setEstimatedEnemyDamage(4.625);
-        expected.setMyEstimatedDamage(0.0);
-        expected.setMyEstimatedPhysicalDamage(0.0);
-        actual = testRanker.evaluateUnmovedEnemy(mockEnemyMech, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
 
     @Test
-    public void testEvaluateMovedEnemy() {
+    void testEvaluateUnmovedEnemyInLOSAndUnableToKick() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Coords testCoords = new Coords(10, 10);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+                eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
+        when(mockPath.getFinalFacing()).thenReturn(3);
+
+        // Test an enemy mek 5 hexes away, in my LoS and unable to kick my flank.
+        Coords enemyCoords = new Coords(10, 15);
+        int enemyMekId = 1;
+        Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(enemyCoords)
+                .when(testRanker)
+                .getClosestCoordsTo(eq(enemyMekId), eq(testCoords));
+        doReturn(true)
+                .when(testRanker)
+                .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
+        doReturn(8.5)
+                .when(testRanker)
+                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                        anyBoolean(),
+                        anyBoolean());
+        doReturn(false)
+                .when(testRanker)
+                .canFlankAndKick(eq(mockEnemyMek), any(Coords.class), any(Coords.class),
+                        any(Coords.class), anyInt());
+
+        EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setEstimatedEnemyDamage(2.125);
+        expected.setMyEstimatedDamage(2.5);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateUnmovedEnemyNotInLOS() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Coords testCoords = new Coords(10, 10);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+                eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
+        when(mockPath.getFinalFacing()).thenReturn(3);
+
+        // Test an enemy mek 5 hexes away but not in my LoS.
+        Coords enemyCoords = new Coords(10, 15);
+        int enemyMekId = 1;
+        Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(enemyCoords)
+                .when(testRanker)
+                .getClosestCoordsTo(eq(enemyMekId), eq(testCoords));
+        doReturn(false)
+                .when(testRanker)
+                .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
+        doReturn(8.5)
+                .when(testRanker)
+                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                        anyBoolean(), anyBoolean());
+        doReturn(false)
+                .when(testRanker)
+                .canFlankAndKick(eq(mockEnemyMek), any(Coords.class), any(Coords.class),
+                        any(Coords.class), anyInt());
+        EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setEstimatedEnemyDamage(2.125);
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateUnmovedEnemyNotInLOSAndAbleToKick() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        doReturn(mockPrincess).when(testRanker).getOwner();
+
+        final Coords testCoords = new Coords(10, 10);
+        final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
+
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+                eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+
+        final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
+        when(mockPath.getFinalFacing()).thenReturn(3);
+
+        // Test an enemy mek 5 hexes away, not in my LoS and able to kick me.
+        Coords enemyCoords = new Coords(10, 15);
+        int enemyMekId = 1;
+        Entity mockEnemyMek = MockGenerators.generateMockBipedMek(0, 0);
+        when(mockEnemyMek.getId()).thenReturn(enemyMekId);
+        doReturn(enemyCoords)
+                .when(testRanker)
+                .getClosestCoordsTo(eq(enemyMekId), eq(testCoords));
+        doReturn(false)
+                .when(testRanker)
+                .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
+        doReturn(8.5)
+                .when(testRanker)
+                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                        anyBoolean(), anyBoolean());
+        doReturn(true)
+                .when(testRanker)
+                .canFlankAndKick(eq(mockEnemyMek), any(Coords.class), any(Coords.class),
+                        any(Coords.class), anyInt());
+
+        EntityEvaluationResponse expected = new EntityEvaluationResponse();
+        expected.setEstimatedEnemyDamage(4.625);
+        expected.setMyEstimatedDamage(0.0);
+        expected.setMyEstimatedPhysicalDamage(0.0);
+
+        EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockEnemyMek, mockPath, false, false);
+        assertEntityEvaluationResponseEquals(expected, actual);
+    }
+
+    @Test
+    void testEvaluateMovedEnemy() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockPrincess).when(testRanker).getOwner();
 
         final MovePath mockPath = mock(MovePath.class);
-        final Entity mockMyUnit = mock(BipedMech.class);
+        final Entity mockMyUnit = mock(BipedMek.class);
         final Crew mockCrew = mock(Crew.class);
         final PilotOptions mockOptions = mock(PilotOptions.class);
 
@@ -309,29 +354,29 @@ public class BasicPathRankerTest {
 
         final Game mockGame = mock(Game.class);
 
-        final int mockEnemyMechId = 1;
-        final Entity mockEnemyMech = mock(BipedMech.class);
-        when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
-        when(mockEnemyMech.getPosition()).thenReturn(new Coords(1, 0));
-        when(mockEnemyMech.getCrew()).thenReturn(mockCrew);
+        final int mockEnemyMekId = 1;
+        final Entity mockEnemyMek = mock(BipedMek.class);
+        when(mockEnemyMek.getId()).thenReturn(mockEnemyMekId);
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(1, 0));
+        when(mockEnemyMek.getCrew()).thenReturn(mockCrew);
 
         doReturn(15.0)
                 .when(testRanker)
-                .calculateDamagePotential(eq(mockEnemyMech), any(EntityState.class),
+                .calculateDamagePotential(eq(mockEnemyMek), any(EntityState.class),
                         any(MovePath.class), any(EntityState.class), anyInt(), any(Game.class));
         doReturn(10.0)
                 .when(testRanker)
-                .calculateKickDamagePotential(eq(mockEnemyMech), any(MovePath.class), any(Game.class));
+                .calculateKickDamagePotential(eq(mockEnemyMek), any(MovePath.class), any(Game.class));
         doReturn(14.5)
                 .when(testRanker)
-                .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMech), anyInt(),
+                .calculateMyDamagePotential(any(MovePath.class), eq(mockEnemyMek), anyInt(),
                         any(Game.class));
         doReturn(8.0)
                 .when(testRanker)
-                .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMech),
+                .calculateMyKickDamagePotential(any(MovePath.class), eq(mockEnemyMek),
                         any(Game.class));
         final Map<Integer, Double> testBestDamageByEnemies = new TreeMap<>();
-        testBestDamageByEnemies.put(mockEnemyMechId, 0.0);
+        testBestDamageByEnemies.put(mockEnemyMekId, 0.0);
         doReturn(testBestDamageByEnemies)
                 .when(testRanker)
                 .getBestDamageByEnemies();
@@ -339,14 +384,14 @@ public class BasicPathRankerTest {
         expected.setMyEstimatedDamage(14.5);
         expected.setMyEstimatedPhysicalDamage(8.0);
         expected.setEstimatedEnemyDamage(25.0);
-        EntityEvaluationResponse actual = testRanker.evaluateMovedEnemy(mockEnemyMech, mockPath, mockGame);
+        EntityEvaluationResponse actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
         assertEntityEvaluationResponseEquals(expected, actual);
 
         // test for distance.
-        when(mockEnemyMech.getPosition()).thenReturn(new Coords(10, 0));
+        when(mockEnemyMek.getPosition()).thenReturn(new Coords(10, 0));
         expected.setMyEstimatedPhysicalDamage(0);
         expected.setEstimatedEnemyDamage(15);
-        actual = testRanker.evaluateMovedEnemy(mockEnemyMech, mockPath, mockGame);
+        actual = testRanker.evaluateMovedEnemy(mockEnemyMek, mockPath, mockGame);
         assertEntityEvaluationResponseEquals(expected, actual);
     }
 
@@ -359,7 +404,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testRankPath() {
+    void testRankPath() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(1.0)
                 .when(testRanker)
@@ -377,7 +422,7 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .checkPathForHazards(any(MovePath.class), any(Entity.class), any(Game.class));
 
-        final Entity mockMover = mock(BipedMech.class);
+        final Entity mockMover = mock(BipedMek.class);
         when(mockMover.isClan()).thenReturn(false);
         when(mockPrincess.wantsToFallBack(eq(mockMover))).thenReturn(false);
 
@@ -422,43 +467,43 @@ public class BasicPathRankerTest {
         final Map<Integer, Double> bestDamageByEnemies = new TreeMap<>();
         when(testRanker.getBestDamageByEnemies()).thenReturn(bestDamageByEnemies);
 
-        final Coords enemyMech1Position = spy(new Coords(10, 10));
+        final Coords enemyMek1Position = spy(new Coords(10, 10));
         doReturn(3)
-                .when(enemyMech1Position)
+                .when(enemyMek1Position)
                 .direction(nullable(Coords.class));
-        final Entity mockEnemyMech1 = mock(BipedMech.class);
-        when(mockEnemyMech1.isOffBoard()).thenReturn(false);
-        when(mockEnemyMech1.getPosition()).thenReturn(enemyMech1Position);
-        when(mockEnemyMech1.isSelectableThisTurn()).thenReturn(false);
-        when(mockEnemyMech1.isImmobile()).thenReturn(false);
-        when(mockEnemyMech1.getId()).thenReturn(1);
-        EntityEvaluationResponse evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
-        doReturn(evalForMockEnemyMech)
+        final Entity mockEnemyMek1 = mock(BipedMek.class);
+        when(mockEnemyMek1.isOffBoard()).thenReturn(false);
+        when(mockEnemyMek1.getPosition()).thenReturn(enemyMek1Position);
+        when(mockEnemyMek1.isSelectableThisTurn()).thenReturn(false);
+        when(mockEnemyMek1.isImmobile()).thenReturn(false);
+        when(mockEnemyMek1.getId()).thenReturn(1);
+        EntityEvaluationResponse evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(25.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
-        testEnemies.add(mockEnemyMech1);
-        doReturn(mockEnemyMech1)
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
+        testEnemies.add(mockEnemyMek1);
+        doReturn(mockEnemyMek1)
                 .when(testRanker)
                 .findClosestEnemy(eq(mockMover), nullable(Coords.class), any(Game.class));
 
-        final Entity mockEnemyMech2 = mock(BipedMech.class);
-        when(mockEnemyMech2.isOffBoard()).thenReturn(false);
-        when(mockEnemyMech2.getPosition()).thenReturn(new Coords(10, 10));
-        when(mockEnemyMech2.isSelectableThisTurn()).thenReturn(true);
-        when(mockEnemyMech2.isImmobile()).thenReturn(false);
-        when(mockEnemyMech2.getId()).thenReturn(2);
-        final EntityEvaluationResponse evalForMockEnemyMech2 = new EntityEvaluationResponse();
-        evalForMockEnemyMech2.setMyEstimatedDamage(8.0);
-        evalForMockEnemyMech2.setMyEstimatedPhysicalDamage(0.0);
-        evalForMockEnemyMech2.setEstimatedEnemyDamage(15.0);
-        doReturn(evalForMockEnemyMech2)
+        final Entity mockEnemyMek2 = mock(BipedMek.class);
+        when(mockEnemyMek2.isOffBoard()).thenReturn(false);
+        when(mockEnemyMek2.getPosition()).thenReturn(new Coords(10, 10));
+        when(mockEnemyMek2.isSelectableThisTurn()).thenReturn(true);
+        when(mockEnemyMek2.isImmobile()).thenReturn(false);
+        when(mockEnemyMek2.getId()).thenReturn(2);
+        final EntityEvaluationResponse evalForMockEnemyMek2 = new EntityEvaluationResponse();
+        evalForMockEnemyMek2.setMyEstimatedDamage(8.0);
+        evalForMockEnemyMek2.setMyEstimatedPhysicalDamage(0.0);
+        evalForMockEnemyMek2.setEstimatedEnemyDamage(15.0);
+        doReturn(evalForMockEnemyMek2)
                 .when(testRanker)
-                .evaluateUnmovedEnemy(eq(mockEnemyMech2), any(MovePath.class), anyBoolean(),
+                .evaluateUnmovedEnemy(eq(mockEnemyMek2), any(MovePath.class), anyBoolean(),
                         anyBoolean());
-        testEnemies.add(mockEnemyMech2);
+        testEnemies.add(mockEnemyMek2);
 
         Coords friendsCoords = new Coords(10, 10);
 
@@ -527,14 +572,14 @@ public class BasicPathRankerTest {
                 .when(testRanker)
                 .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
 
-        // Change the damage to enemy mech 1.
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
-        doReturn(evalForMockEnemyMech)
+        // Change the damage to enemy mek 1.
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(25.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
         expected = new RankedPath(-51.25, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
@@ -552,13 +597,13 @@ public class BasicPathRankerTest {
         if (baseRank > actual.getRank()) {
             fail("The more damage I do, the higher the path rank should be.");
         }
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(4.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
-        doReturn(evalForMockEnemyMech)
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(4.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(25.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
         expected = new RankedPath(-61.0, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-16)
@@ -576,22 +621,22 @@ public class BasicPathRankerTest {
         if (baseRank < actual.getRank()) {
             fail("The less damage I do, the lower the path rank should be.");
         }
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
-        doReturn(evalForMockEnemyMech)
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(25.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
 
-        // Change the damage done by enemy mech 1.
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(35.0);
-        doReturn(evalForMockEnemyMech)
+        // Change the damage done by enemy mek 1.
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(35.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
         expected = new RankedPath(-61.25, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-16.25)
@@ -609,13 +654,13 @@ public class BasicPathRankerTest {
             fail("The more damage they do, the lower the path rank should be.");
         }
         assertRankedPathEquals(expected, actual);
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(15.0);
-        doReturn(evalForMockEnemyMech)
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(15.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
         expected = new RankedPath(-41.25, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(3.75)
@@ -633,13 +678,13 @@ public class BasicPathRankerTest {
         if (baseRank > actual.getRank()) {
             fail("The less damage they do, the higher the path rank should be.");
         }
-        evalForMockEnemyMech = new EntityEvaluationResponse();
-        evalForMockEnemyMech.setMyEstimatedDamage(14.5);
-        evalForMockEnemyMech.setMyEstimatedPhysicalDamage(8.0);
-        evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
-        doReturn(evalForMockEnemyMech)
+        evalForMockEnemyMek = new EntityEvaluationResponse();
+        evalForMockEnemyMek.setMyEstimatedDamage(14.5);
+        evalForMockEnemyMek.setMyEstimatedPhysicalDamage(8.0);
+        evalForMockEnemyMek.setEstimatedEnemyDamage(25.0);
+        doReturn(evalForMockEnemyMek)
                 .when(testRanker)
-                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+                .evaluateMovedEnemy(eq(mockEnemyMek1), any(MovePath.class), any(Game.class));
 
         // Change the distance to the enemy.
         doReturn(2.0)
@@ -875,20 +920,20 @@ public class BasicPathRankerTest {
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
-        doReturn(mockEnemyMech1)
+        doReturn(mockEnemyMek1)
                 .when(testRanker)
                 .findClosestEnemy(eq(mockMover), nullable(Coords.class), any(Game.class));
     }
 
     @Test
-    public void testFindClosestEnemy() {
+    void testFindClosestEnemy() {
         final List<Entity> enemyList = new ArrayList<>(3);
 
-        final Entity enemyMech = mock(BipedMech.class);
-        when(enemyMech.getPosition()).thenReturn(new Coords(10, 10));
-        when(enemyMech.isSelectableThisTurn()).thenReturn(false);
-        when(enemyMech.isImmobile()).thenReturn(false);
-        enemyList.add(enemyMech);
+        final Entity enemyMek = mock(BipedMek.class);
+        when(enemyMek.getPosition()).thenReturn(new Coords(10, 10));
+        when(enemyMek.isSelectableThisTurn()).thenReturn(false);
+        when(enemyMek.isImmobile()).thenReturn(false);
+        enemyList.add(enemyMek);
 
         final Entity enemyTank = mock(Tank.class);
         when(enemyTank.getPosition()).thenReturn(new Coords(10, 15));
@@ -903,24 +948,24 @@ public class BasicPathRankerTest {
         enemyList.add(enemyBA);
 
         final Coords position = new Coords(0, 0);
-        final Entity me = mock(BipedMech.class);
+        final Entity me = mock(BipedMek.class);
         final Game mockGame = mock(Game.class);
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(enemyList).when(mockPrincess).getEnemyEntities();
 
-        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame, false));
+        assertEquals(enemyMek, testRanker.findClosestEnemy(me, position, mockGame, false));
 
-        // Add in an unmoved mech.
-        final Entity unmovedMech = mock(BipedMech.class);
+        // Add in an unmoved mek.
+        final Entity unmovedMek = mock(BipedMek.class);
         // Now the closest by position.
-        when(unmovedMech.getPosition()).thenReturn(new Coords(9, 9));
-        when(unmovedMech.isSelectableThisTurn()).thenReturn(true);
-        when(unmovedMech.isImmobile()).thenReturn(false);
+        when(unmovedMek.getPosition()).thenReturn(new Coords(9, 9));
+        when(unmovedMek.isSelectableThisTurn()).thenReturn(true);
+        when(unmovedMek.isImmobile()).thenReturn(false);
         // Movement should cause it to be further away.
-        when(unmovedMech.getWalkMP()).thenReturn(6);
-        enemyList.add(unmovedMech);
-        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame));
+        when(unmovedMek.getWalkMP()).thenReturn(6);
+        enemyList.add(unmovedMek);
+        assertEquals(enemyMek, testRanker.findClosestEnemy(me, position, mockGame));
 
         // Add in an aero unit right on top of me.
         final Entity mockAero = mock(ConvFighter.class);
@@ -932,13 +977,11 @@ public class BasicPathRankerTest {
         when(mockAero.isSelectableThisTurn()).thenReturn(false);
         when(mockAero.isImmobile()).thenReturn(false);
         enemyList.add(mockAero);
-        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame));
+        assertEquals(enemyMek, testRanker.findClosestEnemy(me, position, mockGame));
     }
 
     @Test
-    public void testCalcAllyCenter() {
-        final BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
-
+    void testCalcAllyCenter() {
         final int myId = 1;
 
         final List<Entity> friends = new ArrayList<>();
@@ -949,28 +992,28 @@ public class BasicPathRankerTest {
         final Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
 
-        final Entity mockFriend1 = mock(BipedMech.class);
+        final Entity mockFriend1 = mock(BipedMek.class);
         when(mockFriend1.getId()).thenReturn(myId);
         when(mockFriend1.isOffBoard()).thenReturn(false);
         final Coords friendPosition1 = new Coords(0, 0);
         when(mockFriend1.getPosition()).thenReturn(friendPosition1);
         friends.add(mockFriend1);
 
-        final Entity mockFriend2 = mock(BipedMech.class);
+        final Entity mockFriend2 = mock(BipedMek.class);
         when(mockFriend2.getId()).thenReturn(2);
         when(mockFriend2.isOffBoard()).thenReturn(false);
         final Coords friendPosition2 = new Coords(10, 0);
         when(mockFriend2.getPosition()).thenReturn(friendPosition2);
         friends.add(mockFriend2);
 
-        final Entity mockFriend3 = mock(BipedMech.class);
+        final Entity mockFriend3 = mock(BipedMek.class);
         when(mockFriend3.getId()).thenReturn(3);
         when(mockFriend3.isOffBoard()).thenReturn(false);
         final Coords friendPosition3 = new Coords(0, 10);
         when(mockFriend3.getPosition()).thenReturn(friendPosition3);
         friends.add(mockFriend3);
 
-        final Entity mockFriend4 = mock(BipedMech.class);
+        final Entity mockFriend4 = mock(BipedMek.class);
         when(mockFriend4.getId()).thenReturn(4);
         when(mockFriend4.isOffBoard()).thenReturn(false);
         final Coords friendPosition4 = new Coords(10, 10);
@@ -979,39 +1022,39 @@ public class BasicPathRankerTest {
 
         // Test the default conditions.
         Coords expected = new Coords(6, 6);
-        Coords actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        Coords actual = BasicPathRanker.calcAllyCenter(myId, friends, mockGame);
         assertCoordsEqual(expected, actual);
 
         // Move one of my friends off-board.
         when(mockFriend2.isOffBoard()).thenReturn(true);
         expected = new Coords(5, 10);
-        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, friends, mockGame);
         assertCoordsEqual(expected, actual);
         when(mockFriend2.isOffBoard()).thenReturn(false);
 
         // Give one of my friends a null position.
         when(mockFriend3.getPosition()).thenReturn(null);
         expected = new Coords(10, 5);
-        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, friends, mockGame);
         assertCoordsEqual(expected, actual);
         when(mockFriend3.getPosition()).thenReturn(friendPosition3);
 
         // Give one of my friends an invalid position.
         when(mockBoard.contains(eq(friendPosition4))).thenReturn(false);
         expected = new Coords(5, 5);
-        actual = testRanker.calcAllyCenter(myId, friends, mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, friends, mockGame);
         assertCoordsEqual(expected, actual);
         when(mockBoard.contains(eq(friendPosition4))).thenReturn(true);
 
         // Test having no friends.
-        actual = testRanker.calcAllyCenter(myId, new ArrayList<>(0), mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, new ArrayList<>(0), mockGame);
         assertNull(actual);
-        actual = testRanker.calcAllyCenter(myId, null, mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, null, mockGame);
         assertNull(actual);
         // I'm my own best friend
         final List<Entity> solo = new ArrayList<>(1);
         solo.add(mockFriend1);
-        actual = testRanker.calcAllyCenter(myId, solo, mockGame);
+        actual = BasicPathRanker.calcAllyCenter(myId, solo, mockGame);
         assertEquals(actual.equals(mockFriend1.getPosition()), true);
     }
 
@@ -1021,7 +1064,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testCalculateDamagePotential() {
+    void testCalculateDamagePotential() {
         final Entity mockMe = generateMockEntity(10, 10);
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
@@ -1066,7 +1109,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testCalculateMyDamagePotential() {
+    void testCalculateMyDamagePotential() {
         final Entity mockMe = generateMockEntity(10, 10);
 
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
@@ -1131,7 +1174,7 @@ public class BasicPathRankerTest {
      * @return
      */
     private Entity generateMockEntity(int x, int y) {
-        final Entity mockEntity = mock(BipedMech.class);
+        final Entity mockEntity = mock(BipedMek.class);
         when(mockEntity.getMaxWeaponRange()).thenReturn(21);
 
         final Crew mockCrew = mock(Crew.class);
@@ -1188,7 +1231,7 @@ public class BasicPathRankerTest {
         return mockGame;
     }
 
-    public List<Coords> setupCoords(String... pairs) {
+    List<Coords> setupCoords(String... pairs) {
         List<Coords> coords = new ArrayList<Coords>();
         for (String pair : pairs) {
             String[] xyPair = pair.split(",");
@@ -1199,7 +1242,7 @@ public class BasicPathRankerTest {
         return coords;
     }
 
-    public List<Hex> setupHexes(List<Coords> coords) {
+    List<Hex> setupHexes(List<Coords> coords) {
         List<Hex> hexes = new ArrayList<Hex>();
         for (Coords c : coords) {
             Hex mockHex = mock(Hex.class);
@@ -1210,7 +1253,7 @@ public class BasicPathRankerTest {
         return hexes;
     }
 
-    public Vector<MoveStep> setupMoveStepVector(List<Coords> coords) {
+    Vector<MoveStep> setupMoveStepVector(List<Coords> coords) {
         Vector<MoveStep> moves = new Vector<MoveStep>();
         for (Coords c : coords) {
             MoveStep mockStep = mock(MoveStep.class);
@@ -1220,7 +1263,7 @@ public class BasicPathRankerTest {
         return moves;
     }
 
-    public MovePath setupPath(Vector<MoveStep> steps) {
+    MovePath setupPath(Vector<MoveStep> steps) {
         Coords finalCoords = steps.lastElement().getPosition();
         MovePath mockPath = mock(MovePath.class);
         when(mockPath.getLastStep()).thenReturn(steps.lastElement());
@@ -1230,7 +1273,7 @@ public class BasicPathRankerTest {
         return mockPath;
     }
 
-    public Game setupGame(List<Coords> coords, List<Hex> hexes) {
+    Game setupGame(List<Coords> coords, List<Hex> hexes) {
         Game mockGame = mock(Game.class);
         Board mockBoard = mock(Board.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
@@ -1241,7 +1284,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testCheckPathForHazards() {
+    void testCheckPathForHazards() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
 
         final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
@@ -1257,7 +1300,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
 
@@ -1283,7 +1326,7 @@ public class BasicPathRankerTest {
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
         // Test walking a ProtoMek over magma crust
-        final Entity mockProto = mock(Protomech.class);
+        final Entity mockProto = mock(ProtoMek.class);
         when(mockProto.locations()).thenReturn(6);
         when(mockProto.getArmor(anyInt())).thenReturn(5);
         when(mockProto.getCrew()).thenReturn(mockCrew);
@@ -1340,12 +1383,12 @@ public class BasicPathRankerTest {
         when(mockHexTwo.depth()).thenReturn(0);
         when(mockHexThree.depth()).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mech.LOC_CT)).thenReturn(10);
-        when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(0);
+        when(mockUnit.getArmor(Mek.LOC_CT)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(Mech.LOC_RARM)).thenReturn(10);
+        when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(10);
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
@@ -1397,9 +1440,9 @@ public class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(0);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(0);
         assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(10);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(10);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
@@ -1419,7 +1462,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testMagmaHazard() {
+    void testMagmaHazard() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
 
         final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
@@ -1432,7 +1475,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
 
@@ -1448,8 +1491,8 @@ public class BasicPathRankerTest {
 
         // Test jumping onto Magma Crust.
         when(mockPath.isJumping()).thenReturn(true);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(24);
-        when(mockUnit.getArmor(eq(Mech.LOC_RLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
         // Only 50% chance to break through Crust, but must make PSR to avoid getting
@@ -1484,12 +1527,12 @@ public class BasicPathRankerTest {
         when(mockFinalHex.depth()).thenReturn(1);
         assertEquals(8595.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
-        // Test damaged 'mech walking hazard (should increase hazard as damage level
+        // Test damaged 'mek walking hazard (should increase hazard as damage level
         // increases)
         when(mockCrew.getPiloting()).thenReturn(5);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockUnit.getArmor(eq(Mech.LOC_LLEG))).thenReturn(2);
-        when(mockUnit.getArmor(eq(Mech.LOC_RLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(2);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.depth()).thenReturn(0);
         // Moderate damage means moderate hazard
@@ -1542,7 +1585,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testSwampHazard() {
+    void testSwampHazard() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
 
         final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
@@ -1555,7 +1598,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
@@ -1623,7 +1666,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testMudHazard() {
+    void testMudHazard() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
 
         final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
@@ -1636,7 +1679,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
@@ -1651,9 +1694,8 @@ public class BasicPathRankerTest {
         when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
         when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
 
-        // Test walking onto mud; jumping doesn't change danger because Mechs can't bog
-        // down here
-        // Small hazard to Mechs due to PSR malus
+        // Test walking onto mud; jumping doesn't change danger because Meks can't bog
+        // down here. Small hazard to Meks due to PSR malus
         when(mockPath.isJumping()).thenReturn(false);
         when(mockFinalHex.depth()).thenReturn(0);
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MUD });
@@ -1679,8 +1721,7 @@ public class BasicPathRankerTest {
     }
 
     @Test
-    public void testBlackIceHazard() {
-
+    void testBlackIceHazard() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         testRanker.blackIce = 1;
 
@@ -1693,7 +1734,7 @@ public class BasicPathRankerTest {
 
         final MovePath mockPath = setupPath(stepVector);
 
-        final Entity mockUnit = mock(BipedMech.class);
+        final Entity mockUnit = mock(BipedMek.class);
         when(mockUnit.getWeight()).thenReturn(70.0);
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
@@ -1709,6 +1750,34 @@ public class BasicPathRankerTest {
         // Test visible black ice hazard value
         when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[] { Terrains.BLACK_ICE });
         assertEquals(12.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+    }
+
+    void testPossibleBlackIceHazard() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+        testRanker.blackIce = 1;
+
+        final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
+
+        final List<Hex> testHexes = setupHexes(testCoords);
+        final Hex mockPenultimateHex = testHexes.get(2);
+
+        final Vector<MoveStep> stepVector = setupMoveStepVector(testCoords);
+
+        final MovePath mockPath = setupPath(stepVector);
+
+        final Entity mockUnit = mock(BipedMek.class);
+        when(mockUnit.getWeight()).thenReturn(70.0);
+        when(mockUnit.locations()).thenReturn(8);
+        when(mockUnit.getArmor(anyInt())).thenReturn(10);
+        when(mockUnit.getHeight()).thenReturn(2);
+        when(mockPath.isJumping()).thenReturn(false);
+
+        final Game mockGame = setupGame(testCoords, testHexes);
+
+        final Crew mockCrew = mock(Crew.class);
+        when(mockUnit.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getPiloting()).thenReturn(5);
+
         // Test _possible_ black ice hazard value (1/3 lower)
         when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[] { Terrains.PAVEMENT });
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);

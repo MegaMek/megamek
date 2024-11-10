@@ -16,24 +16,33 @@
 package megamek.client.ratgenerator;
 
 import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * Handles availability rating values and calculations for RAT generator.
- * Availability is rated on a base-2 logarithmic scale from 0 (non-existent) to 10 (ubiquitous),
- * with 6 being a typical value when the source material does not give an indication of frequency.
- * The availability rating is actually twice the exponent, which allows more precision
- * while still storing values as integers (so it's really a base-(sqrt(2)) scale, but using
+ * Availability is rated on a base-2 logarithmic scale from 0 (non-existent) to
+ * 10 (ubiquitous),
+ * with 6 being a typical value when the source material does not give an
+ * indication of frequency.
+ * The availability rating is actually twice the exponent, which allows more
+ * precision
+ * while still storing values as integers (so it's really a base-(sqrt(2))
+ * scale, but using
  * 2 as the base should theoretically be faster).
  *
- * These values are stored separately for chassis and models; for example, there is
- * one value to indicate the likelihood that a medium Mek is a Phoenix Hawk and another
- * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or 1K, etc.
+ * These values are stored separately for chassis and models; for example, there
+ * is
+ * one value to indicate the likelihood that a medium Mek is a Phoenix Hawk and
+ * another
+ * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or
+ * 1K, etc.
  *
  * @author Neoancient
  */
 public class AvailabilityRating {
-    //Used to calculate av rating from weight.
+    private final static MMLogger logger = MMLogger.create(AvailabilityRating.class);
+
+    // Used to calculate av rating from weight.
     public static final double LOG_BASE = Math.log(2);
 
     String faction = "General";
@@ -48,15 +57,22 @@ public class AvailabilityRating {
      * @param unit The chassis or model key
      * @param era  The era that this availability code applies to.
      * @param code A string with the format FKEY[!RATING]:AV[+/-][:YEAR]
-     * FKEY: the faction key
-     * RATING: if supplied, will limit this record to units with the indicated equipment rating
-     * AV: a value that indicates how common this unit is, from 0 (non-existent) to 10 (ubiquitous)
-     * +: the indicated av rating applies to the highest equipment rating for the faction
-     *     (usually A or Keshik) and decreases for each step the rating is reduced.
-     * -: as +, but applies to the lowest equipment rating (F or PGC) and decreases
-     *     as rating increases.
-     * YEAR: when the unit becomes available to the faction, if later than the beginning of the era.
-     *     Any year before this within the era will be treated as having no availability.
+     *             FKEY: the faction key
+     *             RATING: if supplied, will limit this record to units with the
+     *             indicated equipment rating
+     *             AV: a value that indicates how common this unit is, from 0
+     *             (non-existent) to 10 (ubiquitous)
+     *             +: the indicated av rating applies to the highest equipment
+     *             rating for the faction
+     *             (usually A or Keshik) and decreases for each step the rating is
+     *             reduced.
+     *             -: as +, but applies to the lowest equipment rating (F or PGC)
+     *             and decreases
+     *             as rating increases.
+     *             YEAR: when the unit becomes available to the faction, if later
+     *             than the beginning of the era.
+     *             Any year before this within the era will be treated as having no
+     *             availability.
      */
     public AvailabilityRating(String unit, int era, String code) {
         unitName = unit;
@@ -72,7 +88,7 @@ public class AvailabilityRating {
         faction = fields[0];
 
         if (fields.length < 2) {
-            LogManager.getLogger().warn("No availability code given for " + unit +
+            logger.warn("No availability code given for " + unit +
                     " (" + era + "): " + faction);
             return;
         }
@@ -89,7 +105,7 @@ public class AvailabilityRating {
             try {
                 startYear = Integer.parseInt(fields[2]);
             } catch (NumberFormatException ex) {
-                LogManager.getLogger().warn("Could not parse start year " + fields[2] + " for "
+                logger.warn(ex, "Could not parse start year " + fields[2] + " for "
                         + unit + " in " + era);
             }
         }

@@ -13,18 +13,20 @@
  */
 package megamek.common.preference;
 
-import megamek.MMConstants;
-import megamek.common.MovePath;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+import megamek.MMConstants;
+import megamek.common.MovePath;
+import megamek.logging.MMLogger;
+
 public class ClientPreferences extends PreferenceStoreProxy {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
+
+    // region Variable Declarations
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
     public static final String LAST_PLAYER_NAME = "LastPlayerName";
@@ -35,7 +37,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
-    public static final String MECH_DIRECTORY = "MechDirectory";
+    public static final String MEK_DIRECTORY = "MekDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
@@ -62,12 +64,15 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
 
-    /** A user-specified directory, typically outside the MM directory, where content may be loaded from. */
+    /**
+     * A user-specified directory, typically outside the MM directory, where content
+     * may be loaded from.
+     */
     public static final String USER_DIR = "UserDir";
 
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public ClientPreferences(IPreferenceStore store) {
         this.store = store;
         store.setDefault(LAST_CONNECT_ADDR, MMConstants.LOCALHOST);
@@ -77,7 +82,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
-        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
+        store.setDefault(MEK_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mekfiles");
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
@@ -101,7 +106,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
-    //endregion Constructors
+    // endregion Constructors
 
     public boolean getPrintEntityChange() {
         return store.getBoolean(PRINT_ENTITY_CHANGE);
@@ -123,7 +128,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public boolean useGPinUnitSelection() {
         return store.getBoolean(USE_GP_IN_UNIT_SELECTION);
     }
-    
+
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
@@ -164,8 +169,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(LOG_DIRECTORY);
     }
 
-    public String getMechDirectory() {
-        return store.getString(MECH_DIRECTORY);
+    public String getMekDirectory() {
+        return store.getString(MEK_DIRECTORY);
     }
 
     protected PrintWriter mekHitLocLog = null;
@@ -233,7 +238,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public void setUseGpInUnitSelection(boolean state) {
         store.setValue(USE_GP_IN_UNIT_SELECTION, state);
     }
-    
+
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }
@@ -364,7 +369,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
                 mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
                 mekHitLocLog = null;
             }
         }
@@ -386,7 +391,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getInt(MAP_HEIGHT);
     }
 
-    /** @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash. */
+    /**
+     * @return The absolute user directory path (usually outside of MM). Does not
+     *         end in a slash or backslash.
+     */
     public String getUserDir() {
         return store.getString(USER_DIR);
     }

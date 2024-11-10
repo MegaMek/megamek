@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -21,19 +21,21 @@ package megamek.client.generator.skillGenerators;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Tank;
 import megamek.common.enums.SkillLevel;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(TotalWarfareSkillGenerator.class);
+
+    // region Variable Declarations
     protected static final int[][] SKILL_LEVELS = new int[][] {
             { 7, 6, 5, 4, 4, 3, 2, 1, 0, 0 },
             { 7, 7, 6, 6, 5, 4, 3, 2, 1, 0 } };
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public TotalWarfareSkillGenerator() {
         this(SkillGeneratorMethod.TOTAL_WARFARE);
     }
@@ -41,16 +43,15 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     protected TotalWarfareSkillGenerator(final SkillGeneratorMethod method) {
         super(method);
     }
-    //endregion Constructors
+    // endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         return generateRandomSkills(getLevel(), entity, clanPilot, forceClan);
     }
 
-    protected int[] generateRandomSkills(final SkillLevel level, final Entity entity,
-                                         final boolean clanPilot, final boolean forceClan) {
+    protected int[] generateRandomSkills(final SkillLevel level, final Entity entity, final boolean clanPilot,
+            final boolean forceClan) {
         final int bonus = determineBonus(entity, clanPilot, forceClan);
 
         final int gunneryRoll = Compute.d6(1) + bonus;
@@ -88,7 +89,7 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
                 pilotingLevel = (int) Math.ceil(pilotingRoll / 2.0) + 6;
                 break;
             default:
-                LogManager.getLogger().error("Attempting to generate skills for unknown skill level of " + level);
+                logger.error("Attempting to generate skills for unknown skill level of " + level);
                 gunneryLevel = 0;
                 pilotingLevel = 0;
                 break;
@@ -99,15 +100,16 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     }
 
     /**
-     * @param entity the entity whose crew skill is being rolled
+     * @param entity    the entity whose crew skill is being rolled
      * @param clanPilot if the crew is led by a clan pilot
-     * @param forceClan forces the type to be clan if the crew are led by a clanPilot
+     * @param forceClan forces the type to be clan if the crew are led by a
+     *                  clanPilot
      * @return the bonus to use on the Random Skills Table (Expanded) roll
      */
     protected int determineBonus(final Entity entity, final boolean clanPilot,
-                                 final boolean forceClan) {
+            final boolean forceClan) {
         if (getType().isClan() || (forceClan && clanPilot)) {
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 return 2;
             } else if (entity instanceof Tank) {
                 return -2;

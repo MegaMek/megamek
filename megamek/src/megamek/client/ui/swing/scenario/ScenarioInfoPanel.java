@@ -18,26 +18,23 @@
  */
 package megamek.client.ui.swing.scenario;
 
-import megamek.client.ui.swing.util.DashedSeparator;
-import megamek.client.ui.swing.util.LocationBorder;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.scenario.ScenarioV1;
+import megamek.client.ui.MMMarkdownRenderer;
+import megamek.client.ui.swing.util.*;
 import megamek.common.scenario.Scenario;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * This panel displays a single {@link ScenarioV1} object in a well-formatted manner for display in the
- * {@link ScenarioChooser}.
+ * This panel displays a single {@link Scenario} object in a well-formatted manner for display in the {@link ScenarioChooser}.
  */
 public class ScenarioInfoPanel extends JPanel {
 
     static final int BASE_MINIMUM_WIDTH = 600;
     static final int BASE_MINIMUM_HEIGHT = 100;
 
-    private final JLabel lblTitle = new HeaderLabel();
-    private final DescriptionLabel textDescription2 = new DescriptionLabel();
+    private final JLabel lblTitle = new JLabel();
+    private final JTextPane textDescription2 = new DescriptionPane();
 
     public ScenarioInfoPanel() {
         setBorder(BorderFactory.createCompoundBorder(
@@ -49,42 +46,42 @@ public class ScenarioInfoPanel extends JPanel {
         lblTitle.setName("lblTitle");
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblTitle.setForeground(UIUtil.uiLightGreen());
-        lblTitle.setFont(new Font("Exo 2", Font.BOLD, UIUtil.FONT_SCALE1));
+        new FlatLafStyleBuilder().font("Exo 2").bold().size(1.4).apply(lblTitle);
         add(lblTitle);
-        add(UIUtil.scaledVerticalSpacer(10));
+        add(Box.createVerticalStrut(10));
         add(new DashedSeparator(UIUtil.uiLightGreen(), 0.9f, 2f));
-        add(UIUtil.scaledVerticalSpacer(10));
-
-        textDescription2.setFont(new Font("Noto Sans", Font.PLAIN, UIUtil.FONT_SCALE1));
-        textDescription2.setAlignmentX(0.5f);
-        textDescription2.setVerticalAlignment(SwingConstants.TOP);
-        textDescription2.setBorder(new UIUtil.ScaledEmptyBorder(0, 10, 0, 10));
+        new FlatLafStyleBuilder().font(FontHandler.notoFont()).apply(textDescription2);
         add(textDescription2);
     }
 
     protected void updateFromPreset(final Scenario preset) {
         lblTitle.setText(preset.getName());
-        textDescription2.setText("<HTML>" + preset.getDescription());
+        String description = MMMarkdownRenderer.getRenderedHtml(preset.getDescription());
+        // bring the paragraph top margin in line (and scale it)
+        int margin = UIUtil.scaleForGUI(8);
+        textDescription2.setText("<HTML><HEAD><STYLE>p { margin-top: %d; }</STYLE></HEAD><BODY>%s".formatted(margin, description));
     }
 
-    private static class DescriptionLabel extends JLabel {
+    private static class DescriptionPane extends JTextPane {
+
+        public DescriptionPane() {
+            setEditable(false);
+            setContentType("text/html");
+            setCaretPosition(0);
+            setAlignmentX(0.5f);
+            setBackground(null);
+            setMargin(new Insets(0, 10, 0, 10));
+        }
+
         @Override
         public Dimension getMaximumSize() {
+            // Fixed sizes do not get scaled by FlatLaf
             return UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH, BASE_MINIMUM_HEIGHT);
         }
 
         @Override
         public Dimension getPreferredSize() {
-            return UIUtil.scaleForGUI(BASE_MINIMUM_WIDTH, BASE_MINIMUM_HEIGHT);
-        }
-    }
-
-    private static class HeaderLabel extends JLabel {
-        @Override
-        public void setFont(Font font) {
-            // Keep a higher font size; UIUtil.adjustDialog sets everything to the same absolute font size
-            font = font.deriveFont(1.4f * font.getSize());
-            super.setFont(font);
+            return getMaximumSize();
         }
     }
 }

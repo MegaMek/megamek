@@ -1,20 +1,24 @@
 /*
- * MegaMek -
- * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -84,7 +88,7 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if ((args.length == 4) && args[3].equalsIgnoreCase("ALL")) {
-                                for (Mounted weapon : ce().getWeaponList()) {
+                                for (Mounted<?> weapon : ce().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
                                         fire(ce().getEquipmentNum(weapon), target);
                                     }
@@ -108,7 +112,7 @@ public class FireCommand extends ClientCommand {
                             if (target != null) {
                                 String str = " Weapons for " + ce() + " at " + target + ":\n";
 
-                                for (Mounted weapon : ce().getWeaponList()) {
+                                for (Mounted<?> weapon : ce().getWeaponList()) {
                                     str += "("
                                            + ce().getEquipmentNum(weapon)
                                            + ") "
@@ -146,15 +150,12 @@ public class FireCommand extends ClientCommand {
             return;
         }
 
-        // remove attacks, set weapons available again
-        Enumeration<AbstractEntityAction> i = attacks.elements();
-        while (i.hasMoreElements()) {
-            Object o = i.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        for (AbstractEntityAction abstractEntityAction : attacks) {
+            if (abstractEntityAction instanceof WeaponAttackAction weaponAttackAction) {
+                ce().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
             }
         }
+
         attacks.removeAllElements();
 
         // remove temporary attacks from game & board
@@ -167,14 +168,12 @@ public class FireCommand extends ClientCommand {
     }
 
     private void torsoTwist(int target) {
-        Enumeration<AbstractEntityAction> i = attacks.elements();
-        while (i.hasMoreElements()) {
-            Object o = i.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        for (AbstractEntityAction abstractEntityAction : attacks) {
+            if (abstractEntityAction instanceof WeaponAttackAction weaponAttackAction) {
+                ce().getEquipment(weaponAttackAction.getWeaponId()).setUsedThisRound(false);
             }
         }
+
         attacks.removeAllElements();
 
         // remove temporary attacks from game & board
@@ -192,8 +191,8 @@ public class FireCommand extends ClientCommand {
     }
 
     private void fire(int weaponNum, Targetable target) {
-        // get the selected weaponnum
-        Mounted mounted = ce().getEquipment(weaponNum);
+        // get the selected weaponNumber
+        Mounted<?> mounted = ce().getEquipment(weaponNum);
 
         // validate
         if (ce() == null || target == null || mounted == null
@@ -210,7 +209,7 @@ public class FireCommand extends ClientCommand {
                 .getTargetType(), target.getId(), weaponNum);
 
         if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
-            Mounted ammoMount = mounted.getLinked();
+            Mounted<?> ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
             EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
@@ -222,8 +221,7 @@ public class FireCommand extends ClientCommand {
                     || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
                     || ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
 
-                waa.setOtherAttackInfo(50); // /hardcode vibrobomb setting for
-                // now.
+                waa.setOtherAttackInfo(50); // /hardcode VibroBomb setting for now.
             }
         }
 
@@ -251,8 +249,7 @@ public class FireCommand extends ClientCommand {
         }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
-                target.getId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -269,7 +266,7 @@ public class FireCommand extends ClientCommand {
 
             str += " Range: " + ce().getPosition().distance(target.getPosition());
 
-            Mounted m = ce().getEquipment(weaponId);
+            Mounted<?> m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");

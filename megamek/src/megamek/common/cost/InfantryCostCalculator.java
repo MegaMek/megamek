@@ -29,7 +29,7 @@ public class InfantryCostCalculator {
         int idx = 0;
 
         // Weapon Cost Calculation
-        double pweaponCost = 0;  // Primary Weapon Cost
+        double pweaponCost = 0; // Primary Weapon Cost
         if (null != infantry.getPrimaryWeapon()) {
             pweaponCost = Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
@@ -39,13 +39,15 @@ public class InfantryCostCalculator {
         }
 
         // Determining Break down of who would have primary and secondary weapons.
-        double primarySquad = (infantry.getSquadSize() - infantry.getSecondaryWeaponsPerSquad()) * infantry.getSquadCount();
+        double primarySquad = (infantry.getSquadSize() - infantry.getSecondaryWeaponsPerSquad())
+                * infantry.getSquadCount();
         double secondSquad = infantry.getOInternal(0) - primarySquad; // OInternal = menStarting
 
         // Squad Cost with just the weapons.
         costs[idx++] = primarySquad * pweaponCost + secondSquad * sweaponCost;
 
-        // Check whether the unit has an armor kit. If not, calculate value for custom armor settings
+        // Check whether the unit has an armor kit. If not, calculate value for custom
+        // armor settings
         double armorCost = 0;
         EquipmentType armor = infantry.getArmorKit();
         if (armor != null) {
@@ -88,7 +90,7 @@ public class InfantryCostCalculator {
         // Cost of armor on a per man basis added
         costs[idx++] = armorCost * infantry.getOInternal(0); // OInternal = menStarting
 
-        // Price multiplier includes anti-mech training, motive type, and specializations
+        // Price multiplier includes anti-mek training, motive type, and specializations
         costs[idx++] = -infantry.getPriceMultiplier();
 
         // add in field gun costs

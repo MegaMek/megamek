@@ -23,7 +23,7 @@ import megamek.common.enums.Gender;
 
 /**
  * Description of crew.
- * 
+ *
  * @author Neoancient
  */
 public class CrewDescriptor {
@@ -70,12 +70,13 @@ public class CrewDescriptor {
             }
         }
 
-        //Give up and use the default
+        // Give up and use the default
         return RandomNameGenerator.getInstance().generate(gender, false, RandomNameGenerator.KEY_DEFAULT_FACTION);
     }
 
     /**
-     * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods based on the
+     * Assigns skills based on the tables in TW, p. 271-3, with supplemental mods
+     * based on the
      * BattleForce rules, StratOps, p. 320-1
      */
     private void setSkills() {
@@ -90,10 +91,14 @@ public class CrewDescriptor {
 
         int bonus = 0;
         int ratingLevel = assignment.getRatingLevel();
-        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that don't have
-        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is only one.
-        // For Clan units we give a +/-1 for each rating level above or below second line. This
-        // is an expansion of the StratOps table which only included FL, SL, and Solahma.
+        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that
+        // don't have
+        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is
+        // only one.
+        // For Clan units we give a +/-1 for each rating level above or below second
+        // line. This
+        // is an expansion of the StratOps table which only included FL, SL, and
+        // Solahma.
         int levels = assignment.getFactionRec().getRatingLevels().size();
         if (clan) {
             bonus = ratingLevel - levels / 2;
@@ -144,7 +149,7 @@ public class CrewDescriptor {
 
     /**
      * Determines random experience level using the table on TW p. 273.
-     * 
+     *
      * @return The experience rating index, starting at green as zero.
      */
     public static int randomExperienceLevel() {
@@ -161,29 +166,30 @@ public class CrewDescriptor {
     }
 
     private static final int[][] PILOTING_SKILL_TABLE = {
-            {7, 7, 6, 6, 6, 6, 5, 5, 4},
-            {6, 6, 6, 5, 5, 4, 4, 3, 3},
-            {6, 5, 5, 4, 4, 3, 3, 2, 2},
-            {5, 4, 4, 3, 3, 2, 2, 1, 1}
+            { 7, 7, 6, 6, 6, 6, 5, 5, 4 },
+            { 6, 6, 6, 5, 5, 4, 4, 3, 3 },
+            { 6, 5, 5, 4, 4, 3, 3, 2, 2 },
+            { 5, 4, 4, 3, 3, 2, 2, 1, 1 }
 
     };
 
     private static final int[][] GUNNERY_SKILL_TABLE = {
-            {7, 6, 5, 5, 4, 4, 4, 4, 3},
-            {5, 4, 4, 4, 4, 3, 3, 2, 2},
-            {4, 4, 4, 3, 3, 2, 2, 1, 1},
-            {4, 3, 3, 2, 2, 1, 1, 0, 0}
+            { 7, 6, 5, 5, 4, 4, 4, 4, 3 },
+            { 5, 4, 4, 4, 4, 3, 3, 2, 2 },
+            { 4, 4, 4, 3, 3, 2, 2, 1, 1 },
+            { 4, 3, 3, 2, 2, 1, 1, 0, 0 }
 
     };
 
     /**
-     * Selects the piloting or gunnery skill rating based on overall unit experience level and
+     * Selects the piloting or gunnery skill rating based on overall unit experience
+     * level and
      * modifiers.
-     * 
+     *
      * @param table      Either the piloting or the gunnery skill table
      * @param experience The overall experience rating of the force
      * @param mod        Situational modifiers to the skill roll
-     * @return           The skill rating
+     * @return The skill rating
      */
     private int randomSkillRating(int[][] table, int experience, int mod) {
         int column = Math.max(0, Math.min(experience, table.length - 1));
@@ -195,70 +201,6 @@ public class CrewDescriptor {
         }
     }
 
-    /*
-    public void assignBloodname() {
-        final int[] ratingMods = {-3, -2, -1, 1, 4};
-        int mod = 0;
-        if (assignment.getRatingLevel() >= 0) {
-            mod = ratingMods[assignment.getRatingLevel()];
-        }
-        if (assignment.getFaction().equals("BAN")) {
-            mod -= 2;
-        }
-
-        int type = Bloodname.P_GENERAL;
-        if (assignment.isElement()) {
-            switch (assignment.getUnitType()) {
-                case "Mek":
-                    type = Bloodname.P_MECHWARRIOR;
-                    break;
-                case "Aero":
-                    type = Bloodname.P_AEROSPACE;
-                    break;
-                case "Conventional Fighter":
-                    type = Bloodname.P_AEROSPACE;
-                    mod -= 2;
-                    break;
-                case "BattleArmor":
-                    type = Bloodname.P_ELEMENTAL;
-                    break;
-                case "Infantry":
-                    type = Bloodname.P_ELEMENTAL;
-                    mod -= 2;
-                    break;
-                case "ProtoMek":
-                    type = Bloodname.P_PROTOMECH;
-                    break;
-                case "Dropship":
-                case "Warship":
-                    if (assignment.getFaction().startsWith("CSR")) {
-                        type = Bloodname.P_NAVAL;
-                    } else {
-                        mod -= 2;
-                    }
-                    break;
-                case "Tank":
-                case "VTOL":
-                case "Jumpship":
-                    return;
-            }
-        }
-        int roll = Compute.d6(2) + mod -
-                getGunnery() -
-                getPiloting();
-        if (assignment.getYear() <= 2950) roll++;
-        if (assignment.getYear() > 3055) roll--;
-        if (assignment.getYear() > 3065) roll--;
-        if (assignment.getYear() > 3080) roll--;
-        if (getRank() >= 30) {
-            roll += getRank() - 30;
-        }
-        if (roll >= 6) {
-            setBloodname(Bloodname.randomBloodname(assignment.getFaction().split("\\.")[0],
-                    type, assignment.getYear()));
-        }
-    }
-     */
     public String getName() {
         return name;
     }
@@ -288,7 +230,7 @@ public class CrewDescriptor {
     }
 
     public void setRank(int rank) {
-        if (rank > this.rank) { 
+        if (rank > this.rank) {
             this.rank = rank;
         }
     }
@@ -326,7 +268,8 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, piloting, gender, assignment.getFactionRec().isClan(), null);
+        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, piloting, gender,
+                assignment.getFactionRec().isClan(), null);
         // Randomize names and skills of crew, then assign the piloting and
         // gunnery skills generated for the unit to the correct slot.
         if (crewType.getCrewSlots() > 1) {

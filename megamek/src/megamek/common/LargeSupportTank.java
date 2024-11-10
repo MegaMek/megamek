@@ -19,11 +19,11 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.ArrayList;
+import megamek.logging.MMLogger;
 
 /**
  * This is a large support vehicle
@@ -31,6 +31,8 @@ import java.util.ArrayList;
  * @author beerockxs
  */
 public class LargeSupportTank extends SupportTank {
+    private static final MMLogger logger = MMLogger.create(LargeSupportTank.class);
+
     private static final long serialVersionUID = -3177191060629774478L;
 
     public static final int LOC_FRONTRIGHT = 2;
@@ -40,22 +42,22 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
     public static final int LOC_TURRET_2 = 8;
-    
+
     private double fuelTonnage = 0;
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
             "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret"};
-    
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
             "Front Turret" };
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
-    
+
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -82,7 +84,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -258,7 +260,7 @@ public class LargeSupportTank extends SupportTank {
     public int height() {
         return 1;
     }
-    
+
     @Override
     public boolean isSuperHeavy() {
         return true;
@@ -271,7 +273,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
@@ -339,31 +341,31 @@ public class LargeSupportTank extends SupportTank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            logger.debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -372,15 +374,15 @@ public class LargeSupportTank extends SupportTank {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined
+        // weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
     }
-
 
     @Override
     public long getEntityType() {

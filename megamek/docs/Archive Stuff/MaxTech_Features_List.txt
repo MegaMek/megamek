@@ -169,7 +169,7 @@ Concealing information 		No
 Double blind				Partial		modified rules in use
 Scavenging and repair		No
 
-Mech Construction (p57-65)
+Mek Construction (p57-65)
 
 Mixed tech					Yes
 Fractional accounting		No
@@ -184,7 +184,7 @@ Anti air targeting			Yes
 Multi-trac					No
 Enhanced satellite uplink	No
 Command console				No
-EI system					Yes			all clan mechs assumed to have it, 
+EI system					Yes			all clan meks assumed to have it,
 										if the pilot has the EI implant "skill"
 Small cockpit				Yes
 Torso mounted cockpit		Yes
@@ -194,10 +194,10 @@ XL gyro						Yes
 Armored components			No
 Reinforced structure		Yes
 Composite structure			Yes
-Armless mechs				Yes
-Mech turrets				No
+Armless meks				Yes
+Mek turrets				No
 Critical slot limits		N/A			not enforced
-very light mechs			Yes
+very light meks			Yes
 
 Vehicle construction (p65-71)
 Super heavy tanks			No

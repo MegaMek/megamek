@@ -2,17 +2,26 @@
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.client.ui.swing.widget;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
@@ -22,13 +31,9 @@ import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit
- * in MechDisplay.ArmorPanel class.
+ * in MekDisplay.ArmorPanel class.
  */
 public class CapitalFighterMapSet implements DisplayMapSet {
 
@@ -67,7 +72,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorSmallFontSize());
+            GUIP.getUnitDisplayMekArmorSmallFontSize());
 
     public CapitalFighterMapSet(JComponent c) {
         comp = c;

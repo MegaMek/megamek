@@ -48,7 +48,7 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
     }
 
     @Override
-    protected int bvLocation(Mounted equipment) {
+    protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Jumpship.LOC_NOSE) {
             return BVLOC_NOSE;
         } else if (equipment.getLocation() == Jumpship.LOC_FLS) {
@@ -70,14 +70,14 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
 
     @Override
     protected void determineFront() {
-        Predicate<Mounted> frontFilter = frontWeaponFilter();
-        Predicate<Mounted> rearFilter = rearWeaponFilter();
-        Predicate<Mounted> leftFilter = leftWeaponFilter();
-        Predicate<Mounted> rightFilter = rightWeaponFilter();
-        Predicate<Mounted> leftAftFilter = leftAftWeaponFilter();
-        Predicate<Mounted> rightAftFilter = rightAftWeaponFilter();
-        Predicate<Mounted> leftBroadsideFilter = weapon -> (weapon.getLocation() == Warship.LOC_LBS);
-        Predicate<Mounted> rightBroadsideFilter = weapon -> (weapon.getLocation() == Warship.LOC_RBS);
+        Predicate<Mounted<?>> frontFilter = frontWeaponFilter();
+        Predicate<Mounted<?>> rearFilter = rearWeaponFilter();
+        Predicate<Mounted<?>> leftFilter = leftWeaponFilter();
+        Predicate<Mounted<?>> rightFilter = rightWeaponFilter();
+        Predicate<Mounted<?>> leftAftFilter = leftAftWeaponFilter();
+        Predicate<Mounted<?>> rightAftFilter = rightAftWeaponFilter();
+        Predicate<Mounted<?>> leftBroadsideFilter = weapon -> (weapon.getLocation() == Warship.LOC_LBS);
+        Predicate<Mounted<?>> rightBroadsideFilter = weapon -> (weapon.getLocation() == Warship.LOC_RBS);
         Map<Integer, Double> bvPerArc = new HashMap<>();
         double weaponsBVFront = processWeaponSection(false, frontFilter, false);
         double weaponsBVRear = processWeaponSection(false, rearFilter, false);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,7 @@ public class ConstantSkillGenerator extends AbstractSkillGenerator {
     //endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         return cleanReturn(entity, getLevel().getDefaultSkillValues());
     }
 }

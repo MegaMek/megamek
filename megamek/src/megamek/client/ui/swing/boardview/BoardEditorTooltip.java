@@ -30,8 +30,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.util.UIUtil.DOT_SPACER;
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 /**
  * This class is a {@link megamek.client.ui.swing.boardview.BoardViewTooltipProvider} that is tailored
@@ -76,7 +75,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         int padding = UIUtil.scaleForGUI(BASE_PADDING);
 
         StringBuilder result = new StringBuilder();
-        result.append(guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()));
+        result.append(UIUtil.fontHTML(GUIP.getUnitToolTipTerrainFGColor()));
         result.append("<FONT FACE=" + FontHandler.notoFont().getName() + ">");
 
         // Coordinates and level
@@ -125,7 +124,7 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
         List<String> errors = new ArrayList<>();
         if (!hex.isValid(errors)) {
             result.append(paragraphHTMLOpen(padding))
-                    .append(guiScaledFontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                    .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
                     .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
                     .append(String.join("<BR>", errors))
                     .append("</p>");

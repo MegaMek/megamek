@@ -1,18 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -25,7 +32,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.Infantry;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -37,29 +44,19 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class ATMHandler extends MissileWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -2536312899803153911L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
-    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ATMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
@@ -85,21 +82,6 @@ public class ATMHandler extends MissileWeaponHandler {
         return (int) toReturn;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
-    @Override
-    protected int calcnCluster() {
-        return 5;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -129,7 +111,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int counterAV = 0;
+        int counterAV;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
@@ -151,7 +133,7 @@ public class ATMHandler extends MissileWeaponHandler {
             }
         }
 
-        //Point Defenses engage the missiles still aimed at us
+        // Point Defenses engage the missiles still aimed at us
         counterAV = calcCounterAV();
         av = av - counterAV;
 
@@ -163,11 +145,6 @@ public class ATMHandler extends MissileWeaponHandler {
         return av;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     protected int calcStandardAndExtendedAmmoHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
@@ -196,26 +173,24 @@ public class ATMHandler extends MissileWeaponHandler {
         int missilesHit;
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        Mounted mLinker = weapon.getLinkedBy();
+        Mounted<?> mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
 
-        int nMissilesModifier = getClusterModifiers(atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
+        int nMissilesModifier = getClusterModifiers(
+                atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE));
 
         // is any hex in the flight path of the missile ECM affected?
-        boolean bECMAffected = false;
+        boolean bECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
-            bECMAffected = true;
-        }
 
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS))
+                        MiscType.F_ARTEMIS))
                 && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -262,8 +237,8 @@ public class ATMHandler extends MissileWeaponHandler {
                     .getAmmoType() == AmmoType.T_SRM))
                     || ((atype.getAmmoType() == AmmoType.T_MML)
                             && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE)) && ((weapon
-                            .curMode() == null) || !weapon.curMode().equals(
-                            "Indirect")))) {
+                                    .curMode() == null) || !weapon.curMode().equals(
+                                            "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
@@ -331,8 +306,7 @@ public class ATMHandler extends MissileWeaponHandler {
     }
 
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         if (!bMissed
                 && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             Report r = new Report(3255);

@@ -37,12 +37,13 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     private final boolean[] hasExplosiveArcComponent = new boolean[4];
 
     /**
-     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
+     * Do not call this directly. Use ASSpecialAbilityConverter.getConverter
+     * instead.
      * Constructs a special ability converter for large aerospace units.
      *
-     * @param entity The entity to convert damage for
+     * @param entity  The entity to convert damage for
      * @param element The partially-converted element corresponding to the entity
-     * @param report The calculation report to write to
+     * @param report  The calculation report to write to
      */
     protected ASLargeAeroSpecialAbilityConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -70,7 +71,7 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
         }
     }
 
-    private void processArcENE(Mounted equipment) {
+    private void processArcENE(Mounted<?> equipment) {
         if (isExplosive(equipment)) {
             for (ASArcs arc : ASArcs.values()) {
                 if (ASLocationMapper.damageLocationMultiplier(entity, ASConverter.toInt(arc), equipment) > 0) {
@@ -81,7 +82,8 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     }
 
     @Override
-    protected void processMFB(Transporter transporter) { }
+    protected void processMFB(Transporter transporter) {
+    }
 
     @Override
     protected void processUnitFeatures() {

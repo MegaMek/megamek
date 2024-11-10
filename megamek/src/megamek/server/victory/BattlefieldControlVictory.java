@@ -19,15 +19,15 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Game;
-import megamek.common.Player;
-
 import java.io.Serializable;
 import java.util.Map;
 
+import megamek.common.Game;
+import megamek.common.Player;
+
 /**
  * This class represents a battlefield control (units of only one team left alive) victory
- * Note that this currently does not exclude gun emplacements or spawns (MechWarriors, Missiles) from
+ * Note that this currently does not exclude gun emplacements or spawns (MekWarriors, Missiles) from
  * the test.
  */
 public class BattlefieldControlVictory implements VictoryCondition, Serializable {

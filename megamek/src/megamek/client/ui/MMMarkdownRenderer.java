@@ -46,7 +46,7 @@ public class MMMarkdownRenderer {
     }
 
     /**
-     * This method renders markdown-flavored text as HTML.
+     * This method renders markdown-flavored text as HTML. The result does not include HTML or BODY tags.
      *
      * @param input - a String possible containing markdown markup (and html) to be rendered
      * @return a string rendered to html

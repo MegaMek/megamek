@@ -52,20 +52,20 @@ public class ISMML3 extends MMLWeapon {
         longAV = 2;
         maxRange = RANGE_LONG;
         rulesRefs = "229, TM";
-        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
+        // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false, false, false)
-            .setProductionFactions(F_MERC,F_WB)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, true, false, false, false)
+                .setProductionFactions(F_MERC, F_WB)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 0.4;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {

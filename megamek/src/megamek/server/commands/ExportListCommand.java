@@ -16,8 +16,8 @@ package megamek.server.commands;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.server.Server;
 
 /**
@@ -53,9 +53,9 @@ public class ExportListCommand extends ServerCommand {
         try {
             PrintWriter pw1 = new PrintWriter(new FileWriter(path));
 
-            MechSummary[] msums = MechSummaryCache.getInstance().getAllMechs();
+            MekSummary[] msums = MekSummaryCache.getInstance().getAllMeks();
 
-            for (MechSummary ms1 : msums) {
+            for (MekSummary ms1 : msums) {
                 pw1.println(ms1.getChassis() + ", " + ms1.getModel() + ", "
                         + ms1.getBV());
             }

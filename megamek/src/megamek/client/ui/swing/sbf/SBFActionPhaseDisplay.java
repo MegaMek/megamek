@@ -18,24 +18,25 @@
  */
 package megamek.client.ui.swing.sbf;
 
-import megamek.client.ui.swing.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.Optional;
+
+import javax.swing.AbstractAction;
+
+import megamek.client.ui.swing.MegaMekGUI;
+import megamek.client.ui.swing.SBFClientGUI;
+import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.Optional;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
 
@@ -44,7 +45,7 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     /** The currently selected unit for taking action. Not necessarily equal to the unit shown in the unit viewer. */
     protected int currentFormation = Entity.NONE;
 
-    protected MegamekButton butSkipTurn;
+    protected MegaMekButton butSkipTurn;
     protected final SBFClientGUI clientgui;
     protected final MegaMekController controller = MegaMekGUI.getKeyDispatcher();
 
@@ -56,9 +57,9 @@ public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
     @Override
     protected UIUtil.FixedXPanel setupDonePanel() {
         var donePanel = super.setupDonePanel();
-        butSkipTurn = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        butSkipTurn = new MegaMekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
+        String f = UIUtil.fontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
 

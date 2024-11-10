@@ -1,6 +1,22 @@
-/**
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.server.commands;
 
 import java.util.Iterator;
@@ -9,8 +25,8 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author dirk This command exists to print entity information to the chat
@@ -19,9 +35,9 @@ import megamek.server.Server;
 
 public class AssignNovaNetServerCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public AssignNovaNetServerCommand(Server server, GameManager gameManager) {
+    public AssignNovaNetServerCommand(Server server, TWGameManager gameManager) {
         super(
                 server,
                 "nova",
@@ -130,11 +146,13 @@ public class AssignNovaNetServerCommand extends ServerCommand {
                 }
             }
         } catch (NumberFormatException nfe) {
-            server.sendServerChat(connID, "Error parsing the command. NumberFormatException: Cannot determine the format of a number in the command.");
+            server.sendServerChat(connID,
+                    "Error parsing the command. NumberFormatException: Cannot determine the format of a number in the command.");
         } catch (NullPointerException npe) {
             server.sendServerChat(connID, "Error parsing the command. NullPointerException: " + npe.getMessage());
         } catch (IndexOutOfBoundsException ioobe) {
-            server.sendServerChat(connID, "Error parsing the command. IndexOutOfBoundsException: Insufficient arguments supplied.");
+            server.sendServerChat(connID,
+                    "Error parsing the command. IndexOutOfBoundsException: Insufficient arguments supplied.");
         }
 
     }
@@ -378,10 +396,10 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      * Returns a list with all members of e 's nova network, including e.
      *
      * @param e
-     *            the entity.
+     *                the entity.
      * @param planned
-     *            set this to true if you want to calculate based on next turns
-     *            net.
+     *                set this to true if you want to calculate based on next turns
+     *                net.
      * @return
      */
     private List<Entity> listNetwork(int connID, Entity e, boolean planned) {

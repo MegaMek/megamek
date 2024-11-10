@@ -1,0 +1,12 @@
+﻿Liao Insurgent ‘Meks, DATP:Liao
+Jabberwocky JAW-66B EngineerMech, 1
+Carbine CON-1 ConstructionMech (RL), 2
+Harvester HVR-99 AgroMech (Standard), 3
+CattleMaster CTL-3R 'Herder' IndustrialMech, 4
+DemolitionMech WI-DM2, 5
+Powerman SC XI LoaderMech (Standard), 6
+Buster BC XV-M-W HaulerMech MOD, 5
+Hyena HYN-4A SalvageMech, 4
+Kiso K-3N-KR4 ConstructionMech, 3
+Peacemaker PM-6 PoliceMech,2
+Crosscut ED-X2 LoggerMech (RL), 1

@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -31,7 +31,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
@@ -87,7 +87,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
         }
         // coolant also reduces heat of mechs
-        if (target instanceof Mech) {
+        if (target instanceof Mek) {
             int nDamage = (nDamPerHit * hits) + 1;
             r = new Report(3400);
             r.subject = subjectId;

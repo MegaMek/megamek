@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,8 +30,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
     //endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         if (getType().isManeiDomini()) {
             // JHS72 pg. 121, they are always considered elite
             return SkillLevel.ELITE.getDefaultSkillValues();
@@ -40,7 +39,7 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
         final int[] skills = super.generateRandomSkills(entity, clanPilot, forceClan);
 
         // Now we need to make all kinds of adjustments based on the table on pg. 40 of TW
-        // Infantry Anti-'Mech skill should be one higher unless foot
+        // Infantry Anti-'Mek skill should be one higher unless foot
         if (entity.isConventionalInfantry() && !entity.getMovementMode().isLegInfantry()) {
             skills[1]++;
         }
@@ -52,10 +51,10 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
 
         // Now lets handle clan pilots
         if (getType().isClan() || (forceClan && clanPilot)) {
-            // 'Mechs and Battle Armour are better (but not ProtoMechs),
+            // 'Meks and Battle Armour are better (but not ProtoMeks),
             // Tanks are worse, while Gunnery is worse for Infantry, Conventional Fighters
             // and Small Craft
-            if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
+            if ((entity instanceof Mek) || (entity instanceof BattleArmor)) {
                 skills[0]--;
                 skills[1]--;
             } else if (entity instanceof Tank) {
@@ -66,21 +65,21 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
                 skills[0]++;
             }
         }
-        
+
         //And finally, The Society, per WoRS p. 3
-        
+
         if (getType().isSociety()) {
-            // 'Mechs are Veteran with a -1 modifier to skills (simulated by dropping Piloting by 1).
+            // 'Meks are Veteran with a -1 modifier to skills (simulated by dropping Piloting by 1).
             // Tanks are Regular with the same -1 modifier.
-            // Infantry and ProtoMechs are both Regular.
+            // Infantry and ProtoMeks are both Regular.
             // Aerospace Fighters are Veteran.
-            if (entity instanceof Mech) {
+            if (entity instanceof Mek) {
                 skills[0]=3;
                 skills[1]=5;
             } else if (entity instanceof Tank) {
                 skills[0]=4;
                 skills[1]=6;
-            } else if (entity.isConventionalInfantry() || (entity instanceof Protomech)) {
+            } else if (entity.isConventionalInfantry() || (entity instanceof ProtoMek)) {
                 return SkillLevel.REGULAR.getDefaultSkillValues();
             } else if (entity instanceof Aero) {
                 return SkillLevel.VETERAN.getDefaultSkillValues();

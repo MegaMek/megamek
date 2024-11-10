@@ -18,23 +18,26 @@
  */
 package megamek.client.ui.swing.scenario;
 
-import megamek.MegaMek;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import megamek.MegaMek;
+import megamek.logging.MMLogger;
+
 public class Messages {
+    private static final MMLogger logger = MMLogger.create(Messages.class);
+
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(
             "megamek.client.scenario.messages", MegaMek.getMMOptions().getLocale());
 
-    private Messages() { }
+    private Messages() {
+    }
 
     public static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            LogManager.getLogger().error("Missing megamek.client.scenario.messages i18n entry with key " + key);
+            logger.error("Missing megamek.client.scenario.messages i18n entry with key " + key);
             return '!' + key + '!';
         }
     }

@@ -19,27 +19,33 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-
-import megamek.common.equipment.WeaponMounted;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.equipment.WeaponMounted;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 11/3/13 8:48 AM
  */
-public class EntityTest {
+class EntityTest {
 
     private Entity setupGunEmplacement() {
         Entity testEntity = mock(GunEmplacement.class);
@@ -68,12 +74,12 @@ public class EntityTest {
     }
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         EquipmentType.initializeTypes();
     }
 
     @Test
-    public void testCalculateBattleValue() {
+    void testCalculateBattleValue() {
         // Test a gun emplacement.
         Entity testEntity = setupGunEmplacement();
         int expected = 169;
@@ -86,16 +92,16 @@ public class EntityTest {
     }
 
     @Test
-    public void testCalculateWeight() {
+    void testCalculateWeight() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
         int expectedWeight, computedWeight;
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/mechs/3050U/Exterminator EXT-4A.mtf");
-            mfp  = new MechFileParser(f);
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp = new MekFileParser(f);
             e = mfp.getEntity();
             expectedWeight = 65;
             computedWeight = (int) e.getWeight();
@@ -105,21 +111,115 @@ public class EntityTest {
         }
     }
 
+    @Test
+    void testFormatHeat() {
+        File f;
+        MekFileParser mfp;
+        Entity e;
+        String expectedHeat, computedHeat;
+
+        try {
+            f = new File("testresources/megamek/common/units/Sagittaire SGT-14D.mtf");
+            mfp = new MekFileParser(f);
+            e = mfp.getEntity();
+            expectedHeat = "28, 42 with RHS";
+            computedHeat = e.formatHeat();
+            assertEquals(expectedHeat, computedHeat);
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Verify that if a unit's name appears in the list of canon unit names, it is
+     * canon
+     */
+    @Test
+    void testCanon() {
+        File f;
+        MekFileParser mfp;
+        Entity e;
+        Vector<String> unitNames = new Vector<>();
+        unitNames.add("Exterminator EXT-4A");
+        MekFileParser.setCanonUnitNames(unitNames);
+
+        // Test 1/1
+        try {
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp = new MekFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Verify that if a unit's name does _not_ appear in the list of canon unit
+     * names, it is not canon
+     */
+    @Test
+    void testForceCanonicityFailure() {
+        File f;
+        MekFileParser mfp;
+        Entity e;
+        Vector<String> unitNames = new Vector<>();
+        unitNames.add("Beheadanator BHD-999.666Z");
+        MekFileParser.setCanonUnitNames(unitNames);
+
+        try {
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp = new MekFileParser(f);
+            e = mfp.getEntity();
+            assertFalse(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    /**
+     * Verify that if a unit's name does appear in the _file_ listing canon unit
+     * names, it is canon
+     */
+    @Test
+    void testCanonUnitInCanonUnitListFile() {
+        File f;
+        MekFileParser mfp;
+        Entity e;
+        File oulDir = new File("testresources/megamek/common/units/");
+        MekFileParser.initCanonUnitNames(oulDir, "mockOfficialUnitList.txt");
+
+        try {
+            // MTF file check
+            f = new File("testresources/megamek/common/units/Exterminator EXT-4A.mtf");
+            mfp = new MekFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+            // BLK file check
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
+            mfp = new MekFileParser(f);
+            e = mfp.getEntity();
+            assertTrue(e.isCanon());
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        }
+    }
+
     /**
      * Verify new Tank method .isImmobilizedForJump() returns correct values in
-     * various states.  Note: vehicles cannot lose individual Jump Jets via crits,
+     * various states. Note: vehicles cannot lose individual Jump Jets via crits,
      * so this is not tested.
      */
     @Test
-    public void testIsImmobilizedForJump() {
+    void testIsImmobilizedForJump() {
         File f;
-        MechFileParser mfp;
+        MekFileParser mfp;
         Entity e;
 
         // Test 1/1
         try {
-            f = new File("data/mechfiles/vehicles/3050U/Kanga Medium Hovertank.blk");
-            mfp  = new MechFileParser(f);
+            f = new File("testresources/megamek/common/units/Kanga Medium Hovertank.blk");
+            mfp = new MekFileParser(f);
             e = mfp.getEntity();
             Tank t = (Tank) e;
             Crew c = t.getCrew();
@@ -131,7 +231,8 @@ public class EntityTest {
             c.resetGameState();
             assertFalse(t.isImmobileForJump());
 
-            // 1.b Unconscious crew should prevent jumping; conscious crew should allow jumping
+            // 1.b Unconscious crew should prevent jumping; conscious crew should allow
+            // jumping
             c.setUnconscious(true);
             assertTrue(t.isImmobileForJump());
             c.resetGameState();
@@ -156,7 +257,7 @@ public class EntityTest {
             assertFalse(t.isImmobileForJump());
 
             // 3. Immobilization due to massive damage motive hit / reducing MP to 0 should
-            //    _not_ prevent jumping
+            // _not_ prevent jumping
             t.setMotiveDamage(t.getOriginalWalkMP());
             assertFalse(t.isImmobileForJump());
             t.setMotiveDamage(0);

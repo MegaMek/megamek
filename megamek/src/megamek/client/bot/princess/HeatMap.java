@@ -1,9 +1,39 @@
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.bot.princess;
 
-import megamek.common.*;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
+
+import megamek.common.Coords;
+import megamek.common.EjectedCrew;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.GunEmplacement;
+import megamek.common.MovePath;
+import megamek.common.MoveStep;
 
 /**
  * Tracks activity of units on the map. Board positions that are frequently occupied by units get
@@ -239,18 +269,18 @@ public class HeatMap {
 
 
     /**
-     * Get all hotspots (positions of high activity) in descending order
+     * Get all hot-spots (positions of high activity) in descending order
      *
      * @return  list of positions, or null if team activity tracker is empty
      */
     public List<Coords> getHotSpots () {
 
-        // If there are no hotspots, return null
+        // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
             return null;
         }
 
-        // Sort the weighted positions by descending hotspot value
+        // Sort the weighted positions by descending hot-spot value
         List<Coords> rankedPositions = new ArrayList<>();
         List<Coords> workingPositions = teamActivity.
                 keySet().
@@ -279,18 +309,18 @@ public class HeatMap {
     }
 
     /**
-     * Get the closest hotspot (position of high activity). May return null if the activity tracker
+     * Get the closest hot-spot (position of high activity). May return null if the activity tracker
      * is empty.
-     * @return  {@link Coords} with nearest hotspot, or null if no valid position
+     * @return  {@link Coords} with nearest hot-spot, or null if no valid position
      */
     public Coords getHotSpot (Coords testPosition, boolean topOnly) {
 
-        // If there are no hotspots, return null
+        // If there are no hot-spots, return null
         if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
             return null;
         }
 
-        // Sort the weighted positions by descending hotspot value
+        // Sort the weighted positions by descending hot-spot value
         List<Coords> rankedPositions = new ArrayList<>();
         List<Coords> workingPositions = teamActivity.
                 keySet().
@@ -319,7 +349,7 @@ public class HeatMap {
             }
         }
 
-        // Get the hotspot closest to the provided position, with the highest value
+        // Get the hot-spot closest to the provided position, with the highest value
         int shortestRange = Integer.MAX_VALUE;
         Coords bestPosition = null;
         for (Coords curPosition : rankedPositions) {
@@ -333,7 +363,7 @@ public class HeatMap {
     }
 
     /**
-     * Get the hotspot (position with high activity) with the highest rating. If multiple hotspots
+     * Get the hotspot (position with high activity) with the highest rating. If multiple hot-spots
      * of equal value are present, any one of them may be returned.
      * @return   map position, may return null
      */
@@ -348,7 +378,7 @@ public class HeatMap {
 
     /**
      * Adjusts the trackers using the current position of each provided entity that matches the team
-     * this heat map is tracking. Filters out gun emplacements and ejected MechWarriors/vehicle
+     * this heat map is tracking. Filters out gun emplacements and ejected MekWarriors/vehicle
      * crews, as well as functional units with a dead pilot/crew.
      * @param tracked  list of entities to process
      */
@@ -379,7 +409,7 @@ public class HeatMap {
 
     /**
      * Updates the trackers using a specific movement path. Filters out gun emplacements and ejected
-     * MechWarriors/vehicle crews. Because this information is only available for entities under
+     * MekWarriors/vehicle crews. Because this information is only available for entities under
      * direct Princess control, this is normally limited to tracking friendly entities.
      * @param detailedMove  {@link MovePath} object, which includes an entity reference and Coords
      *                      for the positions moved through
@@ -678,7 +708,7 @@ public class HeatMap {
     /**
      * Determines if a particular entity is valid for tracking i.e. it is a ground unit, deployed,
      * on map, not hidden, and either considered a friendly unit or an enemy unit that is detected
-     * visually or through sensors. Ejected MechWarriors and vehicle crews, gun emplacements, and
+     * visually or through sensors. Ejected MekWarriors and vehicle crews, gun emplacements, and
      * entities with dead crews ('carcass') are rejected.
      * @param testEntity  entity to check
      * @return            true, if entity is valid for tracking

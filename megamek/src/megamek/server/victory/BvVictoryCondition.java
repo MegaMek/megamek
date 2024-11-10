@@ -31,21 +31,21 @@ public interface BvVictoryCondition extends VictoryCondition, Serializable {
 
     default int getFriendlyBV(Game game, Player player) {
         return game.getPlayersList().stream()
-                .filter(Player::isNoObserver)
+                .filter(Player::isNotObserver)
                 .filter(p -> !p.isEnemyOf(player))
                 .mapToInt(Player::getBV).sum();
     }
 
     default int getEnemyBV(Game game, Player player) {
         return game.getPlayersList().stream()
-                .filter(Player::isNoObserver)
+                .filter(Player::isNotObserver)
                 .filter(p -> p.isEnemyOf(player))
                 .mapToInt(Player::getBV).sum();
     }
 
     default int getEnemyInitialBV(Game game, Player player) {
         return game.getPlayersList().stream()
-                .filter(Player::isNoObserver)
+                .filter(Player::isNotObserver)
                 .filter(p -> p.isEnemyOf(player))
                 .mapToInt(Player::getInitialBV).sum();
     }

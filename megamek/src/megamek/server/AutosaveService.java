@@ -18,13 +18,6 @@
  */
 package megamek.server;
 
-import megamek.MMConstants;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -34,7 +27,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.MMConstants;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
+
 public class AutosaveService {
+    private static final MMLogger logger = MMLogger.create(AutosaveService.class);
 
     public static final String FILENAME_FORMAT = "Round-%d-autosave%s.sav.gz";
 
@@ -45,17 +46,19 @@ public class AutosaveService {
     }
 
     public void performRollingAutosave() {
-        final int maxNumberAutosaves = gameManager.getGame().getOptions().intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
+        final int maxNumberAutosaves = gameManager.getGame().getOptions()
+                .intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
         if (maxNumberAutosaves > 0) {
             try {
                 final String fileName = getAutosaveFilename();
                 if (!StringUtility.isNullOrBlank(fileName)) {
-                    gameManager.saveGame(fileName, gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
+                    gameManager.saveGame(fileName,
+                            gameManager.getGame().getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
                 } else {
-                    LogManager.getLogger().error("Unable to perform an autosave because of a null or empty file name");
+                    logger.error("Unable to perform an autosave because of a null or empty file name");
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
         }
     }
@@ -72,14 +75,15 @@ public class AutosaveService {
                     .collect(Collectors.toList());
 
             // Delete older autosave files if needed
-            final int maxNumberAutosaves = gameManager.getGame().getOptions().intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
+            final int maxNumberAutosaves = gameManager.getGame().getOptions()
+                    .intOption(OptionsConstants.BASE_MAX_NUMBER_ROUND_SAVES);
 
             int index = 0;
             while ((autosaveFiles.size() >= maxNumberAutosaves) && (autosaveFiles.size() > index)) {
                 if (autosaveFiles.get(index).delete()) {
                     autosaveFiles.remove(index);
                 } else {
-                    LogManager.getLogger().error("Unable to delete file {}", autosaveFiles.get(index).getName());
+                    logger.error("Unable to delete file {}", autosaveFiles.get(index).getName());
                     index++;
                 }
             }
@@ -89,13 +93,12 @@ public class AutosaveService {
 
             boolean repeatedName = true;
             String localDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(
-                            PreferenceManager.getClientPreferences().getStampFormat()));
+                    PreferenceManager.getClientPreferences().getStampFormat()));
             while (repeatedName) {
                 fileName = String.format(
                         FILENAME_FORMAT,
                         gameManager.getGame().getCurrentRound(),
-                        localDateTime
-                );
+                        localDateTime);
 
                 repeatedName = false;
                 for (final File file : autosaveFiles) {

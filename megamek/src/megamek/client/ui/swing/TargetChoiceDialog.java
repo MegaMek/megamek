@@ -17,6 +17,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 
@@ -90,15 +91,25 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
         String result = "";
 
         if (firingEntity != null) {
-            ToHitData thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);
-            thd.setLocation(target.getPosition());
-            thd.setRange(firingEntity.getPosition().distance(target.getPosition()));
+            ToHitData thd;
+            if (target instanceof INarcPod) {
+                // must not call getPosition() on INarcPods! Check both arms if necessary
+                thd = BrushOffAttackAction.toHit(clientGUI.getClient().getGame(),
+                    firingEntity.getId(), target, BrushOffAttackAction.RIGHT);
+                if (thd.getValue() == TargetRoll.IMPOSSIBLE) {
+                    thd = BrushOffAttackAction.toHit(clientGUI.getClient().getGame(),
+                        firingEntity.getId(), target, BrushOffAttackAction.LEFT);
+                }
+            } else {
+                thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(firingEntity.getPosition().distance(target.getPosition()));
+            }
             if (thd.needsRoll()) {
                 int mod = thd.getValue();
                 result += "<br>Target To Hit Mod: <b>" + (mod < 0 ? "" : "+") + mod + "</b>";
             } else {
                 result += "<br><b>" + thd.getValueAsString() + " To Hit</b>: " + thd.getDesc();
-
             }
         }
 

@@ -1,0 +1,15 @@
+To validate a single design, run the verifier with a command such as:
+
+java -cp MegaMek.jar megamek.common.verifier.EntityVerifier -file <filename>
+
+where <filename> is a mek file in any format that MegaMek supports.
+
+
+
+To run a verification test on all the meks and vehicles in the mekfiles folder, run the unit verifier with a command such as:
+
+java -cp classes;collections.jar;TinyXML.jar megamek.common.verifier.EntityVerifier
+    --- OR (using the MS JVM) ---
+jview /cp classes;collections.jar;TinyXML.jar megamek.common.verifier.EntityVerifier
+
+Various verification options can be changed in the UnitVerifierOptions.xml file.

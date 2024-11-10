@@ -21,7 +21,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CLLBXPrototypeHandler;
 import megamek.common.weapons.autocannons.LBXACWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -41,7 +41,7 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {

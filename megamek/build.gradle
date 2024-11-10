@@ -2,11 +2,14 @@ import java.time.LocalDateTime
 
 plugins {
     id 'application'
+    id 'checkstyle'
+    id 'com.palantir.git-version' version '3.1.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
+    id "io.sentry.jvm.gradle" version '4.11.0'
     id 'jacoco'
     id 'java'
-    id "io.sentry.jvm.gradle" version '4.10.0'
-    id 'com.palantir.git-version' version '3.1.0'
+    id 'org.ec4j.editorconfig' version '0.1.0'
+
 }
 
 java {
@@ -36,25 +39,25 @@ sourceSets {
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
-    implementation 'com.formdev:flatlaf:3.5'
-    implementation 'com.formdev:flatlaf-extras:3.5'
+    implementation 'com.formdev:flatlaf:3.5.1'
+    implementation 'com.formdev:flatlaf-extras:3.5.1'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.20'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
-    implementation 'org.apache.commons:commons-lang3:3.15.0'
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
     implementation 'org.apache.commons:commons-text:1.12.0'
-    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
     implementation 'org.freemarker:freemarker:2.3.33'
     implementation 'org.commonmark:commonmark:0.22.0'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.3'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
-    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
+    testImplementation 'org.mockito:mockito-core:5.13.0'
 }
 
 application {
@@ -71,7 +74,7 @@ ext {
         '-Dsun.awt.disablegrab=true'
     ]
     data = 'data'
-    unitFiles = "${data}/mechfiles"
+    unitFiles = "${data}/mekfiles"
     rats = "${data}/rat"
     docs = "docs"
     lib = "lib"
@@ -80,6 +83,12 @@ ext {
     userdata = 'userdata'
     fileStagingDir = "${buildDir}/files"
     atlasedImages = "${fileStagingDir}/atlasedImages.txt"
+}
+
+checkstyle {
+    toolVersion '10.18.1'
+    configFile file("config/checkstyle/checkstyle.xml")
+    ignoreFailures false
 }
 
 run {
@@ -246,15 +255,15 @@ launch4j {
     jarTask = project.tasks.jar
     windowTitle = 'MegaMek'
     internalName = 'MegaMek'
-    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
     copyright = '2024 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
     jreMinVersion = '17'
     dontWrapJar = true
-    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
-    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium'
+    messagesJreVersionError = 'We require a Java Runtime of version 17 or higher installed. https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
+    messagesJreNotFoundError = 'Go here for instructions on installing the correct version of Java: https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
 }
 
 tasks.register("packagePrepWork") {
@@ -359,7 +368,7 @@ task mechCacheCSVTool(type: JavaExec, dependsOn: jar) {
     description = 'Icon Tool'
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.utilities.MechCacheCSVTool'
+    mainClass = 'megamek.utilities.MekCacheCSVTool'
 }
 
 task nameChangesValidator(type: JavaExec, dependsOn: jar) {
@@ -388,4 +397,13 @@ task unitFileMigrationTool(type: JavaExec, dependsOn: jar) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
+}
+
+tasks.withType(Checkstyle) {
+    minHeapSize = "200m"
+    maxHeapSize = "1g"
+    reports {
+        xml.required = false
+        html.required = true
+    }
 }

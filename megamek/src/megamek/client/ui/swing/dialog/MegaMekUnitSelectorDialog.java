@@ -18,28 +18,33 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GetFocusListener;
 import megamek.client.ui.swing.UnitFailureDialog;
 import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.Entity;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekSummaryCache;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.enums.Gender;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Map;
 
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
@@ -75,11 +80,11 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         GridBagConstraints gbc = new GridBagConstraints();
         JPanel panelButtons = new JPanel(new GridBagLayout());
 
-        buttonSelect = new JButton(Messages.getString("MechSelectorDialog.m_bPick"));
+        buttonSelect = new JButton(Messages.getString("MekSelectorDialog.m_bPick"));
         buttonSelect.addActionListener(this);
         panelButtons.add(buttonSelect, gbc);
 
-        buttonSelectClose = new JButton(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        buttonSelectClose = new JButton(Messages.getString("MekSelectorDialog.m_bPickClose"));
         buttonSelectClose.addActionListener(this);
         panelButtons.add(buttonSelectClose, gbc);
 
@@ -87,13 +92,13 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         buttonClose.addActionListener(this);
         panelButtons.add(buttonClose, gbc);
 
-        JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"),
+        JLabel labelPlayer = new JLabel(Messages.getString("MekSelectorDialog.m_labelPlayer"),
                 SwingConstants.RIGHT);
         panelButtons.add(labelPlayer, gbc);
 
         panelButtons.add(comboPlayer, gbc);
 
-        buttonShowBV = new JButton(Messages.getString("MechSelectorDialog.BV"));
+        buttonShowBV = new JButton(Messages.getString("MekSelectorDialog.BV"));
         buttonShowBV.addActionListener(this);
         panelButtons.add(buttonShowBV, gbc);
 
@@ -194,7 +199,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // instance (loading a saved game without a cache).  In these cases,
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
-            final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
+            final Map<String, String> hFailedFiles = MekSummaryCache.getInstance().getFailedFiles();
             if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);

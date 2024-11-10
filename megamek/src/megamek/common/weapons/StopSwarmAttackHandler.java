@@ -22,7 +22,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -37,7 +37,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * @param g
      */
     public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, GameManager m) {
+            Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 

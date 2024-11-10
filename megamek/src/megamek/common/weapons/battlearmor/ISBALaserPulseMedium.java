@@ -43,7 +43,7 @@ public class ISBALaserPulseMedium extends PulseLaserWeapon {
         criticals = 3;
         bv = 48;
         cost = 60000;
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         shortAV = 6;
         maxRange = RANGE_SHORT;
         rulesRefs = "258, TM";

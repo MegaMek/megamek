@@ -13,9 +13,9 @@
  */
 package megamek.common;
 
-import megamek.codeUtilities.StringUtility;
-
 import java.util.Objects;
+
+import megamek.codeUtilities.StringUtility;
 
 /**
  * Class to store pertinent quirk information. This class is immutable.
@@ -28,20 +28,28 @@ public class QuirkEntry {
     /** The code (OptionsConstants.*) of this quirk. Not the display name. */
     private final String code;
 
-    /** The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks. */
+    /**
+     * The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit
+     * quirks.
+     */
     private final String location;
 
     /** The slot (0 - 11) of this weapon quirk. -1 for unit quirks */
     private final int slot;
 
-    /** The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks. */
-    private final String weaponName; //The weapon's name.
+    /**
+     * The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty
+     * for unit quirks.
+     */
+    private final String weaponName; // The weapon's name.
 
     /**
      * Use this constructor for building unit quirks.
      *
-     * @param code  The quirk being created.
-     * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
+     * @deprecated
+     * @param code   The quirk being created.
+     * @param unitId The ID (chassis &amp; model) of the unit to which the quirk
+     *               belongs.
      */
     @Deprecated
     public QuirkEntry(String code, String unitId) {
@@ -57,8 +65,9 @@ public class QuirkEntry {
 
     /**
      * Creates a unit quirk entry. The code should be a quirk code such as
-     * {@link megamek.common.options.OptionsConstants#QUIRK_POS_COMMAND_MECH}. The code may not be null or empty
-     * but is not otherwise checked if it is a valid value.
+     * {@link megamek.common.options.OptionsConstants#QUIRK_POS_COMMAND_MEK}. The
+     * code may not be null or empty but is not otherwise checked if it is a valid
+     * value.
      *
      * @param code The quirk
      */
@@ -76,11 +85,14 @@ public class QuirkEntry {
     /**
      * Use this constructor for building weapon quirks.
      *
-     * @param code      The quirk being created.
+     * @param code       The quirk being created.
      * @param location   The weapon's location (RT, LL, FF, LW, etc)
-     * @param slot       The critical slot number (0-based) of the weapon's first critical.
+     * @param slot       The critical slot number (0-based) of the weapon's first
+     *                   critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
-     * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
+     * @param unitId     The ID (chassis &amp; model) of the unit to which the quirk
+     *                   belongs.
+     * @deprecated
      */
     @Deprecated
     public QuirkEntry(String code, String location, int slot, String weaponName, String unitId) {
@@ -103,9 +115,10 @@ public class QuirkEntry {
     /**
      * Use this constructor for building weapon quirks.
      *
-     * @param code      The quirk being created.
+     * @param code       The quirk being created.
      * @param location   The weapon's location (RT, LL, FF, LW, etc)
-     * @param slot       The critical slot number (0-based) of the weapon's first critical.
+     * @param slot       The critical slot number (0-based) of the weapon's first
+     *                   critical.
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      */
     public QuirkEntry(String code, String location, int slot, String weaponName) {
@@ -125,22 +138,34 @@ public class QuirkEntry {
         this.weaponName = weaponName;
     }
 
-    /** @return The location String ("LA", "FR" etc.) of this weapon quirk. Empty for unit quirks. */
+    /**
+     * @return The location String ("LA", "FR" etc.) of this weapon quirk. Empty for
+     *         unit quirks.
+     */
     public String getLocation() {
         return location;
     }
 
-    /** @return The code (OptionsConstants.*) of this quirk. Not useful as a display name. */
+    /**
+     * @return The code (OptionsConstants.*) of this quirk. Not useful as a display
+     *         name.
+     */
     public String getQuirk() {
         return code;
     }
 
-    /** @return The slot (0 - 11 at most) of this weapon quirk. Returns -1 for unit quirks. */
+    /**
+     * @return The slot (0 - 11 at most) of this weapon quirk. Returns -1 for unit
+     *         quirks.
+     */
     public int getSlot() {
         return slot;
     }
 
-    /** @return The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk. Empty for unit quirks. */
+    /**
+     * @return The weapon internal name (e.g. CLERLargeLaser) of this weapon quirk.
+     *         Empty for unit quirks.
+     */
     public String getWeaponName() {
         return weaponName;
     }

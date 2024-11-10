@@ -81,6 +81,26 @@ public class VictoryHelper implements Serializable {
 
         VictoryResult result = VictoryResult.noResult();
 
+        boolean gameEnds = false;
+        for (TriggeredEvent event : game.scriptedEvents()) {
+            gameEnds |= event.trigger().isTriggered(game, TriggerSituation.ROUND_END)
+                    && ((event instanceof GameEndTriggeredEvent)
+                    || ((event instanceof VictoryTriggeredEvent victoryEvent)
+                    && victoryEvent.isGameEnding()));
+        }
+
+        if (gameEnds) {
+            // Test all victory events, if any are met; if not, return a draw
+            for (TriggeredEvent event : game.scriptedEvents()) {
+                if ((event instanceof VictoryTriggeredEvent victoryEvent)
+                        && victoryEvent.isGameEnding()
+                        && victoryEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END)) {
+                    return new VictoryResult(true);
+                }
+            }
+            return VictoryResult.drawResult();
+        }
+
         if (checkForVictory) {
             result = checkOptionalVictoryConditions(game, context);
             if (result.isVictory()) {
@@ -148,8 +168,8 @@ public class VictoryHelper implements Serializable {
             double score = combinedResult.getPlayerScore(playerId);
             highScore = Math.max(highScore, score);
         }
-        for (int playerId : combinedResult.getScoringTeams()) {
-            double score = combinedResult.getTeamScore(playerId);
+        for (int teamId : combinedResult.getScoringTeams()) {
+            double score = combinedResult.getTeamScore(teamId);
             highScore = Math.max(highScore, score);
         }
         if (highScore < neededVictoryConditionCount) {

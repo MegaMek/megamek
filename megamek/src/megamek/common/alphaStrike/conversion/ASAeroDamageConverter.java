@@ -73,10 +73,11 @@ class ASAeroDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected void processAMS(Mounted weapon, WeaponType weaponType) { }
+    protected void processAMS(Mounted<?> weapon, WeaponType weaponType) {
+    }
 
     @Override
-    protected double determineDamage(Mounted weapon, int range) {
+    protected double determineDamage(Mounted<?> weapon, int range) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP) {
             return 0;
@@ -85,7 +86,8 @@ class ASAeroDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected double determineSpecialsDamage(WeaponType weaponType, Mounted linked, int range, BattleForceSUA dmgType) {
+    protected double determineSpecialsDamage(WeaponType weaponType, Mounted<?> linked, int range,
+            BattleForceSUA dmgType) {
         if ((dmgType == PNT) && weaponType.hasFlag(WeaponType.F_AMS)) {
             return range == SHORT_RANGE ? 0.3 : 0;
         } else {
@@ -94,7 +96,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected void processArtillery(Mounted weapon, WeaponType weaponType) {
+    protected void processArtillery(Mounted<?> weapon, WeaponType weaponType) {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) && !isArtilleryCannon(weaponType)) {
             assignToLocations(weapon, getArtilleryType(weaponType), 1);
         }
@@ -103,14 +105,14 @@ class ASAeroDamageConverter extends ASDamageConverter {
     @Override
     protected int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
         int totalHeat = entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ? 10 : 0;
-        for (Mounted mount : weaponsList) {
+        for (Mounted<?> mount : weaponsList) {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }
         return totalHeat;
     }
 
     @Override
-    protected int weaponHeat(Mounted weapon, boolean onlyRear, boolean onlyLongRange) {
+    protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_ONESHOT)
                 || (onlyRear && !weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT))

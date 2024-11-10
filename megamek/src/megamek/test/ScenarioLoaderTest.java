@@ -9,26 +9,25 @@ import java.util.List;
 import java.util.Locale;
 
 import megamek.common.Game;
-import megamek.common.MechSummaryCache;
-import megamek.common.scenario.Scenario;
+import megamek.common.MekSummaryCache;
+import megamek.common.scenario.ScenarioLoader;
 import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
-import megamek.server.GameManager;
-import megamek.common.scenario.ScenarioLoader;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class ScenarioLoaderTest {
     private List<String> errCache = new ArrayList<>();
     private PrintStream cachedPs;
     private PrintStream originalOut;
     private PrintStream originalErr;
-    
+
     public static void main(String[] args) throws ScenarioLoaderException, IOException {
         ScenarioLoaderTest tester = new ScenarioLoaderTest();
         tester.runTests();
         System.exit(0);
     }
-    
+
     public List<String> runTests() throws ScenarioLoaderException, IOException {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
@@ -41,7 +40,7 @@ public class ScenarioLoaderTest {
         System.setOut(nullPs);
         cachedPs = new PrintStream(new OutputStream() {
             private StringBuilder line = new StringBuilder();
-            
+
             @Override
             public void write(int b) throws IOException {
                 if (b == '\n') {
@@ -59,7 +58,7 @@ public class ScenarioLoaderTest {
         System.setErr(cachedPs);
 
         // Wait for MSC (we have to wait anyway, better to do it once if we want to measure)
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(1000);
@@ -67,7 +66,7 @@ public class ScenarioLoaderTest {
 
             }
         }
-        
+
         File baseDir = new File("data/scenarios");
         checkScenarioFile(baseDir, errorAccumulator);
         System.setOut(originalOut);
@@ -76,7 +75,7 @@ public class ScenarioLoaderTest {
         nullPs.close();
         return errorAccumulator;
     }
-    
+
     private void checkScenarioFile(File file, List<String> errorAccumulator) throws ScenarioLoaderException, IOException {
         int port = 7770;
         if (null == file) {
@@ -87,7 +86,7 @@ public class ScenarioLoaderTest {
             ScenarioV1 scenario = (ScenarioV1) loader.load();
             try {
                 Game game = (Game) scenario.createGame();
-                GameManager gameManager = new GameManager();
+                TWGameManager gameManager = new TWGameManager();
                 Server server = new Server("test", port + 1, gameManager);
                 server.setGame(game);
                 scenario.applyDamage(gameManager);
@@ -95,7 +94,7 @@ public class ScenarioLoaderTest {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            
+
             if (!errCache.isEmpty()) {
                 errorAccumulator.add("ERROR in " + file.getPath());
                 originalErr.println("ERROR in " + file.getPath());

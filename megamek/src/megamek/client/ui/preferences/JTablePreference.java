@@ -18,31 +18,38 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JTablePreference monitors the latest sort column and sort order of a JTable. It sets the saved
+ * JTablePreference monitors the latest sort column and sort order of a JTable.
+ * It sets the saved
  * values when a dialog is loaded and changes them as they change.
  *
- * Call preferences.manage(new JTablePreference(JTable)) to use this preference, on a JTable that
+ * Call preferences.manage(new JTablePreference(JTable)) to use this preference,
+ * on a JTable that
  * has called setName
  */
 public class JTablePreference extends PreferenceElement implements MouseListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JTablePreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JTable> weakReference;
     private int columnIndex;
     private SortOrder sortOrder;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JTablePreference(final JTable table) throws Exception {
         super(table.getName());
 
@@ -57,9 +64,9 @@ public class JTablePreference extends PreferenceElement implements MouseListener
         weakReference = new WeakReference<>(table);
         table.getTableHeader().addMouseListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JTable> getWeakReference() {
         return weakReference;
     }
@@ -79,9 +86,9 @@ public class JTablePreference extends PreferenceElement implements MouseListener
     public void setSortOrder(final SortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return String.format("%d|%s", getColumnIndex(), getSortOrder().name());
@@ -90,7 +97,7 @@ public class JTablePreference extends PreferenceElement implements MouseListener
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JTablePreference because of a null or blank input value");
+            logger.error("Cannot create a JTablePreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -116,9 +123,9 @@ public class JTablePreference extends PreferenceElement implements MouseListener
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region MouseListener
+    // region MouseListener
     @Override
     public void mouseClicked(final MouseEvent evt) {
         final JTable table = getWeakReference().get();
@@ -157,5 +164,5 @@ public class JTablePreference extends PreferenceElement implements MouseListener
     public void mouseExited(final MouseEvent evt) {
 
     }
-    //endregion MouseListener
+    // endregion MouseListener
 }

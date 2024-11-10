@@ -18,6 +18,30 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Shape;
+import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageCache;
@@ -26,25 +50,16 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.Terrains;
 import megamek.common.annotations.Nullable;
-import megamek.common.planetaryconditions.Light;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.ImageUtil;
-import org.apache.logging.log4j.LogManager;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.util.List;
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
- * This class calculates the shadow map image used to display terrain shadows in the BoardView.
+ * This class calculates the shadow map image used to display terrain shadows in
+ * the BoardView.
  */
 class TerrainShadowHelper {
+    private static final MMLogger logger = MMLogger.create(TerrainShadowHelper.class);
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final BufferedImageOp BLUR_OP = new ConvolveOp(ImageUtil.getGaussKernel(5, 2),
@@ -63,9 +78,12 @@ class TerrainShadowHelper {
     }
 
     /**
-     * Draws and returns the shadow map image for the board, containing shadows for hills/trees/buildings.
-     * The shadow map is an overlay image that is mostly transparent but darker where shadows lie. It's
-     * size is equal to the size of the entire board image at zoom 1 (i.e., it may be big).
+     * Draws and returns the shadow map image for the board, containing shadows for
+     * hills/trees/buildings.
+     * The shadow map is an overlay image that is mostly transparent but darker
+     * where shadows lie. It's
+     * size is equal to the size of the entire board image at zoom 1 (i.e., it may
+     * be big).
      *
      * @return The shadow map image for the board
      */
@@ -73,13 +91,16 @@ class TerrainShadowHelper {
     BufferedImage updateShadowMap() {
         // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
-        // More than one super image on a hex (building + road) doesn't work. how do I get
-        //   the super for a hex for a specific terrain? This would also help
-        //   with building shadowing other buildings.
+        // More than one super image on a hex (building + road) doesn't work. how do I
+        // get
+        // the super for a hex for a specific terrain? This would also help
+        // with building shadowing other buildings.
         // AO shadows might be handled by this too. But:
-        // this seems to need a lot of additional copying (paint shadow on a clean map for this level alone; soften up;
+        // this seems to need a lot of additional copying (paint shadow on a clean map
+        // for this level alone; soften up;
         // copy to real shadow
-        // map with clipping area active; get new clean shadow map for next shadowed level;
+        // map with clipping area active; get new clean shadow map for next shadowed
+        // level;
         // too much hassle currently; it works so beautifully
         if (!GUIP.getShadowMap()) {
             return null;
@@ -130,12 +151,12 @@ class TerrainShadowHelper {
         // Compute shadow angle based on planentary conditions.
         double[] lightDirection;
         if (conditions.getLight().isMoonlessOrPitchBack()) {
-            lightDirection = new double[]{0, 0};
+            lightDirection = new double[] { 0, 0 };
         } else if (conditions.getLight().isDusk()) {
             // TODO: replace when made user controlled
-            lightDirection = new double[]{-38, 14};
+            lightDirection = new double[] { -38, 14 };
         } else {
-            lightDirection = new double[]{-19, 7};
+            lightDirection = new double[] { -19, 7 };
         }
 
         // Shadows for elevation
@@ -143,7 +164,7 @@ class TerrainShadowHelper {
         // 1b) Create a reduced list of shadowcasting hexes
         double angle = Math.atan2(-lightDirection[1], lightDirection[0]);
         int mDir = (int) (0.5 + 1.5 - angle / Math.PI * 3); // +0.5 to counter the (int)
-        int[] sDirs = {mDir % 6, (mDir + 1) % 6, (mDir + 5) % 6};
+        int[] sDirs = { mDir % 6, (mDir + 1) % 6, (mDir + 5) % 6 };
         HashMap<Integer, Set<Coords>> sortedHexes = new HashMap<>();
         HashMap<Integer, Set<Coords>> shadowCastingHexes = new HashMap<>();
         for (Coords c : allBoardHexes(board)) {
@@ -182,14 +203,14 @@ class TerrainShadowHelper {
             Path2D path = new Path2D.Float();
             for (Coords c : sortedHexes.get(h)) {
                 Point p = BoardView.getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                AffineTransform t = AffineTransform.getTranslateInstance(p.x + HexTileset.HEX_W / 2.0, p.y + HexTileset.HEX_H / 2.0);
+                AffineTransform t = AffineTransform.getTranslateInstance(p.x + HexTileset.HEX_W / 2.0,
+                        p.y + HexTileset.HEX_H / 2.0);
                 t.scale(1.02, 1.02);
                 t.translate(-HexTileset.HEX_W / 2.0, -HexTileset.HEX_H / 2.0);
                 path.append(t.createTransformedShape(BoardView.getHexPoly()), false);
             }
             levelClips.put(h, path);
         }
-
 
         // 3) Find all level differences
         final int maxDiff = 35; // limit all diffs to this value
@@ -258,8 +279,11 @@ class TerrainShadowHelper {
                 for (Coords c : shadowCastingHexes.get(shadowcaster)) {
                     Point2D p0 = BoardView.getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     g.drawImage(hS.get(Math.min(lDiff, maxDiff)),
-                            (int) p0.getX() - (int) (Math.abs(lightDirection[0]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_W),
-                            (int) p0.getY() - (int) (Math.abs(lightDirection[1]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_H), null);
+                            (int) p0.getX()
+                                    - (int) (Math.abs(lightDirection[0]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_W),
+                            (int) p0.getY()
+                                    - (int) (Math.abs(lightDirection[1]) * Math.min(lDiff, maxDiff) + HexTileset.HEX_H),
+                            null);
                 }
             }
             g.setClip(saveClip);
@@ -346,12 +370,13 @@ class TerrainShadowHelper {
         }
 
         long tT5 = System.nanoTime() - stT;
-        LogManager.getLogger().info("Time to prepare the shadow map: " + tT5 / 1e6 + " ms");
+        logger.info("Time to prepare the shadow map: " + tT5 / 1e6 + " ms");
         return shadowMap;
     }
 
     /**
-     *  @return a list of Coords of all hexes on the board. Returns ONLY hexes where board.getHex() != null.
+     * @return a list of Coords of all hexes on the board. Returns ONLY hexes where
+     *         board.getHex() != null.
      */
     private List<Coords> allBoardHexes(Board board) {
         if (board == null) {

@@ -18,46 +18,62 @@
  */
 package megamek.common.icons;
 
-import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
-import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Node;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Objects;
 
+import org.w3c.dom.Node;
+
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 /**
- * Camouflage is an implementation of AbstractIcon that contains and displays a Camouflage, which
- * may either be a base Camouflage from the Camouflage directory or a Colour camouflage, which is
+ * Camouflage is an implementation of AbstractIcon that contains and displays a
+ * Camouflage, which
+ * may either be a base Camouflage from the Camouflage directory or a Colour
+ * camouflage, which is
  * based on the specified PlayerColour and then parsed as an AWT Color.
+ *
  * @see AbstractIcon
  */
 public class Camouflage extends AbstractIcon {
+    private static final MMLogger logger = MMLogger.create(Camouflage.class);
+
     private static final long serialVersionUID = 1093277025745250375L;
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
     public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
     public static final String XML_TAG = "camouflage";
 
-    // Rotation and scaling are stored as integers to avoid the usual rounding problems with doubles (e.g.
+    // Rotation and scaling are stored as integers to avoid the usual rounding
+    // problems with doubles (e.g.
     // when comparing camos with equals())
-    /** The angle in degrees by which to rotate this camo when applying it to units. */
+    /**
+     * The angle in degrees by which to rotate this camo when applying it to units.
+     */
     protected int rotationAngle = 0;
-    /** The scale times 10 (10 = no scaling) to apply to this camo when applying it to units. */
+    /**
+     * The scale times 10 (10 = no scaling) to apply to this camo when applying it
+     * to units.
+     */
     protected int scale = 10;
 
-    //region Constructors
+    // region Constructors
     public Camouflage() {
         super(NO_CAMOUFLAGE);
     }
 
     /**
-     * Constructs a new camo of the "category" (directory, ending with "/") and filename. Can only be used
-     * for camos of the directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir
+     * Constructs a new camo of the "category" (directory, ending with "/") and
+     * filename. Can only be used
+     * for camos of the directories that are parsed automatically, i.e. the
+     * MM-internal camo dir, the user dir
      * and the story arcs directory.
      *
      * @param category the directory, e.g. "Clans/Wolf/Alpha Galaxy/"
@@ -68,13 +84,18 @@ public class Camouflage extends AbstractIcon {
     }
 
     /**
-     * Constructs a new camo with the given file. Even though a file is accepted, this can only be used
-     * for camos of the directories that are parsed automatically, i.e. the MM-internal camo dir, the user dir
-     * and the story arcs directory! This method tries to parse the filename to find the camo. This requires
-     * replacing Windows backslashes with normal slashes in order to find the file in the way camos are
+     * Constructs a new camo with the given file. Even though a file is accepted,
+     * this can only be used
+     * for camos of the directories that are parsed automatically, i.e. the
+     * MM-internal camo dir, the user dir
+     * and the story arcs directory! This method tries to parse the filename to find
+     * the camo. This requires
+     * replacing Windows backslashes with normal slashes in order to find the file
+     * in the way camos are
      * stored (see {@link megamek.common.util.fileUtils.AbstractDirectory})
      *
-     * @param file The File, such as a file of "Clans/Wolf/Alpha Galaxy/Alpha Galaxy.jpg"
+     * @param file The File, such as a file of "Clans/Wolf/Alpha Galaxy/Alpha
+     *             Galaxy.jpg"
      */
     public Camouflage(File file) {
         this(getDirectory(file), file.getName());
@@ -89,9 +110,9 @@ public class Camouflage extends AbstractIcon {
     public static Camouflage of(PlayerColour color) {
         return new Camouflage(COLOUR_CAMOUFLAGE, color.name());
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Boolean Methods
+    // region Boolean Methods
     public boolean isColourCamouflage() {
         return COLOUR_CAMOUFLAGE.equals(getCategory());
     }
@@ -100,7 +121,7 @@ public class Camouflage extends AbstractIcon {
     public boolean hasDefaultCategory() {
         return super.hasDefaultCategory() || NO_CAMOUFLAGE.equals(getCategory());
     }
-    //endregion Boolean Methods
+    // endregion Boolean Methods
 
     @Override
     public @Nullable Image getBaseImage() {
@@ -114,19 +135,20 @@ public class Camouflage extends AbstractIcon {
         try {
             return (Image) MMStaticDirectoryManager.getCamouflage().getItem(category, getFilename());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
 
         return null;
     }
 
     /**
-     * @param colour the colour of the camouflage. This shouldn't be null, but null values are handled.
+     * @param colour the colour of the camouflage. This shouldn't be null, but null
+     *               values are handled.
      * @return the created colour camouflage, or null if a null colour is provided
      */
     private @Nullable Image getColourCamouflageImage(final @Nullable Color colour) {
         if (colour == null) {
-            LogManager.getLogger().error("A null colour was passed.");
+            logger.error("A null colour was passed.");
             return null;
         }
         BufferedImage result = new BufferedImage(84, 72, BufferedImage.TYPE_INT_RGB);
@@ -136,7 +158,7 @@ public class Camouflage extends AbstractIcon {
         return result;
     }
 
-    //region File I/O
+    // region File I/O
     @Override
     public void writeToXML(final PrintWriter pw, final int indent) {
         writeToXML(pw, indent, XML_TAG);
@@ -147,12 +169,12 @@ public class Camouflage extends AbstractIcon {
         try {
             icon.parseNodes(wn.getChildNodes());
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
             return new Camouflage();
         }
         return icon;
     }
-    //endregion File I/O
+    // endregion File I/O
 
     @Override
     public Camouflage clone() {
@@ -179,15 +201,17 @@ public class Camouflage extends AbstractIcon {
         this.scale = scale;
     }
 
-    /** Resets the camo scaling to the neutral value (no scaling).  */
+    /** Resets the camo scaling to the neutral value (no scaling). */
     public void resetScale() {
         scale = 10;
     }
 
     /**
-     * @return The camo scaling; this value is 10 times the scaling that is used, so a return value of 10
-     * means no scaling is applied. Use for serialization etc. Use {@link #getScaleFactor()} to get the
-     * value by which to actually scale the camo.
+     * @return The camo scaling; this value is 10 times the scaling that is used, so
+     *         a return value of 10
+     *         means no scaling is applied. Use for serialization etc. Use
+     *         {@link #getScaleFactor()} to get the
+     *         value by which to actually scale the camo.
      */
     public int getScale() {
         return scale;

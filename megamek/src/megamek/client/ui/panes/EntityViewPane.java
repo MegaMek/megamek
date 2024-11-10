@@ -18,8 +18,10 @@
  */
 package megamek.client.ui.panes;
 
+import javax.swing.JFrame;
+
 import megamek.client.ui.baseComponents.AbstractTabbedPane;
-import megamek.client.ui.swing.MechViewPanel;
+import megamek.client.ui.swing.MekViewPanel;
 import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
@@ -30,14 +32,12 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.templates.TROView;
 
-import javax.swing.*;
-
 /**
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
 public class EntityViewPane extends AbstractTabbedPane {
-    private final ConfigurableMechViewPanel summaryPanel = new ConfigurableMechViewPanel();
-    private final MechViewPanel troPanel = new MechViewPanel();
+    private final ConfigurableMekViewPanel summaryPanel = new ConfigurableMekViewPanel();
+    private final MekViewPanel troPanel = new MekViewPanel();
     private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
 
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
@@ -76,17 +76,17 @@ public class EntityViewPane extends AbstractTabbedPane {
 
     /**
      * Updates the pane's currently displayed entity / AS unit to the respective given units. The method
-     * assumes that asUnit corresponds to entity and does no conversion. When the AS Element or MechSummary
+     * assumes that asUnit corresponds to entity and does no conversion. When the AS Element or MekSummary
      * is available, passing it in as asUnit saves the time for AS conversion.
      *
      * @param entity the entity to update to, or null if the panels are to be emptied.
-     * @param asUnit the Alpha Strike unit corresponding to entity (may be a MechSummary)
+     * @param asUnit the Alpha Strike unit corresponding to entity (may be a MekSummary)
      */
     public void updateDisplayedEntity(final @Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
         if (entity == null) {
             troPanel.reset();
         } else {
-            troPanel.setMech(entity, TROView.createView(entity, ViewFormatting.HTML));
+            troPanel.setMek(entity, TROView.createView(entity, ViewFormatting.HTML));
         }
         summaryPanel.setEntity(entity);
         cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);

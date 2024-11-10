@@ -18,18 +18,19 @@
  */
 package megamek.common;
 
+import megamek.common.hexarea.HexArea;
+
 /**
- * This interface is implemented by those units (by InGameObjects) that can be deployed either
- * offboard or on a board. There are InGameObjects that are only targets (HexTarget) and may thus not
- * actually be deployable. All Deployable objects could theoretically be listed in the lobby's unit list.
+ * This interface is implemented by those units (by InGameObjects) that can be deployed either offboard or on a board. There are
+ * InGameObjects that are only targets (HexTarget) and may thus not actually be deployable. All Deployable objects could theoretically be
+ * listed in the lobby's unit list.
  */
 public interface Deployable {
 
     /**
-     * Returns true when this unit/object is deployed, i.e. it has arrived in the game and may
-     * perform actions or be targeted by actions. Usually that means it has a fixed position on a board.
-     * Offboard units also count as undeployed as long as they cannot perform actions and as deployed when they
-     * can.
+     * Returns true when this unit/object is deployed, i.e. it has arrived in the game and may perform actions or be targeted by actions.
+     * Usually that means it has a fixed position on a board. Offboard units also count as undeployed as long as they cannot perform actions
+     * and as deployed when they can.
      */
     boolean isDeployed();
 
@@ -37,4 +38,22 @@ public interface Deployable {
      * Returns the round that this unit/object is to be deployed on the board or offboard.
      */
     int getDeployRound();
+
+    /**
+     * @return True if this unit has its own area it is allowed to flee the board(s) from; false if the unit's owner should be asked
+     * instead.
+     */
+    default boolean hasFleeZone() {
+        return false;
+    }
+
+    /**
+     * @return The area of the board(s) this unit is allowed to flee from; the return value is only valid when {@link #hasFleeZone()}
+     * returns true. Normally this method should not be called, use {@link AbstractGame#canFleeFrom(Deployable, Coords)} instead.
+     * @see AbstractGame#canFleeFrom(Deployable, Coords)
+     * @see #hasFleeZone()
+     */
+    default HexArea getFleeZone() {
+        return HexArea.EMPTY_AREA;
+    }
 }

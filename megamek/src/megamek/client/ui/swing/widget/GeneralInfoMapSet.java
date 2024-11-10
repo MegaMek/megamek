@@ -15,28 +15,36 @@
 */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
-import megamek.common.options.*;
+import megamek.common.options.AbstractOptions;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
+import megamek.common.options.PilotOptions;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Enumeration;
-import java.util.Vector;
-
 /**
- * Set of elements to represent general unit information in MechDisplay
+ * Set of elements to represent general unit information in MekDisplay
  */
 public class GeneralInfoMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***";
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
-    private PMSimpleLabel mechTypeL0, statusL, pilotL, playerL,
+    private PMSimpleLabel mekTypeL0, statusL, pilotL, playerL,
             teamL, weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
             movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
             visualRangeL;
@@ -49,9 +57,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechLargeFontSize());
+            GUIP.getUnitDisplayMekLargeFontSize());
     private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
-            GUIP.getUnitDisplayMechLargeFontSize());
+            GUIP.getUnitDisplayMekLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -76,10 +84,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private void setAreas() {
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
 
-        mechTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord());
-        mechTypeL0.setVisible(false);
-        mechTypeL0.setColor(Color.RED);
-        content.addArea(mechTypeL0);
+        mekTypeL0 = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord());
+        mekTypeL0.setVisible(false);
+        mekTypeL0.setColor(Color.RED);
+        content.addArea(mekTypeL0);
 
         fm = comp.getFontMetrics(FONT_VALUE);
 
@@ -216,13 +224,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     @Override
     public void setEntity(Entity en) {
 
-        mechTypeL0.setVisible(false);
+        mekTypeL0.setVisible(false);
         if (!en.isDesignValid()) {
             // If this is the case, we will just overwrite the name-overflow
             // area, since this info is more important.
-            mechTypeL0.setString(Messages
+            mekTypeL0.setString(Messages
                     .getString("GeneralInfoMapSet.invalidDesign"));
-            mechTypeL0.setVisible(true);
+            mekTypeL0.setVisible(true);
         }
 
         statusR.setString(en.isProne() ? Messages.getString("GeneralInfoMapSet.prone")
@@ -261,8 +269,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA"));
-        if (en instanceof Mech) {
-            if (((Mech) en).isAutoEject()) {
+        if (en instanceof Mek) {
+            if (((Mek) en).isAutoEject()) {
                 ejectR.setString(Messages.getString("GeneralInfoMapSet.Operational"));
             } else {
                 ejectR.setString(Messages.getString("GeneralInfoMapSet.Disabled"));
@@ -309,14 +317,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
             mpR4.setString(Integer.toString(en.getActiveUMUCount()));
-        } else if (en instanceof LandAirMech
+        } else if (en instanceof LandAirMek
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL4.setVisible(true);
             mpR4.setVisible(true);
-            mpR1.setString(Integer.toString(((LandAirMech) en).getAirMechWalkMP()));
-            mpR2.setString(Integer.toString(((LandAirMech) en).getAirMechRunMP()));
-            mpR3.setString(Integer.toString(((LandAirMech) en).getAirMechCruiseMP()));
-            mpR4.setString(Integer.toString(((LandAirMech) en).getAirMechFlankMP()));
+            mpR1.setString(Integer.toString(((LandAirMek) en).getAirMekWalkMP()));
+            mpR2.setString(Integer.toString(((LandAirMek) en).getAirMekRunMP()));
+            mpR3.setString(Integer.toString(((LandAirMek) en).getAirMekCruiseMP()));
+            mpR4.setString(Integer.toString(((LandAirMek) en).getAirMekFlankMP()));
         } else {
             mpL4.setVisible(false);
             mpR4.setVisible(false);
@@ -353,7 +361,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
-        if (en instanceof Mech) {
+        if (en instanceof Mek) {
             heatL.setVisible(true);
             heatR.setVisible(true);
         } else {
@@ -367,11 +375,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setString(Messages.getString("MovementType."
                     + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
-        } else if (en instanceof QuadVee || en instanceof LandAirMech
-                || (en instanceof Mech && ((Mech) en).hasTracks())) {
+        } else if (en instanceof QuadVee || en instanceof LandAirMek
+                || (en instanceof Mek && ((Mek) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
-                // Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
+                // Show "Fighter/AirMek" instead of "Aerodyne/WiGE"
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
@@ -457,7 +465,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
-        } else if (en instanceof LandAirMech
+        } else if (en instanceof LandAirMek
                 && en.getMovementMode() == EntityMovementMode.WIGE) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
@@ -473,7 +481,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL3.setString(Messages.getString("GeneralInfoMapSet.mpL3"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
-            if (en instanceof LandAirMech
+            if (en instanceof LandAirMek
                     && en.getMovementMode() == EntityMovementMode.WIGE) {
                 mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
                 mpL4.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));

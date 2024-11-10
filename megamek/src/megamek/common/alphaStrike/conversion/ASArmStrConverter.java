@@ -18,26 +18,36 @@
  */
 package megamek.common.alphaStrike.conversion;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import org.apache.logging.log4j.LogManager;
-
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import megamek.logging.MMLogger;
 
 final class ASArmStrConverter {
+    private static final MMLogger logger = MMLogger.create(ASArmStrConverter.class);
 
-    /** Mech Structure, AlphaStrike Companion, p.98 */
-    private final static int[][] AS_MECH_STRUCTURE = new int[][] {
-            { 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15 },
-            { 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 7, 8, 8, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20 },
-            { 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12 },
-            { 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10 },
-            { 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8 ,8, 8, 8, 8, 9 },
-            { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6 },
-            { 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7 },
-            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5 }
+    /** Mek Structure, AlphaStrike Companion, p.98 */
+    private final static int[][] AS_MEK_STRUCTURE = new int[][] {
+            { 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 13,
+                    13, 13, 14, 14, 14, 15, 15 },
+            { 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 7, 8, 8, 9, 10, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16,
+                    16, 17, 17, 18, 18, 19, 19, 20, 20 },
+            { 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11,
+                    11, 11, 11, 12, 12 },
+            { 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9,
+                    9, 10, 10, 10 },
+            { 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8,
+                    8, 8, 8, 9 },
+            { 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 7, 7,
+                    7, 7, 7, 8 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5,
+                    6, 6, 6, 6 },
+            { 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+                    6, 6, 7, 7 },
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5,
+                    5, 5, 5, 5 }
     };
 
     static int convertArmor(ASConverter.ConversionData conversionData) {
@@ -85,10 +95,10 @@ final class ASArmStrConverter {
 
             // Some empty locations report -1 armor!
             if (entity.getArmor(loc) > 0) {
-            armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
-            report.addLine(entity.getLocationAbbr(loc),
-                    calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
-                    "", armorMod * entity.getArmor(loc));
+                armorPoints += Math.max(0, armorMod * entity.getArmor(loc));
+                report.addLine(entity.getLocationAbbr(loc),
+                        calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
+                        "", armorMod * entity.getArmor(loc));
             }
             if (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) > 0)) {
                 armorPoints += armorMod * entity.getArmor(loc, true);
@@ -155,8 +165,8 @@ final class ASArmStrConverter {
         report.addSubHeader("Structure:");
 
         int structure;
-        if (entity instanceof Mech) {
-            structure = AS_MECH_STRUCTURE[getEngineIndex(conversionData)][getWeightIndex(entity)];
+        if (entity instanceof Mek) {
+            structure = AS_MEK_STRUCTURE[getEngineIndex(conversionData)][getWeightIndex(entity)];
             report.addLine("Structure ", "", "" + structure);
             if (entity.getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE) {
                 structure = (int) Math.ceil(structure * 0.5);
@@ -174,7 +184,7 @@ final class ASArmStrConverter {
             report.addLine("BA", "2");
             return 2;
         } else if ((entity instanceof Infantry) || (entity instanceof Jumpship)
-                || (entity instanceof Protomech)) {
+                || (entity instanceof ProtoMek)) {
             report.addLine("CI, JS or PM", "1");
             return 1;
         } else if (entity instanceof Tank) {
@@ -205,7 +215,8 @@ final class ASArmStrConverter {
             }
             return (int) Math.ceil(struct / divisor);
         } else if (entity instanceof Aero) {
-            report.addLine("Aero", ((Aero) entity).getSI() + " x 0.5, round up", "= " + (int) Math.ceil(0.5 * ((Aero) entity).getSI()));
+            report.addLine("Aero", ((Aero) entity).getSI() + " x 0.5, round up",
+                    "= " + (int) Math.ceil(0.5 * ((Aero) entity).getSI()));
             return (int) Math.ceil(0.5 * ((Aero) entity).getSI());
         }
 
@@ -279,10 +290,11 @@ final class ASArmStrConverter {
             }
         }
         report.addLine("Unknown Engine", "");
-        LogManager.getLogger().error("Mech Engine type cannot be converted!");
+        logger.error("Mek Engine type cannot be converted!");
         return -1;
     }
 
     // Make non-instantiable
-    private ASArmStrConverter() { }
+    private ASArmStrConverter() {
+    }
 }

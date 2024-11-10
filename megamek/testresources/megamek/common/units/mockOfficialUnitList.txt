@@ -1,0 +1,5 @@
+MegaMek Official Unit List
+This file can be regenerated with java -jar MegaMek.jar -oul
+Format is: Chassis Model|
+Exterminator EXT-4A|
+Kanga Medium Hovertank|

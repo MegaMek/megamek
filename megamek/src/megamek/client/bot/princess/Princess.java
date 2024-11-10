@@ -1,19 +1,33 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess;
 
-import megamek.MegaMek;
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.Level;
+
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
@@ -27,7 +41,12 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.AimingMode;
@@ -46,14 +65,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
-import org.apache.logging.log4j.Level;
-
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger logger = MMLogger.create(Princess.class);
@@ -63,14 +74,14 @@ public class Princess extends BotClient {
     private static final int MAX_OVERHEAT_AMS = 14;
 
     /**
-     * Highest target number to consider when not aiming at the head on an immobile Mech
+     * Highest target number to consider when not aiming at the head on an immobile Mek
      */
-    private static final int SHUTDOWN_MAX_TARGETNUMBER = 12;
+    private static final int SHUTDOWN_MAX_TARGET_NUMBER = 12;
 
     /**
      * Default maximum location armor for checking called shots
      */
-    private static final int CALLED_SHOT_DEFAULT_MAXARMOR = 10;
+    private static final int CALLED_SHOT_DEFAULT_MAX_ARMOR = 10;
 
     /**
      * Combined armor and structure value where a location is at risk of destruction
@@ -78,9 +89,9 @@ public class Princess extends BotClient {
     private static final int LOCATION_DESTRUCTION_THREAT = 5;
 
     /**
-     * Difference in to-hit number between a general shot at an immobile Mech, and aiming for the head
+     * Difference in to-hit number between a general shot at an immobile Mek, and aiming for the head
      */
-    private static final int IMMOBILE_HEADSHOT_MODIFIER = 7;
+    private static final int IMMOBILE_HEAD_SHOT_MODIFIER = 7;
 
     /**
      * To-hit modifier for aimed shots against active targets
@@ -128,12 +139,12 @@ public class Princess extends BotClient {
     private List<HeatMap> enemyHeatMaps;
     private HeatMap friendlyHeatMap;
 
-    private Integer spinupThreshold = null;
+    private Integer spinUpThreshold = null;
 
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
     private final Precognition precognition;
-    private final Thread precogThread;
+    private final Thread precognitionThread;
     /**
      * Mapping to hold the damage allocated to each targetable, stored by ID.
      * Used to allocate damage more intelligently and avoid overkill.
@@ -192,11 +203,11 @@ public class Princess extends BotClient {
         // Set up enhanced targeting
         resetEnhancedTargeting(true);
 
-        // Start-up precog now, so that it can instantiate its game instance,
+        // Start-up precognition now, so that it can instantiate its game instance,
         // and it will stay up-to date.
         precognition = new Precognition(this);
-        precogThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
-        precogThread.start();
+        precognitionThread = new Thread(precognition, "Princess-precognition (" + getName() + ")");
+        precognitionThread.start();
     }
 
     /**
@@ -367,7 +378,7 @@ public class Princess extends BotClient {
             getStrategicBuildingTargets().add(coords);
         }
 
-        spinupThreshold = null;
+        spinUpThreshold = null;
     }
 
     /**
@@ -512,13 +523,32 @@ public class Princess extends BotClient {
             decentFacing = deployCoords.direction(center);
         }
 
-        final Entity deployEntity = game.getEntity(entityNum);
+        final Entity deployEntity = getEntity(entityNum);
         final Hex deployHex = game.getBoard().getHex(deployCoords);
+        int deployElevation = deployEntity.getElevation();
 
-        int deployElevation = getDeployElevation(deployEntity, deployHex);
-
-        // Compensate for hex elevation where != 0...
-        deployElevation -= deployHex.getLevel();
+        if (deployEntity.isAero()) {
+            if (game.getBoard().onGround()) {
+                // keep the altitude set in the lobby, possibly starting grounded
+                deployElevation = deployEntity.getAltitude();
+            } else if (game.getBoard().inAtmosphere()) {
+                // try to keep the altitude set in the lobby, but stay above the terrain
+                var deploymentHelper = new AllowedDeploymentHelper(deployEntity, deployCoords, game.getBoard(), deployHex, game);
+                List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(DeploymentElevationType.ALTITUDE);
+                if (allowedDeployment.isEmpty()) {
+                    // that's bad, cannot deploy at all
+                    logger.error("Cannot find viable altitude to deploy to");
+                    sendDeleteEntity(entityNum);
+                    return;
+                } else {
+                    deployElevation = Math.max(deployEntity.getAltitude(), Collections.min(allowedDeployment).elevation());
+                }
+            }
+        } else {
+            deployElevation = getDeployElevation(deployEntity, deployHex);
+            // Compensate for hex elevation where != 0...
+            deployElevation -= deployHex.getLevel();
+        }
         deploy(entityNum, deployCoords, decentFacing, deployElevation);
     }
 
@@ -693,7 +723,7 @@ public class Princess extends BotClient {
         int RADIUS = 3;
 
         // Shallow copy of refs list
-        ArrayList<Coords> localCopy = new ArrayList(possibleDeployCoords);
+        ArrayList<Coords> localCopy = new ArrayList<>(possibleDeployCoords);
 
         // Hacky, but really, "DEPLOY" should be a path step...
         MovePath mp = new MovePath(game, deployedUnit);
@@ -848,7 +878,7 @@ public class Princess extends BotClient {
 
                     boolean isCalledShot = false;
                     int locationDestruction = Integer.MAX_VALUE;
-                    int aimLocation = Mech.LOC_NONE;
+                    int aimLocation = Mek.LOC_NONE;
                     int calledShotDirection = CalledShot.CALLED_NONE;
 
                     WeaponFireInfo primaryFire = plan.get(0);
@@ -867,7 +897,7 @@ public class Princess extends BotClient {
                                     primaryFire.getTarget(),
                                     primaryFire.getToHit().getCover())) {
 
-                        Entity aimTarget = (Mech) primaryFire.getTarget();
+                        Entity aimTarget = (Mek) primaryFire.getTarget();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS) &&
                                 (!aimTarget.isImmobile() || useCalledShotsOnImmobileTarget)) {
                             isCalledShot = true;
@@ -877,13 +907,13 @@ public class Princess extends BotClient {
                         if (aimTarget.isImmobile() || shooter.hasTargComp()) {
                             boolean rearShot = primaryFire.getToHit().getSideTable() == ToHitData.SIDE_REAR;
 
-                            // Get the Mech location to aim at. Infantry and BA will go for the head
+                            // Get the Mek location to aim at. Infantry and BA will go for the head
                             // if the odds are good.
                             aimLocation = getAimedShotLocation(primaryFire.getTarget(),
                                     plan, rearShot, shooter.isInfantry());
 
                             // When aiming at a location, don't bother checking for called shots
-                            if (aimLocation != Mech.LOC_NONE) {
+                            if (aimLocation != Mek.LOC_NONE) {
                                 isCalledShot = false;
                                 // TODO: this should be adjusted to better handle multiple target types
                                 locationDestruction = aimTarget.getArmor(aimLocation, rearShot) + aimTarget.getInternal(aimLocation);
@@ -918,7 +948,7 @@ public class Princess extends BotClient {
                         }
 
                         // Set attacks as aimed or called, as required
-                        if (aimLocation != Mech.LOC_NONE || calledShotDirection != CalledShot.CALLED_NONE) {
+                        if (aimLocation != Mek.LOC_NONE || calledShotDirection != CalledShot.CALLED_NONE) {
                             setAttackAsAimedOrCalled(shot,
                                     aimLocation,
                                     calledShotDirection,
@@ -959,7 +989,7 @@ public class Princess extends BotClient {
             if (shooter.getSwarmTargetId() != Entity.NONE) {
                 // If we are skipping firing while swarming, it is because we are fleeing...
                 // so let's stop swarming if we are doing so
-                final Mounted stopSwarmWeapon = shooter.getIndividualWeaponList().stream()
+                final Mounted<?> stopSwarmWeapon = shooter.getIndividualWeaponList().stream()
                         .filter(weapon -> weapon.getType() instanceof StopSwarmAttack)
                         .findFirst()
                         .orElse(null);
@@ -1009,7 +1039,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Calculates the targeting/ offboard turn
+     * Calculates the targeting/ off board turn
      * This includes firing TAG and non-direct-fire artillery
      */
     @Override
@@ -1040,7 +1070,7 @@ public class Princess extends BotClient {
         try {
             final Map<AmmoType, Integer> ammoCounts = new HashMap<>();
             msg.append("\nPooling Ammo:");
-            for (final Mounted ammo : shooter.getAmmo()) {
+            for (final Mounted<?> ammo : shooter.getAmmo()) {
                 final AmmoType ammoType = (AmmoType) ammo.getType();
                 msg.append("\n\t").append(ammoType);
                 if (ammoCounts.containsKey(ammoType)) {
@@ -1111,8 +1141,8 @@ public class Princess extends BotClient {
             return new Vector<>();
         }
 
-        final FiringPlanCalculationParameters fccp = new Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
-        FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(fccp);
+        final FiringPlanCalculationParameters firingPlanCalculationParameters = new Builder().buildExact(shooter, target, calcAmmoConservation(shooter));
+        FiringPlan plan = getFireControl(shooter).determineBestFiringPlan(firingPlanCalculationParameters);
         getFireControl(shooter).loadAmmo(shooter, plan);
         plan.sortPlan();
 
@@ -1133,7 +1163,7 @@ public class Princess extends BotClient {
     /**
      * Calculates the move index for the given unit.
      * In general, faster units and units closer to the enemy should move before others.
-     * Additional modifiers for being prone, stealthed, unit type and so on are also factored in.
+     * Additional modifiers for being prone, stealth-ed, unit type and so on are also factored in.
      *
      * @param entity The unit to be indexed.
      * @return The movement index of this unit. May be positive or negative. Higher index values should move first.
@@ -1181,7 +1211,7 @@ public class Princess extends BotClient {
                 modifiers.append("\tx1.1 (Is Prone)");
             }
 
-            // If all else is equal, Infantry before Battle Armor before Tanks before Mechs.
+            // If all else is equal, Infantry before Battle Armor before Tanks before Meks.
             if (entity instanceof BattleArmor) {
                 total *= PRIORITY_BA;
                 modifiers.append("\tx2.0 (is BA)");
@@ -1215,7 +1245,7 @@ public class Princess extends BotClient {
             if (entity.isStealthActive() || entity.isStealthOn() ||
                 entity.isVoidSigActive() || entity.isVoidSigOn()) {
                 total *= PRIORITY_STEALTH;
-                modifiers.append("\tx1/3 (is Stealthed)");
+                modifiers.append("\tx1/3 (is Stealth-ed)");
             }
 
             return total;
@@ -1365,9 +1395,7 @@ public class Princess extends BotClient {
      * @param cover            {@link LosEffects} constant for partial cover, derived from {@code ToHitData.getCover()}
      * @return                 true, if aimed or called shots should be checked
      */
-    protected boolean checkForEnhancedTargeting (Entity shooter,
-                                                 Targetable targetable,
-                                                 int cover) {
+    protected boolean checkForEnhancedTargeting (Entity shooter, Targetable targetable, int cover) {
         // Only works on entities
         if (!(targetable instanceof Entity)){
             return false;
@@ -1429,11 +1457,11 @@ public class Princess extends BotClient {
     /**
      * Determine which location to aim for on a general target. Returned location constant is
      * relative to the provided target type.
-     * Currently only supports aimed shots against Mechs.
+     * Currently only supports aimed shots against Meks.
      * @param target        Entity being shot at
      * @param planOfAttack  Proposed attacks against {@code target}
      * @param rearAttack    true if attacking from rear arc
-     * @param includeHead   true if the head is a valid location, ignored for non-Mech targets
+     * @param includeHead   true if the head is a valid location, ignored for non-Mek targets
      * @return              location constant to aim for, with the {@code LOC_NONE} constant
      *                      indicating no suitable location
      */
@@ -1474,11 +1502,11 @@ public class Princess extends BotClient {
         }
 
         // Each type of unit requires its own checking process due to unique locations.
-        // TODO: placeholders are used for non-Mech targets. Create appropriate methods for each.
+        // TODO: placeholders are used for non-Mek targets. Create appropriate methods for each.
         switch (((Entity) target).getUnitType()) {
             case UnitType.MEK:
                 aimLocation = calculateAimedShotLocation(
-                        (Mech) target,
+                        (Mek) target,
                         workingShots,
                         rearAttack,
                         includeHead
@@ -1503,7 +1531,7 @@ public class Princess extends BotClient {
     /**
      * Determine which direction to make a called shot - left, right, high, or low. Some target
      * types only support calling shots left or right.
-     * Currently only supports called shots against Mechs.
+     * Currently only supports called shots against Meks.
      * @param target       Entity being shot at
      * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
      *                     to target
@@ -1537,10 +1565,10 @@ public class Princess extends BotClient {
             return calledShotDirection;
         }
 
-        if (target instanceof Mech) {
-            calledShotDirection = calculateCalledShotDirection((Mech) target, attackSide, workingShots);
+        if (target instanceof Mek) {
+            calledShotDirection = calculateCalledShotDirection((Mek) target, attackSide, workingShots);
         } else {
-            // TODO: placeholder for non-Mech targets. Create appropriate methods for each.
+            // TODO: placeholder for non-Mek targets. Create appropriate methods for each.
             calledShotDirection = CalledShot.CALLED_NONE;
         }
 
@@ -1548,21 +1576,21 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Determine which location to aim for on a Mech. Prioritizes torsos and legs, and ignores
-     * destroyed locations. Prefers right to left, given that most non-symmetrical Mechs are
+     * Determine which location to aim for on a Mek. Prioritizes torsos and legs, and ignores
+     * destroyed locations. Prefers right to left, given that most non-symmetrical Meks are
      * 'right-handed'.
-     * @param target        Mech being shot at
+     * @param target        Mek being shot at
      * @param aimedShots    Proposed attacks against {@code target}
      * @param rearAttack    true if attacking from the rear arc
      * @param includeHead   true to include the head as a valid location
-     * @return              {@link Mech} constant for location to shoot, or {@code Mech.LOC_NONE}
+     * @return              {@link Mek} constant for location to shoot, or {@code Mek.LOC_NONE}
      *                      for none
      */
-    protected int calculateAimedShotLocation (Mech target,
+    protected int calculateAimedShotLocation (Mek target,
                                               List<WeaponFireInfo> aimedShots,
                                               boolean rearAttack,
                                               boolean includeHead) {
-        int aimLocation = Mech.LOC_NONE;
+        int aimLocation = Mek.LOC_NONE;
 
         if (aimedShots == null || target == null) {
             return aimLocation;
@@ -1572,18 +1600,18 @@ public class Princess extends BotClient {
         int lowestArmor = Integer.MAX_VALUE;
         List<Integer> rankedLocations = new ArrayList<>();
 
-        // Aiming for the head can only be done against an immobile Mech, and takes a penalty.
-        // Don't aim for the head for anti-Mech attacks except after swarming.
+        // Aiming for the head can only be done against an immobile Mek, and takes a penalty.
+        // Don't aim for the head for anti-Mek attacks except after swarming.
         if (includeHead &&
                 target.isImmobile() &&
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.LEG_ATTACK) &&
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
                 !primaryFire.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
-            aimLocation = Mech.LOC_HEAD;
-            int headshotMaxTN = calcEnhancedTargetingMaxTN(false);
+            aimLocation = Mek.LOC_HEAD;
+            int headShotMaxTN = calcEnhancedTargetingMaxTN(false);
             if (aimedShots.stream().anyMatch(curFire -> curFire.getToHit().getValue() +
-                    IMMOBILE_HEADSHOT_MODIFIER > headshotMaxTN)) {
-                aimLocation = Mech.LOC_NONE;
+                    IMMOBILE_HEAD_SHOT_MODIFIER > headShotMaxTN)) {
+                aimLocation = Mek.LOC_NONE;
             } else {
                 return aimLocation;
             }
@@ -1598,51 +1626,51 @@ public class Princess extends BotClient {
                     filter(w -> w.isOperable() && isBigGun(w)).
                     collect(Collectors.toSet())) {
 
-                if (!rankedLocations.contains(Mech.LOC_RARM) &&
-                        curWeapon.getLocation() == Mech.LOC_RARM &&
-                        target.getInternal(Mech.LOC_RARM) > 0) {
-                    rankedLocations.add(Mech.LOC_RARM);
-                } else if (!rankedLocations.contains(Mech.LOC_LARM) &&
-                        curWeapon.getLocation() == Mech.LOC_LARM &&
-                        target.getInternal(Mech.LOC_LARM) > 0) {
-                    rankedLocations.add(Mech.LOC_LARM);
+                if (!rankedLocations.contains(Mek.LOC_RARM) &&
+                        curWeapon.getLocation() == Mek.LOC_RARM &&
+                        target.getInternal(Mek.LOC_RARM) > 0) {
+                    rankedLocations.add(Mek.LOC_RARM);
+                } else if (!rankedLocations.contains(Mek.LOC_LARM) &&
+                        curWeapon.getLocation() == Mek.LOC_LARM &&
+                        target.getInternal(Mek.LOC_LARM) > 0) {
+                    rankedLocations.add(Mek.LOC_LARM);
                 }
-                if (rankedLocations.contains(Mech.LOC_RARM) && rankedLocations.contains(Mech.LOC_LARM)) {
+                if (rankedLocations.contains(Mek.LOC_RARM) && rankedLocations.contains(Mek.LOC_LARM)) {
                     break;
                 }
 
             }
 
-            // Most Mech designs will have their main weapon in either the right torso or right arm,
+            // Most Mek designs will have their main weapon in either the right torso or right arm,
             // so going after the right torso first solves both conditions. Putting the right torso
             // first ensures the left torso and other locations will only supersede it if they have
             // taken more damage and make for a better target.
-            if (target.getInternal(Mech.LOC_RT) > 0) {
-                rankedLocations.add(Mech.LOC_RT);
-            } else if (target.getInternal(Mech.LOC_LT) > 0) {
-                rankedLocations.add(Mech.LOC_LT);
+            if (target.getInternal(Mek.LOC_RT) > 0) {
+                rankedLocations.add(Mek.LOC_RT);
+            } else if (target.getInternal(Mek.LOC_LT) > 0) {
+                rankedLocations.add(Mek.LOC_LT);
             }
 
-            if (!rankedLocations.contains(Mech.LOC_LT)) {
-                if (target.getInternal(Mech.LOC_LT) > 0) {
-                    rankedLocations.add((Mech.LOC_LT));
+            if (!rankedLocations.contains(Mek.LOC_LT)) {
+                if (target.getInternal(Mek.LOC_LT) > 0) {
+                    rankedLocations.add((Mek.LOC_LT));
                 }
             }
 
-            rankedLocations.add(Mech.LOC_CT);
+            rankedLocations.add(Mek.LOC_CT);
         }
 
         // Favor right leg over left due to damage transfer to right torso, except if right leg is
         // completely gone
-        if (target.getInternal(Mech.LOC_RLEG) > 0) {
-            rankedLocations.add(Mech.LOC_RLEG);
-        } else if (target.getInternal(Mech.LOC_LLEG) > 0) {
-            rankedLocations.add(Mech.LOC_LLEG);
+        if (target.getInternal(Mek.LOC_RLEG) > 0) {
+            rankedLocations.add(Mek.LOC_RLEG);
+        } else if (target.getInternal(Mek.LOC_LLEG) > 0) {
+            rankedLocations.add(Mek.LOC_LLEG);
         }
 
-        if (!rankedLocations.contains(Mech.LOC_LLEG)) {
-            if (target.getInternal(Mech.LOC_LLEG) > 0) {
-                rankedLocations.add(Mech.LOC_LLEG);
+        if (!rankedLocations.contains(Mek.LOC_LLEG)) {
+            if (target.getInternal(Mek.LOC_LLEG) > 0) {
+                rankedLocations.add(Mek.LOC_LLEG);
             }
         }
 
@@ -1665,15 +1693,15 @@ public class Princess extends BotClient {
 
             // Doesn't get any better than a torso with no armor
             if (lowestArmor == 0 &&
-                    (aimLocation == Mech.LOC_RT ||
-                            aimLocation == Mech.LOC_LT ||
-                            aimLocation == Mech.LOC_CT)) {
+                    (aimLocation == Mek.LOC_RT ||
+                            aimLocation == Mek.LOC_LT ||
+                            aimLocation == Mek.LOC_CT)) {
                 break;
             }
         }
         // Evaluate whether all the weapons at the chosen location will be effective
-        if (aimLocation != Mech.LOC_NONE &&
-                (!target.isImmobile() || aimLocation == Mech.LOC_HEAD)) {
+        if (aimLocation != Mek.LOC_NONE &&
+                (!target.isImmobile() || aimLocation == Mek.LOC_HEAD)) {
 
             int offset = 0;
             if (locationDestruction <= LOCATION_DESTRUCTION_THREAT) {
@@ -1682,10 +1710,10 @@ public class Princess extends BotClient {
 
             int penetratorCount = 0;
             double totalDamage = 0;
-            int maximumToHit = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mech.LOC_HEAD);
+            int maximumToHit = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mek.LOC_HEAD);
             for (WeaponFireInfo curFire : aimedShots) {
-                if (curFire.getToHit().getValue() + (aimLocation == Mech.LOC_HEAD ?
-                        IMMOBILE_HEADSHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
+                if (curFire.getToHit().getValue() + (aimLocation == Mek.LOC_HEAD ?
+                        IMMOBILE_HEAD_SHOT_MODIFIER : AIMED_SHOT_MODIFIER) <= (maximumToHit + offset)) {
 
                     totalDamage += curFire.getMaxDamage();
                     if (curFire.getMaxDamage() >= lowestArmor) {
@@ -1699,7 +1727,7 @@ public class Princess extends BotClient {
             // can penetrate the armor individually or cumulatively, don't bother aiming
             if (totalDamage == 0 ||
                     (penetratorCount == 0 && 0.4 * totalDamage < lowestArmor)) {
-                aimLocation = Mech.LOC_NONE;
+                aimLocation = Mek.LOC_NONE;
             }
 
         }
@@ -1708,17 +1736,17 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Determine which direction to make a called shot against a Mech - left, right, high, or low.
+     * Determine which direction to make a called shot against a Mek - left, right, high, or low.
      * Shots into a side arc will be called to become rear shots. Shots to the front or rear will
      * call high or low based on how many locations have minimal armor.
-     * @param target       Mech being shot at
+     * @param target       Mek being shot at
      * @param attackSide   {@link ToHitData} SIDE_ constant, indicating attack direction relative
      *                     to target
      * @param calledShots  Proposed attacks against {@code target} parameter
      * @return             {@link CalledShot} constant indicating which direction to call, may
      *                     return {@code CalledShot.CALLED_NONE}.
      */
-    protected int calculateCalledShotDirection (Mech target,
+    protected int calculateCalledShotDirection (Mek target,
                                                 int attackSide,
                                                 List<WeaponFireInfo> calledShots) {
         int calledShotDirection = CalledShot.CALLED_NONE;
@@ -1740,9 +1768,9 @@ public class Princess extends BotClient {
 
         if (attackSide == ToHitData.SIDE_FRONT || attackSide == ToHitData.SIDE_REAR) {
 
-            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mech.LOC_RT,
-                    Mech.LOC_LT,
-                    Mech.LOC_CT));
+            List<Integer> upperLocations = new ArrayList<>(Arrays.asList(Mek.LOC_RT,
+                    Mek.LOC_LT,
+                    Mek.LOC_CT));
 
             // Only consider the arms if they have 'big' weapons
             for (WeaponMounted curWeapon : target.getWeaponList().
@@ -1750,16 +1778,16 @@ public class Princess extends BotClient {
                     filter(w -> w.isOperable() && isBigGun(w)).
                     collect(Collectors.toSet())) {
 
-                if (!upperLocations.contains(Mech.LOC_RARM) &&
-                        curWeapon.getLocation() == Mech.LOC_RARM &&
-                        target.getInternal(Mech.LOC_RARM) > 0) {
-                    upperLocations.add(Mech.LOC_RARM);
-                } else if (!upperLocations.contains(Mech.LOC_LARM) &&
-                        curWeapon.getLocation() == Mech.LOC_LARM &&
-                        target.getInternal(Mech.LOC_LARM) > 0) {
-                    upperLocations.add(Mech.LOC_LARM);
+                if (!upperLocations.contains(Mek.LOC_RARM) &&
+                        curWeapon.getLocation() == Mek.LOC_RARM &&
+                        target.getInternal(Mek.LOC_RARM) > 0) {
+                    upperLocations.add(Mek.LOC_RARM);
+                } else if (!upperLocations.contains(Mek.LOC_LARM) &&
+                        curWeapon.getLocation() == Mek.LOC_LARM &&
+                        target.getInternal(Mek.LOC_LARM) > 0) {
+                    upperLocations.add(Mek.LOC_LARM);
                 }
-                if (upperLocations.contains(Mech.LOC_RARM) && upperLocations.contains(Mech.LOC_LARM)) {
+                if (upperLocations.contains(Mek.LOC_RARM) && upperLocations.contains(Mek.LOC_LARM)) {
                     break;
                 }
 
@@ -1776,10 +1804,10 @@ public class Princess extends BotClient {
                 if (averageDamage.isPresent()) {
                     armorThreshold = (int) Math.floor(averageDamage.getAsDouble());
                 } else {
-                    armorThreshold = CALLED_SHOT_DEFAULT_MAXARMOR;
+                    armorThreshold = CALLED_SHOT_DEFAULT_MAX_ARMOR;
                 }
             } else {
-                armorThreshold = CALLED_SHOT_DEFAULT_MAXARMOR;
+                armorThreshold = CALLED_SHOT_DEFAULT_MAX_ARMOR;
             }
 
             double upperTargets = upperLocations.
@@ -1790,18 +1818,18 @@ public class Princess extends BotClient {
 
             // Only consider shooting low if both legs are intact
             double lowerTargets = 0;
-            if (target.getInternal(Mech.LOC_RLEG) > 0 && target.getInternal(Mech.LOC_LLEG) > 0) {
-                if (target.getArmor(Mech.LOC_RLEG) <= armorThreshold) {
+            if (target.getInternal(Mek.LOC_RLEG) > 0 && target.getInternal(Mek.LOC_LLEG) > 0) {
+                if (target.getArmor(Mek.LOC_RLEG) <= armorThreshold) {
                     lowerTargets++;
                 }
-                if (target.getArmor(Mech.LOC_LLEG) <= armorThreshold) {
+                if (target.getArmor(Mek.LOC_LLEG) <= armorThreshold) {
                     lowerTargets++;
                 }
             }
 
             // If the head armor is weak or there are proportionally more upper targets, call high.
-            // If the leg armor is weak and this is a fast and/or jumping Mech, call low.
-            if (target.getArmor(Mech.LOC_HEAD) + target.getInternal(Mech.LOC_HEAD) <= LOCATION_DESTRUCTION_THREAT ||
+            // If the leg armor is weak and this is a fast and/or jumping Mek, call low.
+            if (target.getArmor(Mek.LOC_HEAD) + target.getInternal(Mek.LOC_HEAD) <= LOCATION_DESTRUCTION_THREAT ||
                     (upperTargets / upperLocations.size() > lowerTargets / 2.0)) {
                 calledShotDirection = CalledShot.CALLED_HIGH;
             } else if (lowerTargets >= 1 ||
@@ -1834,7 +1862,7 @@ public class Princess extends BotClient {
      */
     private int calcEnhancedTargetingMaxTN (boolean isAimedImmobile) {
         if (isAimedImmobile) {
-            return SHUTDOWN_MAX_TARGETNUMBER;
+            return SHUTDOWN_MAX_TARGET_NUMBER;
         } else {
             return Math.max(10 - getBehaviorSettings().getSelfPreservationIndex(), 2);
         }
@@ -1846,7 +1874,7 @@ public class Princess extends BotClient {
      * calledShotDirection} are not mutually exclusive - if both are provided, weapons which
      * cannot make an aimed shot will make a called shot instead
      * @param shot   Single-weapon attack action
-     * @param aimLocation     {@link Mech} LOC_ constant with aiming location
+     * @param aimLocation     {@link Mek} LOC_ constant with aiming location
      * @param destructionThreshold how much damage to completely destroy the location
      */
     protected void setAttackAsAimedOrCalled (WeaponFireInfo shot,
@@ -1857,20 +1885,20 @@ public class Princess extends BotClient {
 
         int offset = 0;
 
-        // If the target is a Mech and the attack is not artillery or non-damaging anti-Mech
+        // If the target is a Mek and the attack is not artillery or non-damaging anti-Mek
         if (shot.getTarget().getTargetType() == UnitType.MEK &&
                 !shot.getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) &&
                 !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
                 !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
 
-            Mech target = (Mech) shot.getTarget();
+            Mek target = (Mek) shot.getTarget();
             int maximumTN;
 
             // If set for aimed shots, and the weapon can make aimed shots
-            if ((aimLocation != Mech.LOC_NONE) &&
+            if ((aimLocation != Mek.LOC_NONE) &&
                     Compute.allowAimedShotWith(shot.getWeapon(), target.isImmobile() ? AimingMode.IMMOBILE : AimingMode.TARGETING_COMPUTER)) {
 
-                maximumTN = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mech.LOC_HEAD);
+                maximumTN = calcEnhancedTargetingMaxTN(target.isImmobile() && aimLocation != Mek.LOC_HEAD);
 
                 // Increase the maximum target number for attacks that may destroy the location,
                 // as well as infantry weapons which may have multiple hits per shot
@@ -1961,7 +1989,7 @@ public class Princess extends BotClient {
     /**
      * Loops through the list of entities controlled by this Princess instance
      * and decides which should be moved first.
-     * Immobile units and ejected MechWarriors / crews will be moved first.
+     * Immobile units and ejected MekWarriors / crews will be moved first.
      * After that, each unit is given an index// This unit should have already
      * moved due to the isImmobilized check. via the
      * {@link #calculateMoveIndex(Entity, StringBuilder)} method.  The highest
@@ -1971,7 +1999,7 @@ public class Princess extends BotClient {
      */
     Entity getEntityToMove() {
 
-        // first move useless units: immobile units, ejected MechWarrior, etc
+        // first move useless units: immobile units, ejected MekWarrior, etc
         Entity movingEntity = null;
         final List<Entity> myEntities = getEntitiesOwned();
         double highestIndex = -Double.MAX_VALUE;
@@ -1992,20 +2020,20 @@ public class Princess extends BotClient {
                 continue;
             }
 
-            // Move immobile units & ejected MechWarriors immediately.
+            // Move immobile units & ejected MekWarriors immediately.
             if (isImmobilized(entity) && !(entity instanceof Infantry)) {
                 msg.append("is immobile.");
                 movingEntity = entity;
                 break;
             }
 
-            if (entity instanceof MechWarrior) {
+            if (entity instanceof MekWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
             }
 
-            // can't do anything with out-of-control aeros, so use them as init sinks
+            // can't do anything with out-of-control aero's, so use them as init sinks
             if (entity.isAero() && ((IAero) entity).isOutControlTotal()) {
                 msg.append("is out-of-control aero.");
                 movingEntity = entity;
@@ -2129,12 +2157,12 @@ public class Princess extends BotClient {
         } else if (1 > mover.getRunMP()) {
             logger.info("Has 0 movement.");
             return true;
-        } else if (!(mover instanceof Mech)) {
+        } else if (!(mover instanceof Mek)) {
             return false;
         }
 
-        final Mech mech = (Mech) mover;
-        if (!mech.isProne() && !mech.isStuck() && !mech.isStalled()) {
+        final Mek mek = (Mek) mover;
+        if (!mek.isProne() && !mek.isStuck() && !mek.isStalled()) {
             return false;
         }
 
@@ -2169,8 +2197,8 @@ public class Princess extends BotClient {
         }
 
         // If we're prone, see if we have a chance of getting up.
-        if (mech.isProne()) {
-            if (mech.cannotStandUpFromHullDown()) {
+        if (mek.isProne()) {
+            if (mek.cannotStandUpFromHullDown()) {
                 logger.info("Cannot stand up.");
                 return true;
             }
@@ -2181,7 +2209,7 @@ public class Princess extends BotClient {
 
             // If our odds to get up are equal to or worse than the threshold,
             // consider ourselves immobile.
-            final PilotingRollData target = mech.checkGetUp(getUp, movePath.getLastStepMovementType());
+            final PilotingRollData target = mek.checkGetUp(getUp, movePath.getLastStepMovementType());
             logger.info("Need to roll " + target.getValue() +
                 " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
@@ -2190,9 +2218,9 @@ public class Princess extends BotClient {
         // How likely are we to get unstuck.
         final MoveStepType type = MoveStepType.FORWARDS;
         final MoveStep walk = new MoveStep(movePath, type);
-        final Hex hex = getHex(mech.getPosition());
-        final PilotingRollData target = mech.checkBogDown(walk, movePath.getLastStepMovementType(),
-                hex, mech.getPriorPosition(), mech.getPosition(), hex.getLevel(), false);
+        final Hex hex = getHex(mek.getPosition());
+        final PilotingRollData target = mek.checkBogDown(walk, movePath.getLastStepMovementType(),
+                hex, mek.getPriorPosition(), mek.getPosition(), hex.getLevel(), false);
         logger.info("Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
     }
@@ -2254,14 +2282,14 @@ public class Princess extends BotClient {
 
             final double thisTimeEstimate = (paths.size() * moveEvaluationTimeEstimate) / 1e3;
             if (logger.getLevel().isLessSpecificThan(Level.INFO)) {
-                String timeestimate = "unknown.";
+                String timeEstimate = "unknown.";
                 if (0 != thisTimeEstimate) {
-                    timeestimate = (int) thisTimeEstimate + " seconds";
+                    timeEstimate = (int) thisTimeEstimate + " seconds";
                 }
                 final String message = "Moving " + entity.getChassis() + ". "
                         + Long.toString(paths.size())
                         + " paths to consider.  Estimated time to completion: "
-                        + timeestimate;
+                        + timeEstimate;
                 sendChat(message);
             }
 
@@ -2270,7 +2298,7 @@ public class Princess extends BotClient {
             // fall tolerance range between 0.50 and 1.0
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
 
-            final List<RankedPath> rankedpaths = getPathRanker(entity).rankPaths(paths,
+            final List<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(paths,
                     getGame(), getMaxWeaponRange(entity), fallTolerance, getEnemyEntities(),
                     getFriendEntities());
 
@@ -2285,16 +2313,16 @@ public class Princess extends BotClient {
 
             moveEvaluationTimeEstimate = 0.5 * (updatedEstimate + moveEvaluationTimeEstimate);
 
-            if (rankedpaths.isEmpty()) {
+            if (rankedPaths.isEmpty()) {
                 return performPathPostProcessing(new MovePath(game, entity), 0);
             }
 
             logger.debug("Path ranking took " + (stop_time - startTime) + " millis");
 
-            final RankedPath bestpath = getPathRanker(entity).getBestPath(rankedpaths);
-            logger.info("Best Path: " + bestpath.getPath() + "  Rank: " + bestpath.getRank());
+            final RankedPath bestPath = getPathRanker(entity).getBestPath(rankedPaths);
+            logger.info("Best Path: " + bestPath.getPath() + "  Rank: " + bestPath.getRank());
 
-            return performPathPostProcessing(bestpath);
+            return performPathPostProcessing(bestPath);
         } catch (Exception e) {
             logger.error("MP is now null!", e);
             return null;
@@ -2310,9 +2338,9 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            final List<Entity> ents = game.getEntitiesVector();
-            for (final Entity ent : ents) {
-                final String errors = getFireControl(ent).checkAllGuesses(ent, game);
+            final List<Entity> entities = game.getEntitiesVector();
+            for (final Entity entity : entities) {
+                final String errors = getFireControl(entity).checkAllGuesses(entity, game);
                 if (!StringUtility.isNullOrBlank(errors)) {
                     logger.warn(errors);
                 }
@@ -2688,7 +2716,7 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Reduce utility of TAGging something if we're already trying.  Update the utilty if it's better,
+     * Reduce utility of TAGging something if we're already trying.  Update the utility if it's better,
      * otherwise try to dissuade the next attacker.
      * @param te
      * @param damage
@@ -2771,7 +2799,7 @@ public class Princess extends BotClient {
             // All candidate weapons should be unique instances.
             friendlyGuidedWeapons.addAll(candidateWeapons);
         }
-        // Cache result in case needed for later pathing / planning.
+        // Cache result in case needed for later path planning.
         incomingGuidablesMap.put(key, friendlyGuidedWeapons);
         return friendlyGuidedWeapons;
     }
@@ -2797,8 +2825,7 @@ public class Princess extends BotClient {
         }
     }
 
-    private boolean isEnemyGunEmplacement(final Entity entity,
-                                          final Coords coords) {
+    private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
         return entity.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)
                && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                && entity.getOwner().isEnemyOf(getLocalPlayer())
@@ -2806,9 +2833,8 @@ public class Princess extends BotClient {
                && !entity.isCrippled();
     }
 
-    private boolean isEnemyInfantry(final Entity entity,
-                                    final Coords coords) {
-        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MECHWARRIOR)
+    private boolean isEnemyInfantry(final Entity entity, final Coords coords) {
+        return entity.hasETypeFlag(Entity.ETYPE_INFANTRY) && !entity.hasETypeFlag(Entity.ETYPE_MEKWARRIOR)
                 && !getBehaviorSettings().getIgnoredUnitTargets().contains(entity.getId())
                 && entity.getOwner().isEnemyOf(getLocalPlayer())
                 && !getStrategicBuildingTargets().contains(coords)
@@ -2820,7 +2846,7 @@ public class Princess extends BotClient {
         super.die();
         if (null != precognition) {
             precognition.signalDone();
-            precogThread.interrupt();
+            precognitionThread.interrupt();
         }
     }
 
@@ -2885,25 +2911,25 @@ public class Princess extends BotClient {
      * Lazy-loaded calculation of the "to-hit target number" threshold for
      * spinning up a rapid fire autocannon.
      */
-    public int getSpinupThreshold() {
-        if (spinupThreshold == null) {
+    public int getSpinUpThreshold() {
+        if (spinUpThreshold == null) {
         // we start spinning up the cannon at 11+ TN at highest aggression levels
         // dropping it down to 6+ TN at the lower aggression levels
-            spinupThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
+            spinUpThreshold = Math.min(11, Math.max(getBehaviorSettings().getHyperAggressionIndex() + 2, 6));
         }
 
-        return spinupThreshold;
+        return spinUpThreshold;
     }
 
-    public void resetSpinupThreshold() {
-        spinupThreshold = null;
+    public void resetSpinUpThreshold() {
+        spinUpThreshold = null;
     }
 
     @Override
     public void endOfTurnProcessing() {
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
-        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishoneredEnemies
+        // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
         setAMSModes();
@@ -2940,7 +2966,7 @@ public class Princess extends BotClient {
     protected void disconnected() {
         if (null != precognition) {
             precognition.signalDone();
-            precogThread.interrupt();
+            precognitionThread.interrupt();
         }
         super.disconnected();
     }
@@ -2975,30 +3001,30 @@ public class Princess extends BotClient {
      * @return Altered move path
      */
     private MovePath performPathPostProcessing(MovePath path, double expectedDamage) {
-        MovePath retval = path;
-        evadeIfNotFiring(retval, expectedDamage >= 0);
-        turnOnSearchLight(retval, expectedDamage >= 0);
-        unloadTransportedInfantry(retval);
-        launchFighters(retval);
-        unjamRAC(retval);
+        MovePath retVal = path;
+        evadeIfNotFiring(retVal, expectedDamage >= 0);
+        turnOnSearchLight(retVal, expectedDamage >= 0);
+        unloadTransportedInfantry(retVal);
+        launchFighters(retVal);
+        unjamRAC(retVal, expectedDamage >= 5 );
 
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
         if (path.getEntity().isAero() || (path.getEntity() instanceof EjectedCrew && path.getEntity().isSpaceborne())) {
-            retval = SharedUtility.moveAero(retval, null);
+            retVal = SharedUtility.moveAero(retVal, null);
         }
 
-        return retval;
+        return retVal;
     }
 
     /**
      * Helper function that appends an unjam RAC command to the end of a qualifying path.
      * @param path The path to process.
      */
-    private void unjamRAC(MovePath path) {
+    private void unjamRAC(MovePath path, boolean expectFiveOrMore) {
         if (path.getEntity().canUnjamRAC() &&
                 (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
-                !path.isJumping()) {
+                !path.isJumping() && !expectFiveOrMore) {
             path.addStep(MoveStepType.UNJAM_RAC);
         }
     }
@@ -3045,7 +3071,7 @@ public class Princess extends BotClient {
      * Helper function that adds an "unload" step for units that are transporting infantry
      * if the conditions for unloading are favorable.
      *
-     * Infantry unloading logic is different from, for example, hot-dropping mechs or launching aerospace fighters,
+     * Infantry unloading logic is different from, for example, hot-dropping Meks or launching aerospace fighters,
      * so we handle it separately.
      * @param path The path to modify
      */
@@ -3111,7 +3137,7 @@ public class Princess extends BotClient {
 
     /**
      * Helper function that adds an "launch" step for units that are transporting
-     * launchable units in some kind of bay.
+     * launch-able units in some kind of bay.
      */
     private void launchFighters(MovePath path) {
         // if my objective is to cross the board, even though it's tempting, I won't be leaving the aerospace
@@ -3132,7 +3158,7 @@ public class Princess extends BotClient {
         TreeMap<Integer, Vector<Integer>> unitsToLaunch = new TreeMap<>();
         boolean executeLaunch = false;
 
-        // loop through all fighter (or smallcraft) bays in the current entity
+        // loop through all fighter (or small craft) bays in the current entity
         // grouping launched craft by bay to limit launches to 'safe' rate.
         Vector<Bay> fighterBays = movingEntity.getFighterBays();
 
@@ -3198,7 +3224,7 @@ public class Princess extends BotClient {
                 // Set default to on/automatic and test to see if it should be off or manual instead
                 EquipmentMode newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_ON);
 
-                boolean isOverheating = (curEntity instanceof Mech) && (curEntity.getHeat() >= MAX_OVERHEAT_AMS);
+                boolean isOverheating = (curEntity instanceof Mek) && (curEntity.getHeat() >= MAX_OVERHEAT_AMS);
 
                 // If there are enough nearby enemy infantry (only counted if the game option is
                 // set), choose manual fire
@@ -3325,39 +3351,39 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Get a list of all hotspots (positions of high activity) for opposing units
+     * Get a list of all hot spots (positions of high activity) for opposing units
      * @return
      */
-    public List<Coords> getEnemyHotspots () {
-        List<Coords> accumulatedHotspots = new ArrayList<>();
+    public List<Coords> getEnemyHotSpots () {
+        List<Coords> accumulatedHotSpots = new ArrayList<>();
         for (HeatMap curMap : enemyHeatMaps) {
-            List<Coords> mapHotspots = curMap.getHotSpots();
-            if (mapHotspots != null) {
-                for (Coords curPosition : mapHotspots) {
-                    if (!accumulatedHotspots.contains(curPosition)) {
-                        accumulatedHotspots.add(curPosition);
+            List<Coords> mapHotSpots = curMap.getHotSpots();
+            if (mapHotSpots != null) {
+                for (Coords curPosition : mapHotSpots) {
+                    if (!accumulatedHotSpots.contains(curPosition)) {
+                        accumulatedHotSpots.add(curPosition);
                     }
                 }
             }
         }
 
-        return accumulatedHotspots;
+        return accumulatedHotSpots;
     }
 
     /**
-     * Get the best hotspot (positions of high activity) for friendly units
+     * Get the best hot spot (positions of high activity) for friendly units
      * @return  {@code Coords} with high friendly activity; may return null
      */
-    public Coords getFriendlyHotspot () {
+    public Coords getFriendlyHotSpot () {
         return friendlyHeatMap.getHotSpot();
     }
 
     /**
-     * Get the nearest top-rated hotspot for friendly units
+     * Get the nearest top-rated hot spot for friendly units
      * @param testPosition
      * @return
      */
-    public Coords getFriendlyHotspot (Coords testPosition) {
+    public Coords getFriendlyHotSpot (Coords testPosition) {
         return friendlyHeatMap.getHotSpot(testPosition, true);
     }
 

@@ -18,29 +18,46 @@
  */
 package megamek.common;
 
-import megamek.common.actions.EntityAction;
-import megamek.common.annotations.Nullable;
-import megamek.common.event.*;
-import megamek.common.force.Forces;
-import megamek.server.scriptedevent.TriggeredEvent;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
+import megamek.common.event.GameBoardNewEvent;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameNewActionEvent;
+import megamek.common.force.Forces;
+import megamek.common.hexarea.HexArea;
+import megamek.logging.MMLogger;
+import megamek.server.scriptedevent.TriggeredEvent;
+
 /**
- * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from. Any such game will have players, units
+ * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from.
+ * Any such game will have players, units
  * (InGameObjects) and Forces (even if empty); the base class manages these.
  */
 public abstract class AbstractGame implements IGame {
+
+    private static final MMLogger LOGGER = MMLogger.create(AbstractGame.class);
 
     private static final int AWAITING_FIRST_TURN = -1;
 
     /** The players present in the game mapped to their id as key */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
-    /** The InGameObjects (units such as Entity and others) present in the game mapped to their id as key */
+    /**
+     * The InGameObjects (units such as Entity and others) present in the game
+     * mapped to their id as key
+     */
     protected final ConcurrentHashMap<Integer, InGameObject> inGameObjects = new ConcurrentHashMap<>();
 
     /** The teams present in the game */
@@ -53,37 +70,45 @@ public abstract class AbstractGame implements IGame {
 
     /**
      * This Map holds all game boards together with a unique ID for each.
-     * For the "legacy" Game that currently only allows a single board, that board always uses ID 0.
-     * To support game types that use board types other than hex boards, a superclass or interface should
+     * For the "legacy" Game that currently only allows a single board, that board
+     * always uses ID 0.
+     * To support game types that use board types other than hex boards, a
+     * superclass or interface should
      * be used instead of Board in the future.
      */
     private final Map<Integer, Board> gameBoards = new HashMap<>();
 
     /**
-     * The forces present in the game. The top level force holds all forces and force-less entities
+     * The forces present in the game. The top level force holds all forces and
+     * force-less entities
      * and should therefore not be shown.
      */
     protected Forces forces = new Forces(this);
 
     /**
-     * This map links deployment rounds to lists of Deployables that deploy in respective rounds. It only contains
-     * units/objects that are not yet deployed or will redeploy (returning Aeros, units going from one board to
+     * This map links deployment rounds to lists of Deployables that deploy in
+     * respective rounds. It only contains
+     * units/objects that are not yet deployed or will redeploy (returning Aeros,
+     * units going from one board to
      * another if implemented). For those, the list is updated every round.
      */
     private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
 
     /**
-     * The round counter. It gets incremented before initiative; round 0 is initial deployment only.
+     * The round counter. It gets incremented before initiative; round 0 is initial
+     * deployment only.
      */
     protected int currentRound = -1;
 
     protected int turnIndex = AWAITING_FIRST_TURN;
 
     /**
-     * This list contains all scripted events that may happen during the course of the game. This list
-     * should only ever be present on the server. Only the results of events should be sent to clients.
+     * This list contains all scripted events that may happen during the course of
+     * the game. This list
+     * should only ever be present on the server. Only the results of events should
+     * be sent to clients.
      */
-    protected final List<TriggeredEvent> scriptedEvents = new ArrayList<>();
+    protected final List<TriggeredEvent> scriptedEvents = new CopyOnWriteArrayList<>();
 
     /**
      * Piles of carry-able objects, sorted by coordinates
@@ -103,18 +128,6 @@ public abstract class AbstractGame implements IGame {
     @Override
     public void addPlayer(int id, Player player) {
         players.put(id, player);
-    }
-
-    @Override
-    @Deprecated
-    public Vector<Player> getPlayersVector() {
-        return new Vector<>(players.values());
-    }
-
-    @Override
-    @Deprecated
-    public Enumeration<Player> getPlayers() {
-        return players.elements();
     }
 
     @Override
@@ -179,7 +192,7 @@ public abstract class AbstractGame implements IGame {
         }
         // The iteration must allow and support concurrent modification of the list!
         // Testing shows that a CopyOnWriteArrayList does not work
-        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements(); ) {
+        for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements();) {
             event.fireEvent(e.nextElement());
         }
     }
@@ -193,9 +206,11 @@ public abstract class AbstractGame implements IGame {
 
     @Override
     public void receiveBoards(Map<Integer, Board> boards) {
-        // cycle the entries so an event can be fired for each to allow listeners to register and unregister
+        // cycle the entries so an event can be fired for each to allow listeners to
+        // register and unregister
         boards.forEach(this::receiveBoard);
-        // some old boards might not have been replaced by new ones, so clear the map and refill
+        // some old boards might not have been replaced by new ones, so clear the map
+        // and refill
         gameBoards.clear();
         gameBoards.putAll(boards);
     }
@@ -222,6 +237,7 @@ public abstract class AbstractGame implements IGame {
 
     /**
      * Empties the list of pending EntityActions completely.
+     *
      * @see #getActionsVector()
      */
     public void clearActions() {
@@ -229,7 +245,8 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Removes all pending EntityActions by the InGameObject (Entity, unit) of the given ID from the list
+     * Removes all pending EntityActions by the InGameObject (Entity, unit) of the
+     * given ID from the list
      * of pending actions.
      */
     public void removeActionsFor(int id) {
@@ -244,7 +261,8 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Returns the pending EntityActions. Do not use to modify the actions; Arlith said: I will be
+     * Returns the pending EntityActions. Do not use to modify the actions; Arlith
+     * said: I will be
      * angry. &gt;:[
      */
     public List<EntityAction> getActionsVector() {
@@ -252,7 +270,8 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Adds the specified action to the list of pending EntityActions for this phase and fires a GameNewActionEvent.
+     * Adds the specified action to the list of pending EntityActions for this phase
+     * and fires a GameNewActionEvent.
      */
     public void addAction(EntityAction action) {
         pendingActions.add(action);
@@ -260,9 +279,12 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * Clears and re-calculates the deployment table, i.e. assembles all units/objects in the game
-     * that are undeployed (that includes returning units or reinforcements) together with the game
-     * round that they are supposed to deploy on. This method can be called at any time in the game
+     * Clears and re-calculates the deployment table, i.e. assembles all
+     * units/objects in the game
+     * that are undeployed (that includes returning units or reinforcements)
+     * together with the game
+     * round that they are supposed to deploy on. This method can be called at any
+     * time in the game
      * and will assemble deployment according to the present game state.
      */
     public void setupDeployment() {
@@ -344,7 +366,6 @@ public abstract class AbstractGame implements IGame {
         this.turnIndex = turnIndex;
     }
 
-
     public boolean hasBoardLocation(@Nullable BoardLocation boardLocation) {
         return hasBoardLocation(boardLocation.coords(), boardLocation.boardId());
     }
@@ -386,8 +407,9 @@ public abstract class AbstractGame implements IGame {
     }
 
     /**
-     * @return Collection of objects on the ground. Best to use getGroundObjects(Coords)
-     * if looking for objects in specific hex
+     * @return Collection of objects on the ground. Best to use
+     *         getGroundObjects(Coords)
+     *         if looking for objects in specific hex
      */
     public Map<Coords, List<ICarryable>> getGroundObjects() {
         return groundObjects;
@@ -399,7 +421,6 @@ public abstract class AbstractGame implements IGame {
     public void setGroundObjects(Map<Coords, List<ICarryable>> groundObjects) {
         this.groundObjects = groundObjects;
     }
-
 
     @Override
     public final List<TriggeredEvent> scriptedEvents() {
@@ -426,5 +447,40 @@ public abstract class AbstractGame implements IGame {
         groundObjects.clear();
         currentRound = -1;
         forces = new Forces(this);
+    }
+
+    /**
+     * Returns true when the given unit can flee from the given coords, as set either for the unit itself or for its owner.
+     *
+     * @param unit   The unit that wants to flee
+     * @param coords The hex coords it wants to flee from
+     * @return True when it can indeed flee
+     */
+    public boolean canFleeFrom(Deployable unit, Coords coords) {
+        if ((unit == null) || (coords == null)) {
+            LOGGER.warn("Received null unit or coords!");
+            return false;
+        } else {
+            return getFleeZone(unit).containsCoords(coords, getBoard());
+        }
+    }
+
+    /**
+     * Returns the {@link HexArea} a given unit can flee from, as set either for the unit itself or for its owner.
+     *
+     * @param unit The unit that wants to flee
+     * @return The area it may flee from
+     */
+    public HexArea getFleeZone(Deployable unit) {
+        if (unit == null) {
+            LOGGER.warn("Received null unit!");
+            return HexArea.EMPTY_AREA;
+        } else if (unit.hasFleeZone()) {
+            return unit.getFleeZone();
+        } else if ((unit instanceof InGameObject inGameObject) && hasPlayer(inGameObject.getOwnerId())) {
+            return getPlayer(inGameObject.getOwnerId()).getFleeZone();
+        } else {
+            return HexArea.EMPTY_AREA;
+        }
     }
 }

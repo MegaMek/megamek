@@ -35,7 +35,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -58,7 +58,7 @@ public abstract class LRTWeapon extends MissileWeapon {
 
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.2;
         } else {
             return super.getTonnage(entity, location, size);
@@ -67,7 +67,7 @@ public abstract class LRTWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MissileWeaponHandler(toHit, waa, game, manager);
     }
 
@@ -82,14 +82,14 @@ public abstract class LRTWeapon extends MissileWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (isClan()) {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 * rackSize / 5 : 0;
             } else if (isArtemisV(fcs)) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.42 * rackSize / 5 : 0;
             } else {
-                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3  * rackSize / 5 : 0;
+                return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.3 * rackSize / 5 : 0;
             }
         } else {
             if (isArtemisIV(fcs) || isArtemisProto(fcs)) {

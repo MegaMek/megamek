@@ -96,6 +96,13 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.PAGE_AXIS));
 
+        filterPanel.add(createFilterTags());
+        filterPanel.add(createFilterPaths());
+
+        return filterPanel;
+    }
+
+    private JPanel createFilterTags() {
         List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
         DefaultListModel<String> tagsModel = new DefaultListModel<>();
         tagsModel.addAll(tags);
@@ -111,8 +118,11 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel boardTagsPanel = new JPanel(new BorderLayout());
         boardTagsPanel.add(new JLabel("Board Tags"), BorderLayout.NORTH);
         boardTagsPanel.add(new JScrollPane(listBoardTags), BorderLayout.CENTER);
-        filterPanel.add(boardTagsPanel);
 
+        return boardTagsPanel;
+    }
+
+    private JPanel createFilterPaths() {
         List<String> paths = bc.getBoardPaths().values().stream().toList();
         paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
         DefaultListModel<String> pathsModel = new DefaultListModel<>();
@@ -129,9 +139,8 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel boardPathsPanel = new JPanel(new BorderLayout());
         boardPathsPanel.add(new JLabel("Board Paths"), BorderLayout.NORTH);
         boardPathsPanel.add(new JScrollPane(listBoardPaths), BorderLayout.CENTER);
-        filterPanel.add(boardPathsPanel);
 
-        return filterPanel;
+        return boardPathsPanel;
     }
 
     private JPanel createList() {

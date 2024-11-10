@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A table model for the advanced search weapon tab's equipment list
+ * A table model for the advanced map search
  */
 class BoardTableModel extends AbstractTableModel {
     private static final int COL_NAME = 0;

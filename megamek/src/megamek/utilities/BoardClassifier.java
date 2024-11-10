@@ -152,18 +152,18 @@ public class BoardClassifier {
 
                             getBoardsByHeight().get(dimension.height()).add(filePath.getPath());
                             getBoardsByWidth().get(dimension.width()).add(filePath.getPath());
-                        }
 
-                        for (String tagString : Board.getTags(filePath)) {
-                            Tags tag = Tags.parse(tagString);
-                            getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
-                            getBoardsByTag().get(tag).add(filePath.getPath());
-                        }
+                            for (String tagString : Board.getTags(filePath)) {
+                                Tags tag = Tags.parse(tagString);
+                                getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
+                                getBoardsByTag().get(tag).add(filePath.getPath());
+                            }
 
-                        getBoardPaths().put(filePath.getPath(), partialBoardPath);
-                        getBoardTags().put(filePath.getPath(), Board.getTags(filePath).toString());
-                        getBoardWidth().put(filePath.getPath(), dimension.width());
-                        getBoardHeigth().put(filePath.getPath(), dimension.height());
+                            getBoardPaths().put(filePath.getPath(), partialBoardPath);
+                            getBoardTags().put(filePath.getPath(), Board.getTags(filePath).toString());
+                            getBoardWidth().put(filePath.getPath(), dimension.width());
+                            getBoardHeigth().put(filePath.getPath(), dimension.height());
+                        }
                     }
                 }
             }

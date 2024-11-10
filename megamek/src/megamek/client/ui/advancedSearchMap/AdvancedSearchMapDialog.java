@@ -155,6 +155,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         });
         boardTable.setModel(boardModel);
         boardSorter = new TableRowSorter<>(boardModel);
+        boardSorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
         boardTable.setRowSorter(boardSorter);
         boardTable.setIntercellSpacing(new Dimension(5, 0));
         boardTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

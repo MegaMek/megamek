@@ -125,12 +125,8 @@ class BoardTableModel extends AbstractTableModel {
             value = path.substring(path.lastIndexOf("\\") + 1, path.length());
             value = value.substring(0, value.lastIndexOf(".board"));
             value = value.replace(size, "").trim();
-            if ((!value.isEmpty())
-                && (value.charAt(0) == '-')) {
-                value = value.substring(1, value.length()).trim();
-            }
         } else if (col == COL_SIZE) {
-            value = getSizeAt(row);
+            value = size;
         }
 
         return value;

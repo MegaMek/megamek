@@ -19,11 +19,7 @@
 package megamek.utilities;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.Board;
@@ -153,14 +149,16 @@ public class BoardClassifier {
                             getBoardsByHeight().get(dimension.height()).add(filePath.getPath());
                             getBoardsByWidth().get(dimension.width()).add(filePath.getPath());
 
-                            for (String tagString : Board.getTags(filePath)) {
+                            Set<String> boardTags = Board.getTags(filePath);
+
+                            for (String tagString : boardTags) {
                                 Tags tag = Tags.parse(tagString);
                                 getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
                                 getBoardsByTag().get(tag).add(filePath.getPath());
                             }
 
                             getBoardPaths().put(filePath.getPath(), partialBoardPath);
-                            getBoardTags().put(filePath.getPath(), Board.getTags(filePath).toString());
+                            getBoardTags().put(filePath.getPath(), boardTags.toString());
                             getBoardWidth().put(filePath.getPath(), dimension.width());
                             getBoardHeigth().put(filePath.getPath(), dimension.height());
                         }

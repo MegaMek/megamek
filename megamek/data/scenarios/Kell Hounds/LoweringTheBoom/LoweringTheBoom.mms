@@ -237,20 +237,3 @@ messages:
 end:
   - trigger:
       type: battlefieldcontrol
-
-victory:
-  - player: Kell Hounds, First Battalion
-    modify: onlyatend
-    trigger:
-      type: fledunits
-      modify: atend
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      atleast: 4
-
-  - player: Thirtieth Marik Militia
-    modify: onlyatend
-    trigger:
-      type: fledunits
-      modify: atend
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      atmost: 2

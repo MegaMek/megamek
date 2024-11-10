@@ -449,9 +449,11 @@ messages:
       units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
       atleast: 6
 
+# ###############################################
 # Victory conditions; they always come as a list (use dashes). Listing them outside the factions can be
 # done as an alternative or in addition to victory conditions listed with the factions. The exception
 # is a draw condition that should directly end the game which cannot be given as part of the factions
+# but must be given as described here
 victory:
   # When a victory condition is a win, it must give the player (= Team) it applies to.
   - player: Player A

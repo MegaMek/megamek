@@ -28,6 +28,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -39,6 +40,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     private BoardClassifier bc;
     private JTable boardTable;
     private JList<String> listBoardTags;
+    private final JCheckBox boardTagsAllCheckBox = new JCheckBox("All");
     private JList<String> listBoardPaths;
     private JLabel boardImage;
     private JLabel boardInfo;
@@ -116,7 +118,19 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
             }
         });
         JPanel boardTagsPanel = new JPanel(new BorderLayout());
-        boardTagsPanel.add(new JLabel("Board Tags"), BorderLayout.NORTH);
+        Box titlePanel = new Box(BoxLayout.LINE_AXIS);
+        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titlePanel.add(new JLabel("Board Tags"));
+        titlePanel.add(Box.createRigidArea( new Dimension(5, 0)));
+        boardTagsAllCheckBox.setSelected(false);
+        boardTagsAllCheckBox.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filterTables();
+            }
+        });
+        titlePanel.add(boardTagsAllCheckBox);
+        boardTagsPanel.add(titlePanel, BorderLayout.NORTH);
         boardTagsPanel.add(new JScrollPane(listBoardTags), BorderLayout.CENTER);
 
         return boardTagsPanel;
@@ -229,7 +243,11 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     private boolean matchTag(List<String> tags) {
         List<String> include = listBoardTags.getSelectedValuesList();
 
-        return !include.isEmpty() && include.stream().anyMatch(tags::contains);
+        if (boardTagsAllCheckBox.isSelected()) {
+            return !include.isEmpty() && include.stream().allMatch(tags::contains);
+        } else {
+            return !include.isEmpty() && include.stream().anyMatch(tags::contains);
+        }
     }
 
     public String getPath() {

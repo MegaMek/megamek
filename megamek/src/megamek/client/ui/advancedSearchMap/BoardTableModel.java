@@ -43,6 +43,9 @@ class BoardTableModel extends AbstractTableModel {
     private List<String> data;
     private List<String> tags;
     private List<String> size;
+    private List<Integer> width;
+    private List<Integer> height;
+
 
     public BoardTableModel() {
         data = new ArrayList<>();
@@ -57,6 +60,8 @@ class BoardTableModel extends AbstractTableModel {
         data = new ArrayList<>();
         tags = new ArrayList<>();
         size = new ArrayList<>();
+        width = new ArrayList<>();
+        height = new ArrayList<>();
         fireTableDataChanged();
     }
 
@@ -77,11 +82,15 @@ class BoardTableModel extends AbstractTableModel {
         data = bc.getBoardPaths().values().stream().toList();;
         tags = new ArrayList<>();
         size = new ArrayList<>();
+        width = new ArrayList<>();
+        height = new ArrayList<>();
 
         for (String path : data) {
             String key = Configuration.boardsDir() + path;
             tags.add(bc.getBoardTags().get(key));
             size.add(bc.getBoardWidth().get(key) + "x" + bc.getBoardHeigth().get(key));
+            width.add(bc.getBoardWidth().get(key));
+            height.add(bc.getBoardHeigth().get(key));
         }
 
         fireTableDataChanged();
@@ -145,6 +154,22 @@ class BoardTableModel extends AbstractTableModel {
         }
 
         return size.get(row);
+    }
+
+    public Integer getWidthAt(int row) {
+        if (width.size() <= row) {
+            return null;
+        }
+
+        return width.get(row);
+    }
+
+    public Integer getHeightAt(int row) {
+        if (height.size() <= row) {
+            return null;
+        }
+
+        return height.get(row);
     }
 
     public List<String> getAllPaths() {

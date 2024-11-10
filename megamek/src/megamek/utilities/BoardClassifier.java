@@ -153,8 +153,10 @@ public class BoardClassifier {
 
                             for (String tagString : boardTags) {
                                 Tags tag = Tags.parse(tagString);
-                                getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
-                                getBoardsByTag().get(tag).add(filePath.getPath());
+                                if (tag != null) {
+                                    getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
+                                    getBoardsByTag().get(tag).add(filePath.getPath());
+                                }
                             }
 
                             getBoardPaths().put(filePath.getPath(), partialBoardPath);

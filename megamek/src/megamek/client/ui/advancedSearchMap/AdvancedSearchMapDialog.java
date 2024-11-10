@@ -19,10 +19,13 @@
 package megamek.client.ui.advancedSearchMap;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.common.util.StringUtil;
 import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -47,6 +50,11 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     private TableRowSorter<BoardTableModel> boardSorter;
     private BoardTableModel boardModel;
     private JLabel boardCountLabel;
+    private JTextField widthStartTextField = new JTextField(4);
+    private JTextField widthEndTextField = new JTextField(4);
+    private JTextField heightStartTextField = new JTextField(4);
+    private JTextField heightEndTextField = new JTextField(4);
+    private JTextField nameTextField = new JTextField(4);
 
     public AdvancedSearchMapDialog(JFrame parent) {
         super(parent, true, "AdvancedSearchMapDialog", "AdvancedSearchMapDialog.title");
@@ -98,25 +106,99 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.PAGE_AXIS));
 
+        filterPanel.add(createFilterRange(widthStartTextField, widthEndTextField, "Width:"));
+        filterPanel.add(createFilterRange(heightStartTextField, heightEndTextField, "Height:"));
+        filterPanel.add(createFilterText(nameTextField, "Name:"));
         filterPanel.add(createFilterTags());
         filterPanel.add(createFilterPaths());
 
         return filterPanel;
     }
 
+    private JPanel createFilterText(JTextField textField, String caption) {
+        JPanel textPanel = new JPanel(new BorderLayout());
+        Box textBox = new Box(BoxLayout.LINE_AXIS);
+        textBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        textBox.add(new JLabel(caption));
+        textBox.add(Box.createRigidArea( new Dimension(5, 0)));
+        textField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTables();
+            }
+        });
+        textBox.add(textField);
+
+        textPanel.add(textBox);
+
+        return textPanel;
+    }
+
+    private JPanel createFilterRange(JTextField startTextField, JTextField endTextField, String caption) {
+        JPanel textPanel = new JPanel(new BorderLayout());
+
+        Box textBox = new Box(BoxLayout.LINE_AXIS);
+        textBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        textBox.add(new JLabel(caption));
+        textBox.add(Box.createRigidArea( new Dimension(5, 0)));
+        startTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTables();
+            }
+        });
+        textBox.add(startTextField);
+
+        textBox.add(new JLabel(" - "));
+        endTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTables();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTables();
+            }
+        });
+        textBox.add(endTextField);
+
+        textPanel.add(textBox, BorderLayout.NORTH);
+        return textPanel;
+    }
+
     private JPanel createFilterTags() {
         List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
         DefaultListModel<String> tagsModel = new DefaultListModel<>();
         tagsModel.addAll(tags);
-        listBoardTags = new JList<>(tagsModel);
-        listBoardTags.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listBoardTags.addSelectionInterval(0, tags.size());
-        listBoardTags.addListSelectionListener (new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                filterTables();
-            }
-        });
+
         JPanel boardTagsPanel = new JPanel(new BorderLayout());
         Box titlePanel = new Box(BoxLayout.LINE_AXIS);
         titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -130,7 +212,18 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
             }
         });
         titlePanel.add(boardTagsAllCheckBox);
+
+        listBoardTags = new JList<>(tagsModel);
+        listBoardTags.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listBoardTags.addSelectionInterval(0, tags.size());
+        listBoardTags.addListSelectionListener (new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                filterTables();
+            }
+        });
         boardTagsPanel.add(titlePanel, BorderLayout.NORTH);
+
         boardTagsPanel.add(new JScrollPane(listBoardTags), BorderLayout.CENTER);
 
         return boardTagsPanel;
@@ -158,11 +251,29 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     }
 
     private JPanel createList() {
-        JPanel listPanel = new JPanel();
-        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
+        JPanel listPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.insets = new Insets(2, 2, 2, 2);
+
+        c.gridx = 0;
+        c.gridy = 0;
+
         boardModel = new BoardTableModel();
         boardModel.setData(bc);
-        boardTable = new JTable();
+        boardTable = new JTable() {
+            @Override
+            public Dimension getPreferredScrollableViewportSize() {
+                Dimension standardSize = super.getPreferredScrollableViewportSize();
+                return new Dimension(standardSize.width, getRowHeight() * 20);
+            }
+        };
+
         boardTable.setName("Board");
         ListSelectionModel boardSelModel = boardTable.getSelectionModel();
         boardSelModel.addListSelectionListener (new ListSelectionListener() {
@@ -185,19 +296,21 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         for (int i = 0; i < boardModel.getColumnCount(); i++) {
             boardTable.getColumnModel().getColumn(i).setPreferredWidth(boardModel.getPreferredWidth(i));
         }
+        boardTable.setRowSelectionInterval(0,0);
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        boardTable.setFillsViewportHeight(true);
+        listPanel.add(new JScrollPane(boardTable), c);
 
-        listPanel.add(new JScrollPane(boardTable));
+        c.gridy++;
+        c.fill = GridBagConstraints.HORIZONTAL;
 
         JPanel countPanel = new JPanel(new FlowLayout());
         JLabel countLabel = new JLabel("Count: ");
         countPanel.add(countLabel);
         boardCountLabel = new JLabel(boardTable.getRowCount() + "");
         countPanel.add(boardCountLabel);
-        listPanel.add(countPanel);
-
-        boardTable.setRowSelectionInterval(0,0);
+        listPanel.add(countPanel, c);
 
         return listPanel;
     }
@@ -216,7 +329,13 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
                     List<String> tags = eqModel.getTagAt(entry.getIdentifier());
                     boolean tagMatch = matchTag(tags);
 
-                    return pathMatch && tagMatch;
+                    boolean widthMatch = StringUtil.isBetween(eqModel.getWidthAt(entry.getIdentifier()), widthStartTextField.getText(), widthEndTextField.getText());
+
+                    boolean heightMatch = StringUtil.isBetween(eqModel.getHeightAt(entry.getIdentifier()), heightStartTextField.getText(), heightEndTextField.getText());
+
+                    boolean nameMatch = eqModel.getPathAt(entry.getIdentifier()).toUpperCase().contains(nameTextField.getText().toUpperCase());
+
+                    return pathMatch && tagMatch && widthMatch && heightMatch && nameMatch;
                 }
             };
         } catch (PatternSyntaxException ignored) {

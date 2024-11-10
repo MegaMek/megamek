@@ -41,15 +41,21 @@ import java.util.regex.PatternSyntaxException;
  */
 public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     private BoardClassifier bc;
-    private JTable boardTable;
-    private JList<String> listBoardTags;
+    private JTable boardTable = new JTable() {
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            Dimension standardSize = super.getPreferredScrollableViewportSize();
+            return new Dimension(standardSize.width, getRowHeight() * 20);
+        }
+    };
+    private JList<String> listBoardTags = new JList<>();
     private final JCheckBox boardTagsAllCheckBox = new JCheckBox("All");
-    private JList<String> listBoardPaths;
+    private JList<String> listBoardPaths = new JList<>();
     private JLabel boardImage;
     private JLabel boardInfo;
-    private TableRowSorter<BoardTableModel> boardSorter;
-    private BoardTableModel boardModel;
-    private JLabel boardCountLabel;
+    private TableRowSorter<BoardTableModel> boardSorter = new TableRowSorter<>();
+    private BoardTableModel boardModel = new BoardTableModel();
+    private JLabel boardCountLabel = new JLabel("");
     private JTextField widthStartTextField = new JTextField(4);
     private JTextField widthEndTextField = new JTextField(4);
     private JTextField heightStartTextField = new JTextField(4);
@@ -77,7 +83,6 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.insets = new Insets(2, 2, 2, 2);
-
         c.gridx = 0;
         c.gridy = 0;
 
@@ -85,12 +90,13 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(createFilter());
-        mainPanel.add(createList());
+        mainPanel.add(createListTable());
 
         c.gridy++;
+
         advancedSearchPane.add(mainPanel, c);
 
-        return advancedSearchPane;
+        return new JScrollPane(advancedSearchPane);
     }
 
     private JPanel createInfo() {
@@ -109,8 +115,15 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         filterPanel.add(createFilterRange(widthStartTextField, widthEndTextField, "Width:"));
         filterPanel.add(createFilterRange(heightStartTextField, heightEndTextField, "Height:"));
         filterPanel.add(createFilterText(nameTextField, "Name:"));
-        filterPanel.add(createFilterTags());
-        filterPanel.add(createFilterPaths());
+
+        JPanel tagsTitlePanel = createTitleWithCheckBox(boardTagsAllCheckBox, "Board Tags");
+        List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
+        filterPanel.add(createFilterList(listBoardTags, tags, tagsTitlePanel, true));
+
+        JPanel pathsTitlePanel = createTitle("Board Tags");
+        List<String> paths = bc.getBoardPaths().values().stream().toList();
+        paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
+        filterPanel.add(createFilterList(listBoardPaths, paths, pathsTitlePanel, false));
 
         return filterPanel;
     }
@@ -194,86 +207,66 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         return textPanel;
     }
 
-    private JPanel createFilterTags() {
-        List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
-        DefaultListModel<String> tagsModel = new DefaultListModel<>();
-        tagsModel.addAll(tags);
+    private JPanel createTitleWithCheckBox(JCheckBox checkBox, String caption) {
+        JPanel titlePanel = new JPanel(new BorderLayout());
 
-        JPanel boardTagsPanel = new JPanel(new BorderLayout());
-        Box titlePanel = new Box(BoxLayout.LINE_AXIS);
-        titlePanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        titlePanel.add(new JLabel("Board Tags"));
-        titlePanel.add(Box.createRigidArea( new Dimension(5, 0)));
-        boardTagsAllCheckBox.setSelected(false);
-        boardTagsAllCheckBox.addActionListener(new AbstractAction() {
+        Box titleBox = new Box(BoxLayout.LINE_AXIS);
+        titleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titleBox.add(new JLabel(caption));
+        titleBox.add(Box.createRigidArea( new Dimension(5, 0)));
+        checkBox.setSelected(false);
+        checkBox.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 filterTables();
             }
         });
-        titlePanel.add(boardTagsAllCheckBox);
+        titleBox.add(checkBox);
+        titlePanel.add(titleBox, BorderLayout.NORTH);
 
-        listBoardTags = new JList<>(tagsModel);
-        listBoardTags.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listBoardTags.addSelectionInterval(0, tags.size());
-        listBoardTags.addListSelectionListener (new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                filterTables();
-            }
-        });
-        boardTagsPanel.add(titlePanel, BorderLayout.NORTH);
-
-        boardTagsPanel.add(new JScrollPane(listBoardTags), BorderLayout.CENTER);
-
-        return boardTagsPanel;
+        return titlePanel;
     }
 
-    private JPanel createFilterPaths() {
-        List<String> paths = bc.getBoardPaths().values().stream().toList();
-        paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
-        DefaultListModel<String> pathsModel = new DefaultListModel<>();
-        pathsModel.addAll(paths);
-        listBoardPaths = new JList<>(pathsModel);
-        listBoardPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        listBoardPaths.setSelectedIndex(0);
-        listBoardPaths.addListSelectionListener (new ListSelectionListener() {
+    private JPanel createTitle(String caption) {
+        JPanel titlePanel = new JPanel(new BorderLayout());
+
+        Box titleBox = new Box(BoxLayout.LINE_AXIS);
+        titleBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        titleBox.add(new JLabel(caption));
+        titlePanel.add(titleBox, BorderLayout.NORTH);
+
+        return titlePanel;
+    }
+
+    private JPanel createFilterList(JList list, List<String> data, JPanel title, boolean selectAll) {
+        DefaultListModel<String> model = new DefaultListModel<>();
+        model.addAll(data);
+        list.setModel(model);
+        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        list.setSelectedIndex(0);
+        list.addListSelectionListener (new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 filterTables();
             }
         });
+
+        if (selectAll) {
+            list.addSelectionInterval(0, data.size());
+        }
+
         JPanel boardPathsPanel = new JPanel(new BorderLayout());
-        boardPathsPanel.add(new JLabel("Board Paths"), BorderLayout.NORTH);
-        boardPathsPanel.add(new JScrollPane(listBoardPaths), BorderLayout.CENTER);
+        boardPathsPanel.add(title, BorderLayout.NORTH);
+        boardPathsPanel.add(new JScrollPane(list), BorderLayout.CENTER);
 
         return boardPathsPanel;
     }
 
-    private JPanel createList() {
-        JPanel listPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.insets = new Insets(2, 2, 2, 2);
+    private JPanel createListTable() {
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
 
-        c.gridx = 0;
-        c.gridy = 0;
-
-        boardModel = new BoardTableModel();
         boardModel.setData(bc);
-        boardTable = new JTable() {
-            @Override
-            public Dimension getPreferredScrollableViewportSize() {
-                Dimension standardSize = super.getPreferredScrollableViewportSize();
-                return new Dimension(standardSize.width, getRowHeight() * 20);
-            }
-        };
-
         boardTable.setName("Board");
         ListSelectionModel boardSelModel = boardTable.getSelectionModel();
         boardSelModel.addListSelectionListener (new ListSelectionListener() {
@@ -288,7 +281,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
             }
         });
         boardTable.setModel(boardModel);
-        boardSorter = new TableRowSorter<>(boardModel);
+        boardSorter.setModel(boardModel);
         boardSorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
         boardTable.setRowSorter(boardSorter);
         boardTable.setIntercellSpacing(new Dimension(5, 0));
@@ -300,17 +293,15 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
         boardTable.setFillsViewportHeight(true);
-        listPanel.add(new JScrollPane(boardTable), c);
-
-        c.gridy++;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        listPanel.add(new JScrollPane(boardTable));
 
         JPanel countPanel = new JPanel(new FlowLayout());
         JLabel countLabel = new JLabel("Count: ");
         countPanel.add(countLabel);
-        boardCountLabel = new JLabel(boardTable.getRowCount() + "");
+
+        boardCountLabel.setText(boardModel.getRowCount() + "");
         countPanel.add(boardCountLabel);
-        listPanel.add(countPanel, c);
+        listPanel.add(countPanel);
 
         return listPanel;
     }
@@ -369,6 +360,9 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         }
     }
 
+    /**
+     * Returns if path for the selected map when the dialog is confirmed
+     */
     public String getPath() {
         int index = boardTable.getSelectedRow() ;
         if (index >= 0) {

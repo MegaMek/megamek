@@ -23,6 +23,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utilities.BoardClassifier;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -72,17 +73,15 @@ class BoardTableModel extends AbstractTableModel {
         };
     }
 
-    public void setData(List<String> paths) {
-        data = paths;
+    public void setData(BoardClassifier bc) {
+        data = bc.getBoardPaths().values().stream().toList();;
         tags = new ArrayList<>();
         size = new ArrayList<>();
 
-        for (String path : paths) {
-            Board board = new Board(16, 17);
-            board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
-
-            tags.add(board.getTags().toString());
-            size.add(board.getWidth() + "x" + board.getHeight());
+        for (String path : data) {
+            String key = Configuration.boardsDir() + path;
+            tags.add(bc.getBoardTags().get(key));
+            size.add(bc.getBoardWidth().get(key) + "x" + bc.getBoardHeigth().get(key));
         }
 
         fireTableDataChanged();

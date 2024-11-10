@@ -96,7 +96,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.PAGE_AXIS));
 
-        List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().toList();
+        List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
         DefaultListModel<String> tagsModel = new DefaultListModel<>();
         tagsModel.addAll(tags);
         listBoardTags = new JList<>(tagsModel);
@@ -138,7 +138,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
         boardModel = new BoardTableModel();
-        boardModel.setData(bc.getBoardPaths().values().stream().toList());
+        boardModel.setData(bc);
         boardTable = new JTable();
         boardTable.setName("Board");
         ListSelectionModel boardSelModel = boardTable.getSelectionModel();

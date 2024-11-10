@@ -50,6 +50,9 @@ public class BoardClassifier {
 
     // function that maps full board paths to partial board paths
     private Map<String, String> boardPaths = new HashMap<>();
+    private Map<String, String> boardTags = new HashMap<>();
+    private Map<String, Integer> boardWidth = new HashMap<>();
+    private Map<String, Integer> boardHeight = new HashMap<>();
 
     public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
@@ -77,6 +80,18 @@ public class BoardClassifier {
 
     public Map<String, String> getBoardPaths() {
         return boardPaths;
+    }
+
+    public Map<String, String> getBoardTags() {
+        return boardTags;
+    }
+
+    public Map<String, Integer> getBoardWidth() {
+        return boardWidth;
+    }
+
+    public Map<String, Integer> getBoardHeigth() {
+        return boardHeight;
     }
 
     public void setBoardPaths(Map<String, String> boardPaths) {
@@ -146,6 +161,9 @@ public class BoardClassifier {
                         }
 
                         getBoardPaths().put(filePath.getPath(), partialBoardPath);
+                        getBoardTags().put(filePath.getPath(), Board.getTags(filePath).toString());
+                        getBoardWidth().put(filePath.getPath(), dimension.width());
+                        getBoardHeigth().put(filePath.getPath(), dimension.height());
                     }
                 }
             }

@@ -1,6 +1,7 @@
 generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-27
 chassis:Mad Cat Mk IV PR
 clanname:Savage Wolf
+model:
 mul id:6574
 
 Config:Biped

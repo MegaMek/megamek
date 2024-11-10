@@ -19,6 +19,7 @@
 package megamek.client.ui.advancedSearchMap;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.util.StringUtil;
 import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
@@ -120,7 +121,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
         filterPanel.add(createFilterList(listBoardTags, tags, tagsTitlePanel, true));
 
-        JPanel pathsTitlePanel = createTitle("Board Tags");
+        JPanel pathsTitlePanel = createTitle("Board Paths");
         List<String> paths = bc.getBoardPaths().values().stream().toList();
         paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
         filterPanel.add(createFilterList(listBoardPaths, paths, pathsTitlePanel, false));
@@ -275,7 +276,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
                 int index = boardTable.getSelectedRow() ;
                 if (index >= 0) {
                     index = boardTable.convertRowIndexToModel(index);
-                    boardImage.setIcon(boardModel.getIconAt(index, 200));
+                    boardImage.setIcon(boardModel.getIconAt(index, UIUtil.scaleForGUI(200)));
                     boardInfo.setText(boardModel.getInfoAt(index));
                 }
             }

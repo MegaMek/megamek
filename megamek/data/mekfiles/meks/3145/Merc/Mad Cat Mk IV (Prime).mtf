@@ -1,44 +1,42 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
 chassis:Mad Cat Mk IV
 clanname:Savage Wolf
 model:(Prime)
 mul id:6570
 
-Config:Biped Omnimech
-TechBase:Clan
-Era:3136
-Source:TRO: 3145 Mercenaries
-Rules Level:3
+Config:Biped OmniMek
+techbase:Clan
+era:3136
+source:TRO: 3145 Mercenaries
+rules level:3
 role:Skirmisher
 
-
-
 quirk:stable
-quirk:pro_actuator
 quirk:non_standard
+quirk:pro_actuator
 
+mass:75
+engine:375 XXL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Mass:75
-Engine:375 XXL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+heat sinks:17 Clan Double
+base chassis heat sinks:15
+walk mp:5
+jump mp:0
 
-Heat Sinks:17 Double
-Base Chassis Heat Sinks:15
-Walk MP:5
-Jump MP:0
-
-Armor:Ferro-Lamellor(Clan)
-LA Armor:24
-RA Armor:24
-LT Armor:24
-RT Armor:24
-CT Armor:35
-HD Armor:9
-LL Armor:31
-RL Armor:31
-RTL Armor:7
-RTR Armor:7
-RTC Armor:8
+armor:Ferro-Lamellor(Clan)
+LA armor:24
+RA armor:24
+LT armor:24
+RT armor:24
+CT armor:35
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:7
+RTR armor:7
+RTC armor:8
 
 Weapons:6
 ER PPC, Left Arm
@@ -51,8 +49,8 @@ Streak SRM 6, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -65,8 +63,8 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -81,11 +79,11 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (R) (omnipod)
-CLStreakSRM6 (R) (omnipod)
-Clan Streak SRM 6 Ammo (omnipod)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (R) (OMNIPOD)
+CLStreakSRM6 (R) (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 -Empty-
 -Empty-
@@ -95,28 +93,28 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (R) (omnipod)
-CLStreakSRM6 (R) (omnipod)
-Clan Streak SRM 6 Ammo (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (R) (OMNIPOD)
+CLStreakSRM6 (R) (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 
 Center Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Gyro (armored)
-Gyro (armored)
-Gyro (armored)
-Gyro (armored)
+Gyro (ARMORED)
+Gyro (ARMORED)
+Gyro (ARMORED)
+Gyro (ARMORED)
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support

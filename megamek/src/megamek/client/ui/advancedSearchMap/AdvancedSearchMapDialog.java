@@ -18,20 +18,11 @@
  */
 package megamek.client.ui.advancedSearchMap;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
-import megamek.client.ui.swing.ButtonEsc;
-import megamek.client.ui.swing.CloseAction;
-import megamek.client.ui.swing.dialog.DialogButton;
-import megamek.common.Board;
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -45,61 +36,51 @@ import java.util.regex.PatternSyntaxException;
  * This is the dialog for advanced map filtering
  */
 public class AdvancedSearchMapDialog extends AbstractButtonDialog {
-
-    BoardClassifier bc;
-    JTable boardTable;
-    JList<String> listBoardTags;
-    JList<String> listBoardPaths;
-    JLabel boardImage;
-    JLabel boardInfo;
-    TableRowSorter<BoardTableModel> boardSorter;
-
+    private BoardClassifier bc;
+    private JTable boardTable;
+    private JList<String> listBoardTags;
+    private JList<String> listBoardPaths;
+    private JLabel boardImage;
+    private JLabel boardInfo;
+    private TableRowSorter<BoardTableModel> boardSorter;
     private BoardTableModel boardModel;
+    private JLabel boardCountLabel;
+
     public AdvancedSearchMapDialog(JFrame parent) {
         super(parent, true, "AdvancedSearchMapDialog", "AdvancedSearchMapDialog.title");
 
+        setPreferredSize(new Dimension(1200, 1600));
+
         initialize();
-    }
-
-
-    @Override
-    protected JPanel createButtonPanel() {
-        JButton cancelButton = new ButtonEsc(new CloseAction(this));
-        JButton okButton = new DialogButton(Messages.getString("Ok.text"));
-        okButton.addActionListener(this::okButtonActionPerformed);
-        getRootPane().setDefaultButton(okButton);
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 0));
-        buttonPanel.add(okButton);
-        buttonPanel.add(cancelButton);
-
-        JPanel outerPanel = new JPanel(new GridLayout(1,1));
-        outerPanel.setBorder(BorderFactory.createCompoundBorder(
-            new MatteBorder(1, 0, 0, 0, UIManager.getColor("Separator.foreground")),
-            new EmptyBorder(10, 0, 10, 0)));
-        outerPanel.add(buttonPanel);
-
-        return outerPanel;
     }
 
     @Override
     protected Container createCenterPane() {
         bc = BoardClassifier.getInstance();
 
-        JPanel advancedSearchPane = new JPanel();
+        JPanel advancedSearchPane = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.insets = new Insets(2, 2, 2, 2);
 
-        advancedSearchPane.setLayout(new BoxLayout(advancedSearchPane, BoxLayout.PAGE_AXIS));
+        c.gridx = 0;
+        c.gridy = 0;
 
-        advancedSearchPane.add(createInfo());
+        advancedSearchPane.add(createInfo(), c);
 
         JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.add(createFilter());
         mainPanel.add(createList());
 
-        advancedSearchPane.add(mainPanel);
+        c.gridy++;
+        advancedSearchPane.add(mainPanel, c);
 
         return advancedSearchPane;
-
     }
 
     private JPanel createInfo() {
@@ -154,11 +135,12 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
     }
 
     private JPanel createList() {
-        JPanel listPanel = new JPanel(new FlowLayout());
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.PAGE_AXIS));
         boardModel = new BoardTableModel();
         boardModel.setData(bc.getBoardPaths().values().stream().toList());
         boardTable = new JTable();
-        boardTable.setName("RAT");
+        boardTable.setName("Board");
         ListSelectionModel boardSelModel = boardTable.getSelectionModel();
         boardSelModel.addListSelectionListener (new ListSelectionListener() {
             @Override
@@ -184,12 +166,19 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         listPanel.add(new JScrollPane(boardTable));
 
+        JPanel countPanel = new JPanel(new FlowLayout());
+        JLabel countLabel = new JLabel("Count: ");
+        countPanel.add(countLabel);
+        boardCountLabel = new JLabel(boardTable.getRowCount() + "");
+        countPanel.add(boardCountLabel);
+        listPanel.add(countPanel);
+
         boardTable.setRowSelectionInterval(0,0);
 
         return listPanel;
     }
 
-    void filterTables() {
+    private void filterTables() {
         RowFilter<BoardTableModel, Integer> boardFilter;
         try {
             boardFilter = new RowFilter<>() {
@@ -211,9 +200,15 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         }
 
         boardSorter.setRowFilter(boardFilter);
+        boardCountLabel.setText(boardTable.getRowCount() + "");
+
+        if (boardTable.getRowCount() > 0) {
+            boardTable.setRowSelectionInterval(0, 0);
+            boardTable.scrollRectToVisible(boardTable.getCellRect(0, 0, true));
+        }
     }
 
-    boolean matchPath(String path) {
+    private boolean matchPath(String path) {
         List<String> include = listBoardPaths.getSelectedValuesList();
 
         String value = path.substring(0, path.lastIndexOf("\\") + 1 );
@@ -221,7 +216,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         return !include.isEmpty() && include.stream().anyMatch(value::contains);
     }
 
-    boolean matchTag(List<String> tags) {
+    private boolean matchTag(List<String> tags) {
         List<String> include = listBoardTags.getSelectedValuesList();
 
         return !include.isEmpty() && include.stream().anyMatch(tags::contains);

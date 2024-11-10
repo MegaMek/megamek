@@ -20,10 +20,12 @@
 MMSVersion: 2
 name: Death of the Legion
 planet: Mankova
-description: >
+description: |
   During a raid on Mankova by Gorman Toth and his pirate unit known as the Legion of Honor, Toth learned that
   a Star League depot had been found during strip mining. Thinking he had tricked the Kell Hounds into
   taking action elsewhere he went straight for it.
+  
+  *Goal: Playing as the Kell Hounds force, destroy the Pirate forces.*
 
 map:
   cols: 2

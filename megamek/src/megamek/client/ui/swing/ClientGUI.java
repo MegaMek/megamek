@@ -2069,11 +2069,22 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    /**
+     * Request MegaMekLab to print out record sheets for the current player's selected units.
+     * The method will try to find MML either automatically or based on a configured client setting.
+     *
+     * @param unitList The list of units to print
+     * @param button This should always be {@link ChatLounge#butPrintList}, if you need to trigger this method from somewhere else, override it.
+     */
     public void printList(ArrayList<Entity> unitList, JButton button) {
+        // Do nothing if there are no units to print
         if ((unitList == null) || unitList.isEmpty()) {
             return;
         }
 
+        // Detect the MML executable.
+        // If the user hasn't set this manually, try to pick "MegaMakLab.exe"/".sh"
+        // from the same directory that MM is in
         var mmlPath = CP.getMmlPath();
         var autodetect = false;
         if (null == mmlPath || mmlPath.isBlank()) {
@@ -2097,28 +2108,42 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
 
         try {
+            // Save unit list to a temporary file
             var unitFile = File.createTempFile("MegaMekPrint", ".mul");
             EntityListFile.saveTo(unitFile, unitList);
+
             String[] command;
             if (mml.getName().toLowerCase().contains("gradle")) {
+                // If the executable is `gradlew`/`gradelw.bat`, assume it's the gradle wrapper
+                // which comes in the MML git repo. Compile and run MML from source in order to print units.
                 command = new String[] {
                     mml.getAbsolutePath(),
                     "run",
                     "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
                 };
             } else {
+                // Start mml normally. "--no-startup" tells MML to exit after the user closes the
+                // print dialog (by printing or cancelling)
                 command = new String[] {
                     mml.getAbsolutePath(),
                     unitFile.getAbsolutePath(),
                     "--no-startup"
                 };
             }
+            // It takes a while for MML to start, so we change the text of the button
+            // to let the user know that something is happening
             button.setText(Messages.getString("ChatLounge.butPrintList.printing"));
+
             logger.info("Running command: {}", String.join(" ", command));
+
+
             var p = new ProcessBuilder(command)
                 .directory(mml.getAbsoluteFile().getParentFile())
                 .inheritIO()
                 .start();
+
+            // This thread's only purpose is to wait for the MML process to finish and change the button's text back to
+            // its original value.
             new Thread(() -> {
                 try {
                     p.waitFor();
@@ -2130,7 +2155,10 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             }).start();
 
         } catch (Exception e) {
+            // If something goes wrong, probably ProcessBuild.start if anything,
+            // Make sure to set the button text back to what it started as no matter what.
             logger.error(e, "Operation failed", "Error printing unit list");
+            button.setText(Messages.getString("ChatLounge.butPrintList"));
         }
     }
 

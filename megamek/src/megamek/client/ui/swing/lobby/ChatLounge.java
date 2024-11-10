@@ -551,6 +551,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butSaveList.setEnabled(false);
         butPrintList.setActionCommand(CL_ACTIONCOMMAND_PRINTLIST);
         butPrintList.setEnabled(false);
+        butPrintList.setToolTipText(Messages.getString("ChatLounge.butPrintList.tooltip"));
         butAdd.setEnabled(mscLoaded);
         butAdd.setActionCommand(CL_ACTIONCOMMAND_LOADMEK);
         butArmy.setEnabled(mscLoaded);

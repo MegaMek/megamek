@@ -975,6 +975,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadMapSetup.setEnabled(!inSpace);
         butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
         butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
+        butAdvancedSearchMap.setEnabled(!inSpace);
 
         butGroundMap.removeActionListener(lobbyListener);
         butLowAtmoMap.removeActionListener(lobbyListener);

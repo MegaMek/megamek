@@ -63,9 +63,6 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
-    private static final String OPTIONS_FILE = "file";
-    private static final String OPTIONS_ON = "on";
-    private static final String OPTIONS_OFF = "off";
     private static final String OBJECTS = "objects";
     private static final String MESSAGES = "messages";
     private static final String END = "end";

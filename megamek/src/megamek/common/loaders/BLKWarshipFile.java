@@ -384,6 +384,9 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
                         }
                     }
                     if (etype.isVariableSize()) {
+                        if (size == 0) {
+                            size = MtfFile.extractLegacySize(equipName);
+                        }
                         newmount.setSize(size);
                     }
                 } else if (!equipName.isBlank()) {

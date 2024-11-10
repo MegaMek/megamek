@@ -1,37 +1,39 @@
-chassis:Patron LoaderMech
-model:PTN-1
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Patron
+model:PTN-1 LoaderMech
 mul id:4793
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2470
-Source:TRO: 3075
-Rules Level:4
+techbase:Inner Sphere
+era:2470
+source:TRO: 3075
+rules level:4
 role:Ambusher
 
-Mass:15
-Engine:40 Fuel Cell Engine(IS)
-Structure:IS Industrial
-Myomer:Standard
-Cockpit:Primitive Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:2
-Jump MP:0
+mass:15
+engine:40 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Primitive Industrial Cockpit
+gyro:Standard Gyro
 
-Armor:Commercial(Inner Sphere)
-LA Armor:2
-RA Armor:2
-LT Armor:2
-RT Armor:2
-CT Armor:3
-HD Armor:3
-LL Armor:2
-RL Armor:2
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+heat sinks:1 Single
+walk mp:2
+jump mp:0
+
+armor:Commercial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:0
 

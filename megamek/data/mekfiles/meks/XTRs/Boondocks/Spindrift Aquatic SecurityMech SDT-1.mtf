@@ -1,36 +1,37 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
 chassis:Spindrift Aquatic SecurityMech
 model:SDT-1
 mul id:3021
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3069
-Source:XTR: Boondocks
-Rules Level:4
+techbase:Inner Sphere
+era:3069
+source:XTR: Boondocks
+rules level:4
 role:Ambusher
 
-Mass:30
-Engine:120 Fusion Engine(IS)
-Structure:Industrial
-Cockpit:Industrial Cockpit (AFC)
-Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+mass:30
+engine:120 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Armor:Patchwork
-LA Armor:Reactive(Inner Sphere):8
-RA Armor:Reactive(Inner Sphere):8
-LT Armor:Reflective(Inner Sphere):6
-RT Armor:Reflective(Inner Sphere):6
-CT Armor:Heavy Industrial(Inner Sphere):10
-HD Armor:Heavy Industrial(Inner Sphere):5
-LL Armor:Heavy Industrial(Inner Sphere):7
-RL Armor:Heavy Industrial(Inner Sphere):7
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+heat sinks:10 Single
+walk mp:4
+jump mp:0
+
+armor:Patchwork
+LA armor:IS Reactive(Inner Sphere):8
+RA armor:IS Reactive(Inner Sphere):8
+LT armor:IS Reflective(Inner Sphere):6
+RT armor:IS Reflective(Inner Sphere):6
+CT armor:IS Heavy Industrial(Inner Sphere):10
+HD armor:IS Heavy Industrial(Inner Sphere):5
+LL armor:IS Heavy Industrial(Inner Sphere):7
+RL armor:IS Heavy Industrial(Inner Sphere):7
+RTL armor:2
+RTR armor:2
+RTC armor:3
 
 Weapons:2
 ER Small Laser, Left Torso
@@ -68,7 +69,7 @@ Left Torso:
 Heat Sink
 Heat Sink
 Heat Sink
-ISUMU
+UMU
 ISERSmallLaser
 Environmental Sealing
 -Empty-
@@ -82,7 +83,7 @@ Right Torso:
 Heat Sink
 Heat Sink
 Heat Sink
-ISUMU
+UMU
 SRT 6
 SRT 6
 IS Ammo SRTorpedo-6
@@ -125,7 +126,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISUMU
+UMU
 Environmental Sealing
 -Empty-
 -Empty-
@@ -139,7 +140,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISUMU
+UMU
 Environmental Sealing
 -Empty-
 -Empty-

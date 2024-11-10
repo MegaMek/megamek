@@ -1,46 +1,43 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
 chassis:Spindrift Aquatic SecurityMech
 model:SDT-1A
 mul id:5106
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3083
-Source:TRO: Prototypes
-Rules Level:4
+techbase:Inner Sphere
+era:3083
+source:TRO: Prototypes
+rules level:4
 role:Scout
-
-
 
 quirk:no_eject
 quirk:multi_trac
 
+mass:30
+engine:120 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Mass:30
-Engine:120 Fusion Engine
-Structure:Industrial
-Cockpit:Industrial Cockpit (AFC)
-Myomer:Standard
+heat sinks:10 Single
+walk mp:4
+jump mp:4
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:4
-
-Armor:Standard Armor
-LA Armor:5
-RA Armor:5
-LT Armor:9
-RT Armor:9
-CT Armor:10
-HD Armor:9
-LL Armor:10
-RL Armor:10
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:5
+RA armor:5
+LT armor:9
+RT armor:9
+CT armor:10
+HD armor:9
+LL armor:10
+RL armor:10
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:2
-1 ISERSmallLaser, Left Torso
-1 ISSRT6, Right Torso, Ammo:15
+ER Small Laser, Left Torso
+SRT 6, Right Torso
 
 Left Arm:
 Shoulder
@@ -74,7 +71,7 @@ Left Torso:
 Heat Sink
 Heat Sink
 Heat Sink
-ISUMU
+UMU
 ISERSmallLaser
 IS Ammo SRTorpedo-6
 Environmental Sealing
@@ -88,9 +85,9 @@ Right Torso:
 Heat Sink
 Heat Sink
 Heat Sink
-ISUMU
-ISSRT6
-ISSRT6
+UMU
+SRT 6
+SRT 6
 Environmental Sealing
 -Empty-
 -Empty-
@@ -99,16 +96,16 @@ Environmental Sealing
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Environmental Sealing
 -Empty-
 
@@ -119,19 +116,39 @@ Cockpit
 Environmental Sealing
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISUMU
+UMU
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISUMU
+UMU
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -14,6 +14,7 @@
  */
 package megamek.common.loaders;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -251,6 +252,10 @@ public class BLKFile {
                             }
                         }
                         if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = MtfFile.extractLegacySize(equipName);
+                            }
+
                             mount.setSize(size);
                         } else if (t.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)
                                 && size > 1) {
@@ -288,16 +293,18 @@ public class BLKFile {
                 sv.setBARRating(armor.getBAR(), i);
                 sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false), i);
             }
-        } else if (dataFile.exists("barrating")) {
-            megamek.common.equipment.ArmorType armor = ArmorType.svArmor(dataFile.getDataAsInt("barrating")[0]);
-            sv.setArmorType(armor.getArmorType());
-            sv.setBARRating(armor.getBAR());
-            sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false));
         } else {
-            if (dataFile.exists("armor_type")) {
-                sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            if (dataFile.exists("barrating")) {
+                megamek.common.equipment.ArmorType armor = ArmorType.svArmor(dataFile.getDataAsInt("barrating")[0]);
+                sv.setArmorType(armor.getArmorType());
+                sv.setBARRating(armor.getBAR());
+                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false));
             } else {
-                throw new EntityLoadingException("could not find armor_type block.");
+                if (dataFile.exists("armor_type")) {
+                    sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+                } else {
+                    throw new EntityLoadingException("could not find armor_type block.");
+                }
             }
             if (dataFile.exists("armor_tech")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
@@ -746,7 +753,7 @@ public class BLKFile {
             // barRating block written out later in SV-specific section
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != ArmorType.T_ARMOR_UNKNOWN)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
-                blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
+                blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
@@ -868,6 +875,7 @@ public class BLKFile {
         if (t.isSupportVehicle()) {
             blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
             blk.writeBlockData("engine_tech_rating", t.getEngineTechRating());
+
         }
 
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
@@ -1163,8 +1171,13 @@ public class BLKFile {
     }
 
     public static void encode(String fileName, Entity t) throws EntitySavingException {
+        File file = new File(fileName);
+        encode(file, t);
+    }
+
+    public static void encode(File file, Entity t) throws EntitySavingException {
         BuildingBlock blk = BLKFile.getBlock(t);
-        blk.writeBlockFile(fileName);
+        blk.writeBlockFile(file);
     }
 
     protected void addTransports(Entity e) throws EntityLoadingException {

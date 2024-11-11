@@ -42,7 +42,6 @@ class BoardTableModel extends AbstractTableModel {
 
     private List<String> data;
     private List<String> tags;
-    private List<String> size;
     private List<Integer> width;
     private List<Integer> height;
 
@@ -59,7 +58,6 @@ class BoardTableModel extends AbstractTableModel {
     public void clearData() {
         data = new ArrayList<>();
         tags = new ArrayList<>();
-        size = new ArrayList<>();
         width = new ArrayList<>();
         height = new ArrayList<>();
         fireTableDataChanged();
@@ -81,14 +79,12 @@ class BoardTableModel extends AbstractTableModel {
     public void setData(BoardClassifier bc) {
         data = bc.getBoardPaths().values().stream().toList();;
         tags = new ArrayList<>();
-        size = new ArrayList<>();
         width = new ArrayList<>();
         height = new ArrayList<>();
 
         for (String path : data) {
             String key = Configuration.boardsDir() + path;
             tags.add(bc.getBoardTags().get(key));
-            size.add(bc.getBoardWidth().get(key) + "x" + bc.getBoardHeigth().get(key));
             width.add(bc.getBoardWidth().get(key));
             height.add(bc.getBoardHeigth().get(key));
         }
@@ -121,20 +117,18 @@ class BoardTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         String path = getPathAt(row);
-        String size = getSizeAt(row);
         Integer width = getWidthAt(row);
         Integer height = getHeightAt(row);
 
         if (path== null) {
             return "?";
         }
-
         String value = "";
 
         if (col == COL_NAME) {
             value = path.substring(path.lastIndexOf("\\") + 1, path.length());
             value = value.substring(0, value.lastIndexOf(".board"));
-            value = value.replace(size, "").trim();
+            value = value.replace(width + "x" + height, "").trim();
         } else if (col == COL_SIZE) {
             value = String.format("%03dx%03d", width, height);
         }
@@ -148,14 +142,6 @@ class BoardTableModel extends AbstractTableModel {
         }
 
         return data.get(row);
-    }
-
-    public String getSizeAt(int row) {
-        if (size.size() <= row) {
-            return null;
-        }
-
-        return size.get(row);
     }
 
     public Integer getWidthAt(int row) {

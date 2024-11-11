@@ -167,6 +167,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         textBox.add(new JLabel(caption));
         textBox.add(Box.createRigidArea( new Dimension(5, 0)));
+        startTextField.setToolTipText("start range, blank acts as wildcard");
         startTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -186,6 +187,8 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         textBox.add(startTextField);
 
         textBox.add(new JLabel(" - "));
+
+        endTextField.setToolTipText("end range, blank acts as wildcard");
         endTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {

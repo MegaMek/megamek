@@ -122,6 +122,8 @@ class BoardTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         String path = getPathAt(row);
         String size = getSizeAt(row);
+        Integer width = getWidthAt(row);
+        Integer height = getHeightAt(row);
 
         if (path== null) {
             return "?";
@@ -134,7 +136,7 @@ class BoardTableModel extends AbstractTableModel {
             value = value.substring(0, value.lastIndexOf(".board"));
             value = value.replace(size, "").trim();
         } else if (col == COL_SIZE) {
-            value = size;
+            value = String.format("%03dx%03d", width, height);
         }
 
         return value;

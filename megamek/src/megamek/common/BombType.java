@@ -564,12 +564,14 @@ public class BombType extends AmmoType {
         bomb.bv = 20;
         bomb.cost = 10000;
         bomb.rulesRefs = "247, TW";
+        // Tech Progression adjusted to match future errata. While called Laser-Guided this is aligned
+        // with TAG for progression once TAG is common.
         bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
-                .setISAdvancement(DATE_ES, DATE_ES, 3065, 2800, 3060)
+                .setISAdvancement(DATE_ES, DATE_ES, 2645, 2835, 3035)
                 .setISApproximate(false, false, false, true, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, 3065, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false)

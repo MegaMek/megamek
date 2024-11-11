@@ -1,5 +1,8 @@
 /*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * 
+ * This file is part of MegaMek.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -92,19 +95,23 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         double damage = calculateBaseDamage(ae, weapon, wtype);
 
-        if ((ae instanceof Infantry)
-                && (nRange == 0)) {
-            if (ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
-                damage += 0.14;
-            }
-            InfantryMount mount = ((Infantry) ae).getMount();
-            if ((mount != null) && target.isConventionalInfantry() && (mount.getBurstDamageDice() > 0)) {
-                damage += Compute.d6(mount.getBurstDamageDice());
-            } else if ((mount != null) && !target.isConventionalInfantry()) {
-                damage += mount.getVehicleDamage();
-            }
+        if ((ae instanceof Infantry) && (nRange == 0)
+                && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+            damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
+        
+        // beast-mounted infantry get range 0 bonus damage per platoon
+        if ((ae instanceof Infantry) && (nRange == 0)) {
+            InfantryMount mount = ((Infantry) ae).getMount();
+            if (mount != null) {
+                if (!target.isConventionalInfantry()) {
+                    damageDealt += mount.getVehicleDamage();
+                } else if (mount.getBurstDamageDice() > 0){
+                    damageDealt += Compute.d6(mount.getBurstDamageDice());
+                }
+            }
+        }
 
         // conventional infantry weapons with high damage get treated as if they have
         // the infantry burst mod

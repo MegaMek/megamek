@@ -6325,7 +6325,7 @@
 			</model>
 		</chassis>
 		<chassis name='Intruder' unitType='Dropship'>
-			<availability>MOC:4,HL:2,CLAN:1,IS:4,WOB:4,SIC:4,FS:3,CIR:4,BAN:4,Periphery:3,CS:4FWL:6,NIOPS:4,DC:5</availability>
+			<availability>MOC:4,HL:2,CLAN:1,IS:4,WOB:4,SIC:4,FS:3,CIR:4,BAN:4,Periphery:3,CS:4,FWL:6,NIOPS:4,DC:5</availability>
 			<model name='(2655)'>
 				<roles>assault</roles>
 				<availability>General:6</availability>
@@ -10851,7 +10851,7 @@
 			</model>
 		</chassis>
 		<chassis name='Spider' unitType='Mek'>
-			<availability>MOC:2CC:4,FRR:5,IS:1,WOB:2,SIC:4,MERC:3,FS:4,Periphery:2,CS:3,OA:1,Periphery.MW:4,Periphery.ME:4,FWL:6,NIOPS:3,DC:6</availability>
+			<availability>MOC:2,CC:4,FRR:5,IS:1,WOB:2,SIC:4,MERC:3,FS:4,Periphery:2,CS:3,OA:1,Periphery.MW:4,Periphery.ME:4,FWL:6,NIOPS:3,DC:6</availability>
 			<model name='SDR-5D'>
 				<roles>anti_infantry</roles>
 				<availability>FS:5</availability>

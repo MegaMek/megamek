@@ -218,3 +218,53 @@ Troop Carrier
 <height>
 8.5 m
 </height>
+
+<capabilities>
+<p>The Vampire’s main strength lies in its speed and deceptive appearance. It could blend into aerospace formations, often being mistaken for a fighter on a bombing run due to its weapons loadout and small size.</p>
+
+<p>The Vampire was equipped with a modest weapon array more akin to aerospace fighters. It carried two medium lasers and an SRM-6 in the nose, while each wing mounted a Large Laser and LRM-20. An additional pair of medium lasers protected the aft. This fighter-like armament allowed the Vampire to blend in with aerospace squadrons during combat missions. Despite its light weapons load, two tons of SRM reloads and three tons of LRM reloads provided ample endurance for its hit-and-run role.</p>
+</capabilities>
+
+<overview>
+The Vampire is one of the smallest DropShips ever to see combat, often mistaken for a heavy aerospace fighter due to its speed and armament. Designed by Markesan Aeronautics for rapid deployment of jump infantry, it was the fastest infantry carrier of its time. With the aim of minimizing exposure to enemy aerospace fighters, the Vampire was engineered to match the speed and agility of the fighters it might encounter. Though highly effective in its role, the Vampire's short fuel range and cramped infantry compartments made it unpopular for long missions. Despite its flaws, the Vampire played a key role in several Federated Suns operations.
+</overview>
+
+<deployment>
+<p>The Vampire's troop compartments were notoriously cramped, only capable of carrying three platoons of jump infantry. Because of this, infantry often preferred to travel on larger transports, only transferring to the Vampire for the final assault. The ship also featured a cargo bay with 14 tons of capacity for quick strike operations. Its ventral drop hatches enabled the rapid deployment of troops without landing, giving it a strategic edge in surprise operations.</p>
+</deployment>
+
+<history>
+<p> When approaching a target, the Vampire would perform high-speed, low-altitude passes, deploying up to three platoons of jump infantry via specialized drop hatches on its ventral surface. This tactic confused enemies, as seen during the brief "Border War" between the Federated Suns and the Capellan Confederation. The most famous example occurred at Redfield, where Liao troops mistook incoming Vampires for bombers, only to be caught off guard when infantry rained down instead of bombs.</p>
+</history>
+
+<manufacturer>
+Markesan Aeronautics
+</manufacturer>
+
+<primaryFactory>
+Markesan
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Donovan XVIII drive system
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Troop Carrier
+</use>
+
+<length>
+42 m
+</length>
+
+<width>
+28 m
+</width>
+
+<height>
+8.5 m
+</height>

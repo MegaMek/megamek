@@ -2929,7 +2929,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 5560;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
                 .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
@@ -3291,7 +3291,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
                 .setISAdvancement(2785, 2800, DATE_NONE, 2845, 3045).setISApproximate(true, true, false, true, false)
                 .setPrototypeFactions(F_DC).setProductionFactions(F_DC);

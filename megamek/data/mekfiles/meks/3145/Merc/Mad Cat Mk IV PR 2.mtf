@@ -1,43 +1,41 @@
-chassis:Mad Cat Mk IV
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Mad Cat Mk IV PR
 clanname:Savage Wolf
-model:PR 2
+model:2
 mul id:6575
 
 Config:Biped
-TechBase:Clan
-Era:3131
-Source:TRO: 3145 Mercenaries
-Rules Level:3
+techbase:Clan
+era:3131
+source:TRO: 3145 Mercenaries
+rules level:3
 role:Skirmisher
 
-
-
 quirk:stable
-quirk:pro_actuator
 quirk:non_standard
+quirk:pro_actuator
 
+mass:75
+engine:375 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Mass:75
-Engine:375 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+heat sinks:16 Clan Double
+walk mp:5
+jump mp:0
 
-Heat Sinks:16 Double
-Walk MP:5
-Jump MP:0
-
-Armor:Ferro-Fibrous(Clan)
-LA Armor:24
-RA Armor:24
-LT Armor:25
-RT Armor:25
-CT Armor:36
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:7
-RTR Armor:7
-RTC Armor:9
+armor:Ferro-Fibrous(Clan)
+LA armor:24
+RA armor:24
+LT armor:25
+RT armor:25
+CT armor:36
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:7
+RTR armor:7
+RTC armor:9
 
 Weapons:7
 ER PPC, Left Arm

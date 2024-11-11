@@ -272,7 +272,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILEEXTENTION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Boards Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAPSETUP = "/mapsetup";
     private static final String CL_KEY_NAMEHELPPANE = "helpPane";
 
@@ -1899,6 +1899,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
                 Dimension sz = new Dimension(scaleForGUI(width), scaleForGUI(height));
                 dialog.setPreferredSize(sz);
+                dialog.pack();
                 dialog.setVisible(true);
 
             } else if (ev.getSource() == butAdvancedSearchMap) {

@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.advancedSearchMap;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -96,9 +97,9 @@ class BoardTableModel extends AbstractTableModel {
     public String getColumnName(int column) {
         switch (column) {
             case COL_NAME:
-                return "Name";
+                return Messages.getString("AdvancedSearchMapDialog.boardTableModel.name");
             case COL_SIZE:
-                return "Size";
+                return Messages.getString("AdvancedSearchMapDialog.boardTableModel.size");
             default:
                 return "??";
         }
@@ -185,17 +186,17 @@ class BoardTableModel extends AbstractTableModel {
         board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
 
         String info;
-        String col = UIUtil.tag("td", "", path);
-        info = UIUtil.tag("tr", "", col);
-        col = UIUtil.tag("td", "", board.getWidth() + "x" + board.getHeight());
-        info += UIUtil.tag("tr", "", col);
-        col = UIUtil.tag("td", "", board.getTags().toString());
-        info += UIUtil.tag("tr", "", col);
-        info = UIUtil.tag("table", "", info);
+        String col = UIUtil.tag("TD", "", path);
+        info = UIUtil.tag("TR", "", col);
+        col = UIUtil.tag("TD", "", board.getWidth() + "x" + board.getHeight());
+        info += UIUtil.tag("TR", "", col);
+        col = UIUtil.tag("TD", "", board.getTags().toString());
+        info += UIUtil.tag("TR", "", col);
+        info = UIUtil.tag("TABLE", "", info);
         String attr = String.format("WIDTH=%s", UIUtil.scaleForGUI(500));
-        info = UIUtil.tag("div", attr,  info);
-        info = UIUtil.tag("body", "", info);
-        info = UIUtil.tag("html", "", info);
+        info = UIUtil.tag("DIV", attr,  info);
+        info = UIUtil.tag("BODY", "", info);
+        info = UIUtil.tag("HTML", "", info);
 
         return info;
     }

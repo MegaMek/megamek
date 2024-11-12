@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.advancedSearchMap;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.util.StringUtil;
@@ -50,7 +51,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         }
     };
     private JList<String> listBoardTags = new JList<>();
-    private final JCheckBox boardTagsAllCheckBox = new JCheckBox("All");
+    private final JCheckBox boardTagsAllCheckBox = new JCheckBox(Messages.getString("AdvancedSearchMapDialog.boardTagsAllCheckBox"));
     private JList<String> listBoardPaths = new JList<>();
     private JLabel boardImage;
     private JLabel boardInfo;
@@ -113,15 +114,15 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.PAGE_AXIS));
 
-        filterPanel.add(createFilterRange(widthStartTextField, widthEndTextField, "Width:"));
-        filterPanel.add(createFilterRange(heightStartTextField, heightEndTextField, "Height:"));
-        filterPanel.add(createFilterText(nameTextField, "Name:"));
+        filterPanel.add(createFilterRange(widthStartTextField, widthEndTextField, Messages.getString("AdvancedSearchMapDialog.filterRangeWidth")));
+        filterPanel.add(createFilterRange(heightStartTextField, heightEndTextField, Messages.getString("AdvancedSearchMapDialog.filterRangeHeight")));
+        filterPanel.add(createFilterText(nameTextField, Messages.getString("AdvancedSearchMapDialog.filterName")));
 
-        JPanel tagsTitlePanel = createTitleWithCheckBox(boardTagsAllCheckBox, "Board Tags");
+        JPanel tagsTitlePanel = createTitleWithCheckBox(boardTagsAllCheckBox, Messages.getString("AdvancedSearchMapDialog.filterBoardTags"));
         List<String> tags = Arrays.stream(BoardsTagger.Tags.values()).map(BoardsTagger.Tags::getName).distinct().sorted().toList();
         filterPanel.add(createFilterList(listBoardTags, tags, tagsTitlePanel, true));
 
-        JPanel pathsTitlePanel = createTitle("Board Paths");
+        JPanel pathsTitlePanel = createTitle(Messages.getString("AdvancedSearchMapDialog.filterBoardPaths"));
         List<String> paths = bc.getBoardPaths().values().stream().toList();
         paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
         filterPanel.add(createFilterList(listBoardPaths, paths, pathsTitlePanel, false));
@@ -167,7 +168,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         textBox.add(new JLabel(caption));
         textBox.add(Box.createRigidArea( new Dimension(5, 0)));
-        startTextField.setToolTipText("start range, blank acts as wildcard");
+        startTextField.setToolTipText(Messages.getString("AdvancedSearchMapDialog.filterRangeStart.tooltip"));
         startTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -188,7 +189,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         textBox.add(new JLabel(" - "));
 
-        endTextField.setToolTipText("end range, blank acts as wildcard");
+        endTextField.setToolTipText(Messages.getString("AdvancedSearchMapDialog.filterRangeEnd.tooltip"));
         endTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -300,7 +301,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         listPanel.add(new JScrollPane(boardTable));
 
         JPanel countPanel = new JPanel(new FlowLayout());
-        JLabel countLabel = new JLabel("Count: ");
+        JLabel countLabel = new JLabel(Messages.getString("AdvancedSearchMapDialog.boardTableCount"));
         countPanel.add(countLabel);
 
         boardCountLabel.setText(boardModel.getRowCount() + "");

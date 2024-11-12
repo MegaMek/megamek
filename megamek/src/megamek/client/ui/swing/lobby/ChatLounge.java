@@ -214,7 +214,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private JLabel lblBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"));
     private JButton butHelp = new JButton(" " + Messages.getString("ChatLounge.butHelp") + " ");
-    private JButton butAdvancedSearchMap = new JButton("Advanced Search");
+    private JButton butAdvancedSearchMap = new JButton(Messages.getString("AdvancedSearchMapDialog.title"));
 
     private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));

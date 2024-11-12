@@ -46,7 +46,6 @@ class BoardTableModel extends AbstractTableModel {
     private List<Integer> width;
     private List<Integer> height;
 
-
     public BoardTableModel() {
         data = new ArrayList<>();
     }
@@ -56,41 +55,9 @@ class BoardTableModel extends AbstractTableModel {
         return data.size();
     }
 
-    public void clearData() {
-        data = new ArrayList<>();
-        tags = new ArrayList<>();
-        width = new ArrayList<>();
-        height = new ArrayList<>();
-        fireTableDataChanged();
-    }
-
     @Override
     public int getColumnCount() {
         return N_COL;
-    }
-
-    public int getPreferredWidth(int col) {
-        return switch (col) {
-            case COL_NAME -> 200;
-            case COL_SIZE -> 20;
-            default -> 10;
-        };
-    }
-
-    public void setData(BoardClassifier bc) {
-        data = bc.getBoardPaths().values().stream().toList();;
-        tags = new ArrayList<>();
-        width = new ArrayList<>();
-        height = new ArrayList<>();
-
-        for (String path : data) {
-            String key = Configuration.boardsDir() + path;
-            tags.add(bc.getBoardTags().get(key));
-            width.add(bc.getBoardWidth().get(key));
-            height.add(bc.getBoardHeigth().get(key));
-        }
-
-        fireTableDataChanged();
     }
 
     @Override
@@ -137,6 +104,30 @@ class BoardTableModel extends AbstractTableModel {
         return value;
     }
 
+    public int getPreferredWidth(int col) {
+        return switch (col) {
+            case COL_NAME -> 200;
+            case COL_SIZE -> 20;
+            default -> 10;
+        };
+    }
+
+    public void setData(BoardClassifier bc) {
+        data = bc.getBoardPaths().values().stream().toList();;
+        tags = new ArrayList<>();
+        width = new ArrayList<>();
+        height = new ArrayList<>();
+
+        for (String path : data) {
+            String key = Configuration.boardsDir() + path;
+            tags.add(bc.getBoardTags().get(key));
+            width.add(bc.getBoardWidth().get(key));
+            height.add(bc.getBoardHeigth().get(key));
+        }
+
+        fireTableDataChanged();
+    }
+
     public String getPathAt(int row) {
         if (data.size() <= row) {
             return null;
@@ -159,10 +150,6 @@ class BoardTableModel extends AbstractTableModel {
         }
 
         return height.get(row);
-    }
-
-    public List<String> getAllPaths() {
-        return data;
     }
 
     public ImageIcon getIconAt(int row, int height) {

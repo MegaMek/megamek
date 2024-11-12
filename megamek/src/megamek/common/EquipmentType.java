@@ -556,6 +556,15 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
+     * @param mounted The equipment mount. In some cases the moudes are affected by linked equipment.
+     * @return the number of modes that this type of equipment can be in or
+     *         <code>0</code> if it doesn't have modes.
+     */
+    public int getModesCount(Mounted<?> mounted) {
+        return getModesCount();
+    }
+
+    /**
      * @return the number of modes that this type of equipment can be in or
      *         <code>0</code> if it doesn't have modes.
      */

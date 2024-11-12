@@ -19,9 +19,13 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.InsulatedLaserWeaponHandler;
+import megamek.common.weapons.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**
@@ -39,21 +43,38 @@ public abstract class LaserWeapon extends EnergyWeapon {
         atClass = CLASS_LASER;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        if (!(this instanceof PulseLaserWeapon)) {
+            addMode("");
+            addMode("Pulse");
+        }
+    }
+
+    @Override
+    public int getModesCount(Mounted<?> mounted) {
+        Mounted<?> linkedBy = mounted.getLinkedBy();
+        if ((linkedBy instanceof MiscMounted)
+                && !linkedBy.isInoperable()
+                && ((MiscMounted) linkedBy).getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            return 2;
+        } else {
+            return 0;
+        }
+    }
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
             TWGameManager manager) {
         Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
-        if ((linkedBy != null) && !linkedBy.isInoperable()
-                && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-            return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
+        if ((linkedBy != null) && !linkedBy.isInoperable()) {
+            if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
+            } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                return new PulseLaserWeaponHandler(toHit, waa, game, manager);
+            }
         }
         return new EnergyWeaponHandler(toHit, waa, game, manager);
     }

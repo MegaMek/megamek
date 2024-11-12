@@ -131,6 +131,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
                 heat++;
             }
         }
+        if (curMode().equals("Pulse")) {
+            heat += 2;
+        }
 
         return heat;
     }

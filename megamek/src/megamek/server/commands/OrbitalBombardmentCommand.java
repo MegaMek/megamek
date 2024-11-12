@@ -35,12 +35,12 @@ public class OrbitalBombardmentCommand extends ServerCommand implements IsGM {
         super(server, "ob", "GM Drops a bomb onto the board doing of 100 damage with a 3 hex radius, to be exploded at" +
                 "the end of the next weapons attack phase." +
                 "Allowed formats:"+
-                "/bomb <x> <y> and" +
-                "/bomb <x> <y> [factor=10] [radius=4]" +
-                "the damage at impact point is 10 times the factor, default is 10. " +
+                "/ob <x> <y> and" +
+                "/ob <x> <y> [factor=#] [radius=#]" +
+                "the damage at impact point is the factor times 10, default factor value is 10. " +
                 "and hex x, y is x=column number and y=row number (hex 0923 would be x=9 and y=23), the explosion blast radius default " +
                 "is equal to 4, it automatically applies a linear damage dropoff each hex away from the center." +
-                " All parameters in square brackets may be ommited. " +
+                " All parameters in square brackets may be omitted. " +
                 " Example: /ob 10 10 factor=12 ");
         this.gameManager = gameManager;
     }

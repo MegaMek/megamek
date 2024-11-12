@@ -19,6 +19,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -63,6 +64,14 @@ public abstract class LaserWeapon extends EnergyWeapon {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public int getToHitModifier(@Nullable Mounted<?> mounted) {
+        if ((mounted == null) || !(mounted.getLinkedBy() instanceof MiscMounted) || !mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            return super.getToHitModifier(mounted);
+        }
+        return mounted.curMode().getName().equals("Pulse") ? -2 : 0;
     }
 
     @Override

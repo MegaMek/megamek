@@ -502,7 +502,7 @@ public class EquipmentType implements ITechnology {
         return spreadable;
     }
 
-    public int getToHitModifier() {
+    public int getToHitModifier(@Nullable Mounted<?> mounted) {
         return toHitModifier;
     }
 

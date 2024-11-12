@@ -32,6 +32,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
@@ -788,16 +789,14 @@ public abstract class TestEntity implements TestEntityOption {
             }
         } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
             double fTons = 0.0f;
-            for (Mounted<?> mo : getEntity().getWeaponList()) {
-                WeaponType wt = (WeaponType) mo.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += mo.getTonnage();
+            for (WeaponMounted mounted : getEntity().getWeaponList()) {
+                if (mounted.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
-            for (Mounted<?> mo : getEntity().getMisc()) {
-                MiscType mt2 = (MiscType) mo.getType();
-                if (mt2.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mo.getTonnage();
+            for (MiscMounted mounted : getEntity().getMisc()) {
+               if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
             double weight = 0.0f;

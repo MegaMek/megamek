@@ -93,7 +93,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
         addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);
-        addOption(allowed, OptionsConstants.ALLOWED_GM_CAN_KILL_UNITS, false);
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules");
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);

@@ -45,10 +45,6 @@ public class KillCommand extends ServerCommand implements IsGM {
     public void run(int connId, String[] args) {
 
         // Check to make sure gm kills are allowed!
-        if (!(server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_GM_CAN_KILL_UNITS))) {
-            server.sendServerChat(connId, "Command-line kill is not enabled in this game.");
-            return;
-        }
         if (!isGM(connId)) {
             server.sendServerChat(connId, "You are not a Game Master.");
             return;

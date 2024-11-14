@@ -21,59 +21,54 @@ package megamek.server.commands;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
+import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Server Command "/changeOwner" that will switch an entity's owner to another player.
  *
  * @author Luana Scoppio
  */
-public class ChangeOwnershipCommand extends ServerCommand implements IsGM {
-
-    private final TWGameManager gameManager;
+public class ChangeOwnershipCommand extends GamemasterServerCommand {
 
     public ChangeOwnershipCommand(Server server, TWGameManager gameManager) {
         super(server,
+            gameManager,
             "changeOwner",
             "Switches ownership of a player's entity to another player during the end phase. "
-                + "Usage: /changeOwner <Unit ID> <Player ID>  "
-                + "The following is an example of changing unit ID 7 to player ID 2: /changeOwner 7 2 ");
-        this.gameManager = gameManager;
+            + "Usage: /changeOwner <Unit ID> <Player ID>  "
+            + "The following is an example of changing unit ID 7 to player ID 2: /changeOwner 7 2 ");
     }
 
-    /**
-     * Run this command with the arguments supplied
-     *
-     * @see ServerCommand#run(int, String[])
-     */
     @Override
-    public void run(int connId, String[] args) {
-        try {
-            if (!isGM(connId)) {
-                server.sendServerChat(connId, "You are not a Game Master.");
-                return;
-            }
+    public List<Argument<?>> defineArguments() {
+        List<Argument<?>> arguments = new ArrayList<>();
+        arguments.add(new IntegerArgument("unitID", 0, Integer.MAX_VALUE));
+        arguments.add(new IntegerArgument("playerID", 0, Integer.MAX_VALUE));
+        return arguments;
+    }
 
-            int eid = Integer.parseInt(args[1]);
-            Entity ent = gameManager.getGame().getEntity(eid);
-            int pid = Integer.parseInt(args[2]);
-            Player player = server.getGame().getPlayer(pid);
-            if (null == ent) {
-                server.sendServerChat(connId, "No such entity.");
-            } else if (null == player) {
-                server.sendServerChat(connId, "No such player.");
-            } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
-                server.sendServerChat(connId, "Player must be assigned a team.");
-            } else {
-                server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
-                ent.setTraitorId(pid);
-            }
-        } catch (NumberFormatException ignored) {
+    @Override
+    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        IntegerArgument unitID = (IntegerArgument) args.get("unitID");
+        IntegerArgument playerID = (IntegerArgument) args.get("playerID");
+
+        Entity ent = gameManager.getGame().getEntity(unitID.getValue());
+        Player player = server.getGame().getPlayer(playerID.getValue());
+        if (null == ent) {
+            server.sendServerChat(connId, "No such entity.");
+        } else if (null == player) {
+            server.sendServerChat(connId, "No such player.");
+        } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
+            server.sendServerChat(connId, "Player must be assigned a team.");
+        } else {
+            server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
+            ent.setTraitorId(player.getId());
         }
-    }
-
-    @Override
-    public TWGameManager getGameManager() {
-        return gameManager;
     }
 }

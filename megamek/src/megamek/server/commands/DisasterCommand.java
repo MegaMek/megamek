@@ -18,45 +18,149 @@
  */
 package megamek.server.commands;
 
+import megamek.common.Coords;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
+import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Luana Scoppio
  */
-public class DisasterCommand extends ServerCommand {
+public class DisasterCommand extends GamemasterServerCommand {
 
-    private final TWGameManager gameManager;
+    enum Disaster {
+        RANDOM,
+        HURRICANE,
+        LIGHTNING_STORM,
+        ORBITAL_BOMBARDMENT,
+        ORBITAL_BOMBARDMENT_2,
+        ORBITAL_BOMBARDMENT_3,
+        SANDSTORM,
+        HAILSTORM,
+        ECLIPSE,
+        SOLAR_FLARE,
+        SUPERNOVA,
+        SMOG,
+        FIRESTORM,
+        TRAITOR;
 
-    /** Creates new DisasterCommand */
+        public static Disaster getRandomDisaster() {
+            return values()[(int) (Math.random() * values().length)];
+        }
+    }
+
     public DisasterCommand(Server server, TWGameManager gameManager) {
-        super(server, "disaster", "GM calls a disaster at random, arguments in square brackets are optional. Usage: /disaster [type]  " +
+        super(server, gameManager, "gomorrah", "GM calls a disaster, arguments in square brackets are optional. " +
+            "Usage: /gomorrah [type]  " +
             "if not type is passed, one is chosen at random. " +
-            "type= 0: hurricane, 1: lightning storm, 2: meteor shower, 3: orbital bombardment, 4: wildfire, 5: sandstorm, 6: hailstorm, " +
-            "7: heatwave");
-        this.gameManager = gameManager;
+            "Type can be one of the following: hurricane, lightning, ob, ob2, ob3, sandstorm, hailstorm, eclipse, solarflare, " +
+            "supernova, smog, firestorm, traitor. " +
+            "The type ob, ob2 and ob3 are orbital bombardment with one, two or three random hit locations, at default values " +
+            "for damage (100) and radius (4).");
+    }
+
+    @Override
+    public List<Argument<?>> defineArguments() {
+        return List.of(new EnumArgument<>("type", Disaster.class, Disaster.RANDOM));
+    }
+
+    private void runDisasterCommand(int connId, Disaster disaster) {
+        switch (disaster) {
+            case HURRICANE:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "wind=6", "winddir=6"});
+                server.sendServerChat("Hurricane incoming!");
+                break;
+            case LIGHTNING_STORM:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "weather=14"});
+                server.sendServerChat("Lightning storm incoming!");
+                break;
+            case ECLIPSE:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=4"});
+                server.sendServerChat("The sun is being eclipsed...");
+                break;
+            case SOLAR_FLARE:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=5", "emi=1"});
+                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "1", "5"});
+                server.sendServerChat("Sensors warn of an imminent solar flare incoming! Expect some fires.");
+                break;
+            case SUPERNOVA:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "light=5", "emi=1", "atmo=2", "wind=0", "weather=0"});
+                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "2", "75"});
+                server.sendServerChat("The star is going supernova!");
+                server.sendServerChat("Everything is on fire! We are doomed!");
+                break;
+            case ORBITAL_BOMBARDMENT_3:
+                orbitalBombardment(connId);
+            case ORBITAL_BOMBARDMENT_2:
+                orbitalBombardment(connId);
+            case ORBITAL_BOMBARDMENT:
+                orbitalBombardment(connId);
+                break;
+            case SANDSTORM:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
+                server.sendServerChat("A sandstorm is approaching!");
+                break;
+            case HAILSTORM:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "weather=13", "wind=4", "winddir=6"});
+                server.sendServerChat("A hailstorm is incoming!");
+                break;
+            case FIRESTORM:
+                new FirestormCommand(server, gameManager).run(connId, new String[]{"firestorm", "2", "50"});
+                server.sendServerChat("A firestorm is consuming the battlefield!");
+                break;
+            case SMOG:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "atmo=5", "fog=2", "light=1"});
+                server.sendServerChat("A thick smog is covering the battlefield!");
+                break;
+            case TRAITOR:
+            default:
+                {
+                    var players = gameManager.getGame().getPlayersList();
+                    var randomPlayer = players.get((int) (Math.random() * players.size()));
+
+                    var units = gameManager.getGame().getPlayerEntities(randomPlayer, true);
+                    var randomUnit = units.get((int) (Math.random() * units.size()));
+
+                    var otherPlayers = players.stream().filter(p -> p != randomPlayer).toList();
+                    var newOwner = otherPlayers.get((int) (Math.random() * otherPlayers.size()));
+
+                    new ChangeOwnershipCommand(server, gameManager).run(connId,
+                        new String[]{"traitor", "" + randomUnit.getId(), "" + newOwner.getId()});
+                    server.sendServerChat("A traitor has been revealed!");
+                }
+        }
+    }
+
+    private Coords getRandomHexCoords() {
+        var board = gameManager.getGame().getBoard();
+        var x = (int) (Math.random() * board.getWidth());
+        var y = (int) (Math.random() * board.getHeight());
+        return new Coords(x, y);
+    }
+
+    private void orbitalBombardment(int connId) {
+        var coords = getRandomHexCoords();
+        new OrbitalBombardmentCommand(server, gameManager).run(connId, new String[]{"ob",
+            coords.getX() + 1 + "",
+            coords.getY() + 1 + ""
+        });
     }
 
     /**
      * Run this command with the arguments supplied
      */
     @Override
-    public void run(int connId, String[] args) {
-        if (!server.getPlayer(connId).getGameMaster()) {
-            server.sendServerChat(connId, "You are not a Game Master.");
-            return;
-        }
-
-        // Check argument integrity.
-        if (args.length == 1) {
-            // Check command
-            // NOT IMPLEMENTED
-            server.sendServerChat(connId, "Oh no...");
-        } else if (args.length == 2) {
-            // Error out; it's not a valid call.
-            server.sendServerChat(connId, "Oh no...");
+    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        if (args.get("type").getValue().equals(Disaster.RANDOM)) {
+            runDisasterCommand(connId, Disaster.getRandomDisaster());
         } else {
-            server.sendServerChat(connId, "disaster command failed (1).");
+            runDisasterCommand(connId, (Disaster) args.get("type").getValue());
         }
     }
 }

@@ -24,22 +24,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.gmCommands.GamemasterCommandPanel;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -54,6 +46,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
 import megamek.logging.MMLogger;
+import megamek.server.Server;
+import megamek.server.commands.*;
 
 /**
  * Context menu for the board.
@@ -208,23 +202,6 @@ public class MapMenu extends JPopupMenu {
                     itemCount++;
                 }
 
-            }
-
-            // Traitor Command
-            JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.Traitor"));
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TRAITOR.getCmd());
-            item.addActionListener(evt -> {
-                try {
-                    if (currentPanel instanceof MovementDisplay) {
-                        ((MovementDisplay) currentPanel).actionPerformed(evt);
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex, "");
-                }
-            });
-
-            if (game.getPhase().isMovement()) {
-                add(item);
             }
         }
 
@@ -433,10 +410,15 @@ public class MapMenu extends JPopupMenu {
 
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
+            JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
+            JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
+            JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
             var entities = client.getGame().getEntitiesVector(coords);
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
                 cfgMenu.add(createCustomMekMenuItem(entity));
+                traitorMenu.add(createTraitorMenuItem(entity));
+                killMenu.add(createKillMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
@@ -444,8 +426,39 @@ public class MapMenu extends JPopupMenu {
             if (cfgMenu.getItemCount() != 0) {
                 menu.add(cfgMenu);
             }
+            if (traitorMenu.getItemCount() != 0) {
+                menu.add(traitorMenu);
+            }
+            if (killMenu.getItemCount() != 0) {
+                menu.add(killMenu);
+            }
+            menu.add(specialCommandsMenu);
             return menu;
         }
+    }
+
+    private record Tuple(String name, GamemasterServerCommand command) {}
+
+    private JMenu createGMSpecialCommandsMenu() {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
+        var commands = List.of(
+            new Tuple("Kill Unit", new KillCommand(null, null)),
+            new Tuple("Change Ownership", new ChangeOwnershipCommand(null, null)),
+            new Tuple("Change Weather", new ChangeWeatherCommand(null, null)),
+            new Tuple("Disasters", new DisasterCommand(null, null)),
+            new Tuple("Orbital Bombardment", new OrbitalBombardmentCommand(null, null)),
+            new Tuple("Remove Smoke", new RemoveSmokeCommand(null, null)),
+            new Tuple("Firestarter", new FirestarterCommand(null, null)),
+            new Tuple("Firestorm", new FirestormCommand(null, null))
+            );
+
+        for (var cmd : commands) {
+            JMenuItem item = new JMenuItem(cmd.name());
+            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd.command()).setVisible(true));
+            menu.add(item);
+        }
+
+        return menu;
     }
 
     JMenuItem createCustomMekMenuItem(Entity entity) {
@@ -469,6 +482,79 @@ public class MapMenu extends JPopupMenu {
             med.setVisible(true);
             client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
+        });
+        return item;
+    }
+
+    private JMenuItem createTraitorMenuItem(Entity en) {
+        // Traitor Command
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.Traitor") + " " + en.getDisplayName());
+        item.addActionListener(evt -> {
+            gui.getBoardView().setShouldIgnoreKeys(false);
+            var players = client.getGame().getPlayersList();
+            Integer[] playerIds = new Integer[players.size() - 1];
+            String[] playerNames = new String[players.size() - 1];
+            String[] options = new String[players.size() - 1];
+
+            Player currentOwner = en.getOwner();
+            // Loop through the players vector and fill in the arrays
+            int idx = 0;
+            for (var player : players) {
+                if (player.getName().equals(currentOwner.getName())
+                    || (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+                    continue;
+                }
+                playerIds[idx] = player.getId();
+                playerNames[idx] = player.getName();
+                options[idx] = player.getName() + " (ID: " + player.getId() + ")";
+                idx++;
+            }
+
+            // No players available?
+            if (idx == 0) {
+                JOptionPane.showMessageDialog(gui.getFrame(),
+                    "No players available. Units cannot be traitored to players "
+                        + "that aren't assigned to a team.");
+                return;
+            }
+
+            // Dialog for choosing which player to transfer to
+            String option = (String) JOptionPane.showInputDialog(gui.getFrame(),
+                "Choose the player to gain ownership of this unit (" + en.getDisplayName() + ") when it turns traitor",
+                "Traitor", JOptionPane.QUESTION_MESSAGE, null,
+                options, options[0]);
+
+            // Verify that we have a valid option...
+            if (option != null) {
+                // Now that we've selected a player, correctly associate the ID and name
+                int id = playerIds[Arrays.asList(options).indexOf(option)];
+                String name = playerNames[Arrays.asList(options).indexOf(option)];
+
+                // And now we perform the actual transfer
+                int confirm = JOptionPane.showConfirmDialog(
+                    gui.getFrame(),
+                    en.getDisplayName() + " will switch to " + name
+                        + "'s side at the end of this turn. Are you sure?",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    client.sendChat(String.format("/changeOwner %d %d", en.getId(), id));
+                }
+            }
+        });
+
+        return item;
+    }
+
+    private JMenuItem createKillMenuItem(Entity en) {
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.KillUnit") + " " + en.getDisplayName());
+        item.addActionListener(evt -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                gui.getFrame(),
+                "Are you sure you want to kill " + en.getDisplayName() + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                client.sendChat(String.format("/kill %d", en.getId()));
+            }
         });
         return item;
     }

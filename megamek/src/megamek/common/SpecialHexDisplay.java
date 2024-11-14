@@ -97,15 +97,11 @@ public class SpecialHexDisplay implements Serializable {
         },
         PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), "note.png").toString()) {
             @Override
-            public boolean drawBefore() {
-                return true;
-            }
-
-            @Override
             public boolean drawAfter() {
                 return true;
             }
-        };
+        },
+        ORBITAL_BOMBARDMENT(new MegaMekFile(Configuration.hexesDir(), "obinc.gif").toString());
 
         private transient Image defaultImage;
         private final String defaultImagePath;
@@ -250,16 +246,17 @@ public class SpecialHexDisplay implements Serializable {
      * @return
      */
     public boolean isObscured(Player other) {
+        if (owner == null) {
+            return false;
+        }
         if ((obscured == SHD_OBSCURED_OWNER) && owner.equals(other)) {
             return false;
         } else if ((obscured == SHD_OBSCURED_TEAM) && (other != null)
                 && (owner.getTeam() == other.getTeam())) {
             return false;
-        } else if (obscured == SHD_OBSCURED_ALL) {
-            return false;
-        } else {
-            return true;
         }
+
+        return obscured != SHD_OBSCURED_ALL;
     }
 
     public void setObscured(int obscured) {
@@ -272,7 +269,7 @@ public class SpecialHexDisplay implements Serializable {
      * display
      * in the appropriate phase. Other bomb- or artillery-related graphics are
      * optional.
-     * 
+     *
      * @param phase
      * @param curRound
      * @param playerChecking

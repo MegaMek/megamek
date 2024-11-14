@@ -20,59 +20,47 @@ package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Luana Scoppio
  */
-public class KillCommand extends ServerCommand implements IsGM {
+public class KillCommand extends GamemasterServerCommand{
 
     private final TWGameManager gameManager;
 
     /** Creates new KillCommand */
     public KillCommand(Server server, TWGameManager gameManager) {
-        super(server, "kill", "Allows a GM to destroy a single unit instantly" +
+        super(server, gameManager, "kill", "Allows a GM to destroy a single unit instantly" +
                 "Usage: "+
                 "/kill <id> " +
                 "where id is the units ID. The units ID can be found by hovering over the unit.");
         this.gameManager = gameManager;
     }
 
+    @Override
+    public List<Argument<?>> defineArguments() {
+        return List.of(new IntegerArgument("unitID", 0, Integer.MAX_VALUE));
+    }
+
     /**
      * Run this command with the arguments supplied
      */
     @Override
-    public void run(int connId, String[] args) {
-
-        // Check to make sure gm kills are allowed!
-        if (!isGM(connId)) {
-            server.sendServerChat(connId, "You are not a Game Master.");
+    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        int unitId = (int) args.get("unitID").getValue();
+        // is the unit on the board?
+        var unit = gameManager.getGame().getEntity(unitId);
+        if (unit == null) {
+            server.sendServerChat(connId, "Specified unit is not on the board.");
             return;
         }
-        // Check argument integrity.
-        if (args.length == 2) {
-            // Check command
-            try {
-                int unitId = Integer.parseInt(args[1]);
-                // is the unit on the board?
-                var unit = gameManager.getGame().getEntity(unitId);
-                if (unit == null) {
-                    server.sendServerChat(connId, "Specified unit is not on the board.");
-                    return;
-                }
-                gameManager.destroyEntity(unit, "Act of God", false, false);
-                server.sendServerChat(connId, unit.getDisplayName() + " has been destroyed.");
-            } catch (NumberFormatException e) {
-                server.sendServerChat(connId, "Kill command failed (2).  Proper format is \"/kill <id>\" where id is the units numerical ID");
-            }
-        } else {
-            // Error out; it's not a valid call.
-            server.sendServerChat(connId, "Kill command failed (1).  Proper format is \"/kill <id>\" where id is the units ID");
-        }
-    }
-
-    @Override
-    public TWGameManager getGameManager() {
-        return gameManager;
+        gameManager.destroyEntity(unit, "Act of God", false, false);
+        server.sendServerChat(unit.getDisplayName() + " has been devastated.");
     }
 }

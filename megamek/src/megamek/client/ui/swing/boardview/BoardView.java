@@ -87,6 +87,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.server.props.OrbitalBombardment;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -637,6 +638,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.BOMB_DRIFT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
+        SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
@@ -1454,6 +1456,38 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return (clientgui != null) ? clientgui.getDisplayedWeapon().orElse(null) : null;
     }
 
+    private void drawOrbitalBombardmentHexes(Graphics boardGraphics) {
+        Image orbitalBombardmentImage = tileManager.getOrbitalBombardmentImage();
+        Rectangle view = boardGraphics.getClipBounds();
+        boolean justDraw = false;
+        // Compute the origin of the viewing area
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        // Compute size of viewing area
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        // Draw incoming artillery sprites - requires server to update client's
+        // view of game
+        for (Enumeration<OrbitalBombardment> attacks = game.getOrbitalBombardmentAttacks(); attacks.hasMoreElements();) {
+            final OrbitalBombardment orbitalBombardment = attacks.nextElement();
+            final Coords c = new Coords(orbitalBombardment.getX(), orbitalBombardment.getY());
+            // Is the Coord within the viewing area?
+            boolean insideViewArea = ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
+                && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight)));
+            if (insideViewArea) {
+                Point p = getHexLocation(c);
+                boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true), p.x, p.y, boardPanel);
+                for (Coords c2 : c.allAtDistanceOrLess(orbitalBombardment.getRadius())) {
+                    Point p2 = getHexLocation(c2);
+                    boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true), p2.x, p2.y, boardPanel);
+                }
+            }
+
+        }
+    }
+
     /**
      * Display artillery modifier in pretargeted hexes
      */
@@ -1638,6 +1672,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
             // Artillery targets
             drawArtilleryHexes(boardGraph);
+
+            // draw Orbital Bombardment targets;
+            drawOrbitalBombardmentHexes(boardGraph);
 
             // draw highlight border
             drawSprite(boardGraph, highlightSprite);

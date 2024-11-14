@@ -190,8 +190,11 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CheckBVTeamCommand(server));
         commands.add(new NukeCommand(server, this));
         commands.add(new KillCommand(server, this));
+        commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
         commands.add(new DisasterCommand(server, this));
+        commands.add(new FirestarterCommand(server, this));
+        commands.add(new FirestormCommand(server, this));
         commands.add(new RemoveSmokeCommand(server, this));
         commands.add(new ChangeWeatherCommand(server, this));
         commands.add(new TraitorCommand(server, this));
@@ -20194,8 +20197,6 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     range += entity.getElevation();
                 }
-            } else {
-                continue;
             }
 
             // We might need to nuke everyone in the explosion hex. If so...
@@ -20394,7 +20395,35 @@ public class TWGameManager extends AbstractGameManager {
      *             through it's builder.
      */
     public void addScheduledOrbitalBombardment(OrbitalBombardment orbitalBombardment) {
+        Report r = new Report(1302);
+        r.indent();
+        r.newlines = 0;
+        r.add("Unknown warship in orbit");
+        r.add(orbitalBombardment.getCoords().getBoardNum());
+        getvPhaseReport().addElement(r);
+        Report.addNewline(getvPhaseReport());
+
+        drawOrbitalBombardmentOnBoard(orbitalBombardment);
         scheduledOrbitalBombardment.add(orbitalBombardment);
+        getGame().setOrbitalBombardmentVector(new Vector<>(scheduledOrbitalBombardment));
+    }
+
+    private void drawOrbitalBombardmentOnBoard(OrbitalBombardment orbitalBombardment) {
+
+        for (var coord : orbitalBombardment.getCoords().allAtDistanceOrLess(orbitalBombardment.getRadius())) {
+            getGame().getBoard().addSpecialHexDisplay(
+                coord,
+                new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
+                    getGame().getRoundCount(),
+                    getGame().getPlayersList().get(0), // It doesnt matter which is the player, but I dont want to cause a nullpointer.
+                    "Orbital bombardment incoming, landing on round "
+                        + getGame().getRoundCount()
+                        + ", fired by an unknown warship in orbit",
+                    SpecialHexDisplay.SHD_OBSCURED_ALL)
+            );
+            sendChangedHex(coord);
+        }
     }
 
     /**
@@ -20419,8 +20448,15 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveScheduledOrbitalBombardments() {
         scheduledOrbitalBombardment
-            .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamageFactor(), ob.getRadius(), vPhaseReport));
+            .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamageFactor(), ob.getRadius()));
         scheduledOrbitalBombardment.clear();
+        getGame().resetOrbitalBombardmentAttacks();
+
+        // All right. We're done.
+        var r = new Report(1301, Report.PUBLIC);
+        r.indent();
+        r.newlines = 2;
+        getvPhaseReport().add(r);
     }
 
     /**
@@ -20446,19 +20482,12 @@ public class TWGameManager extends AbstractGameManager {
      * @param position  the position that will be hit by the orbital bombardment
      * @param damageFactor the factor by which the base damage will be multiplied
      * @param radius the radius which the damage will hit
-     * @param vDesc  a vector that contains the output report
      */
-    public void doOrbitalBombardment(Coords position, int damageFactor, int radius, Vector<Report> vDesc) {
-        // Just in case.
-        if (vDesc == null) {
-            vDesc = new Vector<>();
-        }
-
+    public void doOrbitalBombardment(Coords position, int damageFactor, int radius) {
         Report r = new Report(1300, Report.PUBLIC);
-
         r.indent();
         r.add(position.getBoardNum(), true);
-        vDesc.add(r);
+        getvPhaseReport().add(r);
 
         // Then, do actual blast damage.
         // Use the standard blast function for this.
@@ -20470,41 +20499,7 @@ public class TWGameManager extends AbstractGameManager {
         doExplosion(baseDamage, degradation , false, position, true, tmpV,
             blastedUnitsVec, -1, true);
         Report.indentAll(tmpV, 2);
-        vDesc.addAll(tmpV);
-
-        // Next, for whatever's left, do terrain effects
-        // such as clearing, roughing, and boiling off water.
-        boolean damageFlag = true;
-
-        // Lastly, do secondary effects.
-        for (Entity entity : game.getEntitiesVector()) {
-            // loaded units and off board units don't have a position,
-            // so we don't count 'em here
-            if ((entity.getTransportId() != Entity.NONE) || (entity.getPosition() == null)) {
-                continue;
-            }
-
-            // If it's already destroyed...
-            if ((entity.isDoomed()) || (entity.isDestroyed())) {
-                continue;
-            }
-
-            // If it's too far away for this...
-            if (position.distance(entity.getPosition()) > radius) {
-                continue;
-            }
-
-            // Actually do secondary effects against it.
-            // Since the effects are unit-dependant, we'll just define it in the
-            // entity.
-//            applySecondaryNuclearEffects(entity, position, vDesc);
-        }
-
-        // All right. We're done.
-        r = new Report(1216, Report.PUBLIC);
-        r.indent();
-        r.newlines = 2;
-        vDesc.add(r);
+        getvPhaseReport().addAll(tmpV);
     }
 
     /**
@@ -31690,6 +31685,10 @@ public class TWGameManager extends AbstractGameManager {
 
     void clearBombIcons() {
         game.getBoard().clearBombIcons();
+    }
+
+    void clearOrbitalBombardmentIcons() {
+        game.getBoard().clearOrbitalBombardmentIcons();
     }
 
     /**

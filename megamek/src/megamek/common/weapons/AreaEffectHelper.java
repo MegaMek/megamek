@@ -13,19 +13,16 @@
 */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import megamek.common.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
+import org.apache.commons.lang3.IntegerRange;
 
 /**
  * Class containing functionality that helps out with area effect weapons.
@@ -805,6 +802,14 @@ public class AreaEffectHelper {
             HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
             vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                     DamageType.IGNORE_PASSENGER, false, true));
+
+            // If there is nothing left to destroy in the unit
+            if (
+                entity.isDoomed()
+                && (!entity.hasUndamagedCriticalSlots() || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)
+            ) {
+                break;
+            }
             damage -= cluster;
         }
     }

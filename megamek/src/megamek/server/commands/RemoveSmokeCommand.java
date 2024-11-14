@@ -22,44 +22,30 @@ package megamek.server.commands;
 import megamek.common.planetaryconditions.Fog;
 import megamek.common.planetaryconditions.Wind;
 import megamek.server.Server;
+import megamek.server.commands.arguments.Argument;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Luana Scoppio
  */
-public class RemoveSmokeCommand extends ServerCommand implements IsGM {
-
-    private final TWGameManager gameManager;
+public class RemoveSmokeCommand extends GamemasterServerCommand {
 
     /** Creates new KillCommand */
     public RemoveSmokeCommand(Server server, TWGameManager gameManager) {
-        super(server, "nosmoke", "GM removes all smoke cloud hexes. Usage: /nosmoke");
-        this.gameManager = gameManager;
-    }
-
-    /**
-     * Run this command with the arguments supplied
-     */
-    @Override
-    public void run(int connId, String[] args) {
-        if (!isGM(connId)) {
-            server.sendServerChat(connId, "You are not a Game Master.");
-            return;
-        }
-
-        // Check argument integrity.
-        if (args.length == 1) {
-            // Check command
-            gameManager.getSmokeCloudList().forEach(gameManager::removeSmokeTerrain);
-            server.sendServerChat(connId, "GM cleared the smoke clouds.");
-        } else {
-            // Error out; it's not a valid call.
-            server.sendServerChat(connId, "nosmoke command failed (1).");
-        }
+        super(server, gameManager, "nosmoke", "GM removes all smoke cloud hexes. Usage: /nosmoke");
     }
 
     @Override
-    public TWGameManager getGameManager() {
-        return gameManager;
+    public List<Argument<?>> defineArguments() {
+        return List.of();
+    }
+
+    @Override
+    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        gameManager.getSmokeCloudList().forEach(gameManager::removeSmokeTerrain);
+        server.sendServerChat(connId, "GM cleared the smoke clouds.");
     }
 }

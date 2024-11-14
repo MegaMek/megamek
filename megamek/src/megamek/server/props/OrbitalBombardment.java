@@ -18,6 +18,8 @@
  */
 package megamek.server.props;
 
+import megamek.common.Coords;
+
 /**
  * Represents an orbital bombardment event.
  * x and y are board positions, damageFactor is the damage at impact point times 10, and radius is the blast radius of the explosion with
@@ -31,19 +33,23 @@ public class OrbitalBombardment {
     private final int y;
     private final int damageFactor;
     private final int radius;
-
+    private final Coords coords;
     /**
      * Represents an orbital bombardment event.
      * x and y are board positions, damageFactor is the damage at impact point times 10, and radius is the blast radius of the explosion with
      * regular/linear damage droppoff.
      *
-     * @param builder
      */
     private OrbitalBombardment(Builder builder) {
         this.x = builder.x;
         this.y = builder.y;
         this.damageFactor = builder.damageFactor;
         this.radius = builder.radius;
+        this.coords = new Coords(x, y);
+    }
+
+    public Coords getCoords() {
+        return coords;
     }
 
     public int getX() {

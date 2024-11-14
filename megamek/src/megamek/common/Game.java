@@ -15,12 +15,6 @@
  */
 package megamek.common;
 
-import static java.util.stream.Collectors.toList;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -39,8 +33,15 @@ import megamek.common.planetaryconditions.WindDirection;
 import megamek.common.weapons.AttackHandler;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
+import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
@@ -113,7 +114,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private Vector<Minefield> vibrabombs = new Vector<>();
     private Vector<AttackHandler> attacks = new Vector<>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<>();
-
+    private Vector<OrbitalBombardment> orbitalBombardmentAttacks = new Vector<OrbitalBombardment>();
     private int lastEntityId;
 
     private Vector<TagInfo> tagInfoForTurn = new Vector<>();
@@ -2200,6 +2201,19 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
         turnVector.removeAll(turnsToRemove);
         return turnsToRemove.size();
+    }
+
+    public void setOrbitalBombardmentVector(Vector<OrbitalBombardment> v) {
+        orbitalBombardmentAttacks = v;
+        processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    public void resetOrbitalBombardmentAttacks() {
+        orbitalBombardmentAttacks.removeAllElements();
+    }
+
+    public Enumeration<OrbitalBombardment> getOrbitalBombardmentAttacks() {
+        return orbitalBombardmentAttacks.elements();
     }
 
     public void setArtilleryVector(Vector<ArtilleryAttackAction> v) {

@@ -1,25 +1,20 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Coords;
-import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.EnumArgument;
@@ -27,12 +22,13 @@ import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
- * @author Luana Scoppio
+ * @author Luana Coppio
  */
 public class DisasterCommand extends GamemasterServerCommand {
+
+    public static final String TYPE = "type";
 
     enum Disaster {
         RANDOM,
@@ -56,18 +52,12 @@ public class DisasterCommand extends GamemasterServerCommand {
     }
 
     public DisasterCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "gomorrah", "GM calls a disaster, arguments in square brackets are optional. " +
-            "Usage: /gomorrah [type]  " +
-            "if not type is passed, one is chosen at random. " +
-            "Type can be one of the following: hurricane, lightning, ob, ob2, ob3, sandstorm, hailstorm, eclipse, solarflare, " +
-            "supernova, smog, firestorm, traitor. " +
-            "The type ob, ob2 and ob3 are orbital bombardment with one, two or three random hit locations, at default values " +
-            "for damage (100) and radius (4).");
+        super(server, gameManager, "disaster", Messages.getString("Gamemaster.cmd.disaster.help"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new EnumArgument<>("type", Disaster.class, Disaster.RANDOM));
+        return List.of(new EnumArgument<>(TYPE, Messages.getString("Gamemaster.cmd.disaster.type"), Disaster.class, Disaster.RANDOM));
     }
 
     private void runDisasterCommand(int connId, Disaster disaster) {
@@ -157,10 +147,10 @@ public class DisasterCommand extends GamemasterServerCommand {
      */
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
-        if (args.get("type").getValue().equals(Disaster.RANDOM)) {
+        if (args.get(TYPE).getValue().equals(Disaster.RANDOM)) {
             runDisasterCommand(connId, Disaster.getRandomDisaster());
         } else {
-            runDisasterCommand(connId, (Disaster) args.get("type").getValue());
+            runDisasterCommand(connId, (Disaster) args.get(TYPE).getValue());
         }
     }
 }

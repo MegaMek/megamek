@@ -441,22 +441,14 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createGMSpecialCommandsMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        var commands = List.of(
-            new Tuple("Kill Unit", new KillCommand(null, null)),
-            new Tuple("Change Ownership", new ChangeOwnershipCommand(null, null)),
-            new Tuple("Change Weather", new ChangeWeatherCommand(null, null)),
-            new Tuple("Disasters", new DisasterCommand(null, null)),
-            new Tuple("Orbital Bombardment", new OrbitalBombardmentCommand(null, null)),
-            new Tuple("Remove Smoke", new RemoveSmokeCommand(null, null)),
-            new Tuple("Firestarter", new FirestarterCommand(null, null)),
-            new Tuple("Firestorm", new FirestormCommand(null, null))
-            );
-
-        for (var cmd : commands) {
-            JMenuItem item = new JMenuItem(cmd.name());
-            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd.command()).setVisible(true));
-            menu.add(item);
-        }
+        Server.getServerInstance().getAllCommands().stream()
+            .filter(cmd -> cmd instanceof GamemasterServerCommand)
+            .map(cmd -> (GamemasterServerCommand) cmd)
+            .forEach(cmd -> {
+                JMenuItem item = new JMenuItem(cmd.getName());
+                item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd).setVisible(true));
+                menu.add(item);
+            });
 
         return menu;
     }

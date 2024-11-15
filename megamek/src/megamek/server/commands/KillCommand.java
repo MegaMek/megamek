@@ -1,24 +1,19 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
-import megamek.common.options.OptionsConstants;
+import megamek.client.ui.Messages;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.IntegerArgument;
@@ -28,24 +23,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Luana Scoppio
+ * @author Luana Coppio
  */
 public class KillCommand extends GamemasterServerCommand{
 
-    private final TWGameManager gameManager;
+    public static final String UNIT_ID = "unitID";
 
     /** Creates new KillCommand */
     public KillCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "kill", "Allows a GM to destroy a single unit instantly" +
-                "Usage: "+
-                "/kill <id> " +
-                "where id is the units ID. The units ID can be found by hovering over the unit.");
-        this.gameManager = gameManager;
+        super(server, gameManager, "kill", Messages.getString("Gamemaster.cmd.kill.help"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new IntegerArgument("unitID", 0, Integer.MAX_VALUE));
+        return List.of(new IntegerArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")));
     }
 
     /**
@@ -53,14 +44,14 @@ public class KillCommand extends GamemasterServerCommand{
      */
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
-        int unitId = (int) args.get("unitID").getValue();
+        int unitId = (int) args.get(UNIT_ID).getValue();
         // is the unit on the board?
         var unit = gameManager.getGame().getEntity(unitId);
         if (unit == null) {
-            server.sendServerChat(connId, "Specified unit is not on the board.");
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.missingUnit"));
             return;
         }
-        gameManager.destroyEntity(unit, "Act of God", false, false);
-        server.sendServerChat(unit.getDisplayName() + " has been devastated.");
+        gameManager.destroyEntity(unit, Messages.getString("Gamemaster.cmd.kill.reason"), false, false);
+        server.sendServerChat(unit.getDisplayName() + Messages.getString("Gamemaster.cmd.kill.success"));
     }
 }

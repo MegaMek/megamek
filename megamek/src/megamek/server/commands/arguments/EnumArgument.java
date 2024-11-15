@@ -1,13 +1,15 @@
 package megamek.server.commands.arguments;
 
+import megamek.client.ui.Messages;
+
 import java.util.Arrays;
 
 public class EnumArgument<E extends Enum<E>> extends Argument<E> {
     private final Class<E> enumType;
     private final E defaultValue;
 
-    public EnumArgument(String name, Class<E> enumType, E defaultValue) {
-        super(name);
+    public EnumArgument(String name, String description, Class<E> enumType, E defaultValue) {
+        super(name, description);
         this.enumType = enumType;
         this.defaultValue = defaultValue;
     }
@@ -41,4 +43,14 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
         }
         return value;
     }
+
+    @Override
+    public String getHelp() {
+        return getDescription() +
+            " (" + String.join(", ", Arrays.toString(enumType.getEnumConstants())) + ")" +
+            (defaultValue != null ?
+                " [default: " + defaultValue + "]. " + Messages.getString("Gamemaster.cmd.params.optional") :
+                " " + Messages.getString("Gamemaster.cmd.params.required"));
+    }
+
 }

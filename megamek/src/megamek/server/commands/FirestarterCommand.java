@@ -1,23 +1,19 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
@@ -32,26 +28,28 @@ import java.util.Objects;
 /**
  * The Server Command "/firestarter" that will put one hex on fire.
  *
- * @author Luana Scoppio
+ * @author Luana Coppio
  */
 public class FirestarterCommand extends GamemasterServerCommand {
+
+    private static final String FIRESTARTER = "firestarter";
+    private static final String X = "x";
+    private static final String Y = "y";
+    private static final String TYPE = "type";
 
     public FirestarterCommand(Server server, TWGameManager gameManager) {
         super(server,
             gameManager,
-            "firestarter",
-            "Starts fire in one specific hex at a specific intensity. "
-                + "Usage: /firestarter <x> <y> [<intensity>]  "
-                + "The intensity can be 1=Norma, 2=Inferno, 3=Inferno Bomb or 4=Inferno IV, default is 1.");
+            FIRESTARTER,
+            Messages.getString("Gamemaster.cmd.fire.help"));
     }
-
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument("x"),
-            new IntegerArgument("y"),
-            new IntegerArgument("intensity", 1, 4, 1));
+            new IntegerArgument(X, Messages.getString("Gamemaster.cmd.x")),
+            new IntegerArgument(Y, Messages.getString("Gamemaster.cmd.y")),
+            new IntegerArgument(TYPE, Messages.getString("Gamemaster.cmd.fire.type"), 1, 4, 1));
     }
 
     /**
@@ -61,10 +59,9 @@ public class FirestarterCommand extends GamemasterServerCommand {
      */
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
-        int xArg = (int) args.get("x").getValue() - 1;
-        int yArg = (int) args.get("y").getValue() -1;
-        int fireType = (int) args.get("intensity").getValue();
-
+        int xArg = (int) args.get(X).getValue() - 1;
+        int yArg = (int) args.get(Y).getValue() - 1;
+        int fireType = (int) args.get(TYPE).getValue();
         igniteHex(new Coords(xArg, yArg), fireType);
     }
 
@@ -77,5 +74,4 @@ public class FirestarterCommand extends GamemasterServerCommand {
             throw new IllegalArgumentException("Failed to ignite hex: " + e.getMessage());
         }
     }
-
 }

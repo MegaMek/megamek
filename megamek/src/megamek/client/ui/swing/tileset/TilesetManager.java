@@ -77,7 +77,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     private static final String FILENAME_ARTILLERY_ADJUSTED_IMAGE = "artyadj.gif";
     private static final String FILENAME_ARTILLERY_INCOMING_IMAGE = "artyinc.gif";
 
-    private static final String FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE = "obinc.gif";
+    public static final String FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE = "obinc.gif";
 
     public static final int ARTILLERY_AUTOHIT = 0;
     public static final int ARTILLERY_ADJUSTED = 1;

@@ -152,45 +152,58 @@ class BoardTableModel extends AbstractTableModel {
         return height.get(row);
     }
 
+    public List<String> getTagAt(int row) {
+        if (tags.size() <= row) {
+            return null;
+        }
+
+        String tag = tags.get(row);
+        tag = tag.substring(1, tag.length() -1);
+        return Arrays.stream(tag.split(", ")).toList();
+    }
+
     public ImageIcon getIconAt(int row, int height) {
+        ImageIcon icon = null;
         String path = getPathAt(row);
-        Board board = new Board(16, 17);
-        board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
 
-        BufferedImage image = Minimap.getMinimapImageMaxZoom(board);
+        if (path != null) {
+            Board board = new Board(16, 17);
+            board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
 
-        int scaledHeight = Math.min(image.getHeight(), height);
-        int scaledWidth = Math.max(1, image.getWidth() * scaledHeight / image.getHeight());
+            BufferedImage image = Minimap.getMinimapImageMaxZoom(board);
 
-        image = ImageUtil.getScaledImage(image, scaledWidth, scaledHeight);
-        ImageIcon icon = new ImageIcon(image);
+            int scaledHeight = Math.min(image.getHeight(), height);
+            int scaledWidth = Math.max(1, image.getWidth() * scaledHeight / image.getHeight());
+
+            image = ImageUtil.getScaledImage(image, scaledWidth, scaledHeight);
+            icon = new ImageIcon(image);
+        }
+
         return icon;
     }
 
     public String getInfoAt(int row) {
+        String info = "";
         String path = getPathAt(row);
-        Board board = new Board(16, 17);
-        board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
 
-        String info;
-        String col = UIUtil.tag("TD", "", path);
-        info = UIUtil.tag("TR", "", col);
-        col = UIUtil.tag("TD", "", board.getWidth() + "x" + board.getHeight());
-        info += UIUtil.tag("TR", "", col);
-        col = UIUtil.tag("TD", "", board.getTags().toString());
-        info += UIUtil.tag("TR", "", col);
-        info = UIUtil.tag("TABLE", "", info);
-        String attr = String.format("WIDTH=%s", UIUtil.scaleForGUI(500));
-        info = UIUtil.tag("DIV", attr,  info);
-        info = UIUtil.tag("BODY", "", info);
-        info = UIUtil.tag("HTML", "", info);
+        if (path != null) {
+            Board board = new Board(16, 17);
+            board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
+
+
+            String col = UIUtil.tag("TD", "", path);
+            info = UIUtil.tag("TR", "", col);
+            col = UIUtil.tag("TD", "", board.getWidth() + "x" + board.getHeight());
+            info += UIUtil.tag("TR", "", col);
+            col = UIUtil.tag("TD", "", board.getTags().toString());
+            info += UIUtil.tag("TR", "", col);
+            info = UIUtil.tag("TABLE", "", info);
+            String attr = String.format("WIDTH=%s", UIUtil.scaleForGUI(500));
+            info = UIUtil.tag("DIV", attr, info);
+            info = UIUtil.tag("BODY", "", info);
+            info = UIUtil.tag("HTML", "", info);
+        }
 
         return info;
-    }
-
-    public List<String> getTagAt(int row) {
-        String tag = tags.get(row);
-        tag = tag.substring(1, tag.length() -1);
-        return Arrays.stream(tag.split(", ")).toList();
     }
 }

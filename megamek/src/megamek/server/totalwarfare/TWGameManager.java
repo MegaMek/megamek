@@ -20306,17 +20306,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private void orbitalBombardmentDamage(Coords position, Vector<Report> vDesc, Entity e, int damage) {
+        var distanceFromGroundZero = e.getPosition().distance(position);
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             int table = ToHitData.HIT_NORMAL;
             int hitSide = ToHitData.SIDE_RANDOM;
+
             if (e instanceof ProtoMek) {
                 table = ToHitData.HIT_SPECIAL_PROTO;
-            } else if (e instanceof Mek) {
-                table = ToHitData.HIT_ABOVE;
-                hitSide = e.sideTable(position);
-            } else if (e instanceof Tank) {
-                if (e.isAirborneVTOLorWIGE()) {
+            } else if ((e instanceof Mek) || (e instanceof Tank)) {
+                if (distanceFromGroundZero == 0) {
                     table = ToHitData.HIT_ABOVE;
                 }
                 hitSide = e.sideTable(position);
@@ -20409,20 +20408,19 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     private void drawOrbitalBombardmentOnBoard(OrbitalBombardment orbitalBombardment) {
-
         for (var coord : orbitalBombardment.getCoords().allAtDistanceOrLess(orbitalBombardment.getRadius())) {
             getGame().getBoard().addSpecialHexDisplay(
                 coord,
                 new SpecialHexDisplay(
                     SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
                     getGame().getRoundCount(),
-                    getGame().getPlayersList().get(0), // It doesnt matter which is the player, but I dont want to cause a nullpointer.
+                    getGame().getPlayersList().get(0), // It doesnt the player, I just dont want to cause a nullpointer.
                     "Orbital bombardment incoming, landing on round "
                         + getGame().getRoundCount()
                         + ", fired by an unknown warship in orbit",
                     SpecialHexDisplay.SHD_OBSCURED_ALL)
             );
-            sendChangedHex(coord);
+            sendChangedHex(coords);
         }
     }
 
@@ -20447,13 +20445,21 @@ public class TWGameManager extends AbstractGameManager {
      * explode any scheduled orbital bombardments
      */
     void resolveScheduledOrbitalBombardments() {
+        if (scheduledOrbitalBombardment.isEmpty()) {
+            return;
+        }
+
+        var r = new Report(1303, Report.PUBLIC);
+        r.indent();
+        r.newlines = 2;
+        getvPhaseReport().add(r);
+
         scheduledOrbitalBombardment
-            .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamageFactor(), ob.getRadius()));
+            .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamage(), ob.getRadius()));
         scheduledOrbitalBombardment.clear();
         getGame().resetOrbitalBombardmentAttacks();
 
-        // All right. We're done.
-        var r = new Report(1301, Report.PUBLIC);
+        r = new Report(1301, Report.PUBLIC);
         r.indent();
         r.newlines = 2;
         getvPhaseReport().add(r);
@@ -20480,10 +20486,10 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * do an orbital bombardment
      * @param position  the position that will be hit by the orbital bombardment
-     * @param damageFactor the factor by which the base damage will be multiplied
+     * @param damage the damage of the bombardment at target hex
      * @param radius the radius which the damage will hit
      */
-    public void doOrbitalBombardment(Coords position, int damageFactor, int radius) {
+    public void doOrbitalBombardment(Coords position, int damage, int radius) {
         Report r = new Report(1300, Report.PUBLIC);
         r.indent();
         r.add(position.getBoardNum(), true);
@@ -20494,9 +20500,8 @@ public class TWGameManager extends AbstractGameManager {
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
         int range = radius + 1;
-        int baseDamage = damageFactor * 10;
-        var degradation = baseDamage / range;
-        doExplosion(baseDamage, degradation , false, position, true, tmpV,
+        var degradation = damage / range;
+        doExplosion(damage, degradation , false, position, true, tmpV,
             blastedUnitsVec, -1, true);
         Report.indentAll(tmpV, 2);
         getvPhaseReport().addAll(tmpV);

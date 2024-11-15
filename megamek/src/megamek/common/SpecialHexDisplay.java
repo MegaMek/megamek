@@ -23,6 +23,8 @@ import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
+import static megamek.client.ui.swing.tileset.TilesetManager.FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE;
+
 /**
  * @author dirk
  */
@@ -101,7 +103,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ORBITAL_BOMBARDMENT(new MegaMekFile(Configuration.hexesDir(), "obinc.gif").toString());
+        ORBITAL_BOMBARDMENT(new MegaMekFile(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE).toString());
 
         private transient Image defaultImage;
         private final String defaultImagePath;

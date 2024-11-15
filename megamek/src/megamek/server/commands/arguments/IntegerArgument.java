@@ -1,20 +1,24 @@
 package megamek.server.commands.arguments;
 
+import megamek.client.ui.Messages;
+
+import java.util.Arrays;
+
 public class IntegerArgument extends Argument<Integer> {
     private final int minValue;
     private final int maxValue;
     private final Integer defaultValue;
 
-    public IntegerArgument(String name) {
-        this(name, Integer.MIN_VALUE, Integer.MAX_VALUE, null);
+    public IntegerArgument(String name, String description) {
+        this(name, description, Integer.MIN_VALUE, Integer.MAX_VALUE, null);
     }
 
-    public IntegerArgument(String name, int minValue, int maxValue) {
-        this(name, minValue, maxValue, null);
+    public IntegerArgument(String name, String description, int minValue, int maxValue) {
+        this(name, description, minValue, maxValue, null);
     }
 
-    public IntegerArgument(String name, int minValue, int maxValue, Integer defaultValue) {
-        super(name);
+    public IntegerArgument(String name, String description, int minValue, int maxValue, Integer defaultValue) {
+        super(name, description);
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.defaultValue = defaultValue;
@@ -60,4 +64,13 @@ public class IntegerArgument extends Argument<Integer> {
     public int getMaxValue() {
         return maxValue;
     }
+
+    @Override
+    public String getHelp() {
+        return getDescription() + (minValue == Integer.MIN_VALUE ? "": " Min: " + minValue) +
+            (defaultValue != null ?
+                " [default: " + defaultValue + "]. " + Messages.getString("Gamemaster.cmd.params.optional") :
+                " " + Messages.getString("Gamemaster.cmd.params.required"));
+    }
+
 }

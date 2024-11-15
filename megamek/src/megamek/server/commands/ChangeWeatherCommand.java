@@ -1,71 +1,59 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.common.planetaryconditions.*;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
- * @author Luana Scoppio
+ * @author Luana Coppio
  */
 public class ChangeWeatherCommand extends GamemasterServerCommand {
 
-    private static final String HELP_TEXT = "GM changes (weather) planetary conditions. The parameters are optional and unordered " +
-        "and the effects are applied at the beginning of the next turn. The square brackets means that argument is optional. " +
-        "Usage format: /weather [fog=0-2] [wind=0-6] [winddir=0-6] [light=0-6] [atmo=0-5] [blowsand=0-1] [weather=0-14]  " +
-        "light= 0: daylight, 1: dusk, 2: full moon, 3: glare, 4: moonless night, 5: solar flare, 6: pitch black  " +
-        "fog= 0: none, 1: light, 2: heavy  " +
-        "wind= 0: calm, 1: light gale, 2: moderate gale, 3: strong gale, 4: storm, 5: tornado F1-F3, 6: tornado F4  " +
-        "winddir= 0: south, 1: southwest, 2: northwest, 3: north, 4: northeast, 5: southeast, 6: random  " +
-        "atmo= 0: vacuum, 1: trace, 2: thin, 3: standard, 4: high, 5: very high  " +
-        "blowsand= 0: no, 1: yes  " +
-        "emi= 0: no, 1: yes  " +
-        "weather= 0: clear, 1: light rain, 2: moderate rain, 3: heavy rain, 4: gusting rain, 5: downpour, 6: light snow " +
-        "7: moderate snow, 8: snow flurries, 9: heavy snow, 10: sleet, 11: ice storm, 12: light hail, 13: heavy hail " +
-        "14: lightning storm";
+    private static final String FOG = "fog";
+    private static final String LIGHT = "light";
+    private static final String WIND = "wind";
+    private static final String WIND_DIR = "winddir";
+    private static final String ATMO = "atmo";
+    private static final String BLOWSAND = "blowsand";
+    private static final String EMIS = "emi";
+    private static final String WEATHER = "weather";
 
     /** Creates new ChangeWeatherCommand */
     public ChangeWeatherCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "weather", HELP_TEXT);
+        super(server, gameManager, WEATHER, Messages.getString("Gamemaster.cmd.changeweather.help"));
     }
 
+    @Override
     public List<Argument<?>> defineArguments() {
-        List<Argument<?>> arguments = new ArrayList<>();
-        arguments.add(new IntegerArgument("fog", 0, 2));
-        arguments.add(new IntegerArgument("light", 0, 6));
-        arguments.add(new IntegerArgument("wind", 0, 6));
-        arguments.add(new IntegerArgument("atmo", 0, 5));
-        arguments.add(new IntegerArgument("blowsand", 0, 1));
-        arguments.add(new IntegerArgument("emi", 0, 1));
-        arguments.add(new IntegerArgument("weather", 0, 14));
-        return arguments;
+        return List.of(new OptionalIntegerArgument(FOG, Messages.getString("Gamemaster.cmd.changeweather.fog"), 0, 2),
+            new OptionalIntegerArgument(LIGHT, Messages.getString("Gamemaster.cmd.changeweather.light"), 0, 6),
+            new OptionalIntegerArgument(WIND, Messages.getString("Gamemaster.cmd.changeweather.wind"), 0, 6),
+            new OptionalIntegerArgument(WIND_DIR, Messages.getString("Gamemaster.cmd.changeweather.winddir"), 0, 6),
+            new OptionalIntegerArgument(ATMO, Messages.getString("Gamemaster.cmd.changeweather.atmo"), 0, 5),
+            new OptionalIntegerArgument(BLOWSAND, Messages.getString("Gamemaster.cmd.changeweather.blowsand"), 0, 1),
+            new OptionalIntegerArgument(EMIS, Messages.getString("Gamemaster.cmd.changeweather.emi"), 0, 1),
+            new OptionalIntegerArgument(WEATHER, Messages.getString("Gamemaster.cmd.changeweather.weather"), 0, 14));
     }
 
     private void updatePlanetaryCondition(int value, int connId, int maxLength, Consumer<Integer> setter,
@@ -78,7 +66,6 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
         }
     }
 
-
     private record Condition(int maxLength, Consumer<Integer> setter, Function<Integer, String> successMessage, Function<Integer, String> errorMessage) {}
 
     /**
@@ -89,27 +76,36 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
         var planetaryConditions = getGameManager().getGame().getPlanetaryConditions();
 
         Map<String, Condition> conditions = Map.of(
-            "fog", new Condition(Fog.values().length, value -> planetaryConditions.setFog(Fog.values()[value]),
-                value -> "The fog has changed.", maxLength -> "Invalid fog value. Must be between 0 and " + (maxLength - 1)),
-            "wind", new Condition(Wind.values().length, value -> planetaryConditions.setWind(Wind.values()[value]),
-                value -> "The wind strength has changed.", maxLength -> "Invalid wind value. Must be between 0 and " + (maxLength - 1)),
-            "winddir", new Condition(WindDirection.values().length, value -> planetaryConditions.setWindDirection(WindDirection.values()[value]),
-                value -> "The wind direction has changed.", maxLength -> "Invalid wind direction value. Must be between 0 and " + (maxLength - 1)),
-            "light", new Condition(Light.values().length, value -> planetaryConditions.setLight(Light.values()[value]),
-                value -> "The light has changed.", maxLength -> "Invalid light value. Must be between 0 and " + (maxLength - 1)),
-            "atmo", new Condition(Atmosphere.values().length, value -> planetaryConditions.setAtmosphere(Atmosphere.values()[value]),
-                value -> value == 0 ? "The air has vanished, put your vac suits!" : "The air is changing.", maxLength -> "Invalid atmosphere value. Must be between 0 and " + (maxLength - 1)),
-            "blowsand", new Condition(BlowingSand.values().length, value -> planetaryConditions.setBlowingSand(BlowingSand.values()[value]),
-                value -> value == 1 ? "Sand started blowing." : "The sand has settled.", maxLength -> "Invalid blowsand value. Must be between 0 and " + (maxLength - 1)),
-            "weather", new Condition(Weather.values().length, value -> planetaryConditions.setWeather(Weather.values()[value]),
-                value -> "The weather has changed.", maxLength -> "Invalid weather value. Must be between 0 and " + (maxLength - 1)),
-            "emi", new Condition(EMI.values().length, value -> planetaryConditions.setEMI(EMI.values()[value]),
-                value -> value == 1 ? "EMI is active." : "EMI is inactive.", maxLength -> "Invalid EMI value. Must be between 0 and " + (maxLength - 1))
+            FOG, new Condition(Fog.values().length, value -> planetaryConditions.setFog(Fog.values()[value]),
+                value -> Messages.getString("Gamemaster.cmd.changeweather.fog.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.fog.error", (maxLength - 1))),
+            WIND, new Condition(Wind.values().length, value -> planetaryConditions.setWind(Wind.values()[value]),
+                value -> Messages.getString("Gamemaster.cmd.changeweather.wind.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.wind.error", (maxLength - 1))),
+            WIND_DIR, new Condition(WindDirection.values().length, value -> planetaryConditions.setWindDirection(WindDirection.values()[value]),
+                value -> Messages.getString("Gamemaster.cmd.changeweather.winddir.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.winddir.error", (maxLength - 1))),
+            LIGHT, new Condition(Light.values().length, value -> planetaryConditions.setLight(Light.values()[value]),
+                value -> Messages.getString("Gamemaster.cmd.changeweather.light.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.light.error", (maxLength - 1))),
+            ATMO, new Condition(Atmosphere.values().length, value -> planetaryConditions.setAtmosphere(Atmosphere.values()[value]),
+                value -> value == 0 ? Messages.getString("Gamemaster.cmd.changeweather.atmo.success0") : Messages.getString("Gamemaster.cmd.changeweather.atmo.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.atmo.error", (maxLength - 1))),
+            BLOWSAND, new Condition(BlowingSand.values().length, value -> planetaryConditions.setBlowingSand(BlowingSand.values()[value]),
+                value -> value == 1 ? Messages.getString("Gamemaster.cmd.changeweather.blowsand.success1") : Messages.getString("Gamemaster.cmd.changeweather.blowsand.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.blowsand.error", (maxLength - 1))),
+            WEATHER, new Condition(Weather.values().length, value -> planetaryConditions.setWeather(Weather.values()[value]),
+                value -> Messages.getString("Gamemaster.cmd.changeweather.weather.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.weather.error", (maxLength - 1))),
+            EMIS, new Condition(EMI.values().length, value -> planetaryConditions.setEMI(EMI.values()[value]),
+                value -> value == 1 ? Messages.getString("Gamemaster.cmd.changeweather.emi.success1") : Messages.getString("Gamemaster.cmd.changeweather.emi.success"),
+                maxLength -> Messages.getString("Gamemaster.cmd.changeweather.emi.error", (maxLength - 1)))
         );
+
         conditions.forEach((prefix, condition) -> {
-            if (args.containsKey(prefix)) {
+            if (args.containsKey(prefix) && ((OptionalIntegerArgument) args.get(prefix)).getValue().isPresent()) {
                 updatePlanetaryCondition(
-                    (int) args.get(prefix).getValue(),
+                    ((OptionalIntegerArgument) args.get(prefix)).getValue().get(),
                     connId,
                     condition.maxLength,
                     condition.setter,
@@ -120,5 +116,4 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
 
         getGameManager().getGame().setPlanetaryConditions(planetaryConditions);
     }
-
 }

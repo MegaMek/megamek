@@ -1,23 +1,19 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MegaMek.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- * MegaMek is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * MegaMek is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
+import megamek.client.ui.Messages;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
@@ -31,7 +27,9 @@ import java.util.*;
  * @author Luana Coppio
  */
 public abstract class GamemasterServerCommand extends ServerCommand {
-
+    private static final String NEWLINE = "\n";
+    private static final String WHITESPACE = " ";
+    private static final String LONG_WHITESPACE = "   ";
     private static final String EMPTY_ARGUMENT = null;
     protected final TWGameManager gameManager;
     protected final static MMLogger logger = MMLogger.create(GamemasterServerCommand.class);
@@ -82,6 +80,7 @@ public abstract class GamemasterServerCommand extends ServerCommand {
 
     // Parses the arguments using the definition
     private Map<String, Argument<?>> parseArguments(String[] args) {
+
         List<Argument<?>> argumentDefinitions = defineArguments();
         Map<String, Argument<?>> parsedArguments = new HashMap<>();
         List<String> positionalArguments = new ArrayList<>();
@@ -94,7 +93,8 @@ public abstract class GamemasterServerCommand extends ServerCommand {
 
         // Separate positional arguments and named arguments
         boolean namedArgumentStarted = false;
-        for (String arg : List.of(args)) {
+        for (int i = 1; i < args.length; i++) {
+            String arg = args[i];
             String[] keyValue = arg.split("=");
 
             if (keyValue.length == 2) {
@@ -138,6 +138,43 @@ public abstract class GamemasterServerCommand extends ServerCommand {
         }
 
         return parsedArguments;
+    }
+
+    public String getHelpHtml() {
+        return "<html>" +
+            this.getHelp()
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("   ", "&#9;")
+                .replaceAll(NEWLINE, "<br>")+
+            "</html>";
+    }
+
+    @Override
+    public String getHelp() {
+        StringBuilder help = new StringBuilder();
+        help.append(super.getHelp())
+            .append(NEWLINE)
+            .append(Messages.getString("Gamemaster.cmd.help"))
+            .append(NEWLINE)
+            .append("/")
+            .append(getName());
+
+        for (Argument<?> arg : defineArguments()) {
+            help.append(WHITESPACE)
+                .append(arg.getRepr());
+        }
+
+        help.append(NEWLINE);
+        for (var arg : defineArguments()) {
+            help.append(LONG_WHITESPACE)
+                .append(arg.getName())
+                .append(":")
+                .append(WHITESPACE)
+                .append(arg.getHelp())
+                .append(NEWLINE);
+        }
+        return help.toString();
     }
 
     // The new method for game master commands that uses parsed arguments

@@ -4790,6 +4790,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return result;
     }
 
+    /**
+     * @return true if the entity has any critical slot that isn't damaged yet
+     */
     public boolean hasUndamagedCriticalSlots() {
         return IntStream.range(0, locations())
             .mapToLong(i -> getCriticalSlots(i)

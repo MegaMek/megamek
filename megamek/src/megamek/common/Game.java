@@ -2203,15 +2203,25 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return turnsToRemove.size();
     }
 
-    public void setOrbitalBombardmentVector(Vector<OrbitalBombardment> v) {
-        orbitalBombardmentAttacks = v;
+    /**
+     * Set the new vector of orbital bombardments for this round.
+     * @param orbitalBombardments
+     */
+    public void setOrbitalBombardmentVector(Vector<OrbitalBombardment> orbitalBombardments) {
+        orbitalBombardmentAttacks = orbitalBombardments;
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
+    /**
+     * Resets the orbital bombardment attacks list.
+     */
     public void resetOrbitalBombardmentAttacks() {
         orbitalBombardmentAttacks.removeAllElements();
     }
 
+    /**
+     * @return an Enumeration of orbital bombardment attacks.
+     */
     public Enumeration<OrbitalBombardment> getOrbitalBombardmentAttacks() {
         return orbitalBombardmentAttacks.elements();
     }

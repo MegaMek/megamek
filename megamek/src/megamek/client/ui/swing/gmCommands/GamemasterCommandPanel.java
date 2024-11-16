@@ -1,6 +1,8 @@
 package megamek.client.ui.swing.gmCommands;
 
 import megamek.client.ui.swing.ClientGUI;
+import megamek.common.Coords;
+import megamek.common.annotations.Nullable;
 import megamek.server.commands.GamemasterServerCommand;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.EnumArgument;
@@ -14,15 +16,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-// JPanel wrapper for game master commands
+/**
+ * Dialog for executing a gamemaster command.
+ */
 public class GamemasterCommandPanel extends JDialog {
     private final GamemasterServerCommand command;
     private final ClientGUI client;
+    private final Coords coords;
 
-    public GamemasterCommandPanel(JFrame parent, ClientGUI client, GamemasterServerCommand command) {
+    /**
+     * Constructor for the dialog for executing a gamemaster command.
+     *
+     * @param parent    The parent frame.
+     * @param client    The client GUI.
+     * @param command   The command to render.
+     */
+    public GamemasterCommandPanel(JFrame parent, ClientGUI client, GamemasterServerCommand command, @Nullable Coords coords) {
         super(parent, command.getName(), true);
         this.command = command;
         this.client = client;
+        this.coords = coords;
         initializeUI(parent);
     }
 
@@ -87,9 +100,22 @@ public class GamemasterCommandPanel extends JDialog {
         return null;
     }
 
+    private boolean isArgumentX(Argument<?> argument) {
+        return argument.getName().equals("x");
+    }
+
+    private boolean isArgumentY(Argument<?> argument) {
+        return argument.getName().equals("y");
+    }
+
+    private int getIntArgumentDefaultValue(IntegerArgument intArg) {
+        return intArg.hasDefaultValue() ? intArg.getValue() : isArgumentX(intArg) ? coords.getX() :
+            isArgumentY(intArg) ? coords.getY() : 0;
+    }
+
     private JSpinner createSpinner(IntegerArgument intArg) {
         return new JSpinner(new SpinnerNumberModel(
-            intArg.hasDefaultValue() ? intArg.getValue() : 0,
+            getIntArgumentDefaultValue(intArg),
             intArg.getMinValue(),
             intArg.getMaxValue(),
             1));
@@ -141,6 +167,13 @@ public class GamemasterCommandPanel extends JDialog {
         return executeButton;
     }
 
+    /**
+     * Execute the command with the given arguments.
+     * It runs the command using the client chat, this way the command is sent to the server.
+     * All arguments are loaded as named variables in the form of "argumentName=argumentValue".
+     *
+     * @param argumentComponents The components that hold the arguments selected.
+     */
     private void executeCommand(Map<String, JComponent> argumentComponents) {
         List<Argument<?>> arguments = command.defineArguments();
         String[] args = new String[arguments.size()];
@@ -166,6 +199,7 @@ public class GamemasterCommandPanel extends JDialog {
                 }
             }
         }
+
         client.getClient().sendChat("/" + command.getName() + " " + String.join(" ", args));
     }
 }

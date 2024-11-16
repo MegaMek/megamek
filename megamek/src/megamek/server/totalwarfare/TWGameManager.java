@@ -194,6 +194,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new ChangeOwnershipCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
+        commands.add(new NoFiresCommand(server, this));
+        commands.add(new FirefightCommand(server, this));
         commands.add(new FirestormCommand(server, this));
         commands.add(new RemoveSmokeCommand(server, this));
         commands.add(new ChangeWeatherCommand(server, this));
@@ -5290,7 +5292,7 @@ public class TWGameManager extends AbstractGameManager {
      *                   if it can't return)
      * @return Vector of turn reports.
      */
-    Vector<Report> processLeaveMap(MovePath movePath, boolean flewOff, int returnable) {
+    public Vector<Report> processLeaveMap(MovePath movePath, boolean flewOff, int returnable) {
         Entity entity = movePath.getEntity();
         Vector<Report> vReport = new Vector<>();
         Report r;
@@ -31694,10 +31696,6 @@ public class TWGameManager extends AbstractGameManager {
 
     void clearBombIcons() {
         game.getBoard().clearBombIcons();
-    }
-
-    void clearOrbitalBombardmentIcons() {
-        game.getBoard().clearOrbitalBombardmentIcons();
     }
 
     /**

@@ -22,7 +22,15 @@ import megamek.server.totalwarfare.TWGameManager;
 import java.util.*;
 
 /**
- * A ServerCommand that can only be used by Game Masters
+ * A ServerCommand that can only be used by Game Masters,
+ * This abstract class implements many features that are common to all Game Master commands,
+ * like the isGM check for users, it also uses the Argument class for building the command arguments
+ * and to abstract the parsing of the arguments, limit assertion and error handling, and for building
+ * a more dynamic "help" feature.
+ * It also has a more advanced parser and argument handling than the ServerCommand class, which allows for
+ * named arguments, positional arguments, optional arguments and default values.
+ * named arguments can be passed in any order, and positional arguments are parsed in order and MUST appear before named
+ * arguments.
  *
  * @author Luana Coppio
  */

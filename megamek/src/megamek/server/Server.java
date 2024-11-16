@@ -539,13 +539,6 @@ public class Server implements Runnable {
     }
 
     /**
-     * Returns the list of all server commands
-     */
-    public List<ServerCommand> getAllCommands() {
-        return new ArrayList<>(commandsHash.values());
-    }
-
-    /**
      * Sent when a client attempts to connect.
      */
     void clientVersionCheck(int cn) {

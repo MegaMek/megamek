@@ -14,15 +14,12 @@
 package megamek.common.weapons;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 
 import megamek.common.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
-import org.apache.commons.lang3.IntegerRange;
 
 /**
  * Class containing functionality that helps out with area effect weapons.
@@ -621,7 +618,7 @@ public class AreaEffectHelper {
      *                    arty
      *                    attack, -1 otherwise
      * @param mineClear   Whether or not we're clearing a minefield
-     * @return
+     * @return A DamageFalloff object containing the damage and falloff values and if it is cluster or not
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
         if (ammo == null) {
@@ -694,21 +691,23 @@ public class AreaEffectHelper {
 
             clusterMunitionsFlag = true;
         } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
-            switch (ammo.getAmmoType()) {
+            falloff = switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage
-                case AmmoType.T_LONG_TOM:
+                case AmmoType.T_LONG_TOM -> {
                     damage = 4;
-                    falloff = 2;
-                    break;
-                case AmmoType.T_SNIPER:
+                    yield 2;
+                }
+                case AmmoType.T_SNIPER -> {
                     damage = 2;
-                    falloff = 1;
-                    break;
-                case AmmoType.T_THUMPER:
+                    yield 1;
+                }
+                case AmmoType.T_THUMPER -> {
                     damage = 1;
-                    falloff = 1;
-            }
+                    yield 1;
+                }
+                default -> falloff;
+            };
             // if this was a mine clearance, then it only affects the hex hit
         } else if (mineClear) {
             falloff = damage;

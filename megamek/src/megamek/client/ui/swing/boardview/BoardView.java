@@ -1456,10 +1456,16 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return (clientgui != null) ? clientgui.getDisplayedWeapon().orElse(null) : null;
     }
 
+    /**
+     * Draw the orbital bombardment attacks on the board view
+     *
+     * @author Luana Coppio
+     * @param boardGraphics     The graphics object to draw on
+     */
     private void drawOrbitalBombardmentHexes(Graphics boardGraphics) {
         Image orbitalBombardmentImage = tileManager.getOrbitalBombardmentImage();
         Rectangle view = boardGraphics.getClipBounds();
-        boolean justDraw = false;
+
         // Compute the origin of the viewing area
         int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
         int drawY = (view.y / (int) (HEX_H * scale)) - 1;

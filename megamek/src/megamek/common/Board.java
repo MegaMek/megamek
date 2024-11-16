@@ -2084,24 +2084,4 @@ public class Board implements Serializable {
         return zoneID + NUM_ZONES_X2;
     }
 
-    public void clearOrbitalBombardmentIcons() {
-        for (Coords coords : specialHexes.keySet()) {
-            removeOrbitalBombardmentIcons(coords);
-        }
-    }
-
-    public void removeOrbitalBombardmentIcons(Coords coords) {
-        // Do nothing if the coords aren't on this board.
-        if (!this.contains(coords) || null == specialHexes.get(coords)) {
-            return;
-        }
-
-        // Use iterator so we can remove while traversing
-        for (Iterator<SpecialHexDisplay> iterator = specialHexes.get(coords).iterator(); iterator.hasNext();) {
-            SpecialHexDisplay shd = iterator.next();
-            if (ORBITAL_BOMBARDMENT.equals(shd.getType())) {
-                iterator.remove();
-            }
-        }
-    }
 }

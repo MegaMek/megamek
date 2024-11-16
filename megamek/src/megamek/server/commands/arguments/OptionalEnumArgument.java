@@ -4,6 +4,11 @@ import megamek.client.ui.Messages;
 
 import java.util.Arrays;
 
+/**
+ * Nullable Argument for an Enum type.
+ * @param <E>
+ * @author Luana Coppio
+ */
 public class OptionalEnumArgument<E extends Enum<E>> extends EnumArgument<E> {
 
     public OptionalEnumArgument(String name, String description, Class<E> enumType) {

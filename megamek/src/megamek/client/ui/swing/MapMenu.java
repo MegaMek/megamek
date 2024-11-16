@@ -229,17 +229,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.targetMenuItem")
                 + t.getDisplayName());
 
-        String targetCode;
-
-        if (t instanceof Entity) {
-            targetCode = "E|" + ((Entity) t).getId();
-        } else if (t instanceof BuildingTarget) {
-            targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        } else if (t instanceof MinefieldTarget) {
-            targetCode = "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
-        } else {
-            targetCode = "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        }
+        String targetCode = getTargetCode(t);
 
         item.setActionCommand(targetCode);
         item.addActionListener(evt -> {
@@ -253,6 +243,21 @@ public class MapMenu extends JPopupMenu {
             }
         });
         return item;
+    }
+
+    private static String getTargetCode(Targetable t) {
+        String targetCode;
+
+        if (t instanceof Entity) {
+            targetCode = "E|" + ((Entity) t).getId();
+        } else if (t instanceof BuildingTarget) {
+            targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+        } else if (t instanceof MinefieldTarget) {
+            targetCode = "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
+        } else {
+            targetCode = "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+        }
+        return targetCode;
     }
 
     private @Nullable JMenuItem createChargeMenuItem() {
@@ -403,12 +408,11 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createGamemasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (!client.getLocalPlayer().getGameMaster()) {
-            return menu;
-        } else {
+        if (client.getLocalPlayer().getGameMaster()) {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
+            JMenu rescueMenu = new JMenu(Messages.getString("Gamemaster.Rescue"));
             JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
             JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
 
@@ -418,6 +422,7 @@ public class MapMenu extends JPopupMenu {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
                 cfgMenu.add(createCustomMekMenuItem(entity));
                 traitorMenu.add(createTraitorMenuItem(entity));
+                rescueMenu.add(createRescueMenuItem(entity));
                 killMenu.add(createKillMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
@@ -435,8 +440,8 @@ public class MapMenu extends JPopupMenu {
                 menu.addSeparator();
             }
             menu.add(specialCommandsMenu);
-            return menu;
         }
+        return menu;
     }
 
     /**
@@ -446,17 +451,20 @@ public class MapMenu extends JPopupMenu {
     private JMenu createGMSpecialCommandsMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
         List.of(
-            new KillCommand(null, null),
-            new OrbitalBombardmentCommand(null, null),
             new ChangeOwnershipCommand(null, null),
+            new ChangeWeatherCommand(null, null),
             new DisasterCommand(null, null),
+            new KillCommand(null, null),
+            new FirefightCommand(null, null),
             new FirestarterCommand(null, null),
             new FirestormCommand(null, null),
+            new NoFiresCommand(null, null),
+            new OrbitalBombardmentCommand(null, null),
             new RemoveSmokeCommand(null, null),
-            new ChangeWeatherCommand(null, null)
+            new RescueCommand(null, null)
         ).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd).setVisible(true));
+            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
             menu.add(item);
         });
 
@@ -488,9 +496,14 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem createTraitorMenuItem(Entity en) {
+    /**
+     * Create traitor menu for game master options
+     * @param entity    the entity to create the traitor menu for
+     * @return JMenu    the traitor menu
+     */
+    private JMenuItem createTraitorMenuItem(Entity entity) {
         // Traitor Command
-        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.Traitor") + " " + en.getDisplayName());
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.Traitor.text", entity.getDisplayName()));
         item.addActionListener(evt -> {
             gui.getBoardView().setShouldIgnoreKeys(false);
             var players = client.getGame().getPlayersList();
@@ -498,7 +511,7 @@ public class MapMenu extends JPopupMenu {
             String[] playerNames = new String[players.size() - 1];
             String[] options = new String[players.size() - 1];
 
-            Player currentOwner = en.getOwner();
+            Player currentOwner = entity.getOwner();
             // Loop through the players vector and fill in the arrays
             int idx = 0;
             for (var player : players) {
@@ -515,15 +528,14 @@ public class MapMenu extends JPopupMenu {
             // No players available?
             if (idx == 0) {
                 JOptionPane.showMessageDialog(gui.getFrame(),
-                    "No players available. Units cannot be traitored to players "
-                        + "that aren't assigned to a team.");
+                    Messages.getString("Gamemaster.Traitor.text.noplayers"));
                 return;
             }
 
             // Dialog for choosing which player to transfer to
             String option = (String) JOptionPane.showInputDialog(gui.getFrame(),
-                "Choose the player to gain ownership of this unit (" + en.getDisplayName() + ") when it turns traitor",
-                "Traitor", JOptionPane.QUESTION_MESSAGE, null,
+                Messages.getString("Gamemaster.Traitor.text.selectplayer", entity.getDisplayName()),
+                Messages.getString("Gamemaster.Traitor.title"), JOptionPane.QUESTION_MESSAGE, null,
                 options, options[0]);
 
             // Verify that we have a valid option...
@@ -535,12 +547,12 @@ public class MapMenu extends JPopupMenu {
                 // And now we perform the actual transfer
                 int confirm = JOptionPane.showConfirmDialog(
                     gui.getFrame(),
-                    en.getDisplayName() + " will switch to " + name
-                        + "'s side at the end of this turn. Are you sure?",
-                    "Confirm",
+                    Messages.getString("Gamemaster.Traitor.confirmation", entity.getDisplayName(), name),
+                    Messages.getString("Gamemaster.Traitor.confirm"),
                     JOptionPane.YES_NO_OPTION);
+
                 if (confirm == JOptionPane.YES_OPTION) {
-                    client.sendChat(String.format("/changeOwner %d %d", en.getId(), id));
+                    client.sendChat(String.format("/changeOwner %d %d", entity.getId(), id));
                 }
             }
         });
@@ -548,14 +560,43 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem createKillMenuItem(Entity en) {
-        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.KillUnit.text", en.getDisplayName()));
+    /**
+     * Create a menu for killing a specific entity
+     *
+     * @param entity    the entity to create the kill menu for
+     * @return JMenuItem    the kill menu item
+     */
+    private JMenuItem createKillMenuItem(Entity entity) {
+        return createCommandMenuItem(entity, "Gamemaster.KillUnit.text",
+            "Gamemaster.KillUnit.confirmation", String.format("/kill %d", entity.getId()));
+    }
+
+    /**
+     * Create a menu for rescuing a specific entity
+     * @param entity    the entity to create the rescue menu for
+     * @return          the rescue menu item
+     */
+    private JMenuItem createRescueMenuItem(Entity entity) {
+        return createCommandMenuItem(entity, "Gamemaster.Rescue.text",
+            "Gamemaster.Rescue.confirmation", String.format("/rescue %d", entity.getId()));
+    }
+
+    /**
+     * Create a menu for a specific GM command
+     * @param entity            the entity to create the menu for
+     * @param messageKey        the menu item message key for the menu item
+     * @param confirmationKey   the confirmation message key
+     * @param command           the command that will be sent to the server
+     * @return                  the menu item
+     */
+    private JMenuItem createCommandMenuItem(Entity entity, String messageKey, String confirmationKey, String command) {
+        JMenuItem item = new JMenuItem(Messages.getString(messageKey, entity.getDisplayName()));
         item.addActionListener(evt -> {
             int confirm = JOptionPane.showConfirmDialog(
-                gui.getFrame(), Messages.getString("Gamemaster.KillUnit.confirmation", en.getDisplayName()),
+                gui.getFrame(), Messages.getString(confirmationKey, entity.getDisplayName()),
                 Messages.getString("Gamemaster.dialog.confirm"), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                client.sendChat(String.format("/kill %d", en.getId()));
+                client.sendChat(command);
             }
         });
         return item;
@@ -1509,9 +1550,7 @@ public class MapMenu extends JPopupMenu {
 
         if (list.size() == 1) {
             myTarget = selectedEntity = list.firstElement();
-
-            if (currentPanel instanceof FiringDisplay) {
-                FiringDisplay panel = (FiringDisplay) currentPanel;
+            if (currentPanel instanceof FiringDisplay panel) {
                 panel.target(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);

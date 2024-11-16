@@ -2,8 +2,10 @@ package megamek.server.commands.arguments;
 
 import megamek.client.ui.Messages;
 
-import java.util.Arrays;
-
+/**
+ * Argument for an Integer type.
+ * @author Luana Coppio
+ */
 public class IntegerArgument extends Argument<Integer> {
     private final int minValue;
     private final int maxValue;

@@ -4,6 +4,11 @@ import megamek.client.ui.Messages;
 
 import java.util.Arrays;
 
+/**
+ * Argument for an Enum type.
+ * @param <E>
+ * @author Luana Coppio
+ */
 public class EnumArgument<E extends Enum<E>> extends Argument<E> {
     protected final Class<E> enumType;
     protected final E defaultValue;

@@ -18,6 +18,7 @@ import megamek.client.ui.Messages;
 import java.util.Optional;
 
 /**
+ * Optional Argument for an Integer type.
  * @author Luana Coppio
  */
 public class OptionalIntegerArgument extends Argument<Optional<Integer>> {

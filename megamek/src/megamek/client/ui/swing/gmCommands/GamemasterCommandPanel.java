@@ -109,8 +109,8 @@ public class GamemasterCommandPanel extends JDialog {
     }
 
     private int getIntArgumentDefaultValue(IntegerArgument intArg) {
-        return intArg.hasDefaultValue() ? intArg.getValue() : isArgumentX(intArg) ? coords.getX() :
-            isArgumentY(intArg) ? coords.getY() : 0;
+        return intArg.hasDefaultValue() ? intArg.getValue() : isArgumentX(intArg) ? coords.getX()+1 :
+            isArgumentY(intArg) ? coords.getY()+1 : 0;
     }
 
     private JSpinner createSpinner(IntegerArgument intArg) {

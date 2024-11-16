@@ -56,6 +56,6 @@ public class RescueCommand extends GamemasterServerCommand{
         MovePath path = new MovePath(gameManager.getGame(), unit);
         path.addStep(MovePath.MoveStepType.FLEE);
         gameManager.addReport(gameManager.processLeaveMap(path, false, -1));
-        server.sendServerChat(unit.getDisplayName() + Messages.getString("Gamemaster.cmd.rescue.success"));
+        server.sendServerChat(Messages.getString("Gamemaster.cmd.rescue.success", unit.getDisplayName()));
     }
 }

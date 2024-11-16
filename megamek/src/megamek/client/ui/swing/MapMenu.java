@@ -435,6 +435,9 @@ public class MapMenu extends JPopupMenu {
             if (traitorMenu.getItemCount() != 0) {
                 menu.add(traitorMenu);
             }
+            if (rescueMenu.getItemCount() != 0) {
+                menu.add(rescueMenu);
+            }
             if (killMenu.getItemCount() != 0) {
                 menu.add(killMenu);
                 menu.addSeparator();
@@ -567,7 +570,7 @@ public class MapMenu extends JPopupMenu {
      * @return JMenuItem    the kill menu item
      */
     private JMenuItem createKillMenuItem(Entity entity) {
-        return createCommandMenuItem(entity, "Gamemaster.KillUnit.text",
+        return createEntityCommandMenuItem(entity, "Gamemaster.KillUnit.text",
             "Gamemaster.KillUnit.confirmation", String.format("/kill %d", entity.getId()));
     }
 
@@ -577,7 +580,7 @@ public class MapMenu extends JPopupMenu {
      * @return          the rescue menu item
      */
     private JMenuItem createRescueMenuItem(Entity entity) {
-        return createCommandMenuItem(entity, "Gamemaster.Rescue.text",
+        return createEntityCommandMenuItem(entity, "Gamemaster.Rescue.text",
             "Gamemaster.Rescue.confirmation", String.format("/rescue %d", entity.getId()));
     }
 
@@ -589,7 +592,7 @@ public class MapMenu extends JPopupMenu {
      * @param command           the command that will be sent to the server
      * @return                  the menu item
      */
-    private JMenuItem createCommandMenuItem(Entity entity, String messageKey, String confirmationKey, String command) {
+    private JMenuItem createEntityCommandMenuItem(Entity entity, String messageKey, String confirmationKey, String command) {
         JMenuItem item = new JMenuItem(Messages.getString(messageKey, entity.getDisplayName()));
         item.addActionListener(evt -> {
             int confirm = JOptionPane.showConfirmDialog(

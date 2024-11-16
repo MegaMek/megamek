@@ -28,7 +28,8 @@ public class RemoveSmokeCommand extends GamemasterServerCommand {
 
     /** Creates new KillCommand */
     public RemoveSmokeCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "nosmoke", Messages.getString("Gamemaster.cmd.removesmoke.help"));
+        super(server, gameManager, "nosmoke", Messages.getString("Gamemaster.cmd.removesmoke.help"),
+            Messages.getString("Gamemaster.cmd.removesmoke.longName"));
     }
 
     @Override

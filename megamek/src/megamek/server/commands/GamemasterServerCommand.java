@@ -34,6 +34,8 @@ public abstract class GamemasterServerCommand extends ServerCommand {
     protected final TWGameManager gameManager;
     protected final static MMLogger logger = MMLogger.create(GamemasterServerCommand.class);
     private final String errorMsg;
+    private final String longName;
+
     /**
      * Creates new ServerCommand that can only be used by Game Masters
      *
@@ -42,10 +44,11 @@ public abstract class GamemasterServerCommand extends ServerCommand {
      * @param name          the name of the command
      * @param helpText      the help text for the command
      */
-    public GamemasterServerCommand(Server server, TWGameManager gameManager, String name, String helpText) {
+    public GamemasterServerCommand(Server server, TWGameManager gameManager, String name, String helpText, String longName) {
         super(server, name, helpText);
         this.gameManager = gameManager;
         this.errorMsg = "Error executing command: " + name;
+        this.longName = longName;
     }
 
     private boolean isGM(int connId) {
@@ -145,7 +148,7 @@ public abstract class GamemasterServerCommand extends ServerCommand {
             this.getHelp()
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
-                .replaceAll("   ", "&#9;")
+                .replaceAll("   ", "| ")
                 .replaceAll(NEWLINE, "<br>")+
             "</html>";
     }
@@ -157,6 +160,7 @@ public abstract class GamemasterServerCommand extends ServerCommand {
             .append(NEWLINE)
             .append(Messages.getString("Gamemaster.cmd.help"))
             .append(NEWLINE)
+            .append(NEWLINE)
             .append("/")
             .append(getName());
 
@@ -165,7 +169,9 @@ public abstract class GamemasterServerCommand extends ServerCommand {
                 .append(arg.getRepr());
         }
 
-        help.append(NEWLINE);
+        help.append(NEWLINE)
+            .append(NEWLINE);
+
         for (var arg : defineArguments()) {
             help.append(LONG_WHITESPACE)
                 .append(arg.getName())
@@ -175,6 +181,10 @@ public abstract class GamemasterServerCommand extends ServerCommand {
                 .append(NEWLINE);
         }
         return help.toString();
+    }
+
+    public String getLongName() {
+        return longName;
     }
 
     // The new method for game master commands that uses parsed arguments

@@ -34,7 +34,8 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
     public static final String RADIUS = "radius";
 
     public OrbitalBombardmentCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "ob", Messages.getString("Gamemaster.cmd.orbitalbombardment.help"));
+        super(server, gameManager, "ob", Messages.getString("Gamemaster.cmd.orbitalbombardment.help"),
+            Messages.getString("Gamemaster.cmd.orbitalbombardment.longName"));
     }
 
     @Override

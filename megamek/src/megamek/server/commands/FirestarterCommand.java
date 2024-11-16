@@ -41,7 +41,8 @@ public class FirestarterCommand extends GamemasterServerCommand {
         super(server,
             gameManager,
             FIRESTARTER,
-            Messages.getString("Gamemaster.cmd.fire.help"));
+            Messages.getString("Gamemaster.cmd.fire.help"),
+            Messages.getString("Gamemaster.cmd.firestarter.longName"));
     }
 
     @Override

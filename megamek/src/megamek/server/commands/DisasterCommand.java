@@ -39,6 +39,7 @@ public class DisasterCommand extends GamemasterServerCommand {
         ORBITAL_BOMBARDMENT_3,
         SANDSTORM,
         HAILSTORM,
+        ICESTORM,
         ECLIPSE,
         SOLAR_FLARE,
         SUPERNOVA,
@@ -52,7 +53,8 @@ public class DisasterCommand extends GamemasterServerCommand {
     }
 
     public DisasterCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "disaster", Messages.getString("Gamemaster.cmd.disaster.help"));
+        super(server, gameManager, "disaster", Messages.getString("Gamemaster.cmd.disaster.help"),
+            Messages.getString("Gamemaster.cmd.disaster.longName"));
     }
 
     @Override
@@ -98,6 +100,10 @@ public class DisasterCommand extends GamemasterServerCommand {
                 break;
             case HAILSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "weather=13", "wind=4", "winddir=6"});
+                server.sendServerChat("A hailstorm is incoming!");
+                break;
+            case ICESTORM:
+                new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "fog=1", "weather=11", "wind=6", "winddir=6"});
                 server.sendServerChat("A hailstorm is incoming!");
                 break;
             case FIRESTORM:

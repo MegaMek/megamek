@@ -24,7 +24,7 @@ public abstract class Argument<T> {
     }
 
     public String getRepr() {
-        return "<" + getName() + ">";
+        return "<" + getName() + "=#>";
     }
 
     public abstract String getHelp();

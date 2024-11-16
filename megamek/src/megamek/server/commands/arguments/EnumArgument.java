@@ -5,8 +5,8 @@ import megamek.client.ui.Messages;
 import java.util.Arrays;
 
 public class EnumArgument<E extends Enum<E>> extends Argument<E> {
-    private final Class<E> enumType;
-    private final E defaultValue;
+    protected final Class<E> enumType;
+    protected final E defaultValue;
 
     public EnumArgument(String name, String description, Class<E> enumType, E defaultValue) {
         super(name, description);

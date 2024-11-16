@@ -5,6 +5,7 @@ import megamek.server.commands.GamemasterServerCommand;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.OptionalEnumArgument;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,64 +23,122 @@ public class GamemasterCommandPanel extends JDialog {
         super(parent, command.getName(), true);
         this.command = command;
         this.client = client;
+        initializeUI(parent);
+    }
+
+    private void initializeUI(JFrame parent) {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-
-        JLabel helpLabel = new JLabel(command.getHelpHtml());
-        add(helpLabel);
-
-        List<Argument<?>> arguments = command.defineArguments();
-        Map<String, JComponent> argumentComponents = new HashMap<>();
-
-        for (Argument<?> argument : arguments) {
-            JPanel argumentPanel = new JPanel();
-            argumentPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-            JLabel label = new JLabel(argument.getName() + ":");
-            argumentPanel.add(label);
-
-            if (argument instanceof IntegerArgument) {
-                IntegerArgument intArg = (IntegerArgument) argument;
-                JSpinner spinner = new JSpinner(new SpinnerNumberModel(
-                    intArg.hasDefaultValue() ? intArg.getValue() : 0,
-                    intArg.getMinValue(),
-                    intArg.getMaxValue(),
-                    1));
-                argumentPanel.add(spinner);
-                argumentComponents.put(argument.getName(), spinner);
-            } else if (argument instanceof EnumArgument) {
-                EnumArgument<?> enumArg = (EnumArgument<?>) argument;
-                JComboBox<String> comboBox = new JComboBox<>();
-                for (Enum<?> constant : enumArg.getEnumType().getEnumConstants()) {
-                    comboBox.addItem(constant.name());
-                }
-                if (enumArg.getValue() != null) {
-                    comboBox.setSelectedItem(enumArg.getValue().name());
-                }
-                argumentPanel.add(comboBox);
-                argumentComponents.put(argument.getName(), comboBox);
-            }
-
-            add(argumentPanel);
-        }
-
-        JButton executeButton = new JButton("Execute Command");
-        executeButton.addActionListener(e -> executeCommand(argumentComponents));
-        add(executeButton);
-
+        addTitleAndDescription();
+        Map<String, JComponent> argumentComponents = addArgumentComponents();
+        addExecuteButton(argumentComponents);
         pack();
         setLocationRelativeTo(parent);
     }
 
-    private String wrapText(String text, int lineLength) {
-        StringBuilder wrappedText = new StringBuilder("<html>");
-        int currentIndex = 0;
-        while (currentIndex < text.length()) {
-            int endIndex = Math.min(currentIndex + lineLength, text.length());
-            wrappedText.append(text, currentIndex, endIndex).append("<br>");
-            currentIndex = endIndex;
+    private void addTitleAndDescription() {
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
+
+        JLabel titleLabel = new JLabel(command.getLongName());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titlePanel.add(titleLabel);
+
+        JLabel helpLabel = new JLabel(command.getHelpHtml());
+        helpLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        titlePanel.add(helpLabel);
+
+        add(titlePanel);
+    }
+
+    private Map<String, JComponent> addArgumentComponents() {
+        List<Argument<?>> arguments = command.defineArguments();
+        Map<String, JComponent> argumentComponents = new HashMap<>();
+
+        for (Argument<?> argument : arguments) {
+            JPanel argumentPanel = createArgumentPanel(argument);
+            add(argumentPanel);
+            argumentComponents.put(argument.getName(), getArgumentComponent(argument, argumentPanel));
         }
-        wrappedText.append("</html>");
-        return wrappedText.toString();
+        return argumentComponents;
+    }
+
+    private JPanel createArgumentPanel(Argument<?> argument) {
+        JPanel argumentPanel = new JPanel();
+        argumentPanel.setLayout(new FlowLayout());
+        JLabel label = new JLabel(argument.getName() + ":");
+        argumentPanel.add(label);
+        return argumentPanel;
+    }
+
+    private JComponent getArgumentComponent(Argument<?> argument, JPanel argumentPanel) {
+        if (argument instanceof IntegerArgument intArg) {
+            JSpinner spinner = createSpinner(intArg);
+            argumentPanel.add(spinner);
+            return spinner;
+        } else if (argument instanceof OptionalEnumArgument<?> enumArg) {
+            JComboBox<String> comboBox = createOptionalEnumComboBox(enumArg);
+            argumentPanel.add(comboBox);
+            return comboBox;
+        } else if (argument instanceof EnumArgument<?> enumArg) {
+            JComboBox<String> comboBox = createEnumComboBox(enumArg);
+            argumentPanel.add(comboBox);
+            return comboBox;
+        }
+        return null;
+    }
+
+    private JSpinner createSpinner(IntegerArgument intArg) {
+        return new JSpinner(new SpinnerNumberModel(
+            intArg.hasDefaultValue() ? intArg.getValue() : 0,
+            intArg.getMinValue(),
+            intArg.getMaxValue(),
+            1));
+    }
+
+    private JComboBox<String> createOptionalEnumComboBox(OptionalEnumArgument<?> enumArg) {
+        JComboBox<String> comboBox = new JComboBox<>();
+        if (enumArg.getValue() == null) {
+            comboBox.addItem("-");
+            comboBox.setSelectedItem("-");
+        }
+        for (var arg : enumArg.getEnumType().getEnumConstants()) {
+            comboBox.addItem(arg.ordinal() + ": " + arg.toString());
+        }
+        if (enumArg.getValue() != null) {
+            comboBox.setSelectedItem(enumArg.getValue().ordinal() + ": " + enumArg.getValue().toString());
+        }
+        return comboBox;
+    }
+
+    private JComboBox<String> createEnumComboBox(EnumArgument<?> enumArg) {
+        JComboBox<String> comboBox = new JComboBox<>();
+        for (Enum<?> constant : enumArg.getEnumType().getEnumConstants()) {
+            comboBox.addItem(constant.name());
+        }
+        if (enumArg.getValue() != null) {
+            comboBox.setSelectedItem(enumArg.getValue().name());
+        }
+        return comboBox;
+    }
+
+    private void addExecuteButton(Map<String, JComponent> argumentComponents) {
+        add(getExecuteButton(argumentComponents));
+    }
+
+    private JButton getExecuteButton(Map<String, JComponent> argumentComponents) {
+        JButton executeButton = new JButton("Execute Command");
+        executeButton.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to execute this command?",
+                "Execute Command",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (response == JOptionPane.YES_OPTION) {
+                executeCommand(argumentComponents);
+            }
+        });
+        return executeButton;
     }
 
     private void executeCommand(Map<String, JComponent> argumentComponents) {
@@ -93,7 +152,18 @@ public class GamemasterCommandPanel extends JDialog {
             if (component instanceof JSpinner) {
                 args[i] = argument.getName() + "=" + ((JSpinner) component).getValue().toString();
             } else if (component instanceof JComboBox) {
-                args[i] = argument.getName() + "=" + Objects.requireNonNull(((JComboBox<?>) component).getSelectedItem());
+                if (argument instanceof OptionalEnumArgument<?>) {
+                    String selectedItem = (String) ((JComboBox<?>) component).getSelectedItem();
+                    if (selectedItem == null || selectedItem.equals("-")) {
+                        // If it is null we just set it to an empty string and move on
+                        args[i] = "";
+                        continue;
+                    }
+                    var selectedItemValue = selectedItem.split(":")[0].trim();
+                    args[i] = argument.getName() + "=" + selectedItemValue;
+                } else {
+                    args[i] = argument.getName() + "=" + Objects.requireNonNull(((JComboBox<?>) component).getSelectedItem());
+                }
             }
         }
         client.getClient().sendChat("/" + command.getName() + " " + String.join(" ", args));

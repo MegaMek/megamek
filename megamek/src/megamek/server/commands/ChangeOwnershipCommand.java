@@ -38,7 +38,8 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
         super(server,
             gameManager,
             "changeOwner",
-            Messages.getString("Gamemaster.cmd.changeownership.help"));
+            Messages.getString("Gamemaster.cmd.changeownership.help"),
+            Messages.getString("Gamemaster.cmd.changeownership.longName"));
     }
 
     @Override

@@ -40,7 +40,8 @@ public class FirestormCommand extends GamemasterServerCommand {
         super(server,
             gameManager,
             FIRESTORM,
-            Messages.getString("Gamemaster.cmd.firestorm.help"));
+            Messages.getString("Gamemaster.cmd.firestorm.help"),
+            Messages.getString("Gamemaster.cmd.firestorm.longName"));
     }
 
     @Override

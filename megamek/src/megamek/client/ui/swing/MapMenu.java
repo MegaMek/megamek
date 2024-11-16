@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
 import megamek.logging.MMLogger;
-import megamek.server.Server;
 import megamek.server.commands.*;
 
 /**
@@ -407,13 +406,14 @@ public class MapMenu extends JPopupMenu {
         if (!client.getLocalPlayer().getGameMaster()) {
             return menu;
         } else {
-
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
             JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
             JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
             JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
+
             var entities = client.getGame().getEntitiesVector(coords);
+
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
                 cfgMenu.add(createCustomMekMenuItem(entity));
@@ -425,30 +425,40 @@ public class MapMenu extends JPopupMenu {
             }
             if (cfgMenu.getItemCount() != 0) {
                 menu.add(cfgMenu);
+                menu.addSeparator();
             }
             if (traitorMenu.getItemCount() != 0) {
                 menu.add(traitorMenu);
             }
             if (killMenu.getItemCount() != 0) {
                 menu.add(killMenu);
+                menu.addSeparator();
             }
             menu.add(specialCommandsMenu);
             return menu;
         }
     }
 
-    private record Tuple(String name, GamemasterServerCommand command) {}
-
+    /**
+     * Create a menu for special commands for the GM
+     * @return the menu
+     */
     private JMenu createGMSpecialCommandsMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
-        Server.getServerInstance().getAllCommands().stream()
-            .filter(cmd -> cmd instanceof GamemasterServerCommand)
-            .map(cmd -> (GamemasterServerCommand) cmd)
-            .forEach(cmd -> {
-                JMenuItem item = new JMenuItem(cmd.getName());
-                item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd).setVisible(true));
-                menu.add(item);
-            });
+        List.of(
+            new KillCommand(null, null),
+            new OrbitalBombardmentCommand(null, null),
+            new ChangeOwnershipCommand(null, null),
+            new DisasterCommand(null, null),
+            new FirestarterCommand(null, null),
+            new FirestormCommand(null, null),
+            new RemoveSmokeCommand(null, null),
+            new ChangeWeatherCommand(null, null)
+        ).forEach(cmd -> {
+            JMenuItem item = new JMenuItem(cmd.getLongName());
+            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd).setVisible(true));
+            menu.add(item);
+        });
 
         return menu;
     }
@@ -539,11 +549,11 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenuItem createKillMenuItem(Entity en) {
-        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.KillUnit") + " " + en.getDisplayName());
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.KillUnit.text", en.getDisplayName()));
         item.addActionListener(evt -> {
             int confirm = JOptionPane.showConfirmDialog(
-                gui.getFrame(),
-                "Are you sure you want to kill " + en.getDisplayName() + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+                gui.getFrame(), Messages.getString("Gamemaster.KillUnit.confirmation", en.getDisplayName()),
+                Messages.getString("Gamemaster.dialog.confirm"), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 client.sendChat(String.format("/kill %d", en.getId()));
             }

@@ -31,7 +31,8 @@ public class KillCommand extends GamemasterServerCommand{
 
     /** Creates new KillCommand */
     public KillCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "kill", Messages.getString("Gamemaster.cmd.kill.help"));
+        super(server, gameManager, "kill", Messages.getString("Gamemaster.cmd.kill.help"),
+            Messages.getString("Gamemaster.cmd.kill.longName"));
     }
 
     @Override

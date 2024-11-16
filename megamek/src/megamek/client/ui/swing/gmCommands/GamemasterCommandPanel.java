@@ -102,7 +102,7 @@ public class GamemasterCommandPanel extends JDialog {
             comboBox.setSelectedItem("-");
         }
         for (var arg : enumArg.getEnumType().getEnumConstants()) {
-            comboBox.addItem(arg.ordinal() + ": " + arg.toString());
+            comboBox.addItem(arg.ordinal() + ": " + arg);
         }
         if (enumArg.getValue() != null) {
             comboBox.setSelectedItem(enumArg.getValue().ordinal() + ": " + enumArg.getValue().toString());

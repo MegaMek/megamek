@@ -148,7 +148,7 @@ public abstract class GamemasterServerCommand extends ServerCommand {
             this.getHelp()
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
-                .replaceAll("   ", "| ")
+                .replaceAll(LONG_WHITESPACE, "| ")
                 .replaceAll(NEWLINE, "<br>")+
             "</html>";
     }

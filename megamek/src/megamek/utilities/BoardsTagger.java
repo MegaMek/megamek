@@ -119,8 +119,17 @@ public class BoardsTagger {
 
     public static void main(String... args) {
         try {
+            Map<String, List<String>> boardCheckSum = new HashMap<>();
+
             File boardDir = Configuration.boardsDir();
-            scanForBoards(boardDir);
+            scanForBoards(boardDir, boardCheckSum);
+
+            boardCheckSum.forEach((key, value) -> {
+                if (value.size() > 1) {
+                    String message = key + " : " + value.stream().sorted().collect(Collectors.joining(", "));
+                    logger.info(message);
+                }
+            });
         } catch (Exception ex) {
             logger.error(ex, "Board tagger cannot scan boards");
             System.exit(64);
@@ -133,15 +142,13 @@ public class BoardsTagger {
      * Recursively scans the supplied file/directory for any boards and auto-tags
      * them.
      */
-    private static void scanForBoards(File file) throws IOException {
-        Map<String, List<String>> boardCheckSum = new HashMap<>();
-
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) throws IOException {
         if (file.isDirectory()) {
             String[] fileList = file.list();
             for (String filename : fileList) {
                 File filepath = new File(file, filename);
                 if (filepath.isDirectory()) {
-                    scanForBoards(new File(file, filename));
+                    scanForBoards(new File(file, filename), boardCheckSum);
                 } else {
                     tagBoard(filepath);
                     checkSum(boardCheckSum, filepath);
@@ -151,13 +158,6 @@ public class BoardsTagger {
             tagBoard(file);
             checkSum(boardCheckSum, file);
         }
-
-        boardCheckSum.forEach((key, value) -> {
-            if (value.size() > 1) {
-                String message = key + " : " + value.stream().sorted().collect(Collectors.joining(", "));
-                logger.info(message);
-            }
-        });
     }
 
     /**

@@ -42,7 +42,7 @@ map:
 
 options:
   file: options_3025_basic.xml
-  on:
+  off:
     - check_victory
 
 factions:
@@ -59,8 +59,9 @@ factions:
       modify: onlyatend
 
   fleefrom:
-    all:
-#    border: north
+    border: north
+    # only for testing:
+#    all:
 
   # only for testing bot vs bot
   #  bot:

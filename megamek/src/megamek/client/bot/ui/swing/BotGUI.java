@@ -134,7 +134,7 @@ public class BotGUI implements GameListener {
     }
 
     @Override
-    public void gameVictory(GameVictoryEvent e) {
+    public void gameVictory(PostGameResolution e) {
 
     }
 }

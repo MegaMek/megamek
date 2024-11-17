@@ -3006,7 +3006,7 @@ public class Princess extends BotClient {
         turnOnSearchLight(retVal, expectedDamage >= 0);
         unloadTransportedInfantry(retVal);
         launchFighters(retVal);
-        unjamRAC(retVal);
+        unjamRAC(retVal, expectedDamage >= 5 );
 
         // if we are using vector movement, there's a whole bunch of post-processing that happens to
         // aircraft flight paths when a player does it, so we apply it here.
@@ -3021,10 +3021,10 @@ public class Princess extends BotClient {
      * Helper function that appends an unjam RAC command to the end of a qualifying path.
      * @param path The path to process.
      */
-    private void unjamRAC(MovePath path) {
+    private void unjamRAC(MovePath path, boolean expectFiveOrMore) {
         if (path.getEntity().canUnjamRAC() &&
                 (path.getMpUsed() <= path.getEntity().getWalkMP()) &&
-                !path.isJumping()) {
+                !path.isJumping() && !expectFiveOrMore) {
             path.addStep(MoveStepType.UNJAM_RAC);
         }
     }

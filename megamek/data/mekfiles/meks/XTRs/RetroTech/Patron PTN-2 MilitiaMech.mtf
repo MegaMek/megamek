@@ -1,0 +1,159 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Patron
+model:PTN-2 MilitiaMech
+mul id:4794
+
+Config:Biped
+techbase:Inner Sphere
+era:3076
+source:XTR: RetroTech
+rules level:2
+role:Sniper
+
+
+mass:15
+engine:30 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+
+heat sinks:1 Single
+walk mp:2
+jump mp:0
+
+armor:Commercial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:9
+Light Machine Gun, Left Arm
+Light Machine Gun, Left Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Light Machine Gun
+Light Machine Gun
+IS Light Machine Gun Ammo - Half
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Light Machine Gun
+Light Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Searchlight
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+RL10
+RL10
+RL10
+RL10
+RL10
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

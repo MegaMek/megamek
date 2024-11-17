@@ -302,6 +302,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         int base = ae.getCrew().getPiloting();
 
         toHit = new ToHitData(base, "base");
+        toHit.addModifier(0, "DFA");
 
         // BMR(r), page 33. +3 modifier for DFA on infantry.
         if (te instanceof Infantry) {

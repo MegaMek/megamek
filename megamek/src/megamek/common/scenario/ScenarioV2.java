@@ -60,6 +60,9 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
+    private static final String OPTIONS_FILE = "file";
+    private static final String OPTIONS_ON = "on";
+    private static final String OPTIONS_OFF = "off";
     private static final String OBJECTS = "objects";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
@@ -220,18 +223,22 @@ public class ScenarioV2 implements Scenario {
 
     private void parseOptions(IGame game) {
         game.getOptions().initialize();
-        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
-            File optionsFile = new File(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue());
-            game.getOptions().loadOptions(optionsFile, true);
-        } else {
-            game.getOptions().loadOptions();
-        }
         if (node.has(OPTIONS)) {
             JsonNode optionsNode = node.get(OPTIONS);
-            if (optionsNode.isArray()) {
-                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
-            } else if (optionsNode.isTextual()) {
-                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            if (optionsNode.has(OPTIONS_FILE)) {
+                File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
+                game.getOptions().loadOptions(optionsFile, true);
+            } else {
+                game.getOptions().loadOptions();
+            }
+
+            if (optionsNode.has(OPTIONS_ON)) {
+                JsonNode onNode = optionsNode.get(OPTIONS_ON);
+                onNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            }
+            if (optionsNode.has(OPTIONS_OFF)) {
+                JsonNode offNode = optionsNode.get(OPTIONS_OFF);
+                offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
             }
         }
     }

@@ -1,37 +1,39 @@
-chassis:Patron LoaderMech
-model:
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Patron
+model:LoaderMech
 mul id:4792
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2550
-Source:TRO: 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2550
+source:TRO: 3075
+rules level:2
 role:Ambusher
 
-Mass:15
-Engine:30 Fuel Cell Engine
-Structure:Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:2
-Jump MP:0
+mass:15
+engine:30 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:2
-RA Armor:2
-LT Armor:2
-RT Armor:2
-CT Armor:3
-HD Armor:3
-LL Armor:2
-RL Armor:2
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+heat sinks:1 Single
+walk mp:2
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:2
+RA armor:2
+LT armor:2
+RT armor:2
+CT armor:3
+HD armor:3
+LL armor:2
+RL armor:2
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:0
 
@@ -78,9 +80,9 @@ Searchlight
 -Empty-
 
 Right Torso:
-Lift Hoist
-Lift Hoist
-Lift Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
 -Empty-
 -Empty-
 -Empty-
@@ -103,7 +105,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 MechSprayer
-Cargo (1 ton)
+Cargo:SIZE:1.0
 
 Head:
 Life Support

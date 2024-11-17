@@ -525,11 +525,8 @@ public class Hex implements Serializable {
     /**
      * Adds terrain modifiers to PSRs made in this hex
      */
-    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll,
-                                        boolean enteringRubble) {
-        for (Integer i : terrains.keySet()) {
-            terrains.get(i).pilotingModifier(moveMode, roll, enteringRubble);
-        }
+    public void applyTerrainPilotingModifiers(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+        terrains.values().forEach(t -> t.applyPilotingModifier(moveMode, roll, enteringRubble));
     }
 
     /**

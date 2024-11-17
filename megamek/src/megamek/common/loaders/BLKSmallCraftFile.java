@@ -249,6 +249,9 @@ public class BLKSmallCraftFile extends BLKFile implements IMekLoader {
                             }
                         }
                         if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = MtfFile.extractLegacySize(equipName);
+                            }
                             mount.setSize(size);
                         }
                     } catch (LocationFullException ex) {

@@ -76,8 +76,9 @@ public class TilesetManager implements IPreferenceChangeListener {
     private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif";
     private static final String FILENAME_ARTILLERY_ADJUSTED_IMAGE = "artyadj.gif";
     private static final String FILENAME_ARTILLERY_INCOMING_IMAGE = "artyinc.gif";
+    private static final String FILENAME_ARTILLERY_HIT_IMAGE = "artyhit.gif";
 
-    public static final String FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE = "obinc.gif";
+    public static final String FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE = "artyinc.gif";
 
     public static final int ARTILLERY_AUTOHIT = 0;
     public static final int ARTILLERY_ADJUSTED = 1;
@@ -109,6 +110,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
     private Image orbitalBombardmentIncoming;
+    private Image orbitalBombardmentHit;
 
     /**
      * Hexes under the effects of ECM have a shaded "static" image displayed,
@@ -494,6 +496,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         artilleryAdjusted = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE);
         artilleryIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE);
         orbitalBombardmentIncoming = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE);
+        orbitalBombardmentHit = LoadSpecificImage(Configuration.hexesDir(), FILENAME_ARTILLERY_HIT_IMAGE);
 
         started = true;
     }

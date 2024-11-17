@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
@@ -20388,6 +20389,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void addScheduledNuke(int[] nuke) {
         scheduledNukes.add(nuke);
+        drawNukeIncomingOnBoard(nuke);
     }
 
     /**
@@ -20398,35 +20400,72 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void addScheduledOrbitalBombardment(OrbitalBombardment orbitalBombardment) {
         Report r = new Report(1302);
-        r.indent();
-        r.newlines = 0;
-        r.add("Unknown warship in orbit");
-        r.add(orbitalBombardment.getCoords().getBoardNum());
+        r.indent()
+            .newLines(0)
+            .add(Messages.getString("OrbitalBombardment.source"))
+            .add(orbitalBombardment.getCoords().getBoardNum());
         getvPhaseReport().addElement(r);
         Report.addNewline(getvPhaseReport());
 
-        drawOrbitalBombardmentOnBoard(orbitalBombardment);
+        drawOrbitalBombardmentIncomingOnBoard(orbitalBombardment);
         scheduledOrbitalBombardment.add(orbitalBombardment);
         getGame().setOrbitalBombardmentVector(new Vector<>(scheduledOrbitalBombardment));
     }
 
     /**
      * Draws one "orbital bombardment target" on each hex where it is going to hit.
-     * @param orbitalBombardment
+     * @param orbitalBombardment  The orbital bombardment to be drawn.
      */
     private void drawOrbitalBombardmentOnBoard(OrbitalBombardment orbitalBombardment) {
-        for (var coord : orbitalBombardment.getCoords().allAtDistanceOrLess(orbitalBombardment.getRadius())) {
+        var allCoords = orbitalBombardment.getAllAffectedCoords();
+        var hexes = getGame().getBoard().getSpecialHexDisplayTable();
+
+        for (var coord : allCoords) {
+            if (!getGame().getBoard().contains(coord)) {
+                continue;
+            }
+
+            var removeIncoming = hexes.get(coord).stream()
+                .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING)
+                .toList();
+
+            for (var shd : removeIncoming) {
+                getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+            }
+
+            String imageSignature = orbitalBombardment.getImageSignature(coord);
             getGame().getBoard().addSpecialHexDisplay(
                 coord,
                 new SpecialHexDisplay(
                     SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
                     getGame().getRoundCount(),
-                    getGame().getPlayersList().get(0), // It doesnt the player, I just dont want to cause a nullpointer.
-                    "Orbital bombardment incoming, landing on round "
-                        + getGame().getRoundCount()
-                        + ", fired by an unknown warship in orbit",
-                    SpecialHexDisplay.SHD_OBSCURED_ALL)
-            );
+                    getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                    Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
+                    SpecialHexDisplay.SHD_OBSCURED_ALL,
+                    imageSignature));
+            sendChangedHex(coord);
+        }
+    }
+
+
+    /**
+     * Draws one "orbital bombardment target" on each hex where it is going to hit.
+     * @param orbitalBombardment  The orbital bombardment to be drawn.
+     */
+    private void drawOrbitalBombardmentIncomingOnBoard(OrbitalBombardment orbitalBombardment) {
+        var allCoords = orbitalBombardment.getAllAffectedCoords();
+        for (var coord : allCoords) {
+            if (!getGame().getBoard().contains(coord)) {
+                continue;
+            }
+            getGame().getBoard().addSpecialHexDisplay(
+                coord,
+                new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING,
+                    getGame().getRoundCount(),
+                    getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                    Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
+                    SpecialHexDisplay.SHD_OBSCURED_ALL));
             sendChangedHex(coord);
         }
     }
@@ -20436,6 +20475,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveScheduledNukes() {
         for (int[] nuke : scheduledNukes) {
+            drawNukeHitOnBoard(nuke);
             if (nuke.length == 3) {
                 doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), nuke[2],
                         vPhaseReport);
@@ -20463,6 +20503,7 @@ public class TWGameManager extends AbstractGameManager {
 
         scheduledOrbitalBombardment
             .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamage(), ob.getRadius()));
+        scheduledOrbitalBombardment.forEach(this::drawOrbitalBombardmentOnBoard);
         scheduledOrbitalBombardment.clear();
         getGame().resetOrbitalBombardmentAttacks();
 
@@ -20470,6 +20511,59 @@ public class TWGameManager extends AbstractGameManager {
         r.indent();
         r.newlines = 2;
         getvPhaseReport().add(r);
+    }
+
+    private void drawNukeHitOnBoard(int[] nukeArgs) {
+        var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] -1).radius(4).damage(0).build();
+
+        var allCoords = nuke.getAllAffectedCoords();
+        var hexes = getGame().getBoard().getSpecialHexDisplayTable();
+
+        for (var coord : allCoords) {
+            if (!getGame().getBoard().contains(coord)) {
+                continue;
+            }
+
+            var removeIncoming = hexes.get(coord).stream()
+                .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
+                .toList();
+
+            for (var shd : removeIncoming) {
+                getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+            }
+
+            String imageSignature = nuke.getImageSignature(coord);
+            getGame().getBoard().addSpecialHexDisplay(
+                coord,
+                new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.NUKE_HIT,
+                    getGame().getRoundCount(),
+                    getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                    Messages.getString("Nuke.exploded"),
+                    SpecialHexDisplay.SHD_OBSCURED_ALL,
+                    imageSignature));
+            sendChangedHex(coord);
+        }
+    }
+
+    private void drawNukeIncomingOnBoard(int[] nukeArgs) {
+        var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] -1).radius(4).damage(0).build();
+
+        var allCoords = nuke.getAllAffectedCoords();
+        for (var coord : allCoords) {
+            if (!getGame().getBoard().contains(coord)) {
+                continue;
+            }
+            getGame().getBoard().addSpecialHexDisplay(
+                coord,
+                new SpecialHexDisplay(
+                    SpecialHexDisplay.Type.NUKE_INCOMING,
+                    getGame().getRoundCount(),
+                    getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                    Messages.getString("Nuke.hitOnRound", getGame().getRoundCount()),
+                    SpecialHexDisplay.SHD_OBSCURED_ALL));
+            sendChangedHex(coord);
+        }
     }
 
     /**

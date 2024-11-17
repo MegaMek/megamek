@@ -215,7 +215,14 @@ public class MapMenu extends JPopupMenu {
             this.add(menu);
             itemCount++;
         }
+        menu = createPleaToRoyaltyMenu();
+        if (menu.getItemCount() > 0) {
+            this.addSeparator();
+            this.add(menu);
+            itemCount++;
+        }
 
+        this.addSeparator();
         menu = createGamemasterMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
@@ -399,6 +406,216 @@ public class MapMenu extends JPopupMenu {
         menu.add(item);
 
         return menu;
+    }
+
+    /**
+     * Creates various menus related to giving commands to allied bots
+     *
+     * @return JMenu
+     */
+    private JMenu createPleaToRoyaltyMenu() {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
+
+        for (var player : client.getGame().getPlayersList()) {
+            if (!player.isEnemyOf(client.getLocalPlayer()) && player.isBot()) {
+                menu.add(createBotCommands(player));
+            }
+        }
+        return menu;
+    }
+
+    private JMenu createBotCommands(Player bot) {
+        JMenu menu = new JMenu(bot.getName());
+
+        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
+        JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
+        JMenu ignoreTargetMenu= new JMenu(Messages.getString("Bot.commands.ignore"));
+
+        JMenu fleeMenu = new JMenu(Messages.getString("Bot.commands.flee"));
+        JMenu behaviorMenu = createBehaviorMenu(bot);
+
+
+        behaviorMenu.add(createBehaviorMenu(bot));
+        fleeMenu.add(createFleeMenu(bot));
+        targetHexMenu.add(createTargetHexMenuItem(bot));
+        menu.add(targetHexMenu);
+
+        for (Entity entity : client.getGame().getEntitiesVector(coords)) {
+            prioritizeTargetUnitMenu.add(createPrioritizeTargetUnitMenu(bot, entity));
+            ignoreTargetMenu.add(createIgnoreTargetUnitMenu(bot, entity));
+        }
+
+        if (prioritizeTargetUnitMenu.getItemCount() > 0) {
+            menu.add(prioritizeTargetUnitMenu);
+        }
+
+        if (ignoreTargetMenu.getItemCount() > 0) {
+            menu.add(ignoreTargetMenu);
+        }
+
+        menu.addSeparator();
+        menu.add(behaviorMenu);
+        menu.add(fleeMenu);
+        return menu;
+    }
+
+    JMenu createBehaviorMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.behavior"));
+        menu.add(createCautionMenu(bot));
+        menu.add(createAvoidMenu(bot));
+        menu.add(createAggressionMenu(bot));
+        menu.add(createHerdingMenu(bot));
+        menu.add(createBraveryMenu(bot));
+        return menu;
+    }
+
+    JMenu createHerdingMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.herding"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: herd : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: herd : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createBraveryMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.bravery"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: brave : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: brave : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createAggressionMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.aggression"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: aggression : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: aggression : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createAvoidMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.avoid"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: avoid : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: avoid : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createCautionMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.caution"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: caution : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: caution : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+
+    JMenuItem createFleeMenu(Player bot) {
+        JMenuItem item = new JMenuItem(Messages.getString("Bot.commands.flee.text"));
+        item.addActionListener(evt -> {
+                int confirm = JOptionPane.showConfirmDialog(
+                    gui.getFrame(),
+                    Messages.getString("Bot.commands.flee.confirmation", bot.getName()),
+                    Messages.getString("Bot.commands.flee.confirm"),
+                    JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    client.sendChat(String.format("%s: flee",
+                        bot.getName()
+                    ));
+                }
+            }
+        );
+        return item;
+    }
+
+    JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: ignoreTarget : %d",
+                bot.getName(),
+                entity.getId()
+            ))
+        );
+        return item;
+    }
+
+    JMenuItem createPrioritizeTargetUnitMenu(Player bot, Entity entity) {
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: prioritize : %d",
+                bot.getName(),
+                entity.getId()
+            ))
+        );
+        return item;
+    }
+
+    JMenuItem createTargetHexMenuItem(Player bot) {
+        JMenuItem item = new JMenuItem(coords.toFriendlyString());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: target : %02d%02d",
+                bot.getName(),
+                coords.getX()+1,
+                coords.getY()+1
+            ))
+        );
+        return item;
     }
 
     /**

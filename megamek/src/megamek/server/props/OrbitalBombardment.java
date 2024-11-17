@@ -15,6 +15,8 @@ package megamek.server.props;
 
 import megamek.common.Coords;
 
+import java.util.List;
+
 /**
  * Represents an orbital bombardment event.
  * x and y are board positions, damageFactor is the damage at impact point times 10, and radius is the blast radius of the explosion with
@@ -62,6 +64,27 @@ public class OrbitalBombardment {
     public int getRadius() {
         return radius;
     }
+
+    public int getXOffset() {
+        return x - radius;
+    }
+
+    public int getYOffset() {
+        return y - radius;
+    }
+
+    public String getImageSignature(Coords boardPosition) {
+        var offsetX = boardPosition.getX() - getXOffset();
+        var offsetY = boardPosition.getY() - getYOffset();
+        var modifier = offsetX % 2 == 0 ? "" : "_odd";
+        var imageSig = String.format("col_%d_row_%d%s.png", offsetX, offsetY, modifier);
+        return imageSig;
+    }
+
+    public List<Coords> getAllAffectedCoords() {
+        return coords.allAtDistanceOrLess(radius);
+    }
+
 
     /**
      * Builder of an orbital bombardment event.

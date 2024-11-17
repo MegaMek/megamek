@@ -57,7 +57,8 @@ public class CircleHexArea extends AbstractHexArea {
     @Override
     public Set<Coords> getCoords() {
         if (isSmall()) {
-            return new HashSet<>(center.allAtDistanceOrLess(radius));
+            // TODO: Check if this function is not suffering of an off-by-one error
+            return new HashSet<>(center.allLessThanDistance(radius));
         } else {
             return super.getCoords();
         }

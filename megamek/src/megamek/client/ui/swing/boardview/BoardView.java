@@ -639,6 +639,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         SpecialHexDisplay.Type.BOMB_DRIFT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
         SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT.init();
+        SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING.init();
+        SpecialHexDisplay.Type.NUKE_HIT.init();
+        SpecialHexDisplay.Type.NUKE_INCOMING.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
@@ -1840,6 +1843,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         final Hex hex = game.getBoard().getHex(c);
+        if (hex == null) {
+            return;
+        }
         final Point hexLoc = getHexLocation(c);
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
@@ -2121,7 +2127,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
-                        scaledImage = getScaledImage(shd.getType().getDefaultImage(), true);
+                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, boardPanel);
                     }
                 }

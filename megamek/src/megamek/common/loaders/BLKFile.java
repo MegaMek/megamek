@@ -1180,11 +1180,6 @@ public class BLKFile {
         blk.writeBlockFile(file);
     }
 
-    public static void encode(File file, Entity t) throws EntitySavingException {
-        BuildingBlock blk = BLKFile.getBlock(t);
-        blk.writeBlockFile(file);
-    }
-
     protected void addTransports(Entity e) throws EntityLoadingException {
         if (dataFile.containsData("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");

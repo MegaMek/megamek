@@ -491,18 +491,6 @@ public class BuildingBlock {
         return true;
     }
 
-
-    /**
-     * Writes the buildingBlock data to a file.
-     *
-     * @param fileName the full namepath of the file to write. Overwrites existing files.
-     * @return true on success.
-     */
-    public boolean writeBlockFile(String fileName) {
-        File file = new File(fileName);
-        return writeBlockFile(file);
-    }
-
     /**
      * Writes the buildingBlock data to a file.
      *

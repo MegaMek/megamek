@@ -36,4 +36,9 @@ public class SpecificRoundStartTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return game.getCurrentRound() == gameRound;
     }
+
+    @Override
+    public String toString() {
+        return "GameRound Start: " + gameRound;
+    }
 }

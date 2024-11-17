@@ -36,4 +36,9 @@ public class NotTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return !trigger.isTriggered(game, event);
     }
+
+    @Override
+    public String toString() {
+        return "[not] " + trigger;
+    }
 }

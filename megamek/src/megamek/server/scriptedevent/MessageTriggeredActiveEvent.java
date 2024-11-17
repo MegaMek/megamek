@@ -54,4 +54,10 @@ public class MessageTriggeredActiveEvent implements TriggeredActiveEvent {
     public void process(IGameManager gameManager) {
         gameManager.send(new Packet(PacketCommand.SCRIPTED_MESSAGE, header, message, image));
     }
+
+    @Override
+    public String toString() {
+        return "Message: " + trigger + ", \"" + message.substring(0, Math.min(message.length(), 20)) + "...\"";
+    }
+
 }

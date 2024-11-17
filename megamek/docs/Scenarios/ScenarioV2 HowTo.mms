@@ -725,6 +725,10 @@ area:
   empty:
 
 area:
+  # The "all" area includes all hexes of any board
+  all:
+
+area:
   # the area can be given as a terrain type
   terrain:
     # required: the terrain type to include in the area

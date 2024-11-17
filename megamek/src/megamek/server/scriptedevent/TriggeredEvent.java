@@ -36,4 +36,8 @@ public interface TriggeredEvent {
      * or a {@link OnceTrigger} can be used to define a trigger that will never happen more than once.
      */
     Trigger trigger();
+
+    default boolean isGameEnding() {
+        return false;
+    }
 }

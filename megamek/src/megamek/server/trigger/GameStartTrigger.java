@@ -31,4 +31,9 @@ public class GameStartTrigger extends AbstractOneTimeTrigger {
     protected boolean isTriggeredImpl(IGame game, TriggerSituation event) {
         return game.getPhase().isDuringOrAfter(GamePhase.INITIATIVE);
     }
+
+    @Override
+    public String toString() {
+        return "GameStart";
+    }
 }

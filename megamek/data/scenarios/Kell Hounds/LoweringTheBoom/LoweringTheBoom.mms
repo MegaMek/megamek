@@ -54,24 +54,25 @@ factions:
   victory:
     - trigger:
         type: fledunits
-        modify: atend
         units: [ 101, 102, 103, 104, 105, 106 ]
         atleast: 4
       modify: onlyatend
 
   fleefrom:
-    border: north
+    all:
+#    border: north
 
-  bot:
-    # try to get away
-    selfpreservation: 8
-    fallshame: 8
-    hyperaggression: 4
-    herdmentality: 1
-    bravery: 3
-    # Princess respects the edge she is set to flee from
-    fleeto: north
-    flee: true
+  # only for testing bot vs bot
+  #  bot:
+  #    # try to get away
+  #    selfpreservation: 8
+  #    fallshame: 8
+  #    hyperaggression: 4
+  #    herdmentality: 1
+  #    bravery: 3
+  #    # Princess respects the edge she is set to flee from
+  #    fleeto: north
+  #    flee: true
 
   units:
     include: LoweringTheBoom_units_marik.mmu
@@ -94,7 +95,6 @@ factions:
     - modify: onlyatend
       trigger:
         type: fledunits
-        modify: atend
         units: [ 101, 102, 103, 104, 105, 106 ]
         atmost: 2
 

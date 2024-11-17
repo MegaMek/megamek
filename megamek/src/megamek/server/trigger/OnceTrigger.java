@@ -46,4 +46,9 @@ public final class OnceTrigger implements Trigger {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return trigger + " [once]";
+    }
 }

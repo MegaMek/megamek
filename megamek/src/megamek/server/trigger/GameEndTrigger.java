@@ -26,4 +26,9 @@ public class GameEndTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return event == TriggerSituation.GAME_END;
     }
+
+    @Override
+    public String toString() {
+        return "GameEnd";
+    }
 }

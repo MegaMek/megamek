@@ -494,6 +494,7 @@ public class BuildingBlock {
         return true;
     }
 
+
     /**
      * Writes the buildingBlock data to a file.
      *
@@ -502,10 +503,20 @@ public class BuildingBlock {
      */
     public boolean writeBlockFile(String fileName) {
         File file = new File(fileName);
+        return writeBlockFile(file);
+    }
+
+    /**
+     * Writes the buildingBlock data to a file.
+     *
+     * @param file File to write. Overwrites existing files.
+     * @return true on success.
+     */
+    public boolean writeBlockFile(File file) {
 
         if (file.exists()) {
             if (!file.delete()) {
-                logger.error("Unable to delete file with name " + fileName);
+                logger.error("Unable to delete file with name " + file.getName());
                 return false;
             }
         }
@@ -520,7 +531,7 @@ public class BuildingBlock {
 
             bw.flush();
         } catch (Exception e) {
-            logger.error("Unable to save block file " + fileName, e);
+            logger.error("Unable to save block file " + file.getName(), e);
             return false;
         }
 

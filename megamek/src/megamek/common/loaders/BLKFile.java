@@ -14,6 +14,7 @@
  */
 package megamek.common.loaders;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -1165,6 +1166,11 @@ public class BLKFile {
     public static void encode(String fileName, Entity t) throws EntitySavingException {
         BuildingBlock blk = BLKFile.getBlock(t);
         blk.writeBlockFile(fileName);
+    }
+
+    public static void encode(File file, Entity t) throws EntitySavingException {
+        BuildingBlock blk = BLKFile.getBlock(t);
+        blk.writeBlockFile(file);
     }
 
     protected void addTransports(Entity e) throws EntityLoadingException {

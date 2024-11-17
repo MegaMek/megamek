@@ -727,6 +727,11 @@ public class AreaEffectHelper {
      */
     public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport,
             TWGameManager gameManager) {
+
+        // this +1 is necessary because the drawNuke method subtracts 1 from them
+        int[] nukeArgs = { coords.getX() + 1, coords.getY() + 1};
+        gameManager.drawNukeHitOnBoard(nukeArgs);
+
         NukeStats nukeStats = getNukeStats(nukeType);
 
         if (nukeStats == null) {

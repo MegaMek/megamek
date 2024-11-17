@@ -20513,7 +20513,8 @@ public class TWGameManager extends AbstractGameManager {
         getvPhaseReport().add(r);
     }
 
-    private void drawNukeHitOnBoard(int[] nukeArgs) {
+    public void drawNukeHitOnBoard(int[] nukeArgs) {
+        // Turns out this object can be used here
         var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] -1).radius(4).damage(0).build();
 
         var allCoords = nuke.getAllAffectedCoords();

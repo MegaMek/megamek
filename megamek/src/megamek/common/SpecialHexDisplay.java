@@ -31,7 +31,7 @@ import static megamek.client.ui.swing.tileset.TilesetManager.FILENAME_ORBITAL_BO
  */
 public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
-
+    public static final int LARGE_EXPLOSION_IMAGE_RADIUS = 4;
     public enum Type {
         ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif")) {
             @Override

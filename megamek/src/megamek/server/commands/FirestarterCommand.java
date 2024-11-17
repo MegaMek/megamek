@@ -60,6 +60,10 @@ public class FirestarterCommand extends GamemasterServerCommand {
      */
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        if (getGameManager().getGame().getBoard().inSpace()) {
+            server.sendServerChat(connId, "Can't start a fire in space");
+            return;
+        }
         int xArg = (int) args.get(X).getValue() - 1;
         int yArg = (int) args.get(Y).getValue() - 1;
         int fireType = (int) args.get(TYPE).getValue();

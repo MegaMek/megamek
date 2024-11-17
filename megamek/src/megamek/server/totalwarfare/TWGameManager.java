@@ -20419,7 +20419,7 @@ public class TWGameManager extends AbstractGameManager {
     private void drawOrbitalBombardmentOnBoard(OrbitalBombardment orbitalBombardment) {
         var allCoords = orbitalBombardment.getAllAffectedCoords();
         var hexes = getGame().getBoard().getSpecialHexDisplayTable();
-
+        var message = Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount());
         for (var coord : allCoords) {
             if (!getGame().getBoard().contains(coord)) {
                 continue;
@@ -20433,16 +20433,27 @@ public class TWGameManager extends AbstractGameManager {
                 getGame().getBoard().removeSpecialHexDisplay(coord, shd);
             }
 
-            String imageSignature = orbitalBombardment.getImageSignature(coord);
-            getGame().getBoard().addSpecialHexDisplay(
-                coord,
-                new SpecialHexDisplay(
-                    SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
-                    getGame().getRoundCount(),
-                    getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
-                    Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount()),
-                    SpecialHexDisplay.SHD_OBSCURED_ALL,
-                    imageSignature));
+            if (orbitalBombardment.getRadius() == SpecialHexDisplay.LARGE_EXPLOSION_IMAGE_RADIUS) {
+                String imageSignature = orbitalBombardment.getImageSignature(coord);
+                getGame().getBoard().addSpecialHexDisplay(
+                    coord,
+                    new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
+                        getGame().getRoundCount(),
+                        getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                        message,
+                        SpecialHexDisplay.SHD_OBSCURED_ALL,
+                        imageSignature));
+            } else {
+                getGame().getBoard().addSpecialHexDisplay(
+                    coord,
+                    new SpecialHexDisplay(
+                        SpecialHexDisplay.Type.BOMB_HIT,
+                        getGame().getRoundCount(),
+                        getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                        message,
+                        SpecialHexDisplay.SHD_OBSCURED_ALL));
+            }
             sendChangedHex(coord);
         }
     }
@@ -20454,6 +20465,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void drawOrbitalBombardmentIncomingOnBoard(OrbitalBombardment orbitalBombardment) {
         var allCoords = orbitalBombardment.getAllAffectedCoords();
+        // var allCoords = orbitalBombardment.getCoords().allAtDistanceOrLess(SpecialHexDisplay.LARGE_EXPLOSION_IMAGE_RADIUS);
         for (var coord : allCoords) {
             if (!getGame().getBoard().contains(coord)) {
                 continue;

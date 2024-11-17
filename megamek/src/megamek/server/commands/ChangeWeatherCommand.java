@@ -71,6 +71,10 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
      */
     @Override
     public void runAsGM(int connId, Map<String, Argument<?>> args) {
+        if (getGameManager().getGame().getBoard().inSpace()) {
+            server.sendServerChat(connId, "There is no planetary conditions to change outside of a planet");
+            return;
+        }
         var planetaryConditions = getGameManager().getGame().getPlanetaryConditions();
         var conditions = getStringConditionMap(planetaryConditions);
         conditions.forEach(updatePlanetaryConditions(connId, args));

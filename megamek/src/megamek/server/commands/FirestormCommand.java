@@ -59,6 +59,9 @@ public class FirestormCommand extends GamemasterServerCommand {
      */
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+        if (getGameManager().getGame().getBoard().inSpace()) {
+            server.sendServerChat(connId, "Can't start a firestorm in space");
+        }
         try {
             var fireType = (int) args.get(TYPE).getValue();
             var percent = (int) args.get(PERCENT).getValue();

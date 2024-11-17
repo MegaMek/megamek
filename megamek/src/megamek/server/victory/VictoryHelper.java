@@ -96,7 +96,7 @@ public class VictoryHelper implements Serializable {
             }
 
             // Check for battlefield control; this is currently an automatic victory when VCs are checked at all
-            // TODO: this could be made optional to allow the game to continue once alone if there's a use case
+            // this could be made optional to allow the game to continue once alone if there's a use case
             VictoryResult battlefieldControlVR = battlefieldControlVC.checkVictory(game, context);
             if (battlefieldControlVR.isVictory()) {
                 return battlefieldControlVR;
@@ -104,43 +104,6 @@ public class VictoryHelper implements Serializable {
         }
 
         return VictoryResult.noResult();
-    }
-
-    /**
-     * Checks the various victory conditions if any lead to a game-ending result. Player-agreed /victory is always checked, other victory
-     * conditions only if victory checking is at all enabled. Scripted victory and game-ending events are also always tested.
-     *
-     * @param game    The Game
-     * @param context The victory context - to my knowledge, this is currently not used at all
-     * @return A combined victory result giving the current victory status
-     * @see VictoryResult#noResult()
-     * @see VictoryResult#drawResult()
-     */
-    public VictoryResult checkForVictory2(Game game, Map<String, Object> context) {
-        List<VictoryResult> victoryResults = new ArrayList<>();
-
-        // Always check for chat-command /victory, so games without victory conditions can be completed
-        victoryResults.add(playerAgreedVC.checkVictory(game, context));
-
-        if (gameEndsByScriptedEvent(game)) {
-            // The game does end now; therefore, test all victory events. If none are met, the game is a draw
-            for (TriggeredEvent event : game.scriptedEvents()) {
-                if (event instanceof VictoryTriggeredEvent victoryEvent) {
-                    victoryResults.add(victoryEvent.checkVictory(game, context));
-                }
-            }
-            return VictoryResult.drawResult();
-        }
-
-        if (checkForVictory) {
-            victoryResults.add(checkOptionalVictoryConditions(game, context));
-
-            // Check for battlefield control; this is currently an automatic victory when VCs are checked at all
-            // TODO: this could be made optional to allow the game to continue once alone if there's a use case
-            victoryResults.add(battlefieldControlVC.checkVictory(game, context));
-        }
-
-        return victoryResults.stream().filter(VictoryResult::isVictory).findFirst().orElse(VictoryResult.noResult());
     }
 
     /**

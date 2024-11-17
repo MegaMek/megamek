@@ -581,8 +581,14 @@ Blood Asp G|Star Adder (Blood Asp) G
 Blood Asp I|Star Adder (Blood Asp) I
 Blood Asp Prime|Star Adder (Blood Asp) Prime
 Blood Asp T|Star Adder (Blood Asp) T
+Chaffee Servicemech BT1|Chaffee BT1 Servicemech
 Conjurer (Hellhound) 2|Hellhound (Conjurer) 2
 Conjurer (Hellhound)|Hellhound (Conjurer)
+Copper SecurityMech CPK-19|Copper CPK-19 SecurityMech
+Copper SecurityMech CPK-65|Copper CPK-65 SecurityMech
+Copper SecurityMech CPK-65KM|Copper CPK-65KM SecurityMech
+Deep Lord MilitiaMech RCL-Z1M|Deep Lord RCL-Z1M MilitiaMech
+Deep Lord MilitiaMech RCL-Z1M-B|Deep Lord RCL-Z1M-B MilitiaMech
 Dire Wolf (Daishi) A|Daishi (Dire Wolf) A
 Dire Wolf (Daishi) B|Daishi (Dire Wolf) B
 Dire Wolf (Daishi) Prime|Daishi (Dire Wolf) Prime
@@ -597,6 +603,10 @@ Executioner (Gladiator) B|Gladiator (Executioner) B
 Executioner (Gladiator) C|Gladiator (Executioner) C
 Executioner (Gladiator) D|Gladiator (Executioner) D
 Executioner (Gladiator) Prime|Gladiator (Executioner) Prime
+Exo Haulermech HMX-1|Exo HMX-1 HaulerMech
+Exo Haulermech HMX-2|Exo HMX-2 HaulerMech
+Exo Haulermech HMX-3|Exo HMX-3 HaulerMech
+Exo Haulermech HMX-3M|Exo HMX-3M HaulerMech
 Fire Moth (Dasher) A|Dasher (Fire Moth) A
 Fire Moth (Dasher) B|Dasher (Fire Moth) B
 Fire Moth (Dasher) C|Dasher (Fire Moth) C
@@ -610,6 +620,12 @@ Gargoyle (Man O' War) Prime|Man O' War (Gargoyle) Prime
 Gotterdammerung GTD-20C|Götterdämmerung GTD-20C
 Gotterdammerung GTD-20S|Götterdämmerung GTD-20S
 Gotterdammerung GTD-30S|Götterdämmerung GTD-30S
+Grommet D90 MilitiaMech|Grommet D90 MilitiaMech
+Guard SecurityMech GS-107X|Guard GS-107X SecurityMech
+Guard SecurityMech GS-54|Guard GS-54 SecurityMech
+Gulon MiningMech GLN-1A|Gulon GLN-1A MiningMech
+Gulon SecurityMech GLN-1B|Gulon GLN-1B SecurityMech
+Gulon SolahmaMech C|Gulon C SolahmaMech
 Gun GN-2O|Gùn GN-2O
 Gun GN-2OA|Gùn GN-2OA
 Gun GN-2OB|Gùn GN-2OB
@@ -654,8 +670,8 @@ Mad Dog (Vulture) A|Vulture (Mad Dog) A
 Mad Dog (Vulture) B|Vulture (Mad Dog) B
 Mad Dog (Vulture) C|Vulture (Mad Dog) C
 Mad Dog (Vulture) Prime|Vulture (Mad Dog) Prime
-Marauder Red Hunter|Marauder (Red Hunter-3146)
 Marauder IIC (Standard)|Marauder IIC
+Marauder Red Hunter|Marauder (Red Hunter-3146)
 Mist Lynx (Koshi) A|Koshi (Mist Lynx) A
 Mist Lynx (Koshi) B|Koshi (Mist Lynx) B
 Mist Lynx (Koshi) C|Koshi (Mist Lynx) C
@@ -673,13 +689,29 @@ Nova (Black Hawk) D|Black Hawk (Nova) D
 Nova (Black Hawk) Prime|Black Hawk (Nova) Prime
 Nova (Black Hawk) S|Black Hawk (Nova) S
 'OMEGA' SHP-4X|Omega SHP-4X
+Opossum SalvageMech OPO-2|Opossum OPO-2 SalvageMech
+Opossum SalvageMech OPO-3 MOD|Opossum OPO-3 SalvageMech MOD
+Pacifier SecurityMech CCU-36|Pacifier CCU-36 SecurityMech
+Pacifier SecurityMech CCU-40|Pacifier CCU-40 SecurityMech
+Patron LoaderMech PTN-1|Patron PTN-1 LoaderMech
+Patron LoaderMech|Patron LoaderMech
+Patron MilitiaMech PTN-2|Patron PTN-2 MilitiaMech
+Patron MilitiaMech PTN-2M|Patron PTN-2M MilitiaMech
+Peacemaker PM-6 PoliceMech|Peacemaker PM-6 PoliceMech
 Peregrine (Horned Owl) (Standard)|Peregrine (Horned Owl)
 Phoenix Hawk LAM PXH-HK2|Phoenix Hawk LAM PHX-HK2
 Phoenix Hawk PXH-1b (Special)|Phoenix Hawk PXH-1b 'Special'
 Phoenix Hawk PXH-1c (Special)|Phoenix Hawk PXH-1c 'Special'
 Piranha (Standard)|Piranha
+Quasit MilitiaMech QUA-51M|Quasit QUA-51M MilitiaMech
+Quasit MilitiaMech QUA-51P|Quasit QUA-51P MilitiaMech
+Quasit MilitiaMech QUA-51T|Quasit QUA-51T MilitiaMech
 Raijin RJN101-A|Raijin RJN-101-A
 Raijin RJN101-C|Raijin RJN-101-C
+Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum'|Rock Hound AM-PRM-RH7 'Rock Possum' ProspectorMech
+Rock Hound ProspectorMech AM-PRM-RH7|Rock Hound AM-PRM-RH7 ProspectorMech
+Rock Hound ProspectorMech 'Rock Otter'AM-PRM-RH7A|Rock Hound AM-PRM-RH7A 'Rock Otter' ProspectorMech
+Sarissa SecurityMech MN2-A|Sarissa MN2-A SecurityMech
 Stone Rhino (Behemoth) 4|Behemoth (Stone Rhino) 4
 Stone Rhino (Behemoth) 5|Behemoth (Stone Rhino) 5
 Stone Rhino (Behemoth) 6|Behemoth (Stone Rhino) 6

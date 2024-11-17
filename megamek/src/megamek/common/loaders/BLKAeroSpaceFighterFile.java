@@ -276,6 +276,9 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                             }
                         }
                         if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = MtfFile.extractLegacySize(equipName);
+                            }
                             mount.setSize(size);
                         }
                         if (etype.hasFlag(MiscType.F_CARGO)) {

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2024 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -385,17 +385,14 @@ public class BuildingBlock {
     /**
      * Clears the <CODE>rawData</CODE> Vector and inserts a default comment and
      * <I>BlockVersion</I> information.
-     *
-     * @return Returns true on success.
      */
-    public boolean createNewBlock() {
+    public void createNewBlock() {
         rawData.clear();
         writeBlockComment("Saved from version " + SuiteConstants.VERSION + " on " + LocalDate.now());
-        return true;
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, String blockData) {
         String[] temp = new String[1];
@@ -405,7 +402,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, int blockData) {
         String[] temp = new String[1];
@@ -414,7 +411,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, int[] blockData) {
         String[] temp = new String[blockData.length];
@@ -426,7 +423,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, float blockData) {
         String[] temp = new String[1];
@@ -435,7 +432,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, double blockData) {
         String[] temp = new String[1];
@@ -444,7 +441,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, float[] blockData) {
         String[] temp = new String[blockData.length];
@@ -455,7 +452,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see writeBlockData (String, Vector)
+     * @see #writeBlockData (String, Vector)
      */
     public boolean writeBlockData(String blockName, String[] blockData) {
         return writeBlockData(blockName, makeVector(blockData));
@@ -497,15 +494,14 @@ public class BuildingBlock {
     /**
      * Writes the buildingBlock data to a file.
      *
-     * @param fileName File to write. Overwrites existing files.
+     * @param file File to write. Overwrites existing files.
      * @return true on success.
      */
-    public boolean writeBlockFile(String fileName) {
-        File file = new File(fileName);
+    public boolean writeBlockFile(File file) {
 
         if (file.exists()) {
             if (!file.delete()) {
-                logger.error("Unable to delete file with name " + fileName);
+                logger.error("Unable to delete file with name " + file);
                 return false;
             }
         }
@@ -520,7 +516,7 @@ public class BuildingBlock {
 
             bw.flush();
         } catch (Exception e) {
-            logger.error("Unable to save block file " + fileName, e);
+            logger.error("Unable to save block file " + file.getPath(), e);
             return false;
         }
 
@@ -614,7 +610,7 @@ public class BuildingBlock {
     /**
      * Just about the same as the <CODE>getVector()</CODE> command.
      *
-     * @see getVector ()
+     * @see #getVector()
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
     public Vector<String> getAllDataAsVector() {
@@ -646,14 +642,14 @@ public class BuildingBlock {
 
     // for those of us who like doing things indirectly ; -?
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(int[] array) {
         return array[0];
     }
 
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      * @return Returns <CODE>array.size()</CODE>
      */
     public int getReturnedArraySize(Vector<Object> array) {
@@ -661,14 +657,13 @@ public class BuildingBlock {
     }
 
     /**
-     * @see getReturnedArraySize (String[])
+     * @see #getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(float[] array) {
         try {
             return Integer.parseInt("" + array[0]);
         } catch (Exception ignored) {
-            logger.error(
-                    "Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
+            logger.error("Couldn't find array size at [0], is this an array I returned? Trying to find the size anyway");
             return this.countArray(array);
         }
     }
@@ -685,7 +680,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see countArray( String[] )
+     * @see #countArray( String[] )
      */
     public int countArray(float[] array) {
 
@@ -693,7 +688,7 @@ public class BuildingBlock {
     }
 
     /**
-     * @see countArray( String[] )
+     * @see #countArray( String[] )
      */
     public int countArray(int[] array) {
 

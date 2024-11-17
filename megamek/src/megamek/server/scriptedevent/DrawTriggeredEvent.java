@@ -60,4 +60,9 @@ public record DrawTriggeredEvent(Trigger trigger, boolean endsGame) implements T
     public boolean isGameEnding() {
         return endsGame;
     }
+
+    @Override
+    public String toString() {
+        return "Draw: " + trigger + (endsGame ? " [ends]" : "");
+    }
 }

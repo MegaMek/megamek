@@ -31,23 +31,28 @@ public class DisasterCommand extends GamemasterServerCommand {
     public static final String TYPE = "type";
 
     enum Disaster {
+        ORBITAL_BOMBARDMENT,    // can happen in space
+        ORBITAL_BOMBARDMENT_2,  // can happen in space
+        ORBITAL_BOMBARDMENT_3,  // can happen in space
+        TRAITOR,                // can happen in space
         RANDOM,
         HURRICANE,
-        LIGHTNING_STORM,
-        ORBITAL_BOMBARDMENT,
-        ORBITAL_BOMBARDMENT_2,
-        ORBITAL_BOMBARDMENT_3,
         SANDSTORM,
-        ICESTORM,
+        LIGHTNING_STORM,
+        ICE_STORM,
         ECLIPSE,
         SOLAR_FLARE,
-        SUPERNOVA,
         SMOG,
-        FIRESTORM,
-        TRAITOR;
+        SUPERNOVA,
+        FIRESTORM;
 
         public static Disaster getRandomDisaster() {
             return values()[(int) (Math.random() * values().length)];
+        }
+        public static Disaster getRandomSpaceDisaster() {
+            // currently only the first 4 disasters can happen in space, since all the others are either fire
+            // or climatic events
+            return values()[(int) (Math.random() * 4)];
         }
     }
 
@@ -86,6 +91,7 @@ public class DisasterCommand extends GamemasterServerCommand {
                 server.sendServerChat("The star is going supernova!");
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
+
             case ORBITAL_BOMBARDMENT_3:
                 orbitalBombardment(connId);
             case ORBITAL_BOMBARDMENT_2:
@@ -93,11 +99,12 @@ public class DisasterCommand extends GamemasterServerCommand {
             case ORBITAL_BOMBARDMENT:
                 orbitalBombardment(connId);
                 break;
+
             case SANDSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
                 server.sendServerChat("A sandstorm is approaching!");
                 break;
-            case ICESTORM:
+            case ICE_STORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "fog=1", "weather=11", "wind=6", "winddir=6"});
                 server.sendServerChat("An ice storm is incoming!");
                 break;
@@ -149,7 +156,11 @@ public class DisasterCommand extends GamemasterServerCommand {
     @Override
     protected void runAsGM(int connId, Map<String, Argument<?>> args) {
         if (args.get(TYPE).getValue().equals(Disaster.RANDOM)) {
-            runDisasterCommand(connId, Disaster.getRandomDisaster());
+            if (getGameManager().getGame().getBoard().inSpace()) {
+                runDisasterCommand(connId, Disaster.getRandomSpaceDisaster());
+            } else {
+                runDisasterCommand(connId, Disaster.getRandomDisaster());
+            }
         } else {
             runDisasterCommand(connId, (Disaster) args.get(TYPE).getValue());
         }

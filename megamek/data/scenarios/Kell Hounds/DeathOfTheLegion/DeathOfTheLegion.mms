@@ -448,8 +448,8 @@ messages:
 
   - header: Pilot Message
     text: |
-      *Sgt. Clarence Wilson:* Sir, Jump Infantry is reporting several of the pirates who've fled have been caught and captured
-      or destroyed.
+      *Sgt. Clarence Wilson:* Sir, Jump Infantry is reporting several of the pirates who've fled have been caught 
+      and captured or destroyed.
     image: portraits/Male/MekWarrior/MW_M_103.png
     trigger:
       type: and

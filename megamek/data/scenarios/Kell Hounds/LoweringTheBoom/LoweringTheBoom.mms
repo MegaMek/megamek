@@ -145,14 +145,6 @@ messages:
     trigger:
       type: gamestart
 
-  - header: One Unit Safe
-    text: Congratulations, one of your Meks has safely left the battlefield!
-    trigger:
-      type: fledunits
-      modify: once
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 1
-
   - header: Another Unit Safe
     text: Three of your Meks have safely left the battlefield! This game is already considered a draw.
     trigger:
@@ -233,6 +225,26 @@ messages:
       modify: atend
       units: [ 101, 102, 103, 104, 105, 106 ]
       count: 4
+
+  - header: Pilot Message
+    text: |
+      *Deborah Ryan:* They won't be catching me!
+    image: portraits/Female/MekWarrior/MW_F_83.png
+    trigger:
+      type: fledunits
+      modify: once
+      units: [ 106 ]
+      count: 1
+
+  - header: Pilot Message
+    text: |
+      *Col. Oliver Nage:* They got Deborah's Javelin! Let's hope she made it out of there. Keep going!
+    image: portraits/Male/MekWarrior/MW_M_15.png
+    trigger:
+      type: killedunit
+      modify: once
+      unit: 106
+
 
 end:
   - trigger:

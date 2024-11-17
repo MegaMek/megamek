@@ -28,34 +28,19 @@ import java.util.Map;
 
 /**
  * This class represents "victory" events that are a draw that can be added programmatically or from MM scenarios to check for a draw
- * result.
+ * result. There are two ways these victory events can be used, depending on the endsGame parameter: When endsGame is true, this
+ * victory condition is checked at the end of game rounds and if it is met, the game ends. When endsGame is false, this victory
+ * condition is only checked after the game has already ended through another condition (e.g. round limit or other event).
  *
+ * Note: Victory Triggers must *not* be one-time triggers. Victory is checked multiple times, even when victory is achieved and triggers
+ * must be able to react multiple times.
+ *
+ * @param trigger  The trigger that decides if a draw has occurred
+ * @param endsGame When true, ends the game when it happens, when false, is only checked when the game has ended
  * @see GameEndTriggeredEvent
  * @see VictoryTriggeredEvent
  */
-public class DrawTriggeredEvent implements TriggeredEvent, VictoryCondition {
-
-    private final Trigger trigger;
-    private final boolean isGameEnding;
-
-    /**
-     * Creates a draw result scripted event. There are two ways these victory events can be used, depending on the isGameEnding parameter:
-     * When isGameEnding is true, this victory condition is checked at the end of game rounds and if it is met, the game ends. When
-     * isGameEnding is false, this victory condition is only checked after the game has already ended through another condition (round limit
-     * or other event).
-     *
-     * Note: Victory Triggers must *not* be one-time triggers. Victory is checked multiple times, even when victory is achieved and triggers
-     * must be able to react multiple times.
-     *
-     * @param trigger      The trigger that decides if a draw has occurred
-     * @param isGameEnding When true, ends the game when it happens, when false, is only checked when the game has ended
-     * @see GameEndTriggeredEvent
-     * @see VictoryTriggeredEvent
-     */
-    public DrawTriggeredEvent(Trigger trigger, boolean isGameEnding) {
-        this.trigger = trigger;
-        this.isGameEnding = isGameEnding;
-    }
+public record DrawTriggeredEvent(Trigger trigger, boolean endsGame) implements TriggeredEvent, VictoryCondition {
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
@@ -73,6 +58,6 @@ public class DrawTriggeredEvent implements TriggeredEvent, VictoryCondition {
 
     @Override
     public boolean isGameEnding() {
-        return isGameEnding;
+        return endsGame;
     }
 }

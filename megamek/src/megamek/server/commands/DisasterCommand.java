@@ -22,6 +22,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Luana Coppio
@@ -29,13 +30,13 @@ import java.util.Map;
 public class DisasterCommand extends GamemasterServerCommand {
 
     public static final String TYPE = "type";
-
+    private static Random random = new Random();
     enum Disaster {
+        RANDOM,
         ORBITAL_BOMBARDMENT,    // can happen in space
         ORBITAL_BOMBARDMENT_2,  // can happen in space
         ORBITAL_BOMBARDMENT_3,  // can happen in space
         TRAITOR,                // can happen in space
-        RANDOM,
         HURRICANE,
         SANDSTORM,
         LIGHTNING_STORM,
@@ -47,12 +48,12 @@ public class DisasterCommand extends GamemasterServerCommand {
         FIRESTORM;
 
         public static Disaster getRandomDisaster() {
-            return values()[(int) (Math.random() * values().length)];
+            return values()[random.nextInt(1, values().length)];
         }
         public static Disaster getRandomSpaceDisaster() {
             // currently only the first 4 disasters can happen in space, since all the others are either fire
             // or climatic events
-            return values()[(int) (Math.random() * 4)];
+            return values()[random.nextInt(1, 5)];
         }
     }
 

@@ -20,6 +20,7 @@ import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -30,13 +31,39 @@ import java.util.Random;
 public class DisasterCommand extends GamemasterServerCommand {
 
     public static final String TYPE = "type";
-    private static Random random = new Random();
+    private static final Random random = new Random();
     enum Disaster {
-        RANDOM,
-        ORBITAL_BOMBARDMENT,    // can happen in space
-        ORBITAL_BOMBARDMENT_2,  // can happen in space
-        ORBITAL_BOMBARDMENT_3,  // can happen in space
-        TRAITOR,                // can happen in space
+
+        RANDOM {
+            @Override
+            public boolean canHappenAtAll() {
+                return false;
+            }
+        },
+        ORBITAL_BOMBARDMENT {
+            @Override
+            public boolean canHappenInSpace() {
+                return true;
+            }
+        },
+        ORBITAL_BOMBARDMENT_2 {
+            @Override
+            public boolean canHappenInSpace() {
+                return true;
+            }
+        },
+        ORBITAL_BOMBARDMENT_3 {
+            @Override
+            public boolean canHappenInSpace() {
+                return true;
+            }
+        },
+        TRAITOR {
+            @Override
+            public boolean canHappenInSpace() {
+                return true;
+            }
+        },
         HURRICANE,
         SANDSTORM,
         LIGHTNING_STORM,
@@ -47,13 +74,24 @@ public class DisasterCommand extends GamemasterServerCommand {
         SUPERNOVA,
         FIRESTORM;
 
-        public static Disaster getRandomDisaster() {
-            return values()[random.nextInt(1, values().length)];
+        public boolean canHappenInSpace() {
+            return false;
         }
+
+        public boolean canHappenAtAll() {
+            return true;
+        }
+
+        public static Disaster getRandomDisaster() {
+            var ret = Arrays.stream(values()).filter(Disaster::canHappenAtAll).toList();
+            return ret.get(random.nextInt(ret.size()));
+        }
+
         public static Disaster getRandomSpaceDisaster() {
             // currently only the first 4 disasters can happen in space, since all the others are either fire
             // or climatic events
-            return values()[random.nextInt(1, 5)];
+            var ret = Arrays.stream(values()).filter(Disaster::canHappenInSpace).toList();
+            return ret.get(random.nextInt(ret.size()));
         }
     }
 
@@ -93,14 +131,6 @@ public class DisasterCommand extends GamemasterServerCommand {
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
 
-            case ORBITAL_BOMBARDMENT_3:
-                orbitalBombardment(connId);
-            case ORBITAL_BOMBARDMENT_2:
-                orbitalBombardment(connId);
-            case ORBITAL_BOMBARDMENT:
-                orbitalBombardment(connId);
-                break;
-
             case SANDSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
                 server.sendServerChat("A sandstorm is approaching!");
@@ -118,28 +148,31 @@ public class DisasterCommand extends GamemasterServerCommand {
                 server.sendServerChat("A thick smog is covering the battlefield!");
                 break;
             case TRAITOR:
+                var players = gameManager.getGame().getPlayersList();
+                var randomPlayer = players.get((random.nextInt(players.size())));
+                var units = gameManager.getGame().getPlayerEntities(randomPlayer, true);
+                var randomUnit = units.get((random.nextInt(units.size())));
+                var otherPlayers = players.stream().filter(p -> p != randomPlayer).toList();
+                var newOwner = otherPlayers.get(random.nextInt(otherPlayers.size()));
+                new ChangeOwnershipCommand(server, gameManager).run(connId,
+                    new String[]{"traitor", "" + randomUnit.getId(), "" + newOwner.getId()});
+                server.sendServerChat("A traitor has been revealed!");
+                break;
+            case ORBITAL_BOMBARDMENT_3:
+                orbitalBombardment(connId);
+            case ORBITAL_BOMBARDMENT_2:
+                orbitalBombardment(connId);
+            case ORBITAL_BOMBARDMENT:
             default:
-                {
-                    var players = gameManager.getGame().getPlayersList();
-                    var randomPlayer = players.get((int) (Math.random() * players.size()));
-
-                    var units = gameManager.getGame().getPlayerEntities(randomPlayer, true);
-                    var randomUnit = units.get((int) (Math.random() * units.size()));
-
-                    var otherPlayers = players.stream().filter(p -> p != randomPlayer).toList();
-                    var newOwner = otherPlayers.get((int) (Math.random() * otherPlayers.size()));
-
-                    new ChangeOwnershipCommand(server, gameManager).run(connId,
-                        new String[]{"traitor", "" + randomUnit.getId(), "" + newOwner.getId()});
-                    server.sendServerChat("A traitor has been revealed!");
-                }
+                orbitalBombardment(connId);
+                break;
         }
     }
 
     private Coords getRandomHexCoords() {
         var board = gameManager.getGame().getBoard();
-        var x = (int) (Math.random() * board.getWidth());
-        var y = (int) (Math.random() * board.getHeight());
+        var x = random.nextInt(board.getWidth());
+        var y = random.nextInt(board.getHeight());
         return new Coords(x, y);
     }
 

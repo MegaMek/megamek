@@ -2929,7 +2929,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 5560;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
                 .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
@@ -3291,7 +3291,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "318, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
                 .setISAdvancement(2785, 2800, DATE_NONE, 2845, 3045).setISApproximate(true, true, false, true, false)
                 .setPrototypeFactions(F_DC).setProductionFactions(F_DC);
@@ -7524,9 +7524,10 @@ public class MiscType extends EquipmentType {
         misc.explosive = true;
         misc.rulesRefs = "92, IO";
         misc.omniFixedOnly = true;
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setISAdvancement(3136, DATE_NONE, DATE_NONE, 3140, DATE_NONE)
+                .setISAdvancement(3136, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_RS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
@@ -7549,9 +7550,10 @@ public class MiscType extends EquipmentType {
                 .or(F_SS_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_PROTOMEK_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
         misc.explosive = true;
         misc.rulesRefs = "93, IO";
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setISAdvancement(3137, DATE_NONE, DATE_NONE, 3140, DATE_NONE)
+                .setISAdvancement(3137, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_RS)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
@@ -7576,9 +7578,10 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
         misc.rulesRefs = "94, IO";
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
+                .setISAdvancement(3133, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -7598,9 +7601,10 @@ public class MiscType extends EquipmentType {
                 .or(F_PROTOMEK_EQUIPMENT);
         // TODO: game rules
         misc.rulesRefs = "94, IO";
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setISAdvancement(3136, DATE_NONE, DATE_NONE, 3142, DATE_NONE)
+                .setISAdvancement(3136, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }
@@ -7620,9 +7624,10 @@ public class MiscType extends EquipmentType {
                 .or(F_PROTOMEK_EQUIPMENT);
         // TODO: game rules
         misc.rulesRefs = "94, IO";
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
-                .setISAdvancement(3137, DATE_NONE, DATE_NONE, 3142, DATE_NONE)
+                .setISAdvancement(3137, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return misc;
     }

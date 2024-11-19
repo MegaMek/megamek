@@ -1,41 +1,38 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
 chassis:Copperhead
 model:CPR-HD-002
 mul id:690
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3054
-Source:TRO: 3055
-Rules Level:2
+techbase:Inner Sphere
+era:3054
+source:TRO: 3055
+rules level:2
 role:Striker
-
-
-
 
 quirk:difficult_maintain
 
+mass:30
+engine:180 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Mass:30
-Engine:180 XL Engine
-Structure:Standard
-Myomer:Standard
+heat sinks:12 IS Double
+walk mp:6
+jump mp:2
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:2
-
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:9
-RT Armor:9
-CT Armor:12
-HD Armor:9
-LL Armor:9
-RL Armor:9
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:9
+RT armor:9
+CT armor:12
+HD armor:9
+LL armor:9
+RL armor:9
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:7
 Medium Pulse Laser, Left Arm
@@ -56,8 +53,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISMediumPulseLaser
 ISSmallPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -66,12 +63,12 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 SRM 4
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -85,8 +82,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 Medium Laser
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -100,7 +97,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 Medium Laser
 IS Ammo SRM-4
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -114,7 +111,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Medium Laser
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -136,7 +133,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -150,7 +147,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

@@ -1839,6 +1839,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public boolean doYesNoDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
         confirm.setVisible(true);
+        confirm.setAlwaysOnTop(true);
         return confirm.getAnswer();
     }
 
@@ -2280,12 +2281,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 }
             }
 
-            // Allow players to save their living units to a file.
-            // Don't bother asking if none survived.
-            if (!living.isEmpty()
-                    && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
+            // Ask if you want to persist the final unit list from a battle encounter
+            if (doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
                             Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
-                // Allow the player to save the units to a file.
                 saveVictoryList();
             }
 

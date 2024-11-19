@@ -52,6 +52,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -131,7 +132,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTABLE_ROWHEIGHT_COMPACT = 20;
     static final int MEKTABLE_ROWHEIGHT_FULL = 65;
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
-    private static final int TEAMOVERVIEW_BORDER = 45;
     private static final int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
 
     private JTabbedPane panTabs = new JTabbedPane();
@@ -233,7 +233,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private Game boardPreviewGame = new Game();
     private transient BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0, 0);
-    private JCheckBox showPlayerDeployment = new JCheckBox(Messages.getString("ChatLounge.showPlayerDeployment"));
+    private final JCheckBox showPlayerDeployment = new JCheckBox(Messages.getString("ChatLounge.showPlayerDeployment"));
 
     private ArrayList<String> invalidBoards = new ArrayList<>();
     private ArrayList<String> serverBoards = new ArrayList<>();
@@ -270,7 +270,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
     private static final String CL_KEY_FILEEXTENTION_XML = ".xml";
-    private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Boards Stuff/MapAssemblyHelp.html";
+    private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Map and Board Stuff/MapAssemblyHelp.html";
     private static final String CL_KEY_FILEPATH_MAPSETUP = "/mapsetup";
     private static final String CL_KEY_NAMEHELPPANE = "helpPane";
 
@@ -788,17 +788,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewBV.setDisplayInvalidFields(false);
             previewBV.setUseLosTool(false);
             previewBV.setTooltipProvider(new TWBoardViewTooltip(boardPreviewGame, clientgui, previewBV));
-            JButton bpButton = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardButton"));
-            bpButton.addActionListener(e -> previewGameBoard());
-            JPanel bpPanel = new JPanel();
-            bpPanel.setLayout(new BoxLayout(bpPanel, BoxLayout.PAGE_AXIS));
-            JPanel topPanel = new JPanel(new FlowLayout());
-            topPanel.add(bpButton);
+
             showPlayerDeployment.setSelected(true);
-            topPanel.add(showPlayerDeployment);
-            bpPanel.add(topPanel);
-            bpPanel.add(previewBV.getComponent(true));
-            boardPreviewW.add(bpPanel);
+            showPlayerDeployment.addActionListener(e -> previewGameBoard());
+
+            JPanel previewSettingsPanel = new JPanel(new FlowLayout());
+            previewSettingsPanel.add(showPlayerDeployment);
+
+            Box previewPanel = Box.createVerticalBox();
+            previewPanel.add(previewSettingsPanel);
+            previewPanel.add(previewBV.getComponent(true));
+            boardPreviewW.add(previewPanel);
             boardPreviewW.setSize(clientgui.getFrame().getWidth() / 2, clientgui.getFrame().getHeight() / 2);
 
             String closeAction = "closeAction";
@@ -883,7 +883,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * The search string is split at ";" and search results for the tokens
      * are ANDed.
      */
-    protected java.util.List<String> getSearchedItems(String searchString) {
+    protected List<String> getSearchedItems(String searchString) {
         String lowerCaseSearchString = searchString.toLowerCase();
         String[] searchStrings = lowerCaseSearchString.split(";");
         java.util.List<String> result = mapSettings.getBoardsAvailableVector();
@@ -1894,6 +1894,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
                 Dimension sz = new Dimension(scaleForGUI(width), scaleForGUI(height));
                 dialog.setPreferredSize(sz);
+                dialog.pack();
                 dialog.setVisible(true);
 
             } else if (ev.getSource() == butListView) {

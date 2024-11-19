@@ -1,5 +1,6 @@
-chassis:Gulon MiningMech
-model:GLN-1A 
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Gulon
+model:GLN-1A MiningMech
 mul id:7844
 
 Config:Biped
@@ -8,6 +9,7 @@ era:3000
 source:TRO: Irregulars
 rules level:2
 role:Ambusher
+
 
 mass:25
 engine:100 Fission Engine(IS)
@@ -68,7 +70,7 @@ MiningDrill
 
 Left Torso:
 MechSprayer
-Liquid Storage:size:0.5
+Liquid Storage:SIZE:0.5
 -Empty-
 -Empty-
 -Empty-

@@ -333,6 +333,7 @@ public class OptionsConstants {
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
     public static final String ADVANCED_BLACK_ICE= "black_ice";
+    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS= "lightning_storm_targets_units";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";
@@ -525,7 +526,6 @@ public class OptionsConstants {
     public static final String RPG_ARTILLERY_SKILL = "artillery_skill";
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
-    public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
     private OptionsConstants() { }

@@ -84,6 +84,7 @@ import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.jacksonadapters.BotParser;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -91,13 +92,13 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
+import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;
-import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
 
@@ -857,7 +858,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             for (int x = 0; x < pa.length; x++) {
                 if (playerTypes[x] == ScenarioDialog.T_BOT) {
                     logger.info("Adding bot " + pa[x].getName() + " as Princess");
-                    BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    Princess c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
+                    if (scenario.hasBotInfo(pa[x].getName())
+                            && scenario.getBotInfo(pa[x].getName()) instanceof BotParser.PrincessRecord princessRecord) {
+                        c.setBehaviorSettings(princessRecord.behaviorSettings());
+                    }
                     c.getGame().addGameListener(new BotGUI(frame, c));
                     c.connect();
                 }

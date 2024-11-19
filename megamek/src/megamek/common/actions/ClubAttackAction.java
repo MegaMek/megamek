@@ -479,8 +479,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Various versions of physical weapons have different base bonuses and
         // penalties.
-        base += getHitModFor(clubType);
         toHit = new ToHitData(base, "base");
+        toHit.addModifier(getHitModFor(clubType), clubType.getName());
 
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 

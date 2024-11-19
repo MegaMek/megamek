@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * This class has methods for reading objects such as SBF Formations, Units and AlphaStrikeElements
@@ -44,7 +43,6 @@ public final class MMUReader {
     static final String SBF_FORMATION = "SBFFormation";
     static final String SBF_UNIT = "SBFUnit";
     static final String AS_ELEMENT = "ASElement";
-    static final String TW_UNIT = "TWUnit";
     static final String SKILL = "skill";
     static final String SIZE = "size";
     static final String ROLE = "role";
@@ -112,25 +110,34 @@ public final class MMUReader {
         List<Object> result = new ArrayList<>();
         if (node.isArray()) {
             for (Iterator<JsonNode> it = node.elements(); it.hasNext(); ) {
-                JsonNode arrayNode = it.next();
-                parseNode(arrayNode, objectType).ifPresent(result::add);
+                result.addAll(parseNode(it.next(), objectType));
             }
+        } else if (node.isObject()) {
+            result.addAll(parseNode(node, objectType));
         } else {
-            parseNode(node, objectType).ifPresent(result::add);
+            throw new IllegalArgumentException("Can't process file, neither array nor single unit");
         }
         return result;
     }
 
-    private Optional<Object> parseNode(JsonNode node, Class<?> objectType) throws IOException {
+    private List<Object> parseNode(JsonNode node, Class<?> objectType) throws IOException {
         if (node.has(INCLUDE)) {
             JsonNode node2 = yamlMapper.readTree(new File(currentDirectory, node.get(INCLUDE).textValue()));
             // add the included nodes to the present node as if they had been written directly in the original file
-            node2.fieldNames().forEachRemaining(n -> ((ObjectNode) node).set(n, node2.get(n)));
+            // node can be an array or a single element (object node)
+            // the included file can have an array or a single element
+            if (node2.isObject()) {
+                ((ObjectNode) node).setAll((ObjectNode) node2);
+            } else if (node2.isArray()) {
+                return read(node2, objectType);
+            } else {
+                throw new IllegalArgumentException("Can't process include file, neither array nor single unit");
+            }
         }
 
         if (objectType != null) {
             // When the object type such as AlphaStrikeElement.class is given, read it directly as such an object
-            return Optional.of(yamlMapper.treeToValue(node, objectType));
+            return List.of(yamlMapper.treeToValue(node, objectType));
 
         } else {
             // When no type is provided by the method call, the type must be given with the "type:" keyword
@@ -138,18 +145,14 @@ public final class MMUReader {
                 throw new IOException("Missing type info in MMU file!");
             }
             try {
-                switch (node.get(TYPE).textValue()) {
-                    case SBF_FORMATION:
-                        return Optional.of(yamlMapper.treeToValue(node, SBFFormation.class));
-                    case AS_ELEMENT:
-                        return Optional.of(yamlMapper.treeToValue(node, AlphaStrikeElement.class));
-                    case SBF_UNIT:
-                        return Optional.of(yamlMapper.treeToValue(node, SBFUnit.class));
-                    default:
-                        return Optional.empty();
-                }
+                return switch (node.get(TYPE).textValue()) {
+                    case SBF_FORMATION -> List.of(yamlMapper.treeToValue(node, SBFFormation.class));
+                    case AS_ELEMENT -> List.of(yamlMapper.treeToValue(node, AlphaStrikeElement.class));
+                    case SBF_UNIT -> List.of(yamlMapper.treeToValue(node, SBFUnit.class));
+                    default -> List.of();
+                };
             } catch (JsonProcessingException e) {
-                return Optional.empty();
+                return List.of();
             }
         }
     }

@@ -71,6 +71,9 @@ public class MekTROView extends TROView {
         setModelData("hsType", mek.getHeatSinkTypeName());
         setModelData("hsCount",
                 mek.hasDoubleHeatSinks() ? mek.heatSinks() + " [" + (mek.heatSinks() * 2) + "]" : mek.heatSinks());
+        if (mek.hasRiscHeatSinkOverrideKit()) {
+            setModelData("riscKit", true);
+        }
         setModelData("hsMass", NumberFormat.getInstance().format(testMek.getWeightHeatSinks()));
         if (mek.getGyroType() == Mek.GYRO_STANDARD) {
             setModelData("gyroType", mek.getRawSystemName(Mek.SYSTEM_GYRO));

@@ -29,6 +29,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
@@ -64,6 +65,7 @@ public class MtfFile implements IMekLoader {
     private String lamType;
     private String motiveType;
     private String ejectionType;
+    private String heatSinkKit;
 
     private String heatSinks;
     private String jumpMP;
@@ -110,6 +112,7 @@ public class MtfFile implements IMekLoader {
     public static final String GYRO = "gyro:";
     public static final String MOTIVE = "motive:";
     public static final String EJECTION = "ejection:";
+    public static final String HEAT_SINK_KIT = "heat sink kit:";
     public static final String MASS = "mass:";
     public static final String ENGINE = "engine:";
     public static final String STRUCTURE = "structure:";
@@ -153,6 +156,24 @@ public class MtfFile implements IMekLoader {
     public static final String ROLE = "role:";
     public static final String FLUFF_IMAGE = "fluffimage:";
     public static final String ICON = "icon:";
+
+    private static final Pattern LEGACY_SIZE_PATTERN = Pattern.compile("\\((\\d+(?:\\.\\d+)?)\\s*(?:ton|tons|m|kg)\\)", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Modern unit files store resizable equipment like Cargo:SIZE:4.0
+     * Old equipment stores it like Cargo (4 tons)
+     * This is a helper method to parse old-style resizable equipment
+     * @param eqName The name of the equipment (including the size designator)
+     * @return The parsed size of the equipment
+     */
+    public static double extractLegacySize(String eqName) {
+        var m = LEGACY_SIZE_PATTERN.matcher(eqName);
+        if (m.find()) {
+            return Double.parseDouble(m.group(1));
+        } else {
+            return 0;
+        }
+    }
 
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
@@ -201,6 +222,12 @@ public class MtfFile implements IMekLoader {
             } catch (Exception ignored) {
                 fullHead = false;
             }
+            boolean riscHeatSinkKit;
+            try {
+                riscHeatSinkKit = heatSinkKit.substring(HEAT_SINK_KIT.length()).equals(Mek.RISC_HEAT_SINK_OVERRIDE_KIT);
+            } catch (Exception ignored) {
+                riscHeatSinkKit = false;
+            }
             if (chassisConfig.contains("QuadVee")) {
                 int iMotiveType;
                 try {
@@ -231,6 +258,7 @@ public class MtfFile implements IMekLoader {
                 mek = new BipedMek(iGyroType, iCockpitType);
             }
             mek.setFullHeadEject(fullHead);
+            mek.setRiscHeatSinkOverrideKit(riscHeatSinkKit);
             mek.setChassis(chassis.trim());
             mek.setClanChassisName(clanChassisName);
             mek.setModel(model.trim());
@@ -897,6 +925,10 @@ public class MtfFile implements IMekLoader {
                             mount = mek.addEquipment(etype, etype2, loc, isOmniPod, isArmored);
                         }
                         if (etype.isVariableSize()) {
+                            if (size == 0) {
+                                size = extractLegacySize(critName);
+                            }
+
                             mount.setSize(size);
                             // The size may require additional critical slots
                             // Account for loading Superheavy oversized Variable Size components
@@ -1130,6 +1162,11 @@ public class MtfFile implements IMekLoader {
 
         if (lineLower.startsWith(EJECTION)) {
             ejectionType = line;
+            return true;
+        }
+
+        if (lineLower.startsWith(HEAT_SINK_KIT)) {
+            heatSinkKit = line;
             return true;
         }
 

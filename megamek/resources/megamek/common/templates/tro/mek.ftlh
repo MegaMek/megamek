@@ -36,7 +36,7 @@
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${qvType} Cruising MP:</td><td align="center">${qvCruise}</td><td></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${qvType} Flanking MP:</td><td align="center">${qvFlank}</td><td></td></tr>
 	</#if>
-	<tr><td>${hsType}:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td></tr>
+	<tr><td>${hsType}:</td><td align="center">${hsCount}</td><td align="center">${hsMass}</td><#if riscKit??><td>w/ RISC Heat Sink Override Kit</td></#if></tr>
 	<tr><td>${gyroType}:</td><td></td><td align="center">${gyroMass}</td></tr>
 	<tr><td>${cockpitType}:</td><td></td><td align="center">${cockpitMass}</td></tr>
 	<tr><td>Armor Factor${armorType}:</td><td>${armorFactor}</td><td align="center">${armorMass}</td></tr>

@@ -546,6 +546,10 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                     sinksR.append(Messages.getString("MekDisplay.activeSinksTextSingle", sinks));
                 }
 
+                if (m.hasRiscHeatSinkOverrideKit()) {
+                    sinksR.append(Messages.getString("MekDisplay.RiscKit"));
+                }
+
                 boolean hasTSM = false;
                 boolean mtHeat = false;
                 if (((Mek) en).hasTSM(false)) {

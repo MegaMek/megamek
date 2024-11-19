@@ -1,4 +1,4 @@
-#Saved from version 0.50.0-SNAPSHOT on 2024-07-13
+#Saved from version 0.50.1-SNAPSHOT on 2024-11-09
 <UnitType>
 Tank
 </UnitType>
@@ -36,11 +36,11 @@ Hover
 </motion_type>
 
 <transporters>
-insulatedcargobay:5.22:1:1::-1:0
+insulatedcargobay:4.35:1:1::-1:0
 </transporters>
 
 <cruiseMP>
-4
+8
 </cruiseMP>
 
 <engine_type>
@@ -51,9 +51,9 @@ insulatedcargobay:5.22:1:1::-1:0
 0
 </armor_type>
 
-<armor_tech>
+<armor_tech_rating>
 0
-</armor_tech>
+</armor_tech_rating>
 
 <armor>
 24

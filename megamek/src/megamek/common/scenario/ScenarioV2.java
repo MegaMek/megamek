@@ -60,15 +60,21 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
+    private static final String OPTIONS_FILE = "file";
+    private static final String OPTIONS_ON = "on";
+    private static final String OPTIONS_OFF = "off";
     private static final String OBJECTS = "objects";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
     private static final String TRIGGER = "trigger";
     private static final String VICTORY = "victory";
     private static final String AREA = "area";
+    private static final String BOT = "bot";
+    private static final String EVENTS = "events";
 
     private final JsonNode node;
     private final File scenariofile;
+    private final Map<String, BotParser.BotInfo> botInfo = new HashMap<>();
 
     private final List<HexArea> deploymentAreas = new ArrayList<>();
 
@@ -120,6 +126,11 @@ public class ScenarioV2 implements Scenario {
     }
 
     @Override
+    public BotParser.BotInfo getBotInfo(String playerName) {
+        return botInfo.get(playerName);
+    }
+
+    @Override
     public IGame createGame() throws IOException, ScenarioLoaderException {
         logger.info("Loading scenario from {}", scenariofile);
         IGame game = selectGameType();
@@ -128,6 +139,7 @@ public class ScenarioV2 implements Scenario {
         parsePlayers(game);
         parseMessages(game);
         parseGameEndEvents(game);
+        parseGeneralEvents(game);
 
         game.setupTeams();
 
@@ -165,6 +177,23 @@ public class ScenarioV2 implements Scenario {
         }
     }
 
+    private void parseGeneralEvents(IGame game) {
+        if (node.has(EVENTS)) {
+            node.get(EVENTS).iterator().forEachRemaining(n -> {
+                try {
+                    parseGeneralEvent(game, n);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
+    private void parseGeneralEvent(IGame game, JsonNode node) throws JsonProcessingException {
+        game.addScriptedEvent(GeneralEventDeserializer.parse(node, scenarioDirectory()));
+    }
+
+
     private void parseGameEndEvents(IGame game) {
         if (node.has(END)) {
             node.get(END).iterator().forEachRemaining(n -> parseGameEndEvent(game, n));
@@ -173,7 +202,6 @@ public class ScenarioV2 implements Scenario {
 
     private void parseGameEndEvent(IGame game, JsonNode node) {
         game.addScriptedEvent(new GameEndTriggeredEvent(TriggerDeserializer.parseNode(node.get(TRIGGER))));
-
     }
 
     private void parseMessages(IGame game) {
@@ -195,18 +223,22 @@ public class ScenarioV2 implements Scenario {
 
     private void parseOptions(IGame game) {
         game.getOptions().initialize();
-        if (node.has(PARAM_GAME_OPTIONS_FILE)) {
-            File optionsFile = new File(scenariofile.getParentFile(), node.get(PARAM_GAME_OPTIONS_FILE).textValue());
-            game.getOptions().loadOptions(optionsFile, true);
-        } else {
-            game.getOptions().loadOptions();
-        }
         if (node.has(OPTIONS)) {
             JsonNode optionsNode = node.get(OPTIONS);
-            if (optionsNode.isArray()) {
-                optionsNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
-            } else if (optionsNode.isTextual()) {
-                game.getOptions().getOption(optionsNode.textValue()).setValue(true);
+            if (optionsNode.has(OPTIONS_FILE)) {
+                File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
+                game.getOptions().loadOptions(optionsFile, true);
+            } else {
+                game.getOptions().loadOptions();
+            }
+
+            if (optionsNode.has(OPTIONS_ON)) {
+                JsonNode onNode = optionsNode.get(OPTIONS_ON);
+                onNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+            }
+            if (optionsNode.has(OPTIONS_OFF)) {
+                JsonNode offNode = optionsNode.get(OPTIONS_OFF);
+                offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
             }
         }
     }
@@ -286,6 +318,11 @@ public class ScenarioV2 implements Scenario {
 
             teamId = playerNode.has(PARAM_TEAM) ? playerNode.get(PARAM_TEAM).intValue() : teamId + 1;
             player.setTeam(Math.min(teamId, Player.TEAM_NAMES.length - 1));
+
+            // Bot type
+            if (playerNode.has(BOT)) {
+                botInfo.put(player.getName(), BotParser.parse(playerNode.get(BOT)));
+            }
 
             // The flee area
             if (playerNode.has(EntityDeserializer.FLEE_AREA)) {

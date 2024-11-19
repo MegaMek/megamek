@@ -18,11 +18,13 @@
 #
 # Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: Lowering the Boom
+name: Lowering the Boom [Flee]
 planet: Castor
-description: >
-  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner
+description: | 
+  Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner 
   has authorized an attack to remove the weapons and provide the Kell Hounds with action.
+  
+  *Goal: Playing as the Marik force, escape the Kell Hounds.*
 
 map:
   boardrows: 2
@@ -38,7 +40,11 @@ map:
       terrain: water
       newlevel: 3
 
+options:
+  file: gameoptions3025.xml
+
 factions:
+
 - name: Thirtieth Marik Militia
   camo: Free Worlds League/Marik Militia/Marik Militia.jpg
   deploy: N
@@ -54,98 +60,33 @@ factions:
   fleefrom:
     border: north
 
+  bot:
+    # try to get away
+    selfpreservation: 8
+    fallshame: 8
+    hyperaggression: 4
+    herdmentality: 1
+    bravery: 3
+    # Princess respects the edge she is set to flee from
+    fleeto: north
+    flee: true
+
   units:
-  - fullname: Thunderbolt TDR-5S
-    id: 101
-    at: [ 12, 29 ]
-    remaining:
-      armor:
-        LT: 2
-        CT: 15
-    ammo:
-      CT:
-        - slot: 11
-          shots: 5
-        - slot: 12
-          shots: 5
-    crew:
-      name: Col. Oliver Nage
-      portrait: Male/MekWarrior/MW_M_15.png
-      piloting: 5
-      gunnery: 5
-
-  - fullname: Griffin GRF-1N
-    id: 102
-    at: [ 9, 32 ]
-    remaining:
-      armor:
-        LT: 0
-        CT: 15
-      internal:
-        LT: 10
-    crits:
-      RT: 3
-    crew:
-      name: Maj. Abraham Morrison
-      portrait: Male/MekWarrior/MW_M_13.png
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Hunchback HBK-4G
-    id: 103
-    at: [ 16, 29 ]
-    remaining:
-      armor:
-        HD: 5
-        RL: 10
-    ammo:
-      LT:
-        - slot: 1
-          shots: 3
-        - slot: 2
-          shots: 3
-    crew:
-      name: Lt. Alicia Devon
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Centurion CN9-A
-    id: 104
-    at: [ 14, 31 ]
-    remaining:
-      armor:
-        CT: 12
-    ammo:
-      LT:
-        - slot: 4
-          shots: 4
-        - slot: 5
-          shots: 4
-    crew:
-      name: Sgt. Jonathan Taylor
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Hermes II HER-2S
-    id: 105
-    at: [ 5, 30 ]
-    crew:
-      name: Samantha Blaustein
-      piloting: 4
-      gunnery: 4
-
-  - fullname: Javelin JVN-10N
-    id: 106
-    at: [ 2, 29 ]
-    crew:
-      name: Deborah Ryan
-      piloting: 4
-      gunnery: 4
+    include: LoweringTheBoom_units_marik.mmu
 
 - name: Kell Hounds, First Battalion
   camo: MERC - 1st Kell Hounds.gif
   deploy:
     edge: S
+
+  bot:
+    # must be pretty berserk to hunt down the Mariks in this scenario
+    selfpreservation: 2
+    fallshame: 2
+    hyperaggression: 9
+    herdmentality: 3
+    bravery: 8
+    forcedwithdrawal: false
 
   victory:
     - modify: onlyatend
@@ -156,64 +97,7 @@ factions:
         atmost: 2
 
   units:
-    - fullname: Wolverine WVR-6R
-      id: 201
-      deploymentround: 2
-      crew:
-        name: Maj. Salome Ward
-        piloting: 4
-        gunnery: 3
-
-    - fullname: Shadow Hawk SHD-2H
-      id: 202
-      crew:
-        name: Lee Kennedy
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Dervish DV-6M
-      id: 203
-      deploymentround: 2
-      ammo:
-        LT:
-          - slot: 3
-            shots: 4
-        RT:
-          - slot: 3
-            shots: 4
-      crew:
-        name: Brian Martell
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Trebuchet TBT-5N
-      id: 204
-      deploymentround: 2
-      crew:
-        name: Judith Nesmith
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Phoenix Hawk PXH-1
-      id: 205
-      crew:
-        name: Nathan Mack
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Phoenix Hawk PXH-1
-      id: 206
-      crew:
-        name: Stuart O'Grady
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Jenner JR7-D
-      id: 207
-      crew:
-        name: Sarah Jette
-        piloting: 4
-        gunnery: 4
+    include: LoweringTheBoom_units_kell.mmu
 
 messages:
   - header: Situation
@@ -253,14 +137,11 @@ messages:
       as many Meks as possible.
 
       Be careful! Some of your Meks have already sustained damage.
+      
+      *This game uses basic game rules.*
     image: loweringboom_map.png
     trigger:
-      type: and
-      triggers:
-        - type: phasestart
-          phase: movement
-        - type: round
-          round: 1
+      type: gamestart
 
   - header: One Unit Safe
     text: Congratulations, one of your Meks has safely left the battlefield!

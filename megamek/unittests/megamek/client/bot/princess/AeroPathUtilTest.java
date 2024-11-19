@@ -35,53 +35,67 @@ import megamek.utils.MockGenerators;
  * @since 07/24/2024
  */
 class AeroPathUtilTest {
-	@Test
-	void testAssertWillStallOnAtmosphereGroundMap() {
-		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
+    @Test
+    void testAssertWillStallOnAtmosphereGroundMap() {
+        final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+        final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+        when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
 
-		boolean result = AeroPathUtil.willStall(mockPath);
-		assertFalse(result);
-	}
+        boolean result = AeroPathUtil.willStall(mockPath);
+        assertFalse(result);
+    }
 
-	@Test
-	void testAssertWillStallAsSpheroidDropshipWithVLAND() {
-		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
-		when(mockEntity.isSpheroid()).thenReturn(true);
+    @Test
+    void testAssertWillStallAsSpheroidDropshipWithVLAND() {
+        final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+        when(mockEntity.isSpheroid()).thenReturn(true);
 
-		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
-		when(mockPath.getFinalVelocity()).thenReturn(0);
-		when(mockPath.getFinalNDown()).thenReturn(0);
-		when(mockPath.getMpUsed()).thenReturn(0);
-		when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+        final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+        when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
+        when(mockPath.getFinalVelocity()).thenReturn(0);
+        when(mockPath.getFinalNDown()).thenReturn(0);
+        when(mockPath.getMpUsed()).thenReturn(0);
+        when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
 
-		boolean result = AeroPathUtil.willStall(mockPath);
-		assertFalse(result);
-	}
+        boolean result = AeroPathUtil.willStall(mockPath);
+        assertFalse(result);
+    }
 
-	@Test
-	void testAssertWillCrashWithOutLandOrVland() {
-		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+    @Test
+    void testAssertWillCrashWithOutLandOrVland() {
+        final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 
-		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.getFinalVelocity()).thenReturn(1);
+        final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+        when(mockPath.getFinalVelocity()).thenReturn(1);
+        when(mockPath.isOnAtmosphericGroundMap()).thenReturn(true);
 
-		boolean result = AeroPathUtil.willCrash(mockPath);
-		assertTrue(result);
-	}
+        boolean result = AeroPathUtil.willCrash(mockPath);
+        assertTrue(result);
+    }
 
-	@Test
-	void testAssertWillCrashWithLandOrVland() {
-		final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+    @Test
+    void testAssertWillCrashWithLandOrVland() {
+        final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
 
-		final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
-		when(mockPath.getFinalVelocity()).thenReturn(0);
-		when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
-		when(mockPath.contains(MoveStepType.LAND)).thenReturn(true);
+        final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+        when(mockPath.getFinalVelocity()).thenReturn(0);
+        when(mockPath.contains(MoveStepType.VLAND)).thenReturn(true);
+        when(mockPath.contains(MoveStepType.LAND)).thenReturn(true);
 
-		boolean result = AeroPathUtil.willCrash(mockPath);
-		assertFalse(result);
-	}
+        boolean result = AeroPathUtil.willCrash(mockPath);
+        assertFalse(result);
+    }
+
+    @Test
+    void testAssertWillCrashNoAtmosphere() {
+        final Entity mockEntity = MockGenerators.generateMockAerospace(0, 0);
+
+        final MovePath mockPath = MockGenerators.generateMockPath(16, 16, mockEntity);
+        when(mockPath.getFinalVelocity()).thenReturn(1);
+        when(mockPath.isOnAtmosphericGroundMap()).thenReturn(false);
+
+        boolean result = AeroPathUtil.willCrash(mockPath);
+        assertFalse(result);
+    }
+
 }

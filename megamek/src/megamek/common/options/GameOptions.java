@@ -98,6 +98,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false);
@@ -302,7 +303,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
         addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
         addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
-        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false);
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 

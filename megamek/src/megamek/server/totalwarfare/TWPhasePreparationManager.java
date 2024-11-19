@@ -178,10 +178,7 @@ public class TWPhasePreparationManager {
                 gameManager.resetEntityPhase(phase);
                 gameManager.clearReports();
                 gameManager.resolveHeat();
-                PlanetaryConditions conditions = gameManager.getGame().getPlanetaryConditions();
-                if (conditions.isBlowingSandActive()) {
-                    gameManager.addReport(gameManager.resolveBlowingSandDamage());
-                }
+                gameManager.resolveWeather();
                 gameManager.addReport(gameManager.resolveControlRolls());
                 gameManager.addReport(gameManager.checkForTraitors());
                 // write End Phase header

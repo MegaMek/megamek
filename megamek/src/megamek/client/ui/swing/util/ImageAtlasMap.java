@@ -13,55 +13,55 @@
  */
 package megamek.client.ui.swing.util;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
- * Class to encapsulate a map that maps old image paths to the subsequent
- * location in an image atlas. This allows us
- * to keep the old meksets while still packaging the images into an atlas.
+ * Class to encapsulate a map that maps old image paths to the subsequent location in an image atlas. This allows us to keep the old meksets
+ * while still packaging the images into an atlas.
  *
- * There's a potential cross-platform path issue as the Java <code>File</code>
- * class uses the current system's file
- * system to do file comparisons. If we write windows-style path strings to a
- * file and read that in with UNIX, it can
- * cause comparisons to fail. Because of this, the internal map is stored with
- * filepaths represented as strings, but
- * they are passed in as paths which then are expicitly converted to UNIX-style
- * filepaths.
+ * There's a potential cross-platform path issue as the Java <code>File</code> class uses the current system's file system to do file
+ * comparisons. If we write windows-style path strings to a file and read that in with UNIX, it can cause comparisons to fail. Because of
+ * this, the internal map is stored with file paths represented as strings, but they are passed in as paths which then are explicitly
+ * converted to UNIX-style file paths.
  *
  * @author arlith
  */
+
+@XmlRootElement(name = "atlas_map")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ImageAtlasMap {
     private static final MMLogger logger = MMLogger.create(ImageAtlasMap.class);
+    private Map<String, String> imgFileToAtlasMap = new HashMap<>();
 
-    Map<String, String> imgFileToAtlasMap = new HashMap<>();
-
-    public ImageAtlasMap() {
-
-    }
+    public ImageAtlasMap() { }
 
     private ImageAtlasMap(Map<String, String> map) {
         imgFileToAtlasMap = map;
     }
 
+    public Map<String, String> getImgFileToAtlasMap() {
+        return imgFileToAtlasMap;
+    }
+
+    public void setImgFileToAtlasMap(Map<String, String> map) {
+        imgFileToAtlasMap = map;
+    }
+
     /**
-     * Insert new values into the atlas map, using Paths which get converted to
-     * UNIX-style path strings.
+     * Insert new values into the atlas map, using Paths which get converted to UNIX-style path strings.
      *
      * @param value
      * @param key
@@ -70,11 +70,16 @@ public class ImageAtlasMap {
         imgFileToAtlasMap.put(convertPathToLinux(value), convertPathToLinux(key));
     }
 
+    public String get(Path key) {
+        return imgFileToAtlasMap.get(convertPathToLinux(key));
+    }
+
     /**
      * Return true if the atlas map contains the given path, which is converted to
      * UNIX-style path strings.
      *
      * @param key
+     *
      * @return
      */
     public boolean containsKey(Path key) {
@@ -92,42 +97,40 @@ public class ImageAtlasMap {
         // Generate a canonical path
         StringBuilder v = new StringBuilder();
         int numNames = p.getNameCount() - 1;
+
         for (int i = 0; i < numNames; i++) {
             v.append(p.getName(i));
             v.append("/");
         }
+
         v.append(p.getFileName());
         return v.toString();
     }
 
-    public String get(Path key) {
-        return imgFileToAtlasMap.get(convertPathToLinux(key));
-    }
-
-    public boolean writeToFile() {
-        XStream xstream = new XStream();
-        try (OutputStream fos = new FileOutputStream(Configuration.imageFileAtlasMapFile());
-                Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
-            xstream.toXML(imgFileToAtlasMap, writer);
-        } catch (Exception e) {
-            logger.error("", e);
-            return false;
+    public void writeToFile() {
+        try  {
+            JAXBContext jaxbContext = JAXBContext.newInstance(megamek.client.ui.swing.util.ImageAtlasMap.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(imgFileToAtlasMap, Configuration.imageFileAtlasMapFile());
+        } catch (JAXBException exception) {
+            logger.error("Unable to write to Image Atlas Map File", exception);
         }
-        return true;
     }
 
-    @SuppressWarnings("unchecked")
     public static @Nullable ImageAtlasMap readFromFile() {
         if (!Configuration.imageFileAtlasMapFile().exists()) {
             return null;
         }
 
-        try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
-            XStream xstream = new XStream();
-            return new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
-        } catch (Exception e) {
-            logger.error("", e);
-            return null;
+        try  {
+            JAXBContext jaxbContext = JAXBContext.newInstance(megamek.client.ui.swing.util.ImageAtlasMap.class);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            return (ImageAtlasMap) jaxbUnmarshaller.unmarshal(Configuration.imageFileAtlasMapFile());
+        } catch (JAXBException exception) {
+            logger.error("Unable to read from Image Atlas Map File", exception);
         }
+
+        return null;
     }
 }

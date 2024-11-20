@@ -132,6 +132,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
             }
         }
 
+        // Apply heat modifiers (scenario/permanent/modding)
+        for (EquipmentModifier modifier : equipmentModifiers) {
+            if (modifier instanceof SimpleWeaponHeatModifier weaponHeatModifier) {
+                heat = weaponHeatModifier.getModifiedHeat(heat);
+            }
+        }
+
         return heat;
     }
 

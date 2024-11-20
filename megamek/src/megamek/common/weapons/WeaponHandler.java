@@ -1829,6 +1829,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             roll = Compute.rollD6(2);
         }
 
+        // Check for misfire (scenario/permanent/modding)
+        if (toHit.needsRoll() || (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
+            for (EquipmentModifier modifier : weapon.getEquipmentModifiers()) {
+                if (modifier instanceof WeaponMisfireModifier misfireModifier && misfireModifier.isMisfire(roll.getIntValue())) {
+                    toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Weapon misfires");
+                }
+            }
+        }
+
         nweapons = getNumberWeapons();
         nweaponsHit = 1;
         // use ammo when creating this, so it works when shooting the last shot

@@ -16,28 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.common.modifiers;
 
 import java.util.function.Function;
 
-/**
- * This is an EquipmentModifier that changes the heat generation of a weapon (WeaponMounted). This can be a simple addition or subtraction,
- * but also a more complicated method.
- *
- * Note that multiple such heat modifiers can be applied to a weapon. Their effects stack by being applied one after the other.
- */
-public class SimpleWeaponHeatModifier implements EquipmentModifier {
+public class SimpleDamageModifier implements EquipmentModifier {
 
-    private final Function<Integer, Integer> heatModification;
+    private final Function<Integer, Integer> damageModification;
 
     /**
      * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
      * the final heat value of the weapon is capped to never be less than 0.
      *
-     * @param deltaHeat The heat value to add to the weapon's heat generation
+     * @param deltaDamage The heat value to add to the weapon's heat generation
      */
-    public SimpleWeaponHeatModifier(int deltaHeat) {
-        this(heat -> heat + deltaHeat);
+    public SimpleDamageModifier(int deltaDamage) {
+        this(heat -> heat + deltaDamage);
     }
 
     /**
@@ -49,13 +43,13 @@ public class SimpleWeaponHeatModifier implements EquipmentModifier {
      * new SimpleWeaponHeatModifier(heat -> (int) (1.2 * heat));
      * }</pre>
      *
-     * @param heatModification The function to apply to the weapon's heat value
+     * @param damageModification The function to apply to the weapon's heat value
      */
-    public SimpleWeaponHeatModifier(Function<Integer, Integer> heatModification) {
-        this.heatModification = heatModification;
+    public SimpleDamageModifier(Function<Integer, Integer> damageModification) {
+        this.damageModification = damageModification;
     }
 
-    public int getModifiedHeat(int originalHeat) {
-        return Math.max(0, heatModification.apply(originalHeat));
+    public int getModifiedDamage(int originalHeat) {
+        return Math.max(0, damageModification.apply(originalHeat));
     }
 }

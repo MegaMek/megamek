@@ -263,6 +263,20 @@ factions:
           # motive: 1
           # firecontrol: 1
 
+        # TODO: nyi
+#        modifiers:
+#          LA:
+#            slot: 4
+#            modifier:
+#              type: misfire
+#              on: 7+
+#
+#          RA:
+#            slot: 1
+#            modifier:
+#              type: heat
+#              add: 2
+
         # ammo types and reduced amount
         # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
         ammo:

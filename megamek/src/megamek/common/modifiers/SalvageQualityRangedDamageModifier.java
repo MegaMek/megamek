@@ -16,29 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.common.modifiers;
 
-import megamek.common.modifiers.EquipmentModifier;
+/**
+ * This class represents a modifier that is one of the options for some weapons at salvage quality, CO p.215.
+ */
+public class SalvageQualityRangedDamageModifier extends SimpleDamageModifier {
 
-import java.util.List;
-
-public interface ModifiableEquipment {
-
-    List<EquipmentModifier> getEquipmentModifiers();
-
-    default void addEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().add(equipmentModifier);
-    }
-
-    default void removeEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().remove(equipmentModifier);
-    }
-
-    default void clearEquipmentModifiers() {
-        getEquipmentModifiers().clear();
-    }
-
-    default boolean isModified() {
-        return !getEquipmentModifiers().isEmpty();
+    /**
+     * Creates a weapon modifier that makes the weapon deal 1 less damage, as applicable to some ranged weapons, CO p.215.
+     */
+    public SalvageQualityRangedDamageModifier() {
+        super(-1);
     }
 }

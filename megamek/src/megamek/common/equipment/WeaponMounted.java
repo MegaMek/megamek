@@ -21,6 +21,8 @@ package megamek.common.equipment;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.modifiers.EquipmentModifier;
+import megamek.common.modifiers.SimpleWeaponHeatModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.gaussrifles.GaussWeapon;

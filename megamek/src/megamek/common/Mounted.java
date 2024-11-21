@@ -25,6 +25,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.modifiers.EquipmentModifier;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;

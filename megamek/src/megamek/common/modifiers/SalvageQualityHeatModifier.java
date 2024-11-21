@@ -16,29 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.common.modifiers;
 
-import megamek.common.modifiers.EquipmentModifier;
+/**
+ * This class represents a modifier that is one of the options for energy weapons at salvage quality, CO p.215. Note that this modifier can
+ * be applied to any weapon.
+ */
+public class SalvageQualityHeatModifier extends SimpleWeaponHeatModifier {
 
-import java.util.List;
-
-public interface ModifiableEquipment {
-
-    List<EquipmentModifier> getEquipmentModifiers();
-
-    default void addEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().add(equipmentModifier);
-    }
-
-    default void removeEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().remove(equipmentModifier);
-    }
-
-    default void clearEquipmentModifiers() {
-        getEquipmentModifiers().clear();
-    }
-
-    default boolean isModified() {
-        return !getEquipmentModifiers().isEmpty();
+    /**
+     * Creates a weapon modifier that makes the weapon create 2 extra heat when fired, as applicable to energy weapons, CO p.215.
+     */
+    public SalvageQualityHeatModifier() {
+        super(2);
     }
 }

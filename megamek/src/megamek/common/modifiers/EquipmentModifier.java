@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.common.modifiers;
 
 /**
  * This interface is a marker for modifiers that change equipment behavior. An example is a modifier that changes the heat a weapon

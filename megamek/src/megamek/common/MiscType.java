@@ -7130,6 +7130,7 @@ public class MiscType extends EquipmentType {
         misc.name = "MASH Equipment";
         misc.setInternalName(misc.name);
         misc.addLookupName("MASH Core Component");
+        misc.addLookupName("MASH Operation Theater");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;

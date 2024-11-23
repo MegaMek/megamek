@@ -356,11 +356,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
         toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
-        /*
-         * TODO: moveTraitor = createMenuItem(menu,
-         * getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);
-         */
-
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);

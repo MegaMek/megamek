@@ -4791,6 +4791,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * @return true if the entity has any critical slot that isn't damaged yet
+     */
+    public boolean hasUndamagedCriticalSlots() {
+        return IntStream.range(0, locations())
+            .mapToLong(i -> getCriticalSlots(i)
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(CriticalSlot::isHittable)
+                .count()
+            ).sum() > 0;
+    }
+
+    /**
      * @return True when this unit has a RISC Super-Cooled Myomer System (even if
      *         the SCM is destroyed).
      */

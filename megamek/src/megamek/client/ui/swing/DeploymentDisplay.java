@@ -131,6 +131,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
         butDone.setEnabled(false);
+
         setupButtonPanel();
     }
 

@@ -13,13 +13,7 @@
 */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.*;
 import megamek.common.planetaryconditions.Atmosphere;
@@ -624,7 +618,7 @@ public class AreaEffectHelper {
      *                    arty
      *                    attack, -1 otherwise
      * @param mineClear   Whether or not we're clearing a minefield
-     * @return
+     * @return A DamageFalloff object containing the damage and falloff values and if it is cluster or not
      */
     public static DamageFalloff calculateDamageFallOff(AmmoType ammo, int attackingBA, boolean mineClear) {
         if (ammo == null) {
@@ -697,21 +691,23 @@ public class AreaEffectHelper {
 
             clusterMunitionsFlag = true;
         } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
-            switch (ammo.getAmmoType()) {
+            falloff = switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage
-                case AmmoType.T_LONG_TOM:
+                case AmmoType.T_LONG_TOM -> {
                     damage = 4;
-                    falloff = 2;
-                    break;
-                case AmmoType.T_SNIPER:
+                    yield 2;
+                }
+                case AmmoType.T_SNIPER -> {
                     damage = 2;
-                    falloff = 1;
-                    break;
-                case AmmoType.T_THUMPER:
+                    yield 1;
+                }
+                case AmmoType.T_THUMPER -> {
                     damage = 1;
-                    falloff = 1;
-            }
+                    yield 1;
+                }
+                default -> falloff;
+            };
             // if this was a mine clearance, then it only affects the hex hit
         } else if (mineClear) {
             falloff = damage;
@@ -731,6 +727,11 @@ public class AreaEffectHelper {
      */
     public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport,
             TWGameManager gameManager) {
+
+        // this +1 is necessary because the drawNuke method subtracts 1 from them
+        int[] nukeArgs = { coords.getX() + 1, coords.getY() + 1};
+        gameManager.drawNukeHitOnBoard(nukeArgs);
+
         NukeStats nukeStats = getNukeStats(nukeType);
 
         if (nukeStats == null) {
@@ -805,6 +806,14 @@ public class AreaEffectHelper {
             HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
             vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                     DamageType.IGNORE_PASSENGER, false, true));
+
+            // If there is nothing left to destroy in the unit
+            if (
+                entity.isDoomed()
+                && (!entity.hasUndamagedCriticalSlots() || entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)
+            ) {
+                break;
+            }
             damage -= cluster;
         }
     }

@@ -342,17 +342,6 @@ public class MekSearchFilter {
         return equipmentCriteria.toString();
     }
 
-    private static boolean isBetween(double value, String sStart, String sEnd) {
-        if (sStart.isEmpty() && sEnd.isEmpty()) {
-            return true;
-        }
-
-        int iStart = StringUtil.toInt(sStart, Integer.MIN_VALUE);
-        int iEnd = StringUtil.toInt(sEnd, Integer.MAX_VALUE);
-
-        return (!(value < iStart)) && (!(value > iEnd));
-    }
-
     private static boolean isMatch(int i, boolean b) {
         if (i == 1) {
             return b;
@@ -493,179 +482,179 @@ public class MekSearchFilter {
         }
 
         // Check walk criteria
-        if (!isBetween(mek.getWalkMp(), f.sStartWalk, f.sEndWalk)) {
+        if (!StringUtil.isBetween(mek.getWalkMp(), f.sStartWalk, f.sEndWalk)) {
             return false;
         }
 
         // Check jump criteria
-        if (!isBetween(mek.getJumpMp(), f.sStartJump, f.sEndJump)) {
+        if (!StringUtil.isBetween(mek.getJumpMp(), f.sStartJump, f.sEndJump)) {
             return false;
         }
 
         // Check year criteria
-        if (!isBetween(mek.getYear(), f.sStartYear, f.sEndYear)) {
+        if (!StringUtil.isBetween(mek.getYear(), f.sStartYear, f.sEndYear)) {
             return false;
         }
 
         // Check Tonnage criteria
-        if (!isBetween((int) mek.getTons(), f.sStartTons, f.sEndTons)) {
+        if (!StringUtil.isBetween((int) mek.getTons(), f.sStartTons, f.sEndTons)) {
             return false;
         }
 
         // Check BV criteria
-        if (!isBetween(mek.getBV(), f.sStartBV, f.sEndBV)) {
+        if (!StringUtil.isBetween(mek.getBV(), f.sStartBV, f.sEndBV)) {
             return false;
         }
 
-        if (!isBetween(mek.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
+        if (!StringUtil.isBetween(mek.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
             return false;
         }
 
-        if (!isBetween(mek.getLowerArms(), f.sStartLowerArms, f.sEndLowerArms)) {
+        if (!StringUtil.isBetween(mek.getLowerArms(), f.sStartLowerArms, f.sEndLowerArms)) {
             return false;
         }
 
-        if (!isBetween(mek.getHands(), f.sStartHands, f.sEndHands)) {
+        if (!StringUtil.isBetween(mek.getHands(), f.sStartHands, f.sEndHands)) {
             return false;
         }
 
-        if (!isBetween(mek.getTroopCarryingSpace(), f.sStartTroopSpace, f.sEndTroopSpace)) {
+        if (!StringUtil.isBetween(mek.getTroopCarryingSpace(), f.sStartTroopSpace, f.sEndTroopSpace)) {
             return false;
         }
 
-        if (!isBetween(mek.getASFBays(), f.sStartASFBays, f.sEndASFBays)) {
+        if (!StringUtil.isBetween(mek.getASFBays(), f.sStartASFBays, f.sEndASFBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getASFDoors(), f.sStartASFDoors, f.sEndASFDoors)) {
+        if (!StringUtil.isBetween(mek.getASFDoors(), f.sStartASFDoors, f.sEndASFDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getASFUnits(), f.sStartASFUnits, f.sEndASFUnits)) {
+        if (!StringUtil.isBetween(mek.getASFUnits(), f.sStartASFUnits, f.sEndASFUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getSmallCraftBays(), f.sStartSmallCraftBays, f.sEndSmallCraftBays)) {
+        if (!StringUtil.isBetween(mek.getSmallCraftBays(), f.sStartSmallCraftBays, f.sEndSmallCraftBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getSmallCraftDoors(), f.sStartSmallCraftDoors, f.sEndSmallCraftDoors)) {
+        if (!StringUtil.isBetween(mek.getSmallCraftDoors(), f.sStartSmallCraftDoors, f.sEndSmallCraftDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getSmallCraftUnits(), f.sStartSmallCraftUnits, f.sEndSmallCraftUnits)) {
+        if (!StringUtil.isBetween(mek.getSmallCraftUnits(), f.sStartSmallCraftUnits, f.sEndSmallCraftUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getMekBays(), f.sStartMekBays, f.sEndMekBays)) {
+        if (!StringUtil.isBetween(mek.getMekBays(), f.sStartMekBays, f.sEndMekBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getMekDoors(), f.sStartMekDoors, f.sEndMekDoors)) {
+        if (!StringUtil.isBetween(mek.getMekDoors(), f.sStartMekDoors, f.sEndMekDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getMekUnits(), f.sStartMekUnits, f.sEndMekUnits)) {
+        if (!StringUtil.isBetween(mek.getMekUnits(), f.sStartMekUnits, f.sEndMekUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getHeavyVehicleBays(), f.sStartHeavyVehicleBays, f.sEndHeavyVehicleBays)) {
+        if (!StringUtil.isBetween(mek.getHeavyVehicleBays(), f.sStartHeavyVehicleBays, f.sEndHeavyVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getHeavyVehicleDoors(), f.sStartHeavyVehicleDoors, f.sEndHeavyVehicleDoors)) {
+        if (!StringUtil.isBetween(mek.getHeavyVehicleDoors(), f.sStartHeavyVehicleDoors, f.sEndHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getHeavyVehicleUnits(), f.sStartHeavyVehicleUnits, f.sEndHeavyVehicleUnits)) {
+        if (!StringUtil.isBetween(mek.getHeavyVehicleUnits(), f.sStartHeavyVehicleUnits, f.sEndHeavyVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getLightVehicleBays(), f.sStartLightVehicleBays, f.sEndLightVehicleBays)) {
+        if (!StringUtil.isBetween(mek.getLightVehicleBays(), f.sStartLightVehicleBays, f.sEndLightVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getLightVehicleDoors(), f.sStartLightVehicleDoors, f.sEndLightVehicleDoors)) {
+        if (!StringUtil.isBetween(mek.getLightVehicleDoors(), f.sStartLightVehicleDoors, f.sEndLightVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getLightVehicleUnits(), f.sStartLightVehicleUnits, f.sEndLightVehicleUnits)) {
+        if (!StringUtil.isBetween(mek.getLightVehicleUnits(), f.sStartLightVehicleUnits, f.sEndLightVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getProtoMekBays(), f.sStartProtomekBays, f.sEndProtomekBays)) {
+        if (!StringUtil.isBetween(mek.getProtoMekBays(), f.sStartProtomekBays, f.sEndProtomekBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getProtoMekDoors(), f.sStartProtomekDoors, f.sEndProtomekDoors)) {
+        if (!StringUtil.isBetween(mek.getProtoMekDoors(), f.sStartProtomekDoors, f.sEndProtomekDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getProtoMekUnits(), f.sStartProtomekUnits, f.sEndProtomekUnits)) {
+        if (!StringUtil.isBetween(mek.getProtoMekUnits(), f.sStartProtomekUnits, f.sEndProtomekUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getBattleArmorBays(), f.sStartBattleArmorBays, f.sEndBattleArmorBays)) {
+        if (!StringUtil.isBetween(mek.getBattleArmorBays(), f.sStartBattleArmorBays, f.sEndBattleArmorBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getBattleArmorDoors(), f.sStartBattleArmorDoors, f.sEndBattleArmorDoors)) {
+        if (!StringUtil.isBetween(mek.getBattleArmorDoors(), f.sStartBattleArmorDoors, f.sEndBattleArmorDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getBattleArmorUnits(), f.sStartBattleArmorUnits, f.sEndBattleArmorUnits)) {
+        if (!StringUtil.isBetween(mek.getBattleArmorUnits(), f.sStartBattleArmorUnits, f.sEndBattleArmorUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getInfantryBays(), f.sStartInfantryBays, f.sEndInfantryBays)) {
+        if (!StringUtil.isBetween(mek.getInfantryBays(), f.sStartInfantryBays, f.sEndInfantryBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getInfantryDoors(), f.sStartInfantryDoors, f.sEndInfantryDoors)) {
+        if (!StringUtil.isBetween(mek.getInfantryDoors(), f.sStartInfantryDoors, f.sEndInfantryDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
+        if (!StringUtil.isBetween(mek.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
+        if (!StringUtil.isBetween(mek.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getDropshuttleBays(), f.sStartDropshuttleBays, f.sEndDropshuttleBays)) {
+        if (!StringUtil.isBetween(mek.getDropshuttleBays(), f.sStartDropshuttleBays, f.sEndDropshuttleBays)) {
             return false;
         }
 
-        if (!isBetween(mek.getDropshuttleDoors(), f.sStartDropshuttleDoors, f.sEndDropshuttleDoors)) {
+        if (!StringUtil.isBetween(mek.getDropshuttleDoors(), f.sStartDropshuttleDoors, f.sEndDropshuttleDoors)) {
             return false;
         }
 
-        if (!isBetween(mek.getDropshuttelUnits(), f.sStartDropshuttleUnits, f.sEndDropshuttleUnits)) {
+        if (!StringUtil.isBetween(mek.getDropshuttelUnits(), f.sStartDropshuttleUnits, f.sEndDropshuttleUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
+        if (!StringUtil.isBetween(mek.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
             return false;
         }
 
-        if (!isBetween(mek.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
+        if (!StringUtil.isBetween(mek.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
             return false;
         }
 
-        if (!isBetween(mek.getCargoBayUnits(), f.sStartCargoBayUnits, f.sEndCargoBayUnits)) {
+        if (!StringUtil.isBetween(mek.getCargoBayUnits(), f.sStartCargoBayUnits, f.sEndCargoBayUnits)) {
             return false;
         }
 
-        if (!isBetween(mek.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
+        if (!StringUtil.isBetween(mek.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
             return false;
         }
 

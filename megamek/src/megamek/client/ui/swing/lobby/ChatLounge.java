@@ -80,6 +80,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.advancedSearchMap.AdvancedSearchMapDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -214,6 +215,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private JLabel lblBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"));
     private JButton butHelp = new JButton(" " + Messages.getString("ChatLounge.butHelp") + " ");
+    private JButton butAdvancedSearchMap = new JButton(Messages.getString("AdvancedSearchMapDialog.title"));
 
     private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));
@@ -387,6 +389,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butDetach.addActionListener(lobbyListener);
         butCancelSearch.addActionListener(lobbyListener);
         butHelp.addActionListener(lobbyListener);
+        butAdvancedSearchMap.addActionListener(lobbyListener);
         butListView.addActionListener(lobbyListener);
         butForceView.addActionListener(lobbyListener);
         butCollapse.addActionListener(lobbyListener);
@@ -686,6 +689,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         JPanel panHelp = new JPanel(new GridLayout(1, 1));
         panHelp.add(butHelp);
+        panHelp.add(butAdvancedSearchMap);
 
         FixedYPanel panTopRowsHelp = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
         panTopRowsHelp.add(panTopRows);
@@ -978,6 +982,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadMapSetup.setEnabled(!inSpace);
         butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
         butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
+        butAdvancedSearchMap.setEnabled(!inSpace && (mapSettings.getMapWidth() == 1) && (mapSettings.getMapHeight() == 1));
 
         butGroundMap.removeActionListener(lobbyListener);
         butLowAtmoMap.removeActionListener(lobbyListener);
@@ -1907,6 +1912,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 dialog.setPreferredSize(sz);
                 dialog.pack();
                 dialog.setVisible(true);
+
+            } else if (ev.getSource() == butAdvancedSearchMap) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                AdvancedSearchMapDialog asmd = new AdvancedSearchMapDialog(clientgui.getFrame());
+                setCursor(Cursor.getDefaultCursor());
+
+                if (asmd.showDialog().isConfirmed()) {
+                    String path = asmd.getPath();
+                    if (path != null) {
+                        Board board = new Board(16, 17);
+                        board.load(new MegaMekFile(Configuration.boardsDir(), path).getFile());
+                        String boardName = path.replace(".board", "");
+                        boardName = boardName.replace("\\", "/");
+                        mapSettings.getBoardsSelectedVector().clear();
+                        mapSettings.setMapSize(1, 1);
+                        mapSettings.setBoardSize(board.getWidth(), board.getHeight());
+                        clientgui.getClient().sendMapDimensions(mapSettings);
+                        mapSettings.getBoardsSelectedVector().set(0, boardName);
+                        refreshMapUI();
+                        clientgui.getClient().sendMapSettings(mapSettings);
+
+                        if (boardPreviewW.isVisible()) {
+                            previewGameBoard();
+                        }
+
+                        String msg = clientgui.getClient().getLocalPlayer() + " changed map to: " + boardName;
+                        clientgui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+                    }
+                }
 
             } else if (ev.getSource() == butListView) {
                 scrMekTable.setViewportView(mekTable);

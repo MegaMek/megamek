@@ -26989,9 +26989,11 @@ public class TWGameManager extends AbstractGameManager {
                                         && (lastUnitNum == entity.getUnitNumber());
                             }
                         });
+                        if(lastUnit.next() != null){
                         Entity lastUnitMember = lastUnit.next();
                         lastUnitMember.setUnitNumber(deletedUnitNum);
                         entityUpdate(lastUnitMember.getId());
+                        }
                     } // End update-unit-number
                 } // End added-ProtoMek
 

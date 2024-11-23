@@ -160,6 +160,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
     private JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
     private JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
+    private JButton butPrintList = new JButton(Messages.getString("ChatLounge.butPrintList"));
 
     /* Unit Table */
     private MekTable mekTable;
@@ -276,6 +277,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private static final String CL_ACTIONCOMMAND_LOADLIST = "load_list";
     private static final String CL_ACTIONCOMMAND_SAVELIST = "save_list";
+    private static final String CL_ACTIONCOMMAND_PRINTLIST = "print_list";
     private static final String CL_ACTIONCOMMAND_LOADMEK = "load_mek";
     private static final String CL_ACTIONCOMMAND_ADDBOT = "add_bot";
     private static final String CL_ACTIONCOMMAND_REMOVEBOT = "remove_bot";
@@ -365,6 +367,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butRandomMap.addActionListener(lobbyListener);
         butRemoveBot.addActionListener(lobbyListener);
         butSaveList.addActionListener(lobbyListener);
+        butPrintList.addActionListener(lobbyListener);
         butShowUnitID.addActionListener(lobbyListener);
         butSkills.addActionListener(lobbyListener);
         butSpaceSize.addActionListener(lobbyListener);
@@ -546,6 +549,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butLoadList.setEnabled(mscLoaded);
         butSaveList.setActionCommand(CL_ACTIONCOMMAND_SAVELIST);
         butSaveList.setEnabled(false);
+        butPrintList.setActionCommand(CL_ACTIONCOMMAND_PRINTLIST);
+        butPrintList.setEnabled(false);
+        butPrintList.setToolTipText(Messages.getString("ChatLounge.butPrintList.tooltip"));
         butAdd.setEnabled(mscLoaded);
         butAdd.setActionCommand(CL_ACTIONCOMMAND_LOADMEK);
         butArmy.setEnabled(mscLoaded);
@@ -561,6 +567,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panUnitInfoGrid.add(butLoadList);
         panUnitInfoGrid.add(butSaveList);
         panUnitInfoGrid.add(butNames);
+        panUnitInfoGrid.add(butPrintList);
 
         panUnitInfo.add(panUnitInfoAdd);
         panUnitInfo.add(panUnitInfoGrid);
@@ -1739,7 +1746,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
                 clientgui.loadListFile(c.getLocalPlayer());
 
-            } else if (ev.getSource().equals(butSaveList)) {
+            } else if (ev.getSource().equals(butSaveList) || ev.getSource().equals(butPrintList)) {
                 // Allow the player to save their current
                 // list of entities to a file.
                 Client c = getSelectedClient();
@@ -1752,7 +1759,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 for (Entity entity : entities) {
                     entity.setForceString(game().getForces().forceStringFor(entity));
                 }
-                clientgui.saveListFile(entities, c.getLocalPlayer().getName());
+                if (ev.getSource().equals(butSaveList)) {
+                    clientgui.saveListFile(entities, c.getLocalPlayer().getName());
+                } else {
+                    clientgui.printList(entities, (JButton) ev.getSource());
+                }
 
             } else if (ev.getSource().equals(butAddBot)) {
                 configAndCreateBot(null);
@@ -2286,6 +2297,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butRandomMap.removeActionListener(lobbyListener);
         butRemoveBot.removeActionListener(lobbyListener);
         butSaveList.removeActionListener(lobbyListener);
+        butPrintList.removeActionListener(lobbyListener);
         butShowUnitID.removeActionListener(lobbyListener);
         butSkills.removeActionListener(lobbyListener);
         butSpaceSize.removeActionListener(lobbyListener);
@@ -2405,10 +2417,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Disable the Remove Bot button for the "player" of a "Connect As Bot" client
         butRemoveBot.setEnabled(isSingleLocalBot);
         butSaveList.setEnabled(false);
+        butPrintList.setEnabled(false);
         if (isSinglePlayer) {
             var selPlayer = theElement(selPlayers);
             var hasUnits = !game().getPlayerEntities(selPlayer, false).isEmpty();
             butSaveList.setEnabled(hasUnits && unitsVisible(selPlayer));
+            butPrintList.setEnabled(hasUnits && unitsVisible(selPlayer));
             setTeamSelectedItem(selPlayer.getTeam());
         }
     }

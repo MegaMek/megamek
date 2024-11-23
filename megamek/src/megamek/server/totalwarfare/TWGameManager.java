@@ -24630,7 +24630,7 @@ public class TWGameManager extends AbstractGameManager {
         // attached to
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-            Mounted<?> laser = mounted.getLinkedBy();
+            Mounted<?> laser = mounted.getLinked();
             if (en instanceof Mek) {
                 for (int slot = 0; slot < en.getNumberOfCriticals(laser.getLocation()); slot++) {
                     CriticalSlot cs = en.getCritical(laser.getLocation(), slot);

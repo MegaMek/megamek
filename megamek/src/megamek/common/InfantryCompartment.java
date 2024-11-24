@@ -174,7 +174,7 @@ public final class InfantryCompartment implements Transporter {
      */
     @Override
     public String getUnusedString() {
-        return "Troops - " + currentSpace + " tons";
+        return "Infantry Compartment - " + currentSpace + " tons";
     }
 
     @Override

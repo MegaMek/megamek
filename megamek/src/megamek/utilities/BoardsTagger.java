@@ -27,10 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.Configuration;
-import megamek.common.Hex;
+import megamek.common.*;
 import megamek.logging.MMLogger;
 
 /**
@@ -86,7 +83,15 @@ public class BoardsTagger {
         TAG_WATER("Water"),
         TAG_ICE("IceTerrain"),
         TAG_FLAT("Flat"),
-        TAG_SNOWTERRAIN("SnowTerrain");
+        TAG_SNOWTERRAIN("SnowTerrain"),
+        TAG_HANGER("Hanger"),
+        TAG_FORTRESS("Fortress"),
+        TAG_GUNEMPLACEMENT("GunEmplacement"),
+        TAG_HEAVYBUILDING("HeavyBuilding"),
+        TAG_HARDENEDBUILDING("HardenedBuilding"),
+        TAG_ARMOREDBUILDING("ArmoredBuilding"),
+        TAG_IMPASSABLE("Impassable"),
+        TAG_ELEVATOR("Elevator");
 
         private String tagName;
         private static final Map<String, Tags> internalTagMap;
@@ -218,6 +223,14 @@ public class BoardsTagger {
         int water = 0;
         int ice = 0;
         int snowTerrain = 0;
+        int hanger = 0;
+        int fortress = 0;
+        int gunEnplacement = 0;
+        int heavyBuilding = 0;
+        int hardenedBuilding = 0;
+        int armoredBuilding = 0;
+        int impassable = 0;
+        int elevator = 0;
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -266,6 +279,16 @@ public class BoardsTagger {
                     lowBuildings += (height <= 2) ? 1 : 0;
                     highBuildings += (height > 2) ? 1 : 0;
                 }
+                if (hex.containsTerrain(BUILDING)) {
+                    hanger += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
+                    fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
+                    gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
+                    heavyBuilding += hex.terrainLevel(BUILDING) == Building.HEAVY ? 1 : 0;
+                    hardenedBuilding += hex.terrainLevel(BUILDING) == Building.HARDENED ? 1 : 0;
+                    armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ? 1 : 0;
+                }
+                impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
+                elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
             }
         }
 
@@ -316,6 +339,14 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
+        matchingTags.put(Tags.TAG_HANGER, hanger > 10);
+        matchingTags.put(Tags.TAG_FORTRESS, fortress > 10);
+        matchingTags.put(Tags.TAG_GUNEMPLACEMENT, gunEnplacement > 10);
+        matchingTags.put(Tags.TAG_HEAVYBUILDING, heavyBuilding > 10);
+        matchingTags.put(Tags.TAG_HARDENEDBUILDING, hardenedBuilding > 10);
+        matchingTags.put(Tags.TAG_ARMOREDBUILDING, armoredBuilding > 10);
+        matchingTags.put(Tags.TAG_IMPASSABLE, impassable > 0);
+        matchingTags.put(Tags.TAG_ELEVATOR, elevator > 0);
 
         // Remove (see below) any auto tags that might be present so that auto tags that
         // no longer apply

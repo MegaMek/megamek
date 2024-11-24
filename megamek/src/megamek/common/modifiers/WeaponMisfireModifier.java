@@ -18,11 +18,12 @@
  */
 package megamek.common.modifiers;
 
+import java.util.*;
 import java.util.function.Predicate;
 
-public class WeaponMisfireModifier implements EquipmentModifier {
+public class WeaponMisfireModifier extends AbstractEquipmentModifier {
 
-    private final Predicate<Integer> misfireTest;
+    private final Set<Integer> misfireRollResults = new HashSet<>();
 
     /**
      * Creates a weapon modifier that makes the weapon misfire if the die roll matches a given test.
@@ -34,11 +35,36 @@ public class WeaponMisfireModifier implements EquipmentModifier {
      *
      * @param misfireTest The test of the die roll result that returns true when a misfire occurs
      */
-    public WeaponMisfireModifier(Predicate<Integer> misfireTest) {
-        this.misfireTest = misfireTest;
+    public WeaponMisfireModifier(Predicate<Integer> misfireTest, Reason reason) {
+        super(reason);
+        for (int i = 2; i <= 12; i++) {
+            if (misfireTest.test(i)) {
+                misfireRollResults.add(i);
+            }
+        }
+    }
+
+    /**
+     * Creates a weapon modifier that makes the weapon misfire if the die roll matches any of the given numbers.
+     *
+     * @param misfireRollResults A list of numbers (2...12) that make the weapon misfire when rolled as a to-hit roll.
+     */
+    public WeaponMisfireModifier(Reason reason, int... misfireRollResults) {
+        super(reason);
+        Arrays.stream(misfireRollResults).forEach(this.misfireRollResults::add);
+    }
+
+    /**
+     * Creates a weapon modifier that makes the weapon misfire if the die roll matches any of the given numbers.
+     *
+     * @param misfireRollResults A list of numbers (2...12) that make the weapon misfire when rolled as a to-hit roll.
+     */
+    public WeaponMisfireModifier(Collection<Integer> misfireRollResults, Reason reason) {
+        super(reason);
+        this.misfireRollResults.addAll(misfireRollResults);
     }
 
     public boolean isMisfire(int toHitRollResult) {
-        return misfireTest.test(toHitRollResult);
+        return misfireRollResults.contains(toHitRollResult);
     }
 }

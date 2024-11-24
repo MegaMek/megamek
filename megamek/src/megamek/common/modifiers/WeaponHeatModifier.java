@@ -18,17 +18,15 @@
  */
 package megamek.common.modifiers;
 
-import java.util.function.Function;
-
 /**
  * This is an EquipmentModifier that changes the heat generation of a weapon (WeaponMounted). This can be a simple addition or subtraction,
  * but also a more complicated method.
  *
  * Note that multiple such heat modifiers can be applied to a weapon. Their effects stack by being applied one after the other.
  */
-public class SimpleWeaponHeatModifier implements EquipmentModifier {
+public class WeaponHeatModifier extends AbstractEquipmentModifier {
 
-    private final Function<Integer, Integer> heatModification;
+    private final int deltaHeat;
 
     /**
      * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
@@ -36,26 +34,19 @@ public class SimpleWeaponHeatModifier implements EquipmentModifier {
      *
      * @param deltaHeat The heat value to add to the weapon's heat generation
      */
-    public SimpleWeaponHeatModifier(int deltaHeat) {
-        this(heat -> heat + deltaHeat);
+    public WeaponHeatModifier(int deltaHeat, Reason reason) {
+        super(reason);
+        this.deltaHeat = deltaHeat;
+    }
+
+    public int getDeltaHeat() {
+        return deltaHeat;
     }
 
     /**
-     * Creates a heat modifier that performs the given function on the weapon's own heat generation value. Note that the final heat value of
-     * the weapon is capped to never be less than 0.
-     *
-     * A modifier that increases weapon heat by 20% can be created like this:
-     * <pre>{@code
-     * new SimpleWeaponHeatModifier(heat -> (int) (1.2 * heat));
-     * }</pre>
-     *
-     * @param heatModification The function to apply to the weapon's heat value
+     * @return The delta heat of this modifier with a leading "+" if it is positive, i.e. "+2" or "-1" or "0".
      */
-    public SimpleWeaponHeatModifier(Function<Integer, Integer> heatModification) {
-        this.heatModification = heatModification;
-    }
-
-    public int getModifiedHeat(int originalHeat) {
-        return Math.max(0, heatModification.apply(originalHeat));
+    public String formattedDeltaHeat() {
+        return formattedModifier(deltaHeat);
     }
 }

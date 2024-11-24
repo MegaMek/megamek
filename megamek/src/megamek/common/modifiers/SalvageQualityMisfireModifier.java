@@ -28,6 +28,6 @@ public class SalvageQualityMisfireModifier extends WeaponMisfireModifier {
      * Creates a weapon modifier that makes the weapon misfire on a to-hit roll of 3 or less, as applicable to energy weapons, CO p.215.
      */
     public SalvageQualityMisfireModifier() {
-        super(roll -> roll <= 3);
+        super(roll -> roll <= 3, Reason.SALVAGE_QUALITY);
     }
 }

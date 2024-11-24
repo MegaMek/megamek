@@ -36,6 +36,7 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
+import megamek.common.modifiers.*;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -528,10 +529,11 @@ public class MekView {
 
         Game game = entity.getGame();
 
+        // Unit and Weapon Quirks
         if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             List<String> activeUnitQuirksNames = entity.getQuirks().activeQuirks().stream()
                     .map(IOption::getDisplayableNameWithValue)
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!activeUnitQuirksNames.isEmpty()) {
                 sQuirks.add(new SingleLine());
@@ -543,8 +545,8 @@ public class MekView {
             List<String> wpQuirksList = new ArrayList<>();
             for (Mounted<?> weapon : entity.getWeaponList()) {
                 List<String> activeWeaponQuirksNames = weapon.getQuirks().activeQuirks().stream()
-                        .map(IOption::getDisplayableNameWithValue)
-                        .collect(Collectors.toList());
+                    .map(IOption::getDisplayableNameWithValue)
+                    .toList();
                 if (!activeWeaponQuirksNames.isEmpty()) {
                     String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
                     wq += String.join(", ", activeWeaponQuirksNames);
@@ -558,6 +560,24 @@ public class MekView {
                 sQuirks.add(list);
             }
         }
+
+        // Equipment and Unit modifiers (salvage quality etc)
+        List<String> weaponModifierList = new ArrayList<>();
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            List<String> weaponModifiers = getEquipmentModifiers(weapon);
+            if (!weaponModifiers.isEmpty()) {
+                String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
+                wq += String.join(", ", weaponModifiers);
+                weaponModifierList.add(wq);
+            }
+        }
+        if (!weaponModifierList.isEmpty()) {
+            sQuirks.add(new SingleLine());
+            ItemList list = new ItemList(Messages.getString("MekView.WeaponMods"));
+            weaponModifierList.forEach(list::addItem);
+            sQuirks.add(list);
+        }
+
         sFluff.addAll(sQuirks);
         if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new SingleLine());
@@ -591,6 +611,32 @@ public class MekView {
                 Arrays.stream(errorLines).forEach(errorList::addItem);
                 sInvalid.add(errorList);
             }
+        }
+    }
+
+    private List<String> getEquipmentModifiers(Mounted<?> equipment) {
+        return equipment.getModifiers().stream().map(m -> "%s (%s)".formatted(modifierReason(m), modifierText(m))).toList();
+    }
+
+    private String modifierReason(EquipmentModifier modifier) {
+        return switch (modifier.reason()) {
+            case SALVAGE_QUALITY -> Messages.getString("MekView.SalvageQuality");
+            case PARTIAL_REPAIR -> Messages.getString("MekView.PartialRepair");
+            case UNKNOWN -> "Unknown";
+        };
+    }
+
+    private String modifierText(EquipmentModifier modifier) {
+        if (modifier instanceof WeaponHeatModifier heatModifier) {
+            return heatModifier.formattedDeltaHeat() + " heat";
+        } else if (modifier instanceof ToHitModifier toHitModifier) {
+            return toHitModifier.formattedToHitModifier() + " to-hit";
+        } else if (modifier instanceof DamageModifier damageModifier) {
+            return damageModifier.formattedDamageModifier() + " damage";
+        } else if (modifier instanceof WeaponMisfireModifier) {
+            return "weapon may misfire";
+        } else {
+            return "unknown";
         }
     }
 
@@ -927,48 +973,33 @@ public class MekView {
         }
 
         TableElement wpnTable = new TableElement(4);
-        wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
-        wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
-                TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
+        wpnTable.setColNames("Weapons  ", "  Loc  ", entity.isOmni() ? "  Omni  " : "");
+        wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
         for (WeaponMounted mounted : entity.getWeaponList()) {
-            String[] row = { mounted.getDesc() + quirkMarker(mounted),
+            String[] row = { mounted.getDesc() + quirkAndModMarker(mounted),
                     entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = mounted.getType();
 
-            if (entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+            if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                 row[0] += Messages.getString("MekView.IS");
             }
-            if (!entity.isClan()
-                    && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+            if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                 row[0] += Messages.getString("MekView.Clan");
             }
-            /*
-             * TODO: this should probably go in the ammo table somewhere if
-             * (wtype.hasFlag(WeaponType.F_ONESHOT)) { sWeapons.append(" [")
-             * .append(mounted.getLinked().getDesc()).append("]");
-             * }
-             */
 
-            int heat = wtype.getHeat();
-            int bWeapDamaged = 0;
+            int damagedWeaponsInBay = 0;
             if (wtype instanceof BayWeapon) {
-                // loop through weapons in bay and add up heat
-                heat = 0;
                 for (WeaponMounted m : mounted.getBayWeapons()) {
-                    heat = heat + m.getType().getHeat();
                     if (m.isDestroyed()) {
-                        bWeapDamaged++;
+                        damagedWeaponsInBay++;
                     }
                 }
             }
-            row[2] = String.valueOf(heat);
 
             if (entity.isOmni()) {
-                row[3] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
-            } else if (wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
-                row[3] = warningStart() + Messages.getString("MekView.WeaponDamage")
-                        + ")" + warningEnd();
+                row[2] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
+            } else if (damagedWeaponsInBay > 0 && !showDetail) {
+                row[2] = warningStart() + Messages.getString("MekView.WeaponDamage") + ")" + warningEnd();
             }
             if (mounted.isDestroyed()) {
                 if (mounted.isRepairable()) {
@@ -985,12 +1016,10 @@ public class MekView {
                 for (WeaponMounted m : mounted.getBayWeapons()) {
                     row = new String[] { m.getDesc(), "", "", "" };
 
-                    if (entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
+                    if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
                         row[0] += Messages.getString("MekView.IS");
                     }
-                    if (!entity.isClan()
-                            && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
+                    if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
                         row[0] += Messages.getString("MekView.Clan");
                     }
                     if (m.isDestroyed()) {
@@ -1026,8 +1055,15 @@ public class MekView {
         return retVal;
     }
 
-    private String quirkMarker(Mounted<?> mounted) {
-        return (mounted.countQuirks() > 0) ? " (Q)" : "";
+    private String quirkAndModMarker(Mounted<?> mounted) {
+        List<String> markers = new ArrayList<>();
+        if (mounted.countQuirks() > 0) {
+            markers.add("Q");
+        }
+        if (mounted.isModified()) {
+            markers.add("M");
+        }
+        return markers.isEmpty() ? "" : " (%s)".formatted(String.join(", ", markers));
     }
 
     private boolean hideAmmo(Mounted<?> mounted) {

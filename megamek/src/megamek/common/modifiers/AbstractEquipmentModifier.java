@@ -16,29 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.common.modifiers;
 
-import megamek.common.modifiers.EquipmentModifier;
+/**
+ * This is a base class for EquipmentModifiers that deals with part of the implementation requirements.
+ */
+public abstract class AbstractEquipmentModifier implements EquipmentModifier {
 
-import java.util.List;
+    private final Reason reason;
 
-public interface ModifiableEquipment {
-
-    List<EquipmentModifier> getEquipmentModifiers();
-
-    default void addEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().add(equipmentModifier);
+    public AbstractEquipmentModifier(Reason reason) {
+        this.reason = reason;
     }
 
-    default void removeEquipmentModifier(EquipmentModifier equipmentModifier) {
-        getEquipmentModifiers().remove(equipmentModifier);
+    @Override
+    public Reason reason() {
+        return reason;
     }
 
-    default void clearEquipmentModifiers() {
-        getEquipmentModifiers().clear();
-    }
-
-    default boolean isModified() {
-        return !getEquipmentModifiers().isEmpty();
+    /**
+     * @return Returns the given number as a String with a leading "+" if it is positive, i.e. "+2" or "-1" or "0".
+     */
+    protected String formattedModifier(int modifier) {
+        return (modifier > 0 ? "+" : "") + modifier;
     }
 }

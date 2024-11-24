@@ -263,26 +263,41 @@ factions:
           # motive: 1
           # firecontrol: 1
 
-        # TODO: nyi
-#        modifiers:
-#          LA:
-#            slot: 4
-#            modifier:
-#              type: misfire
-#              on: 7+
-#
-#          RA:
-#            slot: 1
-#            modifier:
-#              type: heat
-#              add: 2
+        # quality, partial repair modifiers
+        modifiers:
+          # the locations are not a list
+          LA:
+            # the slots must always be a list!
+            - slot: 4
+              modifiers:
+                # the modifiers can be a list or a single entry
+                # misfire
+                - type: misfire
+                  # The roll results to misfire on, must always be a list, not a single number
+                  on: [ 2, 3 ]
+                # heat adds the given delta to the weapon heat
+                - type: heat
+                  delta: 2
+                # damage obviously adds the given delta to the weapon's damage
+                - type: damage
+                  delta: -1
+                # tohit changes the tohit target number by the given delta
+                - type: tohit
+                  delta: 1
+
+          RA:
+            - slot: 1
+              modifier:
+                type: heat
+                delta: 2
 
         # ammo types and reduced amount
         # this usually requires looking up the unit file and possibly AmmoType.java for the type designations
         ammo:
           LA:
-            slot: 5
-            shots: 2
+            # the slots must always be a list!
+            - slot: 5
+              shots: 2
             # type: xyz (TODO)
 
         # Optional: give details of the crew/pilot - currently only for single pilots (TODO)

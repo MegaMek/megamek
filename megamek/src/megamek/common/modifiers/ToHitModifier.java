@@ -20,23 +20,27 @@ package megamek.common.modifiers;
 
 import megamek.common.TargetRollModifier;
 
-import java.util.Objects;
-
-public class ToHitModifier implements EquipmentModifier {
+public class ToHitModifier extends AbstractEquipmentModifier {
 
     private final int toHitModification;
-    private final String description;
 
     /**
      * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
      * the final heat value of the weapon is capped to never be less than 0.
      */
-    public ToHitModifier(int toHitModification, String description) {
+    public ToHitModifier(int toHitModification, Reason reason) {
+        super(reason);
         this.toHitModification = toHitModification;
-        this.description = Objects.requireNonNullElse(description, "weapon modification");
     }
 
-    public TargetRollModifier getToHitModifier(int originalHeat) {
-        return new TargetRollModifier(toHitModification, description);
+    public TargetRollModifier getToHitModifier() {
+        return new TargetRollModifier(toHitModification, (reason() == Reason.PARTIAL_REPAIR) ? "partial repair" : "salvage quality");
+    }
+
+    /**
+     * @return The to hit modifier of this modifier with a leading "+" if it is positive, i.e. "+2" or "-1" or "0".
+     */
+    public String formattedToHitModifier() {
+        return formattedModifier(toHitModification);
     }
 }

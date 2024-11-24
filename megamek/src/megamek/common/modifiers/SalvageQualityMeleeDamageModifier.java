@@ -21,12 +21,12 @@ package megamek.common.modifiers;
 /**
  * This class represents a modifier that is one of the options for melee weapons at salvage quality, CO p.215.
  */
-public class SalvageQualityMeleeDamageModifier extends SimpleDamageModifier {
+public class SalvageQualityMeleeDamageModifier extends DamageModifier {
 
     /**
      * Creates a weapon modifier that makes the weapon deal 2 less damage, as applicable to melee weapons, CO p.215.
      */
     public SalvageQualityMeleeDamageModifier() {
-        super(-2);
+        super(-2, Reason.SALVAGE_QUALITY);
     }
 }

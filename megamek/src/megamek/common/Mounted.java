@@ -41,7 +41,7 @@ import megamek.logging.MMLogger;
  * @author Ben
  * @since April 1, 2002, 1:29 PM
  */
-public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated, ModifiableEquipment {
+public class Mounted<T extends EquipmentType> implements Serializable, RoundUpdated, PhaseUpdated, Modifiable {
     private static final MMLogger logger = MMLogger.create(Mounted.class);
 
     private static final long serialVersionUID = 6438017987074691566L;
@@ -177,7 +177,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     private boolean squadSupportWeapon;
 
-    protected final List<EquipmentModifier> equipmentModifiers = new ArrayList<>();
+    protected final List<EquipmentModifier> modifiers = new ArrayList<>();
 
     /** Creates new Mounted */
     protected Mounted(Entity entity, T type) {
@@ -1779,7 +1779,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return intro + " { " + String.join(", ", state) + " }";
     }
 
-    public List<EquipmentModifier> getEquipmentModifiers() {
-        return equipmentModifiers;
+    public List<EquipmentModifier> getModifiers() {
+        return modifiers;
     }
 }

@@ -27,6 +27,6 @@ public class SalvageQualityToHitModifier extends ToHitModifier {
      * Creates a to-hit modifier that adds a +1 to-hit penalty, as applicable to weapons, CO p.215.
      */
     public SalvageQualityToHitModifier() {
-        super(1, "salvage quality");
+        super(1, Reason.SALVAGE_QUALITY);
     }
 }

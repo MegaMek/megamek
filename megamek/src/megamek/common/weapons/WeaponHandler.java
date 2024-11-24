@@ -1832,18 +1832,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
             roll = Compute.rollD6(2);
         }
 
-        // Check for misfire (scenario/permanent/modding)
+        // Check for misfire (scenario/quality/modding)
         if (toHit.needsRoll() || (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
-            for (EquipmentModifier modifier : weapon.getEquipmentModifiers()) {
+            for (EquipmentModifier modifier : weapon.getModifiers()) {
                 if (modifier instanceof WeaponMisfireModifier misfireModifier && misfireModifier.isMisfire(roll.getIntValue())) {
                     toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Weapon misfires");
                 }
             }
         }
 
-        // Check for misfire (scenario/permanent/modding)
+        // Check for to-hit modifiers (scenario/quality/modding)
         if (toHit.needsRoll()) {
-            for (EquipmentModifier modifier : weapon.getEquipmentModifiers()) {
+            for (EquipmentModifier modifier : weapon.getModifiers()) {
                 if (modifier instanceof ToHitModifier misfireModifier) {
                     toHit.addModifier(misfireModifier.getToHitModifier());
                 }

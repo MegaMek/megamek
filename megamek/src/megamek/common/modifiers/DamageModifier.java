@@ -18,11 +18,9 @@
  */
 package megamek.common.modifiers;
 
-import java.util.function.Function;
+public class DamageModifier extends AbstractEquipmentModifier {
 
-public class SimpleDamageModifier implements EquipmentModifier {
-
-    private final Function<Integer, Integer> damageModification;
+    private final int deltaDamage;
 
     /**
      * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
@@ -30,26 +28,19 @@ public class SimpleDamageModifier implements EquipmentModifier {
      *
      * @param deltaDamage The heat value to add to the weapon's heat generation
      */
-    public SimpleDamageModifier(int deltaDamage) {
-        this(heat -> heat + deltaDamage);
-    }
-
-    /**
-     * Creates a heat modifier that performs the given function on the weapon's own heat generation value. Note that the final heat value of
-     * the weapon is capped to never be less than 0.
-     *
-     * A modifier that increases weapon heat by 20% can be created like this:
-     * <pre>{@code
-     * new SimpleWeaponHeatModifier(heat -> (int) (1.2 * heat));
-     * }</pre>
-     *
-     * @param damageModification The function to apply to the weapon's heat value
-     */
-    public SimpleDamageModifier(Function<Integer, Integer> damageModification) {
-        this.damageModification = damageModification;
+    public DamageModifier(int deltaDamage, Reason reason) {
+        super(reason);
+        this.deltaDamage = deltaDamage;
     }
 
     public int getModifiedDamage(int originalHeat) {
-        return Math.max(0, damageModification.apply(originalHeat));
+        return deltaDamage;
+    }
+
+    /**
+     * @return The damage modifier with a leading "+" if it is positive, i.e. "+2" or "-1" or "0".
+     */
+    public String formattedDamageModifier() {
+        return formattedModifier(deltaDamage);
     }
 }

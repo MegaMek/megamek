@@ -22,12 +22,12 @@ package megamek.common.modifiers;
  * This class represents a modifier that is one of the options for energy weapons at salvage quality, CO p.215. Note that this modifier can
  * be applied to any weapon.
  */
-public class SalvageQualityHeatModifier extends SimpleWeaponHeatModifier {
+public class SalvageQualityHeatModifier extends WeaponHeatModifier {
 
     /**
      * Creates a weapon modifier that makes the weapon create 2 extra heat when fired, as applicable to energy weapons, CO p.215.
      */
     public SalvageQualityHeatModifier() {
-        super(2);
+        super(2, Reason.SALVAGE_QUALITY);
     }
 }

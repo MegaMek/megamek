@@ -22,7 +22,7 @@ package megamek.common.equipment;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.modifiers.EquipmentModifier;
-import megamek.common.modifiers.SimpleWeaponHeatModifier;
+import megamek.common.modifiers.WeaponHeatModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -135,11 +135,12 @@ public class WeaponMounted extends Mounted<WeaponType> {
         }
 
         // Apply heat modifiers (scenario/permanent/modding)
-        for (EquipmentModifier modifier : equipmentModifiers) {
-            if (modifier instanceof SimpleWeaponHeatModifier weaponHeatModifier) {
-                heat = weaponHeatModifier.getModifiedHeat(heat);
+        for (EquipmentModifier modifier : modifiers) {
+            if (modifier instanceof WeaponHeatModifier weaponHeatModifier) {
+                heat += weaponHeatModifier.getDeltaHeat();
             }
         }
+        heat = Math.max(0, heat);
 
         return heat;
     }

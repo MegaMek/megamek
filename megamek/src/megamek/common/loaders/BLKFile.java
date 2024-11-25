@@ -1206,7 +1206,7 @@ public class BLKFile {
                         case "troopspace":
                             // Everything after the ':' should be the space's size.
                             double fsize = Double.parseDouble(numbers);
-                            e.addTransporter(new TroopSpace(fsize), isPod);
+                            e.addTransporter(new InfantryCompartment(fsize), isPod);
                             break;
                         case "cargobay":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);

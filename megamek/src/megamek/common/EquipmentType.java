@@ -502,7 +502,7 @@ public class EquipmentType implements ITechnology {
         return spreadable;
     }
 
-    public int getToHitModifier() {
+    public int getToHitModifier(@Nullable Mounted<?> mounted) {
         return toHitModifier;
     }
 
@@ -553,6 +553,15 @@ public class EquipmentType implements ITechnology {
         }
 
         return false;
+    }
+
+    /**
+     * @param mounted The equipment mount. In some cases the moudes are affected by linked equipment.
+     * @return the number of modes that this type of equipment can be in or
+     *         <code>0</code> if it doesn't have modes.
+     */
+    public int getModesCount(Mounted<?> mounted) {
+        return getModesCount();
     }
 
     /**

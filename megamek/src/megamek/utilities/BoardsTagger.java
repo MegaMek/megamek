@@ -21,18 +21,11 @@ package megamek.utilities;
 import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import megamek.common.Board;
 import megamek.common.Building;
@@ -126,8 +119,17 @@ public class BoardsTagger {
 
     public static void main(String... args) {
         try {
+            Map<String, List<String>> boardCheckSum = new HashMap<>();
+
             File boardDir = Configuration.boardsDir();
-            scanForBoards(boardDir);
+            scanForBoards(boardDir, boardCheckSum);
+
+            boardCheckSum.forEach((key, value) -> {
+                if (value.size() > 1) {
+                    String message = key + " : " + value.stream().sorted().collect(Collectors.joining(", "));
+                    logger.info(message);
+                }
+            });
         } catch (Exception ex) {
             logger.error(ex, "Board tagger cannot scan boards");
             System.exit(64);
@@ -140,19 +142,21 @@ public class BoardsTagger {
      * Recursively scans the supplied file/directory for any boards and auto-tags
      * them.
      */
-    private static void scanForBoards(File file) throws IOException {
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) throws IOException {
         if (file.isDirectory()) {
             String[] fileList = file.list();
             for (String filename : fileList) {
                 File filepath = new File(file, filename);
                 if (filepath.isDirectory()) {
-                    scanForBoards(new File(file, filename));
+                    scanForBoards(new File(file, filename), boardCheckSum);
                 } else {
                     tagBoard(filepath);
+                    checkSum(boardCheckSum, filepath);
                 }
             }
         } else {
             tagBoard(file);
+            checkSum(boardCheckSum, file);
         }
     }
 
@@ -345,6 +349,39 @@ public class BoardsTagger {
                 String message = String.format("Could not save board: %s", boardFile);
                 logger.error(ex, message);
             }
+        }
+    }
+
+    private static void checkSum(Map<String, List<String>> boardCheckSum,  File boardFile) {
+        MessageDigest md;
+
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+
+            String line;
+            List<String> lines = new ArrayList<>();
+
+            // remove tag lines
+            try (BufferedReader br = new BufferedReader(new FileReader(boardFile));) {
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith("tag ")) {
+                        lines.add(line);
+                    }
+                }
+            } catch (Exception e) {
+                logger.error(e, "Error Calculating Hash");
+            }
+
+            String sortedLines = lines.stream().sorted().collect(Collectors.joining());
+
+            md.update(sortedLines.getBytes(), 0, sortedLines.length());
+            HexFormat hexFormat = HexFormat.of();
+            String cs = hexFormat.formatHex(md.digest()).toUpperCase();
+            boardCheckSum.putIfAbsent(cs, new ArrayList<>());
+
+            boardCheckSum.get(cs).add(boardFile.getPath());
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e, "SHA-256 Algorithm Can't be Found");
         }
     }
 }

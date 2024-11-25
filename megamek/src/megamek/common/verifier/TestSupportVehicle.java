@@ -1512,7 +1512,7 @@ public class TestSupportVehicle extends TestEntity {
 
         boolean troopSpaceFound = false;
         for (Transporter transport : supportVee.getTransports()) {
-            if ((transport instanceof TroopSpace) && !troopSpaceFound) {
+            if ((transport instanceof InfantryCompartment) && !troopSpaceFound) {
                 buff.append(StringUtil.makeLength("Troop Space", 30));
                 buff.append("1\n");
                 troopSpaceFound = true;
@@ -1702,7 +1702,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Each distinct bay requires a slot, regardless of size. All {@link TroopSpace}
+     * Each distinct bay requires a slot, regardless of size. All {@link InfantryCompartment}
      * is treated as a single bay.
      *
      * @return The number of slots required by transporters.
@@ -1714,7 +1714,7 @@ public class TestSupportVehicle extends TestEntity {
         for (Transporter transporter : supportVee.getTransports()) {
             if ((transporter instanceof Bay transportBay) && !transportBay.isQuarters()) {
                 slots++;
-            } else if ((transporter instanceof TroopSpace) && !foundTroopSpace) {
+            } else if ((transporter instanceof InfantryCompartment) && !foundTroopSpace) {
                 slots++;
                 foundTroopSpace = true;
             }

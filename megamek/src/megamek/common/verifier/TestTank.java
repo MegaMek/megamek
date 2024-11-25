@@ -667,7 +667,7 @@ public class TestTank extends TestEntity {
         // total)
         boolean infantryBayCounted = false;
         for (Transporter transport : tank.getTransports()) {
-            if (transport instanceof TroopSpace) {
+            if (transport instanceof InfantryCompartment) {
                 buff.append(StringUtil.makeLength("Troop Space", 30));
                 buff.append("1\n");
                 infantryBayCounted = true;

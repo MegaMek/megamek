@@ -90,6 +90,8 @@ public enum KeyCommandBind {
     TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
+    PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
     // Toggles isometric view on/off

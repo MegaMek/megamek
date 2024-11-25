@@ -536,6 +536,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
                     Hex h = board.getHex(j, k);
+                    if (h == null) {
+                        continue;
+                    }
                     if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h));
                         if (h.containsTerrain(SPACE)) {

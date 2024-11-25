@@ -1138,7 +1138,7 @@ public class EquipChoicePanel extends JPanel {
                 if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                     m_mounted.setHotLoad(chHotLoad.isSelected());
                     // Set the mode too, so vehicles can switch back
-                    int numModes = m_mounted.getType().getModesCount();
+                    int numModes = m_mounted.getModesCount();
                     for (int m = 0; m < numModes; m++) {
                         if (m_mounted.getType().getMode(m).getName()
                                 .equals("HotLoad")) {

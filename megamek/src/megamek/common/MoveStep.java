@@ -3323,7 +3323,9 @@ public class MoveStep implements Serializable {
         final Coords dest = getPosition();
         final Hex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
-
+        if (destHex == null) {
+            return false;
+        }
         if (null == dest) {
             var ex = new IllegalStateException("Step has no position");
             logger.error("", ex);

@@ -902,8 +902,8 @@ public class FireControl {
         toHit.append(getDamageWeaponMods(shooter, weapon));
 
         // weapon mods
-        if (0 != weaponType.getToHitModifier()) {
-            toHit.addModifier(weaponType.getToHitModifier(), TH_WEAPON_MOD);
+        if (0 != weaponType.getToHitModifier(weapon)) {
+            toHit.addModifier(weaponType.getToHitModifier(weapon), TH_WEAPON_MOD);
         }
 
         // Target size.
@@ -3475,7 +3475,7 @@ public class FireControl {
                 if (!(weaponType instanceof MMLWeapon)) {
                     // Naively assume that easier-hitting is better
                     if (returnAmmo != null) {
-                        AmmoType returnAmmoType = (AmmoType) (returnAmmo.getType());
+                        AmmoType returnAmmoType = returnAmmo.getType();
                         returnAmmo = ((ammoType.getToHitModifier() > returnAmmoType.getToHitModifier()) ? ammo
                                 : returnAmmo);
                     } else {

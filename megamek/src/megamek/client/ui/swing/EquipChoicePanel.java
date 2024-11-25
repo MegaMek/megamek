@@ -323,8 +323,7 @@ public class EquipChoicePanel extends JPanel {
         boolean condEjectFuel = chCondEjectFuel.isSelected();
         boolean condEjectSIDest = chCondEjectSIDest.isSelected();
 
-        if (entity instanceof Mek) {
-            Mek mek = (Mek) entity;
+        if (entity instanceof Mek mek) {
             mek.setAutoEject(!autoEject);
             mek.setCondEjectAmmo(condEjectAmmo);
             mek.setCondEjectEngine(condEjectEngine);
@@ -349,8 +348,8 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update munitions selections
-        for (final Object newVar2 : m_vMunitions) {
-            ((MunitionChoicePanel) newVar2).applyChoice();
+        for (final MunitionChoicePanel munitions : m_vMunitions) {
+            munitions.applyChoice();
         }
         if (panMunitions instanceof BayMunitionsChoicePanel) {
             ((BayMunitionsChoicePanel) panMunitions).apply();
@@ -365,12 +364,12 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update MG rapid fire settings
-        for (final Object newVar1 : m_vMGs) {
-            ((RapidfireMGPanel) newVar1).applyChoice();
+        for (final RapidfireMGPanel rapidfireMGPanel : m_vMGs) {
+            rapidfireMGPanel.applyChoice();
         }
         // update mines setting
-        for (final Object newVar : m_vMines) {
-            ((MineChoicePanel) newVar).applyChoice();
+        for (final MineChoicePanel mineChoicePanel : m_vMines) {
+            mineChoicePanel.applyChoice();
         }
         // update bomb setting
         if (null != m_bombs) {

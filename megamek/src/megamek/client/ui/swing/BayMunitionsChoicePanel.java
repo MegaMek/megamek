@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2017 - The MegaMek Team
+ * MegaMek - Copyright (C) 2024 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,6 +44,9 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+
+import static megamek.common.AmmoType.F_BATTLEARMOR;
+import static megamek.common.AmmoType.F_PROTOMEK;
 
 /**
  * @author Neoancient
@@ -142,9 +143,6 @@ public class BayMunitionsChoicePanel extends JPanel {
     }
 
     class AmmoRowPanel extends JPanel implements ChangeListener {
-        /**
-         *
-         */
         private static final long serialVersionUID = 7251618728823971065L;
 
         private final JLabel lblTonnage = new JLabel();
@@ -167,16 +165,17 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
 
-            final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
+            final Optional<WeaponType> weaponType = bay.getBayWeapons().stream()
                     .map(Mounted::getType).findAny();
 
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech
             // base
-            this.techBase = wtype.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
+            this.techBase = weaponType.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
 
             munitions = AmmoType.getMunitionsFor(at).stream()
-                    .filter(this::includeMunition).collect(Collectors.toList());
+                .filter(this::includeMunition)
+                .toList();
             tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
             Map<String, Integer> starting = new HashMap<>();
             ammoMounts.forEach(m -> starting.merge(m.getType().getInternalName(), m.getBaseShotsLeft(), Integer::sum));
@@ -203,7 +202,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             gbc.insets = new Insets(0, 5, 0, 5);
             gbc.gridwidth = 5;
             add(new JLabel("(" + entity.getLocationAbbr(bay.getLocation()) + ") "
-                    + (wtype.isPresent() ? wtype.get().getName() : "?")), gbc);
+                    + (weaponType.isPresent() ? weaponType.get().getName() : "?")), gbc);
             gbc.gridx = 5;
             gbc.gridwidth = 1;
             gbc.weightx = 1.0;
@@ -226,32 +225,41 @@ public class BayMunitionsChoicePanel extends JPanel {
             recalcMaxValues();
         }
 
-        private boolean includeMunition(AmmoType atype) {
-            if (!atype
+        /**
+         * Assert if a specific ammo type should be included in the list of munitions for the ship.
+         * @param ammoType  the type of munition to be asserted
+         * @return true means the munition should be included.
+         */
+        private boolean includeMunition(AmmoType ammoType) {
+            if (!ammoType
                     .canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
-                    || (atype.getAmmoType() != at)
-                    || (atype.getRackSize() != rackSize)
-                    || ((atype.getTechBase() != techBase)
-                            && (atype.getTechBase() != AmmoType.TECH_BASE_ALL)
+                    || (ammoType.getAmmoType() != at)
+                    || (ammoType.getRackSize() != rackSize)
+                    || ((ammoType.getTechBase() != techBase)
+                            && (ammoType.getTechBase() != AmmoType.TECH_BASE_ALL)
                             && (techBase != AmmoType.TECH_BASE_ALL))
-                    || !atype.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
+                    || !ammoType.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
                             SimpleTechLevel.getGameTechLevel(game),
                             techBase == AmmoType.TECH_BASE_CLAN,
                             techBase == AmmoType.TECH_BASE_ALL,
                             game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
             }
-            if (atype.hasFlag(AmmoType.F_NUCLEAR)
+            if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
                     && !game.getOptions().booleanOption(
                             OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                 return false;
             }
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS)
                         || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
             }
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS_V);
+            }
+            // A Bay should not load BA nor Protomek exclusive ammo/weapons
+            if (ammoType.hasFlag(F_BATTLEARMOR) || ammoType.hasFlag(F_PROTOMEK)) {
+                return false;
             }
             return true;
         }

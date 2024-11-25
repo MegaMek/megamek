@@ -4282,8 +4282,8 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
-        misc.tonnage = 0.0;
-        misc.criticals = 0;
+        misc.tonnage = 0.100;
+        misc.criticals = 2;
         misc.cost = 500000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);

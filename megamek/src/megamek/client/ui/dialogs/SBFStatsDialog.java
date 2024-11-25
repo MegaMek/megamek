@@ -27,6 +27,7 @@ import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.force.Force;
 import megamek.common.jacksonadapters.MMUWriter;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -58,7 +59,7 @@ public class SBFStatsDialog extends AbstractDialog {
     private static final String COLUMN_SEPARATOR = "\t";
 
     private final Collection<Force> forceList;
-    private final Game game;
+    private final IGame game;
     private List<SBFFormation> formations;
     private final MMToggleButton elementsToggle = new MMToggleButton(Messages.getString("SBFStatsDialog.showElements"));
     private final JButton clipBoardButton = new JButton(Messages.getString("SBFStatsDialog.copy"));
@@ -83,7 +84,7 @@ public class SBFStatsDialog extends AbstractDialog {
      * @param forceList The force or forces to be converted
      * @param gm The game object (necessary to retrieve the entities from the forces)
      */
-    public SBFStatsDialog(JFrame frame, Collection<Force> forceList, Game gm) {
+    public SBFStatsDialog(JFrame frame, Collection<Force> forceList, IGame gm) {
         super(frame, false, "SBFStatsDialog", "SBFStatsDialog.title");
         this.forceList = forceList;
         game = gm;

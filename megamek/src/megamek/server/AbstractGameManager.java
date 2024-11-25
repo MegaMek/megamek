@@ -250,7 +250,6 @@ public abstract class AbstractGameManager implements IGameManager {
      */
     public void incrementAndSendGameRound() {
         getGame().incrementCurrentRound();
-        send(packetHelper.createCurrentRoundNumberPacket());
     }
 
     public GameManagerPacketHelper getPacketHelper() {

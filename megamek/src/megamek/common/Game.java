@@ -520,6 +520,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *         entities not yet
      *         deployed. Ignores offboard units and captured Mek pilots.
      */
+    @Override
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -537,6 +538,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *         Ignores offboard
      *         units and captured Mek pilots.
      */
+    @Override
     public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -2609,6 +2611,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return Value of property victoryPlayerId.
      */
+    @Override
     public int getVictoryPlayerId() {
         return victoryPlayerId;
     }
@@ -2618,6 +2621,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param victoryPlayerId New value of property victoryPlayerId.
      */
+    @Override
     public void setVictoryPlayerId(int victoryPlayerId) {
         this.victoryPlayerId = victoryPlayerId;
     }
@@ -2627,6 +2631,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return Value of property victoryTeam.
      */
+    @Override
     public int getVictoryTeam() {
         return victoryTeam;
     }
@@ -2636,6 +2641,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param victoryTeam New value of property victoryTeam.
      */
+    @Override
     public void setVictoryTeam(int victoryTeam) {
         this.victoryTeam = victoryTeam;
     }
@@ -3082,6 +3088,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return reports;
     }
 
+    /**
+     * Verify if the game has ended due a time limit
+     * @return true if the game has ended due to a time limit
+     */
+    @Override
     public boolean gameTimerIsExpired() {
         return getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)
                 && (getRoundCount() == getOptions().intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
@@ -3409,6 +3420,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Cancels a victory
      */
+    @Override
     public void cancelVictory() {
         setForceVictory(false);
         setVictoryPlayerId(Player.PLAYER_NONE);

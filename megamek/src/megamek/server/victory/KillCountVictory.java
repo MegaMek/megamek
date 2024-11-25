@@ -19,10 +19,7 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Player;
-import megamek.common.Report;
+import megamek.common.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -42,15 +39,15 @@ public class KillCountVictory implements VictoryCondition, Serializable {
     }
 
     @Override
-    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
         boolean isVictory = false;
         VictoryResult victoryResult = new VictoryResult(true);
         Map<Integer, Integer> killsPerTeam = new HashMap<>();
         Map<Integer, Integer> killsPerNoTeamPlayer = new HashMap<>();
-        
-        updateKillTables(game, killsPerTeam, killsPerNoTeamPlayer, game.getWreckedEntities());
-        updateKillTables(game, killsPerTeam, killsPerNoTeamPlayer, game.getCarcassEntities());
-        
+        if (game instanceof Game mmGame) {
+            updateKillTables(mmGame, killsPerTeam, killsPerNoTeamPlayer, mmGame.getWreckedEntities());
+            updateKillTables(mmGame, killsPerTeam, killsPerNoTeamPlayer, mmGame.getCarcassEntities());
+        }
         boolean teamHasHighestKills = true;
         int highestKillsId = -1;
         int killCount = 0;
@@ -60,7 +57,7 @@ public class KillCountVictory implements VictoryCondition, Serializable {
                 killCount = killsPerTeam.get(killer);
             }
         }
-        
+
         for (Integer killer : killsPerNoTeamPlayer.keySet()) {
             if (killsPerTeam.get(killer) > killCount) {
                 highestKillsId = killer;
@@ -68,7 +65,7 @@ public class KillCountVictory implements VictoryCondition, Serializable {
                 teamHasHighestKills = false;
             }
         }
-        
+
         if (killCount >= requiredKillCount) {
             Report r = new Report(7106, Report.PUBLIC);
             isVictory = true;
@@ -94,11 +91,11 @@ public class KillCountVictory implements VictoryCondition, Serializable {
         while (victims.hasMoreElements()) {
             Entity wreck = victims.nextElement();
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
-            
+
             if (killer == null) {
                 continue;
-            }            
-            
+            }
+
             int team = killer.getOwner().getTeam();
             // Friendly fire doesn't count
             if (team == wreck.getOwner().getTeam()) {

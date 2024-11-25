@@ -134,8 +134,52 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        return 0;
+    }
+
+    @Override
     public ReportEntry getNewReport(int messageId) {
         return new Report(messageId);
+    }
+
+    @Override
+    public void setVictoryPlayerId(int victoryPlayerId) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void setVictoryTeam(int victoryTeam) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void cancelVictory() {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public int getVictoryPlayerId() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public int getVictoryTeam() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public boolean gameTimerIsExpired() {
+        // NOT IMPLEMENTED
+        return false;
+    }
+
+    @Override
+    public int getLiveCommandersOwnedBy(Player player) {
+        // NOT IMPLEMENTED
+        return 0;
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

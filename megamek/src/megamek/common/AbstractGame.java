@@ -483,4 +483,5 @@ public abstract class AbstractGame implements IGame {
             return HexArea.EMPTY_AREA;
         }
     }
+
 }

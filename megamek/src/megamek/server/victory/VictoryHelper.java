@@ -19,6 +19,7 @@
  */
 package megamek.server.victory;
 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedevent.TriggeredEvent;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class manages the victory conditions of a game. As victory conditions could potentially have some state they need to save in
@@ -69,8 +75,8 @@ public class VictoryHelper implements Serializable {
      * @see VictoryResult#noResult()
      * @see VictoryResult#drawResult()
      */
-    public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
-        // Always check for chat-command /victory, so games without victory conditions can be completed
+    public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
+        // Always check for forced victory, so games without victory conditions can be completed
         VictoryResult playerAgreedVR = playerAgreedVC.checkVictory(game, context);
         if (playerAgreedVR.isVictory()) {
             return playerAgreedVR;
@@ -116,7 +122,7 @@ public class VictoryHelper implements Serializable {
             .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));
     }
 
-    private VictoryResult checkOptionalVictoryConditions(Game game, Map<String, Object> context) {
+    private VictoryResult checkOptionalVictoryConditions(IGame game, Map<String, Object> context) {
         boolean isVictory = false;
         VictoryResult combinedResult = new VictoryResult(true);
 

@@ -271,6 +271,45 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return new Report(messageId);
     }
 
+    @Override
+    public void setVictoryPlayerId(int victoryPlayerId) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void setVictoryTeam(int victoryTeam) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void cancelVictory() {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public int getVictoryPlayerId() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public int getVictoryTeam() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public boolean gameTimerIsExpired() {
+        // NOT IMPLEMENTED
+        return false;
+    }
+
+    @Override
+    public int getLiveCommandersOwnedBy(Player player) {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
     public SBFFullGameReport getGameReport() {
         return gameReport;
     }
@@ -307,6 +346,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     public List<InGameObject> getGraveyard() {
         return graveyard;
+    }
+
+    @Override
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        return 0;
     }
 
     /**

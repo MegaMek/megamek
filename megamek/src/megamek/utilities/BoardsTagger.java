@@ -84,7 +84,7 @@ public class BoardsTagger {
         TAG_ICE("IceTerrain"),
         TAG_FLAT("Flat"),
         TAG_SNOWTERRAIN("SnowTerrain"),
-        TAG_HANGER("Hanger"),
+        TAG_HANGAR("Hangar"),
         TAG_FORTRESS("Fortress"),
         TAG_GUNEMPLACEMENT("GunEmplacement"),
         TAG_HEAVYBUILDING("HeavyBuilding"),
@@ -223,7 +223,7 @@ public class BoardsTagger {
         int water = 0;
         int ice = 0;
         int snowTerrain = 0;
-        int hanger = 0;
+        int hangar = 0;
         int fortress = 0;
         int gunEnplacement = 0;
         int heavyBuilding = 0;
@@ -280,7 +280,7 @@ public class BoardsTagger {
                     highBuildings += (height > 2) ? 1 : 0;
                 }
                 if (hex.containsTerrain(BUILDING)) {
-                    hanger += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
+                    hangar += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
                     fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
                     gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
                     heavyBuilding += hex.terrainLevel(BUILDING) == Building.HEAVY ? 1 : 0;
@@ -339,7 +339,7 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
-        matchingTags.put(Tags.TAG_HANGER, hanger > 10);
+        matchingTags.put(Tags.TAG_HANGAR, hangar > 10);
         matchingTags.put(Tags.TAG_FORTRESS, fortress > 10);
         matchingTags.put(Tags.TAG_GUNEMPLACEMENT, gunEnplacement > 10);
         matchingTags.put(Tags.TAG_HEAVYBUILDING, heavyBuilding > 10);

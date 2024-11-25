@@ -57,7 +57,7 @@ public class StringUtil {
 
     /**
      * A utility for padding out a string with spaces.
-     * 
+     *
      * @param s the string to pad
      * @param n the desired length of the resultant string
      * @param bRightJustify true if the string should be right justified
@@ -82,7 +82,7 @@ public class StringUtil {
      * the end. The format of the stamp is dictated by the client option
      * "StampFormat", which must use the same formatting as Java's
      * DateTimeFormatter class.
-     * 
+     *
      * @param filename the String containing the filename (with extension)
      * @return the filename with date/time stamp added
      */
@@ -182,5 +182,19 @@ public class StringUtil {
         } catch (Exception ignored) {
             return i;
         }
+    }
+
+    /**
+     * Returns if value is between the start and end
+     */
+    public static boolean isBetween(double value, String sStart, String sEnd) {
+        if (sStart.isEmpty() && sEnd.isEmpty()) {
+            return true;
+        }
+
+        int iStart = StringUtil.toInt(sStart, Integer.MIN_VALUE);
+        int iEnd = StringUtil.toInt(sEnd, Integer.MAX_VALUE);
+
+        return (!(value < iStart)) && (!(value > iEnd));
     }
 }

@@ -484,6 +484,10 @@ public class AmmoType extends EquipmentType {
         return ammoType;
     }
 
+    public int getToHitModifier() {
+        return toHitModifier;
+    }
+
     /**
      * Analog to WeaponType.getFireTNRoll(), but based on munitions.
      * See TO:AR pg 42

@@ -96,7 +96,7 @@ public final class CollapseWarning {
 
             List<Coords> hexesToCheck = new ArrayList<Coords>();
             if (pos != null) {
-                hexesToCheck = pos.allAtDistanceOrLess(range + 1);
+                hexesToCheck = pos.allAtDistanceOrLess(range);
             } else {
                 return hexesToCheck;
             }

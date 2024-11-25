@@ -34,7 +34,7 @@ public class AllowGameMasterCommand extends ServerCommand {
 
     public AllowGameMasterCommand(Server server, TWGameManager gameManager) {
         super(server, "allowGM", "Allows a player become Game Master "
-                + "Usage: /allowGameMaster used in respond to another " +
+                + "Usage: /allowGM used in respond to another " +
                 "Player's request to become Game Master.  All players assigned to" +
                 " a team must allow the change.");
         this.gameManager = gameManager;

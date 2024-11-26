@@ -8931,7 +8931,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             } else {
                 result.append(next.getUnusedString());
             }
-            if (isOmni() && ((next instanceof TroopSpace)
+            if (isOmni() && ((next instanceof InfantryCompartment)
                     || (next instanceof Bay))) {
                 if (omniPodTransports.contains(next)) {
                     result.append(" (Pod)");
@@ -10136,8 +10136,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public double getTroopCarryingSpace() {
         double space = 0;
         for (Transporter t : transports) {
-            if (t instanceof TroopSpace) {
-                space += ((TroopSpace) t).totalSpace;
+            if (t instanceof InfantryCompartment) {
+                space += ((InfantryCompartment) t).totalSpace;
             }
         }
         return space;
@@ -10146,8 +10146,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public double getPodMountedTroopCarryingSpace() {
         double space = 0;
         for (Transporter t : omniPodTransports) {
-            if (t instanceof TroopSpace) {
-                space += ((TroopSpace) t).totalSpace;
+            if (t instanceof InfantryCompartment) {
+                space += ((InfantryCompartment) t).totalSpace;
             }
         }
         return space;

@@ -415,9 +415,11 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createPleaToRoyaltyMenu() {
         JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
-
+        var isGM = client.getLocalPlayer().isGameMaster();
         for (var player : client.getGame().getPlayersList()) {
-            if (!player.isEnemyOf(client.getLocalPlayer()) && player.isBot()) {
+            var isEnemy = player.isEnemyOf(client.getLocalPlayer());
+            var playerIsBot = player.isBot();
+            if (playerIsBot && (!isEnemy || isGM)) {
                 menu.add(createBotCommands(player));
             }
         }
@@ -425,7 +427,7 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu createBotCommands(Player bot) {
-        JMenu menu = new JMenu(bot.getName());
+        JMenu menu = new JMenu(bot.getName() + " (" + Player.TEAM_NAMES[bot.getTeam()] + ")");
 
         JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
         JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));

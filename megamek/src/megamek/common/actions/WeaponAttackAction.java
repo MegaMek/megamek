@@ -27,6 +27,8 @@ import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.modifiers.EquipmentModifier;
+import megamek.common.modifiers.ToHitModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -832,6 +834,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = compileAmmoToHitMods(game, ae, target, ttype, toHit, wtype, weapon, atype, munition, bApollo,
                 bArtemisV, bFTL, bHeatSeeking, isECMAffected, isINarcGuided);
 
+        // Check for to-hit modifiers (scenario/quality/modding)
+        if (toHit.needsRoll()) {
+            for (EquipmentModifier modifier : weapon.getModifiers()) {
+                if (modifier instanceof ToHitModifier misfireModifier) {
+                    toHit.addModifier(misfireModifier.getToHitModifier());
+                }
+            }
+        }
+
         // okay!
         return toHit;
     }
@@ -902,18 +913,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit = compileCrewToHitMods(game, ae, te, toHit, null);
 
         // Collect the modifiers for the attacker's condition/actions
-        if (ae != null) {
-            // Conventional fighter, Aerospace and fighter LAM attackers
-            if (ae.isAero()) {
-                toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, Entity.LOC_NONE,
-                        AimingMode.NONE, eistatus, null, null, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
-                        false, false, false, false, false);
-                // Everyone else
-            } else {
-                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, Entity.LOC_NONE,
-                        AimingMode.NONE, null, null, weaponId, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
-                        false, false, false, false, false);
-            }
+        // Conventional fighter, Aerospace and fighter LAM attackers
+        if (ae.isAero()) {
+            toHit = compileAeroAttackerToHitMods(game, ae, target, ttype, toHit, Entity.LOC_NONE,
+                AimingMode.NONE, eistatus, null, null, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
+                false, false, false, false, false);
+            // Everyone else
+        } else {
+            toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, Entity.LOC_NONE,
+                AimingMode.NONE, null, null, weaponId, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
+                false, false, false, false, false);
         }
 
         // Collect the modifiers for the target's condition/actions

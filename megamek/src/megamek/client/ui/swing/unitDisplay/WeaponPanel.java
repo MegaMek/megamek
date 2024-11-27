@@ -21,7 +21,6 @@ package megamek.client.ui.swing.unitDisplay;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -37,7 +36,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
-import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
@@ -48,7 +46,6 @@ import megamek.client.ui.swing.FiringDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
@@ -59,6 +56,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.modifiers.DamageModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -1854,21 +1852,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 && (unitDisplay.getClientGUI() != null)
                 && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+            int damage = Compute.dialDownDamage(mounted, wtype);
             if (mounted.hasChargedCapacitor() != 0) {
-                if (mounted.hasChargedCapacitor() == 1) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                            mounted, wtype) + 5));
-                }
-                if (mounted.hasChargedCapacitor() == 2) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                            mounted, wtype) + 10));
-                }
-            } else {
-                wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                        mounted, wtype)));
+                damage += mounted.hasChargedCapacitor() * 5;
             }
+            damage = Math.max(0, damage + damageModification(mounted));
+            wDamR.setText(Integer.toString(damage));
         } else {
-            wDamR.setText(Integer.toString(wtype.getDamage()));
+            int damage = Math.max(0, wtype.getDamage() + damageModification(mounted));
+            wDamR.setText(Integer.toString(damage));
         }
 
         // update range
@@ -2105,6 +2097,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             sb.append(Messages.getString("MekDisplay.isHotLoaded"));
         }
         return sb.toString();
+    }
+
+    private int damageModification(WeaponMounted weapon) {
+        return weapon.getModifiers().stream()
+            .filter(m -> m instanceof DamageModifier)
+            .map(m -> (DamageModifier) m)
+            .mapToInt(DamageModifier::getDeltaDamage)
+            .sum();
     }
 
     private String formatBayWeapon(WeaponMounted m) {

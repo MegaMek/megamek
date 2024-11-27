@@ -32,9 +32,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.modifiers.EquipmentModifier;
-import megamek.common.modifiers.ToHitModifier;
-import megamek.common.modifiers.WeaponMisfireModifier;
+import megamek.common.modifiers.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
@@ -1837,15 +1835,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             for (EquipmentModifier modifier : weapon.getModifiers()) {
                 if (modifier instanceof WeaponMisfireModifier misfireModifier && misfireModifier.isMisfire(roll.getIntValue())) {
                     toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Weapon misfires");
-                }
-            }
-        }
-
-        // Check for to-hit modifiers (scenario/quality/modding)
-        if (toHit.needsRoll()) {
-            for (EquipmentModifier modifier : weapon.getModifiers()) {
-                if (modifier instanceof ToHitModifier misfireModifier) {
-                    toHit.addModifier(misfireModifier.getToHitModifier());
                 }
             }
         }

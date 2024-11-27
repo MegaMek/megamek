@@ -26,14 +26,14 @@ public class DamageModifier extends AbstractEquipmentModifier {
      * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
      * the final heat value of the weapon is capped to never be less than 0.
      *
-     * @param deltaDamage The heat value to add to the weapon's heat generation
+     * @param deltaDamage The heat value to add to the weapon's damage
      */
     public DamageModifier(int deltaDamage, Reason reason) {
         super(reason);
         this.deltaDamage = deltaDamage;
     }
 
-    public int getModifiedDamage(int originalHeat) {
+    public int getDeltaDamage() {
         return deltaDamage;
     }
 

@@ -5498,7 +5498,7 @@
 			</model>
 		</chassis>
 		<chassis name='Enforcer' unitType='Mek'>
-			<availability>CC:1,FS:7,MERC:4,CDP:2,Periphery:2,FVC:7LA:2,DC:1</availability>
+			<availability>CC:1,FS:7,MERC:4,CDP:2,Periphery:2,FVC:7,LA:2,DC:1</availability>
 			<model name='ENF-4R'>
 				<availability>FVC:4-,General:2-,FS:4-,TC:4-</availability>
 			</model>

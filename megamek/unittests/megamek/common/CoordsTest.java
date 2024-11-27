@@ -84,6 +84,20 @@ class CoordsTest {
     }
 
     @Test
+    void testAllAtDIstance() {
+        assertEquals(new Coords(10, 10).allAtDistanceOrLess(1).size(), 7);
+        assertEquals(new Coords(10, 10).allLessThanDistance(1).size(), 1);
+        assertEquals(new Coords(10, 10).allAtDistanceOrLess(0).size(), 1);
+    }
+
+    @Test
+    void testTranslation() {
+        Coords center = new Coords(8, 9);
+        assertEquals(new Coords(7, 9), center.translated(4, 1));
+        assertEquals(new Coords(7, 8), center.translated(5, 1));
+    }
+
+    @Test
     void testHexRow() {
         Coords center = new Coords(3, 7);
         assertFalse(center.isOnHexRow(-1, new Coords(0, 0)));

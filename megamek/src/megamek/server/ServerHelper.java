@@ -32,7 +32,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * This class contains computations carried out by the Server class.
  * Methods put in here should be static and self-contained.
- * 
+ *
  * @author NickAragua
  */
 public class ServerHelper {
@@ -40,7 +40,7 @@ public class ServerHelper {
      * Determines if the given entity is an infantry unit in the given hex is "in
      * the open"
      * (and thus subject to double damage from attacks)
-     * 
+     *
      * @param te                         Target entity.
      * @param te_hex                     Hex where target entity is located.
      * @param game                       The current {@link Game}
@@ -558,7 +558,7 @@ public class ServerHelper {
 
     /**
      * Checks for minefields within the entity's active probe range.
-     * 
+     *
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
@@ -642,7 +642,8 @@ public class ServerHelper {
 
         // Get all hidden units in probe range
         List<Entity> hiddenUnits = new ArrayList<>();
-        for (Coords coords : detectorCoords.allAtDistanceOrLess(probeRange)) {
+        // TODO: Check if this function is not suffering of an off-by-one error
+        for (Coords coords : detectorCoords.allLessThanDistance(probeRange)) {
             for (Entity entity : game.getEntitiesVector(coords, true)) {
                 if (entity.isHidden() && entity.isEnemyOf(detector)) {
                     hiddenUnits.add(entity);
@@ -739,7 +740,7 @@ public class ServerHelper {
      * of consecutive use, IO p.89. The first round of use means consecutiveRounds =
      * 1; this is
      * the minimum as 0 rounds of use would not trigger a roll.
-     * 
+     *
      * @param consecutiveRounds The rounds the RHS has been used
      * @return The roll target number to avoid failure
      */

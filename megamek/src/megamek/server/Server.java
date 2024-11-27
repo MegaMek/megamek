@@ -209,6 +209,10 @@ public class Server implements Runnable {
     private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
     private final ConnectionListener connectionListener = new ConnectionListener() {
+
+        private boolean isPaused = false;
+        private final List<ReceivedPacket> pausedWaitingList = new ArrayList<>();
+
         /**
          * Called when it is sensed that a connection has terminated.
          */
@@ -252,10 +256,33 @@ public class Server implements Runnable {
                     // Some packets should be handled immediately
                     handle(rp.getConnectionId(), rp.getPacket());
                     break;
-                default:
+                case PAUSE:
+                    if (!isPaused) {
+                        logger.info("Pause packet received - pausing packet handling");
+                        sendServerChat("Game is paused.");
+                    }
+                    isPaused = true;
+                    break;
+                case UNPAUSE:
+                    if (isPaused) {
+                        logger.info("Unpause packet received - resuming packet handling");
+                        sendServerChat("Game is resumed.");
+                    }
+                    isPaused = false;
                     synchronized (packetQueue) {
-                        packetQueue.add(rp);
+                        packetQueue.addAll(pausedWaitingList);
                         packetQueue.notifyAll();
+                    }
+                    pausedWaitingList.clear();
+                    break;
+                default:
+                    if (isPaused) {
+                        pausedWaitingList.add(rp);
+                    } else {
+                        synchronized (packetQueue) {
+                            packetQueue.add(rp);
+                            packetQueue.notifyAll();
+                        }
                     }
                     break;
             }

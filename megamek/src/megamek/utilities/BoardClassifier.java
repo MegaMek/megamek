@@ -19,11 +19,7 @@
 package megamek.utilities;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.Board;
@@ -50,6 +46,9 @@ public class BoardClassifier {
 
     // function that maps full board paths to partial board paths
     private Map<String, String> boardPaths = new HashMap<>();
+    private Map<String, String> boardTags = new HashMap<>();
+    private Map<String, Integer> boardWidth = new HashMap<>();
+    private Map<String, Integer> boardHeight = new HashMap<>();
 
     public Map<Tags, List<String>> getBoardsByTag() {
         return boardsByTag;
@@ -77,6 +76,18 @@ public class BoardClassifier {
 
     public Map<String, String> getBoardPaths() {
         return boardPaths;
+    }
+
+    public Map<String, String> getBoardTags() {
+        return boardTags;
+    }
+
+    public Map<String, Integer> getBoardWidth() {
+        return boardWidth;
+    }
+
+    public Map<String, Integer> getBoardHeigth() {
+        return boardHeight;
     }
 
     public void setBoardPaths(Map<String, String> boardPaths) {
@@ -137,15 +148,22 @@ public class BoardClassifier {
 
                             getBoardsByHeight().get(dimension.height()).add(filePath.getPath());
                             getBoardsByWidth().get(dimension.width()).add(filePath.getPath());
-                        }
 
-                        for (String tagString : Board.getTags(filePath)) {
-                            Tags tag = Tags.parse(tagString);
-                            getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
-                            getBoardsByTag().get(tag).add(filePath.getPath());
-                        }
+                            Set<String> boardTags = Board.getTags(filePath);
 
-                        getBoardPaths().put(filePath.getPath(), partialBoardPath);
+                            for (String tagString : boardTags) {
+                                Tags tag = Tags.parse(tagString);
+                                if (tag != null) {
+                                    getBoardsByTag().putIfAbsent(tag, new ArrayList<>());
+                                    getBoardsByTag().get(tag).add(filePath.getPath());
+                                }
+                            }
+
+                            getBoardPaths().put(filePath.getPath(), partialBoardPath);
+                            getBoardTags().put(filePath.getPath(), boardTags.toString());
+                            getBoardWidth().put(filePath.getPath(), dimension.width());
+                            getBoardHeigth().put(filePath.getPath(), dimension.height());
+                        }
                     }
                 }
             }

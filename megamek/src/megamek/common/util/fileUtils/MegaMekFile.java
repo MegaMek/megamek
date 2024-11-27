@@ -50,6 +50,14 @@ public class MegaMekFile {
         }
     }
 
+    public boolean isDirectory() {
+        return this.getFile().isDirectory();
+    }
+
+    public boolean isFile() {
+        return this.getFile().isFile();
+    }
+
     public File getFile() {
         return file;
     }

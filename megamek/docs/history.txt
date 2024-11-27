@@ -1,6 +1,16 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.01-SNAPSHOT
+0.50.02-SNAPSHOT
++ PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions
++ PR #6186: Allow pausing a Princess-only game
++ PR #6190: Allow printing unit list from MM
++ Fix #433: Add an advanced search for boards to the lobby
++ Fix #5086: Updated SRMAXHandler to ignore specialty armors
++ PR #6209: Implement RISC laser pulse module
++ Fix #6211: Added null check for lastUnitMember
++ PR #6203: Dev Tool to Find duplicate boards
+
+0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),
     Protomek code modernization
 + PR #6004, #6018: Internal changes (Entity cleanup, added JavaDoc building in Actions, editor configuration)

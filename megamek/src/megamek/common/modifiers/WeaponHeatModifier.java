@@ -19,8 +19,7 @@
 package megamek.common.modifiers;
 
 /**
- * This is an EquipmentModifier that changes the heat generation of a weapon (WeaponMounted). This can be a simple addition or subtraction,
- * but also a more complicated method.
+ * This is an EquipmentModifier that changes the heat generation of a weapon (WeaponMounted).
  *
  * Note that multiple such heat modifiers can be applied to a weapon. Their effects stack by being applied one after the other.
  */

@@ -635,6 +635,8 @@ public class MekView {
             return damageModifier.formattedDamageModifier() + " damage";
         } else if (modifier instanceof WeaponMisfireModifier) {
             return "weapon may misfire";
+        } else if (modifier instanceof WeaponJamModifier) {
+            return "weapon may jam";
         } else {
             return "unknown";
         }

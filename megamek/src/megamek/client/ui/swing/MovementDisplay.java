@@ -853,7 +853,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 (ce instanceof Tank)
                         && (ce.getSwarmAttackerId() != Entity.NONE));
 
-        setFleeEnabled(ce.canFlee());
+        boolean fleeStart = ce().canFlee(ce().getPosition());
+        boolean fleeEnd = (cmd.getLastStep() != null) && (ce().canFlee(cmd.getLastStep().getPosition()));
+        setFleeEnabled(fleeStart || fleeEnd);
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must enter a valid
             // hex.
@@ -968,6 +970,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (redrawMovement) {
             clientgui.getBoardView().drawMovementData(ce(), cmd);
         }
+
+        boolean fleeStart = ce().canFlee(ce().getPosition());
+        boolean fleeEnd = (cmd.getLastStep() != null) && (ce().canFlee(cmd.getLastStep().getPosition()));
+        setFleeEnabled(fleeStart || fleeEnd);
         updateDonePanel();
     }
 
@@ -1966,6 +1972,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // else clear movement
                         clear();
                     }
+
                     return;
                 }
                 // if not valid, tell why
@@ -4893,10 +4900,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.EscapeDialog.title"),
                         Messages.getString("MovementDisplay.EscapeDialog.message"))) {
-
-            clear();
             addStepToMovePath(MoveStepType.FLEE);
             ready();
+            clear();
         } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd())
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.FlyOffDialog.title"),

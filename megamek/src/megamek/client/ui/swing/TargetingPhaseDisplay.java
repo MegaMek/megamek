@@ -404,7 +404,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         if (GUIP.getAutoSelectNextUnit()) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
         }
-        setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
+        setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee(ce().getPosition()));
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
@@ -754,7 +754,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-        setDisengageEnabled(ce().isOffBoard() && ce().canFlee());
+        setDisengageEnabled(ce().isOffBoard() && ce().canFlee(ce().getPosition()));
     }
 
     /**
@@ -776,7 +776,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 removeAttack(o);
-                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
+                setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee(ce().getPosition()));
                 clientgui.getUnitDisplay().wPan.displayMek(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();

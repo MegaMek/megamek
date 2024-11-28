@@ -41,7 +41,7 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+        if (super.doChecks(vPhaseReport)) {
             return true;
         }
 

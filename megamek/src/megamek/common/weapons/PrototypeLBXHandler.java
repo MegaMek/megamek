@@ -42,7 +42,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -75,15 +75,15 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+        if (super.doChecks(vPhaseReport)) {
             return true;
         }
-        
+
         if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;

@@ -73,7 +73,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+        if (super.doChecks(vPhaseReport)) {
             return true;
         }
 

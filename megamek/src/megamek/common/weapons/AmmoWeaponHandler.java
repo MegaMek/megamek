@@ -20,6 +20,7 @@
 package megamek.common.weapons;
 
 import java.io.Serial;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Compute;
@@ -32,6 +33,9 @@ import megamek.common.Report;
 import megamek.common.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.modifiers.EquipmentModifier;
+import megamek.common.modifiers.WeaponHeatModifier;
+import megamek.common.modifiers.WeaponJamModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -99,7 +103,25 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        processJamFromEquipmentModifier(vPhaseReport);
         return doAmmoFeedProblemCheck(vPhaseReport);
+    }
+
+    /**
+     * Jams the weapon if it is has a jamming equipment modifier (e.g. salvage quality) which is triggered by the to-hit roll and
+     * adds the appropriate report.
+     *
+     * @param phaseReport The current report
+     */
+    protected void processJamFromEquipmentModifier(List<Report> phaseReport) {
+        for (EquipmentModifier modifier : weapon.getModifiers()) {
+            if (modifier instanceof WeaponJamModifier jamModifier && jamModifier.isJammed(roll.getIntValue())) {
+                phaseReport.add(new Report(3161).subject(subjectId));
+                weapon.setJammed(true);
+                isJammed = true;
+                // CO p.215 doesn't say if the jam prevents the current shot, assuming no
+            }
+        }
     }
 
     /**

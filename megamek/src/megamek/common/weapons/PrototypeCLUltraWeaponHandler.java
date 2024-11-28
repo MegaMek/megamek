@@ -39,17 +39,17 @@ public class PrototypeCLUltraWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (doAmmoFeedProblemCheck(vPhaseReport)) {
+        if (super.doChecks(vPhaseReport)) {
             return true;
         } else if (ae.isConventionalInfantry()) {
             return false;
         }
-        
+
         if ((roll.getIntValue() <= 3) && (howManyShots == 2)) {
             Report r = new Report(3160);
             r.subject = subjectId;

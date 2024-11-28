@@ -137,18 +137,32 @@ public class RATGenerator {
         return null;
     }
 
+    /**
+     * Return the availability rating for a given chassis. If the specific faction is not
+     * directly listed, the parents of the provided faction are used as a lookup. If multiple
+     * parent factions are provided, all of them are calculated and then averaged.
+     * @param era   year for era
+     * @param unit  string with chassis name
+     * @param fRec  faction data
+     * @param year  year to test
+     * @return      An availability rating object
+     */
     public @Nullable AvailabilityRating findChassisAvailabilityRecord(int era, String unit,
             FactionRecord fRec, int year) {
+
         if (fRec == null) {
             return null;
         }
+
         AvailabilityRating retVal = null;
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
+
             if (chassisIndex.get(era).get(unit).containsKey(fRec.getKey())) {
                 retVal = chassisIndex.get(era).get(unit).get(fRec.getKey());
             } else if (fRec.getParentFactions().size() == 1) {
                 retVal = findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0), year);
             } else if (!fRec.getParentFactions().isEmpty()) {
+
                 ArrayList<AvailabilityRating> list = new ArrayList<>();
                 for (String alt : fRec.getParentFactions()) {
                     AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt, year);
@@ -157,6 +171,7 @@ public class RATGenerator {
                     }
                 }
                 retVal = mergeFactionAvailability(fRec.getKey(), list);
+
             } else {
                 retVal = chassisIndex.get(era).get(unit).get("General");
             }
@@ -377,34 +392,35 @@ public class RATGenerator {
     }
 
     /**
-     * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find
-     * the average
-     * availability among the parents. Based on average weight rather than av
-     * rating.
+     * Used for a faction with multiple parent factions (e.g. FC == FS + LA)
+     * to find the average availability among the parents. Based on average
+     * weight rather than av rating.
      *
-     * @param faction The faction code to use for the new AvailabilityRecord
-     * @param list    A list of ARs for the various parent factions
-     * @return A new AR with the average availability code from the various
-     *         factions.
+     * @param faction  The faction code to use for the new AvailabilityRecord
+     * @param avList   A list of ratings from the various parent factions
+     * @return A new availability rating with the average value from the various factions.
      */
-    private AvailabilityRating mergeFactionAvailability(String faction, List<AvailabilityRating> list) {
-        if (list.isEmpty()) {
+    private AvailabilityRating mergeFactionAvailability(String faction,
+                                                        List<AvailabilityRating> avList) {
+
+        if (avList.isEmpty()) {
             return null;
         }
+
         double totalWt = 0;
         int totalAdj = 0;
-        for (AvailabilityRating ar : list) {
+
+        for (AvailabilityRating ar : avList) {
             totalWt += AvailabilityRating.calcWeight(ar.availability);
             totalAdj += ar.ratingAdjustment;
         }
-        AvailabilityRating retVal = list.get(0).makeCopy(faction);
+        AvailabilityRating retVal = avList.get(0).makeCopy(faction);
 
-        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / list.size()));
-        if (totalAdj < 0) {
-            retVal.ratingAdjustment = (totalAdj - 1) / list.size();
-        } else {
-            retVal.ratingAdjustment = (totalAdj + 1) / list.size();
+        retVal.availability = (int) (AvailabilityRating.calcAvRating(totalWt / avList.size()));
+        if (totalAdj != 0) {
+            retVal.ratingAdjustment = totalAdj > 0 ? 1 : -1;
         }
+
         return retVal;
     }
 
@@ -438,11 +454,31 @@ public class RATGenerator {
                 + (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
     }
 
-    public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
-            String rating, Collection<Integer> weightClasses, int networkMask,
-            Collection<EntityMovementMode> movementModes,
-            Collection<MissionRole> roles, int roleStrictness,
-            FactionRecord user) {
+    /**
+     * Generate a frequency table for random selection of units, given a range of parameters
+     * @param fRec
+     * @param unitType
+     * @param year
+     * @param rating
+     * @param weightClasses
+     * @param networkMask
+     * @param movementModes
+     * @param roles
+     * @param roleStrictness
+     * @param user
+     * @return
+     */
+    public List<UnitTable.TableEntry> generateTable(FactionRecord fRec,
+                                                    int unitType,
+                                                    int year,
+                                                    String rating,
+                                                    Collection<Integer> weightClasses,
+                                                    int networkMask,
+                                                    Collection<EntityMovementMode> movementModes,
+                                                    Collection<MissionRole> roles,
+                                                    int roleStrictness,
+                                                    FactionRecord user) {
+
         HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
         HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 
@@ -465,16 +501,13 @@ public class RATGenerator {
         }
 
         /*
-         * Adjustments for unit rating require knowing both how many ratings are
-         * available
+         * Adjustments for unit rating require knowing both how many ratings are available
          * to the faction and where the rating falls within the whole. If a faction does
          * not have designated rating levels, it inherits those of the parent faction;
-         * if there are multiple parent factions the first match is used. Some very
-         * minor
-         * or generic factions do not use rating adjustments, indicated by a rating
-         * level
-         * of -1. A faction that has one rating level is a special case that always has
-         * the indicated rating within the parent faction's system.
+         * if there are multiple parent factions the first match is used.
+         * Some very minor or generic factions do not use rating adjustments, indicated by
+         *  a rating level of -1. A faction that has one rating level is a special case that
+         * always has the indicated rating within the parent faction's system.
          */
 
         int ratingLevel = -1;
@@ -507,8 +540,7 @@ public class RATGenerator {
                 continue;
             }
 
-            AvailabilityRating ar = findChassisAvailabilityRecord(early,
-                    chassisKey, fRec, year);
+            AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }

@@ -853,10 +853,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 (ce instanceof Tank)
                         && (ce.getSwarmAttackerId() != Entity.NONE));
 
-        boolean fleeStart = (ce().canFlee(ce().getPosition()) && (cmd.getLastStep() == null));
+        boolean fleeStart = (cmd.getLastStep() == null)
+            && ce().canFlee(ce().getPosition());
         boolean fleeEnd = (cmd.getLastStep() != null)
-            && (ce().canFlee(cmd.getLastStep().getPosition())
-            && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL) );
+            && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
+            && clientgui.getClient().getGame().canFleeFrom(ce(), cmd.getLastStep().getPosition());
         setFleeEnabled(fleeStart || fleeEnd);
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must enter a valid
@@ -973,10 +974,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().drawMovementData(ce(), cmd);
         }
 
-        boolean fleeStart = (ce().canFlee(ce().getPosition()) && (cmd.getLastStep() == null));
+        boolean fleeStart = (cmd.getLastStep() == null)
+            && ce().canFlee(ce().getPosition());
         boolean fleeEnd = (cmd.getLastStep() != null)
-            && (ce().canFlee(cmd.getLastStep().getPosition())
-            && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL) );
+            && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
+            && clientgui.getClient().getGame().canFleeFrom(ce(), cmd.getLastStep().getPosition());
         setFleeEnabled(fleeStart || fleeEnd);
         updateDonePanel();
     }

@@ -406,7 +406,6 @@ class PrincessTest {
 
         // Unit is capable of fleeing.
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
@@ -420,6 +419,7 @@ class PrincessTest {
         when(mockPrincess.getHomeEdge(any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Game mockGame = mock(Game.class);
         when(mockPrincess.getGame()).thenReturn(mockGame);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
 
         // In its current state, the entity does not need to flee the board.
         assertFalse(mockPrincess.mustFleeBoard(mockMek));

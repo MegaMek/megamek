@@ -20,8 +20,8 @@ factions:
           RA:
             - slot: 3
               modifiers:
-                type: heat
-                delta: 2
+                type: jam
+                on: [ 2,3,4,5,6,7,8,9]
             - slot: 10
               modifiers:
                 # the modifiers can be a list or a single entry

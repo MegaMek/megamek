@@ -267,7 +267,7 @@ factions:
         modifiers:
           # the locations are not a list
           LA:
-            # the slots must always be a list!
+            # the slots must always be a list! Slots are 1-based (eg.g. CT = 1 to 12)
             - slot: 4
               modifiers:
                 # the modifiers can be a list or a single entry
@@ -290,6 +290,13 @@ factions:
               modifier:
                 type: heat
                 delta: 2
+
+          CT:
+            - slot: 11
+              modifier:
+                type: jam
+                on: [ 5, 6 ]
+
 
         # ammo types and reduced amount
         # this usually requires looking up the unit file and possibly AmmoType.java for the type designations

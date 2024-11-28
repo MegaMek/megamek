@@ -18,7 +18,6 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,8 +25,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.modifiers.*;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModifier>  {
 
@@ -36,6 +36,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
     private static final String TYPE_TOHIT = "tohit";
     private static final String TYPE_DAMAGE = "damage";
     private static final String TYPE_MISFIRE = "misfire";
+    private static final String TYPE_JAM = "jam";
     private static final String DELTA = "delta";
     private static final String ON = "on";
 
@@ -44,7 +45,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
     }
 
     @Override
-    public EquipmentModifier deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JacksonException {
+    public EquipmentModifier deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         return parseNode(node);
     }
@@ -55,14 +56,19 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
             case TYPE_HEAT -> new WeaponHeatModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.PARTIAL_REPAIR);
             case TYPE_DAMAGE -> new DamageModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.PARTIAL_REPAIR);
             case TYPE_TOHIT -> new ToHitModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.PARTIAL_REPAIR);
-            case TYPE_MISFIRE -> parseMisfire(node);
+            case TYPE_MISFIRE -> new WeaponMisfireModifier(parseRollValues(node.get(ON)), EquipmentModifier.Reason.PARTIAL_REPAIR);
+            case TYPE_JAM -> new WeaponJamModifier(parseRollValues(node.get(ON)), EquipmentModifier.Reason.PARTIAL_REPAIR);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 
-    private static EquipmentModifier parseMisfire(JsonNode node) {
-        Set<Integer> misfireRolls = new HashSet<>();
-        node.get(ON).forEach(n -> misfireRolls.add(n.asInt()));
-        return new WeaponMisfireModifier(misfireRolls, EquipmentModifier.Reason.PARTIAL_REPAIR);
+    /**
+     * Parses the given array node that is a list of Integers, e.g. "numbers: [ 2, 3, 5 ]" and returns the numbers as a Set.
+     *
+     * @param node The node to parse
+     * @return The set of Integers given by the node
+     */
+    private static Set<Integer> parseRollValues(JsonNode node) {
+        return StreamSupport.stream(node.spliterator(), false).map(JsonNode::asInt).collect(Collectors.toSet());
     }
 }

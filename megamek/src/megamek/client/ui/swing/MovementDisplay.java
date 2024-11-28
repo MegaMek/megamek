@@ -853,7 +853,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 (ce instanceof Tank)
                         && (ce.getSwarmAttackerId() != Entity.NONE));
 
-        boolean fleeStart = ce().canFlee(ce().getPosition());
+        boolean fleeStart = (ce().canFlee(ce().getPosition()) && (cmd.getLastStep() == null));
         boolean fleeEnd = (cmd.getLastStep() != null) && (ce().canFlee(cmd.getLastStep().getPosition()));
         setFleeEnabled(fleeStart || fleeEnd);
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
@@ -971,7 +971,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().drawMovementData(ce(), cmd);
         }
 
-        boolean fleeStart = ce().canFlee(ce().getPosition());
+        boolean fleeStart = (ce().canFlee(ce().getPosition()) && (cmd.getLastStep() == null));
         boolean fleeEnd = (cmd.getLastStep() != null) && (ce().canFlee(cmd.getLastStep().getPosition()));
         setFleeEnabled(fleeStart || fleeEnd);
         updateDonePanel();

@@ -1171,6 +1171,29 @@ public class TWGameManager extends AbstractGameManager {
             while (retreat.hasMoreElements()) {
                 Entity entity = retreat.nextElement();
                 addReport(entity.victoryReport());
+
+                String fleeDirection;
+                switch (entity.getStartingPos(false)) {
+                    case Board.START_N:
+                        fleeDirection = "North";
+                        break;
+                    case Board.START_E:
+                        fleeDirection = "Ease";
+                        break;
+                    case Board.START_S:
+                        fleeDirection = "South";
+                        break;
+                    case Board.START_W:
+                        fleeDirection = "West";
+                        break;
+                    default:
+                        fleeDirection = "Edge";
+                }
+
+                r = new Report(7081, Report.PUBLIC);
+                r.indent();
+                r.add(fleeDirection);
+                addReport(r);
             }
         }
         // List destroyed units
@@ -5304,7 +5327,6 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(9370, Report.PUBLIC);
         }
         r.addDesc(entity);
-        addReport(r);
         OffBoardDirection fleeDirection;
         if (movePath.getFinalCoords().getY() <= 0) {
             fleeDirection = OffBoardDirection.NORTH;
@@ -5316,8 +5338,35 @@ public class TWGameManager extends AbstractGameManager {
             fleeDirection = OffBoardDirection.EAST;
         }
 
-        if (returnable > -1) {
+        String fleeDir;
+        switch (fleeDirection) {
+            case NORTH:
+                entity.setStartingPos(Board.START_N);
+                fleeDir = "North";
+                break;
+            case EAST:
+                entity.setStartingPos(Board.START_E);
+                fleeDir = "East";
+                break;
+            case SOUTH:
+                entity.setStartingPos(Board.START_S);
+                fleeDir = "South";
+                break;
+            case WEST:
+                entity.setStartingPos(Board.START_W);
+                fleeDir = "West";
+                break;
+            default:
+                entity.setStartingPos(Board.START_EDGE);
+                fleeDir = "Edge";
+        }
 
+        r.add(fleeDir);
+        addReport(r);
+
+        entityUpdate(entity.getId());
+
+        if (returnable > -1) {
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
@@ -5330,23 +5379,7 @@ public class TWGameManager extends AbstractGameManager {
                 // fly off again instantly.
                 ((IAero) entity).setOutControl(false);
             }
-            switch (fleeDirection) {
-                case WEST:
-                    entity.setStartingPos(Board.START_W);
-                    break;
-                case NORTH:
-                    entity.setStartingPos(Board.START_N);
-                    break;
-                case EAST:
-                    entity.setStartingPos(Board.START_E);
-                    break;
-                case SOUTH:
-                    entity.setStartingPos(Board.START_S);
-                    break;
-                default:
-                    entity.setStartingPos(Board.START_EDGE);
-            }
-            entityUpdate(entity.getId());
+
             return vReport;
         } else {
             ServerHelper.clearBloodStalkers(game, entity.getId(), this);

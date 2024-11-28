@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2440-->
-<ratgen>
+<ratgen
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='AB' />
 		<faction key='CC'>
@@ -199,14 +202,14 @@
 			</model>
 		</chassis>
 		<chassis name='Armored Personnel Carrier' unitType='Tank'>
-			<availability>CC:10,IS:9,Periphery.Deep:10,DC:8,Periphery:10,TC:10</availability>
+			<availability>CC:10,IS:9,Periphery.Deep:10,DC:8,Periphery:10</availability>
 			<model name='(Hover Primitive)'>
 				<roles>apc</roles>
 				<availability>General:7</availability>
 			</model>
 			<model name='(Tracked LRM)'>
 				<roles>fire_support</roles>
-				<availability>IS.pm:3</availability>
+				<availability>IS:3</availability>
 			</model>
 			<model name='(Tracked MG)'>
 				<roles>inf_support</roles>
@@ -234,12 +237,14 @@
 		<chassis name='Black Eagle' unitType='Dropship'>
 			<availability>TH:4</availability>
 			<model name=''>
+			    <roles>mek_carrier</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Black Lion I Battlecruiser' unitType='Warship'>
 			<availability>TH:6</availability>
 			<model name=''>
+                <roles>cruiser</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -264,6 +269,7 @@
 		<chassis name='Caravan Heavy Transport' unitType='Conventional Fighter'>
 			<availability>General:5</availability>
 			<model name=''>
+                <roles>cargo,civilian</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -294,6 +300,7 @@
 		<chassis name='Cobra VTOL Transport' unitType='VTOL'>
 			<availability>TH:6</availability>
 			<model name=''>
+                <roles>apc</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -316,6 +323,7 @@
 		<chassis name='Cruiser' unitType='Warship'>
 			<availability>CC:2,LA:2,FWL:2,FS:2,DC:2</availability>
 			<model name=''>
+                <roles>cruiser</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -329,6 +337,7 @@
 		<chassis name='Defender Battlecruiser' unitType='Warship'>
 			<availability>FS:4</availability>
 			<model name=''>
+                <roles>cruiser</roles>
 				<availability>FS:8</availability>
 			</model>
 		</chassis>
@@ -390,11 +399,16 @@
 				<availability>General:4</availability>
 			</model>
 		</chassis>
-		<chassis name='Factory - Medium/Large' unitType='Space Station'>
-			<availability>IS:3,Periphery:3</availability>
-		</chassis>
-		<chassis name='Factory - Small' unitType='Space Station'>
+        <chassis name='Factory' unitType='Space Station'>
 			<availability>IS:4,Periphery:4</availability>
+            <model name='Medium/Large (2400)'>
+                <roles>civilian</roles>
+                <availability>General:6</availability>
+            </model>
+            <model name='Small (2300)'>
+                <roles>civilian</roles>
+                <availability>General:8</availability>
+            </model>
 		</chassis>
 		<chassis name='Farragut Battleship' unitType='Warship'>
 			<availability>TH:4</availability>
@@ -479,9 +493,6 @@
 				<availability>General:5</availability>
 			</model>
 		</chassis>
-		<chassis name='Habitat - Small' unitType='Space Station'>
-			<availability>IS:2,Periphery:1</availability>
-		</chassis>
 		<chassis name='Habitat' unitType='Space Station'>
 			<availability>TH:4,IS:2,Periphery:1</availability>
 			<model name='Small (2400)'>
@@ -512,6 +523,7 @@
 		<chassis name='Jumbo' unitType='Dropship'>
 			<availability>IS:6,Periphery:6</availability>
 			<model name=''>
+                <roles>cargo,support</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -600,8 +612,11 @@
 				<availability>General:4</availability>
 			</model>
 		</chassis>
-		<chassis name='Marsden' unitType='Tank'>
+	    <chassis name='Marsden MBT' unitType='Tank'>
 			<availability>Periphery.R:2,LA:4,Periphery.MW:2</availability>
+            <model name='I'>
+                <availability>General:8</availability>
+            </model>
 		</chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
 			<availability>IS:5,Periphery.Deep:5,Periphery:5</availability>
@@ -648,22 +663,28 @@
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
 			<availability>IS:7,Periphery.Deep:7,Periphery:7</availability>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>IS:8,Periphery:8</availability>
 			</model>
 			<model name='(LRM)'>
-				<availability>General:5</availability>
+                <roles>urban</roles>
+				<availability>IS:5,Periphery:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+                <roles>urban</roles>
+				<availability>IS:6,Periphery.Deep:5,Periphery:5</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>urban</roles>
+				<availability>IS:7,Periphery:7</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>IS:8,Periphery:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+                <roles>urban</roles>
+				<availability>IS:5,Periphery:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Merkava Heavy Tank' unitType='Tank'>
@@ -730,18 +751,6 @@
 				<roles>recon</roles>
 				<availability>General:8</availability>
 			</model>
-		</chassis>
-		<chassis name='Pressurized Yard - Huge' unitType='Space Station'>
-			<availability>IS:2,Periphery:2</availability>
-		</chassis>
-		<chassis name='Pressurized Yard - Large' unitType='Space Station'>
-			<availability>IS:3,Periphery:3</availability>
-		</chassis>
-		<chassis name='Pressurized Yard - Medium' unitType='Space Station'>
-			<availability>IS:4,Periphery:4</availability>
-		</chassis>
-		<chassis name='Pressurized Yard - Small' unitType='Space Station'>
-			<availability>TH:6,IS:3,Periphery:2</availability>
 		</chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
 			<availability>TH:4,IS:2,Periphery:1</availability>
@@ -812,6 +821,7 @@
 		<chassis name='Stoat Scout Car' unitType='Tank'>
 			<availability>IS:4,Periphery:3</availability>
 			<model name=''>
+                <roles>recon</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
@@ -834,15 +844,6 @@
 				<roles>recon</roles>
 				<availability>General:8</availability>
 			</model>
-		</chassis>
-		<chassis name='Unpressurized Yard - Huge' unitType='Space Station'>
-			<availability>IS:3,Periphery:3</availability>
-		</chassis>
-		<chassis name='Unpressurized Yard - Medium' unitType='Space Station'>
-			<availability>IS:5,Periphery:5</availability>
-		</chassis>
-		<chassis name='Unpressurized Yard - Small' unitType='Space Station'>
-			<availability>IS:6,Periphery:6</availability>
 		</chassis>
 		<chassis name='Unpressurized Yard' unitType='Space Station'>
 			<availability>TH:5,IS:3,Periphery:2</availability>

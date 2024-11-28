@@ -47,10 +47,8 @@ import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of
- * criteria,
- * including faction, era, unit type, weight class, equipment rating, faction
- * subcommand, vehicle
- * movement mode, and mission role.
+ * criteria, including faction, era, unit type, weight class, equipment rating,
+ * faction subcommand, vehicle movement mode, and mission role.
  *
  * @author Neoancient
  */
@@ -123,8 +121,10 @@ public class RATGenerator {
         rg.getEraSet().forEach(e -> rg.loadEra(e, dir));
     }
 
-    public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
-            int year) {
+    public AvailabilityRating findChassisAvailabilityRecord(int era,
+                                                            String unit,
+                                                            String faction,
+                                                            int year) {
         if (factions.containsKey(faction)) {
             return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
         }
@@ -145,7 +145,7 @@ public class RATGenerator {
      * @param unit  string with chassis name
      * @param fRec  faction data
      * @param year  year to test
-     * @return      An availability rating object
+     * @return      chassis availability rating, relative to other chassis in a collection
      */
     public @Nullable AvailabilityRating findChassisAvailabilityRecord(int era, String unit,
             FactionRecord fRec, int year) {
@@ -184,8 +184,9 @@ public class RATGenerator {
         return null;
     }
 
-    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
-            String faction) {
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era,
+                                                                    String unit,
+                                                                    String faction) {
         if (factions.containsKey(faction)) {
             return findModelAvailabilityRecord(era, unit, factions.get(faction));
         } else if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
@@ -195,31 +196,50 @@ public class RATGenerator {
         }
     }
 
-    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
-            @Nullable FactionRecord fRec) {
+    /**
+     * Generate the availability rating for a specific model
+     * @param era   era designation
+     * @param unit  string full chassis-model name
+     * @param fRec  faction data
+     * @return      the availability value relative to other models of the same chassis
+     */
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era,
+                                                                    String unit,
+                                                                    @Nullable FactionRecord fRec) {
+
         if (null == models.get(unit)) {
             logger.error("Trying to find record for unknown model " + unit);
             return null;
         } else if ((fRec == null) || models.get(unit).factionIsExcluded(fRec)) {
             return null;
         }
+
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+
+            // If the provided faction is directly specified, return its availability
             if (modelIndex.get(era).get(unit).containsKey(fRec.getKey())) {
                 return modelIndex.get(era).get(unit).get(fRec.getKey());
             }
 
+            // If the provided faction has a single parent, return its availability
             if (fRec.getParentFactions().size() == 1) {
                 return findModelAvailabilityRecord(era, unit, fRec.getParentFactions().get(0));
             } else if (!fRec.getParentFactions().isEmpty()) {
-                ArrayList<AvailabilityRating> list = new ArrayList<>();
-                for (String alt : fRec.getParentFactions()) {
-                    AvailabilityRating ar = findModelAvailabilityRecord(era, unit, alt);
+
+                // If neither the faction nor a direct parent is directly specified and
+                // multiple parent factions are available, calculate an average between them
+                ArrayList<AvailabilityRating> avList = new ArrayList<>();
+                for (String curParent : fRec.getParentFactions()) {
+                    AvailabilityRating ar = findModelAvailabilityRecord(era, unit, curParent);
                     if (ar != null) {
-                        list.add(ar);
+                        avList.add(ar);
                     }
                 }
-                return mergeFactionAvailability(fRec.getKey(), list);
+                return mergeFactionAvailability(fRec.getKey(), avList);
+
             }
+
+            // As a fallback, check for General availability
             return modelIndex.get(era).get(unit).get("General");
         }
 
@@ -587,11 +607,10 @@ public class RATGenerator {
         }
 
         // If there is more than one weight class and the faction record (or parent)
-        // indicates a
-        // certain distribution of weight classes, adjust the weight value to conform to
-        // the given
-        // ratio.
+        // indicates a certain distribution of weight classes, adjust the weight value
+        // to conform to the given ratio.
         if (weightClasses.size() > 1) {
+
             // Get standard weight class distribution for faction
             ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
 
@@ -704,6 +723,7 @@ public class RATGenerator {
                 retVal.add(new TableEntry(wt, mRec.getMekSummary()));
             }
         }
+
         return retVal;
     }
 
@@ -831,8 +851,7 @@ public class RATGenerator {
         }
 
         // For non-Clan factions, the amount of salvage from Clan factions is part of
-        // the overall
-        // Clan percentage.
+        // the overall Clan percentage.
         if (!fRec.isClan() && (pctClan != null) && (totalClan > 0)) {
             double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
                     .mapToDouble(salvageWeights::get).sum();
@@ -917,8 +936,8 @@ public class RATGenerator {
 
     /**
      * If the year is equal to one of the era marks, it loads that era. If it is
-     * between two, it
-     * loads eras on both sides. Otherwise, just load the closest era.
+     * between two, it loads eras on both sides. Otherwise, just load the
+     * closest era.
      */
     public void loadYear(final int year) {
         if (getEraSet().isEmpty()) {
@@ -1054,10 +1073,8 @@ public class RATGenerator {
 
     /**
      * Creates model and chassis records for all units that don't already have
-     * entries. This should
-     * only be called after all availability records are loaded, otherwise they will
-     * be overwritten.
-     *
+     * entries. This should only be called after all availability records are
+     * loaded, otherwise they will be overwritten.
      * Used for editing.
      */
     public void initRemainingUnits() {

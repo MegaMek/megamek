@@ -2,6 +2,7 @@ size 16 17
 tag "GrassTheme (Auto)"
 tag "Flat (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "woods:1;foliage_elev:2" ""
 hex 0201 0 "bldg_elev:3;building:2:30;bldg_cf:40" ""
 hex 0301 0 "bldg_elev:3;building:2:28;bldg_cf:40" ""

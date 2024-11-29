@@ -2,6 +2,7 @@ size 150 110
 tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
 hex 0101 -1 "" ""
 hex 0201 -1 "" ""
 hex 0301 0 "" "Bunkers"

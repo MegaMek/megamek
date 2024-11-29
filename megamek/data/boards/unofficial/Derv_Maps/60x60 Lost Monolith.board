@@ -1,7 +1,8 @@
 size 60 60
 tag "Rough (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 3 "" "grass"

@@ -1,12 +1,14 @@
 size 78 78
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
+tag "HighHills (Auto)"
 tag "DesertTheme (Auto)"
 tag "LightForest (Auto)"
-tag "Cliffs (Auto)"
-tag "HighHills (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 3 "" "desert"
 hex 0201 3 "" "desert"
 hex 0301 3 "" "desert"

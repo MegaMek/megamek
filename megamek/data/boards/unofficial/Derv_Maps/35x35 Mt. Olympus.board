@@ -2,6 +2,7 @@ size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
 tag "MarsTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 hex 0101 3 "" "mars"
 hex 0201 4 "" "mars"

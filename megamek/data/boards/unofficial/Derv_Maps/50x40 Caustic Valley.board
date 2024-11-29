@@ -1,9 +1,10 @@
 size 50 40
 option exit_roads_to_pavement false
 tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "DesertTheme (Auto)"
-tag "Water (Auto)"
 tag "Woods (Auto)"
 hex 0101 5 "" "desert"
 hex 0201 5 "" "desert"

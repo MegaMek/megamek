@@ -2,7 +2,10 @@ size 55 55
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
 tag "GrassTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
 hex 0101 -2 "" ""
 hex 0201 -2 "" ""
 hex 0301 -1 "rough:1" ""

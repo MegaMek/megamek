@@ -1,12 +1,13 @@
 size 30 30
 option exit_roads_to_pavement false
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
-tag "IceTerrain (Auto)"
 tag "HighHills (Auto)"
-tag "Woods (Auto)"
+tag "IceTerrain (Auto)"
 tag "LightForest (Auto)"
+tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 -2 "" ""
 hex 0201 -2 "" ""

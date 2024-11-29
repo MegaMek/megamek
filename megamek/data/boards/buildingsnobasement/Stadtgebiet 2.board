@@ -3,6 +3,8 @@ option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "Fortress (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "bldg_elev:2;bldg_basement_type:1;bldg_class:2;pavement:1;building:2:16;bldg_cf:40" ""
 hex 0301 0 "pavement:1" ""

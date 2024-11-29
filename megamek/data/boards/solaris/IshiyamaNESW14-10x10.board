@@ -1,7 +1,8 @@
 size 10 10
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "HighHills (Auto)"
+tag "Impassable (Auto)"
 hex 0101 0 "water:2" ""
 hex 0201 0 "water:2" ""
 hex 0301 0 "water:1" ""

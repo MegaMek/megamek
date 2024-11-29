@@ -123,12 +123,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        // check for fleeing
-        if (md.contains(MovePath.MoveStepType.FLEE)) {
-            addReport(gameManager.processLeaveMap(md, false, -1));
-            return;
-        }
-
         if (md.contains(MovePath.MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 r = new Report(2026);
@@ -1198,6 +1192,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             } else {
                 ((Mek) entity).setJustMovedIntoIndustrialKillingWater(false);
                 ((Mek) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
+            }
+        }
+
+        // check for fleeing
+        if (md.contains(MovePath.MoveStepType.FLEE)) {
+            if (entity.canFlee(entity.getPosition())) {
+                addReport(gameManager.processLeaveMap(md, false, -1));
+            } else {
+                r = new Report(2017, Report.PUBLIC);
+                r.indent();
+                addReport(r);
             }
         }
     }

@@ -1171,6 +1171,29 @@ public class TWGameManager extends AbstractGameManager {
             while (retreat.hasMoreElements()) {
                 Entity entity = retreat.nextElement();
                 addReport(entity.victoryReport());
+
+                String fleeDirection;
+                switch (entity.getStartingPos(false)) {
+                    case Board.START_N:
+                        fleeDirection = "North";
+                        break;
+                    case Board.START_E:
+                        fleeDirection = "Ease";
+                        break;
+                    case Board.START_S:
+                        fleeDirection = "South";
+                        break;
+                    case Board.START_W:
+                        fleeDirection = "West";
+                        break;
+                    default:
+                        fleeDirection = "Edge";
+                }
+
+                r = new Report(7081, Report.PUBLIC);
+                r.indent();
+                r.add(fleeDirection);
+                addReport(r);
             }
         }
         // List destroyed units
@@ -5283,6 +5306,50 @@ public class TWGameManager extends AbstractGameManager {
         return vReport;
     }
 
+    private OffBoardDirection calculateEdge(Coords coords) {
+        OffBoardDirection fleeDirection;
+
+        if (coords.getY() <= 0) {
+            fleeDirection = OffBoardDirection.NORTH;
+        } else if (coords.getY() >= (getGame().getBoard().getHeight() - 1)) {
+            fleeDirection = OffBoardDirection.SOUTH;
+        } else if (coords.getX() <= 0) {
+            fleeDirection = OffBoardDirection.WEST;
+        } else {
+            fleeDirection = OffBoardDirection.EAST;
+        }
+
+        return fleeDirection;
+    }
+
+    private String setRetreatEdge(Entity entity, OffBoardDirection fleeDirection) {
+        String result;
+
+        switch (fleeDirection) {
+            case NORTH:
+                entity.setStartingPos(Board.START_N);
+                result = "North";
+                break;
+            case EAST:
+                entity.setStartingPos(Board.START_E);
+                result = "East";
+                break;
+            case SOUTH:
+                entity.setStartingPos(Board.START_S);
+                result = "South";
+                break;
+            case WEST:
+                entity.setStartingPos(Board.START_W);
+                result = "West";
+                break;
+            default:
+                entity.setStartingPos(Board.START_EDGE);
+                result = "Edge";
+        }
+
+        return result;
+    }
+
     /**
      * Process any flee movement actions, including flying off the map
      *
@@ -5305,20 +5372,15 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(9370, Report.PUBLIC);
         }
         r.addDesc(entity);
+
+        OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
+        String retreatEdge = setRetreatEdge(entity, fleeDirection);
+        r.add(retreatEdge);
         addReport(r);
-        OffBoardDirection fleeDirection;
-        if (movePath.getFinalCoords().getY() <= 0) {
-            fleeDirection = OffBoardDirection.NORTH;
-        } else if (movePath.getFinalCoords().getY() >= (getGame().getBoard().getHeight() - 1)) {
-            fleeDirection = OffBoardDirection.SOUTH;
-        } else if (movePath.getFinalCoords().getX() <= 0) {
-            fleeDirection = OffBoardDirection.WEST;
-        } else {
-            fleeDirection = OffBoardDirection.EAST;
-        }
+
+        entityUpdate(entity.getId());
 
         if (returnable > -1) {
-
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
@@ -5331,23 +5393,7 @@ public class TWGameManager extends AbstractGameManager {
                 // fly off again instantly.
                 ((IAero) entity).setOutControl(false);
             }
-            switch (fleeDirection) {
-                case WEST:
-                    entity.setStartingPos(Board.START_W);
-                    break;
-                case NORTH:
-                    entity.setStartingPos(Board.START_N);
-                    break;
-                case EAST:
-                    entity.setStartingPos(Board.START_E);
-                    break;
-                case SOUTH:
-                    entity.setStartingPos(Board.START_S);
-                    break;
-                default:
-                    entity.setStartingPos(Board.START_EDGE);
-            }
-            entityUpdate(entity.getId());
+
             return vReport;
         } else {
             ServerHelper.clearBloodStalkers(game, entity.getId(), this);
@@ -8620,6 +8666,7 @@ public class TWGameManager extends AbstractGameManager {
             Coords dest, PilotingRollData roll) {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r;
+
         if (!game.getBoard().contains(dest)) {
             // set position anyway, for pushes moving through, stuff like that
             entity.setPosition(dest);
@@ -8633,12 +8680,17 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (turnsRemoved > 0) {
                     send(packetHelper.createTurnListPacket());
                 }
+
+                OffBoardDirection fleeDirection = calculateEdge(src);
+                String  retreatEdge = setRetreatEdge(entity, fleeDirection);
+
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
                 // entity forced from the field
                 r = new Report(2230);
                 r.subject = entity.getId();
                 r.addDesc(entity);
+                r.add(retreatEdge);
                 vPhaseReport.add(r);
                 // TODO : remove passengers and swarmers.
             }
@@ -8777,6 +8829,7 @@ public class TWGameManager extends AbstractGameManager {
                 doSkillCheckInPlace(entity, waterRoll);
             }
         }
+
         // Update the entity's position on the client.
         entityUpdate(entity.getId());
 
@@ -8888,6 +8941,7 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(violation.getId());
             }
         }
+
         return vPhaseReport;
     }
 

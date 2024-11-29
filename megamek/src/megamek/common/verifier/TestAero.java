@@ -1240,28 +1240,7 @@ public class TestAero extends TestEntity {
      * @return The vessel's minimum gunner requirements.
      */
     public static int requiredGunners(Aero aero) {
-        if (!aero.isLargeCraft() && !aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            return 0;
-        }
-        int capitalWeapons = 0;
-        int stdWeapons = 0;
-        for (Mounted<?> m : aero.getTotalWeaponList()) {
-            if (m.getType() instanceof BayWeapon) {
-                continue;
-            }
-            if ((((WeaponType) m.getType()).getLongRange() <= 1)
-                    // MML range depends on ammo, and getLongRange() returns 0
-                    && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
-                continue;
-            }
-            if (((WeaponType) m.getType()).isCapital()
-                    || (m.getType() instanceof ScreenLauncherWeapon)) {
-                capitalWeapons++;
-            } else {
-                stdWeapons++;
-            }
-        }
-        return capitalWeapons + (int) Math.ceil(stdWeapons / 6.0);
+        return Compute.getTotalGunnerNeeds(aero);
     }
 
     /**

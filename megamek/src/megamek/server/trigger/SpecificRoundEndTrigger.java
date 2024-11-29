@@ -38,4 +38,9 @@ public final class SpecificRoundEndTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return (event == TriggerSituation.ROUND_END) && (game.getCurrentRound() == gameRound);
     }
+
+    @Override
+    public String toString() {
+        return "GameRound End: " + gameRound;
+    }
 }

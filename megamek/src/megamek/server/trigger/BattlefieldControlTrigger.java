@@ -47,4 +47,9 @@ public class BattlefieldControlTrigger implements Trigger {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "BattlefieldControl";
+    }
 }

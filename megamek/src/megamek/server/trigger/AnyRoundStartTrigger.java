@@ -26,4 +26,9 @@ public class AnyRoundStartTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return event == TriggerSituation.ROUND_START;
     }
+
+    @Override
+    public String toString() {
+        return "GameRound Start: any";
+    }
 }

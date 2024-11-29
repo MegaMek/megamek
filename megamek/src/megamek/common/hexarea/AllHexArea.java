@@ -16,19 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.server.trigger;
+package megamek.common.hexarea;
 
-import megamek.common.IGame;
+import megamek.common.Board;
+import megamek.common.Coords;
 
-public class AnyRoundEndTrigger implements Trigger {
+/**
+ * This class represents a hex area that includes all hexes of the given board.
+ */
+public class AllHexArea extends AbstractHexArea {
 
     @Override
-    public boolean isTriggered(IGame game, TriggerSituation event) {
-        return event == TriggerSituation.ROUND_END;
-    }
-
-    @Override
-    public String toString() {
-        return "GameRound End: any";
+    public boolean containsCoords(Coords coords, Board board) {
+        return true;
     }
 }

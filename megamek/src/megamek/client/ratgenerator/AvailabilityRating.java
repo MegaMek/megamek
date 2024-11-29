@@ -123,13 +123,26 @@ public class AvailabilityRating {
         return availability;
     }
 
-    public int adjustForRating(int rating, int numLevels) {
-        if (rating < 0 || ratingAdjustment == 0) {
+    /**
+     * Adjust availability rating for the dynamic +/- value, which is based on
+     * equipment quality rating.  The (+) will reduce availability for commands
+     * with a lower rating, while the (-) will reduce availability for commands
+     * with a higher rating.
+     * @param equipRating zero-based index based on {@code numLevels} of rating to check
+     * @param numLevels   number of equipment levels available, typically 5 (A/B/C/D/F)
+     * @return  integer, may be negative
+     */
+    public int adjustForRating(int equipRating, int numLevels) {
+        if (ratingAdjustment == 0 || equipRating < 0) {
             return availability;
-        } else if (ratingAdjustment < 0) {
-            return availability - rating;
+        }
+
+        if (ratingAdjustment > 0) {
+            // (+) adjustment, reduce availability as equipment rating decreases
+            return availability - (numLevels - 1 - equipRating);
         } else {
-            return availability - (numLevels - rating);
+            // (-) adjustment, reduce availability as equipment rating increases
+            return availability - equipRating;
         }
     }
 

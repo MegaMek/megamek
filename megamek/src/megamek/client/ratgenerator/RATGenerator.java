@@ -560,6 +560,8 @@ public class RATGenerator {
                 continue;
             }
 
+            // TODO: add weight class filtering here
+
             AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
             if (ar == null) {
                 continue;

@@ -17,6 +17,8 @@ factions:
 #      - fullname: Phoenix Hawk LAM PHX-HK2M
       - fullname: Blade BLD-XS
         modifiers:
+          unit:
+            - type: notwist
           RA:
             - slot: 3
               modifiers:
@@ -32,12 +34,6 @@ factions:
                 # heat adds the given delta to the weapon heat
                 - type: heat
                   delta: 2
-                # damage obviously adds the given delta to the weapon's damage
-                - type: damage
-                  delta: -1
-                # tohit changes the tohit target number by the given delta
-                - type: tohit
-                  delta: 1
 #      - fullname: Vedette Medium Tank
 #      - fullname: Mauna Kea Command Vessel
 #      - fullname: Moray Heavy Attack Submarine

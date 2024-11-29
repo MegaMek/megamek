@@ -35,7 +35,6 @@ import megamek.common.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.modifiers.EquipmentModifier;
 import megamek.common.scenario.Scenario;
-import megamek.logging.MMLogger;
 
 public class EntityDeserializer extends StdDeserializer<Entity> {
 
@@ -62,6 +61,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String SLOT = "slot";
     private static final String SHOTS = "shots";
     private static final String MODIFIERS = "modifiers";
+    private static final String UNIT = "unit";
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
 
@@ -325,13 +325,16 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
 
     private void assignModifiers(Entity entity, JsonNode node) {
         if (node.has(MODIFIERS)) {
-            JsonNode critsNode = node.get(MODIFIERS);
+            JsonNode modifiersNode = node.get(MODIFIERS);
             for (int location = 0; location < entity.locations(); location++) {
                 String locationAbbr = entity.getLocationAbbr(location);
                 final int finalLoc = location;
-                if (critsNode.has(locationAbbr)) {
-                    critsNode.get(locationAbbr).iterator().forEachRemaining(n -> assignModifier(entity, n, finalLoc));
+                if (modifiersNode.has(locationAbbr)) {
+                    modifiersNode.get(locationAbbr).iterator().forEachRemaining(n -> assignModifier(entity, n, finalLoc));
                 }
+            }
+            if (modifiersNode.has(UNIT)) {
+                parseModifiers(modifiersNode.get(UNIT)).forEach(entity::addEquipmentModifier);
             }
         }
     }
@@ -342,14 +345,14 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
         if (cs != null) {
             Mounted<?> equipment = cs.getMount();
             if (equipment != null) {
-                parseModifiers(entity, node.get(MODIFIERS)).forEach(equipment::addEquipmentModifier);
+                parseModifiers(node.get(MODIFIERS)).forEach(equipment::addEquipmentModifier);
             } else {
                 throw new IllegalArgumentException("Invalid equipment slot " + location + ":" + (slot + 1) + " on " + entity);
             }
         }
     }
 
-    private List<EquipmentModifier> parseModifiers(Entity entity, JsonNode node) {
+    private List<EquipmentModifier> parseModifiers(JsonNode node) {
         if (node.isArray()) {
             List<EquipmentModifier> result = new ArrayList<>();
             node.elements().forEachRemaining(n -> result.add(EquipmentModifierDeserializer.parseNode(n)));

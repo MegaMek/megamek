@@ -562,19 +562,23 @@ public class MekView {
         }
 
         // Equipment and Unit modifiers (salvage quality etc)
-        List<String> weaponModifierList = new ArrayList<>();
-        for (WeaponMounted weapon : entity.getWeaponList()) {
-            List<String> weaponModifiers = getEquipmentModifiers(weapon);
+        List<String> equipmentModifierList = new ArrayList<>();
+        for (Mounted<?> equipment : entity.getEquipment()) {
+            List<String> weaponModifiers = getEquipmentModifiers(equipment);
             if (!weaponModifiers.isEmpty()) {
-                String wq = weapon.getDesc() + " (" + entity.getLocationAbbr(weapon.getLocation()) + "): ";
+                String wq = equipment.getDesc() + " (" + entity.getLocationAbbr(equipment.getLocation()) + "): ";
                 wq += String.join(", ", weaponModifiers);
-                weaponModifierList.add(wq);
+                equipmentModifierList.add(wq);
             }
         }
-        if (!weaponModifierList.isEmpty()) {
+        List<String> unitModifiers = getEquipmentModifiers(entity);
+        if (!unitModifiers.isEmpty()) {
+            equipmentModifierList.add("Systems: " + String.join(", ", unitModifiers));
+        }
+        if (!equipmentModifierList.isEmpty()) {
             sQuirks.add(new SingleLine());
-            ItemList list = new ItemList(Messages.getString("MekView.WeaponMods"));
-            weaponModifierList.forEach(list::addItem);
+            ItemList list = new ItemList(Messages.getString("MekView.EquipmentMods"));
+            equipmentModifierList.forEach(list::addItem);
             sQuirks.add(list);
         }
 
@@ -614,14 +618,15 @@ public class MekView {
         }
     }
 
-    private List<String> getEquipmentModifiers(Mounted<?> equipment) {
-        return equipment.getModifiers().stream().map(m -> "%s (%s)".formatted(modifierReason(m), modifierText(m))).toList();
+    private List<String> getEquipmentModifiers(Modifiable modifiable) {
+        return modifiable.getModifiers().stream().map(m -> "%s (%s)".formatted(modifierReason(m), modifierText(m))).toList();
     }
 
     private String modifierReason(EquipmentModifier modifier) {
         return switch (modifier.reason()) {
             case SALVAGE_QUALITY -> Messages.getString("MekView.SalvageQuality");
             case PARTIAL_REPAIR -> Messages.getString("MekView.PartialRepair");
+            case DAMAGED -> Messages.getString("MekView.Damaged");
             case UNKNOWN -> "Unknown";
         };
     }
@@ -637,6 +642,8 @@ public class MekView {
             return "weapon may misfire";
         } else if (modifier instanceof WeaponJamModifier) {
             return "weapon may jam";
+        } else if (modifier instanceof NoTwistModifier) {
+            return "unit cannot twist";
         } else {
             return "unknown";
         }

@@ -57,6 +57,7 @@ import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
+import megamek.common.modifiers.EquipmentModifier;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -89,7 +90,7 @@ import megamek.utilities.xml.MMXMLUtility;
  */
 @JsonDeserialize(using = EntityDeserializer.class)
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
+        PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable, Modifiable {
 
     private static final MMLogger logger = MMLogger.create(Entity.class);
 
@@ -913,6 +914,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
+
+    protected final List<EquipmentModifier> modifiers = new ArrayList<>();
 
     /**
      * Generates a new, blank, entity.
@@ -15809,5 +15812,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void removeFleeZone() {
         fleeZone = HexArea.EMPTY_AREA;
         hasFleeZone = false;
+    }
+
+    public List<EquipmentModifier> getModifiers() {
+        return modifiers;
     }
 }

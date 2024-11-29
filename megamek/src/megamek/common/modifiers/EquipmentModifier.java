@@ -29,7 +29,8 @@ import java.io.Serializable;
  * from MHQ, Part modifiers must be applied to the Mounteds of the unit (if they aren't already).
  *
  * There seems no way to deal with all such modifiers in a singular way as some will likely have to be applied in the game manager, others
- * in MM common classes and at various points in the code. Therefore this interface cannot specify any methods.
+ * in MM common classes and at various points in the code. Therefore this interface does not specify a method that implements the
+ * modification.
  */
 public interface EquipmentModifier extends Serializable {
 
@@ -39,10 +40,16 @@ public interface EquipmentModifier extends Serializable {
     enum Reason {
 
         /**
-         * Used for Partial Repairs, CO pp.205-207; also, equipment modifiers given in scenarios use this reason, as this usually means
-         * equipment has been damaged before the start of the scenario.
+         * Used when an item suffers from Partial Repair, CO pp.205-207
          */
         PARTIAL_REPAIR,
+
+        /**
+         * Used when an item has fixed pre-existing damage, e.g. from a MM scenario. This is similar to partial repairs in the sense that an
+         * item is partially repaired because it has been previously damaged but the distinction can be used to produce a UI text that makes
+         * more sense than "partial repair" when it is just a fixed effect.
+         */
+        DAMAGED,
 
         /**
          * Used when an item is Salvage Quality, CO p.215

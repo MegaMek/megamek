@@ -265,6 +265,12 @@ factions:
 
         # quality, partial repair modifiers
         modifiers:
+          # modifiers that apply to the unit; this must also be done for modifiers that apply
+          # to systems like Gyro, Controls, Engine; always write as list
+          unit:
+            # Gyro/controls problems: unit cannot twist
+            - type: notwist
+
           # the locations are not a list
           LA:
             # the slots must always be a list! Slots are 1-based (eg.g. CT = 1 to 12)

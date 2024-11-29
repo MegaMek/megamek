@@ -217,7 +217,7 @@ public class QuadMek extends Mek {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !(isProne() || getAlreadyTwisted());
+        return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne() && !getAlreadyTwisted();
     }
 
     @Override

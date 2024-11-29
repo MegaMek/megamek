@@ -835,11 +835,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        if (getConversionMode() == CONV_MODE_MEK) {
-            return super.canChangeSecondaryFacing();
-        } else {
-            return false;
-        }
+        return (getConversionMode() == CONV_MODE_MEK) && super.canChangeSecondaryFacing();
     }
 
     /**
@@ -1508,7 +1504,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 }
         return rollHitLocation(table, side);
     }
-    
+
     @Override
     public HitData rollHitLocation(int table, int side) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {

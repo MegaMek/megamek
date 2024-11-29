@@ -36,6 +36,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.loaders.MtfFile;
+import megamek.common.modifiers.NoTwistModifier;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
@@ -1752,17 +1753,10 @@ public abstract class Mek extends Entity {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#canChangeSecondaryFacing()
-     */
     @Override
     public boolean canChangeSecondaryFacing() {
-        if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
-            return false;
-        }
-        return !(isProne() || isBracing() || getAlreadyTwisted());
+        boolean hasNoTwistModifier = getModifiers().stream().anyMatch(m -> m instanceof NoTwistModifier);
+        return !hasNoTwistModifier && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST) && !isProne() && !isBracing() && !getAlreadyTwisted();
     }
 
     /**

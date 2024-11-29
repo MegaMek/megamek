@@ -1579,7 +1579,7 @@ public class TWGameManager extends AbstractGameManager {
             bvcPlayer.ejectedCrewKilledCount = ServerReportsHelper.getEjectedCrewKilledCount(player, game);
             bvcPlayer.ejectedCrewFledCount = ServerReportsHelper.getFledEjectedCrew(player, game);
 
-            playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
+            playerReport.addAll(bvReport(player.getColoredPlayerNameWithTeam(), player.getId(), bvcPlayer, checkBlind));
 
             int playerTeam = player.getTeam();
 
@@ -1611,7 +1611,8 @@ public class TWGameManager extends AbstractGameManager {
         if (!(checkBlind && doBlind() && suppressBlindBV())) {
             for (Map.Entry<Integer, BVCountHelper> e : teamsInfo.entrySet()) {
                 BVCountHelper bvc = e.getValue();
-                teamReport.addAll(bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false));
+                var coloredTeamName = "<B>"+ Player.TEAM_NAMES[e.getKey()] + "</B>";
+                teamReport.addAll(bvReport(coloredTeamName, Player.PLAYER_NONE, bvc, false));
             }
         }
 

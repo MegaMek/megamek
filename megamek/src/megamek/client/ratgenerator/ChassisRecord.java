@@ -13,11 +13,9 @@
  */
 package megamek.client.ratgenerator;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
+import megamek.common.EntityMovementMode;
 import megamek.logging.MMLogger;
 
 /**
@@ -55,6 +53,108 @@ public class ChassisRecord extends AbstractUnitRecord {
 
     }
 
+    /**
+     * Generate a list of models for this chassis based on certain criteria.
+     * Early prototypes may be available one year before official introduction.
+     * @param exactYear     game year, model must be less than one year away
+     * @param movementModes movement mode types, may be null or empty
+     * @param networkMask   specific C3 network equipment
+     * @return    set of models which pass the filter requirements, may be empty
+     */
+    public HashSet<ModelRecord> getFilteredModels(int exactYear,
+                                                  Collection<EntityMovementMode> movementModes,
+                                                  int networkMask) {
+
+        HashSet<ModelRecord> filteredModels = new HashSet<>();
+
+        for (ModelRecord curModel : models) {
+            // Introduction date check - exclude anything more than a year in the future
+            if (curModel.introYear > exactYear + 1) {
+                continue;
+            }
+
+            // Movement mode check
+            if (movementModes != null && !movementModes.isEmpty()) {
+                if (!movementModes.contains(curModel.getMovementMode())) {
+                    continue;
+                }
+            }
+
+            // C3 network equipment check
+            if ((networkMask & curModel.getNetworkMask()) != networkMask) {
+                continue;
+            }
+
+            filteredModels.add(curModel);
+        }
+
+        return filteredModels;
+    }
+
+    /**
+     * Total the weights of all models for this chassis, including modifiers for
+     * +/- dynamic adjustment, intro year adjustment, and role selection.
+     * @param validModels models to add up
+     * @param era         year for era, defined by availability data files
+     * @param exactYear   current year in game
+     * @param fRec        faction data
+     * @param roles       roles selected for generation, may be null or empty
+     * @param roleStrictness positive number, higher applies heavier role adjustments
+     * @param equipRating    equipment rating to generate for
+     * @param numRatingLevels how many rating levels are present
+     * @return           sum of calculated weights of all models of this chassis
+     */
+    public double totalModelWeight(HashSet<ModelRecord> validModels,
+                                   int era,
+                                   int exactYear,
+                                   FactionRecord fRec,
+                                   Collection<MissionRole> roles,
+                                   int roleStrictness,
+                                   int equipRating,
+                                   int numRatingLevels) {
+
+        RATGenerator ratGen = RATGenerator.getInstance();
+        double retVal = 0;
+        double adjRating;
+        Number roleRating;
+
+        // For each model
+        for (ModelRecord curModel : validModels) {
+
+            if (curModel.factionIsExcluded(fRec)) {
+                continue;
+            }
+
+            // Get the availability rating for the provided faction and year,
+            // skip processing if not available
+            AvailabilityRating avRating = ratGen.findModelAvailabilityRecord(era,
+                curModel.getKey(), fRec);
+            if (avRating == null || avRating.getAvailability() <= 0) {
+                continue;
+            }
+
+            // Adjust availability for +/- dynamic and intro year
+            adjRating = calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
+            if (adjRating <= 0) {
+                continue;
+            }
+
+            // Adjust availability for roles. Method may return null as a filtering mechanism.
+            roleRating = MissionRole.adjustAvailabilityByRole(adjRating,
+                roles, curModel, exactYear, roleStrictness);
+
+            if (roleRating == null || roleRating.doubleValue() <= 0) {
+                continue;
+            }
+
+            // Calculate the weight and add it to the total
+            retVal += AvailabilityRating.calcWeight(roleRating.doubleValue());
+
+        }
+
+        return retVal;
+    }
+
     public int totalModelWeight(int era, String fKey) {
         FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
         if (fRec == null) {
@@ -66,13 +166,13 @@ public class ChassisRecord extends AbstractUnitRecord {
 
     public int totalModelWeight(int era, FactionRecord fRec) {
         int retVal = 0;
-        RATGenerator rg = RATGenerator.getInstance();
+        RATGenerator ratGen = RATGenerator.getInstance();
 
-        for (ModelRecord mr : models) {
-            AvailabilityRating ar = rg.findModelAvailabilityRecord(era,
-                    mr.getKey(), fRec);
-            if (ar != null) {
-                retVal += AvailabilityRating.calcWeight(ar.getAvailability());
+        for (ModelRecord curModel : models) {
+            AvailabilityRating avRating = ratGen.findModelAvailabilityRecord(era,
+                    curModel.getKey(), fRec);
+            if (avRating != null) {
+                retVal += AvailabilityRating.calcWeight(avRating.getAvailability());
             }
         }
 

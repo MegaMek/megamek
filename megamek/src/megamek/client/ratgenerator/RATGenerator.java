@@ -569,6 +569,12 @@ public class RATGenerator {
                     cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
                     Math.max(early, cRec.getIntroYear()), late, year);
             if (cAv > 0) {
+
+                // Apply basic filters to models before summing the total weight
+                HashSet<ModelRecord> validModels = cRec.getFilteredModels(year, movementModes,networkMask);
+
+                double testWeight = cRec.totalModelWeight(validModels, early, year, cRec.isOmni() ? user : fRec, roles, roleStrictness, ratingLevel, numRatingLevels);
+
                 double totalModelWeight = cRec.totalModelWeight(early,
                         cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {

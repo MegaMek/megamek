@@ -501,9 +501,11 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         choDeploymentZone.addItem(Messages.getString("CustomMekDialog.deployEdge"));
         choDeploymentZone.addItem(Messages.getString("CustomMekDialog.deployCenter"));
 
-        for (int zoneID : ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true)
-                .getCustomDeploymentZones()) {
-            choDeploymentZone.addItem("Zone " + zoneID);
+        if (client.getGame().getPhase().isLounge()) {
+            for (int zoneID : ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true)
+                    .getCustomDeploymentZones()) {
+                choDeploymentZone.addItem("Zone " + zoneID);
+            }
         }
 
         int startingPos = entity.getStartingPos(false);

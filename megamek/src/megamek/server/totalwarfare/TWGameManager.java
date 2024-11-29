@@ -5305,6 +5305,22 @@ public class TWGameManager extends AbstractGameManager {
         return vReport;
     }
 
+    private OffBoardDirection calculateEdge(Coords coords) {
+        OffBoardDirection fleeDirection;
+
+        if (coords.getY() <= 0) {
+            fleeDirection = OffBoardDirection.NORTH;
+        } else if (coords.getY() >= (getGame().getBoard().getHeight() - 1)) {
+            fleeDirection = OffBoardDirection.SOUTH;
+        } else if (coords.getX() <= 0) {
+            fleeDirection = OffBoardDirection.WEST;
+        } else {
+            fleeDirection = OffBoardDirection.EAST;
+        }
+
+        return fleeDirection;
+    }
+
     /**
      * Process any flee movement actions, including flying off the map
      *
@@ -5327,18 +5343,10 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(9370, Report.PUBLIC);
         }
         r.addDesc(entity);
-        OffBoardDirection fleeDirection;
-        if (movePath.getFinalCoords().getY() <= 0) {
-            fleeDirection = OffBoardDirection.NORTH;
-        } else if (movePath.getFinalCoords().getY() >= (getGame().getBoard().getHeight() - 1)) {
-            fleeDirection = OffBoardDirection.SOUTH;
-        } else if (movePath.getFinalCoords().getX() <= 0) {
-            fleeDirection = OffBoardDirection.WEST;
-        } else {
-            fleeDirection = OffBoardDirection.EAST;
-        }
 
+        OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
         String fleeDir;
+
         switch (fleeDirection) {
             case NORTH:
                 entity.setStartingPos(Board.START_N);
@@ -8652,6 +8660,7 @@ public class TWGameManager extends AbstractGameManager {
             Coords dest, PilotingRollData roll) {
         Vector<Report> vPhaseReport = new Vector<>();
         Report r;
+
         if (!game.getBoard().contains(dest)) {
             // set position anyway, for pushes moving through, stuff like that
             entity.setPosition(dest);
@@ -8665,12 +8674,39 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (turnsRemoved > 0) {
                     send(packetHelper.createTurnListPacket());
                 }
+
+                OffBoardDirection fleeDirection = calculateEdge(src);
+                String fleeDir;
+
+                switch (fleeDirection) {
+                    case NORTH:
+                        entity.setStartingPos(Board.START_N);
+                        fleeDir = "North";
+                        break;
+                    case EAST:
+                        entity.setStartingPos(Board.START_E);
+                        fleeDir = "East";
+                        break;
+                    case SOUTH:
+                        entity.setStartingPos(Board.START_S);
+                        fleeDir = "South";
+                        break;
+                    case WEST:
+                        entity.setStartingPos(Board.START_W);
+                        fleeDir = "West";
+                        break;
+                    default:
+                        entity.setStartingPos(Board.START_EDGE);
+                        fleeDir = "Edge";
+                }
+
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
                 // entity forced from the field
                 r = new Report(2230);
                 r.subject = entity.getId();
                 r.addDesc(entity);
+                r.add(fleeDir);
                 vPhaseReport.add(r);
                 // TODO : remove passengers and swarmers.
             }
@@ -8809,6 +8845,7 @@ public class TWGameManager extends AbstractGameManager {
                 doSkillCheckInPlace(entity, waterRoll);
             }
         }
+
         // Update the entity's position on the client.
         entityUpdate(entity.getId());
 
@@ -8920,6 +8957,7 @@ public class TWGameManager extends AbstractGameManager {
                 entityUpdate(violation.getId());
             }
         }
+
         return vPhaseReport;
     }
 

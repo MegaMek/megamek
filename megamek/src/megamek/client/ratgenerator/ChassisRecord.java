@@ -134,7 +134,7 @@ public class ChassisRecord extends AbstractUnitRecord {
             }
 
             // Adjust availability for +/- dynamic and intro year
-            adjRating = calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
+            adjRating = curModel.calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
             if (adjRating <= 0) {
                 continue;
             }

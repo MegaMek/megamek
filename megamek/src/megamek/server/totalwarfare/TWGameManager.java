@@ -5321,6 +5321,34 @@ public class TWGameManager extends AbstractGameManager {
         return fleeDirection;
     }
 
+    private String setRetreatEdge(Entity entity, OffBoardDirection fleeDirection) {
+        String result;
+
+        switch (fleeDirection) {
+            case NORTH:
+                entity.setStartingPos(Board.START_N);
+                result = "North";
+                break;
+            case EAST:
+                entity.setStartingPos(Board.START_E);
+                result = "East";
+                break;
+            case SOUTH:
+                entity.setStartingPos(Board.START_S);
+                result = "South";
+                break;
+            case WEST:
+                entity.setStartingPos(Board.START_W);
+                result = "West";
+                break;
+            default:
+                entity.setStartingPos(Board.START_EDGE);
+                result = "Edge";
+        }
+
+        return result;
+    }
+
     /**
      * Process any flee movement actions, including flying off the map
      *
@@ -5345,31 +5373,8 @@ public class TWGameManager extends AbstractGameManager {
         r.addDesc(entity);
 
         OffBoardDirection fleeDirection = calculateEdge(movePath.getFinalCoords());
-        String fleeDir;
-
-        switch (fleeDirection) {
-            case NORTH:
-                entity.setStartingPos(Board.START_N);
-                fleeDir = "North";
-                break;
-            case EAST:
-                entity.setStartingPos(Board.START_E);
-                fleeDir = "East";
-                break;
-            case SOUTH:
-                entity.setStartingPos(Board.START_S);
-                fleeDir = "South";
-                break;
-            case WEST:
-                entity.setStartingPos(Board.START_W);
-                fleeDir = "West";
-                break;
-            default:
-                entity.setStartingPos(Board.START_EDGE);
-                fleeDir = "Edge";
-        }
-
-        r.add(fleeDir);
+        String retreatEdge = setRetreatEdge(entity, fleeDirection);
+        r.add(retreatEdge);
         addReport(r);
 
         entityUpdate(entity.getId());
@@ -8676,29 +8681,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 OffBoardDirection fleeDirection = calculateEdge(src);
-                String fleeDir;
-
-                switch (fleeDirection) {
-                    case NORTH:
-                        entity.setStartingPos(Board.START_N);
-                        fleeDir = "North";
-                        break;
-                    case EAST:
-                        entity.setStartingPos(Board.START_E);
-                        fleeDir = "East";
-                        break;
-                    case SOUTH:
-                        entity.setStartingPos(Board.START_S);
-                        fleeDir = "South";
-                        break;
-                    case WEST:
-                        entity.setStartingPos(Board.START_W);
-                        fleeDir = "West";
-                        break;
-                    default:
-                        entity.setStartingPos(Board.START_EDGE);
-                        fleeDir = "Edge";
-                }
+                String  retreatEdge = setRetreatEdge(entity, fleeDirection);
 
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED));
@@ -8706,7 +8689,7 @@ public class TWGameManager extends AbstractGameManager {
                 r = new Report(2230);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                r.add(fleeDir);
+                r.add(retreatEdge);
                 vPhaseReport.add(r);
                 // TODO : remove passengers and swarmers.
             }

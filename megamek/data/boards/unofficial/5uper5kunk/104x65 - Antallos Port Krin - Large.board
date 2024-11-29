@@ -1,12 +1,15 @@
 size 104 65
 option exit_roads_to_pavement false
 tag "Foliage (Auto)"
-tag "Roads (Auto)"
-tag "DesertTheme (Auto)"
 tag "Water (Auto)"
 tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
+tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "pavement:1" "desert"
 hex 0201 0 "pavement:1" "desert"
 hex 0301 0 "bldg_elev:5;pavement:1;building:2:0;bldg_cf:36" "desert"

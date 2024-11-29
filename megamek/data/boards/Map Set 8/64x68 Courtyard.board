@@ -1,12 +1,8 @@
 size 64 68
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
-tag "Fields (Auto)"
 tag "Roads (Auto)"
-tag "Flat (Auto)"
-tag "MediumForest (Auto)"
 tag "Woods (Auto)"
-tag "LightForest (Auto)"
 tag "LowHills (Auto)"
 hex 0101 2 "road:1:36" ""
 hex 0201 2 "road:1" ""

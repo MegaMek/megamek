@@ -40,11 +40,11 @@ public final class VictoryResult {
     private boolean isVictory;
     private double hiScore = 0;
 
-    VictoryResult(boolean win) {
+    public VictoryResult(boolean win) {
         this.isVictory = win;
     }
     
-    VictoryResult(boolean win, int player, int team) {
+    public VictoryResult(boolean win, int player, int team) {
         this.isVictory = win;
         if (player != Player.PLAYER_NONE) {
             setPlayerScore(player, 1.0);
@@ -54,14 +54,18 @@ public final class VictoryResult {
         }
     }
     
-    static VictoryResult noResult() {
+    public static VictoryResult noResult() {
         return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
     
-    static VictoryResult drawResult() {
+    public static VictoryResult drawResult() {
         return new VictoryResult(true, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
 
+    /**
+     * @return True if this result indicates a game-ending state - this can be a victory but also a draw!
+     * @see #isDraw()
+     */
     public boolean isVictory() {
         return isVictory;
     }
@@ -103,12 +107,12 @@ public final class VictoryResult {
         }
     }
 
-    void setPlayerScore(int id, double score) {
+    public void setPlayerScore(int id, double score) {
         playerScores.put(id, score);
         updateHiScore();
     }
 
-    void setTeamScore(int id, double score) {
+    public void setTeamScore(int id, double score) {
         teamScores.put(id, score);
         updateHiScore();
     }

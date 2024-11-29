@@ -1,7 +1,9 @@
 size 32 51
 option exit_roads_to_pavement false
 tag "MarsTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "bldg_elev:3;pavement:1;building:2:12;bldg_cf:60" ""
 hex 0201 0 "bldg_elev:3;pavement:1;building:2:56;bldg_cf:60" ""
 hex 0301 0 "pavement:1" ""

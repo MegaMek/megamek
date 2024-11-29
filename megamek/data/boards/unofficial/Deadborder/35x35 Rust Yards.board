@@ -1,7 +1,10 @@
 size 35 35
-tag "Water (Auto)"
 tag "MarsTheme (Auto)"
+tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Lava (Auto)"
+tag "HardenedBuilding (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 0 "" "mars"
 hex 0301 0 "" "mars"

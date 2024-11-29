@@ -1,7 +1,9 @@
 size 16 17
 tag "Water (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
+tag "HardenedBuilding (Auto)"
 hex 0101 0 "bldg_elev:5;building:4:12;bldg_cf:150" "desert"
 hex 0201 0 "bldg_elev:5;building:4:50;bldg_cf:150" "desert"
 hex 0301 0 "bldg_elev:5;building:4:20;bldg_cf:150" "desert"

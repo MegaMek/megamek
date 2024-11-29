@@ -1,10 +1,11 @@
 size 34 34
 option exit_roads_to_pavement false
-tag "Roads (Auto)"
+tag "Water (Auto)"
 tag "Swamp (Auto)"
+tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "TropicalTheme (Auto)"
 tag "LightForest (Auto)"
-tag "Water (Auto)"
 tag "Jungle (Auto)"
 hex 0101 0 "" "tropical"
 hex 0201 0 "" "tropical"

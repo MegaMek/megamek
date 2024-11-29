@@ -2,6 +2,8 @@ size 40 40
 tag "Rough (Auto)"
 tag "LunarTheme (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
+tag "HardenedBuilding (Auto)"
 hex 0101 0 "" "Lunar"
 hex 0201 0 "" "Lunar"
 hex 0301 0 "" "Lunar"

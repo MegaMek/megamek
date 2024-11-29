@@ -7294,6 +7294,11 @@ public class Compute {
                     continue;
                 }
                 if (type instanceof WeaponType) {
+                    if ((((WeaponType) m.getType()).getLongRange() <= 1)
+                        // MML range depends on ammo, and getLongRange() returns 0
+                        && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
+                        continue;
+                    }
                     if (((WeaponType) type).isCapital()) {
                         nCapitalW++;
                     } else {

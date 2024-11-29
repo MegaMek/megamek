@@ -1,7 +1,8 @@
 size 34 34
-tag "Water (Auto)"
 tag "MarsTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "" "mars"

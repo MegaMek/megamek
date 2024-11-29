@@ -1,6 +1,7 @@
 size 64 34
 tag "Rough (Auto)"
 tag "Cliffs (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
 tag "LowHills (Auto)"
 hex 0101 1 "" "desert"

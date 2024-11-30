@@ -26,6 +26,7 @@ import megamek.common.force.Forces;
 import megamek.common.options.BasicGameOptions;
 import megamek.server.scriptedevent.TriggeredEvent;
 
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -502,4 +503,8 @@ public interface IGame {
      * @return the number of commanders owned by the player
      */
     int getLiveCommandersOwnedBy(Player player);
+
+    Optional<Player> playerForPlayername(String playerName);
+
+    Optional<Integer> idForPlayername(String playerName);
 }

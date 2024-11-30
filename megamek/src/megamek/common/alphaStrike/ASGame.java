@@ -24,6 +24,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is an Alpha Strike game object that holds all game information. This is intentionally a stub and
@@ -180,6 +181,18 @@ public class ASGame extends AbstractGame {
     public int getLiveCommandersOwnedBy(Player player) {
         // NOT IMPLEMENTED
         return 0;
+    }
+
+    @Override
+    public Optional<Player> playerForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> idForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

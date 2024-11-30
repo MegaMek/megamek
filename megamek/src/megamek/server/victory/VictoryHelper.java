@@ -116,7 +116,7 @@ public class VictoryHelper implements Serializable {
      * @return True when the game ends right now (at the end of round victory check) through a scripted event, either a game-end
      * event or a victory event that is set to be game-ending.
      */
-    private boolean gameEndsByScriptedEvent(Game game) {
+    private boolean gameEndsByScriptedEvent(IGame game) {
         return game.scriptedEvents().stream()
             .filter(TriggeredEvent::isGameEnding)
             .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));

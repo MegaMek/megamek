@@ -310,6 +310,18 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return 0;
     }
 
+    @Override
+    public Optional<Player> playerForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> idForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
+    }
+
     public SBFFullGameReport getGameReport() {
         return gameReport;
     }

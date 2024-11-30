@@ -31869,4 +31869,10 @@ public class TWGameManager extends AbstractGameManager {
     public void sendGroundObjectUpdate() {
         send(new Packet(PacketCommand.UPDATE_GROUND_OBJECTS, getGame().getGroundObjects()));
     }
+
+    @Override
+    public void incrementAndSendGameRound(){
+        super.incrementAndSendGameRound();
+        send(packetHelper.createCurrentRoundNumberPacket());
+    }
 }

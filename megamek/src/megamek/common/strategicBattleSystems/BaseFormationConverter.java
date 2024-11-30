@@ -15,6 +15,7 @@ import megamek.common.force.Forces;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
@@ -53,7 +54,7 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
             var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity) {
-                    thisUnit.add(ASConverter.convert((Entity) entity, new FlexibleCalculationReport()));
+                    thisUnit.add(ASConverter.convertAndKeepRefs((Entity) entity));
                     thisUnitBaseSkill.add(ASConverter.convert((Entity) entity, false));
                 }
             }
@@ -155,8 +156,8 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
             return false;
         }
         for (Force subforce : subforces) {
-            var elementsList = new ArrayList<AlphaStrikeElement>();
-            forces.getFullEntities(subforce).stream().map(e -> ASConverter.convert((Entity) e)).forEach(elementsList::add);
+            var elementsList = forces.getFullEntities(subforce).stream()
+                .map(e -> (Entity) e).map(ASConverter::convert).collect(Collectors.toList());
             invalid |= elementsList.stream().anyMatch(a -> a.hasSUA(LG)) && elementsList.size() > 2;
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
             SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", elementsList, new DummyCalculationReport()).createSbfUnit();

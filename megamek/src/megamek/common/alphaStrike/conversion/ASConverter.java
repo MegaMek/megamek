@@ -62,30 +62,39 @@ public final class ASConverter {
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return standardConversion(entity, true, conversionReport);
+        return standardConversion(entity, false, true, conversionReport);
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return standardConversion(entity, true, new DummyCalculationReport());
+        return standardConversion(entity, false, true, new DummyCalculationReport());
+    }
+
+    public static AlphaStrikeElement convertAndKeepRefs(Entity entity) {
+        return standardConversion(entity, true, true, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return standardConversion(entity, includePilot, new DummyCalculationReport());
+        return standardConversion(entity, false, includePilot, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        return standardConversion(entity, includePilot, conversionReport);
+        return standardConversion(entity, false, includePilot, conversionReport);
     }
 
-    private static AlphaStrikeElement standardConversion(Entity entity, boolean includePilot,
+    private static AlphaStrikeElement standardConversion(Entity entity, boolean keepRefs, boolean includePilot,
             CalculationReport conversionReport) {
         Entity undamagedEntity = getUndamagedEntity(entity);
+
         if (undamagedEntity == null) {
             logger.error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
         if (entity.getGame() != null) {
             undamagedEntity.setGame(entity.getGame());
+        }
+        if (keepRefs) {
+            undamagedEntity.setId(entity.getId());
+            undamagedEntity.setOwner(entity.getOwner());
         }
         return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }

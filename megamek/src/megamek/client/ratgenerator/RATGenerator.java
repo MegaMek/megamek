@@ -588,7 +588,7 @@ public class RATGenerator {
 
                 HashMap<String,Double> modelWeights = new HashMap<>();
 
-                double testWeight = cRec.totalModelWeight(validModels,
+                double totalWeight = cRec.totalModelWeight(validModels,
                     early,
                     year,
                     late,
@@ -599,48 +599,24 @@ public class RATGenerator {
                     numRatingLevels,
                     modelWeights);
 
-                for (ModelRecord curModel : validModels) {
-                    if (!modelWeights.containsKey(curModel.getKey())) {
-                        continue;
-                    }
+                if (totalWeight > 0 && !modelWeights.isEmpty()) {
+                    for (ModelRecord curModel : validModels) {
+                        if (!modelWeights.containsKey(curModel.getKey())) {
+                            continue;
+                        }
 
-                    // Overall availability is the odds of the chassis multiplied
-                    // by the odds of the model. Note that the chassis weight total
-                    // is calculated later after accounting for salvage.
-                    double curWeight = AvailabilityRating.calcWeight(cAv) *  modelWeights.get(curModel.getKey()) / testWeight;
+                        // Overall availability is the odds of the chassis multiplied
+                        // by the odds of the model. Note that the chassis weight total
+                        // is factored later after accounting for salvage.
+                        double curWeight = AvailabilityRating.calcWeight(cAv) * modelWeights.get(curModel.getKey()) / totalWeight;
 
-                }
-
-                double totalModelWeight = cRec.totalModelWeight(early,
-                        cRec.isOmni() ? user : fRec);
-                for (ModelRecord mRec : cRec.getModels()) {
-                    if (mRec.getIntroYear() > year
-                            || (!weightClasses.isEmpty()
-                                    && !weightClasses.contains(mRec.getWeightClass()))
-                            || (networkMask & mRec.getNetworkMask()) != networkMask) {
-                        continue;
-                    }
-
-                    if (!movementModes.isEmpty() && !movementModes.contains(mRec.getMovementMode())) {
-                        continue;
-                    }
-                    ar = findModelAvailabilityRecord(early, mRec.getKey(), fRec);
-                    if ((ar == null) || (ar.getAvailability() == 0)) {
-                        continue;
-                    }
-                    double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
-                    mAv = interpolate(mAv,
-                            mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                            Math.max(early, mRec.getIntroYear()), late, year);
-                    Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
-                    if (adjMAv != null) {
-                        double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
-                                * AvailabilityRating.calcWeight(cAv);
-                        if (mWt > 0) {
-                            unitWeights.put(mRec, mWt);
+                        // Add the random selection weight for this specific model to the tracker
+                        if (curWeight > 0) {
+                            unitWeights.put(curModel, curWeight);
                         }
                     }
                 }
+
             }
         }
 

@@ -508,5 +508,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return moraleStatus;
     }
 
-
+    public void setMoraleStatus(MoraleStatus moraleStatus) {
+        this.moraleStatus = moraleStatus;
+    }
 }

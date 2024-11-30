@@ -193,6 +193,10 @@ public class SBFUnit implements  ASSpecialAbilityCollector, BattleForceSUAFormat
         return damage.reducedBy(damageCrits);
     }
 
+    public int getCurrentMovement() {
+        return Math.max(0, movement - mpCrits);
+    }
+
     public void setDamage(ASDamageVector damage) {
         this.damage = damage;
     }

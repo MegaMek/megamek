@@ -1806,7 +1806,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             isActive = isActive && deployed;
         }
-
         return isActive;
     }
 

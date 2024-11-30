@@ -343,7 +343,8 @@ public abstract class AbstractGame implements IGame {
 
     @Override
     public int getNextEntityId() {
-        return inGameObjects.isEmpty() ? 0 : Collections.max(inGameObjects.keySet()) + 1;
+        var nextId = inGameObjects.isEmpty() ? 0 : Collections.max(inGameObjects.keySet()) + 1;
+        return nextId;
     }
 
     @Override

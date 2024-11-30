@@ -489,12 +489,10 @@ public class Sensor implements Serializable {
 
         // If you have infrared, then each increment of 5 heat will increase the range
         if ((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
-
             // Issue #4315, TO:AR errata changed this. As long as the unit is activated, it can be detected via IR.
             // Removed check for heat 1 or higher.
             // Note: This does not check if a unit is activating after a scenario begins.
             // That is a much larger concern to do with Transport Bays (Extended), TO: AR P.185/186
-
             range += target.heat / 5;
 
             if ((null != game.getBoard().getHex(target.getPosition()))

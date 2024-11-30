@@ -475,18 +475,18 @@ public class RATGenerator {
     }
 
     /**
-     * Generate a frequency table for random selection of units, given a range of parameters
-     * @param fRec
-     * @param unitType
-     * @param year
-     * @param rating
-     * @param weightClasses
-     * @param networkMask
-     * @param movementModes
-     * @param roles
-     * @param roleStrictness
-     * @param user
-     * @return
+     * Generate random selection table entries, given a range of parameters
+     * @param fRec      faction data for selecting units
+     * @param unitType  type of unit (Mek, conventional infantry, etc.)
+     * @param year      current game year
+     * @param rating    equipment rating, typically A/B/C/D/F with A best and F worst
+     * @param weightClasses which weight classes to select, empty or null for all
+     * @param networkMask   type of C3 system required, 0 for none
+     * @param movementModes which movement types to select, empty or null for all
+     * @param roles         apply force generator roles when calculating random selection weights
+     * @param roleStrictness how strictly to apply roles, 0 (none) or higher (more)
+     * @param user           used with OmniMek and salvage balancing
+     * @return   list of entries suitable for building a random generation table, may be empty
      */
     public List<UnitTable.TableEntry> generateTable(FactionRecord fRec,
                                                     int unitType,
@@ -508,16 +508,16 @@ public class RATGenerator {
             fRec = new FactionRecord();
         }
 
-        Integer early = eraSet.floor(year);
-        if (early == null) {
-            early = eraSet.first();
+        Integer currentEra = eraSet.floor(year);
+        if (currentEra == null) {
+            currentEra = eraSet.first();
         }
-        Integer late = null;
+        Integer nextEra = null;
         if (!eraSet.contains(year)) {
-            late = eraSet.ceiling(year);
+            nextEra = eraSet.ceiling(year);
         }
-        if (late == null) {
-            late = early;
+        if (nextEra == null) {
+            nextEra = currentEra;
         }
 
         /*
@@ -542,7 +542,7 @@ public class RATGenerator {
         }
 
         // Iterate through all available chassis
-        for (String chassisKey : chassisIndex.get(early).keySet()) {
+        for (String chassisKey : chassisIndex.get(currentEra).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
                 logger.error("Could not locate chassis " + chassisKey);
@@ -572,14 +572,14 @@ public class RATGenerator {
                 }
             }
 
-            AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
+            AvailabilityRating ar = findChassisAvailabilityRecord(currentEra, chassisKey, fRec, year);
             if (ar == null) {
                 continue;
             }
-            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
+            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, currentEra);
             cAv = interpolate(cAv,
-                    cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
-                    Math.max(early, cRec.getIntroYear()), late, year);
+                    cRec.calcAvailability(ar, ratingLevel, numRatingLevels, nextEra),
+                    Math.max(currentEra, cRec.getIntroYear()), nextEra, year);
             if (cAv > 0) {
 
                 // Apply basic filters to models before summing the total weight
@@ -589,9 +589,9 @@ public class RATGenerator {
                 HashMap<String,Double> modelWeights = new HashMap<>();
 
                 double totalWeight = cRec.totalModelWeight(validModels,
-                    early,
+                    currentEra,
                     year,
-                    late,
+                    nextEra,
                     cRec.isOmni() ? user : fRec,
                     roles,
                     roleStrictness,
@@ -630,7 +630,7 @@ public class RATGenerator {
         if (weightClasses.size() > 1) {
 
             // Get standard weight class distribution for faction
-            ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
+            ArrayList<Integer> wcd = fRec.getWeightDistribution(currentEra, unitType);
 
             if ((wcd != null) && !wcd.isEmpty()) {
                 // Ultra-light and superheavy are too rare to warrant their own values and for
@@ -670,25 +670,25 @@ public class RATGenerator {
 
         double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        if (fRec.getPctSalvage(early) != null) {
+        if (fRec.getPctSalvage(currentEra) != null) {
             HashMap<String, Double> salvageEntries = new HashMap<>();
-            for (Entry<String, Integer> entry : fRec.getSalvage(early).entrySet()) {
+            for (Entry<String, Integer> entry : fRec.getSalvage(currentEra).entrySet()) {
                 salvageEntries.put(entry.getKey(),
                         interpolate(entry.getValue(),
-                                fRec.getSalvage(late).get(entry.getKey()),
-                                early, late, year));
+                                fRec.getSalvage(nextEra).get(entry.getKey()),
+                                currentEra, nextEra, year));
             }
 
-            if (!late.equals(early)) {
-                for (Entry<String, Integer> entry : fRec.getSalvage(late).entrySet()) {
+            if (!nextEra.equals(currentEra)) {
+                for (Entry<String, Integer> entry : fRec.getSalvage(nextEra).entrySet()) {
                     if (!salvageEntries.containsKey(entry.getKey())) {
                         salvageEntries.put(entry.getKey(), interpolate(0.0,
-                                entry.getValue(), early, late, year));
+                                entry.getValue(), currentEra, nextEra, year));
                     }
                 }
             }
 
-            double salvage = fRec.getPctSalvage(early);
+            double salvage = fRec.getPctSalvage(currentEra);
             if (salvage >= 100) {
                 salvage = total;
                 unitWeights.clear();
@@ -711,7 +711,7 @@ public class RATGenerator {
         }
 
         if (ratingLevel >= 0) {
-            adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, early, late);
+            adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 
         // Increase weights if necessary to keep smallest from rounding down to zero

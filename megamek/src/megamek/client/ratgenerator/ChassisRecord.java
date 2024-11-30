@@ -56,7 +56,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     /**
      * Generate a list of models for this chassis based on certain criteria.
      * Early prototypes may be available one year before official introduction.
-     * @param exactYear     game year, model must be less than one year away
+     * @param exactYear     game year
      * @param movementModes movement mode types, may be null or empty
      * @param networkMask   specific C3 network equipment
      * @return    set of models which pass the filter requirements, may be empty
@@ -68,7 +68,7 @@ public class ChassisRecord extends AbstractUnitRecord {
         HashSet<ModelRecord> filteredModels = new HashSet<>();
 
         for (ModelRecord curModel : models) {
-            // Introduction date check - exclude anything more than a year in the future
+            // Introduction date should be at most 1 year away for pre-production prototypes
             if (curModel.introYear > exactYear + 1) {
                 continue;
             }
@@ -93,10 +93,12 @@ public class ChassisRecord extends AbstractUnitRecord {
 
     /**
      * Total the weights of all models for this chassis, including modifiers for
-     * +/- dynamic adjustment, intro year adjustment, and role selection.
+     * +/- dynamic adjustment, intro year adjustment, interpolation, and role
+     * modifications.
      * @param validModels models to add up
-     * @param era         year for era, defined by availability data files
+     * @param era         year for current era
      * @param exactYear   current year in game
+     * @param nextEra     start date of next era after the current one
      * @param fRec        faction data
      * @param roles       roles selected for generation, may be null or empty
      * @param roleStrictness positive number, higher applies heavier role adjustments
@@ -107,6 +109,7 @@ public class ChassisRecord extends AbstractUnitRecord {
     public double totalModelWeight(HashSet<ModelRecord> validModels,
                                    int era,
                                    int exactYear,
+                                   int nextEra,
                                    FactionRecord fRec,
                                    Collection<MissionRole> roles,
                                    int roleStrictness,
@@ -114,8 +117,10 @@ public class ChassisRecord extends AbstractUnitRecord {
                                    int numRatingLevels) {
 
         RATGenerator ratGen = RATGenerator.getInstance();
+        AvailabilityRating avRating, nextAvRating;
         double retVal = 0;
         double adjRating;
+        double nextRating;
         Number roleRating;
 
         // For each model
@@ -127,8 +132,7 @@ public class ChassisRecord extends AbstractUnitRecord {
 
             // Get the availability rating for the provided faction and year,
             // skip processing if not available
-            AvailabilityRating avRating = ratGen.findModelAvailabilityRecord(era,
-                curModel.getKey(), fRec);
+            avRating = ratGen.findModelAvailabilityRecord(era, curModel.getKey(), fRec);
             if (avRating == null || avRating.getAvailability() <= 0) {
                 continue;
             }
@@ -137,6 +141,23 @@ public class ChassisRecord extends AbstractUnitRecord {
             adjRating = curModel.calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
             if (adjRating <= 0) {
                 continue;
+            }
+
+            // If required, interpolate availability between era start or intro date
+            // (whichever is later), and start of next era
+            if (exactYear > era && era != nextEra) {
+                nextAvRating = ratGen.findModelAvailabilityRecord(nextEra,
+                    curModel.getKey(), fRec);
+
+                if (nextAvRating != null) {
+
+                    int interpolationStart = Math.max(curModel.introYear, era);
+                    nextRating = curModel.calcAvailability(nextAvRating, equipRating, numRatingLevels, nextEra);
+                    if (adjRating != nextRating) {
+                        adjRating = adjRating + (nextRating - adjRating) * (exactYear - interpolationStart) / (nextEra - interpolationStart);
+                    }
+                }
+
             }
 
             // Adjust availability for roles. Method may return null as a filtering mechanism.

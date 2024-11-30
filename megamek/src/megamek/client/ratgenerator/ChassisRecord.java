@@ -114,7 +114,8 @@ public class ChassisRecord extends AbstractUnitRecord {
                                    Collection<MissionRole> roles,
                                    int roleStrictness,
                                    int equipRating,
-                                   int numRatingLevels) {
+                                   int numRatingLevels,
+                                   HashMap<String,Double> weightData) {
 
         RATGenerator ratGen = RATGenerator.getInstance();
         AvailabilityRating avRating, nextAvRating;
@@ -122,6 +123,10 @@ public class ChassisRecord extends AbstractUnitRecord {
         double adjRating;
         double nextRating;
         Number roleRating;
+
+        // Clear any pre-existing weighting data - this should only cover
+        // the current set of models
+        weightData.clear();
 
         // For each model
         for (ModelRecord curModel : validModels) {
@@ -169,8 +174,11 @@ public class ChassisRecord extends AbstractUnitRecord {
             }
 
             // Calculate the weight and add it to the total
-            retVal += AvailabilityRating.calcWeight(roleRating.doubleValue());
+            adjRating = AvailabilityRating.calcWeight(roleRating.doubleValue());
+            retVal += adjRating;
 
+            // Cache the final availability rating
+            weightData.put(curModel.getKey(), adjRating);
         }
 
         return retVal;

@@ -575,6 +575,8 @@ public class RATGenerator {
                 // Apply basic filters to models before summing the total weight
                 HashSet<ModelRecord> validModels = cRec.getFilteredModels(year, movementModes,networkMask);
 
+                HashMap<String,Double> modelWeights = new HashMap<>();
+
                 double testWeight = cRec.totalModelWeight(validModels,
                     early,
                     year,
@@ -583,7 +585,20 @@ public class RATGenerator {
                     roles,
                     roleStrictness,
                     ratingLevel,
-                    numRatingLevels);
+                    numRatingLevels,
+                    modelWeights);
+
+                for (ModelRecord curModel : validModels) {
+                    if (!modelWeights.containsKey(curModel.getKey())) {
+                        continue;
+                    }
+
+                    // Overall availability is the odds of the chassis multiplied
+                    // by the odds of the model. Note that the chassis weight total
+                    // is calculated later after accounting for salvage.
+                    double curWeight = AvailabilityRating.calcWeight(cAv) *  modelWeights.get(curModel.getKey()) / testWeight;
+
+                }
 
                 double totalModelWeight = cRec.totalModelWeight(early,
                         cRec.isOmni() ? user : fRec);

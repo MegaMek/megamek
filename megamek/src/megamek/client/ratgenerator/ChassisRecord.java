@@ -57,11 +57,13 @@ public class ChassisRecord extends AbstractUnitRecord {
      * Generate a list of models for this chassis based on certain criteria.
      * Early prototypes may be available one year before official introduction.
      * @param exactYear     game year
+     * @param validWeightClasses restrict weight class to one or more classes
      * @param movementModes movement mode types, may be null or empty
      * @param networkMask   specific C3 network equipment
      * @return    set of models which pass the filter requirements, may be empty
      */
     public HashSet<ModelRecord> getFilteredModels(int exactYear,
+                                                  Collection<Integer> validWeightClasses,
                                                   Collection<EntityMovementMode> movementModes,
                                                   int networkMask) {
 
@@ -70,6 +72,11 @@ public class ChassisRecord extends AbstractUnitRecord {
         for (ModelRecord curModel : models) {
             // Introduction date should be at most 1 year away for pre-production prototypes
             if (curModel.introYear > exactYear + 1) {
+                continue;
+            }
+
+            // Weight class check
+            if (validWeightClasses != null && !validWeightClasses.isEmpty() && !validWeightClasses.contains(curModel.getWeightClass())) {
                 continue;
             }
 

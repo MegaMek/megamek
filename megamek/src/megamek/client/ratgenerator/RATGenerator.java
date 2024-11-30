@@ -541,6 +541,7 @@ public class RATGenerator {
             ratingLevel = factionRatings.indexOf(rating);
         }
 
+        // Iterate through all available chassis
         for (String chassisKey : chassisIndex.get(early).keySet()) {
             ChassisRecord cRec = chassis.get(chassisKey);
             if (cRec == null) {
@@ -548,11 +549,12 @@ public class RATGenerator {
                 continue;
             }
 
+            // Handle ChassisRecords saved as "AERO" units as ASFs for now
             if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACEFIGHTER).contains(cRec.getUnitType())) {
-                // Handle ChassisRecords saved as "AERO" units as ASFs for now
                 cRec.setUnitType(UnitType.AEROSPACEFIGHTER);
             }
 
+            // Only return VTOLs when specifically requesting the unit type
             if (cRec.getUnitType() != unitType &&
                     !(unitType == UnitType.TANK
                             && cRec.getUnitType() == UnitType.VTOL
@@ -560,7 +562,15 @@ public class RATGenerator {
                 continue;
             }
 
-            // TODO: add weight class filtering here
+            // Preliminary filtering by weight class. Most units that have a weight
+            // class are the same for all models although a few outliers exist, so
+            // just look for the first.
+            if (weightClasses != null && !weightClasses.isEmpty()) {
+                boolean validChassis = Arrays.stream(cRec.getModels().stream().mapToInt(ModelRecord::getWeightClass).toArray()).anyMatch(weightClasses::contains);
+                if (!validChassis) {
+                    continue;
+                }
+            }
 
             AvailabilityRating ar = findChassisAvailabilityRecord(early, chassisKey, fRec, year);
             if (ar == null) {
@@ -573,7 +583,8 @@ public class RATGenerator {
             if (cAv > 0) {
 
                 // Apply basic filters to models before summing the total weight
-                HashSet<ModelRecord> validModels = cRec.getFilteredModels(year, movementModes,networkMask);
+                HashSet<ModelRecord> validModels = cRec.getFilteredModels(year,
+                    weightClasses, movementModes, networkMask);
 
                 HashMap<String,Double> modelWeights = new HashMap<>();
 

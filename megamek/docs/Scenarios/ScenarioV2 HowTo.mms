@@ -271,6 +271,9 @@ factions:
             # Gyro/controls problems: unit cannot twist
             - type: notwist
 
+          # note that a heat modifier can be applied to a jump jet slot, resulting in modified heat when jumping; all
+          # heat modifiers on JJ slots stack
+
           # the locations are not a list
           LA:
             # the slots must always be a list! Slots are 1-based (eg.g. CT = 1 to 12)

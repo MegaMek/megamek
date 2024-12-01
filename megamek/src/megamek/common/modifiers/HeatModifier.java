@@ -19,11 +19,10 @@
 package megamek.common.modifiers;
 
 /**
- * This is an EquipmentModifier that changes the heat generation of a weapon (WeaponMounted).
- *
- * Note that multiple such heat modifiers can be applied to a weapon. Their effects stack by being applied one after the other.
+ * This is an EquipmentModifier that changes the heat generation of equipment. This may be applied to weapons, but also to engines. Note
+ * that multiple such heat modifiers can be applied with their effects stacking.
  */
-public class WeaponHeatModifier extends AbstractEquipmentModifier {
+public class HeatModifier extends AbstractEquipmentModifier {
 
     private final int deltaHeat;
 
@@ -33,7 +32,7 @@ public class WeaponHeatModifier extends AbstractEquipmentModifier {
      *
      * @param deltaHeat The heat value to add to the weapon's heat generation
      */
-    public WeaponHeatModifier(int deltaHeat, Reason reason) {
+    public HeatModifier(int deltaHeat, Reason reason) {
         super(reason);
         this.deltaHeat = deltaHeat;
     }

@@ -15,25 +15,20 @@ factions:
 #      - fullname: Intruder (3056)
 #      - fullname: Ares Assault Craft Mk.III
 #      - fullname: Phoenix Hawk LAM PHX-HK2M
-      - fullname: Blade BLD-XS
+      - fullname: Stinger STG-3R
+        id: 110
+        force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
         modifiers:
-          unit:
-            - type: notwist
-          RA:
-            - slot: 3
+          RT:
+            - slot: 4 # JJ
               modifiers:
-                type: jam
-                on: [ 2,3,4,5,6,7,8,9]
-            - slot: 10
-              modifiers:
-                # the modifiers can be a list or a single entry
-                # misfire
-                - type: misfire
-                  # The roll results to misfire on, must always be a list, not a single number
-                  on: [ 2, 3 ]
-                # heat adds the given delta to the weapon heat
-                - type: heat
-                  delta: 2
+                type: heat
+                delta: 1
+        crew:
+          name: John Parthan
+          callsign: Wrinkles
+          piloting: 5
+          gunnery: 3
 #      - fullname: Vedette Medium Tank
 #      - fullname: Mauna Kea Command Vessel
 #      - fullname: Moray Heavy Attack Submarine

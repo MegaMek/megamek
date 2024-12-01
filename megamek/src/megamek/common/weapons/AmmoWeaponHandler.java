@@ -34,7 +34,6 @@ import megamek.common.Roll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.modifiers.EquipmentModifier;
-import megamek.common.modifiers.WeaponHeatModifier;
 import megamek.common.modifiers.WeaponJamModifier;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;

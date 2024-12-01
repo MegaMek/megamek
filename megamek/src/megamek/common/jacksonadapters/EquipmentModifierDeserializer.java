@@ -54,7 +54,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
     public static EquipmentModifier parseNode(JsonNode node) {
         String type = node.get(TYPE).asText();
         return switch (type) {
-            case TYPE_HEAT -> new WeaponHeatModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
+            case TYPE_HEAT -> new HeatModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             case TYPE_DAMAGE -> new DamageModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             case TYPE_TOHIT -> new ToHitModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             case TYPE_MISFIRE -> new WeaponMisfireModifier(parseRollValues(node.get(ON)), EquipmentModifier.Reason.DAMAGED);

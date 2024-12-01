@@ -49,16 +49,6 @@ public class WeaponMisfireModifier extends AbstractEquipmentModifier {
      *
      * @param misfireRollResults A list of numbers (2...12) that make the weapon misfire when rolled as a to-hit roll.
      */
-    public WeaponMisfireModifier(Reason reason, int... misfireRollResults) {
-        super(reason);
-        Arrays.stream(misfireRollResults).forEach(this.misfireRollResults::add);
-    }
-
-    /**
-     * Creates a weapon modifier that makes the weapon misfire if the die roll matches any of the given numbers.
-     *
-     * @param misfireRollResults A list of numbers (2...12) that make the weapon misfire when rolled as a to-hit roll.
-     */
     public WeaponMisfireModifier(Collection<Integer> misfireRollResults, Reason reason) {
         super(reason);
         this.misfireRollResults.addAll(misfireRollResults);

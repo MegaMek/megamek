@@ -18,14 +18,14 @@
 #
 # Based on Battlecorps Scenario 3013, To Save a Prince, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: To Save a Prince [Zakahashi's Zombies]
+name: To Save a Prince [Kell Hounds]
 planet: Mallory's World
 description: |
   Prince Ian Davion commands the Fourth Davion Guards in an attempt to repel the Combine invasion on
   Mallory's World. After Kurita successes against the planetary defenders, the prince summoned a Kell
   Hounds Regiment.
   
-  *Goal: Playing as the Zakahashi's Zombies, break through the Kell Hounds defense.*
+  *Goal: Playing as the Kell Hounds force, prevent Zakahashi's Zombies from breaking through your lines.*
 
 map:
   boardrows: 2
@@ -41,37 +41,49 @@ planetaryconditions:
   temperature: 70
 
 factions:
-- name: Zakahashi's Zombies
-  camo: Draconis Combine/Dieron Regulars/Dieron Regulars.jpg
-  deploy: N
 
-  fleefrom:
-    border: south
+  - name: Kell Hounds, Second Battalion
+    camo: Mercs/Kell Hounds.jpg
+    deploy:
+      edge: S
 
-  victory:
-    - trigger:
-        type: fledunits
-        units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
-        atleast: 6
+    victory:
+      - trigger:
+          type: fledunits
+          modify: atend
+          units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+          atmost: 5
 
-  units:
-    - include: ToSaveAPrince_units_zombies.mmu
+    units:
+      - include: ToSaveAPrince_units_kell.mmu
 
-# OPFOR -----------------------
-- name: Kell Hounds, Second Battalion
-  camo: Mercs/Kell Hounds.jpg
-  deploy:
-    edge: S
+  # OPFOR
+  - name: Zakahashi's Zombies
+    camo: Draconis Combine/Dieron Regulars/Dieron Regulars.jpg
+    deploy: N
 
-  victory:
-    - trigger:
-        type: fledunits
-        modify: atend
-        units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
-        atmost: 5
+    bot:
+      # try to get away
+      selfpreservation: 8
+      fallshame: 8
+      hyperaggression: 4
+      herdmentality: 1
+      bravery: 3
+      # Princess respects the edge she is set to flee from
+      fleeto: south
+      flee: true
 
-  units:
-    - include: ToSaveAPrince_units_kell.mmu
+#    fleefrom:
+#      border: south
+
+    victory:
+      - trigger:
+          type: fledunits
+          units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
+          atleast: 6
+
+    units:
+      - include: ToSaveAPrince_units_zombies.mmu
 
 messages:
   - header: Situation
@@ -104,12 +116,12 @@ messages:
     trigger:
       type: gamestart
 
-  - header: Attacker's Task
+  - header: Defender's Task
     text: |
-      ## Attacker's Task
+      ## Defender's Task
 
-      In this scenario, it is your task to break through the Kell Hounds defense line and exit at least half your
-      Meks off the southern map edge by the end of round 15.
+      In this scenario, it is your task to hold the Kell Hounds defense line and prevent the Zombies units from
+      breaking through. Allow less than half their Meks to exit off the southern map edge until the end of round 15.
 
       The temperature in this desert area is at 70°C, adding heat to all Meks.
     image: tosaveaprince_map.png
@@ -138,9 +150,9 @@ messages:
       units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
       count: 3
 
-  - header:  Defeat
+  - header:  Victory
     text: |
-      ## Defeat
+      ## Victory
 
       The Kell Hounds managed to drive off the Second Sword of Light, enabling the Fourth Davion
       Guards to step in reclaim Prince Ian's body.
@@ -154,14 +166,12 @@ messages:
       units: [ 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112 ]
       atmost: 5
 
-  - header: Victory
+  - header: Defeat
     text: |
-      ## Victory
+      ## Defeat
 
       The Second Sword of Light successfully broke through the line of the Davion defenses. They will not
       recover their Prince's body. This will be a heavy blow to their morale.
-
-      Yorinaga Kurita commends your performance by not being displeased.
 
     image: tosaveaprince_splash.png
     trigger:

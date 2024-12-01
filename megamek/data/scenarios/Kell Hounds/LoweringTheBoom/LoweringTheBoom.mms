@@ -18,7 +18,7 @@
 #
 # Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
 MMSVersion: 2
-name: Lowering the Boom [Flee]
+name: Lowering the Boom [30th Marik Militia]
 planet: Castor
 description: | 
   Lyran intelligence has found illegal atomic weapons on the Marik world of Castor. Katrina Steiner 

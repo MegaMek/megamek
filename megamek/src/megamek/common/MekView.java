@@ -632,7 +632,7 @@ public class MekView {
     }
 
     private String modifierText(EquipmentModifier modifier) {
-        if (modifier instanceof WeaponHeatModifier heatModifier) {
+        if (modifier instanceof HeatModifier heatModifier) {
             return heatModifier.formattedDeltaHeat() + " heat";
         } else if (modifier instanceof ToHitModifier toHitModifier) {
             return toHitModifier.formattedToHitModifier() + " to-hit";

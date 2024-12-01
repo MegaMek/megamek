@@ -1,0 +1,122 @@
+#
+#  Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+#
+#  This file is part of MegaMek.
+#
+#  MegaMek is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  MegaMek is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+#
+# Based on Battlecorps Scenario 3013, To Save a Prince, originally published in FASA's "Kell Hounds" sourcebook
+- fullname: Crusader CRD-3R
+  id: 201
+  force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
+  deploymentround: 2
+  crew:
+    name: Cpt. Carrol O'Caithan
+    piloting: 4
+    gunnery: 3
+
+- fullname: Warhammer WHM-6R
+  id: 202
+  force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
+  deploymentround: 2
+  crew:
+    name: Michael Kiltartan
+    piloting: 5
+    gunnery: 4
+
+- fullname: JagerMech JM6-S
+  id: 203
+  force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
+  deploymentround: 2
+  crew:
+    name: Rich O'Hare
+    piloting: 5
+    gunnery: 4
+
+- fullname: Catapult CPLT-C1
+  id: 204
+  force: 2nd Mek Battalion|11||1st Company|12||Assault Lance|13
+  deploymentround: 2
+  crew:
+    name: Hypatia Donahue
+    piloting: 4
+    gunnery: 3
+
+- fullname: Clint CLNT-2-3T
+  id: 205
+  force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
+  deploymentround: 2
+  crew:
+    name: Lt. Jane Near
+    piloting: 5
+    gunnery: 4
+
+- fullname: Vulcan VL-2T
+  id: 206
+  force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
+  deploymentround: 2
+  crew:
+    name: Julian Goodrich
+    piloting: 5
+    gunnery: 4
+
+- fullname: Enforcer ENF-4R
+  id: 207
+  force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
+  deploymentround: 2
+  crew:
+    name: Robert Cross
+    piloting: 4
+    gunnery: 3
+
+- fullname: Dervish DV-6M
+  id: 208
+  force: 2nd Mek Battalion|11||1st Company|12||Fire Lance|14
+  deploymentround: 2
+  crew:
+    name: Robin Buckley
+    piloting: 5
+    gunnery: 4
+
+- fullname: Jenner JR7-D
+  id: 209
+  force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
+  crew:
+    name: Lt. Jim Morrel
+    piloting: 4
+    gunnery: 3
+
+- fullname: Valkyrie VLK-QA
+  id: 210
+  force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
+  crew:
+    name: Kevin Connor
+    piloting: 5
+    gunnery: 4
+
+- fullname: UrbanMech UM-R60
+  id: 211
+  force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
+  crew:
+    name: Estyn Burns
+    piloting: 5
+    gunnery: 4
+
+- fullname: Javelin JVN-10N
+  id: 212
+  force: 2nd Mek Battalion|11||1st Company|12||Recon Lance|15
+  crew:
+    name: Erin Finney
+    piloting: 4
+    gunnery: 3

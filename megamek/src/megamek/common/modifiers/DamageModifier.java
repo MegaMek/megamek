@@ -18,6 +18,13 @@
  */
 package megamek.common.modifiers;
 
+/**
+ * This is an EquipmentModifier that changes the heat damage of a weapon.
+ *
+ * Note that multiple such modifiers can be applied to a weapon; their effects stack.
+ *
+ * TODO: this currently doesn't work; it shows up in the unit display but does not take effect in the weapon handlers.
+ */
 public class DamageModifier extends AbstractEquipmentModifier {
 
     private final int deltaDamage;

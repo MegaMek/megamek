@@ -18,16 +18,15 @@
  */
 package megamek.common.modifiers;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * This is an EquipmentModifier that jams a weapon (WeaponMounted) upon certain to hit roll results. Note that the modifier can be applied
- * to any weapon, even energy weapons. Also, multiple such modifiers can be applied to a weapon; each of those is checked and the weapon
- * is jammed if any modifier's roll results happen.
+ * This is an EquipmentModifier that jams a weapon (WeaponMounted) upon certain to hit roll results. Note that the modifier only works for
+ * ammo weapons. Also, multiple such modifiers can be applied to a weapon; each of those is checked and the weapon is jammed if any
+ * modifier's roll results happen.
  */
 public class WeaponJamModifier extends AbstractEquipmentModifier {
 
@@ -50,16 +49,6 @@ public class WeaponJamModifier extends AbstractEquipmentModifier {
                 jamRollResults.add(i);
             }
         }
-    }
-
-    /**
-     * Creates a weapon modifier that makes the weapon jam if the die roll matches any of the given numbers.
-     *
-     * @param jamRollResults A list of numbers (2...12) that make the weapon jam when rolled as a to-hit roll.
-     */
-    public WeaponJamModifier(Reason reason, int... jamRollResults) {
-        super(reason);
-        Arrays.stream(jamRollResults).forEach(this.jamRollResults::add);
     }
 
     /**

@@ -24,14 +24,6 @@ package megamek.common.modifiers;
  */
 public class NoTwistModifier extends AbstractSystemModifier {
 
-    public static NoTwistModifier createSalvageQualityGyroNoTwistModifier() {
-        return new NoTwistModifier(Reason.SALVAGE_QUALITY, EntitySystem.GYRO);
-    }
-
-    public static NoTwistModifier createSalvageQualityControlsNoTwistModifier() {
-        return new NoTwistModifier(Reason.SALVAGE_QUALITY, EntitySystem.CONTROLS);
-    }
-
     /**
      * Creates a modifier that prevents torso/turret twists when applied to a unit.
      *

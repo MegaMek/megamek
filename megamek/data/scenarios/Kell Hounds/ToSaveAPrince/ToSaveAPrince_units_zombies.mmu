@@ -1,0 +1,151 @@
+#
+#  Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+#
+#  This file is part of MegaMek.
+#
+#  MegaMek is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  MegaMek is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+#
+# Based on Battlecorps Scenario 3013, To Save a Prince, originally published in FASA's "Kell Hounds" sourcebook
+- fullname: BattleMaster BLR-1G
+  id: 101
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+  crew:
+    name: Tai-i Tendoru Zakahashi
+    piloting: 3
+    gunnery: 3
+
+- fullname: Marauder MAD-3R
+  id: 102
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+  crew:
+    name: Anson McMurphy
+    piloting: 4
+    gunnery: 4
+
+- fullname: Grasshopper GHR-5H
+  id: 103
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+  crew:
+    name: Franco Jones
+    callsign: Frito
+    piloting: 4
+    gunnery: 5
+
+- fullname: Ostsol OTL-4D
+  id: 104
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
+  crew:
+    name: Art Shrett
+    piloting: 3
+    gunnery: 5
+
+- fullname: Orion ON1-K
+  id: 105
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
+  crew:
+    name: Chu-i Susie Elgin
+    piloting: 3
+    gunnery: 4
+
+- fullname: Rifleman RFL-3N
+  id: 106
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
+  remaining:
+    armor:
+      RTR: 0
+  crits:
+    LA: 5
+  crew:
+    name: Cletus Palmer
+    piloting: 4
+    gunnery: 3
+
+- fullname: Dervish DV-6M
+  id: 107
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
+  remaining:
+    armor:
+      CT: 10
+  crits:
+    CT: 11
+    LL: [ 5, 6 ]
+    RL: [ 5, 6 ]
+  crew:
+    name: Tom Meyer
+    callsign: Hands
+    piloting: 3
+    gunnery: 5
+
+- fullname: Enforcer ENF-4R
+  id: 108
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Support Lance|24
+  modifiers:
+    RA:
+      - slot: 4 # AC/10
+        modifiers:
+          type: heat
+          delta: 2
+  crew:
+    name: Charlie Adams
+    piloting: 4
+    gunnery: 4
+
+- fullname: Javelin JVN-10N
+  id: 109
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
+  crew:
+    name: Chu-i Bob Crenshaw
+    callsign: Texas
+    piloting: 4
+    gunnery: 5
+
+- fullname: Stinger STG-3R
+  id: 110
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
+  modifiers:
+    RT:
+      - slot: 4 # JJ
+        modifiers:
+          type: heat
+          delta: 1
+  crew:
+    name: John Parthan
+    callsign: Wrinkles
+    piloting: 5
+    gunnery: 3
+
+- fullname: Locust LCT-1V
+  id: 111
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
+  modifiers:
+    CT:
+      - slot: 11 # ML
+        modifiers:
+          type: misfire
+          on: [ 2,11,4,9,6,7 ] # approx equivalent to an independent 2D6 roll
+  crew:
+    name: Chuck Stork
+    callsign: Bossman
+    piloting: 5
+    gunnery: 5
+
+- fullname: Locust LCT-1V
+  id: 112
+  force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
+  crew:
+    name: Jack Brockman
+    callsign: Hun Killer
+    piloting: 4
+    gunnery: 5
+

@@ -14,16 +14,21 @@
  */
 package megamek.common;
 
+import megamek.common.modifiers.EquipmentModifier;
+import megamek.common.modifiers.HeatModifier;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
- * 
+ *
  * @author Reinhard Vicinus
  */
-public class Engine implements Serializable, ITechnology {
+public class Engine implements Serializable, ITechnology, Modifiable {
     private static final long serialVersionUID = -246032529363109609L;
 
     public static final double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
@@ -155,6 +160,7 @@ public class Engine implements Serializable, ITechnology {
     private int engineFlags;
     private int baseChassisHeatSinks = -1;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
+    protected final List<EquipmentModifier> modifiers = new ArrayList<>();
 
     /**
      * The constructor takes the rating of the engine, the type of engine and
@@ -629,68 +635,74 @@ public class Engine implements Serializable, ITechnology {
     }
 
     /**
+     * @return The additional heat from modifiers (salvage quality or others) of this Engine. Note that this can be negative.
+     */
+    private int heatFromModifers() {
+        return modifiers.stream()
+            .filter(m -> m instanceof HeatModifier).map(m -> (HeatModifier) m)
+            .mapToInt(HeatModifier::getDeltaHeat).sum();
+    }
+
+    /**
      * @return the heat generated while the mek is standing still.
      */
     public int getStandingHeat() {
-        return (engineType == XXL_ENGINE) ? 2 : 0;
+        return Math.max(0, heatFromModifers() + ((engineType == XXL_ENGINE) ? 2 : 0));
     }
 
     /**
      * @return the heat generated while the mek is walking.
      */
     public int getWalkHeat(Entity e) {
+        int heat = heatFromModifers();
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 3 : 4;
-            default:
-                return hasSCM ? 0 : 1;
-        }
+        heat += switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 3 : 4;
+            default -> hasSCM ? 0 : 1;
+        };
+        return Math.max(0, heat);
     }
 
     /**
      * @return the heat generated while the mek is running.
      */
     public int getRunHeat(Entity e) {
+        int heat = heatFromModifers();
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 4 : 6;
-            default:
-                return hasSCM ? 0 : 2;
-        }
+        heat += switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 4 : 6;
+            default -> hasSCM ? 0 : 2;
+        };
+        return Math.max(0, heat);
     }
 
     /**
      * @return the heat generated while the mek is sprinting.
      */
     public int getSprintHeat(Entity e) {
+        int heat = heatFromModifers();
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 6 : 9;
-            default:
-                return hasSCM ? 0 : 3;
-        }
+        heat += switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 6 : 9;
+            default -> hasSCM ? 0 : 3;
+        };
+        return Math.max(0, heat);
     }
 
     /**
      * @return the heat generated while the mek is jumping.
      */
     public int getJumpHeat(int movedMP) {
+        int heat = heatFromModifers();
         if (engineType == XXL_ENGINE) {
-            return Math.max(6, movedMP * 2);
+            heat += Math.max(6, movedMP * 2);
+        } else {
+            heat += Math.max(3, movedMP);
         }
-        return Math.max(3, movedMP);
+        return Math.max(0, heat);
     }
 
     public double getBVMultiplier() {
@@ -1371,5 +1383,10 @@ public class Engine implements Serializable, ITechnology {
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         return getTechAdvancement().getStaticTechLevel();
+    }
+
+    @Override
+    public List<EquipmentModifier> getModifiers() {
+        return modifiers;
     }
 } // End class Engine

@@ -36,6 +36,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.loaders.MtfFile;
+import megamek.common.modifiers.HeatModifier;
 import megamek.common.modifiers.NoTwistModifier;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -1289,15 +1290,15 @@ public abstract class Mek extends Entity {
         return jumpType;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getJumpHeat(int)
-     */
     @Override
     public int getJumpHeat(int movedMP) {
+        int jumpType = getJumpType();
+        if (jumpType == JUMP_NONE) {
+            return 0;
+        }
 
-        int extra = bDamagedCoolantSystem ? 1 : 0;
+        int heat = bDamagedCoolantSystem ? 1 : 0;
+        heat += heatFromJumpJetModifers();
 
         // don't count movement granted by Partial Wing
         for (Mounted<?> mount : getMisc()) {
@@ -1307,20 +1308,28 @@ public abstract class Mek extends Entity {
             }
         }
 
-        switch (getJumpType()) {
-            case JUMP_IMPROVED:
-                return extra + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
-            case JUMP_PROTOTYPE_IMPROVED:
-                // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
-                return extra + (hasEngine() ? Math.max(6, getEngine().getJumpHeat(movedMP * 2)) : 0);
-            case JUMP_BOOSTER:
-            case JUMP_DISPOSABLE:
-                return extra;
-            case JUMP_NONE:
-                return 0;
-            default:
-                return extra + (hasEngine() ? getEngine().getJumpHeat(movedMP) : 0);
+        if (hasEngine()) {
+            heat += switch (jumpType) {
+                case JUMP_IMPROVED -> getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2));
+                case JUMP_PROTOTYPE_IMPROVED ->
+                    // XTRO:Succession Wars p. 17
+                    Math.max(6, getEngine().getJumpHeat(movedMP * 2));
+                case JUMP_BOOSTER, JUMP_DISPOSABLE -> 0;
+                default -> getEngine().getJumpHeat(movedMP);
+            };
         }
+        return Math.max(0, heat);
+    }
+
+    /**
+     * @return The additional heat from any jump jet modifiers (salvage quality or others) on this unit. Note that this can be negative.
+     */
+    private int heatFromJumpJetModifers() {
+        return miscList.stream()
+            .filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+            .flatMap(m -> m.getModifiers().stream())
+            .filter(m -> m instanceof HeatModifier).map(m -> (HeatModifier) m)
+            .mapToInt(HeatModifier::getDeltaHeat).sum();
     }
 
     /**

@@ -199,7 +199,7 @@ public class ChassisRecord extends AbstractUnitRecord {
         return retVal;
     }
 
-    public int totalModelWeight(int era, String fKey) {
+    public double totalModelWeight(int era, String fKey) {
         FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
         if (fRec == null) {
             logger.warn("Attempt to find totalModelWeight for non-existent faction " + fKey);
@@ -208,8 +208,8 @@ public class ChassisRecord extends AbstractUnitRecord {
         return totalModelWeight(era, fRec);
     }
 
-    public int totalModelWeight(int era, FactionRecord fRec) {
-        int retVal = 0;
+    public double totalModelWeight(int era, FactionRecord fRec) {
+        double retVal = 0;
         RATGenerator ratGen = RATGenerator.getInstance();
 
         for (ModelRecord curModel : models) {

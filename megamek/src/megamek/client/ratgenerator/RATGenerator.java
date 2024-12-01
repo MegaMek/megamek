@@ -549,6 +549,11 @@ public class RATGenerator {
                 continue;
             }
 
+            // Pre-production prototypes may show up one year before official introduction
+            if (cRec.introYear > year + 1) {
+                continue;
+            }
+
             // Handle ChassisRecords saved as "AERO" units as ASFs for now
             if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACEFIGHTER).contains(cRec.getUnitType())) {
                 cRec.setUnitType(UnitType.AEROSPACEFIGHTER);
@@ -566,21 +571,56 @@ public class RATGenerator {
             // class are the same for all models although a few outliers exist, so
             // just look for the first.
             if (weightClasses != null && !weightClasses.isEmpty()) {
-                boolean validChassis = Arrays.stream(cRec.getModels().stream().mapToInt(ModelRecord::getWeightClass).toArray()).anyMatch(weightClasses::contains);
+                boolean validChassis = Arrays.stream(cRec.getModels().
+                    stream().
+                    mapToInt(ModelRecord::getWeightClass).
+                    toArray()).
+                    anyMatch(weightClasses::contains);
                 if (!validChassis) {
                     continue;
                 }
             }
 
-            AvailabilityRating ar = findChassisAvailabilityRecord(currentEra, chassisKey, fRec, year);
-            if (ar == null) {
+            AvailabilityRating chassisAvRating = findChassisAvailabilityRecord(currentEra,
+                chassisKey, fRec, year);
+            if (chassisAvRating == null) {
                 continue;
             }
-            double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, currentEra);
-            cAv = interpolate(cAv,
-                    cRec.calcAvailability(ar, ratingLevel, numRatingLevels, nextEra),
-                    Math.max(currentEra, cRec.getIntroYear()), nextEra, year);
-            if (cAv > 0) {
+
+            double chassisAdjRating;
+
+            // If necessary, interpolate chassis availability between era values
+            if (year != currentEra && year != nextEra) {
+
+                // Find the chassis availability at the start of the era, or at
+                // intro date, including dynamic modifiers
+                chassisAdjRating = cRec.calcAvailability(chassisAvRating,
+                    ratingLevel,
+                    numRatingLevels,
+                    Math.max(currentEra, Math.min(year, cRec.introYear)));
+
+                AvailabilityRating chassisNextAvRating = findChassisAvailabilityRecord(nextEra, chassisKey, fRec, nextEra);
+
+                double chassisNextAdj = 0.0;
+                if (chassisNextAvRating != null) {
+                    chassisNextAdj = cRec.calcAvailability(chassisNextAvRating, ratingLevel, numRatingLevels, nextEra);
+                }
+
+                if (chassisAdjRating != chassisNextAdj) {
+                    chassisAdjRating = interpolate(
+                        chassisAdjRating,
+                        chassisNextAdj,
+                        Math.max(currentEra, Math.min(year, cRec.introYear)), nextEra, year);
+                }
+
+            } else {
+                // Find the chassis availability taking into account +/- dynamic
+                // modifiers and introduction year
+                chassisAdjRating = cRec.calcAvailability(chassisAvRating,
+                    ratingLevel, numRatingLevels, year);
+            }
+
+            if (chassisAdjRating > 0) {
 
                 // Apply basic filters to models before summing the total weight
                 HashSet<ModelRecord> validModels = cRec.getFilteredModels(year,
@@ -608,7 +648,7 @@ public class RATGenerator {
                         // Overall availability is the odds of the chassis multiplied
                         // by the odds of the model. Note that the chassis weight total
                         // is factored later after accounting for salvage.
-                        double curWeight = AvailabilityRating.calcWeight(cAv) * modelWeights.get(curModel.getKey()) / totalWeight;
+                        double curWeight = AvailabilityRating.calcWeight(chassisAdjRating) * modelWeights.get(curModel.getKey()) / totalWeight;
 
                         // Add the random selection weight for this specific model to the tracker
                         if (curWeight > 0) {

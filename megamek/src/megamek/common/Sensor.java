@@ -438,6 +438,27 @@ public class Sensor implements Serializable {
         Coords pos = en.getPosition();
         ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, true,
                 allECMInfo);
+        return getECMSensorRangeModifier(ecmInfo);
+    }
+
+    /**
+     * Computes the sensor check modifier for ECM.
+     *
+     * @param targetEntity
+     * @param allECMInfo  A collection of ECMInfo for all entities, this value
+     *                    can be null and it will be computed when it's
+     *                    needed, however passing in the pre-computed
+     *                    collection is much faster
+     * @return
+     */
+    public int getModForTargetECM(Entity targetEntity, List<ECMInfo> allECMInfo) {
+        // how many ECM fields are affecting the target entity?
+        Coords pos = targetEntity.getPosition();
+        ECMInfo ecmInfo = ComputeECM.getFriendlyECMEffects(targetEntity, allECMInfo);
+        return getECMSensorRangeModifier(ecmInfo);
+    }
+
+    public int getECMSensorRangeModifier(ECMInfo ecmInfo){
         double ecm, ecmAngel;
         ecm = ecmAngel = 0;
         if (ecmInfo != null) {

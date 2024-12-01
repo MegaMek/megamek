@@ -517,4 +517,29 @@ public class ComputeECM {
         }
         return worstECMEffects;
     }
+
+    /**
+     * Returns the total friendly ECM effects on the supplied unit.
+     *
+     * @param affectedEntity The entity to check.
+     * @param allECMInfo
+     * @return
+     */
+    public static @Nullable ECMInfo getFriendlyECMEffects(Entity affectedEntity, @Nullable List<ECMInfo> allEcmInfo){
+        if (allEcmInfo == null) {
+            allEcmInfo = computeAllEntitiesECMInfo(affectedEntity.getGame().getEntitiesVector());
+        }
+
+        Coords entityPosition = affectedEntity.getPosition();
+
+        ECMInfo affectedInfo = new ECMInfo(0, 0, affectedEntity.getOwner(), entityPosition);
+        for (ECMInfo ecmInfo : allEcmInfo) {
+            // Is the ECMInfo in range of this position?
+            int dist = entityPosition.distance(ecmInfo.getPos());
+            if (dist <= ecmInfo.getRange()) {
+                affectedInfo.addAlliedECMEffects(ecmInfo);
+            }
+        }
+        return affectedInfo;
+    }
 }

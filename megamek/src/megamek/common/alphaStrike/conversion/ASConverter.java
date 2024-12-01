@@ -246,7 +246,7 @@ public final class ASConverter {
     }
 
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
-    private static @Nullable Entity getUndamagedEntity(Entity entity) {
+    public static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();

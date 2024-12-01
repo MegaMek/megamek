@@ -20,17 +20,17 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameEntityEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.BasicGameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.scriptedevent.TriggeredEvent;
 
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -507,4 +507,5 @@ public interface IGame {
     Optional<Player> playerForPlayername(String playerName);
 
     Optional<Integer> idForPlayername(String playerName);
+
 }

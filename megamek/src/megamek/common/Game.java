@@ -757,6 +757,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return lastPhase;
     }
 
+    @Override
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
     }

@@ -182,6 +182,10 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return Collections.unmodifiableList(units);
     }
 
+    public void removeUnit(SBFUnit unit) {
+        units.remove(unit);
+    }
+
     public void addUnit(SBFUnit newUnit) {
         units.add(newUnit);
     }

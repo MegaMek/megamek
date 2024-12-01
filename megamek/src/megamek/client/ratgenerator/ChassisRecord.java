@@ -103,7 +103,7 @@ public class ChassisRecord extends AbstractUnitRecord {
      * +/- dynamic adjustment, intro year adjustment, interpolation, and role
      * modifications.
      * @param validModels models to add up
-     * @param era         year for current era
+     * @param currentEra  year for current era
      * @param exactYear   current year in game
      * @param nextEra     start date of next era after the current one
      * @param fRec        faction data
@@ -114,7 +114,7 @@ public class ChassisRecord extends AbstractUnitRecord {
      * @return           sum of calculated weights of all models of this chassis
      */
     public double totalModelWeight(HashSet<ModelRecord> validModels,
-                                   int era,
+                                   int currentEra,
                                    int exactYear,
                                    int nextEra,
                                    FactionRecord fRec,
@@ -144,32 +144,40 @@ public class ChassisRecord extends AbstractUnitRecord {
 
             // Get the availability rating for the provided faction and year,
             // skip processing if not available
-            avRating = ratGen.findModelAvailabilityRecord(era, curModel.getKey(), fRec);
+            avRating = ratGen.findModelAvailabilityRecord(currentEra, curModel.getKey(), fRec);
             if (avRating == null || avRating.getAvailability() <= 0) {
-                continue;
-            }
-
-            // Adjust availability for +/- dynamic and intro year
-            adjRating = curModel.calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
-            if (adjRating <= 0) {
                 continue;
             }
 
             // If required, interpolate availability between era start or intro date
             // (whichever is later), and start of next era
-            if (exactYear > era && era != nextEra) {
+            if (exactYear > currentEra && currentEra != nextEra) {
                 nextAvRating = ratGen.findModelAvailabilityRecord(nextEra,
                     curModel.getKey(), fRec);
 
-                if (nextAvRating != null) {
+                int interpolationStart = Math.max(currentEra, Math.min(exactYear, curModel.introYear));
 
-                    int interpolationStart = Math.max(curModel.introYear, era);
-                    nextRating = curModel.calcAvailability(nextAvRating, equipRating, numRatingLevels, nextEra);
-                    if (adjRating != nextRating) {
-                        adjRating = adjRating + (nextRating - adjRating) * (exactYear - interpolationStart) / (nextEra - interpolationStart);
-                    }
+                adjRating = curModel.calcAvailability(avRating,
+                    equipRating, numRatingLevels, interpolationStart);
+
+                nextRating = 0.0;
+                if (nextAvRating != null) {
+                    nextRating = curModel.calcAvailability(nextAvRating,
+                        equipRating, numRatingLevels, nextEra);
                 }
 
+                if (adjRating != nextRating) {
+                    adjRating = adjRating +
+                        (nextRating - adjRating) * (exactYear - interpolationStart) / (nextEra - interpolationStart);
+                }
+
+            } else {
+                // Adjust availability for +/- dynamic and intro year
+                adjRating = curModel.calcAvailability(avRating, equipRating, numRatingLevels, exactYear);
+            }
+
+            if (adjRating <= 0) {
+                continue;
             }
 
             // Adjust availability for roles. Method may return null as a filtering mechanism.

@@ -591,15 +591,16 @@ public class RATGenerator {
 
             // If necessary, interpolate chassis availability between era values
             if (year != currentEra && year != nextEra) {
+                AvailabilityRating chassisNextAvRating = findChassisAvailabilityRecord(nextEra, chassisKey, fRec, nextEra);
 
                 // Find the chassis availability at the start of the era, or at
                 // intro date, including dynamic modifiers
+                int interpolationStart = Math.max(currentEra, Math.min(year, cRec.introYear));
                 chassisAdjRating = cRec.calcAvailability(chassisAvRating,
                     ratingLevel,
                     numRatingLevels,
-                    Math.max(currentEra, Math.min(year, cRec.introYear)));
+                    interpolationStart);
 
-                AvailabilityRating chassisNextAvRating = findChassisAvailabilityRecord(nextEra, chassisKey, fRec, nextEra);
 
                 double chassisNextAdj = 0.0;
                 if (chassisNextAvRating != null) {
@@ -610,7 +611,9 @@ public class RATGenerator {
                     chassisAdjRating = interpolate(
                         chassisAdjRating,
                         chassisNextAdj,
-                        Math.max(currentEra, Math.min(year, cRec.introYear)), nextEra, year);
+                        interpolationStart,
+                        nextEra,
+                        year);
                 }
 
             } else {

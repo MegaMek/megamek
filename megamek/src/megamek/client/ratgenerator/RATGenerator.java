@@ -670,7 +670,7 @@ public class RATGenerator {
         // If there is more than one weight class and the faction record (or parent)
         // indicates a certain distribution of weight classes, adjust the weight value
         // to conform to the given ratio.
-        if (weightClasses.size() > 1) {
+        if (weightClasses != null && weightClasses.size() > 1) {
 
             // Get standard weight class distribution for faction
             ArrayList<Integer> wcd = fRec.getWeightDistribution(currentEra, unitType);

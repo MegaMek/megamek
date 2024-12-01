@@ -777,8 +777,20 @@ public class RATGenerator {
         }
 
         // Adjust weights of standard table entries and salvage entries for established
-        // percentages of Omni-units, base Clan tech, and Star League/advanced tech
-        if (ratingLevel >= 0) {
+        // percentages of Omni-units, base Clan tech, and Star League/advanced tech.
+        // Only do this for Omni-capable unit types, which also covers those which are
+        // commonly fitted with Clan or Star League/advanced technology.
+        // Do not re-balance conventional infantry, battle armor, large craft, or other
+        // unit types. Also skip combat support and civilian specialist roles.
+        if (ratingLevel >= 0 &&
+            (unitType == UnitType.MEK ||
+                unitType == UnitType.AEROSPACEFIGHTER ||
+                unitType == UnitType.TANK ||
+                unitType == UnitType.VTOL) &&
+            (roles == null ||
+                (!roles.contains(MissionRole.SUPPORT) ||
+                    !roles.contains(MissionRole.CIVILIAN) ||
+                    !roles.contains(MissionRole.ENGINEER)))){
             adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 
@@ -1010,8 +1022,8 @@ public class RATGenerator {
             }
         }
 
-        // With modifications, check the new total weight against the original value and
-        // use it as a multiplier to
+        // After modifications, check the new total weight against the original value and
+        // use it as a multiplier to compensate
         double multiplier = totalWeight / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
         for (ModelRecord mRec : unitWeights.keySet()) {
             unitWeights.merge(mRec, multiplier, (a, b) -> a * b);

@@ -453,7 +453,6 @@ public class Sensor implements Serializable {
      */
     public int getModForTargetECM(Entity targetEntity, List<ECMInfo> allECMInfo) {
         // how many ECM fields are affecting the target entity?
-        Coords pos = targetEntity.getPosition();
         ECMInfo ecmInfo = ComputeECM.getFriendlyECMEffects(targetEntity, allECMInfo);
         return getECMSensorRangeModifier(ecmInfo);
     }

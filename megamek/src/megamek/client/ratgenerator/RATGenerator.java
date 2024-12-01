@@ -667,34 +667,37 @@ public class RATGenerator {
             return new ArrayList<>();
         }
 
-        // If there is more than one weight class and the faction record (or parent)
-        // indicates a certain distribution of weight classes, adjust the weight value
-        // to conform to the given ratio.
+        // If there is more than one weight class being generated and the faction record
+        // (or parent) indicates a certain distribution of weight classes, adjust the
+        // generated unit weights conform to the given ratio.
         if (weightClasses != null && weightClasses.size() > 1) {
 
             // Get standard weight class distribution for faction
-            ArrayList<Integer> wcd = fRec.getWeightDistribution(currentEra, unitType);
+            ArrayList<Integer> weightClassDistribution = fRec.getWeightDistribution(currentEra,
+                unitType);
 
-            if ((wcd != null) && !wcd.isEmpty()) {
+            if ((weightClassDistribution != null) && !weightClassDistribution.isEmpty()) {
                 // Ultra-light and superheavy are too rare to warrant their own values and for
                 // weight class distribution purposes are grouped with light and assault,
                 // respectively.
                 final int[] wcdIndex = { 0, 0, 1, 2, 3, 3 };
-                // Find the totals of the weight for the generated table
-                double totalMRWeight = unitWeights.values().stream()
+                // Find the totals of the weights for the generated table
+                double totalTableWeight = unitWeights.values().stream()
                         .mapToDouble(Double::doubleValue)
                         .sum();
-                // Find the sum of the weight distribution values for all weight classes in use.
+                // Find the sum of the weight distribution values for each weight
+                // class being called for
                 int totalWCDWeights = weightClasses.stream()
-                        .filter(wc -> wcdIndex[wc] < wcd.size())
-                        .mapToInt(wc -> wcd.get(wcdIndex[wc]))
+                        .filter(wc -> wcdIndex[wc] < weightClassDistribution.size())
+                        .mapToInt(wc -> weightClassDistribution.get(wcdIndex[wc]))
                         .sum();
 
                 if (totalWCDWeights > 0) {
                     // Group all the models of the generated table by weight class.
                     Function<ModelRecord, Integer> grouper = mr -> wcdIndex[mr.getWeightClass()];
-                    Map<Integer, List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
-                            .collect(Collectors.groupingBy(grouper));
+                    Map<Integer, List<ModelRecord>> weightGroups = unitWeights.
+                            keySet().
+                            stream().collect(Collectors.groupingBy(grouper));
 
                     // Go through the weight class groups and adjust the table weights so the total
                     // of each group corresponds to the distribution for this faction.
@@ -703,7 +706,7 @@ public class RATGenerator {
                                 .mapToDouble(unitWeights::get)
                                 .sum();
                         if (totalWeight > 0) {
-                            double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
+                            double adj = totalTableWeight * weightClassDistribution.get(i) / (totalWeight * totalWCDWeights);
                             weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x, y) -> x * y));
                         }
                     }

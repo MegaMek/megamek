@@ -500,7 +500,6 @@ public class RATGenerator {
                                                     FactionRecord user) {
 
         HashMap<ModelRecord, Double> unitWeights = new HashMap<>();
-        HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
 
         loadYear(year);
 
@@ -714,44 +713,65 @@ public class RATGenerator {
             }
         }
 
-        double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-
+        // If there are salvage percentages defined for the generating faction
+        HashMap<FactionRecord, Double> salvageWeights = new HashMap<>();
         if (fRec.getPctSalvage(currentEra) != null) {
             HashMap<String, Double> salvageEntries = new HashMap<>();
+
+            // If current year is directly on an era data point take it, otherwise
+            // interpolate between current era and next era values.
             for (Entry<String, Integer> entry : fRec.getSalvage(currentEra).entrySet()) {
                 salvageEntries.put(entry.getKey(),
+                    currentEra == year ?
+                        entry.getValue() :
                         interpolate(entry.getValue(),
-                                fRec.getSalvage(nextEra).get(entry.getKey()),
-                                currentEra, nextEra, year));
+                            fRec.getSalvage(nextEra).get(entry.getKey()),
+                            currentEra,
+                            nextEra,
+                            year));
             }
 
+            // Add salvage from the next era that is not already present
             if (!nextEra.equals(currentEra)) {
                 for (Entry<String, Integer> entry : fRec.getSalvage(nextEra).entrySet()) {
                     if (!salvageEntries.containsKey(entry.getKey())) {
-                        salvageEntries.put(entry.getKey(), interpolate(0.0,
-                                entry.getValue(), currentEra, nextEra, year));
+                        salvageEntries.put(entry.getKey(),
+                            interpolate(0.0,
+                                entry.getValue(),
+                                currentEra,
+                                nextEra,
+                                year));
                     }
                 }
             }
 
-            double salvage = fRec.getPctSalvage(currentEra);
-            if (salvage >= 100) {
-                salvage = total;
+            // Use the total salvage percentage from the faction data to get the total
+            // weight of all salvage entries, from the current overall table weight.
+            // If a salvage percentage of 100 percent is specified (unlikely, but possible)
+            // then clear the existing table and regenerate everything again based purely
+            // on salvage.
+            double totalTableWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+            double overallSalvage = fRec.getPctSalvage(currentEra);
+            if (overallSalvage >= 100) {
+                overallSalvage = totalTableWeight;
                 unitWeights.clear();
             } else {
-                salvage = salvage * total / (100 - salvage);
+                overallSalvage = totalTableWeight * overallSalvage / 100.0;
             }
+
+            // Break down the total salvage weight by relative weights of each
+            // provided salvage faction
             double totalFactionWeight = salvageEntries.values().stream()
                     .mapToDouble(Double::doubleValue)
                     .sum();
             for (String fKey : salvageEntries.keySet()) {
                 FactionRecord salvageFaction = factions.get(fKey);
                 if (salvageFaction == null) {
-                    logger.debug("Could not locate faction " + fKey
-                            + " for " + fRec.getKey() + " salvage");
+                    logger.debug("Could not locate faction {} for {} salvage.",
+                        fKey, fRec.getKey());
                 } else {
-                    double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
-                    salvageWeights.put(salvageFaction, wt);
+                    double factionSalvageWeight = overallSalvage * salvageEntries.get(fKey) / totalFactionWeight;
+                    salvageWeights.put(salvageFaction, factionSalvageWeight);
                 }
             }
         }

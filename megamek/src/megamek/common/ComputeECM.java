@@ -522,7 +522,7 @@ public class ComputeECM {
      * Returns the total friendly ECM effects on the supplied unit.
      *
      * @param affectedEntity The entity to check.
-     * @param allECMInfo
+     * @param allEcmInfo
      * @return
      */
     public static @Nullable ECMInfo getFriendlyECMEffects(Entity affectedEntity, @Nullable List<ECMInfo> allEcmInfo){

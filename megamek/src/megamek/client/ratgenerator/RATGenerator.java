@@ -776,11 +776,14 @@ public class RATGenerator {
             }
         }
 
+        // Adjust weights of standard table entries and salvage entries for established
+        // percentages of Omni-units, base Clan tech, and Star League/advanced tech
         if (ratingLevel >= 0) {
             adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 
-        // Increase weights if necessary to keep smallest from rounding down to zero
+        // Incorporate the salvage entries with the unit entries. Then re-calculate
+        // weights as necessary to keep the range of values between 0 and 1000.
         double adj = 1.0;
         DoubleSummaryStatistics stats = Stream
                 .concat(salvageWeights.values().stream(), unitWeights.values().stream())
@@ -811,54 +814,82 @@ public class RATGenerator {
         return retVal;
     }
 
-    private void adjustForRating(FactionRecord fRec, int unitType, int year, int rating,
-            Map<ModelRecord, Double> unitWeights,
-            Map<FactionRecord, Double> salvageWeights, Integer early,
-            Integer late) {
-        double total = 0.0;
-        double totalOmni = 0.0;
-        double totalClan = 0.0;
-        double totalSL = 0.0;
+    /**
+     * Adjust weighted random selection value based on percentage values for
+     * Omni-units, Clan-tech units, and Star League/advanced tech units from
+     * faction data. The {@code unitWeights} and {@code salvageWeights} parameters
+     * are modified rather than returning a single unified set.
+     * @param fRec      faction used to generate units
+     * @param unitType  type of unit being generated
+     * @param year      current game year
+     * @param rating    equipment rating based on available range, typically F (0)/D/C/B/A (4)
+     * @param unitWeights  random frequency rates (entries for the table), excluding salvage
+     * @param salvageWeights  random frequency rates of salvaged units by faction
+     * @param currentEra   current era
+     * @param nextEra      next era
+     */
+    private void adjustForRating(FactionRecord fRec,
+                                 int unitType,
+                                 int year,
+                                 int rating,
+                                 Map<ModelRecord, Double> unitWeights,
+                                 Map<FactionRecord, Double> salvageWeights,
+                                 Integer currentEra,
+                                 Integer nextEra) {
+
+        double totalWeight = 0.0;
+        double totalOmniWeight = 0.0;
+        double totalClanWeight = 0.0;
+        double totalSLWeight = 0.0;
+
+        // Total the unit weight of all selected units, plus get totals
+        // of all Omni-units, base Clan-tech units, and Star League/advanced
+        // tech units
         for (Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
-            total += entry.getValue();
+            totalWeight += entry.getValue();
             if (entry.getKey().isOmni()) {
-                totalOmni += entry.getValue();
+                totalOmniWeight += entry.getValue();
             }
             if (entry.getKey().isClan()) {
-                totalClan += entry.getValue();
+                totalClanWeight += entry.getValue();
             } else if (entry.getKey().isSL()) {
-                totalSL += entry.getValue();
+                totalSLWeight += entry.getValue();
             }
         }
+
         Double pctOmni = null;
         Double pctNonOmni = null;
         Double pctSL = null;
         Double pctClan = null;
         Double pctOther = null;
+
+        // Get the desired percentages from faction data, and interpolate between
+        // eras if needed
         if (unitType == UnitType.MEK) {
-            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI, early, rating),
-                    fRec.findPctTech(TechCategory.OMNI, late, rating), early, late, year);
-            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN, early, rating),
-                    fRec.findPctTech(TechCategory.CLAN, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED, early, rating),
-                    fRec.findPctTech(TechCategory.IS_ADVANCED, late, rating), early, late, year);
+            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI, currentEra, rating),
+                    fRec.findPctTech(TechCategory.OMNI, nextEra, rating), currentEra, nextEra, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN, currentEra, rating),
+                    fRec.findPctTech(TechCategory.CLAN, nextEra, rating), currentEra, nextEra, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED, currentEra, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED, nextEra, rating), currentEra, nextEra, year);
         }
         if (unitType == UnitType.AEROSPACEFIGHTER) {
-            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI_AERO, early, rating),
-                    fRec.findPctTech(TechCategory.OMNI_AERO, late, rating), early, late, year);
-            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_AERO, early, rating),
-                    fRec.findPctTech(TechCategory.CLAN_AERO, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, early, rating),
-                    fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
+            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI_AERO, currentEra, rating),
+                    fRec.findPctTech(TechCategory.OMNI_AERO, nextEra, rating), currentEra, nextEra, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_AERO, currentEra, rating),
+                    fRec.findPctTech(TechCategory.CLAN_AERO, nextEra, rating), currentEra, nextEra, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, currentEra, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, nextEra, rating), currentEra, nextEra, year);
         }
         if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
-            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_VEE, early, rating),
-                    fRec.findPctTech(TechCategory.CLAN_VEE, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, early, rating),
-                    fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_VEE, currentEra, rating),
+                    fRec.findPctTech(TechCategory.CLAN_VEE, nextEra, rating), currentEra, nextEra, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, currentEra, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, nextEra, rating), currentEra, nextEra, year);
         }
 
-        /* Adjust for lack of precision in post-FM:Updates extrapolations */
+        // Use margin values from the faction data to adjust for lack of precision
+        // in post-FM:Updates era extrapolations
         if (pctSL != null || pctClan != null) {
             pctOther = 100.0;
             if (pctSL != null) {
@@ -868,11 +899,11 @@ public class RATGenerator {
             if (pctClan != null) {
                 pctOther -= pctClan;
             }
-            Double techMargin = interpolate(fRec.getTechMargin(early), fRec.getTechMargin(late),
-                    early, late, year);
+            Double techMargin = interpolate(fRec.getTechMargin(currentEra),
+                fRec.getTechMargin(nextEra), currentEra, nextEra, year);
             if (techMargin != null && techMargin > 0) {
                 if (pctClan != null) {
-                    double pct = 100.0 * totalClan / total;
+                    double pct = 100.0 * totalClanWeight / totalWeight;
                     if (pct < pctClan - techMargin) {
                         pctClan -= techMargin;
                     } else if (pct > pctClan + techMargin) {
@@ -881,7 +912,7 @@ public class RATGenerator {
                 }
 
                 if (pctSL != null) {
-                    double pct = 100.0 * totalSL / total;
+                    double pct = 100.0 * totalSLWeight / totalWeight;
                     if (pct < pctSL - techMargin) {
                         pctSL -= techMargin;
                     } else if (pct > pctSL + techMargin) {
@@ -890,22 +921,22 @@ public class RATGenerator {
                 }
             }
 
-            Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
-                    fRec.getUpgradeMargin(late), early, late, year);
+            Double upgradeMargin = interpolate(fRec.getUpgradeMargin(currentEra),
+                    fRec.getUpgradeMargin(nextEra), currentEra, nextEra, year);
             if ((upgradeMargin != null) && (upgradeMargin > 0)) {
-                double pct = 100.0 * (total - totalClan - totalSL) / total;
+                double pct = 100.0 * (totalWeight - totalClanWeight - totalSLWeight) / totalWeight;
                 if (pct < pctOther - upgradeMargin) {
                     pctOther -= upgradeMargin;
                 } else if (pct > pctOther + upgradeMargin) {
                     pctOther += upgradeMargin;
                 }
-                /*
-                 * If clan, sl, and other are all adjusted, the values probably
-                 * don't add up to 100, which is fine unless the upgradeMargin is
-                 * <= techMargin. Then pctOther is more certain, and we adjust
-                 * the values of clan and sl to keep the value of "other" equal to
-                 * a percentage.
-                 */
+
+                // If Clan-tech, Star League tech, and Other are all adjusted, the
+                // values probably don't add up to 100. This is acceptable unless
+                // the upgradeMargin is less than techMargin. Then pctOther is more
+                // certain, and we adjust the values of Clan-tech and Star League
+                // tech to keep the value of Other equal to a percentage.
+
                 if (techMargin != null) {
                     if (upgradeMargin <= techMargin) {
                         if (pctClan == null || pctClan == 0) {
@@ -918,58 +949,70 @@ public class RATGenerator {
                         }
                     }
                 }
+
             }
         }
+
+        // Adjust Omni-unit percentage by margin values from faction data
         if (pctOmni != null) {
-            Double omniMargin = interpolate(fRec.getOmniMargin(early), fRec.getOmniMargin(late),
-                    early, late, year);
-            if ((omniMargin != null) && (omniMargin > 0)) {
-                double pct = 100.0 * totalOmni / total;
+            Double omniMargin = interpolate(fRec.getOmniMargin(currentEra), fRec.getOmniMargin(nextEra),
+                    currentEra, nextEra, year);
+
+            if (omniMargin != null && omniMargin > 0) {
+                double pct = 100.0 * totalOmniWeight / totalWeight;
                 if (pct < pctOmni - omniMargin) {
                     pctOmni -= omniMargin;
                 } else if (pct > pctOmni + omniMargin) {
                     pctOmni += omniMargin;
                 }
             }
+
             pctNonOmni = 100.0 - pctOmni;
         }
 
         // For non-Clan factions, the amount of salvage from Clan factions is part of
         // the overall Clan percentage.
-        if (!fRec.isClan() && (pctClan != null) && (totalClan > 0)) {
-            double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
-                    .mapToDouble(salvageWeights::get).sum();
-            total += clanSalvage;
-            totalClan += clanSalvage;
+        if (!fRec.isClan() && (pctClan != null) && (totalClanWeight > 0)) {
+            double clanSalvage = salvageWeights.
+                    keySet().
+                    stream().
+                filter(FactionRecord::isClan).
+                mapToDouble(salvageWeights::get).
+                sum();
+
+            totalWeight += clanSalvage;
+            totalClanWeight += clanSalvage;
             for (FactionRecord fr : salvageWeights.keySet()) {
                 if (fr.isClan()) {
-                    salvageWeights.put(fr, salvageWeights.get(fr)
-                            * (pctClan / 100.0) * (total / totalClan));
+                    salvageWeights.put(fr, salvageWeights.get(fr) * (pctClan / 100.0) * (totalWeight / totalClanWeight));
                 }
             }
+
         }
-        double totalOther = total - totalClan - totalSL;
+
+        // Anything not base Clan or Star League/advanced tech is Other/basic tech
+        double totalOther = totalWeight - totalClanWeight - totalSLWeight;
         for (ModelRecord mRec : unitWeights.keySet()) {
-            if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
+            if (pctOmni != null && mRec.isOmni() && totalOmniWeight < totalWeight) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (totalWeight / totalOmniWeight));
             }
-            if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));
+            if (pctNonOmni != null && !mRec.isOmni() && totalOmniWeight > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (totalWeight / (totalWeight - totalOmniWeight)));
             }
-            if (pctSL != null && mRec.isSL()
-                    && totalSL > 0) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
+            if (pctSL != null && mRec.isSL() && totalSLWeight > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (totalWeight / totalSLWeight));
             }
-            if (pctClan != null && mRec.isClan()
-                    && totalClan > 0) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
+            if (pctClan != null && mRec.isClan() && totalClanWeight > 0) {
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (totalWeight / totalClanWeight));
             }
             if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
-                        * (total / totalOther));
+                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0) * (totalWeight / totalOther));
             }
         }
-        double multiplier = total / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        // With modifications, check the new total weight against the original value and
+        // use it as a multiplier to
+        double multiplier = totalWeight / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
         for (ModelRecord mRec : unitWeights.keySet()) {
             unitWeights.merge(mRec, multiplier, (a, b) -> a * b);
         }

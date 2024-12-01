@@ -232,7 +232,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getModesCount() {
-        return getType().getModesCount();
+        return getType().getModesCount(this);
     }
 
     protected EquipmentMode getMode(int mode) {

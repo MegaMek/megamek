@@ -1,9 +1,10 @@
 size 35 35
 option exit_roads_to_pavement false
-tag "SnowTerrain (Auto)"
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
 tag "Ocean (Auto)"
+tag "MultipleTheme (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 2 "snow:1" ""
 hex 0201 2 "snow:1" ""
 hex 0301 2 "snow:1" ""

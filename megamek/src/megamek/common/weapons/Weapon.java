@@ -155,13 +155,13 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
             } else {
                 if (getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
-                    setInstantModeSwitch(false);
+                    setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_TELE_OPERATED);
                 }
                 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH)) {
-                    setInstantModeSwitch(false);
+                    setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_WAYPOINT);
                     if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
@@ -180,7 +180,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
                 }
 
                 if (gOp.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH)) {
-                    setInstantModeSwitch(false);
+                    setInstantModeSwitch(true);
                     addMode(MODE_NORMAL);
                     addMode(MODE_CAP_MISSILE_BEARING_EXT);
                     addMode(MODE_CAP_MISSILE_BEARING_LONG);

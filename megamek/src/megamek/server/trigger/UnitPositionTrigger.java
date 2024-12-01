@@ -112,4 +112,14 @@ public class UnitPositionTrigger implements Trigger {
     private boolean matchesIdList(InGameObject unit) {
         return unitIds.isEmpty() || unitIds.contains(unit.getId());
     }
+
+    @Override
+    public String toString() {
+        String result = "UnitPosition: ";
+        result += area.toString();
+        result += (minUnitCount >= 0 ? minUnitCount : "0") + (maxUnitCount < Integer.MAX_VALUE ? "-" + maxUnitCount : "+") + " of ";
+        result += playerName.isBlank() ? "" : playerName + "/";
+        result += unitIds.toString();
+        return result;
+    }
 }

@@ -70,6 +70,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
      */
     public static final String USER_DIR = "UserDir";
 
+    public static final String MML_PATH = "MmlPath";
+
     // endregion Variable Declarations
 
     // region Constructors
@@ -103,6 +105,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(USER_DIR, "");
+        store.setDefault(MML_PATH, "");
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -405,5 +408,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
             userDir = userDir.substring(0, userDir.length() - 1);
         }
         store.setValue(USER_DIR, userDir);
+    }
+
+    public String getMmlPath() {
+        return store.getString(MML_PATH);
+    }
+
+    public void setMmlPath(String mmlPath) {
+        store.setValue(MML_PATH, mmlPath.isBlank() ? "" : new File(mmlPath).getAbsolutePath());
     }
 }

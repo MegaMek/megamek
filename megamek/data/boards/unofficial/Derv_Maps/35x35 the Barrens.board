@@ -1,6 +1,7 @@
 size 35 35
 tag "Rough (Auto)"
 tag "MarsTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 0 "" "mars"

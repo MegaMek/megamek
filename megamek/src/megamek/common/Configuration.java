@@ -121,6 +121,8 @@ public final class Configuration {
 
     /** The default universe directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_IMG_UNIVERSE = "universe";
+    private static final String DEFAULT_DIR_ORBITAL_BOMBARDMENT = "orbital_bombardment";
+    private static final String DEFAULT_DIR_NUKE = "nuke";
 
     private Configuration() {
     }
@@ -324,6 +326,22 @@ public final class Configuration {
      */
     public static File hexesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_HEXES);
+    }
+
+    /**
+     * Return the orbital bombardment hexes directory, which is relative to the hexes directory.
+     * @return {@link File} containing the path to the orbital bombardment hexes directory.
+     */
+    public static File orbitalBombardmentHexesDir() {
+        return new File(hexesDir(), DEFAULT_DIR_ORBITAL_BOMBARDMENT);
+    }
+
+    /**
+     * Return the nuke hit hexes directory, which is relative to the hexes directory.
+     * @return {@link File} containing the path to the orbital bombardment hexes directory.
+     */
+    public static File nukeHexesDir() {
+        return new File(hexesDir(), DEFAULT_DIR_NUKE);
     }
 
     /**

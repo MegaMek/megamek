@@ -356,11 +356,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
         toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
-        /*
-         * TODO: moveTraitor = createMenuItem(menu,
-         * getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);
-         */
-
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);
@@ -528,7 +523,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardRecent.setEnabled((isBoardEditor || isMainMenu) && !RecentBoardList.getRecentBoards().isEmpty());
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled((isLobby || isInGame) && isNotVictory);
+        fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
         fileUnitsReinforceRAT.setEnabled((isLobby || isInGame) && isNotVictory);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);

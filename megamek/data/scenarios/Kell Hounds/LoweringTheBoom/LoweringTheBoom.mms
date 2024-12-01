@@ -41,7 +41,9 @@ map:
       newlevel: 3
 
 options:
-  file: gameoptions3025.xml
+  file: options_3025_basic.xml
+  off:
+    - check_victory
 
 factions:
 
@@ -52,24 +54,26 @@ factions:
   victory:
     - trigger:
         type: fledunits
-        modify: atend
         units: [ 101, 102, 103, 104, 105, 106 ]
         atleast: 4
       modify: onlyatend
 
   fleefrom:
     border: north
+    # only for testing:
+#    all:
 
-  bot:
-    # try to get away
-    selfpreservation: 8
-    fallshame: 8
-    hyperaggression: 4
-    herdmentality: 1
-    bravery: 3
-    # Princess respects the edge she is set to flee from
-    fleeto: north
-    flee: true
+  # only for testing bot vs bot
+  #  bot:
+  #    # try to get away
+  #    selfpreservation: 8
+  #    fallshame: 8
+  #    hyperaggression: 4
+  #    herdmentality: 1
+  #    bravery: 3
+  #    # Princess respects the edge she is set to flee from
+  #    fleeto: north
+  #    flee: true
 
   units:
     include: LoweringTheBoom_units_marik.mmu
@@ -92,7 +96,6 @@ factions:
     - modify: onlyatend
       trigger:
         type: fledunits
-        modify: atend
         units: [ 101, 102, 103, 104, 105, 106 ]
         atmost: 2
 
@@ -105,7 +108,7 @@ messages:
       # Situation
       ## Castor
       ## Free Worlds League
-      ## 7 June 3011
+      ## 15 June 3012
 
       The idea for a Steiner raid on the Marik world of Castor originated with Cranston Snord, a well-known
       eccentric and one of Katrina Steiner's long-serving mercenary commanders. Snord's sources had informed
@@ -142,14 +145,6 @@ messages:
     image: loweringboom_map.png
     trigger:
       type: gamestart
-
-  - header: One Unit Safe
-    text: Congratulations, one of your Meks has safely left the battlefield!
-    trigger:
-      type: fledunits
-      modify: once
-      units: [ 101, 102, 103, 104, 105, 106 ]
-      count: 1
 
   - header: Another Unit Safe
     text: Three of your Meks have safely left the battlefield! This game is already considered a draw.
@@ -231,6 +226,26 @@ messages:
       modify: atend
       units: [ 101, 102, 103, 104, 105, 106 ]
       count: 4
+
+  - header: Pilot Message
+    text: |
+      *Deborah Ryan:* They won't be catching me!
+    image: portraits/Female/MekWarrior/MW_F_83.png
+    trigger:
+      type: fledunits
+      modify: once
+      units: [ 106 ]
+      count: 1
+
+  - header: Pilot Message
+    text: |
+      *Col. Oliver Nage:* They got Deborah's Javelin! Let's hope she made it out of there. Keep going!
+    image: portraits/Male/MekWarrior/MW_M_15.png
+    trigger:
+      type: killedunit
+      modify: once
+      unit: 106
+
 
 end:
   - trigger:

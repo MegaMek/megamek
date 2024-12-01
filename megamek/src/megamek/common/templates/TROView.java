@@ -684,7 +684,7 @@ public class TROView {
      */
     protected @Nullable Map<String, Object> formatTransporter(Transporter transporter, String loc) {
         final Map<String, Object> retVal = new HashMap<>();
-        if (transporter instanceof TroopSpace) {
+        if (transporter instanceof InfantryCompartment) {
             retVal.put("name", Messages.getString("TROView.TroopSpace"));
             retVal.put("tonnage", transporter.getUnused());
         } else if (transporter instanceof Bay) {

@@ -2,6 +2,7 @@ size 34 34
 tag "Foliage (Auto)"
 tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"

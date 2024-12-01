@@ -135,6 +135,7 @@ class TWPhaseEndManager {
                 gameManager.assignAMS();
                 gameManager.handleAttacks();
                 gameManager.resolveScheduledNukes();
+                gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();

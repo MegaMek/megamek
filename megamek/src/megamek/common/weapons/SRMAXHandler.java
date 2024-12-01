@@ -20,6 +20,7 @@
 package megamek.common.weapons;
 
 import megamek.common.Game;
+import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.totalwarfare.TWGameManager;
@@ -38,5 +39,6 @@ public class SRMAXHandler extends SRMHandler {
         sSalvoType = " acid-head missile(s) ";
         nSalvoBonus = -2;
         damageType = DamageType.ACID;
+        generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
     }
 }

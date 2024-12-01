@@ -450,7 +450,7 @@ public class ASSpecialAbilityConverter {
                 assign("Docking Collar", DT, 1);
             } else if (t instanceof InfantryBay) {
                 assign("Infantry Bay", IT, ((InfantryBay) t).getCapacity());
-            } else if (t instanceof TroopSpace) {
+            } else if (t instanceof InfantryCompartment) {
                 assign("Troop Space", IT, t.getUnused());
             } else if (t instanceof MekBay) {
                 assign("Mek Bay", MT, (int) ((MekBay) t).getCapacity());

@@ -223,13 +223,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         @Override
         public String getElementAt(int index) {
             final WeaponMounted mounted = weapons.get(index);
-            final WeaponType wtype = (WeaponType) mounted.getType();
+            final WeaponType wtype = mounted.getType();
             Game game = null;
             if (unitDisplay.getClientGUI() != null) {
                 game = unitDisplay.getClientGUI().getClient().getGame();
             }
 
             StringBuilder wn = new StringBuilder(mounted.getDesc());
+            if ((mounted.getLinkedBy() != null)
+                    && (mounted.getLinkedBy().getType() instanceof MiscType)
+                    && (mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                wn.append("+").append(mounted.getLinkedBy().getShortName());
+            }
             wn.append(" [");
             wn.append(en.getLocationAbbr(mounted.getLocation()));
             //Check if mixedTech and add Clan or IS tag

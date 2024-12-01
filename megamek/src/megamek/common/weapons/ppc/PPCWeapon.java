@@ -73,8 +73,8 @@ public abstract class PPCWeapon extends EnergyWeapon {
             if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
-            if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05;
+            if (getToHitModifier(null) != 0) {
+                damage -= damage * getToHitModifier(null) * 0.05;
             }
         }
         return damage / 10.0;

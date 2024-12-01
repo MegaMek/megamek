@@ -21,11 +21,7 @@
 package megamek.common;
 
 import static java.util.stream.Collectors.toList;
-import static megamek.common.SpecialHexDisplay.Type.ARTILLERY_DRIFT;
-import static megamek.common.SpecialHexDisplay.Type.ARTILLERY_MISS;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_DRIFT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_HIT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
+import static megamek.common.SpecialHexDisplay.Type.*;
 
 import java.io.*;
 import java.util.*;
@@ -1752,7 +1748,7 @@ public class Board implements Serializable {
     public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
         Hashtable<Coords, Collection<SpecialHexDisplay>> temp = new Hashtable<>();
 
-        // Grab all current ARTILLERY_MISS instances
+        // Grab all current ARTILLERY_MISS and ARTILLERY_DRIFT instances
         for (Map.Entry<Coords, Collection<SpecialHexDisplay>> e : specialHexes.entrySet()) {
             for (SpecialHexDisplay special : e.getValue()) {
                 if (Set.of(ARTILLERY_MISS, ARTILLERY_DRIFT).contains(special.getType())) {
@@ -2087,4 +2083,5 @@ public class Board implements Serializable {
     public static int encodeCustomDeploymentZoneID(int zoneID) {
         return zoneID + NUM_ZONES_X2;
     }
+
 }

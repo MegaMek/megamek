@@ -2,6 +2,7 @@ size 48 53
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "MediumForest (Auto)"
 tag "Woods (Auto)"

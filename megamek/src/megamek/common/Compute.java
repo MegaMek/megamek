@@ -7248,6 +7248,7 @@ public class Compute {
             case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                         || wtype.hasFlag(WeaponType.F_PULSE)
+                        || weapon.curMode().getName().equals("Pulse")
                         || (wtype instanceof HAGWeapon)) {
                     return false;
                 }
@@ -7293,6 +7294,11 @@ public class Compute {
                     continue;
                 }
                 if (type instanceof WeaponType) {
+                    if ((((WeaponType) m.getType()).getLongRange() <= 1)
+                        // MML range depends on ammo, and getLongRange() returns 0
+                        && (((WeaponType) m.getType()).getAmmoType() != AmmoType.T_MML)) {
+                        continue;
+                    }
                     if (((WeaponType) type).isCapital()) {
                         nCapitalW++;
                     } else {

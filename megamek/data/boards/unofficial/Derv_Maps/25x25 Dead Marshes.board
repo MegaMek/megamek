@@ -1,10 +1,11 @@
 size 25 25
 option exit_roads_to_pavement false
-tag "Swamp (Auto)"
-tag "LightForest (Auto)"
-tag "DesertTheme (Auto)"
 tag "Water (Auto)"
+tag "Swamp (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
+tag "DesertTheme (Auto)"
+tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "swamp:1" "desert"

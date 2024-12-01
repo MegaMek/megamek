@@ -1,5 +1,6 @@
 size 25 25
 tag "LunarTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Lava (Auto)"
 hex 0101 1 "" "lunar"
 hex 0201 1 "" "lunar"

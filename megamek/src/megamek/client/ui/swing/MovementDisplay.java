@@ -19,20 +19,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -61,6 +47,19 @@ import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static megamek.common.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 public class MovementDisplay extends ActionPhaseDisplay {
     private static final MMLogger logger = MMLogger.create(MovementDisplay.class);
@@ -230,7 +229,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         public String getHotKeyDesc() {
-            String result = "";
+            String result;
 
             String msgNext = Messages.getString("Next");
             String msgPrevious = Messages.getString("Previous");
@@ -854,7 +853,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 (ce instanceof Tank)
                         && (ce.getSwarmAttackerId() != Entity.NONE));
 
-        setFleeEnabled(ce.canFlee());
+        updateFleeButton();
+
         if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must enter a valid
             // hex.
@@ -969,7 +969,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (redrawMovement) {
             clientgui.getBoardView().drawMovementData(ce(), cmd);
         }
+
+        updateFleeButton();
         updateDonePanel();
+    }
+
+    private void updateFleeButton() {
+        boolean fleeStart = (cmd.getLastStep() == null)
+            && ce().canFlee(ce().getPosition());
+        boolean jumpMoveRemaining = (cmd.getLastStep() != null)
+            && cmd.getLastStep().isJumping()
+            && (cmd.getMpUsed() < ce().getJumpMP());
+        boolean runMoveRemaining = (cmd.getLastStep() != null)
+            && !cmd.getLastStep().isJumping()
+            && (cmd.getMpUsed() < ce().getRunMP());
+        boolean moveRemaining = jumpMoveRemaining || runMoveRemaining;
+        boolean fleeEnd = (cmd.getLastStep() != null)
+            && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
+            && moveRemaining
+            && clientgui.getClient().getGame().canFleeFrom(ce(), cmd.getLastStep().getPosition());
+        setFleeEnabled(fleeStart || fleeEnd);
     }
 
     private void updateAeroButtons() {
@@ -1967,6 +1986,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         // else clear movement
                         clear();
                     }
+
                     return;
                 }
                 // if not valid, tell why
@@ -4894,10 +4914,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.EscapeDialog.title"),
                         Messages.getString("MovementDisplay.EscapeDialog.message"))) {
-
-            clear();
             addStepToMovePath(MoveStepType.FLEE);
             ready();
+            clear();
         } else if (actionCmd.equals(MoveCommand.MOVE_FLY_OFF.getCmd())
                 && clientgui.doYesNoDialog(
                         Messages.getString("MovementDisplay.FlyOffDialog.title"),
@@ -5297,11 +5316,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String[] playerNames = new String[players.size() - 1];
             String[] options = new String[players.size() - 1];
             Entity e = ce();
+            if (e == null) {
+                return;
+            }
 
+            Player currentOwner = e.getOwner();
             // Loop through the players vector and fill in the arrays
             int idx = 0;
             for (var player : players) {
-                if (player.getName().equals(clientgui.getClient().getLocalPlayer().getName())
+                if (player.getName().equals(currentOwner.getName())
                         || (player.getTeam() == Player.TEAM_UNASSIGNED)) {
                     continue;
                 }
@@ -5321,7 +5344,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
             // Dialog for choosing which player to transfer to
             String option = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-                    "Choose the player to gain ownership of this unit when it turns traitor",
+                    "Choose the player to gain ownership of this unit (" + e.getDisplayName() + ") when it turns traitor",
                     "Traitor", JOptionPane.QUESTION_MESSAGE, null,
                     options, options[0]);
 

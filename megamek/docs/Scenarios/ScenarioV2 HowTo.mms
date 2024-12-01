@@ -215,6 +215,23 @@ factions:
                                               # use slashes
 
     # Units are always an array (use dashes)
+
+    # Victory conditions; they always come as a list (use dashes). Victory conditions can be listed for the
+    # player that wins or outside of the factions (see below)
+    victory:
+      # a victory is mainly a trigger
+      - trigger:
+          type: fledunits
+          modify: atend
+          units: [ 101, 102, 103, 104, 105, 106 ]
+          atleast: 4
+        # the onlyatend modifier means that this victory condition will not end the game by itself; instead
+        # it will only be checked once the game has ended for any other reason, such as a game end trigger
+        # (for example, a round count end)
+        # sometimes, victory conditions and game end conditions are are easier to write when they are kept
+        # apart; other times, this modifier can be omitted; then, this condition will end the game
+        modify: onlyatend
+
     units:
 #    - include: Annihilator ANH-13.mmu
       - fullname: Atlas AS7-D
@@ -478,6 +495,35 @@ messages:
       atleast: 6
 
 # ###############################################
+# Victory conditions; they always come as a list (use dashes). Listing them outside the factions can be
+# done as an alternative or in addition to victory conditions listed with the factions. The exception
+# is a draw condition that should directly end the game which cannot be given as part of the factions
+# but must be given as described here
+victory:
+  # When a victory condition is a win, it must give the player (= Team) it applies to.
+  - player: Player A
+    trigger:
+      type: fledunits
+      modify: atend
+      units: [ 101, 102, 103, 104, 105, 106 ]
+      atleast: 4
+    # the onlyatend modifier means that this victory condition will not end the game by itself; instead
+    # it will only be checked once the game has ended for any other reason, such as a game end trigger
+    # (for example, a round count end)
+    # sometimes, victory conditions and game end conditions are are easier to write when they are kept
+    # apart; other times, this modifier can be omitted; then, this condition will end the game
+    modify: onlyatend
+
+  # When a victory condition does not give the player, it is a draw condition. In this case, it is
+  # automatically game-ending (this is because, when the game is ended, it is automatically considered
+  # a draw when no actual win condition is met. No explicit draw condition needs to be given.
+  # Draw conditions are only needed when they are supposed to also end the game). So, it should not
+  # use the onlyatend modifier
+  - trigger:
+      type: unitkilled
+      unit: 104
+
+# ###############################################
 # Triggers
 # are used to end the game, decide victory and show messages
 # The following examples show all available triggers. Note that triggers by themselves (as given below)
@@ -722,6 +768,10 @@ area:
 area:
   # The empty area has no hexes. Can be used to prevent units from fleeing the board
   empty:
+
+area:
+  # The "all" area includes all hexes of any board
+  all:
 
 area:
   # the area can be given as a terrain type

@@ -133,6 +133,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
                 heat++;
             }
         }
+        if (curMode().equals("Pulse")) {
+            heat += 2;
+        }
 
         // Apply heat modifiers (scenario/permanent/modding)
         for (EquipmentModifier modifier : modifiers) {

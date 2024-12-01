@@ -1,9 +1,10 @@
 size 64 85
 tag "Rough (Auto)"
 tag "Foliage (Auto)"
-tag "Water (Auto)"
 tag "SnowTheme (Auto)"
+tag "Water (Auto)"
 tag "Ocean (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "IceTerrain (Auto)"
 tag "MediumForest (Auto)"

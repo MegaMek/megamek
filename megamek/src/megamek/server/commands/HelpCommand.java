@@ -22,7 +22,7 @@ import megamek.server.Server;
  * The help command lists the other commands when run without arguments. When
  * run with another command name as an argument, it queries that command for its
  * help string and send that to the client.
- * 
+ *
  * @author Ben
  * @since March 30, 2002, 7:03 PM
  */
@@ -51,8 +51,10 @@ public class HelpCommand extends ServerCommand {
                         + "\" not recognized.  Commands available: "
                         + commandList());
             } else {
-                server.sendServerChat(connId, "/" + command.getName() + " : "
-                        + command.getHelp());
+                var help = command.getHelp();
+                for (String line : help.split("\n")) {
+                    server.sendServerChat(connId, line);
+                }
             }
         }
     }
@@ -64,7 +66,7 @@ public class HelpCommand extends ServerCommand {
 
         Collections.sort(cmdNames);
         for (String cmdName : cmdNames) {
-            if (commandList.length() > 0) {
+            if (!commandList.isEmpty()) {
                 commandList.append(", ");
             }
             commandList.append(cmdName);

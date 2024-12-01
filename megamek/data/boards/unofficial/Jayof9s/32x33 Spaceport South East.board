@@ -1,10 +1,15 @@
 size 32 33
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
-tag "Roads (Auto)"
 tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
 tag "Flat (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
+tag "Fortress (Auto)"
 hex 0101 0 "pavement:1" "grass"
 hex 0201 0 "pavement:1" "grass"
 hex 0301 0 "bldg_elev:3;pavement:1;building:2:12;bldg_cf:55" "grass"

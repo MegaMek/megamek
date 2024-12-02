@@ -340,6 +340,11 @@ public class TeamLoadOutGenerator {
         boolean legal = false;
         boolean clan = techBase.equals("CL");
 
+        // Null-type is illegal!
+        if (null == aType) {
+            return false;
+        }
+
         // Check if tech exists at all (or is explicitly allowed despite being extinct)
         // and whether it is available at the current tech level.
         legal = aType.isAvailableIn(allowedYear, showExtinct)
@@ -1111,7 +1116,9 @@ public class TeamLoadOutGenerator {
                 reconfigurationParameters.groundMap
                         || reconfigurationParameters.enemyCount > reconfigurationParameters.enemyFliers,
                 reconfigurationParameters.friendlyQuality,
-                reconfigurationParameters.isPirate);
+                reconfigurationParameters.isPirate,
+                faction
+            );
     }
 
     /**
@@ -1388,11 +1395,14 @@ public class TeamLoadOutGenerator {
      * @param quality          IUnitRating enum for force quality (A/A* through F)
      * @param isPirate         true to use specific pirate ordnance loadouts
      */
-    public static void populateAeroBombs(List<Entity> entityList,
-            int year,
-            boolean hasGroundTargets,
-            int quality,
-            boolean isPirate) {
+    public void populateAeroBombs(
+        List<Entity> entityList,
+        int year,
+        boolean hasGroundTargets,
+        int quality,
+        boolean isPirate,
+        String faction
+        ) {
 
         // Get all valid bombers, and sort unarmed ones to the front
         // Ignore VTOLs for now, as they suffer extra penalties for mounting bomb
@@ -1438,6 +1448,8 @@ public class TeamLoadOutGenerator {
 
             Entity curBomber = bomberList.get(i);
             boolean isUnarmed = curBomber.getIndividualWeaponList().isEmpty();
+            String techBase = (curBomber.isClan()) ? "CL" : "IS";
+            boolean mixedTech = curBomber.isMixedTech();
 
             // Some fighters on ground attack may be flying air cover rather than strictly
             // air-to-ground
@@ -1477,7 +1489,11 @@ public class TeamLoadOutGenerator {
                     isCAP,
                     isPirate,
                     quality,
-                    year);
+                    year,
+                    faction,
+                    techBase,
+                    mixedTech
+            );
             // Whoops, go yell at the ordnance technician
             if (Arrays.stream(generatedBombs).sum() == 0) {
                 continue;
@@ -1549,11 +1565,16 @@ public class TeamLoadOutGenerator {
      *         enums as the lookup e.g. [BombUnit.HE] will get the number of HE
      *         bombs.
      */
-    private static int[] generateExternalOrdnance(int bombUnits,
-            boolean airOnly,
-            boolean isPirate,
-            int quality,
-            int year) {
+    private int[] generateExternalOrdnance(
+        int bombUnits,
+        boolean airOnly,
+        boolean isPirate,
+        int quality,
+        int year,
+        String faction,
+        String techBase,
+        boolean mixedTech
+    ) {
 
         int[] bombLoad = new int[BombType.B_NUM];
 
@@ -1658,6 +1679,18 @@ public class TeamLoadOutGenerator {
         // rockets or HE
         Map<Integer, Integer> workingBombMap = new HashMap<>();
         for (int curBombType : bombMap.keySet()) {
+            // Make sure the bomb type is even legal for the current scenario
+            if (
+                !checkLegality(
+                    BombType.createBombByType(curBombType),
+                    faction,
+                    techBase,
+                    mixedTech
+                )
+            ) {
+                continue;
+            }
+
             String typeName = BombType.getBombInternalName(curBombType);
             if (curBombType == BombType.B_RL ||
                     curBombType == BombType.B_HE ||

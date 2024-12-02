@@ -6639,7 +6639,7 @@ public class Compute {
             case WeaponType.WEAPON_PLASMA:
                 // If the target is fire-resistant BA, damage is normal
                 if (!target.isFireResistant()) {
-                    damage = 1 + Compute.d6(1);
+                    damage = 2 + Compute.d6(1);
                 }
                 break;
         }

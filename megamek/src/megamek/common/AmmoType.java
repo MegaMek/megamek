@@ -484,6 +484,10 @@ public class AmmoType extends EquipmentType {
         return ammoType;
     }
 
+    public int getToHitModifier() {
+        return toHitModifier;
+    }
+
     /**
      * Analog to WeaponType.getFireTNRoll(), but based on munitions.
      * See TO:AR pg 42
@@ -4395,7 +4399,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
                 .setISAdvancement(2590, 2595, 3040, 2840, 3035)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, false, true)
+                .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_FS);
         return ammo;
     }

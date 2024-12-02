@@ -1,10 +1,14 @@
 size 100 100
 option exit_roads_to_pavement false
-tag "Water (Auto)"
 tag "Cliffs (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
+tag "GunEmplacement (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 3 "woods:2;foliage_elev:2" ""
 hex 0201 3 "woods:2;foliage_elev:2" ""

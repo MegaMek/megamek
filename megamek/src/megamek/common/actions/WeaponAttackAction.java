@@ -3193,8 +3193,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Flat to hit modifiers defined in WeaponType
-        if (wtype.getToHitModifier() != 0) {
-            int modifier = wtype.getToHitModifier();
+        if (wtype.getToHitModifier(weapon) != 0) {
+            int modifier = wtype.getToHitModifier(weapon);
             if (wtype instanceof VariableSpeedPulseLaserWeapon) {
                 int nRange = ae.getPosition().distance(target.getPosition());
                 int[] nRanges = wtype.getRanges(weapon, ammo);
@@ -5243,8 +5243,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
         }
         // weapon to-hit modifier
-        if (wtype.getToHitModifier() != 0) {
-            toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
+        if (wtype.getToHitModifier(weapon) != 0) {
+            toHit.addModifier(wtype.getToHitModifier(weapon), Messages.getString("WeaponAttackAction.WeaponMod"));
         }
         // ammo to-hit modifier
         if (usesAmmo && (atype.getToHitModifier() != 0)) {

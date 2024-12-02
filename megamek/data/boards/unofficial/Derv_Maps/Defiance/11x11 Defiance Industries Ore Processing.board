@@ -1,6 +1,8 @@
 size 11 11
 tag "Rough (Auto)"
 tag "GrassTheme (Auto)"
+tag "MultipleTheme (Auto)"
+tag "Impassable (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""
 hex 0301 1 "bldg_elev:1;pavement:1;building:2:8;bldg_cf:35" ""

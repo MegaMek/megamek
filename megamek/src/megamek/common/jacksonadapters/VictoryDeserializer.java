@@ -18,61 +18,67 @@
  */
 package megamek.common.jacksonadapters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import megamek.server.scriptedevent.DrawTriggeredEvent;
+import megamek.server.scriptedevent.TriggeredEvent;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.Trigger;
 
-import java.io.IOException;
 import java.util.List;
 
-import static megamek.common.jacksonadapters.MMUReader.requireFields;
+public final class VictoryDeserializer {
 
-public class VictoryDeserializer extends StdDeserializer<VictoryTriggeredEvent> {
-
-    private static final String TEXT = "text";
-    private static final String HEADER = "header";
     private static final String TRIGGER = "trigger";
-    private static final String IMAGE = "image";
     private static final String MODIFY = "modify";
     private static final String ONLY_AT_END = "onlyatend";
+    private static final String PLAYER = "player";
 
-    public VictoryDeserializer() {
-        this(null);
-    }
+    /**
+     * Parses the given single victory/draw node to return a TriggeredEvent that is either a
+     * DrawTriggeredEvent or VictoryTriggeredEvent depending on the node's contents.
 
-    public VictoryDeserializer(Class<?> vc) {
-        super(vc);
-    }
-
-    @Override
-    public VictoryTriggeredEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return parse(jp.getCodec().readTree(jp));
+     * @param victoryNode a node from the victory: definition in a scenario file
+     * @return the parsed event
+     */
+    public static TriggeredEvent parse(JsonNode victoryNode) {
+        if (victoryNode.has(PLAYER)) {
+            return parse(victoryNode, victoryNode.get(PLAYER).asText());
+        } else {
+            return parseDrawEvent(victoryNode);
+        }
     }
 
     /**
-     * Parses the given map: or maps: node to return a list of one or more boards (the list should
-     * ideally never be empty, an exception being thrown instead). Board files are tried first
-     * in the given basePath; if not found there, MM's data/boards/ is tried instead.
-
-     * @param victoryNode a map: or maps: node from a YAML definition file
-     * @return a list of parsed boards
-     * @throws IllegalArgumentException for illegal node combinations and other errors
+     * Parses the given single victory node to return a DrawTriggeredEvent. It does not apply to a player
+     * and it is automatically game-ending, as explicit draw conditions are unnecessary when the game has
+     * already ended.
+     *
+     * @param victoryNode a node from the victory: definition in a scenario file
+     * @return the parsed event
      */
-    public static VictoryTriggeredEvent parse(JsonNode victoryNode) {
-        requireFields("MessageScriptedEvent", victoryNode, TRIGGER);
-
+    private static TriggeredEvent parseDrawEvent(JsonNode victoryNode) {
         Trigger trigger = TriggerDeserializer.parseNode(victoryNode.get(TRIGGER));
+        return new DrawTriggeredEvent(trigger, true);
+    }
 
-        boolean isGameEnding = true;
+    /**
+     * Parses the given single victory node to return a VictoryTriggeredEvent.
+     * @param victoryNode a node from the victory: definition in a scenario file
+     * @param playerName The name of the player (and thus, team) to which this victory applies
+     * @return the parsed event
+     */
+    public static VictoryTriggeredEvent parse(JsonNode victoryNode, String playerName) {
+        Trigger trigger = TriggerDeserializer.parseNode(victoryNode.get(TRIGGER));
+        return new VictoryTriggeredEvent(trigger, isGameEnding(victoryNode), playerName);
+    }
+
+    private static boolean isGameEnding(JsonNode victoryNode) {
         if (victoryNode.has(MODIFY)) {
             List<String> modifiers = TriggerDeserializer.parseArrayOrSingleNode(victoryNode.get(MODIFY), ONLY_AT_END);
-            if (modifiers.contains(ONLY_AT_END)) {
-                isGameEnding = false;
-            }
+            return !modifiers.contains(ONLY_AT_END);
         }
-        return new VictoryTriggeredEvent(trigger, isGameEnding);
+        return true;
     }
+
+    private VictoryDeserializer() { }
 }

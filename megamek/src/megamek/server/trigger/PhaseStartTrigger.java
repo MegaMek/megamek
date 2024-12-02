@@ -34,4 +34,9 @@ public class PhaseStartTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return (game.getPhase() == phase) && (event == TriggerSituation.PHASE_START);
     }
+
+    @Override
+    public String toString() {
+        return "Phase Start: " + phase;
+    }
 }

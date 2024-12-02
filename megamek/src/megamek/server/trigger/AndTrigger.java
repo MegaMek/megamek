@@ -43,4 +43,10 @@ public class AndTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return triggers.stream().allMatch(trigger -> trigger.isTriggered(game, event));
     }
+
+    @Override
+    public String toString() {
+        List<String> triggerStrings = triggers.stream().map(Trigger::toString).toList();
+        return "(" + String.join(" and ", triggerStrings) + ")";
+    }
 }

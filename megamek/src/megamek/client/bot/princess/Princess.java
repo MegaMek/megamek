@@ -1047,7 +1047,7 @@ public class Princess extends BotClient {
         Entity entityToFire = getGame().getFirstEntity(getMyTurn());
 
         // if we're crippled, off-board and can do so, disengage
-        if (entityToFire.isOffBoard() && entityToFire.canFlee() && entityToFire.isCrippled(true)) {
+        if (entityToFire.isOffBoard() && entityToFire.canFlee(entityToFire.getPosition()) && entityToFire.isCrippled(true)) {
             Vector<EntityAction> disengageVector = new Vector<>();
             disengageVector.add(new DisengageAction(entityToFire.getId()));
             sendAttackData(entityToFire.getId(), disengageVector);
@@ -2138,7 +2138,7 @@ public class Princess extends BotClient {
     boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;
-        } else if (!entity.canFlee()) {
+        } else if (!entity.canFlee(entity.getPosition())) {
             return false;
         } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(),
                 getHomeEdge(entity), getGame())) {

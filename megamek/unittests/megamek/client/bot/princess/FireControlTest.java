@@ -1862,13 +1862,13 @@ class FireControlTest {
         when(((Mek) mockTarget).getCockpitType()).thenReturn(Mek.COCKPIT_STANDARD);
 
         // Test weapon mods.
-        when(mockWeaponType.getToHitModifier()).thenReturn(-2);
+        when(mockWeaponType.getToHitModifier(mockWeapon)).thenReturn(-2);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         expected.addModifier(-2, FireControl.TH_WEAPON_MOD);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
                 mockShooterState, mockTarget, mockTargetState, mockWeapon, mockAmmo, mockGame));
-        when(mockWeaponType.getToHitModifier()).thenReturn(0);
+        when(mockWeaponType.getToHitModifier(mockWeapon)).thenReturn(0);
 
         // Test heat mods.
         when(mockShooter.getHeatFiringModifier()).thenReturn(1);

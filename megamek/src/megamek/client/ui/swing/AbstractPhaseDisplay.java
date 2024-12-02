@@ -219,7 +219,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     public void gameClientFeedbackRequest(GameCFREvent evt) { }
 
     @Override
-    public void gameVictory(GameVictoryEvent e) { }
+    public void gameVictory(PostGameResolution e) { }
 
     //endregion
 }

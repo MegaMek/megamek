@@ -1,12 +1,13 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Roads (Auto)"
-tag "DesertTheme (Auto)"
 tag "Cliffs (Auto)"
 tag "Water (Auto)"
+tag "Roads (Auto)"
 tag "Ocean (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
+tag "DesertTheme (Auto)"
 hex 0101 0 "water:1" "desert"
 hex 0201 0 "water:1" "desert"
 hex 0301 1 "" "desert"

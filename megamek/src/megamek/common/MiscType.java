@@ -17,6 +17,8 @@ package megamek.common;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.miscGear.AntiMekGear;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
@@ -962,10 +964,9 @@ public class MiscType extends EquipmentType {
                     }
                 }
 
-                for (Mounted<?> mo : entity.getMisc()) {
-                    MiscType mt = (MiscType) mo.getType();
-                    if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        fTons += mo.getTonnage();
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                        fTons += mounted.getTonnage();
                     }
                 }
                 if (getInternalName().equals("ISTargeting Computer")) {
@@ -1110,17 +1111,15 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
-            for (Mounted<?> m : entity.getWeaponList()) {
-                WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+            for (WeaponMounted m : entity.getWeaponList()) {
+                if (m.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     fTons += m.getTonnage();
                 }
             }
 
-            for (Mounted<?> mo : entity.getMisc()) {
-                MiscType mt = (MiscType) mo.getType();
-                if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mo.getTonnage();
+            for (MiscMounted mounted : entity.getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
@@ -4283,8 +4282,8 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
-        misc.tonnage = 0.0;
-        misc.criticals = 0;
+        misc.tonnage = 0.100;
+        misc.criticals = 2;
         misc.cost = 500000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);
@@ -7130,6 +7129,7 @@ public class MiscType extends EquipmentType {
         misc.name = "MASH Equipment";
         misc.setInternalName(misc.name);
         misc.addLookupName("MASH Core Component");
+        misc.addLookupName("MASH Operation Theater");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;

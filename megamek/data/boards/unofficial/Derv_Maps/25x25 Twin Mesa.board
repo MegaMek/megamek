@@ -2,8 +2,9 @@ size 25 25
 option exit_roads_to_pavement false
 tag "MarsTheme (Auto)"
 tag "Roads (Auto)"
-tag "MediumUrban (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
+tag "MediumUrban (Auto)"
 hex 0101 1 "" "mars"
 hex 0201 2 "" "mars"
 hex 0301 1 "" "mars"

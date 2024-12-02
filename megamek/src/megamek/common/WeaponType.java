@@ -805,8 +805,8 @@ public class WeaponType extends EquipmentType {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
 
-            if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05;
+            if (getToHitModifier(null) != 0) {
+                damage -= damage * getToHitModifier(null) * 0.05;
             }
         }
 

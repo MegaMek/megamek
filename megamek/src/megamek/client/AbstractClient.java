@@ -235,6 +235,16 @@ public abstract class AbstractClient implements IClient {
         flushConn();
     }
 
+    public void sendPause() {
+        send(new Packet(PacketCommand.PAUSE));
+        flushConn();
+    }
+
+    public void sendUnpause() {
+        send(new Packet(PacketCommand.UNPAUSE));
+        flushConn();
+    }
+
     /**
      * Receives player information from the message packet.
      *

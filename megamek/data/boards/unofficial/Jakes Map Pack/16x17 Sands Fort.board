@@ -1,7 +1,8 @@
 size 16 17
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
 hex 0101 2 "" ""
 hex 0201 2 "" ""
 hex 0301 2 "" ""

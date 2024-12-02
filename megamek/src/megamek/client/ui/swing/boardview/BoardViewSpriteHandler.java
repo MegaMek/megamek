@@ -121,6 +121,6 @@ public abstract class BoardViewSpriteHandler implements GameListener {
     public void gameClientFeedbackRequest(GameCFREvent e) { }
 
     @Override
-    public void gameVictory(GameVictoryEvent e) { }
+    public void gameVictory(PostGameResolution e) { }
     //endregion
 }

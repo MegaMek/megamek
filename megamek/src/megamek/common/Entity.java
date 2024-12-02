@@ -4791,6 +4791,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * @return true if the entity has any critical slot that isn't damaged yet
+     */
+    public boolean hasUndamagedCriticalSlots() {
+        return IntStream.range(0, locations())
+            .mapToLong(i -> getCriticalSlots(i)
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(CriticalSlot::isHittable)
+                .count()
+            ).sum() > 0;
+    }
+
+    /**
      * @return True when this unit has a RISC Super-Cooled Myomer System (even if
      *         the SCM is destroyed).
      */
@@ -8918,7 +8931,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             } else {
                 result.append(next.getUnusedString());
             }
-            if (isOmni() && ((next instanceof TroopSpace)
+            if (isOmni() && ((next instanceof InfantryCompartment)
                     || (next instanceof Bay))) {
                 if (omniPodTransports.contains(next)) {
                     result.append(" (Pod)");
@@ -9533,8 +9546,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns whether an entity can flee from its current position. Currently
      * returns true if the entity is on the edge of the board.
      */
-    public boolean canFlee() {
-        Coords pos = getPosition();
+    public boolean canFlee(Coords pos) {
         return ((getWalkMP() > 0) || (this instanceof Infantry))
                 && !isProne()
                 && !isStuck()
@@ -10123,8 +10135,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public double getTroopCarryingSpace() {
         double space = 0;
         for (Transporter t : transports) {
-            if (t instanceof TroopSpace) {
-                space += ((TroopSpace) t).totalSpace;
+            if (t instanceof InfantryCompartment) {
+                space += ((InfantryCompartment) t).totalSpace;
             }
         }
         return space;
@@ -10133,8 +10145,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public double getPodMountedTroopCarryingSpace() {
         double space = 0;
         for (Transporter t : omniPodTransports) {
-            if (t instanceof TroopSpace) {
-                space += ((TroopSpace) t).totalSpace;
+            if (t instanceof InfantryCompartment) {
+                space += ((InfantryCompartment) t).totalSpace;
             }
         }
         return space;

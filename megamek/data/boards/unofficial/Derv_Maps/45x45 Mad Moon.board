@@ -1,5 +1,6 @@
 size 45 45
 tag "LunarTheme (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "LowHills (Auto)"
 hex 0101 0 "" "lunar"
 hex 0201 0 "" "lunar"

@@ -1,11 +1,14 @@
 size 60 60
 option exit_roads_to_pavement false
 tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Fields (Auto)"
-tag "GrassTheme (Auto)"
-tag "LowHills (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Woods (Auto)"
+tag "LowHills (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
 tag "DenseForest (Auto)"
 hex 0101 0 "" "grass"
 hex 0201 0 "" "grass"

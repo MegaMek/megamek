@@ -2214,7 +2214,7 @@ public class MoveStep implements Serializable {
         }
 
         // check to see if it's trying to flee and can legally do so.
-        if ((type == MoveStepType.FLEE) && entity.canFlee()) {
+        if ((type == MoveStepType.FLEE) && entity.canFlee(curPos)) {
             movementType = EntityMovementType.MOVE_LEGAL;
         }
 
@@ -3323,7 +3323,9 @@ public class MoveStep implements Serializable {
         final Coords dest = getPosition();
         final Hex destHex = game.getBoard().getHex(dest);
         final Entity entity = getEntity();
-
+        if (destHex == null) {
+            return false;
+        }
         if (null == dest) {
             var ex = new IllegalStateException("Step has no position");
             logger.error("", ex);
@@ -3363,7 +3365,7 @@ public class MoveStep implements Serializable {
         }
 
         // If you want to flee, and you can flee, flee.
-        if ((type == MoveStepType.FLEE) && entity.canFlee()) {
+        if ((type == MoveStepType.FLEE) && entity.canFlee(dest)) {
             return true;
         }
 

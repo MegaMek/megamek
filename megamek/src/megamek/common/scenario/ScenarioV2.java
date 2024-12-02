@@ -52,6 +52,9 @@ import megamek.server.scriptedevent.GameEndTriggeredEvent;
 public class ScenarioV2 implements Scenario {
     private static final MMLogger logger = MMLogger.create(ScenarioV2.class);
 
+    private static final String OPTIONS_FILE = "file";
+    private static final String OPTIONS_ON = "on";
+    private static final String OPTIONS_OFF = "off";
     private static final String DEPLOY = "deploy";
     private static final String DEPLOY_EDGE = "edge";
     private static final String DEPLOY_OFFSET = "offset";
@@ -60,9 +63,6 @@ public class ScenarioV2 implements Scenario {
     private static final String MAPS = "maps";
     private static final String UNITS = "units";
     private static final String OPTIONS = "options";
-    private static final String OPTIONS_FILE = "file";
-    private static final String OPTIONS_ON = "on";
-    private static final String OPTIONS_OFF = "off";
     private static final String OBJECTS = "objects";
     private static final String MESSAGES = "messages";
     private static final String END = "end";
@@ -140,6 +140,7 @@ public class ScenarioV2 implements Scenario {
         parseMessages(game);
         parseGameEndEvents(game);
         parseGeneralEvents(game);
+        parseGameVictories(game, node);
 
         game.setupTeams();
 
@@ -304,7 +305,7 @@ public class ScenarioV2 implements Scenario {
             player.setGhost(true);
 
             parseDeployment(playerNode, player);
-            parseVictories(game, playerNode);
+            parsePlayerVictories(game, playerNode, player.getName());
 
             if (playerNode.has(PARAM_CAMO)) {
                 String camoPath = playerNode.get(PARAM_CAMO).textValue();
@@ -421,14 +422,25 @@ public class ScenarioV2 implements Scenario {
         return result;
     }
 
-    private void parseVictories(IGame game, JsonNode playerNode) {
+    private void parseGameVictories(IGame game, JsonNode playerNode) {
         if (playerNode.has(VICTORY)) {
-            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseVictory(game, n));
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parseGameVictory(game, n));
         }
     }
 
-    private void parseVictory(IGame game, JsonNode node) {
+    private void parseGameVictory(IGame game, JsonNode node) {
         game.addScriptedEvent(VictoryDeserializer.parse(node));
+    }
+
+
+    private void parsePlayerVictories(IGame game, JsonNode playerNode, String playerName) {
+        if (playerNode.has(VICTORY)) {
+            playerNode.get(VICTORY).iterator().forEachRemaining(n -> parsePlayerVictory(game, n, playerName));
+        }
+    }
+
+    private void parsePlayerVictory(IGame game, JsonNode node, String playerName) {
+        game.addScriptedEvent(VictoryDeserializer.parse(node, playerName));
     }
 
     private int smallestFreeUnitID(List<? extends InGameObject> units) {

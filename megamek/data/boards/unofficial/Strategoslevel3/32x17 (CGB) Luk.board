@@ -1,8 +1,9 @@
 size 32 17
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
 tag "MediumForest (Auto)"
 tag "Woods (Auto)"
 tag "MediumUrban (Auto)"

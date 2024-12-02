@@ -1,9 +1,10 @@
 size 34 34
 option exit_roads_to_pavement false
+tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
 tag "LightForest (Auto)"
-tag "Water (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "" "desert"
 hex 0201 1 "sand:1" "desert"

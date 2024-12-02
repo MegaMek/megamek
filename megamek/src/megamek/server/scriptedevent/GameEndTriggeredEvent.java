@@ -47,4 +47,13 @@ import megamek.server.trigger.*;
  */
 public record GameEndTriggeredEvent(Trigger trigger) implements TriggeredEvent {
 
+    @Override
+    public String toString() {
+        return "GameEnd: " + trigger;
+    }
+
+    @Override
+    public boolean isGameEnding() {
+        return true;
+    }
 }

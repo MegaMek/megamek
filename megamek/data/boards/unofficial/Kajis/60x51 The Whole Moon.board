@@ -1,10 +1,13 @@
 size 60 51
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "LunarTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "LunarTheme (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
+tag "GunEmplacement (Auto)"
 hex 0101 2 "" "lunar"
 hex 0201 2 "" "lunar"
 hex 0301 2 "" "lunar"

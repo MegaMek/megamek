@@ -1,10 +1,11 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "LunarTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "LunarTheme (Auto)"
 tag "HighHills (Auto)"
 tag "IceTerrain (Auto)"
+tag "Impassable (Auto)"
 hex 0101 20 "impassable:300" "Lunar"
 hex 0201 20 "impassable:300" "Lunar"
 hex 0301 20 "impassable:300" "Lunar"

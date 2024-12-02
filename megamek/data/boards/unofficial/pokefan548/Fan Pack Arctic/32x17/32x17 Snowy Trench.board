@@ -1,8 +1,9 @@
 size 32 17
 tag "Rough (Auto)"
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "IceTerrain (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"

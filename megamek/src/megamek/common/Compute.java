@@ -5094,9 +5094,13 @@ public class Compute {
             if (ae.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_METAL_CONTENT)) {
                 check += sensor.getModForMetalContent(ae, te);
             }
+
+            check += sensor.getModForTargetECM(te, allECMInfo);
+
         }
         // ECM bubbles
         check += sensor.getModForECM(ae, allECMInfo);
+
 
         return Compute.getSensorBracket(check);
     }

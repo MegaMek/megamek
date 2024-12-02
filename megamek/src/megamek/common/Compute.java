@@ -5094,9 +5094,13 @@ public class Compute {
             if (ae.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_METAL_CONTENT)) {
                 check += sensor.getModForMetalContent(ae, te);
             }
+
+            check += sensor.getModForTargetECM(te, allECMInfo);
+
         }
         // ECM bubbles
         check += sensor.getModForECM(ae, allECMInfo);
+
 
         return Compute.getSensorBracket(check);
     }
@@ -6639,7 +6643,7 @@ public class Compute {
             case WeaponType.WEAPON_PLASMA:
                 // If the target is fire-resistant BA, damage is normal
                 if (!target.isFireResistant()) {
-                    damage = 1 + Compute.d6(1);
+                    damage = 2 + Compute.d6(1);
                 }
                 break;
         }

@@ -72,6 +72,12 @@ public class RATGenerator {
 
     private ArrayList<ActionListener> listeners;
 
+    /**
+     * Minimum difference between actual percentage and desired percentage of Omni-units
+     * before weights are re-balanced
+     */
+    private static double MIN_OMNI_DIFFERENCE = 2.5;
+
     protected RATGenerator() {
         models = new HashMap<>();
         chassis = new HashMap<>();
@@ -541,27 +547,28 @@ public class RATGenerator {
         }
 
         // Iterate through all available chassis
+        double chassisWeightTotal = 0.0;
         for (String chassisKey : chassisIndex.get(currentEra).keySet()) {
-            ChassisRecord cRec = chassis.get(chassisKey);
-            if (cRec == null) {
-                logger.error("Could not locate chassis " + chassisKey);
+            ChassisRecord curChassis = chassis.get(chassisKey);
+            if (curChassis == null) {
+                logger.error("Could not locate chassis {}", chassisKey);
                 continue;
             }
 
             // Pre-production prototypes may show up one year before official introduction
-            if (cRec.introYear > year + 1) {
+            if (curChassis.introYear > year + 1) {
                 continue;
             }
 
             // Handle ChassisRecords saved as "AERO" units as ASFs for now
-            if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACEFIGHTER).contains(cRec.getUnitType())) {
-                cRec.setUnitType(UnitType.AEROSPACEFIGHTER);
+            if (Arrays.asList(UnitType.AERO, UnitType.AEROSPACEFIGHTER).contains(curChassis.getUnitType())) {
+                curChassis.setUnitType(UnitType.AEROSPACEFIGHTER);
             }
 
             // Only return VTOLs when specifically requesting the unit type
-            if (cRec.getUnitType() != unitType &&
+            if (curChassis.getUnitType() != unitType &&
                     !(unitType == UnitType.TANK
-                            && cRec.getUnitType() == UnitType.VTOL
+                            && curChassis.getUnitType() == UnitType.VTOL
                             && movementModes.contains(EntityMovementMode.VTOL))) {
                 continue;
             }
@@ -570,7 +577,7 @@ public class RATGenerator {
             // class are the same for all models although a few outliers exist, so
             // just look for the first.
             if (weightClasses != null && !weightClasses.isEmpty()) {
-                boolean validChassis = Arrays.stream(cRec.getModels().
+                boolean validChassis = Arrays.stream(curChassis.getModels().
                     stream().
                     mapToInt(ModelRecord::getWeightClass).
                     toArray()).
@@ -594,8 +601,8 @@ public class RATGenerator {
 
                 // Find the chassis availability at the start of the era, or at
                 // intro date, including dynamic modifiers
-                int interpolationStart = Math.max(currentEra, Math.min(year, cRec.introYear));
-                chassisAdjRating = cRec.calcAvailability(chassisAvRating,
+                int interpolationStart = Math.max(currentEra, Math.min(year, curChassis.introYear));
+                chassisAdjRating = curChassis.calcAvailability(chassisAvRating,
                     ratingLevel,
                     numRatingLevels,
                     interpolationStart);
@@ -603,7 +610,7 @@ public class RATGenerator {
 
                 double chassisNextAdj = 0.0;
                 if (chassisNextAvRating != null) {
-                    chassisNextAdj = cRec.calcAvailability(chassisNextAvRating, ratingLevel, numRatingLevels, nextEra);
+                    chassisNextAdj = curChassis.calcAvailability(chassisNextAvRating, ratingLevel, numRatingLevels, nextEra);
                 }
 
                 if (chassisAdjRating != chassisNextAdj) {
@@ -618,23 +625,23 @@ public class RATGenerator {
             } else {
                 // Find the chassis availability taking into account +/- dynamic
                 // modifiers and introduction year
-                chassisAdjRating = cRec.calcAvailability(chassisAvRating,
+                chassisAdjRating = curChassis.calcAvailability(chassisAvRating,
                     ratingLevel, numRatingLevels, year);
             }
 
             if (chassisAdjRating > 0) {
 
                 // Apply basic filters to models before summing the total weight
-                HashSet<ModelRecord> validModels = cRec.getFilteredModels(year,
+                HashSet<ModelRecord> validModels = curChassis.getFilteredModels(year,
                     weightClasses, movementModes, networkMask);
 
                 HashMap<String,Double> modelWeights = new HashMap<>();
 
-                double totalWeight = cRec.totalModelWeight(validModels,
+                double totalWeight = curChassis.totalModelWeight(validModels,
                     currentEra,
                     year,
                     nextEra,
-                    cRec.isOmni() ? user : fRec,
+                    curChassis.isOmni() ? user : fRec,
                     roles,
                     roleStrictness,
                     ratingLevel,
@@ -642,6 +649,8 @@ public class RATGenerator {
                     modelWeights);
 
                 if (totalWeight > 0 && !modelWeights.isEmpty()) {
+                    double chassisWeight = AvailabilityRating.calcWeight(chassisAdjRating);
+                    boolean hasModels = false;
                     for (ModelRecord curModel : validModels) {
                         if (!modelWeights.containsKey(curModel.getKey())) {
                             continue;
@@ -649,21 +658,31 @@ public class RATGenerator {
 
                         // Overall availability is the odds of the chassis multiplied
                         // by the odds of the model. Note that the chassis weight total
-                        // is factored later after accounting for salvage.
-                        double curWeight = AvailabilityRating.calcWeight(chassisAdjRating) * modelWeights.get(curModel.getKey()) / totalWeight;
+                        // is factored later after all chassis are processed.
+                        double curWeight = chassisWeight * modelWeights.get(curModel.getKey()) / totalWeight;
 
                         // Add the random selection weight for this specific model to the tracker
                         if (curWeight > 0) {
                             unitWeights.put(curModel, curWeight);
+                            hasModels = true;
                         }
+                    }
+
+                    if (hasModels) {
+                        chassisWeightTotal += chassisWeight;
                     }
                 }
 
             }
         }
 
-        if (unitWeights.isEmpty()) {
+        if (unitWeights.isEmpty() || chassisWeightTotal == 0.0) {
             return new ArrayList<>();
+        }
+
+        // Factor chassis total into every weight
+        for (ModelRecord curModel : unitWeights.keySet()) {
+            unitWeights.merge(curModel, chassisWeightTotal, (a, b) -> 100.0 * a / b);
         }
 
         // If there is more than one weight class being generated and the faction record
@@ -982,6 +1001,59 @@ public class RATGenerator {
             pctNonOmni = 100.0 - pctOmni;
         }
 
+        // Get the difference between the ideal Omni level and the current one
+        // and proportionally assign it to the Omni and non-Omni groups
+        if (pctOmni == null) {
+            pctOmni = 0.0;
+        }
+
+        double omniPctDifference = pctOmni - (100.0 * totalOmniWeight / totalWeight);
+
+        // If there are not enough or too many Omni-units based on the faction data,
+        // re-balance all the weights to bring them back into line. If the faction
+        // data specifies Omni-units but none are present, nothing can be done.
+        double totalWeightPostMod = 0.0;
+        if (Math.abs(omniPctDifference) > MIN_OMNI_DIFFERENCE && totalOmniWeight > 0.0 && pctOmni >= 0.0) {
+
+             // Non-omni adjustment needs to be opposite sign of Omni percentage adjustment
+             // i.e. if Omni needs increasing, non-Omni gets decreased; if Omni needs reducing,
+             // non-Omni needs increasing.
+             double totalNonOmniWeight = (omniPctDifference > 0 ? 1.0 : -1.0) * (totalOmniWeight - totalWeight);
+
+             // Apply the weight modifications proportionally, using the unit weight relative
+             // to the weight total of either Omni or non-Omni as appropriate
+             double curWeight = 0.0;
+             for (ModelRecord curModel : unitWeights.keySet()) {
+                 curWeight = unitWeights.get(curModel);
+
+                 if (curModel.isOmni()) {
+                     if (pctOmni > 0.0) {
+                         curWeight = curWeight + curWeight * omniPctDifference / totalOmniWeight;
+                     } else {
+                         curWeight = 0.0;
+                     }
+                 } else {
+                     if (pctOmni < 100.0) {
+                         curWeight = curWeight + curWeight * omniPctDifference / totalNonOmniWeight;
+                     } else {
+                         curWeight = 0.0;
+                     }
+                 }
+                 unitWeights.put(curModel, curWeight);
+
+                 totalWeightPostMod += curWeight;
+             }
+
+         } else {
+             totalWeightPostMod = totalWeight;
+         }
+
+
+
+
+
+
+
         // For non-Clan factions, the amount of salvage from Clan factions is part of
         // the overall Clan percentage.
         if (!fRec.isClan() && (pctClan != null) && (totalClanWeight > 0)) {
@@ -1005,12 +1077,12 @@ public class RATGenerator {
         // Anything not base Clan or Star League/advanced tech is Other/basic tech
         double totalOther = totalWeight - totalClanWeight - totalSLWeight;
         for (ModelRecord mRec : unitWeights.keySet()) {
-            if (pctOmni != null && mRec.isOmni() && totalOmniWeight < totalWeight) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (totalWeight / totalOmniWeight));
-            }
-            if (pctNonOmni != null && !mRec.isOmni() && totalOmniWeight > 0) {
-                unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (totalWeight / (totalWeight - totalOmniWeight)));
-            }
+//            if (pctOmni != null && mRec.isOmni() && totalOmniWeight < totalWeight) {
+//                unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (totalWeight / totalOmniWeight));
+//            }
+//            if (pctNonOmni != null && !mRec.isOmni() && totalOmniWeight > 0) {
+//                unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (totalWeight / (totalWeight - totalOmniWeight)));
+//            }
             if (pctSL != null && mRec.isSL() && totalSLWeight > 0) {
                 unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (totalWeight / totalSLWeight));
             }

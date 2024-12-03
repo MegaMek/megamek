@@ -1565,7 +1565,7 @@ public class TeamLoadOutGenerator {
      *         enums as the lookup e.g. [BombUnit.HE] will get the number of HE
      *         bombs.
      */
-    private int[] generateExternalOrdnance(
+     public int[] generateExternalOrdnance(
         int bombUnits,
         boolean airOnly,
         boolean isPirate,

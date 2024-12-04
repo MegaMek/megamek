@@ -19,11 +19,11 @@ factions:
         id: 110
         force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
         modifiers:
-          RT:
-            - slot: 4 # JJ
+          RA:
+            - slot: 5 # ML
               modifiers:
-                type: heat
-                delta: 1
+                type: jam
+                on: [ 3,4,5,6,7,8,9,10]
         crew:
           name: John Parthan
           callsign: Wrinkles

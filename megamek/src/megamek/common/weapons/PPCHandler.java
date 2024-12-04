@@ -124,6 +124,10 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
                 && weapon.hasModes()

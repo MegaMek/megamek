@@ -43,6 +43,10 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+
         if (roll.getIntValue() == 2) {
             int damageRoll = Compute.d6(2);
             if (damageRoll >= 8) {

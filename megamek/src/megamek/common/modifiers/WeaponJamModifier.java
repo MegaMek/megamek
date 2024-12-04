@@ -24,9 +24,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * This is an EquipmentModifier that jams a weapon (WeaponMounted) upon certain to hit roll results. Note that the modifier only works for
- * ammo weapons. Also, multiple such modifiers can be applied to a weapon; each of those is checked and the weapon is jammed if any
- * modifier's roll results happen.
+ * This is an EquipmentModifier that jams a weapon (processed by WeaponHandler) upon certain to hit roll results. Note that the modifier
+ * works for all weapons, including energy weapons. Also, multiple such modifiers can be applied to a weapon; each of those is checked and
+ * the weapon is jammed if any modifier's roll results happen. A jam uses ammo and generates heat but prevents damage according to
+ * Mercenaries Supplemental Update, p.138
  */
 public class WeaponJamModifier extends AbstractEquipmentModifier {
 

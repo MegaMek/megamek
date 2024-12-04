@@ -460,6 +460,25 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *         misses because of a failed check.
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        return processJamFromEquipmentModifier(vPhaseReport);
+    }
+
+    /**
+     * Jams the weapon if it is has a jamming equipment modifier (e.g. salvage quality) that is triggered by the to-hit roll and
+     * adds the appropriate report.
+     *
+     * @param phaseReport The current report
+     * @see WeaponJamModifier
+     */
+    protected boolean processJamFromEquipmentModifier(List<Report> phaseReport) {
+        for (EquipmentModifier modifier : weapon.getModifiers()) {
+            if (modifier instanceof WeaponJamModifier jamModifier && jamModifier.isJammed(roll.getIntValue())) {
+                phaseReport.add(new Report(3161).subject(subjectId));
+                weapon.setJammed(true);
+                isJammed = true;
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1828,15 +1847,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             roll = ae.getCrew().rollGunnerySkill();
         } else {
             roll = Compute.rollD6(2);
-        }
-
-        // Check for misfire (scenario/quality/modding)
-        if (toHit.needsRoll() || (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
-            for (EquipmentModifier modifier : weapon.getModifiers()) {
-                if (modifier instanceof WeaponMisfireModifier misfireModifier && misfireModifier.isMisfire(roll.getIntValue())) {
-                    toHit = new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Weapon misfires");
-                }
-            }
         }
 
         nweapons = getNumberWeapons();

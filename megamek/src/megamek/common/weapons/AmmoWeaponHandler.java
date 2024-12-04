@@ -102,26 +102,9 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        processJamFromEquipmentModifier(vPhaseReport);
-        return doAmmoFeedProblemCheck(vPhaseReport);
+        return super.doChecks(vPhaseReport) && doAmmoFeedProblemCheck(vPhaseReport);
     }
 
-    /**
-     * Jams the weapon if it is has a jamming equipment modifier (e.g. salvage quality) which is triggered by the to-hit roll and
-     * adds the appropriate report.
-     *
-     * @param phaseReport The current report
-     */
-    protected void processJamFromEquipmentModifier(List<Report> phaseReport) {
-        for (EquipmentModifier modifier : weapon.getModifiers()) {
-            if (modifier instanceof WeaponJamModifier jamModifier && jamModifier.isJammed(roll.getIntValue())) {
-                phaseReport.add(new Report(3161).subject(subjectId));
-                weapon.setJammed(true);
-                isJammed = true;
-                // CO p.215 doesn't say if the jam prevents the current shot, assuming no
-            }
-        }
-    }
 
     /**
      * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew up.

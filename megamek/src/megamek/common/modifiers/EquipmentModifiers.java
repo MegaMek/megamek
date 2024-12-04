@@ -61,15 +61,6 @@ public class EquipmentModifiers {
     }
 
     /**
-     * Creates a weapon modifier that makes the weapon misfire on a to-hit roll of 3 or less, as applicable to energy weapons, CO p.215.
-     *
-     * @see WeaponMisfireModifier
-     */
-    public static WeaponMisfireModifier createSalvageQualityMisfireModifier() {
-        return new WeaponMisfireModifier(roll -> roll <= 3, EquipmentModifier.Reason.SALVAGE_QUALITY);
-    }
-
-    /**
      * Creates a weapon modifier that makes the weapon create 2 extra heat when fired, as applicable to energy weapons, CO p.215.
      *
      * @see HeatModifier

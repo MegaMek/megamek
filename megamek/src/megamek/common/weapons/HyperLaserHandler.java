@@ -48,6 +48,10 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+
         if (roll.getIntValue() <= 3) {
             Report r = new Report(3162);
 

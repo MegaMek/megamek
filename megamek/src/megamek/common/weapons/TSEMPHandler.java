@@ -60,6 +60,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+
         if (roll.getIntValue() == 2  && weapon.is("TSEMP Repeating Cannon")) {
             Report r = new Report(3162);
             r.subject = subjectId;

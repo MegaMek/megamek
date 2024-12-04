@@ -638,8 +638,6 @@ public class MekView {
             return toHitModifier.formattedToHitModifier() + " to-hit";
         } else if (modifier instanceof DamageModifier damageModifier) {
             return damageModifier.formattedDamageModifier() + " damage";
-        } else if (modifier instanceof WeaponMisfireModifier) {
-            return "weapon may misfire";
         } else if (modifier instanceof WeaponJamModifier) {
             return "weapon may jam";
         } else if (modifier instanceof NoTwistModifier) {

@@ -50,6 +50,12 @@
   at: [ 25, 12 ]
   facing: 5
   force: Leader Lance|11
+  modifiers:
+    LT:
+      - slot: 2 #LRM-10
+        modifiers:
+          type: jam
+          on: [8, 4, 10, 3, 12] # approx like on 8+ on an extra roll
   crew:
     name: Joe Toomb
     callsign: Blackjack
@@ -72,6 +78,12 @@
   facing: 4
   at: [ 29, 12 ]
   force: Attack Lance|12
+  modifiers:
+    LT:
+      - slot: 1 #AC/10
+        modifiers:
+          type: jam
+          on: [ 4, 10, 3, 12 ] # approx like on 9+ on an extra roll
   crew:
     name: Dan Glory
     gunnery: 4

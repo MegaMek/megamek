@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -74,20 +75,20 @@ public class RATGenerator {
 
     /**
      * Minimum difference between actual percentage and desired percentage of Omni-units
-     * before weights are re-balanced
+     * that will trigger re-balancing
      */
     private static double MIN_OMNI_DIFFERENCE = 2.5;
 
     /**
      * Minimum difference between actual percentage and desired percentage of base-Clan
-     * units before weights are re-balanced
+     * units that will trigger re-balancing
      */
-    private static double MIN_CLAN_DIFFERENCE = 5.0;
+    private static double MIN_CLAN_DIFFERENCE = 2.5;
     /**
      * Minimum difference between actual percentage and desired percentage of Star League
-     * and advanced IS tech units before weights are rebalanced
+     * and advanced IS tech units that will trigger re-balancing
      */
-    private static double MIN_SL_DIFFERENCE = 5.0;
+    private static double MIN_SL_DIFFERENCE = 2.5;
 
     protected RATGenerator() {
         models = new HashMap<>();
@@ -883,6 +884,7 @@ public class RATGenerator {
         double totalOmniWeight = 0.0;
         double totalClanWeight = 0.0;
         double totalSLWeight = 0.0;
+        double totalOtherWeight = 0.0;
 
         // Total the unit weight of all selected units, plus get totals
         // of all Omni-units, base Clan-tech units, and Star League/advanced
@@ -892,15 +894,12 @@ public class RATGenerator {
             if (entry.getKey().isOmni()) {
                 totalOmniWeight += entry.getValue();
             }
-            if (entry.getKey().isClan()) {
-                totalClanWeight += entry.getValue();
-            } else if (entry.getKey().isSL()) {
-                totalSLWeight += entry.getValue();
+            if (!entry.getKey().isClan() && !entry.getKey().isSL()) {
+                totalOtherWeight += entry.getValue();
             }
         }
 
         Double pctOmni = null;
-        Double pctNonOmni = null;
         Double pctSL = null;
         Double pctClan = null;
         Double pctOther = null;
@@ -931,11 +930,21 @@ public class RATGenerator {
                     fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, nextEra, rating), currentEra, nextEra, year);
         }
 
-        // Clan factions generally only field Clan-tech Omni-units, so the desired
-        // percentage of Omni-units should always be lower than the percentage of base
-        // Clan units.  Trying to do otherwise creates unexpected results.
-        if (fRec.isClan() && (pctOmni != null && pctClan != null) && pctOmni > pctClan) {
-            logger.warn("Clan faction {} Clan/SL/Omni rating has higher Omni ({}) than Clan ({}) value in era {}.", fRec.getKey(), pctOmni, pctClan, currentEra);
+        // Omni percentage should never be higher than Clan percentage for
+        // Clan factions, and never higher than Clan plus SL for IS factions.
+        // This may lead to unexpected results.
+        if (fRec.isClan()) {
+            if (pctOmni != null && pctClan != null && pctOmni > pctClan) {
+                logger.warn("Clan faction {} Clan/SL/Omni rating has" +
+                    " higher Omni ({}) than Clan ({}) value in era {}.",
+                    fRec.getKey(), pctOmni, pctClan, currentEra);
+            }
+        } else {
+            if (pctOmni != null && pctClan != null && pctSL != null && pctOmni > pctClan + pctSL) {
+                logger.warn("Non-Clan faction {} Clan/SL/Omni rating has" +
+                        " higher Omni ({}) than Clan ({}) + SL ({}) value in era {}.",
+                    fRec.getKey(), pctOmni, pctClan, pctSL, currentEra);
+            }
         }
 
         // Adjust Omni-unit percentage by margin values from faction data
@@ -952,80 +961,80 @@ public class RATGenerator {
                 }
             }
 
-            pctNonOmni = 100.0 - pctOmni;
         }
 
-        // Get the difference between the ideal Omni level and the current one
-        // and proportionally assign it to the Omni and non-Omni groups
-        if (pctOmni == null) {
-            pctOmni = 0.0;
-        }
-        double omniPctDifference = pctOmni - (100.0 * totalOmniWeight / totalWeight);
-
-        // If there are not enough or too many Omni-units based on the faction data,
-        // re-balance all the weights to bring them back into line. If the faction
-        // data specifies Omni-units but none are present, nothing can be done.
         double totalWeightPostMod = 0.0;
-        double totalClanOmniWeight = 0.0;
-        double totalSLOmniWeight = 0.0;
-        if (Math.abs(omniPctDifference) > MIN_OMNI_DIFFERENCE && totalOmniWeight > 0.0 && pctOmni >= 0.0) {
+        // Only balance Meks and aerospace for Omni/non-Omni ratios
+        if ((unitType == UnitType.MEK || unitType == UnitType.AEROSPACEFIGHTER) && pctOmni != null) {
 
-             // Non-omni adjustment needs to be opposite sign of Omni percentage adjustment
-             // i.e. if Omni needs increasing, non-Omni gets decreased; if Omni needs reducing,
-             // non-Omni needs increasing.
-             double totalNonOmniWeight = (omniPctDifference > 0 ? 1.0 : -1.0) * (totalOmniWeight - totalWeight);
+            // Get the difference between the ideal Omni level and the current one
+            double omniPctDifference = pctOmni - (100.0 * totalOmniWeight / totalWeight);
 
-             // Apply the weight modifications proportionally, using the unit weight relative
-             // to the weight total of either Omni or non-Omni as appropriate
-             double curWeight;
-             totalClanWeight = 0.0;
-             totalSLWeight = 0.0;
-             for (ModelRecord curModel : unitWeights.keySet()) {
-                 curWeight = unitWeights.get(curModel);
+            // If there are not enough or too many Omni-units based on the faction data,
+            // re-balance all the weights to bring them back into line. If the faction
+            // data specifies Omni-units but none are present, nothing can be done.
+            if (Math.abs(omniPctDifference) > MIN_OMNI_DIFFERENCE && totalOmniWeight > 0.0 && pctOmni >= 0.0) {
 
-                 if (curModel.isOmni()) {
-                     if (pctOmni > 0.0) {
-                         curWeight = curWeight + curWeight * omniPctDifference / totalOmniWeight;
-                     } else {
-                         curWeight = 0.0;
-                     }
-                 } else {
-                     if (pctOmni < 100.0) {
-                         curWeight = curWeight + curWeight * omniPctDifference / totalNonOmniWeight;
-                     } else {
-                         curWeight = 0.0;
-                     }
-                 }
-                 unitWeights.put(curModel, curWeight);
+                // Total weight of non-Omni units. Sign is deliberately inverted
+                // so weights of non-Omni units are moved in opposite direction from
+                // Omni units.
+                double totalNonOmniWeight = totalOmniWeight - totalWeight;
 
-                 totalWeightPostMod += curWeight;
+                // Apply the weight modifications proportionally, using the unit weight relative
+                // to the weight total of either Omni or non-Omni as appropriate
+                double curWeight;
+                totalClanWeight = 0.0;
+                totalSLWeight = 0.0;
+                totalOtherWeight = 0.0;
+                double totalOmniWeightPostMod = 0.0;
+                for (ModelRecord curModel : unitWeights.keySet()) {
+                    curWeight = unitWeights.get(curModel);
 
-                 // Re-calculate total weights of Clan and SL/advanced units for
-                 // potential re-balancing. Track Omni-units separately so the weights
-                 // we just set are kept.
-                 if (curModel.isClan()) {
-                     totalClanWeight += curWeight;
-                     if (curModel.isOmni()) {
-                         totalClanOmniWeight += curWeight;
-                     }
-                 }
-                 if (curModel.isSL()) {
-                     totalSLWeight += curWeight;
-                     if (curModel.isOmni()) {
-                         totalSLOmniWeight += curWeight;
-                     }
-                 }
+                    if (curModel.isOmni()) {
+                        if (pctOmni > 0.0) {
+                            curWeight = curWeight + curWeight * omniPctDifference / totalOmniWeight;
+                        } else {
+                            curWeight = 0.0;
+                        }
+                    } else {
+                        if (pctOmni < 100.0) {
+                            curWeight = curWeight + curWeight * omniPctDifference / totalNonOmniWeight;
+                        } else {
+                            curWeight = 0.0;
+                        }
+                    }
 
-             }
+                    unitWeights.put(curModel, curWeight);
+                    totalWeightPostMod += curWeight;
 
-        }
+                    // Re-calculate total weights of the various categories
+                    if (curModel.isClan()) {
+                        totalClanWeight += curWeight;
+                    } else if (curModel.isSL()) {
+                        totalSLWeight += curWeight;
+                    } else {
+                        totalOtherWeight += curWeight;
+                    }
+                    if (curModel.isOmni()) {
+                        totalOmniWeightPostMod += curWeight;
+                    }
 
-        if (totalWeightPostMod > 0.0) {
-            totalWeight = totalWeightPostMod;
+                }
+
+                if (totalOmniWeightPostMod > 0.0) {
+                    totalOmniWeight = totalOmniWeightPostMod;
+                }
+
+            }
+
+            if (totalWeightPostMod > 0.0) {
+                totalWeight = totalWeightPostMod;
+            }
+
         }
 
         // Use margin values from the faction data to adjust for lack of precision
-        // in post-FM:Updates era extrapolations
+        // in post-FM:Updates era extrapolations of Clan and Star League ratios
         if (pctSL != null || pctClan != null) {
             pctOther = 100.0;
             if (pctSL != null) {
@@ -1089,96 +1098,226 @@ public class RATGenerator {
             }
         }
 
+        // Re-balance Star League/advanced IS tech designs against Clan and
+        // low-tech units
+        if (pctSL != null) {
 
-        // If there are not enough or too many base Clan or Star League/advanced
-        // IS tech units based on the faction data, re-balance the weights to bring
-        // them back into line.
+            double slPctDifference = pctSL - (100.0 * totalSLWeight / totalWeight);
+            if (Math.abs(slPctDifference) > MIN_SL_DIFFERENCE && totalSLWeight > 0.0) {
 
-        if (pctClan == null) {
-            pctClan = 0.0;
-        }
-        if (pctSL == null) {
-            pctSL = 0.0;
-        }
-        if (pctOther == null) {
-            pctOther = 0.0;
-        }
+                // Total weight of non-Star League/advanced units. Sign is deliberately
+                // inverted so weights of non-SL units are moved in opposite direction from
+                // SL units.
+                double totalNonSLWeight = totalSLWeight - totalWeight;
+                double totalSLWeightPostMod = 0.0;
 
-        double salvageTotalWeight = salvageWeights.keySet().stream().mapToDouble(salvageWeights::get).sum();
+                // Apply the weight modifications proportionally, using the unit weight relative
+                // to the weight total of either Clan or Other as appropriate
+                double curWeight;
+                totalClanWeight = 0.0;
+                totalOtherWeight = 0.0;
+                totalOmniWeight = 0.0;
+                totalWeightPostMod = 0.0;
+                for (ModelRecord curModel : unitWeights.keySet()) {
+                    curWeight = unitWeights.get(curModel);
 
-        // Non-Clan factions consider salvage from Clan factions as Clan units,
-        // so include that weight in the total weight of Clan units
-        double clanSalvageWeight = 0.0;
-        if (!fRec.isClan()) {
-            clanSalvageWeight = salvageWeights.
-                keySet().
-                stream().
-                filter(FactionRecord::isClan).
-                mapToDouble(salvageWeights::get).
-                sum();
-        }
-
-        double clanPctDifference = pctClan - (100.0 * (totalClanWeight + clanSalvageWeight) / (totalWeight + salvageTotalWeight));
-        double slPctDifference = pctSL - (100.0 * totalSLWeight / (totalWeight + salvageTotalWeight));
-
-        if ((Math.abs(clanPctDifference) > MIN_CLAN_DIFFERENCE && totalClanWeight > 0.0) ||
-            (Math.abs(slPctDifference) > MIN_SL_DIFFERENCE && totalSLWeight > 0.0)) {
-
-            // Adjust percentages to limit changes to non-Omni units
-            clanPctDifference = pctClan - (100.0 * (totalClanWeight + clanSalvageWeight - totalClanOmniWeight) / (totalWeight + salvageTotalWeight));
-            boolean clanFlag = Math.abs(clanPctDifference) > MIN_CLAN_DIFFERENCE;
-
-            slPctDifference = pctSL - (100.0 * (totalSLWeight - totalSLOmniWeight) / (totalWeight + salvageTotalWeight));
-            boolean slFlag = Math.abs(slPctDifference) > MIN_SL_DIFFERENCE;
-
-            // Non-Clan and non-SL/advanced units are adjusted to make up the balance
-            double totalOtherWeight = (totalWeight + salvageTotalWeight) -
-                (totalClanWeight + clanSalvageWeight - totalClanOmniWeight) -
-                (totalSLWeight - totalSLOmniWeight);
-            double otherDifference = pctOther - (100.0 * totalOtherWeight / (totalWeight + salvageTotalWeight));
-
-            // Apply the weight modifications proportionally, using the unit weight
-            // relative to the weight total of either Clan or SL/advanced as
-            // appropriate.
-            // Omni-units have already been balanced, so limit adjustments to non-Omnis.
-            double curWeight;
-            totalWeightPostMod = 0.0;
-            for (ModelRecord curModel : unitWeights.keySet()) {
-                curWeight = unitWeights.get(curModel);
-
-                if (curModel.isClan()) {
-                    if (!curModel.isOmni() && clanFlag && totalClanWeight > 0.0) {
-                        if (pctClan > 0.0) {
-                            curWeight = curWeight + curWeight * clanPctDifference / totalClanWeight;
-                        } else {
-                            curWeight = 0.0;
-                        }
-                    }
-                } else if (curModel.isSL()) {
-                    if (!curModel.isOmni() && slFlag && totalSLWeight > 0.0) {
+                    if (curModel.isSL()) {
                         if (pctSL > 0.0) {
                             curWeight = curWeight + curWeight * slPctDifference / totalSLWeight;
                         } else {
                             curWeight = 0.0;
                         }
+                    } else {
+                        if (pctSL < 100.0) {
+                            curWeight = curWeight + curWeight * slPctDifference / totalNonSLWeight;
+                        } else {
+                            curWeight = 0.0;
+                        }
                     }
-                } else if (!curModel.isOmni() && totalOtherWeight > 0.0) {
-                    curWeight = curWeight - curWeight * otherDifference / totalOtherWeight;
+
+                    unitWeights.put(curModel, curWeight);
+                    totalWeightPostMod += curWeight;
+
+                    // Re-calculate total weights of the various categories
+                    if (curModel.isClan()) {
+                        totalClanWeight += curWeight;
+                    } else if (curModel.isSL()) {
+                        totalSLWeightPostMod += curWeight;
+                    } else {
+                        totalOtherWeight += curWeight;
+                    }
+                    if (curModel.isOmni()) {
+                        totalOmniWeight += curWeight;
+                    }
+
                 }
 
-                unitWeights.put(curModel, curWeight);
-                totalWeightPostMod += curWeight;
+                if (totalWeightPostMod > 0.0) {
+                    totalWeight = totalWeightPostMod;
+                }
+                if (totalSLWeightPostMod > 0.0) {
+                    totalSLWeight = totalSLWeightPostMod;
+                }
 
             }
 
         }
 
-        // After modifications, check the new total weight against the original value and
-        // use it as a multiplier to compensate
-        double multiplier = totalWeight / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-        for (ModelRecord mRec : unitWeights.keySet()) {
-            unitWeights.merge(mRec, multiplier, (a, b) -> a * b);
+        // Re-balance Clan designs against SL and low-tech units to match
+        // faction data.
+        double clanSalvageWeight = 0.0;
+        if (pctClan != null) {
+
+            // Get total weights of provided salvage for inclusion in Clan re-balancing.
+            if (!fRec.isClan()) {
+                clanSalvageWeight = salvageWeights.
+                    keySet().
+                    stream().
+                    filter(FactionRecord::isClan).
+                    mapToDouble(salvageWeights::get).
+                    sum();
+            }
+
+            double clanPctDifference = pctClan - (100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight);
+
+            if (Math.abs(clanPctDifference) > MIN_CLAN_DIFFERENCE && totalClanWeight > 0.0) {
+
+                // Total weight of non-Clan units, including salvage if appropriate.
+                // Sign is deliberately inverted so weights of non-Clan units are moved
+                // in opposite direction from Clan units.
+                double totalNonClanWeight = Math.min(totalWeight, totalClanWeight + clanSalvageWeight) - totalWeight;
+
+                // Apply the weight modifications proportionally, using the unit weight relative
+                // to the weight total of either Star League or Other as appropriate
+                double curWeight;
+                totalSLWeight = 0.0;
+                totalOtherWeight = 0.0;
+                totalOmniWeight = 0.0;
+                totalWeightPostMod = 0.0;
+                double totalClanWeightPostMod = 0.0;
+                for (ModelRecord curModel : unitWeights.keySet()) {
+                    curWeight = unitWeights.get(curModel);
+
+                    if (curModel.isClan()) {
+                        if (pctClan > 0.0) {
+                            curWeight = curWeight + curWeight * clanPctDifference / totalClanWeight;
+                        } else {
+                            curWeight = 0.0;
+                        }
+                    } else {
+                        if (pctClan < 100.0) {
+                            curWeight = curWeight + curWeight * clanPctDifference / totalNonClanWeight;
+                        } else {
+                            curWeight = 0.0;
+                        }
+                    }
+
+                    unitWeights.put(curModel, curWeight);
+                    totalWeightPostMod += curWeight;
+
+                    // Re-calculate total weights of the various categories
+                    if (curModel.isClan()) {
+                        totalClanWeightPostMod += curWeight;
+                    } else if (curModel.isSL()) {
+                        totalSLWeight += curWeight;
+                    } else {
+                        totalOtherWeight += curWeight;
+                    }
+                    if (curModel.isOmni()) {
+                        totalOmniWeight += curWeight;
+                    }
+
+                }
+
+                if (totalWeightPostMod > 0.0) {
+                    totalWeight = totalWeightPostMod;
+                }
+                if (totalClanWeightPostMod > 0.0) {
+                    totalClanWeight = totalClanWeightPostMod;
+                }
+
+            }
+
         }
+
+        // If Clan and Star League/advanced IS percentages leave no allowance
+        // for Other/low-tech then remove them using weight of 0.0
+
+        if (pctSL != null && pctClan != null &&
+            (pctOther == 0.0 || pctSL + pctClan >= 100.0)) {
+
+            double pctOtherDifference = pctOther -  100.0 * totalOtherWeight / totalWeight;
+            double totalAdvancedWeight = totalOtherWeight - totalWeight;
+
+            double curWeight;
+            totalOmniWeight = 0.0;
+            totalClanWeight = 0.0;
+            totalSLWeight = 0.0;
+            totalOtherWeight = 0.0;
+            totalWeightPostMod = 0.0;
+            for (ModelRecord curModel : unitWeights.keySet()) {
+                curWeight = unitWeights.get(curModel);
+
+                if (!curModel.isSL() && !curModel.isClan() && curWeight > 0.0) {
+                    curWeight = 0.0;
+                } else {
+                    curWeight = curWeight + curWeight * pctOtherDifference / totalAdvancedWeight;
+                }
+
+                unitWeights.put(curModel, curWeight);
+                totalWeightPostMod += curWeight;
+
+                // Re-calculate total weights of the various categories
+                if (curModel.isClan()) {
+                    totalClanWeight += curWeight;
+                } else if (curModel.isSL()) {
+                    totalSLWeight += curWeight;
+                } else {
+                    totalOtherWeight += curWeight;
+                }
+                if (curModel.isOmni()) {
+                    totalOmniWeight += curWeight;
+                }
+            }
+
+            if (totalWeightPostMod > 0.0) {
+                totalWeight = totalWeightPostMod;
+            }
+        }
+
+        // Check each of the weight totals against the faction specified percentages
+        // and log any that are significantly different
+        DecimalFormat pctFormatter = new DecimalFormat("#.##");
+        if (pctOmni != null &&
+            Math.abs(pctOmni - (100.0 * totalOmniWeight / totalWeight)) > MIN_OMNI_DIFFERENCE) {
+            logger.info("Faction {} Omni percentage ({}) differs significantly from" +
+                    " faction C/SL/O data ({}) in year {}.",
+                fRec.getKey(),
+                pctFormatter.format(100.0 * totalOmniWeight / totalWeight),
+                pctOmni,
+                year);
+        }
+        if (pctSL != null &&
+            Math.abs(pctSL - (100.0 * totalSLWeight / totalWeight)) > MIN_SL_DIFFERENCE) {
+            logger.info("Faction {} Star League/advanced IS percentage ({}) differs" +
+                    " significantly from faction C/SL/O data ({}) in year {}.",
+                fRec.getKey(),
+                pctFormatter.format(100.0 * totalSLWeight / totalWeight),
+                pctSL,
+                year);
+        }
+        if (pctClan != null &&
+            Math.abs(pctClan -
+                (100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight)
+            ) > MIN_CLAN_DIFFERENCE) {
+            logger.info("Faction {} Clan percentage ({}) differs significantly from" +
+                    " faction C/SL/O data ({}) in year {}.",
+                fRec.getKey(),
+                pctFormatter.format(100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight),
+                pctClan,
+                year);
+        }
+
     }
 
     public void dispose() {

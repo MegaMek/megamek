@@ -19,7 +19,7 @@ import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Causes automatic victory at the end of the current turn.
- * 
+ *
  * @author Ben
  * @since July 11, 2002, 2:24 PM
  */
@@ -85,7 +85,7 @@ public class VictoryCommand extends ServerCommand {
         } else {
             server.sendServerChat(getDeclareTeam(player.getName()));
         }
-        gameManager.forceVictory(player);
+        gameManager.forceVictory(player, false, false);
     }
 
 }

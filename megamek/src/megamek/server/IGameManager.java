@@ -134,6 +134,8 @@ public interface IGameManager {
 
     void requestTeamChange(int teamId, Player player);
 
+    void requestTeamChangeForPlayer(int teamID, Player player);
+
     List<ServerCommand> getCommandList(Server server);
 
     void addReport(ReportEntry r);

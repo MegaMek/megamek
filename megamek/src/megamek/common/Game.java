@@ -107,6 +107,8 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     private final GameReports gameReports = new GameReports();
 
     private boolean forceVictory = false;
+    private boolean endImmediately = false;
+    private boolean ignorePlayerDefeatVotes = false;
     private int victoryPlayerId = Player.PLAYER_NONE;
     private int victoryTeam = Player.TEAM_NONE;
 
@@ -2529,13 +2531,6 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Increments the round counter
-     */
-    public void incrementRoundCount() {
-        incrementCurrentRound();
-    }
-
-    /**
      * Getter for property forceVictory. This tells us that there is an active claim
      * for victory.
      *
@@ -2547,12 +2542,47 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
+     * Getter for property ignorePlayerDefeatVotes.
+     * @return Value of property ignorePlayerDefeatVotes.
+     */
+    public boolean isIgnorePlayerDefeatVotes() {
+        return ignorePlayerDefeatVotes;
+    }
+
+    /**
+     * Getter for property endImmediately. This tells us that the game should end even if it is not the end of the round in a
+     * forced victory
+     *
+     * @return Value of property endImmediately.
+     */
+    public boolean isEndImmediately() {
+        return endImmediately;
+    }
+
+    /**
      * Setter for property forceVictory.
      *
      * @param forceVictory New value of property forceVictory.
      */
     public void setForceVictory(boolean forceVictory) {
         this.forceVictory = forceVictory;
+    }
+
+    /**
+     * Setter for property endImmediately.
+     *
+     * @param endImmediately New value of property endImmediately.
+     */
+    public void setEndImmediately(boolean endImmediately) {
+        this.endImmediately = endImmediately;
+    }
+
+    /**
+     * Setter for property ignorePlayerDefeatVotes.
+     * @param ignorePlayerDefeatVotes New value of property ignorePlayerDefeatVotes.
+     */
+    public void setIgnorePlayerDefeatVotes(boolean ignorePlayerDefeatVotes) {
+        this.ignorePlayerDefeatVotes = ignorePlayerDefeatVotes;
     }
 
     /**

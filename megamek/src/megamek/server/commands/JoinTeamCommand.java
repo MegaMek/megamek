@@ -27,7 +27,9 @@ import megamek.server.Server;
  * This command allows a player to join a specified team.
  *
  * @author arlith
+ * @deprecated Planned to be removed, use the GM command {@link ChangeTeamCommand} instead.
  */
+@Deprecated
 public class JoinTeamCommand extends ServerCommand {
 
     public static String SERVER_VOTE_PROMPT_MSG = "All players with an assigned team "
@@ -35,10 +37,12 @@ public class JoinTeamCommand extends ServerCommand {
             + "to allow this change.";
 
     public JoinTeamCommand(Server server) {
-        super(server, "joinTeam", "Switches a player's team at the end phase. "
-                + "Usage: /joinTeam # where the first number is the team "
-                + "number to join.  0 is for no team, " +
-                "-1 is for unassigned team");
+        super(server, "joinTeam", "Planned to be removed, use the GM command /changeTeam instead. "
+            + "Switches a player's team at the end phase. "
+            + "Usage: /joinTeam # where the first number is the team "
+            + "number to join. 0 is for no team, "
+            + "-1 is for unassigned team. "
+            + "Only one player can be changed teams per round.");
     }
 
     /**

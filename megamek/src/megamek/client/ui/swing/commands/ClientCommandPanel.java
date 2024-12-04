@@ -1,13 +1,10 @@
-package megamek.client.ui.swing.gmCommands;
+package megamek.client.ui.swing.commands;
 
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Coords;
 import megamek.common.annotations.Nullable;
-import megamek.server.commands.GamemasterServerCommand;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.EnumArgument;
-import megamek.server.commands.arguments.IntegerArgument;
-import megamek.server.commands.arguments.OptionalEnumArgument;
+import megamek.server.commands.ClientServerCommand;
+import megamek.server.commands.arguments.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,21 +14,21 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Dialog for executing a gamemaster command.
+ * Dialog for executing a client command.
  */
-public class GamemasterCommandPanel extends JDialog {
-    private final GamemasterServerCommand command;
+public class ClientCommandPanel extends JDialog {
+    private final ClientServerCommand command;
     private final ClientGUI client;
     private final Coords coords;
 
     /**
-     * Constructor for the dialog for executing a gamemaster command.
+     * Constructor for the dialog for executing a client command.
      *
      * @param parent    The parent frame.
      * @param client    The client GUI.
      * @param command   The command to render.
      */
-    public GamemasterCommandPanel(JFrame parent, ClientGUI client, GamemasterServerCommand command, @Nullable Coords coords) {
+    public ClientCommandPanel(JFrame parent, ClientGUI client, ClientServerCommand command, @Nullable Coords coords) {
         super(parent, command.getName(), true);
         this.command = command;
         this.client = client;
@@ -88,6 +85,10 @@ public class GamemasterCommandPanel extends JDialog {
             JSpinner spinner = createSpinner(intArg);
             argumentPanel.add(spinner);
             return spinner;
+        } else if (argument instanceof OptionalIntegerArgument intArg) {
+            JSpinner spinner = createSpinner(intArg);
+            argumentPanel.add(spinner);
+            return spinner;
         } else if (argument instanceof OptionalEnumArgument<?> enumArg) {
             JComboBox<String> comboBox = createOptionalEnumComboBox(enumArg);
             argumentPanel.add(comboBox);
@@ -96,6 +97,31 @@ public class GamemasterCommandPanel extends JDialog {
             JComboBox<String> comboBox = createEnumComboBox(enumArg);
             argumentPanel.add(comboBox);
             return comboBox;
+        } else if (argument instanceof OptionalPasswordArgument) {
+            JPasswordField passwordField = new JPasswordField();
+            argumentPanel.add(passwordField);
+            return passwordField;
+        } else if (argument instanceof StringArgument stringArg) {
+            JTextField textField = new JTextField();
+            if (stringArg.hasDefaultValue()) {
+                textField.setText(stringArg.getValue());
+            }
+            argumentPanel.add(textField);
+            return textField;
+        } else if (argument instanceof OptionalStringArgument stringArg) {
+            JTextField textField = new JTextField();
+            if (stringArg.getValue().isPresent()) {
+                textField.setText(stringArg.getValue().get());
+            }
+            argumentPanel.add(textField);
+            return textField;
+        } else if (argument instanceof BooleanArgument boolArg) {
+            JCheckBox checkBox = new JCheckBox();
+            if (boolArg.hasDefaultValue()) {
+                checkBox.setSelected(boolArg.getValue());
+            }
+            argumentPanel.add(checkBox);
+            return checkBox;
         }
         return null;
     }
@@ -111,6 +137,14 @@ public class GamemasterCommandPanel extends JDialog {
     private int getIntArgumentDefaultValue(IntegerArgument intArg) {
         return intArg.hasDefaultValue() ? intArg.getValue() : isArgumentX(intArg) ? coords.getX()+1 :
             isArgumentY(intArg) ? coords.getY()+1 : 0;
+    }
+
+    private JSpinner createSpinner(OptionalIntegerArgument intArg) {
+        return new JSpinner(new SpinnerNumberModel(
+            (int) intArg.getValue().orElse(0),
+            intArg.getMinValue(),
+            intArg.getMaxValue(),
+            1));
     }
 
     private JSpinner createSpinner(IntegerArgument intArg) {
@@ -184,6 +218,12 @@ public class GamemasterCommandPanel extends JDialog {
 
             if (component instanceof JSpinner) {
                 args[i] = argument.getName() + "=" + ((JSpinner) component).getValue().toString();
+            } else if (component instanceof JPasswordField) {
+                args[i] = argument.getName() + "=" + new String(((JPasswordField) component).getPassword());
+            } else if (component instanceof JTextField) {
+                args[i] = argument.getName() + "=" + ((JTextField) component).getText();
+            } else if (component instanceof JCheckBox) {
+                args[i] = argument.getName() + "=" + (((JCheckBox) component).isSelected() ? "true" : "false");
             } else if (component instanceof JComboBox) {
                 if (argument instanceof OptionalEnumArgument<?>) {
                     String selectedItem = (String) ((JComboBox<?>) component).getSelectedItem();

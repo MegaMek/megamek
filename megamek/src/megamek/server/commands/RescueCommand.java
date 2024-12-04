@@ -17,6 +17,7 @@ import megamek.client.ui.Messages;
 import megamek.common.MovePath;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -45,7 +46,7 @@ public class RescueCommand extends GamemasterServerCommand{
      * Run this command with the arguments supplied
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         int unitId = (int) args.get(UNIT_ID).getValue();
         // is the unit on the board?
         var unit = gameManager.getGame().getEntity(unitId);

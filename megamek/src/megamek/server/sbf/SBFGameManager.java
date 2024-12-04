@@ -164,6 +164,11 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     }
 
     @Override
+    public void requestTeamChangeForPlayer(int teamID, Player player) {
+    }
+
+
+    @Override
     public List<ServerCommand> getCommandList(Server server) {
         return Collections.emptyList();
     }

@@ -18,6 +18,7 @@ import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -50,7 +51,7 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
     }
 
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         IntegerArgument unitID = (IntegerArgument) args.get(UNIT_ID);
         IntegerArgument playerID = (IntegerArgument) args.get(PLAYER_ID);
 

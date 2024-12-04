@@ -42,4 +42,5 @@ public abstract class Argument<T> {
     public abstract String getHelp();
 
     public abstract void parse(String input) throws IllegalArgumentException;
+
 }

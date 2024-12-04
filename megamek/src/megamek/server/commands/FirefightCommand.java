@@ -18,6 +18,7 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -59,7 +60,7 @@ public class FirefightCommand extends GamemasterServerCommand {
      * @see ServerCommand#run(int, String[])
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         int xArg = (int) args.get(X).getValue() - 1;
         int yArg = (int) args.get(Y).getValue() - 1;
         firefight(new Coords(xArg, yArg));

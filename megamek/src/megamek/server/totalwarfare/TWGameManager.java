@@ -122,6 +122,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     private Player playerChangingTeam = null;
 
+    private List<TeamChangeRequest> playersChangingTeam = new ArrayList<>();
+
     /**
      * Flag that is set to true when all players have voted to allow another
      * player to change teams.
@@ -208,6 +210,8 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new JoinTeamCommand(server));
         commands.add(new AllowGameMasterCommand(server, this));
         commands.add(new GameMasterCommand(server));
+        commands.add(new ChangeTeamCommand(server, this));
+        commands.add(new EndGameCommand(server, this));
         return commands;
     }
 
@@ -341,11 +345,31 @@ public class TWGameManager extends AbstractGameManager {
         sendServerChat(player.getName() + " set SeeAll: " + player.getSeeAll());
     }
 
+    private record TeamChangeRequest(int teamID, Player player){};
+
+    /**
+     * request the change of a player from a team to another
+     * @param teamID
+     * @param player
+     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead.
+     */
     @Override
-    public void requestTeamChange(int team, Player player) {
-        requestedTeam = team;
+    @Deprecated
+    public void requestTeamChange(int teamID, Player player) {
+        requestedTeam = teamID;
         playerChangingTeam = player;
         changePlayersTeam = false;
+        playersChangingTeam.add(new TeamChangeRequest(teamID, player));
+    }
+
+    /**
+     * request the change of a player from a team to another
+     * @param teamID
+     * @param player
+     */
+    @Override
+    public void requestTeamChangeForPlayer(int teamID, Player player) {
+        playersChangingTeam.add(new TeamChangeRequest(teamID, player));
     }
 
     public void allowTeamChange() {
@@ -364,8 +388,25 @@ public class TWGameManager extends AbstractGameManager {
         return requestedTeam;
     }
 
+
+    /**
+     * Changes the team of the player specified in the team change request and updates the game state.
+     */
     void processTeamChangeRequest() {
-        if (playerChangingTeam != null) {
+        // Change requested by a GM must execute.
+        playersChangingTeam.forEach(this::changePlayerTeams);
+        playersChangingTeam.clear();
+
+        // Changes requested by players follow the default behavior
+        legacyProcessTeamChangeRequest();
+    }
+
+    /**
+     * Changes the team of the player specified in the team change request and updates the game state.
+     * @deprecated Planned to be removed at a later date
+     */
+    private void legacyProcessTeamChangeRequest() {
+        if (playerChangingTeam != null && changePlayersTeam) {
             playerChangingTeam.setTeam(requestedTeam);
             getGame().setupTeams();
             transmitPlayerUpdate(playerChangingTeam);
@@ -377,19 +418,36 @@ public class TWGameManager extends AbstractGameManager {
             }
             sendServerChat(playerChangingTeam.getName() + " has changed teams to " + teamString);
             playerChangingTeam = null;
+            changePlayersTeam = false;
         }
-        changePlayersTeam = false;
+    }
+
+    /**
+     * Changes the team of the player specified in the team change request and updates the game state.
+     *
+     * @param teamChangeRequest the request containing the player and the new team ID
+     */
+    void changePlayerTeams(TeamChangeRequest teamChangeRequest) {
+        teamChangeRequest.player().setTeam(teamChangeRequest.teamID());
+        getGame().setupTeams();
+        transmitPlayerUpdate(teamChangeRequest.player());
+        String teamString = "Team " + teamChangeRequest.teamID() + "!";
+        if (teamChangeRequest.teamID() == Player.TEAM_UNASSIGNED) {
+            teamString = " unassigned!";
+        } else if (teamChangeRequest.teamID() == Player.TEAM_NONE) {
+            teamString = " lone wolf!";
+        }
+        sendServerChat(teamChangeRequest.player().getName() + " has changed teams to " + teamString);
     }
 
     @Override
     public void disconnect(Player player) {
         // in the lounge, just remove all entities for that player
         if (getGame().getPhase().isLounge()) {
-            List<Player> gms = game.getPlayersList().stream().filter(p -> p.isGameMaster())
-                    .collect(Collectors.toList());
+            var gm = game.getPlayersList().stream().filter(Player::isGameMaster).findAny();
 
-            if (gms.size() > 0) {
-                transferAllEnititiesOwnedBy(player, gms.get(0));
+            if (gm.isPresent()) {
+                transferAllEnititiesOwnedBy(player, gm.get());
             } else {
                 removeAllEntitiesOwnedBy(player);
             }
@@ -1274,10 +1332,12 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Forces victory for the specified player, or his/her team at the end of the
+     * Forces victory for a specified player or their team at the end of the
      * round.
      */
-    public void forceVictory(Player victor) {
+    public void forceVictory(Player victor, boolean endImmediately, boolean ignorePlayerVotes) {
+        game.setEndImmediately(endImmediately);
+        game.setIgnorePlayerDefeatVotes(endImmediately);
         game.setForceVictory(true);
         if (victor.getTeam() == Player.TEAM_NONE) {
             game.setVictoryPlayerId(victor.getId());
@@ -2176,9 +2236,13 @@ public class TWGameManager extends AbstractGameManager {
         return vr.isVictory();
     }// end victory
 
+
     private boolean isPlayerForcedVictory() {
         // check game options
-        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY)) {
+        var dontSkipForcedVictory = !game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY);
+        var dontEndImmediately = !game.isEndImmediately();
+
+        if (dontSkipForcedVictory && dontEndImmediately) {
             return false;
         }
 
@@ -2186,17 +2250,18 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        for (Player player : game.getPlayersList()) {
-            if ((player.getId() == game.getVictoryPlayerId()) || ((player.getTeam() == game.getVictoryTeam())
-                    && (game.getVictoryTeam() != Player.TEAM_NONE))) {
-                continue;
-            }
+        if (!game.isIgnorePlayerDefeatVotes()) {
+            for (Player player : game.getPlayersList()) {
+                if ((player.getId() == game.getVictoryPlayerId()) || ((player.getTeam() == game.getVictoryTeam())
+                        && (game.getVictoryTeam() != Player.TEAM_NONE))) {
+                    continue;
+                }
 
-            if (!player.admitsDefeat()) {
-                return false;
+                if (!player.admitsDefeat()) {
+                    return false;
+                }
             }
         }
-
         return true;
     }
 

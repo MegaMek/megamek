@@ -32,7 +32,7 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.gmCommands.GamemasterCommandPanel;
+import megamek.client.ui.swing.commands.ClientCommandPanel;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -630,7 +630,7 @@ public class MapMenu extends JPopupMenu {
     /**
      * Create various menus related to GameMaster (GM) mode
      *
-     * @return
+     * @return JMenu
      */
     private JMenu createGamemasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
@@ -679,21 +679,32 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createGMSpecialCommandsMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
+
+        var nukesAllowed = client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES)
+            && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES);
+
         List.of(
-            new ChangeOwnershipCommand(null, null),
             new ChangeWeatherCommand(null, null),
-            new DisasterCommand(null, null),
+            new ChangeTeamCommand(null, null),
+            new ChangeOwnershipCommand(null, null),
             new KillCommand(null, null),
-            new FirefightCommand(null, null),
+            new RescueCommand(null, null),
             new FirestarterCommand(null, null),
             new FirestormCommand(null, null),
+            new FirefightCommand(null, null),
             new NoFiresCommand(null, null),
-            new OrbitalBombardmentCommand(null, null),
             new RemoveSmokeCommand(null, null),
-            new RescueCommand(null, null)
+            new OrbitalBombardmentCommand(null, null),
+            new DisasterCommand(null, null),
+            new NukeCommand(null, null),
+            new EndGameCommand(null, null)
         ).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
+            if (cmd instanceof NukeCommand) {
+                item.setEnabled(nukesAllowed);
+            }
+            item.addActionListener(evt -> new ClientCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
+
             menu.add(item);
         });
 

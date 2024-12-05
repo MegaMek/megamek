@@ -1292,18 +1292,20 @@ public class RATGenerator {
         DecimalFormat pctFormatter = new DecimalFormat("#.##");
         if (pctOmni != null &&
             Math.abs(pctOmni - (100.0 * totalOmniWeight / totalWeight)) > MIN_OMNI_DIFFERENCE) {
-            logger.info("Faction {} Omni percentage ({}) differs significantly from" +
+            logger.info("Faction {} {} Omni percentage ({}) differs significantly from" +
                     " faction C/SL/O data ({}) in year {}.",
                 fRec.getKey(),
+                UnitType.getTypeName(unitType),
                 pctFormatter.format(100.0 * totalOmniWeight / totalWeight),
                 pctOmni,
                 year);
         }
         if (pctSL != null &&
             Math.abs(pctSL - (100.0 * totalSLWeight / totalWeight)) > MIN_SL_DIFFERENCE) {
-            logger.info("Faction {} Star League/advanced IS percentage ({}) differs" +
+            logger.info("Faction {} {} Star League/advanced IS percentage ({}) differs" +
                     " significantly from faction C/SL/O data ({}) in year {}.",
                 fRec.getKey(),
+                UnitType.getTypeName(unitType),
                 pctFormatter.format(100.0 * totalSLWeight / totalWeight),
                 pctSL,
                 year);
@@ -1312,9 +1314,10 @@ public class RATGenerator {
             Math.abs(pctClan -
                 (100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight)
             ) > MIN_CLAN_DIFFERENCE) {
-            logger.info("Faction {} Clan percentage ({}) differs significantly from" +
+            logger.info("Faction {} {} Clan percentage ({}) differs significantly from" +
                     " faction C/SL/O data ({}) in year {}.",
                 fRec.getKey(),
+                UnitType.getTypeName(unitType),
                 pctFormatter.format(100.0 * Math.min(totalWeight, totalClanWeight + clanSalvageWeight) / totalWeight),
                 pctClan,
                 year);

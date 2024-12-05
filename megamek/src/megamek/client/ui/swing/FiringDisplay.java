@@ -937,7 +937,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * clear weapon jam
      */
     private void doClearWeaponJam() {
-        ArrayList<Mounted<?>> weapons = ((Tank) ce()).getJammedWeapons();
+        List<Mounted<?>> weapons = ((Tank) ce()).getDejammableWeapons();
         String[] names = new String[weapons.size()];
         for (int loop = 0; loop < names.length; loop++) {
             names[loop] = weapons.get(loop).getDesc();

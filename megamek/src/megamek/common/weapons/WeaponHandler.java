@@ -454,10 +454,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * @param vPhaseReport
-     *                     - A <code>Vector</code> containing the phasereport.
-     * @return a <code>boolean</code> value indicating wether or not the attack
-     *         misses because of a failed check.
+     * Processes effects that may make the weapon malfunction in various ways. Overriding methods should generally call super.
+     *
+     * @param vPhaseReport The current phase's report which will be added to accordingly
+     * @return a boolean value indicating wether or not the attack misses because of a failed check.
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return processJamFromEquipmentModifier(vPhaseReport);
@@ -465,9 +465,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /**
      * Jams the weapon if it is has a jamming equipment modifier (e.g. salvage quality) that is triggered by the to-hit roll and
-     * adds the appropriate report.
+     * adds the appropriate report. See Mercenaries Supplemental Update, p.138
      *
-     * @param phaseReport The current report
+     * @param phaseReport The current phase's report which will be added to accordingly
      * @see WeaponJamModifier
      */
     protected boolean processJamFromEquipmentModifier(List<Report> phaseReport) {

@@ -3555,7 +3555,7 @@ public class FireControl {
 
         // step 1: loop through all the unit's jammed weapons to determine the biggest
         // one
-        for (Mounted<?> mounted : tankShooter.getJammedWeapons()) {
+        for (Mounted<?> mounted : tankShooter.getDejammableWeapons()) {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();

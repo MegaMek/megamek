@@ -13,11 +13,7 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CombatVehicleCostCalculator;
@@ -62,7 +58,12 @@ public class Tank extends Entity {
     private boolean moderateMovementDamage = false;
     private boolean heavyMovementDamage = false;
     private boolean infernoFire = false;
-    private ArrayList<Mounted<?>> jammedWeapons = new ArrayList<>();
+
+    /**
+     * A list of weapons of this vehicle that are jammed *and* eligible for being de-jammed in the present game.
+     */
+    private final List<Mounted<?>> dejammableWeapons = new ArrayList<>();
+
     protected boolean engineHit = false;
 
     // locations
@@ -2228,7 +2229,7 @@ public class Tank extends Entity {
      * @return True if there are any jammed weapons and the crew isn't stunned
      */
     public boolean canUnjamWeapon() {
-        return !getJammedWeapons().isEmpty() && getStunnedTurns() <= 0;
+        return !getDejammableWeapons().isEmpty() && getStunnedTurns() <= 0;
     }
 
     /**
@@ -2241,16 +2242,27 @@ public class Tank extends Entity {
         return (m_bTurretJammed || m_bDualTurretJammed) && getStunnedTurns() <= 0;
     }
 
-    public void addJammedWeapon(Mounted<?> weapon) {
-        jammedWeapons.add(weapon);
+    /**
+     * Adds a weapon to the list of weapons of this vehicle that are jammed and can be de-jammed so as to work again. Weapons that are
+     * finally jammed for the present game should not be added to this list.
+     *
+     * @param weapon The weapon to add which makes it eligible for clearing the jammed status
+     */
+    public void addUnjammableWeapon(Mounted<?> weapon) {
+        dejammableWeapons.add(weapon);
     }
 
-    public ArrayList<Mounted<?>> getJammedWeapons() {
-        return jammedWeapons;
+    /**
+     * @return Weapons of this vehicle that are jammed and can be de-jammed so as to work again. Other weapons on the tank might be jammed
+     * without the option to return them to a working state within the current game. Those are not part of the returned list.
+     */
+    public List<Mounted<?>> getDejammableWeapons() {
+        return dejammableWeapons;
     }
 
+    @SuppressWarnings("unused") // Used by MHQ
     public void resetJammedWeapons() {
-        jammedWeapons = new ArrayList<>();
+        dejammableWeapons.clear();
     }
 
     /**

@@ -10270,7 +10270,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (entity instanceof Tank) {
                     Mounted<?> m = entity.getEquipment(((RepairWeaponMalfunctionAction) ea).getWeaponId());
                     m.setJammed(false);
-                    ((Tank) entity).getJammedWeapons().remove(m);
+                    ((Tank) entity).getDejammableWeapons().remove(m);
                     Report r = new Report(3034);
                     r.subject = entity.getId();
                     r.addDesc(entity);
@@ -22783,7 +22783,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!weapons.isEmpty()) {
                     Mounted<?> weapon = weapons.get(Compute.randomInt(weapons.size()));
                     weapon.setJammed(true);
-                    tank.addJammedWeapon(weapon);
+                    tank.addUnjammableWeapon(weapon);
                     r.add(weapon.getName());
                     reports.add(r);
                 }
@@ -28736,7 +28736,7 @@ public class TWGameManager extends AbstractGameManager {
             if (!wpns.isEmpty()) {
                 Mounted<?> weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
                 weapon.setJammed(true);
-                ((GunEmplacement) weapon.getEntity()).addJammedWeapon(weapon);
+                ((GunEmplacement) weapon.getEntity()).addUnjammableWeapon(weapon);
                 r = new Report(3845);
                 r.type = Report.PUBLIC;
                 r.indent(1);

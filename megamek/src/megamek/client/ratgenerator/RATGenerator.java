@@ -894,7 +894,9 @@ public class RATGenerator {
             if (entry.getKey().isOmni()) {
                 totalOmniWeight += entry.getValue();
             }
-            if (!entry.getKey().isClan() && !entry.getKey().isSL()) {
+            if (entry.getKey().isSL()) {
+                totalSLWeight += entry.getValue();
+            } else if (!entry.getKey().isClan()) {
                 totalOtherWeight += entry.getValue();
             }
         }
@@ -1109,7 +1111,6 @@ public class RATGenerator {
                 // inverted so weights of non-SL units are moved in opposite direction from
                 // SL units.
                 double totalNonSLWeight = totalSLWeight - totalWeight;
-                double totalSLWeightPostMod = 0.0;
 
                 // Apply the weight modifications proportionally, using the unit weight relative
                 // to the weight total of either Clan or Other as appropriate
@@ -1118,6 +1119,7 @@ public class RATGenerator {
                 totalOtherWeight = 0.0;
                 totalOmniWeight = 0.0;
                 totalWeightPostMod = 0.0;
+                double totalSLWeightPostMod = 0.0;
                 for (ModelRecord curModel : unitWeights.keySet()) {
                     curWeight = unitWeights.get(curModel);
 
@@ -1168,7 +1170,7 @@ public class RATGenerator {
         double clanSalvageWeight = 0.0;
         if (pctClan != null) {
 
-            // Get total weights of provided salvage for inclusion in Clan re-balancing.
+            // Non-Clan factions count salvage weights from Clan factions as Clan tech
             if (!fRec.isClan()) {
                 clanSalvageWeight = salvageWeights.
                     keySet().

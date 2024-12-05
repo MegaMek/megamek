@@ -63,21 +63,21 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 : null;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numberOfWeapons > 1 ? " (" + numberOfWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            r.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((weaponType.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -177,7 +177,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
                 if (bDirect) {
                     r = new Report(3189);
-                    r.subject = ae.getId();
+                    r.subject = attackerEntity.getId();
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
                 }
@@ -217,7 +217,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().inSpace() || attackerEntity.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -254,7 +254,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackerEntity);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);
                 r.subject = subjectId;
@@ -272,21 +272,21 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         double counterAV = calcCounterAV();
         int armor = 0;
         int weaponarmor = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
             if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
-                ae.loadWeaponWithSameAmmo(bayW);
+                attackerEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
             if (!bayW.isBreached()
                     && !bayW.isDestroyed()
                     && !bayW.isJammed()
                     && bayWAmmo != null
-                    && ae.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
+                    && attackerEntity.getTotalAmmoOfType(bayWAmmo.getType()) >= bayW.getCurrentShots()) {
                 WeaponType bayWType = ((WeaponType) bayW.getType());
                 // need to cycle through weapons and add av
                 double current_av = 0;
@@ -331,7 +331,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                         if (null == bayWAmmo
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
-                            ae.loadWeaponWithSameAmmo(bayW);
+                            attackerEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
                         if (null != bayWAmmo) {
@@ -482,9 +482,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         }
 
         for (int wId : insertedAttacks) {
-            Mounted<?> bayW = ae.getEquipment(wId);
-            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    waa.getTargetId(), wId);
+            Mounted<?> bayW = attackerEntity.getEquipment(wId);
+            WeaponAttackAction newWaa = new WeaponAttackAction(attackerEntity.getId(),
+                    weaponAttackAction.getTargetId(), wId);
             Weapon w = (Weapon) bayW.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
@@ -539,11 +539,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
                 && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+                && attackerEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -552,9 +552,9 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(weaponType.getName());
         if (entityTarget != null) {
-            if ((wtype.getAmmoType() != AmmoType.T_NA)
+            if ((weaponType.getAmmoType() != AmmoType.T_NA)
                     && (weapon.getLinked() != null)
                     && (weapon.getLinked().getType() instanceof AmmoType)) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -658,7 +658,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
             if (bDirect) {
                 r = new Report(3189);
-                r.subject = ae.getId();
+                r.subject = attackerEntity.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
@@ -719,8 +719,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 WeaponType bayWType = ((WeaponType) m.getType());
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
-                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                            waa.getTargetId(), m.getEquipmentNum());
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(weaponAttackAction.getEntityId(), weaponAttackAction.getTargetType(),
+                            weaponAttackAction.getTargetId(), m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
                             gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);

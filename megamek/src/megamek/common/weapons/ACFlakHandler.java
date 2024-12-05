@@ -39,7 +39,7 @@ public class ACFlakHandler extends LBXHandler {
      */
     public ACFlakHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " fragment(s) ";
+        salvoType = " fragment(s) ";
     }
 
     /*

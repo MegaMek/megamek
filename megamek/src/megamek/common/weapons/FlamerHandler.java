@@ -36,27 +36,27 @@ public class FlamerHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
                                       Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
-        EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
-        
+        EquipmentMode currentWeaponMode = game.getEntity(weaponAttackAction.getEntityId()).getEquipment(weaponAttackAction.getWeaponId()).curMode();
+
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
-        
+
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            
+
             if (bmmFlamerDamage && entityTarget.tracksHeat() &&
                     !entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                            Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+                            Compute.targetSideTable(attackerEntity, entityTarget, weapon.getCalledShot().getCall()))) {
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
+                    toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                    weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                    Compute.targetSideTable(attackerEntity, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
@@ -66,8 +66,8 @@ public class FlamerHandler extends WeaponHandler {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
-            
-            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
     }
 
@@ -94,7 +94,7 @@ public class FlamerHandler extends WeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -126,7 +126,7 @@ public class FlamerHandler extends WeaponHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

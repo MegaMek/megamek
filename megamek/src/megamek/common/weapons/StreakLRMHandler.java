@@ -44,24 +44,24 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             return Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
         }
         return 1;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -71,7 +71,7 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -89,7 +89,7 @@ public class StreakLRMHandler extends StreakHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackerEntity,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }

@@ -170,7 +170,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new FixElevationCommand(server, this));
         commands.add(new HelpCommand(server));
         commands.add(new BotHelpCommand(server));
-        commands.add(new KickCommand(server));
+        commands.add(new KickCommand(server, this));
         commands.add(new ListSavesCommand(server));
         commands.add(new LocalSaveGameCommand(server));
         commands.add(new LocalLoadGameCommand(server));
@@ -212,6 +212,9 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new GameMasterCommand(server));
         commands.add(new ChangeTeamCommand(server, this));
         commands.add(new EndGameCommand(server, this));
+        commands.add(new NuclearStrikeCommand(server, this));
+        commands.add(new NuclearStrikeCustomCommand(server, this));
+        commands.add(new RequestSupportCommand(server, this));
         return commands;
     }
 
@@ -9663,8 +9666,8 @@ public class TWGameManager extends AbstractGameManager {
                 for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
                         && j.hasMoreElements();) {
                     WeaponHandler wh = (WeaponHandler) j.nextElement();
-                    if (wh.waa instanceof ArtilleryAttackAction) {
-                        ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
+                    if (wh.weaponAttackAction instanceof ArtilleryAttackAction) {
+                        ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.weaponAttackAction;
 
                         if ((oaaa.getEntityId() == aaa.getEntityId())
                                 && !Targetable.areAtSamePosition(oaaa.getTarget(game), attackTarget)) {
@@ -9798,7 +9801,7 @@ public class TWGameManager extends AbstractGameManager {
 
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
-            WeaponAttackAction waa = wh.waa;
+            WeaponAttackAction waa = wh.weaponAttackAction;
 
             // for artillery attacks, the attacking entity might no longer be in the game.
             // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
@@ -9889,7 +9892,7 @@ public class TWGameManager extends AbstractGameManager {
             // Ensure we only target each attack once
             List<WeaponHandler> targetsToRemove = new ArrayList<>();
             for (WeaponHandler wh : potentialTargets) {
-                if (targetedAttacks.contains(wh.getWaa())) {
+                if (targetedAttacks.contains(wh.getWeaponAttackAction())) {
                     targetsToRemove.add(wh);
                 }
             }
@@ -9927,10 +9930,10 @@ public class TWGameManager extends AbstractGameManager {
         // Create a list of valid assignments for this APDS
         List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
         for (WeaponHandler wr : vAttacks) {
-            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(), e.getEquipmentNum(apds), game.getEntity(wr.waa.getEntityId()));
-            boolean isInRange = e.getPosition().distance(wr.getWaa().getTarget(game).getPosition()) <= 3;
+            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(), e.getEquipmentNum(apds), game.getEntity(wr.weaponAttackAction.getEntityId()));
+            boolean isInRange = e.getPosition().distance(wr.getWeaponAttackAction().getTarget(game).getPosition()) <= 3;
             if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
+                vAttacksInArc.add(wr.weaponAttackAction);
             }
         }
 
@@ -10005,9 +10008,9 @@ public class TWGameManager extends AbstractGameManager {
             // Create a list of valid assignments for this AMS
             List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
-                if (!amsTargets.contains(wr.waa)
-                        && Compute.isInArc(game, e.getId(), e.getEquipmentNum(ams), game.getEntity(wr.waa.getEntityId()))) {
-                    vAttacksInArc.add(wr.waa);
+                if (!amsTargets.contains(wr.weaponAttackAction)
+                        && Compute.isInArc(game, e.getId(), e.getEquipmentNum(ams), game.getEntity(wr.weaponAttackAction.getEntityId()))) {
+                    vAttacksInArc.add(wr.weaponAttackAction);
                 }
             }
 
@@ -10157,11 +10160,11 @@ public class TWGameManager extends AbstractGameManager {
                 // If we successfully detect the enemy, add it to the appropriate detector's
                 // sensor contacts list
                 if (Compute.calcSensorContact(game, detector, target)) {
-                    game.getEntity(detector.getId()).addSensorContact(target.getId());
+                    game.getEntityOrThrow(detector.getId()).addSensorContact(target.getId());
                     // If detector is part of a C3 network, share the contact
                     if (detector.hasNavalC3()) {
                         for (Entity c3NetMate : game.getC3NetworkMembers(detector)) {
-                            game.getEntity(c3NetMate.getId()).addSensorContact(target.getId());
+                            game.getEntityOrThrow(c3NetMate.getId()).addSensorContact(target.getId());
                         }
                     }
                 }
@@ -10205,7 +10208,7 @@ public class TWGameManager extends AbstractGameManager {
                 // If we successfully lock up the enemy, add it to the appropriate detector's
                 // firing solutions list
                 if (Compute.calcFiringSolution(game, detector, target)) {
-                    game.getEntity(detector.getId()).addFiringSolution(targetId);
+                    game.getEntityOrThrow(detector.getId()).addFiringSolution(targetId);
                 }
             }
         }
@@ -20645,6 +20648,11 @@ public class TWGameManager extends AbstractGameManager {
         getvPhaseReport().add(r);
     }
 
+    public void drawNukeHitOnBoard(Coords coord) {
+        int[] position = {coord.getX(), coord.getY()};
+        drawNukeHitOnBoard(position);
+    }
+
     public void drawNukeHitOnBoard(int[] nukeArgs) {
         // Turns out this object can be used here
         var nuke = new OrbitalBombardment.Builder().x(nukeArgs[0] - 1).y(nukeArgs[1] -1).radius(4).damage(0).build();
@@ -20711,6 +20719,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (nukeStats == null) {
             logger.error("Illegal nuke not listed in HS:3070");
+            return;
         }
 
         doNuclearExplosion(position, nukeStats.baseDamage, nukeStats.degradation, nukeStats.secondaryRadius,
@@ -27531,8 +27540,8 @@ public class TWGameManager extends AbstractGameManager {
         int team = p.getTeam();
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
-            if (wh.waa instanceof ArtilleryAttackAction) {
-                ArtilleryAttackAction aaa = (ArtilleryAttackAction) wh.waa;
+            if (wh.weaponAttackAction instanceof ArtilleryAttackAction) {
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction) wh.weaponAttackAction;
                 if ((aaa.getPlayerId() == p.getId())
                         || ((team != Player.TEAM_NONE)
                                 && (team == game.getPlayer(aaa.getPlayerId()).getTeam()))
@@ -29123,10 +29132,10 @@ public class TWGameManager extends AbstractGameManager {
     private void clearArtillerySpotters(int entityID, int weaponID) {
         for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
             WeaponHandler wh = (WeaponHandler) i.nextElement();
-            if ((wh.waa instanceof ArtilleryAttackAction)
-                    && (wh.waa.getEntityId() == entityID)
-                    && (wh.waa.getWeaponId() == weaponID)) {
-                ArtilleryAttackAction aaa = (ArtilleryAttackAction) wh.waa;
+            if ((wh.weaponAttackAction instanceof ArtilleryAttackAction)
+                    && (wh.weaponAttackAction.getEntityId() == entityID)
+                    && (wh.weaponAttackAction.getWeaponId() == weaponID)) {
+                ArtilleryAttackAction aaa = (ArtilleryAttackAction) wh.weaponAttackAction;
                 aaa.setSpotterIds(null);
             }
         }

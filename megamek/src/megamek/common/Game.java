@@ -459,7 +459,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         // aerospace
         // unit having left the field already, for example
         return getAttacksVector().stream()
-                .map(AttackHandler::getWaa)
+                .map(AttackHandler::getWeaponAttackAction)
                 .filter(Objects::nonNull)
                 .anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
@@ -1119,6 +1119,22 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     public @Nullable Entity getEntity(final int id) {
         InGameObject possibleEntity = inGameObjects.get(id);
         return (possibleEntity instanceof Entity) ? (Entity) possibleEntity : null;
+    }
+
+    /**
+     * When it has to exist, the entity HAS to exists. If it doesn't, throw a no such element exception.
+     * This is to be used in place of the previous getEntity method when the entity is expected to exist and the following actions
+     * will cause a null pointer exception if the entity does not exist.
+     * @param id The id number of the entity to get.
+     * @return The entity with the given id number or throw a no such element exception.
+     */
+    public Entity getEntityOrThrow(final int id) {
+        InGameObject possibleEntity = inGameObjects.get(id);
+        var entity = (possibleEntity instanceof Entity) ? (Entity) possibleEntity : null;
+        if (entity == null) {
+            throw new NoSuchElementException("No value present");
+        }
+        return entity;
     }
 
     /**

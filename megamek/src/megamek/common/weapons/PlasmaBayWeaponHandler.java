@@ -105,7 +105,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -141,7 +141,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

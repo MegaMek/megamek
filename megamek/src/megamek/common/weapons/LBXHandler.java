@@ -36,7 +36,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     public LBXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " pellet(s) ";
+        salvoType = " pellet(s) ";
     }
 
     /*
@@ -48,10 +48,10 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_CLUSTER_BALLISTIC,
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -91,24 +91,24 @@ public class LBXHandler extends AmmoWeaponHandler {
         int nHitsModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
-            shotsHit = wtype.getRackSize();
+            shotsHit = weaponType.getRackSize();
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                    && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }
         } else {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
         }
 
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);

@@ -45,7 +45,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -60,7 +60,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
         } else {
             int moF = -toHit.getMoS();
-            if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+            if (attackerEntity.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                 if ((-toHit.getMoS() - 2) < 1) {
                     moF = 0;
                 } else {
@@ -82,10 +82,10 @@ public class MicroBombHandler extends AmmoWeaponHandler {
                 return !bMissed;
             }
         }
-        Infantry ba = (Infantry) ae;
+        Infantry ba = (Infantry) attackerEntity;
         int ratedDamage = ba.getShootingStrength();
-        gameManager.artilleryDamageArea(coords, ae.getPosition(),
-                (AmmoType) ammo.getType(), subjectId, ae, ratedDamage * 2,
+        gameManager.artilleryDamageArea(coords, attackerEntity.getPosition(),
+                (AmmoType) ammo.getType(), subjectId, attackerEntity, ratedDamage * 2,
                 ratedDamage, false, 0, vPhaseReport, false);
         return true;
     }

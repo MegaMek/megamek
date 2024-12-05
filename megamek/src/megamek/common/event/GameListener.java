@@ -66,6 +66,8 @@ public interface GameListener extends java.util.EventListener {
 
     void gameVictory(PostGameResolution e);
 
+    default void gamePlayerStrategicAction(GamePlayerStrategicActionEvent e) { }
+
     default void gameScriptedEvent(GameScriptedEvent event) { }
 
     /**

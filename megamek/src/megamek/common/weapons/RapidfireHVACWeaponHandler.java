@@ -48,8 +48,8 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && !conditions.getAtmosphere().isVacuum()) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
-            Coords src = ae.getPosition();
+            int rear = (attackerEntity.getFacing() + 3 + (weapon.isMekTurretMounted() ? weapon.getFacing() : 0)) % 6;
+            Coords src = attackerEntity.getPosition();
             Coords rearCoords = src.translated(rear);
             Board board = game.getBoard();
             Hex currentHex = board.getHex(src);
@@ -77,25 +77,25 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() == 2) && !attackerEntity.isConventionalInfantry()) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
             int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            for (int i = 0; i < attackerEntity.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = attackerEntity.getCritical(wloc, i);
                 if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticals(wloc, i);
+                    attackerEntity.hitAllCriticals(wloc, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackerEntity, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return false;

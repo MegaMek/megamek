@@ -30,9 +30,9 @@ import megamek.server.totalwarfare.TWGameManager;
  */
 public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
-  
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8430370552107061610L;
 
@@ -46,7 +46,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         super(t, w, g, m);
         bSalvo = true;
     }
-    
+
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -55,7 +55,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             Report.addNewline(vPhaseReport);
             // heat
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                    toHit.getSideTable(), weaponAttackAction.getAimedLocation(), weaponAttackAction
                             .getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
@@ -67,8 +67,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
             if ((!indirect || partialCoverForIndirectFire)
                     && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-                // Weapon strikes Partial Cover.            
+                    .getCover(), Compute.targetSideTable(attackerEntity, entityTarget, weapon.getCalledShot().getCall()))) {
+                // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                         nCluster, bldgAbsorbs);
                 return;
@@ -91,11 +91,11 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             // If using BMM heat option, do damage as well as heat
             if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
                 vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
-                        ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                        attackerEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                         false, false, throughFront, underWater, nukeS2S));
             }
             if (entityTarget.getArmor(hit) > 0 &&
-                    (entityTarget.getArmorType(hit.getLocation()) == 
+                    (entityTarget.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += nDamage / 2;
                 r.add(nDamage / 2);

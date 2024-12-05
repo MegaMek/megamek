@@ -6789,15 +6789,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 .forEach(ams -> {
                     // make a new list of only incoming attacks in arc
                     final List<WeaponAttackAction> attacksInArc = attacks.stream()
-                            .filter(weaponHandler -> (weaponHandler.getWaa() != null)
-                                    && !targets.contains(weaponHandler.getWaa())
+                            .filter(weaponHandler -> (weaponHandler.getWeaponAttackAction() != null)
+                                    && !targets.contains(weaponHandler.getWeaponAttackAction())
                                     && Compute.isInArc(getGame(), getId(), getEquipmentNum(ams),
                                             (weaponHandler instanceof CapitalMissileBearingsOnlyHandler)
                                                     ? getGame().getTarget(
-                                                            weaponHandler.getWaa().getOriginalTargetType(),
-                                                            weaponHandler.getWaa().getOriginalTargetId())
-                                                    : getGame().getEntity(weaponHandler.getWaa().getEntityId())))
-                            .map(WeaponHandler::getWaa)
+                                                            weaponHandler.getWeaponAttackAction().getOriginalTargetType(),
+                                                            weaponHandler.getWeaponAttackAction().getOriginalTargetId())
+                                                    : getGame().getEntity(weaponHandler.getWeaponAttackAction().getEntityId())))
+                            .map(WeaponHandler::getWeaponAttackAction)
                             .collect(Collectors.toList());
 
                     if (attacksInArc.isEmpty()) {

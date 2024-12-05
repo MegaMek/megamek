@@ -65,21 +65,21 @@ public class AR10Handler extends AmmoWeaponHandler {
                 : null;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numberOfWeapons > 1 ? " (" + numberOfWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            r.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((weaponType.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -177,7 +177,7 @@ public class AR10Handler extends AmmoWeaponHandler {
 
                 if (bDirect) {
                     r = new Report(3189);
-                    r.subject = ae.getId();
+                    r.subject = attackerEntity.getId();
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
                 }
@@ -215,7 +215,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             int id = vPhaseReport.size();
             int hits = calcHits(vPhaseReport);
 
-            if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+            if (target.isAirborne() || game.getBoard().inSpace() || attackerEntity.usesWeaponBays()) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -251,7 +251,7 @@ public class AR10Handler extends AmmoWeaponHandler {
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackerEntity);
             } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);
                 r.subject = subjectId;

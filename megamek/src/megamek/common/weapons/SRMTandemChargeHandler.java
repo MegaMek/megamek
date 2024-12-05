@@ -35,7 +35,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " tandem charge missile(s) ";
+        salvoType = " tandem charge missile(s) ";
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
     }
 
@@ -46,12 +46,12 @@ public class SRMTandemChargeHandler extends SRMHandler {
         missed = false;
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), Compute.targetSideTable(attackerEntity, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -135,7 +135,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
             }
             vPhaseReport
                     .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
+                            false, attackerEntity.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : DamageType.NONE, false, false,
                             throughFront, underWater));
@@ -146,10 +146,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
 

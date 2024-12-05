@@ -47,19 +47,19 @@ public class TAGHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         } else {
 
-            TagInfo info = new TagInfo(ae.getId(), Targetable.TYPE_ENTITY,
+            TagInfo info = new TagInfo(attackerEntity.getId(), Targetable.TYPE_ENTITY,
                     entityTarget, false);
             game.addTagInfo(info);
-            entityTarget.setTaggedBy(ae.getId());
+            entityTarget.setTaggedBy(attackerEntity.getId());
 
             if (weapon.isInternalBomb()) {
                 // Firing an internally-mounted TAG pod counts for bomb bay explosion check
-                ((IBomber) ae).increaseUsedInternalBombs(1);
+                ((IBomber) attackerEntity).increaseUsedInternalBombs(1);
             }
 
             // per errata, being painted by a TAG also spots the target for indirect fire
-            ae.setSpotting(true);
-            ae.setSpotTargetId(entityTarget.getId());
+            attackerEntity.setSpotting(true);
+            attackerEntity.setSpotTargetId(entityTarget.getId());
 
             Report r = new Report(3188);
             r.subject = subjectId;
@@ -71,7 +71,7 @@ public class TAGHandler extends WeaponHandler {
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
                                         Building bldg, Vector<Report> vPhaseReport) {
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, true);
+        TagInfo info = new TagInfo(attackerEntity.getId(), target.getTargetType(), target, true);
         game.addTagInfo(info);
         return false;
     }

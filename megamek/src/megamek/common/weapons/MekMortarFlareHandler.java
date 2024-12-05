@@ -53,7 +53,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackerEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || !ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             logger.error("Trying to use a Mek Mortar Flare with non-flare ammo");
@@ -65,8 +65,8 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -111,7 +111,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         bMissed = roll.getIntValue() < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        int duration = wtype.getRackSize() * 2;
+        int duration = weaponType.getRackSize() * 2;
 
         if (!bMissed) {
             r = new Report(3190);

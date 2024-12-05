@@ -34,12 +34,12 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
     public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, Game g,
             TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " explosive pod ";
+        salvoType = " explosive pod ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -48,20 +48,20 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackerEntity).getShootingStrength();
             }
             return 1;
         }
         bSalvo = true;
-        if (ae instanceof BattleArmor) {
+        if (attackerEntity instanceof BattleArmor) {
             if (amsEngaged) {
                 return Compute.missilesHit(
-                        ((BattleArmor) ae).getShootingStrength(), -2);
+                        ((BattleArmor) attackerEntity).getShootingStrength(), -2);
             }
             return Compute
-                    .missilesHit(((BattleArmor) ae).getShootingStrength());
+                    .missilesHit(((BattleArmor) attackerEntity).getShootingStrength());
         }
 
         if (amsEngaged) {
@@ -93,7 +93,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -103,7 +103,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -120,10 +120,10 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
                     bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_DIRECT_FIRE,
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) toReturn;
     }

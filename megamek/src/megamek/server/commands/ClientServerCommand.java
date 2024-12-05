@@ -81,6 +81,10 @@ public abstract class ClientServerCommand extends ServerCommand {
         return true;
     }
 
+    protected boolean isGM(int connId) {
+        return server.getGameManager().getGame().getPlayer(connId).getGameMaster();
+    }
+
     private void safeParseArgumentsAndRun(int connId, String[] args) {
         try {
             var parsedArguments = new Arguments(parseArguments(args));
@@ -96,6 +100,20 @@ public abstract class ClientServerCommand extends ServerCommand {
     // Method to parse arguments, to be implemented by the specific command class
     public List<Argument<?>> defineArguments() {
         return List.of();
+    }
+
+    protected boolean isOutsideOfBoard(int connId, Arguments args) {
+        if (!(args.hasArg("x") && args.hasArg("y"))) {
+            // There is nothing to check, s out of excess of caution we return false.
+            return true;
+        }
+
+        // is the hex on the board?
+        if (!gameManager.getGame().getBoard().contains(((int) args.get("x").getValue()) - 1 , ((int) args.get("y").getValue()) - 1)) {
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.error.outofbounds"));
+            return true;
+        }
+        return false;
     }
 
 

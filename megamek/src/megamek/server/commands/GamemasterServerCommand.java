@@ -44,10 +44,6 @@ public abstract class GamemasterServerCommand extends ClientServerCommand {
         super(server, gameManager, name, helpText, longName);
     }
 
-    private boolean isGM(int connId) {
-        return server.getGameManager().getGame().getPlayer(connId).getGameMaster();
-    }
-
     @Override
     protected boolean preRun(int connId) {
         // Override to add pre-run checks

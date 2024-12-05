@@ -1,8 +1,11 @@
 package megamek.server.commands.arguments;
 
 import megamek.client.ui.Messages;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Nullable Argument for an Enum type.
@@ -21,7 +24,11 @@ public class OptionalEnumArgument<E extends Enum<E>> extends EnumArgument<E> {
             return;
         }
         try {
-            value = enumType.getEnumConstants()[Integer.parseInt(input)];
+            if (NumberUtils.isCreatable(input)) {
+                value = enumType.getEnumConstants()[Integer.parseInt(input)];
+            } else {
+                value = Enum.valueOf(enumType, input.toUpperCase());
+            }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(getName() + " must be one of: " + getEnumConstantsString());
         }
@@ -36,14 +43,9 @@ public class OptionalEnumArgument<E extends Enum<E>> extends EnumArgument<E> {
     }
 
     private String getEnumConstantsString() {
-        var sb = new StringBuilder();
-        for (int i = 0; i < enumType.getEnumConstants().length; i++) {
-            sb.append(i).append(": ").append(enumType.getEnumConstants()[i]);
-            if (i < enumType.getEnumConstants().length - 1) {
-                sb.append(", ");
-            }
-        }
-        return sb.toString();
+        return IntStream.range(0, enumType.getEnumConstants().length)
+            .mapToObj(i -> i + ": " + enumType.getEnumConstants()[i])
+            .collect(Collectors.joining(", "));
     }
 
     @Override

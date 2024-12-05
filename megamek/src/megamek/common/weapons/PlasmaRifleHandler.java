@@ -47,7 +47,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             // if this is a fighter squadron, we need to account for number of
             // weapons
             // should default to one for non squadrons
-            for (int i = 0; i < nweaponsHit; i++) {
+            for (int i = 0; i < numberOfWeaponHits; i++) {
                 extraHeat += Compute.d6();
             }
             if (entityTarget.getArmor(hit) > 0
@@ -82,12 +82,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             toReturn = applyGlancingBlowModifier(toReturn, false);
             if (game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                    && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
             if (game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                    && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
             return toReturn;
@@ -144,7 +144,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -179,7 +179,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

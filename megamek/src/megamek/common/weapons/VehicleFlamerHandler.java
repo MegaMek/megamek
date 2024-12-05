@@ -48,10 +48,10 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -61,25 +61,25 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
-        EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
-        
+        EquipmentMode currentWeaponMode = game.getEntity(weaponAttackAction.getEntityId()).getEquipment(weaponAttackAction.getWeaponId()).curMode();
+
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
-        
+
         if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            
+
             if (bmmFlamerDamage && entityTarget.tracksHeat()) {
-                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+                FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
             }
         } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
+                    toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                    weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget,
+                    .getCover(), Compute.targetSideTable(attackerEntity, entityTarget,
                             weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
@@ -91,25 +91,25 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
-            
-            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
+
+            FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
     }
-    
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
-            } else if ((wtype instanceof ISHeavyFlamer)
-                    || (wtype instanceof CLHeavyFlamer)) {
+            } else if ((weaponType instanceof ISHeavyFlamer)
+                    || (weaponType instanceof CLHeavyFlamer)) {
                 toReturn = Compute.d6(6);
             } else {
                 toReturn = Compute.d6(4);
@@ -138,7 +138,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -170,7 +170,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

@@ -47,21 +47,21 @@ public class HGRHandler extends GRHandler {
             return true;
         }
 
-        if ((ae.mpUsed > 0) && (ae instanceof Mek) && ae.canFall()
+        if ((attackerEntity.mpUsed > 0) && (attackerEntity instanceof Mek) && attackerEntity.canFall()
             // Only check up to assault class, superheavies do not roll.
-            && ae.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
+            && attackerEntity.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
             // Modifier is weight-based.
             int nMod;
-            if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
+            if (attackerEntity.getWeightClass() <= EntityWeightClass.WEIGHT_LIGHT) {
                 nMod = 2;
-            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) {
+            } else if (attackerEntity.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) {
                 nMod = 1;
-            } else if (ae.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY) {
+            } else if (attackerEntity.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY) {
                 nMod = 0;
             } else {
                 nMod = -1;
             }
-            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
+            PilotingRollData psr = new PilotingRollData(attackerEntity.getId(), nMod,
                     "fired HeavyGauss unbraced", false);
             game.addPSR(psr);
         }

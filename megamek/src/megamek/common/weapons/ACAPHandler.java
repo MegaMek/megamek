@@ -44,11 +44,11 @@ public class ACAPHandler extends ACWeaponHandler {
                                       Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
+                weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                Compute.targetSideTable(attackerEntity, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
             return;
@@ -82,7 +82,7 @@ public class ACAPHandler extends ACWeaponHandler {
         // damage absorption by the partial cover, if it would have already happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
+
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, vPhaseReport, bldg,
                 targetStickingOutOfBuilding);
 
@@ -119,7 +119,7 @@ public class ACAPHandler extends ACWeaponHandler {
             }
             hit.makeArmorPiercing(atype, critModifier);
             vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
-                    ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                    attackerEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                     false, false, throughFront, underWater));
         }
     }

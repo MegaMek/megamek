@@ -41,7 +41,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackerEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))) {
             logger.error("Not using airburst ammo!");
@@ -53,8 +53,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -120,12 +120,12 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
-        r.add(wtype.getRackSize());
+        r.add(weaponType.getName() + " " + ammoType.getSubMunitionName());
+        r.add(weaponType.getRackSize());
         vPhaseReport.addElement(r);
 
         Vector<Report> newReports;
-        int numRounds = wtype.getRackSize();
+        int numRounds = weaponType.getRackSize();
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
@@ -178,10 +178,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                         damage += (int) Math.ceil(Compute.d6() / 2.0);
                     }
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(),
-                            waa.getAimingMode(), toHit.getCover());
+                            toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                            weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
@@ -207,10 +207,10 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 // Each round deals 1 damage
                 for (int i = 0; i < numRounds; i++) {
                     hit = target.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(),
-                            waa.getAimingMode(), toHit.getCover());
+                            toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                            weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);

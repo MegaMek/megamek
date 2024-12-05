@@ -72,21 +72,21 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 : null;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numberOfWeapons > 1 ? " (" + numberOfWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             // Report weapon attack and its to-hit value.
             Report r = new Report(3115);
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            r.add(weaponType.getName() + number);
             if (entityTarget != null) {
-                if ((wtype.getAmmoType() != AmmoType.T_NA)
+                if ((weaponType.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)
                         && (weapon.getLinked().getType() instanceof AmmoType)) {
                     AmmoType atype = (AmmoType) weapon.getLinked().getType();
@@ -210,7 +210,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
 
             if (bDirect) {
                 r = new Report(3189);
-                r.subject = ae.getId();
+                r.subject = attackerEntity.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
@@ -250,7 +250,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         int id = vPhaseReport.size();
         int hits = calcHits(vPhaseReport);
 
-        if (target.isAirborne() || game.getBoard().inSpace() || ae.usesWeaponBays()) {
+        if (target.isAirborne() || game.getBoard().inSpace() || attackerEntity.usesWeaponBays()) {
             // if we added a line to the phase report for calc hits, remove
             // it now
             while (vPhaseReport.size() > id) {
@@ -311,7 +311,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                             nCluster, bldgAbsorbs);
-                    gameManager.creditKill(entityTarget, ae);
+                    gameManager.creditKill(entityTarget, attackerEntity);
                     hits -= nCluster;
                     firstHit = false;
                 }
@@ -336,7 +336,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
         int av = 0;
         double counterAV = calcCounterAV();
-        int armor = wtype.getMissileArmor();
+        int armor = weaponType.getMissileArmor();
         //AR10 munitions
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_AR10) {
@@ -357,16 +357,16 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                     armor = 20;
                 }
             } else {
-                int range = RangeType.rangeBracket(nRange, wtype.getATRanges(),
+                int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(),
                         true, false);
                 if (range == WeaponType.RANGE_SHORT) {
-                    av = wtype.getRoundShortAV();
+                    av = weaponType.getRoundShortAV();
                 } else if (range == WeaponType.RANGE_MED) {
-                    av = wtype.getRoundMedAV();
+                    av = weaponType.getRoundMedAV();
                 } else if (range == WeaponType.RANGE_LONG) {
-                    av = wtype.getRoundLongAV();
+                    av = weaponType.getRoundLongAV();
                 } else if (range == WeaponType.RANGE_EXT) {
-                    av = wtype.getRoundExtAV();
+                    av = weaponType.getRoundExtAV();
                 }
             }
             //Nuclear Warheads for non-AR10 missiles
@@ -378,8 +378,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
             nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
         }
         // For squadrons, total the missile armor for the launched volley
-        if (ae.isCapitalFighter()) {
-            armor = armor * nweapons;
+        if (attackerEntity.isCapitalFighter()) {
+            armor = armor * numberOfWeapons;
         }
         CapMissileArmor = armor - (int) counterAV;
         CapMissileAMSMod = calcCapMissileAMSMod();
@@ -402,7 +402,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         AmmoType atype = (AmmoType) ammo.getType();
-        double toReturn = wtype.getDamage(nRange);
+        double toReturn = weaponType.getDamage(nRange);
 
         //AR10 munitions
         if (atype != null) {

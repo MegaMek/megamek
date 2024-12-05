@@ -18,6 +18,7 @@ import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class KillCommand extends GamemasterServerCommand{
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new IntegerArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")));
+        return List.of(new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")));
     }
 
     /**

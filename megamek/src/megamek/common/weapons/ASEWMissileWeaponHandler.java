@@ -52,10 +52,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         missed = false;
 
         hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
-        hit.setCapital(wtype.isCapital());
+        hit.setCapital(weaponType.isCapital());
         hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
@@ -69,13 +69,13 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
         r.add(toHit.getTableDesc());
         r.add(entityTarget.getLocationAbbr(hit));
         vPhaseReport.addElement(r);
-        if (nweaponsHit > 1) {
+        if (numberOfWeaponHits > 1) {
             //If the target is hit by multiple ASEW missiles, report it here, even if the effects don't stack
             r.newlines = 1;
             r = new Report(3471);
             r.subject = subjectId;
             r.addDesc(entityTarget);
-            r.add(nweaponsHit);
+            r.add(numberOfWeaponHits);
             vPhaseReport.add(r);
         } else {
             //Otherwise, report a single ASEW missile hit

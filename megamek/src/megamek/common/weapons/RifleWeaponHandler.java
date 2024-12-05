@@ -50,20 +50,20 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
 
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
         // we default to direct fire weapons for anti-infantry damage
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3.0), toReturn * 2);
         }
@@ -71,7 +71,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                    waa.getAimedLocation(), waa.getAimingMode(),
+                    weaponAttackAction.getAimedLocation(), weaponAttackAction.getAimingMode(),
                     toHit.getCover());
             hit.setAttackerId(getAttackerId());
             if (!(te instanceof Infantry)
@@ -83,11 +83,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
 
@@ -104,7 +104,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         hit.setBoxCars(roll.getIntValue() == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), Compute.targetSideTable(attackerEntity, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -143,8 +143,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
@@ -169,13 +169,13 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
                     .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
+                            false, attackerEntity.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,
                             underWater, nukeS2S));

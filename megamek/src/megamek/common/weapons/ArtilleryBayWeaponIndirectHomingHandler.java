@@ -60,7 +60,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         if (!cares(phase)) {
             return true;
         }
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
@@ -69,7 +69,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+                r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
                 r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
@@ -96,21 +96,21 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
                 && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+                && attackerEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
         // Determine what ammo we're firing for reporting and (later) damage
-        Mounted<?> ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        Mounted<?> ammoUsed = attackerEntity.getEquipment(aaa.getAmmoId());
         final AmmoType atype = (AmmoType) ammoUsed.getType();
         // Report weapon attack and its to-hit value.
         Report r = new Report(3124);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
-        r.add(nweaponsHit);
+        r.add(weaponType.getName());
+        r.add(numberOfWeaponHits);
         r.add(atype.getShortName());
         if (entityTarget != null) {
             r.addDesc(entityTarget);
@@ -166,7 +166,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackerEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -207,7 +207,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 && atype.getAmmoType() == AmmoType.T_ARROW_IV) {
             gameManager.assignAMS();
         }
-        while (nweaponsHit > 0) {
+        while (numberOfWeaponHits > 0) {
             int hits = 1;
             int nCluster = 1;
             if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
@@ -265,7 +265,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             if (!bMissed && (entityTarget != null)) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                gameManager.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, attackerEntity);
             } else if (!bMissed && // The attack is targeting a specific building
                     (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
                 r = new Report(3390);
@@ -305,8 +305,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     }
                     toHit.setSideTable(entity.sideTable(aaa.getCoords()));
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(),
-                            waa.getAimingMode(), toHit.getCover());
+                            toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                            weaponAttackAction.getAimingMode(), toHit.getCover());
                     hit.setAttackerId(getAttackerId());
                     // BA gets damage to all troopers
                     if (entity instanceof BattleArmor) {
@@ -322,11 +322,11 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                                 ratedDamage, false, DamageType.NONE, false, true,
                                 throughFront, underWater));
                     }
-                    gameManager.creditKill(entity, ae);
+                    gameManager.creditKill(entity, attackerEntity);
                 }
             }
             Report.addNewline(vPhaseReport);
-            nweaponsHit--;
+            numberOfWeaponHits--;
         }
         return false;
     }
@@ -336,7 +336,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      * Uses a CFR to let the player choose from eligible TAGs
      */
     public void convertHomingShotToEntityTarget() {
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
         Targetable newTarget = null;
@@ -351,7 +351,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     allowed.add(ti);
                     break;
                 case Targetable.TYPE_ENTITY:
-                    if (ae.isEnemyOf((Entity) ti.target)
+                    if (attackerEntity.isEnemyOf((Entity) ti.target)
                             || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
                         allowed.add(ti);
                     }
@@ -410,7 +410,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 targetIds.add(target.target.getId());
                 targetTypes.add(target.target.getTargetType());
             }
-            int choice = gameManager.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
+            int choice = gameManager.processTAGTargetCFR(attackerEntity.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getId());
@@ -437,7 +437,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      * against Arrow IV homing missiles
      * Artillery bays resolve each weapon individually and don't use Aero AV, so we
      * can safely do this
-     * 
+     *
      * @param vPhaseReport The report for this game phase, be it offboard (Indirect)
      *                     or firing (Direct)
      * @param ammoUsed     The ammoType used by this bay - as only homing shots can
@@ -542,7 +542,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 || target.getTargetType() != Targetable.TYPE_ENTITY
                 || !advancedPD
                 || !advancedAMS
-                || waa.getCounterEquipment() == null) {
+                || weaponAttackAction.getCounterEquipment() == null) {
             return false;
         }
         return true;

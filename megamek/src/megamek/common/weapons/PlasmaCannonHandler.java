@@ -113,11 +113,11 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
-            AimingMode savedAimingMode = waa.getAimingMode();
-            waa.setAimingMode(AimingMode.NONE);
+            AimingMode savedAimingMode = weaponAttackAction.getAimingMode();
+            weaponAttackAction.setAimingMode(AimingMode.NONE);
 
-            int savedAimedLocation = waa.getAimedLocation();
-            waa.setAimedLocation(Entity.LOC_NONE);
+            int savedAimedLocation = weaponAttackAction.getAimedLocation();
+            weaponAttackAction.setAimedLocation(Entity.LOC_NONE);
             boolean savedSalvo = bSalvo;
             bSalvo = true;
             Targetable origTarget = target;
@@ -125,7 +125,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropShip));
+                    Compute.targetSideTable(attackerEntity, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
@@ -146,8 +146,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             // Restore state
             toHit = savedToHit;
-            waa.setAimingMode(savedAimingMode);
-            waa.setAimedLocation(savedAimedLocation);
+            weaponAttackAction.setAimingMode(savedAimingMode);
+            weaponAttackAction.setAimedLocation(savedAimedLocation);
             bSalvo = savedSalvo;
             target = origTarget;
             // Damage a building that blocked a shot
@@ -168,7 +168,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
             Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
-                    coverLoc, wtype.getInfantryDamageClass());
+                    coverLoc, weaponType.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
             }
@@ -183,12 +183,12 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
 
         if (entityTarget.tracksHeat()) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
+                    toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                    weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setGeneralDamageType(generalDamageType);
             hit.setAttackerId(getAttackerId());
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                    Compute.targetSideTable(attackerEntity, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
@@ -287,7 +287,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -322,7 +322,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

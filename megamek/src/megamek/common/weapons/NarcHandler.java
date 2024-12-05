@@ -156,8 +156,8 @@ public class NarcHandler extends MissileWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
 
         // If our narc pod "hits" an already-missing head, reroll until we hit
         // somewhere else as per the errata for torso-mounted cockpits.
@@ -165,8 +165,8 @@ public class NarcHandler extends MissileWeaponHandler {
             && !narcCanAttachTo(entityTarget, Mek.LOC_HEAD)) {
             while (hit.getLocation() == Mek.LOC_HEAD) {
                 hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
             }
         }
         hit.setAttackerId(getAttackerId());
@@ -183,7 +183,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), Compute.targetSideTable(attackerEntity, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -212,7 +212,7 @@ public class NarcHandler extends MissileWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getAmmoType() == AmmoType.T_NARC) {
             // narced
-            NarcPod pod = new NarcPod(ae.getOwner().getTeam(),
+            NarcPod pod = new NarcPod(attackerEntity.getOwner().getTeam(),
                     hit.getLocation());
             Report r = new Report(3250);
             r.subject = subjectId;
@@ -224,7 +224,7 @@ public class NarcHandler extends MissileWeaponHandler {
             // iNarced
             INarcPod pod = null;
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ECM)) {
-                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM,
+                pod = new INarcPod(attackerEntity.getOwner().getTeam(), INarcPod.ECM,
                         hit.getLocation());
                 Report r = new Report(3251);
                 r.subject = subjectId;
@@ -232,7 +232,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HAYWIRE)) {
-                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HAYWIRE,
+                pod = new INarcPod(attackerEntity.getOwner().getTeam(), INarcPod.HAYWIRE,
                         hit.getLocation());
                 Report r = new Report(3252);
                 r.subject = subjectId;
@@ -240,7 +240,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS)) {
-                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.NEMESIS,
+                pod = new INarcPod(attackerEntity.getOwner().getTeam(), INarcPod.NEMESIS,
                         hit.getLocation());
                 Report r = new Report(3253);
                 r.add(entityTarget.getDisplayName());
@@ -248,7 +248,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             } else {
-                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HOMING,
+                pod = new INarcPod(attackerEntity.getOwner().getTeam(), INarcPod.HOMING,
                         hit.getLocation());
                 Report r = new Report(3254);
                 r.subject = subjectId;

@@ -17,7 +17,6 @@ import java.util.Vector;
 
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -49,7 +48,7 @@ public class RACHandler extends UltraWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        } else if (ae.isConventionalInfantry()) {
+        } else if (attackerEntity.isConventionalInfantry()) {
             return false;
         }
         boolean jams = false;
@@ -113,7 +112,7 @@ public class RACHandler extends UltraWeaponHandler {
         }
 
         // Reduce number of allowed shots to number of remaining rounds of ammo if applicable
-        int total = ae.getTotalAmmoOfType(ammo.getType());
+        int total = attackerEntity.getTotalAmmoOfType(ammo.getType());
         if (total < 0 ) {
             throw new RuntimeException("Invalid total ammo value < 0!");
         } else if (total < 6) {

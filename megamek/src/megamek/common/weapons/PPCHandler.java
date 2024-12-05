@@ -58,42 +58,42 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage(nRange);
+        double toReturn = weaponType.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && weapon.hasModes()) {
-            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
+            toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
         if (chargedCapacitor != 0) {
             toReturn += 5;
         }
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackerEntity instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+                && (attackerEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackerEntity).getShootingStrength();
         }
 
         // Check for Altered Damage from Energy Weapons (TacOps, pg.83)
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
+            } else if (nRange <= weaponType.getMediumRange()) {
                 // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
+            } else if (nRange <= weaponType.getLongRange()) {
                 toReturn--;
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(
                 OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -105,9 +105,9 @@ public class PPCHandler extends EnergyWeaponHandler {
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -130,7 +130,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             Roll diceRoll = Compute.rollD6(2);
-            int distance = Compute.effectiveDistance(game, ae, target);
+            int distance = Compute.effectiveDistance(game, attackerEntity, target);
 
             if (distance >= 3) {
                 rollTarget = 3;
@@ -156,8 +156,8 @@ public class PPCHandler extends EnergyWeaponHandler {
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
                 // Destroy the first unmarked critical for the PPC
-                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
-                    CriticalSlot slot1 = ae.getCritical(wlocation, i);
+                for (int i = 0; i < attackerEntity.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot1 = attackerEntity.getCritical(wlocation, i);
                     if ((slot1 == null)
                             || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)
                             || slot1.isHit()) {
@@ -174,7 +174,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 r.choose(false);
                 r.indent(2);
                 vPhaseReport.addElement(r);
-                Vector<Report> newReports = gameManager.damageEntity(ae,
+                Vector<Report> newReports = gameManager.damageEntity(attackerEntity,
                         new HitData(wlocation), 10, false, DamageType.NONE,
                         true);
                 for (Report rep : newReports) {
@@ -182,7 +182,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 }
                 vPhaseReport.addAll(newReports);
                 // Deal 2 damage to the pilot
-                vPhaseReport.addAll(gameManager.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
+                vPhaseReport.addAll(gameManager.damageCrew(attackerEntity, 2, attackerEntity.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -195,14 +195,14 @@ public class PPCHandler extends EnergyWeaponHandler {
         if (chargedCapacitor != 0) {
             if (roll.getIntValue() == 2) {
                 Report r = new Report(3178);
-                r.subject = ae.getId();
+                r.subject = attackerEntity.getId();
                 r.indent();
                 vPhaseReport.add(r);
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
-                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
-                    CriticalSlot slot = ae.getCritical(wlocation, i);
+                for (int i = 0; i < attackerEntity.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot = attackerEntity.getCritical(wlocation, i);
                     if ((slot == null)
                             || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;

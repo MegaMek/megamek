@@ -54,7 +54,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int[] payload = waa.getBombPayload();
+        int[] payload = weaponAttackAction.getBombPayload();
         if (null == payload) {
             return 0;
         }
@@ -82,18 +82,18 @@ public class SpaceBombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        int[] payload = waa.getBombPayload();
-        if (!(ae.isAero()) || null == payload) {
+        int[] payload = weaponAttackAction.getBombPayload();
+        if (!(attackerEntity.isAero()) || null == payload) {
             return;
         }
 
         // Need to remove ammo from fighters within a squadron
-        if (ae instanceof FighterSquadron) {
+        if (attackerEntity instanceof FighterSquadron) {
             // In a fighter squadron, we will haved dropped a salvo of bombs.
             // The salvo consists of one bomb from each fighter equipped with
             // a bomb of the proper type.
             for (int type = 0; type < payload.length; type++) {
-                List<Entity> activeFighters = ae.getActiveSubEntities();
+                List<Entity> activeFighters = attackerEntity.getActiveSubEntities();
                 if (activeFighters.isEmpty()) {
                     break;
                 }
@@ -125,7 +125,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                 if (payload[type] > 0) {
                     double numSalvos = Math.ceil((payload[type] + 0.0) / activeFighters.size());
                     for (int salvo = 0; salvo < numSalvos; salvo++) {
-                        for (Mounted<?> bomb : ae.getBombs()) {
+                        for (Mounted<?> bomb : attackerEntity.getBombs()) {
                             if (((BombType) bomb.getType()).getBombType() == type
                                     && !bomb.isDestroyed()
                                     && bomb.getUsableShotsLeft() > 0) {
@@ -140,7 +140,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
             for (int type = 0; type < payload.length; type++) {
                 for (int i = 0; i < payload[type]; i++) {
                     // find the first mounted bomb of this type and drop it
-                    for (Mounted<?> bomb : ae.getBombs()) {
+                    for (Mounted<?> bomb : attackerEntity.getBombs()) {
                         if (((BombType) bomb.getType()).getBombType() == type &&
                                 !bomb.isDestroyed()
                                 && bomb.getUsableShotsLeft() > 0) {

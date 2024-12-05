@@ -17,9 +17,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.*;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
@@ -45,14 +43,14 @@ public class ChangeTeamCommand extends GamemasterServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeteam.playerID")),
-            new IntegerArgument(TEAM_ID, Messages.getString("Gamemaster.cmd.changeteam.teamID")));
+            new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeteam.playerID")),
+            new TeamArgument(TEAM_ID, Messages.getString("Gamemaster.cmd.changeteam.teamID")));
     }
 
     @Override
     protected void runCommand(int connId, Arguments args) {
-        int teamID = ((IntegerArgument) args.get(TEAM_ID)).getValue();
-        int playerID = ((IntegerArgument) args.get(PLAYER_ID)).getValue();
+        int playerID = ((PlayerArgument) args.get(PLAYER_ID)).getValue();
+        int teamID = ((TeamArgument) args.get(TEAM_ID)).getValue();
 
         Player player = server.getGame().getPlayer(playerID);
         if (null == player) {

@@ -35,12 +35,12 @@ public class MPodHandler extends LBXHandler {
      */
     public MPodHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " pellet(s) ";
+        salvoType = " pellet(s) ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -64,7 +64,7 @@ public class MPodHandler extends LBXHandler {
         if (bGlancing) {
             hitMod -= 4;
         }
-        
+
         if (bLowProfileGlancing) {
             hitMod -= 4;
         }
@@ -80,7 +80,7 @@ public class MPodHandler extends LBXHandler {
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);

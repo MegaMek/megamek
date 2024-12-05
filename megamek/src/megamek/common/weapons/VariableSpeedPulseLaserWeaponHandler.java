@@ -38,26 +38,26 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
-        int[] nRanges = wtype.getRanges(weapon);
-        double toReturn = wtype.getDamage(nRange);
+        int[] nRanges = weaponType.getRanges(weapon);
+        double toReturn = weaponType.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && weapon.hasModes()) {
-            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
+            toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
+            } else if (nRange <= weaponType.getMediumRange()) {
                 // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
+            } else if (nRange <= weaponType.getLongRange()) {
                 toReturn--;
             }
         }
@@ -65,9 +65,9 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                 toReturn += 3;
             } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {

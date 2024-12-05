@@ -696,7 +696,8 @@ public class MapMenu extends JPopupMenu {
             new RemoveSmokeCommand(null, null),
             new OrbitalBombardmentCommand(null, null),
             new DisasterCommand(null, null),
-            new NukeCommand(null, null),
+            new NuclearStrikeCommand(null, null),
+            new NuclearStrikeCustomCommand(null, null),
             new EndGameCommand(null, null)
         ).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());

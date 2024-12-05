@@ -63,7 +63,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (!cares(phase)) {
             return true;
         }
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
@@ -72,7 +72,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+                r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
                 r.add(aaa.getTurnsTilHit());
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
@@ -98,7 +98,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
                 && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+                && attackerEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -108,7 +108,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName() + " (" + atype.getShortName() + ")");
+        r.add(weaponType.getName() + " (" + ammoType.getShortName() + ")");
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -163,7 +163,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackerEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -181,7 +181,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if (missReported) {
             bMissed = true;
         }
-        nDamPerHit = wtype.getRackSize();
+        nDamPerHit = weaponType.getRackSize();
 
         AmmoType ammoType = (AmmoType) ammo.getType();
 
@@ -253,7 +253,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
 
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            gameManager.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, attackerEntity);
         } else if (!bMissed && // The attack is targeting a specific building
                 (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
             r = new Report(3390);
@@ -279,7 +279,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         // homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
         // on the other hand, if the hex *is* the target, do full damage
-        int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
+        int hexDamage = targetingHex ? weaponType.getRackSize() : ratedDamage * 2;
 
         bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
@@ -311,7 +311,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      */
     public void convertHomingShotToEntityTarget() {
         boolean debug = logger.isDebugEnabled();
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) weaponAttackAction;
 
         final Coords tc = target.getPosition();
         Targetable newTarget = null;
@@ -333,7 +333,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                     allowed.add(ti);
                     break;
                 case Targetable.TYPE_ENTITY:
-                    if (ae.isEnemyOf((Entity) ti.target)
+                    if (attackerEntity.isEnemyOf((Entity) ti.target)
                             || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
                         allowed.add(ti);
                     }
@@ -398,7 +398,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 targetIds.add(target.target.getId());
                 targetTypes.add(target.target.getTargetType());
             }
-            int choice = gameManager.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
+            int choice = gameManager.processTAGTargetCFR(attackerEntity.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getId());
@@ -488,7 +488,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             }
             // PD/AMS bays should engage using AV and missile armor per SO Errata
             if (amsBayEngagedCap || pdBayEngagedCap) {
-                CapMissileArmor = wtype.getMissileArmor() - CounterAV;
+                CapMissileArmor = weaponType.getMissileArmor() - CounterAV;
                 CapMissileAMSMod = calcCapMissileAMSMod();
                 Report r = new Report(3235);
                 r.subject = subjectId;

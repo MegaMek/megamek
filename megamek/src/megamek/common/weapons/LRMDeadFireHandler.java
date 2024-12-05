@@ -37,7 +37,7 @@ public class LRMDeadFireHandler extends LRMHandler {
 
     public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " dead fire missile(s) ";
+        salvoType = " dead fire missile(s) ";
     }
 
     @Override

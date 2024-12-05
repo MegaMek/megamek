@@ -49,7 +49,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -59,7 +59,7 @@ public class MGHandler extends AmmoWeaponHandler {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             toReturn = applyGlancingBlowModifier(toReturn, false);
-            
+
             if (bDirect) {
                 toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
                                     toReturn * 2);
@@ -67,29 +67,29 @@ public class MGHandler extends AmmoWeaponHandler {
         } else {
             if (target.isConventionalInfantry()) {
                 toReturn = Compute.directBlowInfantryDamage(
-                        wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                        wtype.getInfantryDamageClass(),
+                        weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                        weaponType.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
-                        toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-                
+                        toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
+
                 toReturn = applyGlancingBlowModifier(toReturn, true);
             } else {
-                toReturn = wtype.getDamage();
+                toReturn = weaponType.getDamage();
                 if (bDirect) {
                     toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
                                         toReturn * 2);
                 }
-                
+
                 toReturn = applyGlancingBlowModifier(toReturn, false);
             }
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
         nDamPerHit = (int) toReturn;
@@ -99,14 +99,14 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidfire()) {
-                ae.heatBuildup += nRapidDamHeatPerHit;
+                attackerEntity.heatBuildup += nRapidDamHeatPerHit;
             } else {
                 super.addHeat();
             }
@@ -115,7 +115,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override
@@ -135,7 +135,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
@@ -143,7 +143,7 @@ public class MGHandler extends AmmoWeaponHandler {
         if (weapon.isRapidfire()) {
 
             // TacOps p.102 Rapid Fire MG Rules
-            switch (wtype.getAmmoType()) {
+            switch (weaponType.getAmmoType()) {
                 case AmmoType.T_MG:
                     nDamPerHit = Compute.d6();
                     break;
@@ -155,13 +155,13 @@ public class MGHandler extends AmmoWeaponHandler {
                     break;
             }
 
-            numRapidFireHits = nDamPerHit;
+            numberOfRapidFireHits = nDamPerHit;
             nRapidDamHeatPerHit = nDamPerHit;
             checkAmmo();
             int ammoUsage = 3 * nRapidDamHeatPerHit;
             for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getUsableShotsLeft() <= 0) {
-                    ae.loadWeapon(weapon);
+                    attackerEntity.loadWeapon(weapon);
                     ammo = weapon.getLinked();
                 }
                 ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

@@ -37,7 +37,7 @@ public class SRMDeadFireHandler extends SRMHandler {
 
     public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " dead fire missile(s) ";
+        salvoType = " dead fire missile(s) ";
     }
 
     @Override
@@ -49,10 +49,10 @@ public class SRMDeadFireHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
 
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;

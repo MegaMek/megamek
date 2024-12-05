@@ -62,13 +62,13 @@ public class AmmoWeaponHandler extends WeaponHandler {
         }
 
         if (ammo.getUsableShotsLeft() <= 0) {
-            ae.loadWeaponWithSameAmmo(weapon);
+            attackerEntity.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
 
         if (weapon.isInternalBomb()) {
-            ((IBomber) ae).increaseUsedInternalBombs(1);
+            ((IBomber) attackerEntity).increaseUsedInternalBombs(1);
         }
 
         super.useAmmo();
@@ -77,7 +77,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     protected void checkAmmo() {
         ammo = weapon.getLinked();
         if (ammo == null) {
-            ae.loadWeapon(weapon);
+            attackerEntity.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
     }
@@ -93,7 +93,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             // shouldn't happen
             return weapon.getNWeapons();
         }
-        int totalShots = ae.getTotalAmmoOfType(ammo.getType());
+        int totalShots = attackerEntity.getTotalAmmoOfType(ammo.getType());
         return Math.min(weapon.getNWeapons(), (int) Math.floor((double) totalShots / (double) weapon.getCurrentShots()));
     }
 
@@ -110,7 +110,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
-        } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
+        } else if ((roll.getIntValue() <= 2) && !attackerEntity.isConventionalInfantry()) {
             // attack roll was a 2, may explode
             Roll diceRoll = Compute.rollD6(2);
 
@@ -156,19 +156,19 @@ public class AmmoWeaponHandler extends WeaponHandler {
         weapon.setHit(true);
 
         int wloc = weapon.getLocation();
-        for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-            CriticalSlot slot1 = ae.getCritical(wloc, i);
+        for (int i = 0; i < attackerEntity.getNumberOfCriticals(wloc); i++) {
+            CriticalSlot slot1 = attackerEntity.getCritical(wloc, i);
             if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
             Mounted<?> mounted = slot1.getMount();
             if (mounted.equals(weapon)) {
-                ae.hitAllCriticals(wloc, i);
+                attackerEntity.hitAllCriticals(wloc, i);
                 break;
             }
         }
 
         // if we're here, the weapon is going to explode whether it's flagged as explosive or not
-        vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
+        vPhaseReport.addAll(gameManager.explodeEquipment(attackerEntity, wloc, weapon, true));
     }
 }

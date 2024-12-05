@@ -36,7 +36,7 @@ public class SRMAXHandler extends SRMHandler {
 
     public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " acid-head missile(s) ";
+        salvoType = " acid-head missile(s) ";
         nSalvoBonus = -2;
         damageType = DamageType.ACID;
         generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;

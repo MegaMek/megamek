@@ -50,22 +50,22 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
 
         if (bDirect) {
             toReturn += toHit.getMoS() / 3;
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, false);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
-        }        
+        }
 
         return (int) Math.ceil(toReturn);
     }
@@ -94,7 +94,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5, vPhaseReport)) {
             return;
         }
 

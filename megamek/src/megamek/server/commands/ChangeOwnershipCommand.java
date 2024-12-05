@@ -17,9 +17,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.server.Server;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.*;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
@@ -46,14 +44,14 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.changeownership.unitID")),
-            new IntegerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeownership.playerID")));
+            new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.changeownership.unitID")),
+            new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.changeownership.playerID")));
     }
 
     @Override
     protected void runCommand(int connId, Arguments args) {
-        IntegerArgument unitID = (IntegerArgument) args.get(UNIT_ID);
-        IntegerArgument playerID = (IntegerArgument) args.get(PLAYER_ID);
+        var unitID = (UnitArgument) args.get(UNIT_ID);
+        var playerID = (PlayerArgument) args.get(PLAYER_ID);
 
         Entity ent = gameManager.getGame().getEntity(unitID.getValue());
         Player player = server.getGame().getPlayer(playerID.getValue());

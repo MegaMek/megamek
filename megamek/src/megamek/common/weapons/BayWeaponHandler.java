@@ -49,7 +49,7 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         double av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
@@ -83,14 +83,14 @@ public class BayWeaponHandler extends WeaponHandler {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 for (WeaponMounted m : weapon.getBayWeapons()) {
-                    ae.heatBuildup += m.getCurrentHeat();
+                    attackerEntity.heatBuildup += m.getCurrentHeat();
                 }
             } else {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
-                if (!ae.hasArcFired(loc, rearMount)) {
-                    ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
-                    ae.setArcFired(loc, rearMount);
+                if (!attackerEntity.hasArcFired(loc, rearMount)) {
+                    attackerEntity.heatBuildup += attackerEntity.getHeatInArc(loc, rearMount);
+                    attackerEntity.setArcFired(loc, rearMount);
                 }
             }
         }
@@ -121,8 +121,8 @@ public class BayWeaponHandler extends WeaponHandler {
                         && target.getTargetType() != Targetable.TYPE_BUILDING))
                 || game.getBoard().inSpace()
                 // Capital missile launchers should return the root handler...
-                || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
-                || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
+                || (weaponType.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+                || (weaponType.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -134,23 +134,23 @@ public class BayWeaponHandler extends WeaponHandler {
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
                 && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+                && attackerEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-        String number = nweapons > 1 ? " (" + nweapons + ")" : "";
+        String number = numberOfWeapons > 1 ? " (" + numberOfWeapons + ")" : "";
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName() + number);
+        r.add(weaponType.getName() + number);
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -206,7 +206,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackerEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -263,7 +263,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         Report.addNewline(vPhaseReport);
         // loop through weapons in bay and do damage
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
+        int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
         int hits = 1;
         int nCluster = 1;
         for (WeaponMounted m : weapon.getBayWeapons()) {
@@ -300,8 +300,8 @@ public class BayWeaponHandler extends WeaponHandler {
                     && (toHit.getThruBldg() != null)
                     && (entityTarget instanceof Infantry)) {
                 // If elevation is the same, building doesn't absorb
-                if (ae.getElevation() != entityTarget.getElevation()) {
-                    int dmgClass = wtype.getInfantryDamageClass();
+                if (attackerEntity.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = weaponType.getInfantryDamageClass();
                     int nDamage;
                     if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
                         nDamage = nDamPerHit * Math.min(nCluster, hits);
@@ -310,7 +310,7 @@ public class BayWeaponHandler extends WeaponHandler {
                         // absorbed damage shouldn't reduce incoming damage,
                         // since the incoming damage was reduced in
                         // Compute.directBlowInfantryDamage
-                        nDamage = -wtype.getDamage(nRange) * Math.min(nCluster, hits);
+                        nDamage = -weaponType.getDamage(nRange) * Math.min(nCluster, hits);
                     }
                     bldgAbsorbs = (int) Math.round(nDamage * bldg.getInfDmgFromInside());
                 } else {
@@ -320,7 +320,7 @@ public class BayWeaponHandler extends WeaponHandler {
             }
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            gameManager.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, attackerEntity);
         } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
@@ -347,11 +347,11 @@ public class BayWeaponHandler extends WeaponHandler {
                 entityTarget);
         final boolean bldgDamagedOnMiss = targetInBuilding
                 && !(target instanceof Infantry)
-                && ae.getPosition().distance(target.getPosition()) <= 1;
+                && attackerEntity.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
+            attackerEntity.setLastTarget(entityTarget.getId());
+            attackerEntity.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -360,7 +360,7 @@ public class BayWeaponHandler extends WeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        r.add(weaponType.getName());
         if (entityTarget != null) {
             r.addDesc(entityTarget);
         } else {
@@ -454,7 +454,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
-            r.subject = ae.getId();
+            r.subject = attackerEntity.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
@@ -550,8 +550,8 @@ public class BayWeaponHandler extends WeaponHandler {
                 WeaponType bayWType = m.getType();
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
-                    WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(),
-                            waa.getTargetId(), m.getEquipmentNum());
+                    WeaponAttackAction bayWaa = new WeaponAttackAction(weaponAttackAction.getEntityId(), weaponAttackAction.getTargetType(),
+                            weaponAttackAction.getTargetId(), m.getEquipmentNum());
                     AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game,
                             gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);

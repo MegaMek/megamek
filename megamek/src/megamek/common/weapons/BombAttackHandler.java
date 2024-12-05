@@ -52,20 +52,20 @@ public class BombAttackHandler extends WeaponHandler {
 
     @Override
     protected void useAmmo() {
-        int[] payload = waa.getBombPayload();
-        if (!ae.isBomber() || (null == payload)) {
+        int[] payload = weaponAttackAction.getBombPayload();
+        if (!attackerEntity.isBomber() || (null == payload)) {
             return;
         }
         for (int type = 0; type < payload.length; type++) {
             for (int i = 0; i < payload[type]; i++) {
                 // find the first mounted bomb of this type and drop it
-                for (Mounted<?> bomb : ae.getBombs()) {
+                for (Mounted<?> bomb : attackerEntity.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
                             && (((BombType) bomb.getType()).getBombType() == type)) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
-                            ((IBomber) ae).increaseUsedInternalBombs(1);
+                            ((IBomber) attackerEntity).increaseUsedInternalBombs(1);
                         }
                         break;
                     }
@@ -82,10 +82,10 @@ public class BombAttackHandler extends WeaponHandler {
      */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
-        int[] payload = waa.getBombPayload();
+        int[] payload = weaponAttackAction.getBombPayload();
         Coords coords = target.getPosition();
         Coords drop;
-        Player player = game.getEntity(waa.getEntityId()).getOwner();
+        Player player = game.getEntity(weaponAttackAction.getEntityId()).getOwner();
         String bombMsg;
         Vector<Integer> hitIds = null;
 
@@ -103,7 +103,7 @@ public class BombAttackHandler extends WeaponHandler {
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (ti.missed || game.getEntity(waa.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
+                    if (ti.missed || game.getEntity(weaponAttackAction.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
                         // Not a usable friendly TAG
                         continue;
                     }
@@ -134,8 +134,8 @@ public class BombAttackHandler extends WeaponHandler {
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
-                if (wtype != null) {
-                    r.add(wtype.getName());
+                if (weaponType != null) {
+                    r.add(weaponType.getName());
                 } else {
                     r.add("Error: From Nowhere");
                 }
@@ -210,23 +210,23 @@ public class BombAttackHandler extends WeaponHandler {
                                     player, bombMsg));
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
-                    if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                    if (attackerEntity.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                         if ((-typeModifiedToHit.getMoS() - 2) < 1) {
                             moF = 0;
                         } else {
                             moF = -typeModifiedToHit.getMoS() - 2;
                         }
                     }
-                    if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                    if (weaponType.hasFlag(WeaponType.F_ALT_BOMB)) {
                         // Need to determine location in flight path
                         int idx = 0;
-                        for (; idx < ae.getPassedThrough().size(); idx++) {
-                            if (ae.getPassedThrough().get(idx).equals(coords)) {
+                        for (; idx < attackerEntity.getPassedThrough().size(); idx++) {
+                            if (attackerEntity.getPassedThrough().get(idx).equals(coords)) {
                                 break;
                             }
                         }
                         // Retrieve facing at current step in flight path
-                        int facing = ae.getPassedThroughFacing().get(idx);
+                        int facing = attackerEntity.getPassedThroughFacing().get(idx);
                         // Scatter, based on location and facing
                         drop = Compute.scatterAltitudeBombs(coords, facing, moF);
                     } else {
@@ -266,18 +266,18 @@ public class BombAttackHandler extends WeaponHandler {
                     }
                 }
                 if (type == BombType.B_INFERNO) {
-                    hitIds = gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
+                    hitIds = gameManager.deliverBombInferno(drop, attackerEntity, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    gameManager.deliverThunderMinefield(drop, ae.getOwner().getId(), 20, ae.getId());
+                    gameManager.deliverThunderMinefield(drop, attackerEntity.getOwner().getId(), 20, attackerEntity.getId());
                     List<Coords> hexes = drop.allAdjacent();
                     for (Coords c : hexes) {
-                        gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
+                        gameManager.deliverThunderMinefield(c, attackerEntity.getOwner().getId(), 20, attackerEntity.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
                     hitIds = AreaEffectHelper.processFuelAirDamage(drop,
-                            EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
+                            EquipmentType.get(BombType.getBombInternalName(type)), attackerEntity, vPhaseReport, gameManager);
                 } else {
-                    hitIds = gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    hitIds = gameManager.deliverBombDamage(drop, type, subjectId, attackerEntity, vPhaseReport);
                 }
 
                 // Display drifts that hit nothing separately from drifts that dealt damage

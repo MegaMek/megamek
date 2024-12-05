@@ -33,7 +33,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
             Game g, TWGameManager m) {
         super(toHit, waa, g, m);
-        sSalvoType = " mine(s) ";
+        salvoType = " mine(s) ";
     }
 
     /*
@@ -46,9 +46,9 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackerEntity).getShootingStrength();
             }
             return 1;
         }
@@ -60,7 +60,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(hits);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
@@ -82,8 +82,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         if (target instanceof Mek) {
             hit = new HitData(Mek.LOC_CT);
@@ -111,7 +111,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
                             hit,
                             damage,
                             false,
-                            ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                            attackerEntity.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType,
                             false, false, throughFront,
                             underWater);
@@ -141,7 +141,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
 
         // do we need to revert to single shot?
         if (nShots > 1) {
-            int nAvail = ae.getTotalAmmoOfType(ammo.getType());
+            int nAvail = attackerEntity.getTotalAmmoOfType(ammo.getType());
             while (nAvail < nShots) {
                 nShots--;
             }
@@ -150,7 +150,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         // use up ammo
         for (int i = 0; i < nShots; i++) {
             if (ammo.getUsableShotsLeft() <= 0) {
-                ae.loadWeaponWithSameAmmo(weapon);
+                attackerEntity.loadWeaponWithSameAmmo(weapon);
                 ammo = weapon.getLinked();
             }
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);

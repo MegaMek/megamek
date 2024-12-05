@@ -36,13 +36,13 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
 
     public LRMFollowTheLeaderHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " FTL missile(s) ";
+        salvoType = " FTL missile(s) ";
         nSalvoBonus = 1;
     }
 
     @Override
     public int getSalvoBonus() {
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(attackerEntity, attackerEntity.getPosition(), target.getPosition())) {
             return 0;
         } else {
             return nSalvoBonus;
@@ -51,7 +51,7 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
 
     @Override
     protected int calcnCluster() {
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(attackerEntity, attackerEntity.getPosition(), target.getPosition())) {
             return super.calcnCluster();
         } else {
             return Integer.MAX_VALUE;

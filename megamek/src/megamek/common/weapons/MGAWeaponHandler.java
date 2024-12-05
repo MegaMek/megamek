@@ -43,15 +43,15 @@ public class MGAWeaponHandler extends MGHandler {
         if (target.isConventionalInfantry()) {
             calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
-                    wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport, howManyShots);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
-                if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+                if (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG]) {
                     damage = (int) Math.floor(damage * 0.75);
-                } else if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME]) {
+                } else if (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME]) {
                     damage = (int) Math.floor(damage * 0.5);
                 }
             }
@@ -63,7 +63,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -72,13 +72,13 @@ public class MGAWeaponHandler extends MGHandler {
         setDone();
         checkAmmo();
         howManyShots = weapon.getCurrentShots();
-        int total = ae.getTotalAmmoOfType(ammo.getType());
+        int total = attackerEntity.getTotalAmmoOfType(ammo.getType());
         if (total <= howManyShots) {
             howManyShots = total;
         }
         shotsNeedFiring = howManyShots;
         if (ammo.getUsableShotsLeft() == 0) {
-            ae.loadWeapon(weapon);
+            attackerEntity.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // there will be some ammo somewhere, otherwise shot will not have
             // been fired.
@@ -86,7 +86,7 @@ public class MGAWeaponHandler extends MGHandler {
         while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
             shotsNeedFiring -= ammo.getBaseShotsLeft();
             ammo.setShotsLeft(0);
-            ae.loadWeapon(weapon);
+            attackerEntity.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
@@ -94,7 +94,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -124,7 +124,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -136,7 +136,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -148,13 +148,13 @@ public class MGAWeaponHandler extends MGHandler {
         int nDamage;
         if (hit == null) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                    toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover());
+                    toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                    weaponAttackAction.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCover(), Compute.targetSideTable(attackerEntity, entityTarget, weapon
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
@@ -191,8 +191,8 @@ public class MGAWeaponHandler extends MGHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
@@ -215,13 +215,13 @@ public class MGAWeaponHandler extends MGHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
                     .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
+                            false, attackerEntity.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,
                             underWater));

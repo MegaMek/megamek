@@ -30,7 +30,7 @@ public class StreakHandler extends MissileWeaponHandler {
     private static final MMLogger logger = MMLogger.create(StreakHandler.class);
 
     private static final long serialVersionUID = 4122111574368642492L;
-    boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
+    boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(attackerEntity, attackerEntity.getPosition(), target.getPosition());
 
     /**
      * @param t
@@ -46,10 +46,10 @@ public class StreakHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             return Compute.directBlowInfantryDamage(
-                    wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
         }
         return 2;
     }
@@ -64,9 +64,9 @@ public class StreakHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackerEntity).getShootingStrength();
             }
             return 1;
         }
@@ -88,9 +88,9 @@ public class StreakHandler extends MissileWeaponHandler {
         }
 
         if (amsMod == 0 && allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            missilesHit = weaponType.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod + nMissilesModifier,
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(), amsMod + nMissilesModifier,
                     weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
             if (amsMod != 0) {
                 Report r;
@@ -110,7 +110,7 @@ public class StreakHandler extends MissileWeaponHandler {
             Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
-            r.add(sSalvoType);
+            r.add(salvoType);
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             vPhaseReport.addElement(r);
@@ -133,13 +133,13 @@ public class StreakHandler extends MissileWeaponHandler {
         }
 
         if (ammo.getUsableShotsLeft() <= 0) {
-            ae.loadWeaponWithSameAmmo(weapon);
+            attackerEntity.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
 
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
-            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
                 weapon.setFired(true);
             }
             setDone();

@@ -48,7 +48,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
         if (!bMissed) {
             Report r = new Report(3190);
             r.subject = subjectId;
-            r.player = ae.getOwnerId();
+            r.player = attackerEntity.getOwnerId();
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
@@ -71,7 +71,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
 
         // Handle munitions.
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
-            int damage = wtype.getRackSize() * calcDamagePerHit();
+            int damage = weaponType.getRackSize() * calcDamagePerHit();
             int smokeType = SmokeCloud.SMOKE_LIGHT;
             if (damage > 5) {
                 smokeType = SmokeCloud.SMOKE_HEAVY;

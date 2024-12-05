@@ -43,7 +43,7 @@ public class ACCaselessHandler extends ACWeaponHandler {
             return true;
         }
 
-        if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() <= 2) && !attackerEntity.isConventionalInfantry()) {
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3164);

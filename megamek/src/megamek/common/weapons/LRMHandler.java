@@ -77,7 +77,7 @@ public class LRMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, attackerEntity,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
@@ -96,22 +96,22 @@ public class LRMHandler extends MissileWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                        * ((BattleArmor) ae).getShootingStrength());
-                r.add(sSalvoType);
+                r.add(weaponType.getRackSize()
+                        * ((BattleArmor) attackerEntity).getShootingStrength());
+                r.add(salvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackerEntity).getShootingStrength();
             }
             Report r = new Report(3326);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getRackSize());
-            r.add(sSalvoType);
+            r.add(weaponType.getRackSize());
+            r.add(salvoType);
             vPhaseReport.add(r);
             return 1;
         }
@@ -121,8 +121,8 @@ public class LRMHandler extends MissileWeaponHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mek) || (ae instanceof Tank)) {
-            bMekTankStealthActive = ae.isStealthActive();
+        if ((attackerEntity instanceof Mek) || (attackerEntity instanceof Tank)) {
+            bMekTankStealthActive = attackerEntity.isStealthActive();
         }
         Mounted<?> mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
@@ -130,7 +130,7 @@ public class LRMHandler extends MissileWeaponHandler {
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
-        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(attackerEntity, attackerEntity.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
 
@@ -216,14 +216,14 @@ public class LRMHandler extends MissileWeaponHandler {
                 nMissilesModifier += 2;
             }
         } else if ((entityTarget != null)
-                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-                        .isINarcedBy(ae.getOwner().getTeam()))) {
+                && (entityTarget.isNarcedBy(attackerEntity.getOwner().getTeam()) || entityTarget
+                        .isINarcedBy(attackerEntity.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
             // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
-            bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
+            bTargetECMAffected = ComputeECM.isAffectedByECM(attackerEntity,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM)
                     || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -254,14 +254,14 @@ public class LRMHandler extends MissileWeaponHandler {
             nMissilesModifier -= getAeroSanityAMSHitsMod();
         }
 
-        int rackSize = wtype.getRackSize();
+        int rackSize = weaponType.getRackSize();
         boolean minRangeELRMAttack = false;
 
         // ELRMs only hit with half their rack size rounded up at minimum range.
         // Ignore this for space combat. 1 hex is 18km across.
-        if (wtype instanceof ExtendedLRMWeapon
+        if (weaponType instanceof ExtendedLRMWeapon
                 && !game.getBoard().inSpace()
-                && (nRange <= wtype.getMinimumRange())) {
+                && (nRange <= weaponType.getMinimumRange())) {
             rackSize = rackSize / 2 + rackSize % 2;
             minRangeELRMAttack = true;
         }
@@ -273,9 +273,9 @@ public class LRMHandler extends MissileWeaponHandler {
                     nMissilesModifier, weapon.isHotLoaded(), true,
                     isAdvancedAMS());
         } else {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(rackSize
-                        * ((BattleArmor) ae).getShootingStrength(),
+                        * ((BattleArmor) attackerEntity).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
                         isAdvancedAMS());
             } else {
@@ -289,7 +289,7 @@ public class LRMHandler extends MissileWeaponHandler {
             Report r = new Report(3325);
             r.subject = subjectId;
             r.add(missilesHit);
-            r.add(sSalvoType);
+            r.add(salvoType);
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             vPhaseReport.addElement(r);

@@ -88,7 +88,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        TargetRoll tn = new TargetRoll(weaponType.getFireTN(), weaponType.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
@@ -118,7 +118,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         // TODO : you do a normal ignition as though for intentional fires
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5, vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);

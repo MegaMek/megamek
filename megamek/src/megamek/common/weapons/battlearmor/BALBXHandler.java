@@ -43,10 +43,10 @@ public class BALBXHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -61,20 +61,20 @@ public class BALBXHandler extends WeaponHandler {
             bSalvo = true;
             Report r = new Report(3325);
             r.subject = subjectId;
-            r.add(wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength());
+            r.add(weaponType.getRackSize() * ((BattleArmor) attackerEntity).getShootingStrength());
             r.add(sSalvoType);
             r.add(" ");
             vPhaseReport.add(r);
-            return ((BattleArmor) ae).getShootingStrength();
+            return ((BattleArmor) attackerEntity).getShootingStrength();
         }
         int missilesHit;
         int nMissilesModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength();
+            missilesHit = weaponType.getRackSize() * ((BattleArmor) attackerEntity).getShootingStrength();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize()
-                    * ((BattleArmor) ae).getShootingStrength(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize()
+                    * ((BattleArmor) attackerEntity).getShootingStrength(),
                     nMissilesModifier, weapon.isHotLoaded(), false, false);
         }
 

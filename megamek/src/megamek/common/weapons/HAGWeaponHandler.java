@@ -37,12 +37,12 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      */
     public HAGWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " projectiles ";
+        salvoType = " projectiles ";
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -52,18 +52,18 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
-            double toReturn = wtype.getRackSize();
+            double toReturn = weaponType.getRackSize();
             toReturn = Compute.directBlowInfantryDamage(
                     toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }
@@ -72,7 +72,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -84,21 +84,21 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         }
         int nHits;
         int nHitsModifier = getClusterModifiers(true);
-        if (nRange <= wtype.getShortRange()) {
+        if (nRange <= weaponType.getShortRange()) {
             nHitsModifier += 2;
-        } else if (nRange > wtype.getMediumRange()) {
+        } else if (nRange > weaponType.getMediumRange()) {
             nHitsModifier -= 2;
         }
 
         if (allShotsHit()) {
-            nHits = wtype.getRackSize();
+            nHits = weaponType.getRackSize();
         } else {
-            nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier);
+            nHits = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier);
         }
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(nHits);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.newlines = 0;
         r.add(toHit.getTableDesc());
         vPhaseReport.addElement(r);

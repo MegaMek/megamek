@@ -40,7 +40,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             return true;
         }
 
-        WeaponMounted laser = waa.getEntity(game).getWeapon(waa.getWeaponId());
+        WeaponMounted laser = weaponAttackAction.getEntity(game).getWeapon(weaponAttackAction.getWeaponId());
 
         if ((roll.getIntValue() == 2) && laser.curMode().equals("Pulse")) {
             vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(), laser.getLocation(), laser.getLinkedBy()));
@@ -50,46 +50,46 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        double toReturn = weaponType.getDamage();
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
             && weapon.hasModes()) {
-            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
+            toReturn = Compute.dialDownDamage(weapon, weaponType, nRange);
         }
 
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackerEntity instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+            && (attackerEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackerEntity).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
+            } else if (nRange <= weaponType.getMediumRange()) {
                 // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
+            } else if (nRange <= weaponType.getLongRange()) {
                 toReturn--;
             }
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn / 3.0);
         }
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

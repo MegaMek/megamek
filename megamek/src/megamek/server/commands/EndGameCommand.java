@@ -16,10 +16,7 @@ package megamek.server.commands;
 import megamek.client.ui.Messages;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.BooleanArgument;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.*;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
@@ -45,13 +42,13 @@ public class EndGameCommand extends GamemasterServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.endgame.playerID")),
+            new PlayerArgument(PLAYER_ID, Messages.getString("Gamemaster.cmd.endgame.playerID")),
             new BooleanArgument(FORCE, Messages.getString("Gamemaster.cmd.endgame.force"), false));
     }
 
     @Override
     protected void runCommand(int connId, Arguments args) {
-        int playerID = ((IntegerArgument) args.get(PLAYER_ID)).getValue();
+        int playerID = ((PlayerArgument) args.get(PLAYER_ID)).getValue();
         boolean force = ((BooleanArgument) args.get(FORCE)).getValue();
 
         var player = server.getGame().getPlayer(playerID);

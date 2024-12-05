@@ -344,11 +344,11 @@ public class WeaponMounted extends Mounted<WeaponType> {
         for (WeaponHandler wr : vAttacks) {
             boolean isInArc = Compute.isInArc(getEntity().getGame(),
                     getEntity().getId(), getEntity().getEquipmentNum(this),
-                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
+                    getEntity().getGame().getEntity(wr.weaponAttackAction.getEntityId()));
             boolean isInRange = getEntity().getPosition().distance(
-                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
+                    wr.getWeaponAttackAction().getTarget(getEntity().getGame()).getPosition()) <= 3;
             if (isInArc && isInRange) {
-                vAttacksInArc.add(wr.waa);
+                vAttacksInArc.add(wr.weaponAttackAction);
             }
         }
         // find the most dangerous salvo by expected damage

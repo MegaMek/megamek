@@ -131,7 +131,6 @@ public class DisasterCommand extends GamemasterServerCommand {
                 server.sendServerChat("The star is going supernova!");
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
-
             case SANDSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
                 server.sendServerChat("A sandstorm is approaching!");

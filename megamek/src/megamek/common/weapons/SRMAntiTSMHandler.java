@@ -36,7 +36,7 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
 
     public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " anti-TSM missile(s) ";
+        salvoType = " anti-TSM missile(s) ";
         damageType = DamageType.ANTI_TSM;
     }
 
@@ -45,9 +45,9 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
-            if (ae instanceof BattleArmor) {
+            if (attackerEntity instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor) ae).getShootingStrength();
+                return ((BattleArmor) attackerEntity).getShootingStrength();
             }
             return 1;
         }
@@ -68,19 +68,19 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
         if (allShotsHit()) {
             // We want buildings and large craft to be able to affect this number with AMS
             // treat as a Streak launcher (cluster roll 11) to make this happen
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                     nMissilesModifier, weapon.isHotLoaded(), true,
                     isAdvancedAMS());
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                     nMissilesModifier, weapon.isHotLoaded(), false, isAdvancedAMS());
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(missilesHit);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);

@@ -15,10 +15,7 @@
 package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.IntegerArgument;
-import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.commands.arguments.*;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
@@ -40,15 +37,15 @@ public class NukeCommand extends ClientServerCommand {
                 "/nuke <x> <y> <type> and" +
                 "/nuke <x> <y> <damage> <degredation> <secondary radius> <crater>" +
                 "where type is 0-4 (0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker)" +
-                "and hex x, y is x=column number and y=row number (hex 0923 would be x=9 and y=23)", "Nuclear Strike");
+                "and hex x, y is x=column number and y=row number (hex 0923 would be x=9 and y=23)", "Nuclear Strike (old)");
         this.gameManager = gameManager;
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument("x", "The x-coordinate of the hex to nuke."),
-            new IntegerArgument("y", "The y-coordinate of the hex to nuke."),
+            new CoordXArgument("x", "The x-coordinate of the hex to nuke."),
+            new CoordYArgument("y", "The y-coordinate of the hex to nuke."),
             new OptionalIntegerArgument("type", "The type of nuke to drop. " +
                 "(0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker)", 0, 4),
             new OptionalIntegerArgument("dmg", "The damage of the nuke.", 0, 1_000_000),

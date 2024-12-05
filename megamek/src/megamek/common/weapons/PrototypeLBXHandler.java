@@ -42,7 +42,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -56,13 +56,13 @@ public class PrototypeLBXHandler extends LBXHandler {
         int shotMod = getClusterModifiers(true);
 
         shotMod -= 1;
-        int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
-                .missilesHit(wtype.getRackSize(), shotMod);
+        int shotsHit = allShotsHit() ? weaponType.getRackSize() : Compute
+                .missilesHit(weaponType.getRackSize(), shotMod);
 
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
@@ -75,7 +75,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -83,8 +83,8 @@ public class PrototypeLBXHandler extends LBXHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
-        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
+
+        if ((roll.getIntValue() == 2) && !attackerEntity.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

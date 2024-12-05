@@ -40,23 +40,23 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
-        } else if (ae.isConventionalInfantry()) {
+        } else if (attackerEntity.isConventionalInfantry()) {
             return false;
         }
-        
+
         if (((roll.getIntValue() <= 4) && (howManyShots == 2))
                 || ((roll.getIntValue() == 2) && (howManyShots == 1))) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            if (weaponType.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 r.messageId = 3160;
                 weapon.setHit(true);
             } else {

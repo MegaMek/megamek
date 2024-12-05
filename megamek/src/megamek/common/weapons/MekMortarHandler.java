@@ -45,7 +45,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -62,9 +62,9 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         int nMissilesModifier = getClusterModifiers(true);
 
         if (targetHex) {
-            missilesHit = wtype.getRackSize();
+            missilesHit = weaponType.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+            missilesHit = Compute.missilesHit(weaponType.getRackSize(),
                     nMissilesModifier);
         }
 
@@ -97,7 +97,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     * 
+     *
      * @return a <code>int</code> value saying how much hits are in each cluster
      *         of damage.
      */
@@ -108,18 +108,18 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(),
+                    weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    weaponType.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
-            
+                    toHit.getThruBldg() != null, attackerEntity.getId(), calcDmgPerHitReport);
+
             toReturn = applyGlancingBlowModifier(toReturn, true);
             return (int) toReturn;
         }

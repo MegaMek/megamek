@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
 package megamek.common.weapons;
@@ -43,7 +43,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -62,16 +62,16 @@ public class StopSwarmAttackHandler extends WeaponHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-        if (ae.getSwarmTargetId() != target.getId()) {
-            Entity other = game.getEntity(ae.getSwarmTargetId());
-            
+        if (attackerEntity.getSwarmTargetId() != target.getId()) {
+            Entity other = game.getEntity(attackerEntity.getSwarmTargetId());
+
             if (other != null) {
                 other.setSwarmAttackerId(Entity.NONE);
             }
         } else {
             entityTarget.setSwarmAttackerId(Entity.NONE);
         }
-        ae.setSwarmTargetId(Entity.NONE);
+        attackerEntity.setSwarmTargetId(Entity.NONE);
         return false;
     }
 }

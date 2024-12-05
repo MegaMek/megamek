@@ -35,7 +35,7 @@ public class LRMFragHandler extends LRMHandler {
 
     public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " fragmentation missile(s) ";
+        salvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;
     }
 
@@ -48,15 +48,15 @@ public class LRMFragHandler extends LRMHandler {
     protected int calcDamagePerHit() {
         double toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
+        if ((attackerEntity instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
+                && (attackerEntity.getSwarmTargetId() == target.getId())) {
+            toReturn *= ((BattleArmor) attackerEntity).getShootingStrength();
         }
         // against infantry, we have 1 hit
         if (target.isConventionalInfantry()) {
-            toReturn = wtype.getRackSize();
+            toReturn = weaponType.getRackSize();
             if (bDirect) {
                 toReturn += toHit.getMoS() / 3.0;
             }
@@ -96,7 +96,7 @@ public class LRMFragHandler extends LRMHandler {
         if ((bldg != null)
                 && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
                         false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        new TargetRoll(weaponType.getFireTN(), weaponType.getName()), 5,
                         vPhaseReport)) {
             return;
         }

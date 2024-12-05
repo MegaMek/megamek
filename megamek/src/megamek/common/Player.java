@@ -19,20 +19,20 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.hexarea.BorderHexArea;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+
 /**
  * Represents a player in the game.
- *
  * Note that Player should be usable for any type of game (TW, AS, BF, SBF) and therefore should not
  * make any direct use of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
  * Note that two Players are equal if their ID is equal.
@@ -40,6 +40,7 @@ import megamek.common.options.OptionsConstants;
 public final class Player extends TurnOrdered {
 
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 6828849559007455761L;
 
     public static final int PLAYER_NONE = -1;
@@ -84,6 +85,10 @@ public final class Player extends TurnOrdered {
 
     private int initialEntityCount;
     private int initialBV;
+
+    // Battlefield Support Points
+    private float initialBSP;
+    private float currentBSP;
 
     // initiative bonuses go here because we don't know if teams are rolling
     // initiative collectively
@@ -146,7 +151,7 @@ public final class Player extends TurnOrdered {
 
     public boolean hasMinefields() {
         return (numMfCmd > 0) || (numMfConv > 0) || (numMfVibra > 0) || (numMfActive > 0) || (numMfInferno > 0)
-        		|| getGroundObjectsToPlace().size() > 0;
+        		|| !getGroundObjectsToPlace().isEmpty();
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -270,7 +275,7 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * If you are checking to see this player is a Game Master, use {@link #isGameMaster()} ()} instead
+     * If you are checking to see this player is a Game Master, use {@link #isGameMaster()} instead
      * @return the value of gameMaster flag, without checking if it is permitted.
      */
     public boolean getGameMaster() {
@@ -348,7 +353,7 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * If you are checking to see this player can ignore double-blind, use {@link #canIgnoreDoubleBlind()} ()} instead
+     * If you are checking to see this player can ignore double-blind, use {@link #canIgnoreDoubleBlind()} instead
      * @return the value of singleBlind flag, without checking if it is permitted.
      */
     public boolean getSingleBlind() {
@@ -554,6 +559,35 @@ public final class Player extends TurnOrdered {
         return unit.getOwnerId() == id;
     }
 
+    public float getInitialBSP() {
+        return initialBSP;
+    }
+
+    public void setInitialBSP(final int initialBSP) {
+        this.initialBSP = initialBSP;
+    }
+
+    public float getCurrentBSP() {
+        return currentBSP;
+    }
+
+    public void setCurrentBSP(final float currentBSP) {
+        this.currentBSP = currentBSP;
+    }
+
+    /**
+     * Changes the current BSP by the given amount. Returns false if the change would result in a negative value.
+     * @param amountToChange The amount to change the current BSP by (negative for decrease)
+     * @return True if the change was successful, false if the change was canceled because it does not have enough BSP
+     */
+    public boolean changeCurrentBSP(final float amountToChange) {
+        if (currentBSP + amountToChange < 0) {
+            return false;
+        }
+        this.currentBSP += amountToChange;
+        return true;
+    }
+
     public int getInitialBV() {
         return initialBV;
     }
@@ -594,8 +628,7 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity && ((Entity) object).getOwner().equals(this)) {
-                Entity entity = (Entity) object;
+            if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
                     bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
@@ -616,8 +649,7 @@ public final class Player extends TurnOrdered {
         }
         int commandb = 0;
         for (InGameObject unit : game.getInGameObjects()) {
-            if (unit instanceof Entity) {
-                Entity entity = (Entity) unit;
+            if (unit instanceof Entity entity) {
                 if ((null != entity.getOwner())
                         && entity.getOwner().equals(this)
                         && !entity.isDestroyed()
@@ -726,6 +758,9 @@ public final class Player extends TurnOrdered {
 
         copy.initialEntityCount = initialEntityCount;
         copy.initialBV = initialBV;
+
+        copy.initialBSP = initialBSP;
+        copy.currentBSP = currentBSP;
 
         copy.constantInitBonus = constantInitBonus;
         copy.streakCompensationBonus = streakCompensationBonus;

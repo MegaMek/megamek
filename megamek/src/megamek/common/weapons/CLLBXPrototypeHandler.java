@@ -41,7 +41,7 @@ public class CLLBXPrototypeHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -57,26 +57,26 @@ public class CLLBXPrototypeHandler extends LBXHandler {
         int nHitsModifier = getClusterModifiers(true);
 
         if (allShotsHit()) {
-            shotsHit = wtype.getRackSize();
+            shotsHit = weaponType.getRackSize();
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
-                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
+                    && (nRange > weaponType.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
-            }            
+            }
         } else {
             // flat modifier of -1, because of prototype
             nHitsModifier -= 1;
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
         }
 
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
-        r.add(sSalvoType);
+        r.add(salvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);

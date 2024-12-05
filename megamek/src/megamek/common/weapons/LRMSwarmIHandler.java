@@ -35,6 +35,6 @@ public class LRMSwarmIHandler extends LRMSwarmHandler {
 
     public LRMSwarmIHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
-        sSalvoType = " swarm-i missile(s) ";
+        salvoType = " swarm-i missile(s) ";
     }
 }

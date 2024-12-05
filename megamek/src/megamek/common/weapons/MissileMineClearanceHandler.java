@@ -44,7 +44,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         Coords targetPos = target.getPosition();
 
-        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = attackerEntity.getEquipment(weaponAttackAction.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE))) {
             logger.error("Not using mine clearance ammo!");
@@ -56,8 +56,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
+        if (weaponType != null) {
+            r.add(weaponType.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhere");
         }
@@ -120,8 +120,8 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
 
         // Handle mine clearance
         List<Minefield> mfRemoved = new ArrayList<>();
-        int missileDamage = (wtype instanceof LRMWeapon) ? 1 : 2;
-        int mineDamage = wtype.getRackSize() * missileDamage;
+        int missileDamage = (weaponType instanceof LRMWeapon) ? 1 : 2;
+        int mineDamage = weaponType.getRackSize() * missileDamage;
         boolean updateMinefields = false;
         for (Minefield mf : game.getMinefields(targetPos)) {
             int density = mf.getDensity() - mineDamage;
@@ -151,12 +151,12 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         }
 
         // Report amount of damage
-        int damage = (wtype.getRackSize() * missileDamage) / 10;
+        int damage = (weaponType.getRackSize() * missileDamage) / 10;
         r = new Report(9940);
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
+        r.add(weaponType.getName() + " " + ammoType.getSubMunitionName());
         r.add(damage);
         vPhaseReport.addElement(r);
 
@@ -209,11 +209,11 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
                 vPhaseReport.addAll(newReports);
             } else {
                 hit = target.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
+                        toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                        weaponAttackAction.getAimingMode(), toHit.getCover());
                 if (target.getBARRating(hit.getLocation()) <= 6) {
                     hit.setGeneralDamageType(generalDamageType);
-                    hit.setCapital(wtype.isCapital());
+                    hit.setCapital(weaponType.isCapital());
                     hit.setBoxCars(roll.getIntValue() == 12);
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);

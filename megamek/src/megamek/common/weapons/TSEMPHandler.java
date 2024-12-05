@@ -65,19 +65,19 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             weapon.setHit(true);
             int wloc = weapon.getLocation();
-            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
-                CriticalSlot slot1 = ae.getCritical(wloc, i);
+            for (int i = 0; i < attackerEntity.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = attackerEntity.getCritical(wloc, i);
                 if ((slot1 == null) ||
                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted<?> mounted = slot1.getMount();
                 if (mounted.equals(weapon)) {
-                    ae.hitAllCriticals(wloc, i);
+                    attackerEntity.hitAllCriticals(wloc, i);
                     break;
                 }
             }
-            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(attackerEntity, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return true;
@@ -90,11 +90,11 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
 
-        ae.setFiredTsempThisTurn(true);
-        ae.setHasFiredTsemp(true);
+        attackerEntity.setFiredTsempThisTurn(true);
+        attackerEntity.setHasFiredTsemp(true);
 
-        if (ae.getTsempEffect() == MMConstants.TSEMP_EFFECT_NONE) {
-            ae.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
+        if (attackerEntity.getTsempEffect() == MMConstants.TSEMP_EFFECT_NONE) {
+            attackerEntity.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
         }
 
         return super.handle(phase, vPhaseReport);

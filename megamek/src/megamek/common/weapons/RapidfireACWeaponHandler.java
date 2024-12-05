@@ -23,7 +23,6 @@ import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Game;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -52,7 +51,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         if (kindRapidFire) {
             jamLevel = 2;
         }
-        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !ae.isConventionalInfantry()) {
+        if ((roll.getIntValue() <= jamLevel) && (howManyShots == 2) && !attackerEntity.isConventionalInfantry()) {
             if (roll.getIntValue() > 2 || kindRapidFire) {
                 Report r = new Report(3161);
                 r.subject = subjectId;

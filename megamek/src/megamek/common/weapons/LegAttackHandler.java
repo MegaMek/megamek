@@ -61,8 +61,8 @@ public class LegAttackHandler extends WeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), weaponAttackAction.getAimedLocation(),
+                weaponAttackAction.getAimingMode(), toHit.getCover());
         hit.setAttackerId(getAttackerId());
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
@@ -82,10 +82,10 @@ public class LegAttackHandler extends WeaponHandler {
         vPhaseReport.addElement(r);
 
         int damage = 4;
-        if (ae instanceof BattleArmor) {
-            damage += ((BattleArmor) ae).getVibroClaws();
-            if (((BattleArmor) ae).hasMyomerBooster()) {
-                damage += ((BattleArmor) ae).getTroopers() * 2;
+        if (attackerEntity instanceof BattleArmor) {
+            damage += ((BattleArmor) attackerEntity).getVibroClaws();
+            if (((BattleArmor) attackerEntity).hasMyomerBooster()) {
+                damage += ((BattleArmor) attackerEntity).getTroopers() * 2;
             }
         }
 
@@ -98,7 +98,7 @@ public class LegAttackHandler extends WeaponHandler {
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;
         }
-        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
+        if (attackerEntity.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
             critMod += 1;
         }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));

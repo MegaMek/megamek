@@ -1,10 +1,11 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "MediumForest (Auto)"
 tag "TropicalTheme (Auto)"
-tag "Water (Auto)"
 tag "Woods (Auto)"
 hex 0101 3 "" "tropical"
 hex 0201 3 "" "tropical"

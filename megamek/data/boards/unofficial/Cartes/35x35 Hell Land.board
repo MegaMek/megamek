@@ -1,7 +1,8 @@
 size 35 35
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "Lava (Auto)"
 tag "LightForest (Auto)"

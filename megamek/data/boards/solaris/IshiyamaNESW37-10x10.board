@@ -1,6 +1,7 @@
 size 10 10
 tag "GrassTheme (Auto)"
 tag "HighHills (Auto)"
+tag "Impassable (Auto)"
 hex 0101 4 "" ""
 hex 0201 4 "" ""
 hex 0301 2 "" ""

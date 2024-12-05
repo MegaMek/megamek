@@ -1,5 +1,6 @@
 size 25 14
 tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "desert"

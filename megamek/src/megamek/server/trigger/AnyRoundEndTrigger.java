@@ -26,4 +26,9 @@ public class AnyRoundEndTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return event == TriggerSituation.ROUND_END;
     }
+
+    @Override
+    public String toString() {
+        return "GameRound End: any";
+    }
 }

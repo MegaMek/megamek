@@ -1,9 +1,11 @@
 size 15 18
 option exit_roads_to_pavement false
-tag "TropicalTheme (Auto)"
 tag "Cliffs (Auto)"
 tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
+tag "Impassable (Auto)"
+tag "TropicalTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 5 "impassable:1" "tropical"
 hex 0201 5 "impassable:1" "tropical"

@@ -2,6 +2,8 @@ size 30 17
 tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
 tag "DesertTheme (Auto)"
+tag "Impassable (Auto)"
+tag "Elevator (Auto)"
 hex 0101 5 "impassable:0" "desert"
 hex 0201 5 "impassable:0" "desert"
 hex 0301 5 "impassable:0" "desert"

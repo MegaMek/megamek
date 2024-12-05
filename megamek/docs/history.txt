@@ -9,6 +9,21 @@ MEGAMEK VERSION HISTORY:
 + PR #6209: Implement RISC laser pulse module
 + Fix #6211: Added null check for lastUnitMember
 + PR #6203: Dev Tool to Find duplicate boards
++ PR #6181: Rename TroopSpace to InfantryCompartment
++ Fix #6217: Too many gunners for aerospace in MekHQ
++ Fix #6069: Stops bays from loading BA and protomek ammunition
++ PR #6221: Corrects weight and critical slots for BNIU
++ PR #6222: Adds the players team in the BV report
++ PR #6223: Allows GM to control any bot in the game via Map Menu
++ Fix #5397: Allow Capital Missiles to switch modes instantly
++ Fix #4315: IR sensors should be able to detect units without heat scale
++ PR #6228: Victory and MM scenarios updates victory handling to recognize victory/draw by scenario events correctly
++ PR #6216: Add additional board auto tags
++ PR #6208: Megamek side of MekHQ CombatMaths PR #5155
++ PR #6230: Allow fleeing at end of movement
++ Fix #3018: Fixes Battle Armor Plasma Rifles not applying TacOps Optional Rules
++ Fix #3827: Fixes target's side's ECM not effecting sensor spottingFixes
+
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

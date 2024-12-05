@@ -1,7 +1,8 @@
 size 16 17
-tag "Water (Auto)"
 tag "SnowTheme (Auto)"
+tag "Water (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
 tag "IceTerrain (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "snow"

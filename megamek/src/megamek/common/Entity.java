@@ -9546,8 +9546,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns whether an entity can flee from its current position. Currently
      * returns true if the entity is on the edge of the board.
      */
-    public boolean canFlee() {
-        Coords pos = getPosition();
+    public boolean canFlee(Coords pos) {
         return ((getWalkMP() > 0) || (this instanceof Infantry))
                 && !isProne()
                 && !isStuck()

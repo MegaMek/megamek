@@ -29,6 +29,7 @@ import java.util.*;
 import javax.swing.*;
 
 import megamek.client.Client;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.gmCommands.GamemasterCommandPanel;
@@ -415,9 +416,11 @@ public class MapMenu extends JPopupMenu {
      */
     private JMenu createPleaToRoyaltyMenu() {
         JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
-
+        var isGM = client.getLocalPlayer().isGameMaster();
         for (var player : client.getGame().getPlayersList()) {
-            if (!player.isEnemyOf(client.getLocalPlayer()) && player.isBot()) {
+            var isEnemy = player.isEnemyOf(client.getLocalPlayer());
+            var playerIsBot = player.isBot();
+            if (playerIsBot && (!isEnemy || isGM)) {
                 menu.add(createBotCommands(player));
             }
         }
@@ -425,18 +428,14 @@ public class MapMenu extends JPopupMenu {
     }
 
     private JMenu createBotCommands(Player bot) {
-        JMenu menu = new JMenu(bot.getName());
+        JMenu menu = new JMenu(bot.getName() + " (" + Player.TEAM_NAMES[bot.getTeam()] + ")");
 
         JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
         JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
         JMenu ignoreTargetMenu= new JMenu(Messages.getString("Bot.commands.ignore"));
-
-        JMenu fleeMenu = new JMenu(Messages.getString("Bot.commands.flee"));
+        JMenu fleeMenu = createFleeMenu(bot);
         JMenu behaviorMenu = createBehaviorMenu(bot);
 
-
-        behaviorMenu.add(createBehaviorMenu(bot));
-        fleeMenu.add(createFleeMenu(bot));
         targetHexMenu.add(createTargetHexMenuItem(bot));
         menu.add(targetHexMenu);
 
@@ -565,23 +564,33 @@ public class MapMenu extends JPopupMenu {
     }
 
 
-    JMenuItem createFleeMenu(Player bot) {
-        JMenuItem item = new JMenuItem(Messages.getString("Bot.commands.flee.text"));
-        item.addActionListener(evt -> {
-                int confirm = JOptionPane.showConfirmDialog(
-                    gui.getFrame(),
-                    Messages.getString("Bot.commands.flee.confirmation", bot.getName()),
-                    Messages.getString("Bot.commands.flee.confirm"),
-                    JOptionPane.YES_NO_OPTION);
+    JMenu createFleeMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.flee"));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.northEdge")), bot, CardinalEdge.NORTH));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.southEdge")), bot, CardinalEdge.SOUTH));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.westEdge")), bot, CardinalEdge.WEST));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.eastEdge")), bot, CardinalEdge.EAST));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.nearestEdge")), bot, CardinalEdge.NEAREST));
+        return menu;
+    }
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    client.sendChat(String.format("%s: flee",
-                        bot.getName()
-                    ));
-                }
+    private JMenuItem setFleeAction(JMenuItem fleeMenuItem, Player bot, CardinalEdge cardinalEdge) {
+        fleeMenuItem.addActionListener(evt -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                gui.getFrame(),
+                Messages.getString("Bot.commands.flee.confirmation", bot.getName()),
+                Messages.getString("Bot.commands.flee.confirm"),
+                JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                client.sendChat(String.format("%s: flee : %d",
+                    bot.getName(),
+                    cardinalEdge.getIndex()
+                ));
             }
-        );
-        return item;
+        });
+
+        return fleeMenuItem;
     }
 
     JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {

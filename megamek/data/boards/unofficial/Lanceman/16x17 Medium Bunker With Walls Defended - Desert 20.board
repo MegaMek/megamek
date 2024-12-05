@@ -1,6 +1,7 @@
 size 16 17
 tag "Flat (Auto)"
 tag "DesertTheme (Auto)"
+tag "Fortress (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

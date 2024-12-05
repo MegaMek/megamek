@@ -2,6 +2,7 @@ size 25 25
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"
+tag "HeavyBuilding (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 0 "pavement:1" ""
 hex 0201 0 "pavement:1" ""

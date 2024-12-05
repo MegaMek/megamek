@@ -25,18 +25,17 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
-import megamek.server.scriptedevent.GameEndTriggeredEvent;
 import megamek.server.scriptedevent.TriggeredEvent;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
 
 /**
- * This class manages the victory conditions of a game. As victory conditions could potentially have some
- * state they need to save in savegames, this class is actually part of the Game rather than just
- * a GameManager helper. TODO: This should be resolved by storing victory conditions in Game but manage
- * them from GameManager.
+ * This class manages the victory conditions of a game. As victory conditions could potentially have some state they need to save in
+ * savegames, this class is actually part of the Game rather than just a GameManager helper. TODO: This should be resolved by storing
+ * victory conditions in Game but manage them from GameManager.
  */
 public class VictoryHelper implements Serializable {
 
@@ -47,74 +46,74 @@ public class VictoryHelper implements Serializable {
     private final List<VictoryCondition> victoryConditions = new ArrayList<>();
 
     /**
-     * Constructs the VictoryHelper. Note that this should be called after the lobby phase so that the final
-     * victory game settings for this game are used.
+     * Constructs the VictoryHelper. Note that this should be called after the lobby phase so that the final victory game settings for this
+     * game are used.
      *
-     * @param options The GameOptions of the game
+     * @param game The game
      */
-    public VictoryHelper(BasicGameOptions options) {
-        checkForVictory = options.booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
+    public VictoryHelper(IGame game) {
+        checkForVictory = game.getOptions().booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
 
         if (checkForVictory) {
-            buildVClist(options);
+            buildVClist(game);
         }
     }
 
     /**
-     * Checks the various victory conditions if any lead to a game-ending result. Player-agreed
-     * /victory is always checked, other victory conditions only if victory checking is at all enabled.
+     * Checks the various victory conditions if any lead to a game-ending result. Player-agreed /victory is always checked, other victory
+     * conditions only if victory checking is at all enabled. Scripted victory and game-ending events are also always tested.
      *
-     * @param game The Game
+     * @param game    The Game
      * @param context The victory context - to my knowledge, this is currently not used at all
      * @return A combined victory result giving the current victory status
-     *
      * @see VictoryResult#noResult()
      * @see VictoryResult#drawResult()
      */
     public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
-        // Always check for forced victory, so games without victory conditions can be completed
+        // Always check for chat-command /victory, so games without victory conditions can be completed
         VictoryResult playerAgreedVR = playerAgreedVC.checkVictory(game, context);
         if (playerAgreedVR.isVictory()) {
             return playerAgreedVR;
         }
 
-        VictoryResult result = VictoryResult.noResult();
-
-        boolean gameEnds = false;
-        for (TriggeredEvent event : game.scriptedEvents()) {
-            gameEnds |= event.trigger().isTriggered(game, TriggerSituation.ROUND_END)
-                    && ((event instanceof GameEndTriggeredEvent)
-                    || ((event instanceof VictoryTriggeredEvent victoryEvent)
-                    && victoryEvent.isGameEnding()));
-        }
-
-        if (gameEnds) {
-            // Test all victory events, if any are met; if not, return a draw
+        if (gameEndsByScriptedEvent(game)) {
+            // The game does end now; therefore, test all victory events. If none are met, the game is a draw
             for (TriggeredEvent event : game.scriptedEvents()) {
-                if ((event instanceof VictoryTriggeredEvent victoryEvent)
-                        && victoryEvent.isGameEnding()
-                        && victoryEvent.trigger().isTriggered(game, TriggerSituation.ROUND_END)) {
-                    return new VictoryResult(true);
+                if (event instanceof VictoryTriggeredEvent victoryEvent) {
+                    VictoryResult victoryResult = victoryEvent.checkVictory(game, context);
+                    if (victoryResult.isVictory()) {
+                        return victoryResult;
+                    }
                 }
             }
             return VictoryResult.drawResult();
         }
 
         if (checkForVictory) {
-            // Check optional Victory conditions; these can have reports
-            result = checkOptionalVictoryConditions(game, context);
+            VictoryResult result = checkOptionalVictoryConditions(game, context);
             if (result.isVictory()) {
                 return result;
             }
 
             // Check for battlefield control; this is currently an automatic victory when VCs are checked at all
+            // this could be made optional to allow the game to continue once alone if there's a use case
             VictoryResult battlefieldControlVR = battlefieldControlVC.checkVictory(game, context);
             if (battlefieldControlVR.isVictory()) {
                 return battlefieldControlVR;
             }
         }
 
-        return result;
+        return VictoryResult.noResult();
+    }
+
+    /**
+     * @return True when the game ends right now (at the end of round victory check) through a scripted event, either a game-end
+     * event or a victory event that is set to be game-ending.
+     */
+    private boolean gameEndsByScriptedEvent(Game game) {
+        return game.scriptedEvents().stream()
+            .filter(TriggeredEvent::isGameEnding)
+            .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));
     }
 
     private VictoryResult checkOptionalVictoryConditions(Game game, Map<String, Object> context) {
@@ -153,7 +152,12 @@ public class VictoryHelper implements Serializable {
         }
     }
 
-    private void buildVClist(BasicGameOptions options) {
+    /**
+     * Returns a list of victory conditions that are checked if victory conditions are checked at all as per this game's options. The
+     * conditions include those set in the game options as well as those added by code (e.g. through a scenario).
+     */
+    private void buildVClist(IGame game) {
+        BasicGameOptions options = game.getOptions();
         neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victoryConditions.add(new BVDestroyedVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));

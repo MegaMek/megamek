@@ -272,9 +272,7 @@ class TWPhaseEndManager {
 
                 break;
             case END_REPORT:
-                if (gameManager.changePlayersTeam()) {
-                    gameManager.processTeamChangeRequest();
-                }
+                gameManager.processTeamChangeRequest();
                 if (gameManager.victory()) {
                     gameManager.changePhase(GamePhase.VICTORY);
                 } else {

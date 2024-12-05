@@ -177,6 +177,11 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
     public void calculatePlayerInitialCounts() {
     }
 
+    @Override
+    public void requestTeamChangeForPlayer(int teamID, Player player) {
+
+    }
+
     /**
      * Creates a packet containing all entities, including wrecks, visible to
      * the player in a blind game

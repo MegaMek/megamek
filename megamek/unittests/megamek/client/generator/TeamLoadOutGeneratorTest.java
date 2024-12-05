@@ -597,6 +597,9 @@ class TeamLoadOutGeneratorTest {
         assertEquals(8, bin2.getUsableShotsLeft());
     }
 
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount no ordnance.
+     */
     @Test
     void testGenerateExternalOrdnanceCAP3SWEraPirates() {
         // Game setup

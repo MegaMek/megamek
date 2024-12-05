@@ -1741,37 +1741,49 @@ public class TeamLoadOutGenerator {
         completeWeight = ordnanceRandomWeights.stream().mapToInt(curWeight -> Math.max(curWeight, 1)).asDoubleStream()
                 .sum();
 
-        for (int curLoad = 0; curLoad < bombUnits && loopSafety < castPropertyInt("maxBombApplicationLoopCount", 10);) {
+        if (!ordnanceIDs.isEmpty() && !ordnanceRandomWeights.isEmpty() && completeWeight != 0) {
+            for (int curLoad = 0; curLoad < bombUnits && loopSafety < castPropertyInt("maxBombApplicationLoopCount", 10); ) {
 
-            // Randomly get the ordnance type
-            randomThreshold = (Compute.randomInt(
+                // Randomly get the ordnance type
+                randomThreshold = (Compute.randomInt(
                     castPropertyInt("maxBombOrdnanceWeightPercentThreshold", 100)) / 100.0) * completeWeight;
-            countWeight = 0.0;
-            for (int i = 0; i < ordnanceIDs.size(); i++) {
-                countWeight += Math.max(ordnanceRandomWeights.get(i), 1.0);
-                if (countWeight >= randomThreshold) {
-                    selectedBombType = ordnanceIDs.get(i);
-                    break;
+                countWeight = 0.0;
+                for (int i = 0; i < ordnanceIDs.size(); i++) {
+                    countWeight += Math.max(ordnanceRandomWeights.get(i), 1.0);
+                    if (countWeight >= randomThreshold) {
+                        selectedBombType = ordnanceIDs.get(i);
+                        break;
+                    }
                 }
-            }
 
-            // If the selected ordnance doesn't exceed the provided limit increment the
-            // counter,
-            // otherwise skip it and keep trying with some safeties to prevent infinite
-            // loops.
-            if (selectedBombType >= 0 &&
+                // If the selected ordnance doesn't exceed the provided limit increment the
+                // counter,
+                // otherwise skip it and keep trying with some safeties to prevent infinite
+                // loops.
+                if (selectedBombType >= 0 &&
                     curLoad + BombType.getBombCost(selectedBombType) <= bombUnits) {
-                bombLoad[selectedBombType]++;
-                curLoad += BombType.getBombCost(selectedBombType);
-            } else {
-                loopSafety++;
+                    bombLoad[selectedBombType]++;
+                    curLoad += BombType.getBombCost(selectedBombType);
+                } else {
+                    loopSafety++;
+                }
             }
         }
 
         // Oops, nothing left - rocket launchers are always popular
+        // XXX: Add prototype RLs as well.
         if (Arrays.stream(bombLoad).sum() == 0) {
-            bombLoad[BombType.B_RL] = bombUnits;
-            return bombLoad;
+            if (
+                checkLegality(
+                    BombType.createBombByType(BombType.B_RL),
+                    faction,
+                    techBase,
+                    mixedTech
+                )
+            ) {
+                bombLoad[BombType.B_RL] = bombUnits;
+                return bombLoad;
+            }
         }
 
         // Randomly replace advanced ordnance with rockets or HE, depending on force

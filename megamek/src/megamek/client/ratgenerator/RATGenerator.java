@@ -896,7 +896,7 @@ public class RATGenerator {
             }
             if (entry.getKey().isSL()) {
                 totalSLWeight += entry.getValue();
-            } else if (!entry.getKey().isClan()) {
+            } else if (!entry.getKey().isMixedOrClanTech()) {
                 totalOtherWeight += entry.getValue();
             }
         }
@@ -1010,7 +1010,7 @@ public class RATGenerator {
                     totalWeightPostMod += curWeight;
 
                     // Re-calculate total weights of the various categories
-                    if (curModel.isClan()) {
+                    if (curModel.isMixedOrClanTech()) {
                         totalClanWeight += curWeight;
                     } else if (curModel.isSL()) {
                         totalSLWeight += curWeight;
@@ -1141,7 +1141,7 @@ public class RATGenerator {
                     totalWeightPostMod += curWeight;
 
                     // Re-calculate total weights of the various categories
-                    if (curModel.isClan()) {
+                    if (curModel.isMixedOrClanTech()) {
                         totalClanWeight += curWeight;
                     } else if (curModel.isSL()) {
                         totalSLWeightPostMod += curWeight;
@@ -1200,7 +1200,7 @@ public class RATGenerator {
                 for (ModelRecord curModel : unitWeights.keySet()) {
                     curWeight = unitWeights.get(curModel);
 
-                    if (curModel.isClan()) {
+                    if (curModel.isMixedOrClanTech()) {
                         if (pctClan > 0.0) {
                             curWeight = curWeight + curWeight * clanPctDifference / totalClanWeight;
                         } else {
@@ -1218,7 +1218,7 @@ public class RATGenerator {
                     totalWeightPostMod += curWeight;
 
                     // Re-calculate total weights of the various categories
-                    if (curModel.isClan()) {
+                    if (curModel.isMixedOrClanTech()) {
                         totalClanWeightPostMod += curWeight;
                     } else if (curModel.isSL()) {
                         totalSLWeight += curWeight;
@@ -1260,7 +1260,7 @@ public class RATGenerator {
             for (ModelRecord curModel : unitWeights.keySet()) {
                 curWeight = unitWeights.get(curModel);
 
-                if (!curModel.isSL() && !curModel.isClan() && curWeight > 0.0) {
+                if (!curModel.isSL() && !curModel.isMixedOrClanTech() && curWeight > 0.0) {
                     curWeight = 0.0;
                 } else {
                     curWeight = curWeight + curWeight * pctOtherDifference / totalAdvancedWeight;
@@ -1270,7 +1270,7 @@ public class RATGenerator {
                 totalWeightPostMod += curWeight;
 
                 // Re-calculate total weights of the various categories
-                if (curModel.isClan()) {
+                if (curModel.isMixedOrClanTech()) {
                     totalClanWeight += curWeight;
                 } else if (curModel.isSL()) {
                     totalSLWeight += curWeight;

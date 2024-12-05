@@ -48,8 +48,8 @@ import megamek.logging.MMLogger;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for
- * certain types
- * of missions in addition to what is formally declared in the data files.
+ * certain types of missions in addition to what is formally declared in the
+ * data files.
  *
  * @author Neoancient
  */
@@ -75,6 +75,7 @@ public class ModelRecord extends AbstractUnitRecord {
     private boolean primitive;
     private boolean retrotech;
     private boolean starLeague;
+    private boolean mixedTech;
 
     private int weightClass;
     private EntityMovementMode movementMode;
@@ -147,6 +148,21 @@ public class ModelRecord extends AbstractUnitRecord {
     }
 
     /**
+     * @return true, if unit is base IS tech and mounts Clan tech equipment
+     */
+    public boolean isMixedTech() {
+        return mixedTech;
+    }
+
+    /**
+     * @return true, if unit is either base Clan tech, or is base IS tech and
+     * mounts Clan tech equipment
+     */
+    public boolean isMixedOrClanTech() {
+        return clan || mixedTech;
+    }
+
+    /**
      * Unit contains at least some primitive technology, without any advanced tech.
      * Testing is not extensive, there may be units that are not properly flagged.
      *
@@ -159,9 +175,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Unit consists of at least some primitive technology and some advanced/Star
-     * League/Clan
-     * technology. Testing is not extensive, there may be units that are not
-     * properly flagged.
+     * League/Clan technology. Testing is not extensive, there may be units that
+     * are not properly flagged.
      *
      * @return true, if unit contains both primitive and advanced tech
      */
@@ -222,17 +237,12 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Proportion of total weapons BV that is capable of attacking targets at longer
-     * ranges.
-     * Units with values of 0.75 or higher are mostly armed with weapons that can
-     * hit targets at
-     * 15+ hexes, have a minimum range, and potentially fire indirectly in ground
-     * combat; or
-     * reach long/extreme range in air or space combat.
+     * ranges. Units with values of 0.75 or higher are mostly armed with weapons
+     * that can hit targets at 15+ hexes, have a minimum range, and potentially fire
+     * indirectly in ground combat; or reach long/extreme range in air or space combat.
      * Complementary to getSRProportion() - where one is high and the other is low,
-     * the unit is
-     * specialized for that range bracket. If both values are similar the unit is
-     * well balanced
-     * between long and short ranged capabilities.
+     * the unit is specialized for that range bracket. If both values are similar
+     * the unit is well balanced between long and short ranged capabilities.
      * TODO: rename for consistency and clarity
      *
      * @return between zero (none) and 1.0 (all weapons)
@@ -243,17 +253,12 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Proportion of total weapons BV that is limited to attacking targets at close
-     * range.
-     * Units with values of 0.75 or higher are mostly armed with weapons that have a
-     * long range
-     * of less than 12 hexes and do not have a minimum range in ground combat, or
-     * are limited to
-     * short range in air/space combat.
+     * range. Units with values of 0.75 or higher are mostly armed with weapons that
+     * have a long range of less than 12 hexes and do not have a minimum range in
+     * ground combat, or are limited to short range in air/space combat.
      * Complementary to getLongRange() - where one is high and the other is low, the
-     * unit is
-     * specialized for that range bracket. If both values are similar the unit is
-     * well balanced
-     * between long and short ranged capabilities.
+     * unit is specialized for that range bracket. If both values are similar the
+     * unit is well balanced between long and short ranged capabilities.
      *
      * @return between zero (none) and 1.0 (all weapons)
      */
@@ -391,8 +396,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Checks the equipment carried by this unit and summarizes it in a variety of
-     * easy to access
-     * data
+     * easy to access data
      *
      * @param unitData Data for unit
      */
@@ -492,12 +496,10 @@ public class ModelRecord extends AbstractUnitRecord {
         for (int i = 0; i < unitData.getEquipmentNames().size(); i++) {
 
             // EquipmentType.get is throwing an NPE intermittently, and the only possibility
-            // I can see
-            // is that there is a null equipment name.
+            // I can see is that there is a null equipment name.
             if (null == unitData.getEquipmentNames().get(i)) {
-                logger.error(
-                        "RATGenerator ModelRecord encountered null equipment name in MekSummary for "
-                                + unitData.getName() + ", index " + i);
+                logger.error("RATGenerator ModelRecord encountered null equipment name" +
+                    " in MekSummary for {}, index {}", unitData.getName(), i);
                 continue;
             }
             EquipmentType eq = EquipmentType.get(unitData.getEquipmentNames().get(i));
@@ -508,6 +510,11 @@ public class ModelRecord extends AbstractUnitRecord {
             // Only check for lostech equipment if it hasn't already been found
             if (!losTech && !eq.isAvailableIn(3000, false)) {
                 losTech = true;
+            }
+
+            // If this is Clan tech on an IS base unit, set the mixed tech flag
+            if (!mixedTech && !clan && eq.isClan()) {
+                mixedTech = true;
             }
 
             if (eq instanceof WeaponType) {
@@ -552,23 +559,20 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Check for use against airborne targets. Ignore small craft, DropShips, and
-                // other
-                // large space craft.
+                // other large spacecraft.
                 if (unitType < UnitType.SMALL_CRAFT) {
                     flakBV += getFlakBVModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Check for artillery weapons. Ignore aerospace fighters, small craft, and
-                // large
-                // space craft.
+                // large spacecraft.
                 if (unitType <= UnitType.CONV_FIGHTER && eq instanceof ArtilleryWeapon) {
                     artilleryBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Don't check incendiary weapons for conventional infantry, fixed wing
-                // aircraft,
-                // and space-going units
+                // aircraft, and space-going units
                 if (!incendiary &&
                         (unitType < UnitType.CONV_FIGHTER && unitType != UnitType.INFANTRY)) {
                     if (eq instanceof FlamerWeapon ||
@@ -596,9 +600,8 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Total up BV for weapons that require ammo. Streak-type missile systems get a
-                // discount. Ignore small craft, DropShips, and large space craft. Ignore
-                // infantry
-                // weapons except for field guns.
+                // discount. Ignore small craft, DropShips, and large spacecraft. Ignore
+                // infantry weapons except for field guns.
                 if (unitType < UnitType.SMALL_CRAFT &&
                         ((WeaponType) eq).getAmmoType() > AmmoType.T_NA &&
                         !(eq instanceof InfantryWeapon)) {
@@ -620,15 +623,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Total up BV for weapons capable of attacking at the longest ranges or using
-                // indirect fire. Ignore small craft, DropShips, and other space craft.
+                // indirect fire. Ignore small craft, DropShips, and other spacecraft.
                 if (unitType < UnitType.SMALL_CRAFT) {
                     longRangeBV += getLongRangeModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
                 }
 
                 // Total up BV of weapons suitable for attacking at close range. Ignore small
-                // craft,
-                // DropShips, and other space craft. Also skip anti-Mek attacks.
+                // craft, DropShips, and other spacecraft. Also skip anti-Mek attacks.
                 if (unitType < UnitType.SMALL_CRAFT) {
                     shortRangeBV += getShortRangeModifier((WeaponType) eq) * eq.getBV(null) *
                             unitData.getEquipmentQuantities().get(i);
@@ -696,9 +698,8 @@ public class ModelRecord extends AbstractUnitRecord {
         }
 
         // Calculate BV proportions for all ground units, VTOL, blue water naval, gun
-        // emplacements
-        // and fixed wing aircraft. Exclude Small craft, DropShips, and large space
-        // craft.
+        // emplacements and fixed wing aircraft. Exclude Small craft, DropShips, and
+        // large spacecraft.
         if (unitType <= UnitType.AEROSPACEFIGHTER) {
             if (totalWeaponBV > 0) {
                 flakBVProportion = flakBV / totalWeaponBV;
@@ -722,9 +723,8 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Units are considered primitive if they have no advanced tech and at least
-     * some primitive
-     * tech. The check is not exhaustive so some niche units may not be flagged
-     * properly.
+     * some primitive tech. The check is not exhaustive so some niche units may
+     * not be flagged properly.
      *
      * @param unitData Unit data
      * @return true if unit has primitive tech and no advanced tech
@@ -824,10 +824,9 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Checks that unit has at least one piece of primitive tech for basic unit
-     * components such as
-     * engine, frame, and armor. The check is not extensive so some units may
-     * include a niche item
-     * even though they are not flagged as such.
+     * components such as engine, frame, and armor. The check is not extensive
+     * so some units may include a niche item even though they are not flagged
+     * as such.
      *
      * @param unitData Unit data
      * @return true if unit contains primitive basic equipment
@@ -880,8 +879,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
     /**
      * Check if unit is built with advanced technology. This only checks the basic
-     * components,
-     * not any mounted equipment such as weapons.
+     * components, not any mounted equipment such as weapons.
      *
      * @param unitData       unit data
      * @param starLeagueOnly true to only check original Star League tech - XL
@@ -989,8 +987,7 @@ public class ModelRecord extends AbstractUnitRecord {
         double ineffective = 0.0;
 
         // Use a limited version for checking air-to-air capability, including potential
-        // for
-        // thresholding heavily armored targets
+        // for thresholding heavily armored targets
         if (unitType == UnitType.CONV_FIGHTER || unitType == UnitType.AEROSPACEFIGHTER) {
             if (checkWeapon.getAmmoType() == AmmoType.T_AC_LBX ||
                     checkWeapon.getAmmoType() == AmmoType.T_HAG ||

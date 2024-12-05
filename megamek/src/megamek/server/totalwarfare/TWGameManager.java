@@ -1340,7 +1340,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void forceVictory(Player victor, boolean endImmediately, boolean ignorePlayerVotes) {
         game.setEndImmediately(endImmediately);
-        game.setIgnorePlayerDefeatVotes(endImmediately);
+        game.setIgnorePlayerDefeatVotes(ignorePlayerVotes);
         game.setForceVictory(true);
         if (victor.getTeam() == Player.TEAM_NONE) {
             game.setVictoryPlayerId(victor.getId());
@@ -1350,9 +1350,7 @@ public class TWGameManager extends AbstractGameManager {
             game.setVictoryTeam(victor.getTeam());
         }
 
-        List<Player> playersVector = game.getPlayersList();
-        for (int i = 0; i < playersVector.size(); i++) {
-            Player player = playersVector.get(i);
+        for (Player player : game.getPlayersList()) {
             player.setAdmitsDefeat(false);
         }
     }

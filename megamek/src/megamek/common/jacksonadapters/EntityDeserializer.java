@@ -62,6 +62,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String SHOTS = "shots";
     private static final String MODIFIERS = "modifiers";
     private static final String UNIT = "unit";
+    private static final String ENGINE = "engine";
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
 
@@ -335,6 +336,10 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             }
             if (modifiersNode.has(UNIT)) {
                 parseModifiers(modifiersNode.get(UNIT)).forEach(entity::addEquipmentModifier);
+            }
+            if (modifiersNode.has(ENGINE) && entity.hasEngine()) {
+                Engine engine = entity.getEngine();
+                parseModifiers(modifiersNode.get(ENGINE)).forEach(engine::addEquipmentModifier);
             }
         }
     }

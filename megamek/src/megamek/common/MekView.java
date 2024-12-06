@@ -571,10 +571,19 @@ public class MekView {
                 equipmentModifierList.add(wq);
             }
         }
+
         List<String> unitModifiers = getEquipmentModifiers(entity);
         if (!unitModifiers.isEmpty()) {
             equipmentModifierList.add("Systems: " + String.join(", ", unitModifiers));
         }
+
+        if (entity.hasEngine()) {
+            List<String> engineModifiers = getEquipmentModifiers(entity.getEngine());
+            if (!engineModifiers.isEmpty()) {
+                equipmentModifierList.add("Engine: " + String.join(", ", engineModifiers));
+            }
+        }
+
         if (!equipmentModifierList.isEmpty()) {
             sQuirks.add(new SingleLine());
             ItemList list = new ItemList(Messages.getString("MekView.EquipmentMods"));
@@ -642,6 +651,8 @@ public class MekView {
             return "weapon may jam";
         } else if (modifier instanceof NoTwistModifier) {
             return "unit cannot twist";
+        } else if (modifier instanceof WalkMPEquipmentModifier walkMPModifier) {
+            return walkMPModifier.formattedMPModifier() + " walk MP";
         } else {
             return "unknown";
         }

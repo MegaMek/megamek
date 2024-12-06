@@ -18,21 +18,29 @@
  */
 package megamek.common.modifiers;
 
-/**
- * This interface is implemented by modifiers that affect systems of a unit that don't have a Mounted or other object to represent
- * them such as Gyro. Also, modifiers that aren't cumulative can be represented as a unit modifier.
- */
-public interface SystemModifier extends EquipmentModifier {
+public class WalkMPEquipmentModifier extends AbstractEquipmentModifier {
+
+    private final int deltaMP;
 
     /**
-     * The systems that a modifier can apply to and which are not Mounteds in Entity
+     * Creates a heat modifier that adds the given deltaHeat value to the weapon's own heat generation. DeltaHeat can be less than 0, but
+     * the final heat value of the weapon is capped to never be less than 0.
+     *
+     * @param deltaMP The heat value to add to the weapon's heat generation
      */
-    enum EntitySystem {
-        GYRO, CONTROLS, LIFE_SUPPORT, COCKPIT, JUMP_JETS, AVIONICS
+    public WalkMPEquipmentModifier(int deltaMP, Reason reason) {
+        super(reason);
+        this.deltaMP = deltaMP;
+    }
+
+    public int getDeltaMP() {
+        return deltaMP;
     }
 
     /**
-     * @return The system (Gyro, Cockpit etc) that this modifier comes from.
+     * @return The delta heat of this modifier with a leading "+" if it is positive, i.e. "+2" or "-1" or "0".
      */
-    EntitySystem system();
+    public String formattedMPModifier() {
+        return formattedModifier(deltaMP);
+    }
 }

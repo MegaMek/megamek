@@ -312,6 +312,8 @@ public class TripodMek extends Mek {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return Math.max(0, mp);
     }
 

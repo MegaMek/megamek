@@ -58,6 +58,8 @@ import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
 import megamek.common.modifiers.EquipmentModifier;
+import megamek.common.modifiers.RunMPEquipmentModifier;
+import megamek.common.modifiers.WalkMPEquipmentModifier;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -3063,7 +3065,39 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return mp;
+    }
+
+    /**
+     * Adds all walk MP equipment modifier deltas to the given walk MP value, leaving the value at a minimum of 1, provided the given
+     * previous walk MPs were at least 1. Currently, only engine modifiers can affect walk MP.
+     *
+     * @return The given walk MP of the unit, modified by any modifiers
+     */
+    protected int applyWalkMPEquipmentModifiers(int walkMP) {
+        if (hasEngine()) {
+            int mpDelta = engine.getModifiers().stream()
+                .filter(m -> m instanceof WalkMPEquipmentModifier).map(m -> (WalkMPEquipmentModifier) m)
+                .mapToInt(WalkMPEquipmentModifier::getDeltaMP).sum();
+            int minimum = (walkMP > 0) ? 1 : 0;
+            walkMP = Math.max(minimum, walkMP + mpDelta);
+        }
+        return walkMP;
+    }
+
+    /**
+     * Adds all run MP equipment modifier deltas to the given run MP value, leaving the value at a minimum of 0. Currently, only
+     * system modifiers that are directly applied to the unit can affect run MP, e.g. Gyro or Controls modifiers.
+     *
+     * @return The given walk MP of the unit, modified by any modifiers
+     */
+    protected int applyRunMPEquipmentModifiers(int runMP) {
+        int mpDelta = getModifiers().stream()
+            .filter(m -> m instanceof RunMPEquipmentModifier).map(m -> (RunMPEquipmentModifier) m)
+            .mapToInt(RunMPEquipmentModifier::getDeltaMP).sum();
+        return Math.max(0, runMP + mpDelta);
     }
 
     /**
@@ -3114,7 +3148,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        return (int) Math.ceil(getWalkMP(mpCalculationSetting) * 1.5);
+        return applyRunMPEquipmentModifiers((int) Math.ceil(getWalkMP(mpCalculationSetting) * 1.5));
     }
 
     /**

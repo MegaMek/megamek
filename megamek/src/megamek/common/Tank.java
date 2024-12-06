@@ -371,6 +371,8 @@ public class Tank extends Entity {
             mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return Math.max(mp, 0);
     }
 

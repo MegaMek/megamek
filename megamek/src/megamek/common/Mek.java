@@ -1031,7 +1031,7 @@ public abstract class Mek extends Entity {
         } else {
             mp = super.getRunMP(mpCalculationSetting);
         }
-
+        mp = applyRunMPEquipmentModifiers(mp);
         return Math.max(0, mp - hardenedArmorMPReduction());
     }
 

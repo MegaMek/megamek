@@ -69,23 +69,4 @@ public class EquipmentModifiers {
         return new HeatModifier(2, EquipmentModifier.Reason.SALVAGE_QUALITY);
     }
 
-    /**
-     * Creates a unit modifier that prevents it from torso twisting based on a salvage quality Gyro, CO p.215. Note that this modifier works
-     * for all unit types even though it should only be applied to Meks.
-     *
-     * @see NoTwistModifier
-     */
-    public static NoTwistModifier createSalvageQualityGyroNoTwistModifier() {
-        return new NoTwistModifier(EquipmentModifier.Reason.SALVAGE_QUALITY, SystemModifier.EntitySystem.GYRO);
-    }
-
-    /**
-     * Creates a unit modifier that prevents it from turret twisting based on salvage quality Controls, CO p.215. Note that this modifier
-     * works for all unit types even though it should only be applied to tanks.
-     *
-     * @see NoTwistModifier
-     */
-    public static NoTwistModifier createSalvageQualityControlsNoTwistModifier() {
-        return new NoTwistModifier(EquipmentModifier.Reason.SALVAGE_QUALITY, SystemModifier.EntitySystem.CONTROLS);
-    }
 }

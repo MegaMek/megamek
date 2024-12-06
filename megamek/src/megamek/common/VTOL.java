@@ -648,6 +648,8 @@ public class VTOL extends Tank implements IBomber {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return mp;
     }
 

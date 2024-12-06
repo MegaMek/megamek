@@ -386,6 +386,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             mp = isSpheroid() ? 0 : mp / 2;
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return mp;
     }
 
@@ -1804,7 +1806,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-    
+
      */
     @Override
     public void setOmni(boolean omni) {

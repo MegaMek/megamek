@@ -282,11 +282,19 @@ factions:
 
         # quality, partial repair modifiers
         modifiers:
+          # Engine modifiers are added to the engine if the unit has an engine, ignored otherwise
+          engine:
+            # Walk MPs: the given amount is added; run mp are recalculated
+            - type: walkmp
+              delta: -1
+
           # modifiers that apply to the unit; this must also be done for modifiers that apply
           # to systems like Gyro, Controls, Engine; always write as list
           unit:
             # Gyro/controls problems: unit cannot twist
             - type: notwist
+#            - type: runmp
+#              delta: -1
 
           # note that a heat modifier can be applied to a jump jet slot, resulting in modified heat when jumping; all
           # heat modifiers on JJ slots stack

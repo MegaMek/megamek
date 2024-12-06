@@ -16,19 +16,10 @@ factions:
 #      - fullname: Ares Assault Craft Mk.III
 #      - fullname: Phoenix Hawk LAM PHX-HK2M
       - fullname: Stinger STG-3R
-        id: 110
-        force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Light Lance|25
         modifiers:
-          RA:
-            - slot: 5 # ML
-              modifiers:
-                type: jam
-                on: [ 3,4,5,6,7,8,9,10]
-        crew:
-          name: John Parthan
-          callsign: Wrinkles
-          piloting: 5
-          gunnery: 3
+          engine:
+            - type: walkmp
+              delta: -2
 #      - fullname: Vedette Medium Tank
 #      - fullname: Mauna Kea Command Vessel
 #      - fullname: Moray Heavy Attack Submarine

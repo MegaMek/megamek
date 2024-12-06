@@ -263,6 +263,8 @@ public class BipedMek extends Mek {
             mp = applyGravityEffectsOnMP(mp);
         }
 
+        mp = applyWalkMPEquipmentModifiers(mp);
+
         return Math.max(0, mp);
     }
 

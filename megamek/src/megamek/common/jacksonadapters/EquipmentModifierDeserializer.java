@@ -37,6 +37,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
     private static final String TYPE_DAMAGE = "damage";
     private static final String TYPE_JAM = "jam";
     private static final String TYPE_NOTWIST = "notwist";
+    private static final String TYPE_WALKMP = "walkmp";
     private static final String DELTA = "delta";
     private static final String ON = "on";
 
@@ -58,6 +59,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
             case TYPE_TOHIT -> new ToHitModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             case TYPE_JAM -> new WeaponJamModifier(parseRollValues(node.get(ON)), EquipmentModifier.Reason.DAMAGED);
             case TYPE_NOTWIST -> new NoTwistModifier(EquipmentModifier.Reason.DAMAGED, SystemModifier.EntitySystem.GYRO);
+            case TYPE_WALKMP -> new WalkMPEquipmentModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }

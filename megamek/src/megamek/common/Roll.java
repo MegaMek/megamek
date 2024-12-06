@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -118,7 +119,34 @@ public abstract class Roll implements Serializable {
         System.out.println(".");
     }
 
+    /**
+     * Determines if the roll is a success based on the target roll.
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
     public boolean isTargetRollSuccess(TargetRoll targetRoll) {
-        return getIntValue() > targetRoll.getValue();
+        return getIntValue() > 2 && getIntValue() >= targetRoll.getValue();
     }
+
+    /**
+     * Determines if the roll is a success based on the target roll.
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccessWithoutSimpleFailure(TargetRoll targetRoll) {
+        return getIntValue() >= targetRoll.getValue();
+    }
+
+    /**
+     * Returns the margin of success/failure of the roll compared to the target roll.
+     * @param targetRoll the target roll to compare against
+     * @return the margin of success/failure
+     */
+    public int getMarginOfSuccess(TargetRoll targetRoll) {
+        return getIntValue() - targetRoll.getValue();
+    }
+
 }

@@ -245,7 +245,7 @@ public final class ASConverter {
         return tmmForMovement(movement, new DummyCalculationReport());
     }
 
-    /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
+    /** Retrieves a fresh (undamaged and unmodified) copy of the given entity. */
     public static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());

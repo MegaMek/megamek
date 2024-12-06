@@ -286,7 +286,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false);
         addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false);
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false);
+        //addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false);

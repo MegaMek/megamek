@@ -16769,8 +16769,8 @@ public class TWGameManager extends AbstractGameManager {
                                 damage));
                     } else if (entity instanceof Tank) {
                         // if we got a pavement bonus, take care of it
-                        int k = entity.gotPavementBonus ? 1 : 0;
-                        if (!entity.gotPavementBonus) {
+                        int k = entity.gotPavementOrRoadBonus ? 1 : 0;
+                        if (!entity.gotPavementOrRoadBonus) {
                             int j = entity.mpUsed;
                             int damage = 0;
                             while (j > (entity.getRunMP(MPCalculationSetting.NO_GRAVITY) + k)) {
@@ -29408,7 +29408,7 @@ public class TWGameManager extends AbstractGameManager {
                         || (moveType == EntityMovementType.MOVE_VTOL_RUN)
                         || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     int limit = cachedMaxMPExpenditure;
-                    if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                    if (step.isOnlyPavementOrRoad() && entity.isEligibleForPavementOrRoadBonus()) {
                         limit++;
                     }
                     if (step.getMpUsed() > limit) {

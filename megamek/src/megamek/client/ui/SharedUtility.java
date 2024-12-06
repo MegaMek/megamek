@@ -359,7 +359,7 @@ public class SharedUtility {
                             || (moveType == EntityMovementType.MOVE_SPRINT)
                             || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                         int limit = entity.getRunningGravityLimit();
-                        if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                        if (step.isOnlyPavementOrRoad() && entity.isEligibleForPavementOrRoadBonus()) {
                             limit++;
                         }
                         if (step.getMpUsed() > limit) {

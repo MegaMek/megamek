@@ -1349,12 +1349,12 @@ public class MoveStep implements Serializable {
                     onlyPavementOrRoad = true;
                 }
                 else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_DIRT)){
-                    if (entity.getMovementMode().isHover()){
+                    if(entity.getMovementMode().isHover()){
                         onlyPavementOrRoad = true;
                     }
                 }
                 else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_GRAVEL)){
-                    if (entity.getMovementMode().isHover() || entity.getMovementMode().isTracked()){
+                    if(entity.getMovementMode().isHover() || entity.getMovementMode().isTracked()){
                         onlyPavementOrRoad=true;
                     }
                 }

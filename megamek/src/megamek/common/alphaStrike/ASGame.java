@@ -21,6 +21,7 @@ package megamek.common.alphaStrike;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.Optional;
  */
 public class ASGame extends AbstractGame {
 
-    private GameOptions options = new GameOptions();
+    private IGameOptions options = new GameOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private Board board = new Board();
@@ -49,7 +50,7 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public GameOptions getOptions() {
+    public IGameOptions getOptions() {
         return null;
     }
 

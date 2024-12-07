@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -59,7 +60,7 @@ public class InfantrySupportMortarLightWeapon extends InfantryWeapon {
 	}
 
 	@Override
-	public void adaptToGameOptions(GameOptions gOp) {
+	public void adaptToGameOptions(IGameOptions gOp) {
 		super.adaptToGameOptions(gOp);
 
 		// Indirect Fire

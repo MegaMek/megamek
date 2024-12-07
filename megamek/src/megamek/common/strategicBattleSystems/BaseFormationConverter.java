@@ -51,14 +51,41 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
         Forces forces = game.getForces();
         for (Force subforce : forces.getFullSubForces(force)) {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
-            var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
+//            var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity) {
                     thisUnit.add(ASConverter.convertAndKeepRefs((Entity) entity));
-                    thisUnitBaseSkill.add(ASConverter.convert((Entity) entity, false));
+//                    thisUnitBaseSkill.add(ASConverter.convert((Entity) entity, false));
                 }
             }
-            SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), thisUnitBaseSkill, report).createSbfUnit();
+            SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), report).createSbfUnit();
+            formation.addUnit(convertedUnit);
+        }
+        formation.setName(force.getName());
+        formation.setOwnerId(force.getOwnerId());
+        calcSbfFormationStats();
+        formation.setConversionReport(report);
+        return formation;
+    }
+
+    /**
+     *  Returns an SBF Formation formed from the given force. When the force cannot be converted
+     *  to an SBF Formation according to the rules, returns null. The given force must be
+     *  approximately company-shaped to work, i.e. it has to contain some subforces with some entities
+     *  in each subforce but no further subforces.
+     */
+    public T unsafeConvert() {
+        report.addHeader("Strategic BattleForce Conversion for ");
+        report.addHeader(force.getName());
+        Forces forces = game.getForces();
+        for (Force subforce : forces.getFullSubForces(force)) {
+            var thisUnit = new ArrayList<AlphaStrikeElement>();
+            for (ForceAssignable entity : forces.getFullEntities(subforce)) {
+                if (entity instanceof Entity) {
+                    thisUnit.add(ASConverter.convertAndKeepRefs((Entity) entity));
+                }
+            }
+            SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(),  report).createSbfUnit();
             formation.addUnit(convertedUnit);
         }
         formation.setName(force.getName());
@@ -160,7 +187,7 @@ public abstract class BaseFormationConverter<T extends SBFFormation> {
                 .map(e -> (Entity) e).map(ASConverter::convert).collect(Collectors.toList());
             invalid |= elementsList.stream().anyMatch(a -> a.hasSUA(LG)) && elementsList.size() > 2;
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
-            SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", elementsList, new DummyCalculationReport()).createSbfUnit();
+            SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", new DummyCalculationReport()).createSbfUnit();
             invalid |= unit.isGround() && elementsList.stream().anyMatch(AlphaStrikeElement::isAerospace);
             invalid |= unit.isAerospace() && elementsList.stream().filter(AlphaStrikeElement::isGround).anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
         }

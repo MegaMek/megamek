@@ -103,7 +103,7 @@ public final class ASConverter {
             CalculationReport conversionReport, Crew originalCrew) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
-            logger.error("Cannot convert this type of Entity: " + entity.getShortName());
+            logger.error("Cannot convert this type of Entity: {}", entity.getShortName());
             return null;
         }
 
@@ -177,6 +177,7 @@ public final class ASConverter {
         }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+        element.setBasePointValue(pvConverter.getBasePointValue());
         element.setConversionReport(conversionReport);
         return element;
     }
@@ -251,7 +252,7 @@ public final class ASConverter {
             MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Could not obtain clean Entity for entity {}.", entity, e);
             return null;
         }
     }

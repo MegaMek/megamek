@@ -14,6 +14,9 @@
 
 package megamek.common.options;
 
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -27,157 +30,152 @@ public class PilotOptions extends AbstractOptions {
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
     public static final String MD_ADVANTAGES = "MDAdvantages";
 
+    private static final Object[][] ADV_OPTIONS = {
+        { OptionsConstants.PILOT_ANIMAL_MIMIC, false },
+        { OptionsConstants.PILOT_CROSS_COUNTRY, false },
+        { OptionsConstants.PILOT_DODGE_MANEUVER, false },
+        { OptionsConstants.PILOT_HVY_LIFTER, false },
+        { OptionsConstants.PILOT_HOPPING_JACK, false },
+        { OptionsConstants.PILOT_HOT_DOG, false },
+        { OptionsConstants.PILOT_JUMPING_JACK, false },
+        { OptionsConstants.PILOT_MANEUVERING_ACE, false },
+        { OptionsConstants.PILOT_MELEE_MASTER, false },
+        { OptionsConstants.PILOT_MELEE_SPECIALIST, false },
+        { OptionsConstants.PILOT_APTITUDE_PILOTING, false },
+        { OptionsConstants.PILOT_SHAKY_STICK, false },
+        { OptionsConstants.PILOT_TM_FOREST_RANGER, false },
+        { OptionsConstants.PILOT_TM_FROGMAN, false },
+        { OptionsConstants.PILOT_TM_MOUNTAINEER, false },
+        { OptionsConstants.PILOT_TM_NIGHTWALKER, false },
+        { OptionsConstants.PILOT_TM_SWAMP_BEAST, false },
+        { OptionsConstants.PILOT_ZWEIHANDER, false },
+
+        // Gunnery Abilities
+        { OptionsConstants.GUNNERY_BLOOD_STALKER, false },
+        { OptionsConstants.GUNNERY_CLUSTER_HITTER, false },
+        { OptionsConstants.GUNNERY_CLUSTER_MASTER, false },
+        { OptionsConstants.GUNNERY_GOLDEN_GOOSE, false },
+        { OptionsConstants.GUNNERY_SPECIALIST, new Vector<String>() },
+        { OptionsConstants.GUNNERY_MULTI_TASKER, false },
+        { OptionsConstants.PILOT_APTITUDE_GUNNERY, false },
+        { OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false },
+        { OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false },
+        { OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<String>() },
+        { OptionsConstants.GUNNERY_SANDBLASTER, new Vector<String>() },
+        { OptionsConstants.GUNNERY_SNIPER, false },
+        { OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<String>() },
+
+        // Misc Abilities
+        { OptionsConstants.MISC_EAGLE_EYES, false },
+        { OptionsConstants.MISC_ENV_SPECIALIST, new Vector<String>() },
+        { OptionsConstants.MISC_FORWARD_OBSERVER, false },
+        { OptionsConstants.MISC_HUMAN_TRO, new Vector<String>() },
+        { OptionsConstants.MISC_IRON_MAN, false },
+        { OptionsConstants.MISC_PAIN_RESISTANCE, false },
+        { OptionsConstants.MISC_TACTICAL_GENIUS, false },
+
+        // Infantry abilities
+        { OptionsConstants.INFANTRY_FOOT_CAV, false },
+        { OptionsConstants.INFANTRY_URBAN_GUERRILLA, false },
+
+        // Unofficial
+        { OptionsConstants.UNOFF_EI_IMPLANT, false },
+        { OptionsConstants.UNOFF_GUNNERY_LASER, false },
+        { OptionsConstants.UNOFF_GUNNERY_MISSILE, false },
+        { OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false },
+        { OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false },
+        { OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false },
+        { OptionsConstants.UNOFF_WEATHERED, false },
+        { OptionsConstants.UNOFF_ALLWEATHER, false },
+        { OptionsConstants.UNOFF_BLIND_FIGHTER, false },
+        { OptionsConstants.UNOFF_SENSOR_GEEK, false },
+        { OptionsConstants.UNOFF_SMALL_PILOT, false },
+    };
+
+    private static final Object[][] EDGE_OPTIONS = {
+        { OptionsConstants.EDGE, 0 },
+        { OptionsConstants.EDGE_WHEN_HEADHIT, true },
+        { OptionsConstants.EDGE_WHEN_TAC, true },
+        { OptionsConstants.EDGE_WHEN_KO, true },
+        { OptionsConstants.EDGE_WHEN_EXPLOSION, true },
+        { OptionsConstants.EDGE_WHEN_MASC_FAILS, true },
+        { OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true },
+        { OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true },
+        { OptionsConstants.EDGE_WHEN_AERO_KO, true },
+        { OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true },
+        { OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true },
+        { OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true }
+    };
+
+    private static final Object[][] MD_OPTIONS = {
+        { OptionsConstants.MD_PAIN_SHUNT, false },
+        { OptionsConstants.MD_COMM_IMPLANT, false },
+        { OptionsConstants.MD_BOOST_COMM_IMPLANT, false },
+        { OptionsConstants.MD_CYBER_IMP_AUDIO, false },
+        { OptionsConstants.MD_CYBER_IMP_VISUAL, false },
+        { OptionsConstants.MD_CYBER_IMP_LASER, false },
+        { OptionsConstants.MD_MM_IMPLANTS, false },
+        { OptionsConstants.MD_ENH_MM_IMPLANTS, false },
+        { OptionsConstants.MD_FILTRATION, false },
+        { OptionsConstants.MD_GAS_EFFUSER_PHERO, false },
+        { OptionsConstants.MD_GAS_EFFUSER_TOXIN, false },
+        { OptionsConstants.MD_DERMAL_ARMOR, false },
+        { OptionsConstants.MD_DERMAL_CAMO_ARMOR, false },
+        { OptionsConstants.MD_TSM_IMPLANT, false },
+        { OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false },
+        { OptionsConstants.MD_VDNI, false },
+        { OptionsConstants.MD_BVDNI, false },
+        { OptionsConstants.MD_PROTO_DNI, false },
+        { OptionsConstants.MD_PL_ENHANCED, false },
+        { OptionsConstants.MD_PL_IENHANCED, false },
+        { OptionsConstants.MD_PL_EXTRA_LIMBS, false },
+        { OptionsConstants.MD_PL_TAIL, false },
+        { OptionsConstants.MD_PL_MASC, false },
+        { OptionsConstants.MD_PL_GLIDER, false },
+        { OptionsConstants.MD_PL_FLIGHT, false },
+        { OptionsConstants.MD_SUICIDE_IMPLANTS, false }
+    };
+
     public PilotOptions() {
         super();
     }
 
     @Override
     public void initialize() {
-        IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES);
+        // Pre-size optionsHash (just a guess: total options * 2)
+        int totalOptions = ADV_OPTIONS.length + EDGE_OPTIONS.length + MD_OPTIONS.length;
+        optionsHash = new Hashtable<>(totalOptions * 2);
+        var optionsInfo = PilotOptionsInfo.getInstance();
+        IBasicOptionGroup advGroup = optionsInfo.addGroup(OptionsConstants.ADV, LVL3_ADVANTAGES);
+        IBasicOptionGroup edgeGroup = optionsInfo.addGroup(OptionsConstants.EDGE, EDGE_ADVANTAGES);
+        IBasicOptionGroup mdGroup = optionsInfo.addGroup(OptionsConstants.MD, MD_ADVANTAGES);
 
-        addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
-        addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
-        addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false);
-        // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false);
-        addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
-        // addOption(adv, OptionsConstants.PILOT_HOPPER, false);
-        addOption(adv, OptionsConstants.PILOT_HOPPING_JACK, false);
-        addOption(adv, OptionsConstants.PILOT_HOT_DOG, false);
-        addOption(adv, OptionsConstants.PILOT_JUMPING_JACK, false);
-        addOption(adv, OptionsConstants.PILOT_MANEUVERING_ACE, false);
-        addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false);
-        addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false);
-        // addOption(adv, OptionsConstants.PILOT_NATURAL_GRACE, false);
-        // addOption(adv, OptionsConstants.PILOT_RIDE_WASH, false);
-        addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false);
-        // addOption(adv, OptionsConstants.PILOT_SLUGGER, false);
-        // addOption(adv, OptionsConstants.PILOT_SPEED_DEMON, false);
-        // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false);
-        // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false);
-        // addOption(adv, OptionsConstants.PILOT_TM_, false);
-        addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false);
-        addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false);
-        addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false);
-        addOption(adv, OptionsConstants.PILOT_TM_NIGHTWALKER, false);
-        addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false);
-        // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
-        addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
+        addOptions(optionsInfo, advGroup, ADV_OPTIONS);
+        addOptions(optionsInfo, edgeGroup, EDGE_OPTIONS);
+        addOptions(optionsInfo, mdGroup, MD_OPTIONS);
+    }
 
-        // Gunnery Abilities
-        addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false);
-        addOption(adv, OptionsConstants.GUNNERY_CLUSTER_HITTER, false);
-        addOption(adv, OptionsConstants.GUNNERY_CLUSTER_MASTER, false);
-        // addOption(adv, OptionsConstants.GUNNERY_FIST_FIRE, false);
-        addOption(adv, OptionsConstants.GUNNERY_GOLDEN_GOOSE, false);
-        // addOption(adv, OptionsConstants.GUNNERY_GROUND_HUGGER, false);
-        addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<>());
-        // addOption(adv, OptionsConstants.GUNNERY_MARKSMAN, false);
-        addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false);
-        addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false);
-        addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false);
-        addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<>());
-        addOption(adv, OptionsConstants.GUNNERY_SANDBLASTER, new Vector<>());
-        // addOption(adv, OptionsConstants.GUNNERY_SHARPSHOOTER, false);
-        addOption(adv, OptionsConstants.GUNNERY_SNIPER, false);
-        addOption(adv, OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<>());
+    private void addOptions(AbstractOptionsInfo optionsInfo, IBasicOptionGroup group, Object[][] options) {
+        for (Object[] entry : options) {
+            String name = (String) entry[0];
+            Object defaultValue = entry[1];
 
-         // Misc Abilities
-         // addOption(adv, OptionsConstants.MISC_ANTAGONIZER, false);
-         // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false);
-         // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false);
-         addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false);
-         addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, new Vector<>());
-         addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false);
-         addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<>());
-         addOption(adv, OptionsConstants.MISC_IRON_MAN, false);
-         addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false);
-         addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false);
+            if (defaultValue instanceof Boolean) {
+                addOption(optionsInfo, group, name, IOption.BOOLEAN, defaultValue);
+            } else if (defaultValue instanceof Integer) {
+                addOption(optionsInfo, group, name, IOption.INTEGER, defaultValue);
+            } else if (defaultValue instanceof Vector) {
+                addOption(optionsInfo, group, name, IOption.CHOICE, "");
+            } else {
+                // fallback to boolean if not recognized, or handle other types as needed
+                addOption(optionsInfo, group, name, IOption.BOOLEAN, defaultValue);
+            }
+        }
+    }
 
-        // Infantry abilities - Only one until beast mounts are implemented
-        addOption(adv, OptionsConstants.INFANTRY_FOOT_CAV, false);
-        addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false);
-
-        // Unofficial
-        addOption(adv, OptionsConstants.UNOFF_EI_IMPLANT, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_LASER, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_MISSILE, false);
-        addOption(adv, OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false);
-        addOption(adv, OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false);
-        addOption(adv, OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false);
-        addOption(adv, OptionsConstants.UNOFF_WEATHERED, false);
-        addOption(adv, OptionsConstants.UNOFF_ALLWEATHER, false);
-        addOption(adv, OptionsConstants.UNOFF_BLIND_FIGHTER, false);
-        addOption(adv, OptionsConstants.UNOFF_SENSOR_GEEK, false);
-        addOption(adv, OptionsConstants.UNOFF_SMALL_PILOT, false);
-
-        IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES);
-        addOption(edge, "edge", 0);
-        /* different edge triggers */
-        // Mek Triggers
-        addOption(edge, "edge_when_headhit", true);
-        addOption(edge, "edge_when_tac", true);
-        addOption(edge, "edge_when_ko", true);
-        addOption(edge, "edge_when_explosion", true);
-        addOption(edge, "edge_when_masc_fails", true);
-        //Aero Triggers
-        addOption(edge, "edge_when_aero_alt_loss", true);
-        addOption(edge, "edge_when_aero_explosion", true);
-        addOption(edge, "edge_when_aero_ko", true);
-        addOption(edge, "edge_when_aero_lucky_crit", true);
-        addOption(edge, "edge_when_aero_nuke_crit", true);
-        addOption(edge, "edge_when_aero_unit_cargo_lost", true);
-
-        addOption(edge, OptionsConstants.EDGE, 0);
-        // different edge triggers
-        //Mek Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_TAC, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, true);
-        //Aero Triggers
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_KO, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
-        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
-
-        // manei domini
-        IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES);
-        addOption(md, OptionsConstants.MD_PAIN_SHUNT, false);
-        addOption(md, OptionsConstants.MD_COMM_IMPLANT, false);
-        //TODO - -1 bonus when spotting for LRMs and moving through mines.
-        addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false);
-        //TODO - -1 bonus when spotting for LRMs and moving through mines.
-        addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false);
-        addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false);
-        addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false);
-        addOption(md, OptionsConstants.MD_MM_IMPLANTS, false);
-        addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false);
-        addOption(md, OptionsConstants.MD_FILTRATION, false);
-        addOption(md, OptionsConstants.MD_GAS_EFFUSER_PHERO, false);
-        addOption(md, OptionsConstants.MD_GAS_EFFUSER_TOXIN, false);
-        addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false);
-        addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false);
-        addOption(md, OptionsConstants.MD_TSM_IMPLANT, false);
-        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false);
-        addOption(md, OptionsConstants.MD_VDNI, false);
-        addOption(md, OptionsConstants.MD_BVDNI, false);
-        addOption(md, OptionsConstants.MD_PROTO_DNI, false);
-        //Prosthetic Limbs (not MD Exclusive)
-        addOption(md, OptionsConstants.MD_PL_ENHANCED, false);
-        addOption(md, OptionsConstants.MD_PL_IENHANCED, false);
-        addOption(md, OptionsConstants.MD_PL_EXTRA_LIMBS, false);
-        addOption(md, OptionsConstants.MD_PL_TAIL, false);
-        addOption(md, OptionsConstants.MD_PL_MASC, false);
-        addOption(md, OptionsConstants.MD_PL_GLIDER, false);
-        addOption(md, OptionsConstants.MD_PL_FLIGHT, false);
-        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);
-
-        //TODO - Prototype DNI IO pg 83
+    protected void addOption(AbstractOptionsInfo optionsInfo, IBasicOptionGroup group, String name, int type, Object defaultValue) {
+        optionsHash.put(name, new Option(this, name, type, defaultValue));
+        optionsInfo.addOptionInfo(group, name);
     }
 
     /*
@@ -190,13 +188,18 @@ public class PilotOptions extends AbstractOptions {
         return PilotOptionsInfo.getInstance();
     }
 
+    @Override
+    public Map<String, IOption> getOptionsHash() {
+        return Map.of();
+    }
+
     private static class PilotOptionsInfo extends AbstractOptionsInfo {
-        private static boolean initliazed = false;
-        private static AbstractOptionsInfo instance = new PilotOptionsInfo();
+        private static boolean initialized = false;
+        private static final AbstractOptionsInfo instance = new PilotOptionsInfo();
 
         public static AbstractOptionsInfo getInstance() {
-            if (!initliazed) {
-                initliazed = true;
+            if (!initialized) {
+                initialized = true;
                 // Create a new dummy PilotOptions; ensures values initialized
                 // Otherwise, could have issues when loading saved games
                 new PilotOptions();

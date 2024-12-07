@@ -25,7 +25,7 @@ public interface IBasicOptionGroup {
     /**
      * Returns the 'internal'(NON-NLS) name of the group, which is the only ID
      * that is unique in the parent container
-     * 
+     *
      * @see megamek.common.options.IOptionGroup#getDisplayableName()
      * @return group name
      */
@@ -34,7 +34,7 @@ public interface IBasicOptionGroup {
     /**
      * Returns the <code>String</code> key that can be used by clients to
      * distinguish option groups by their own criterion
-     * 
+     *
      * @return group key which can be an empty <code>String</code>
      */
     String getKey();
@@ -44,4 +44,16 @@ public interface IBasicOptionGroup {
      *         in this group
      */
     Enumeration<String> getOptionNames();
+
+
+    /**
+     * Adds new option name to this group. The option names are unique, so if
+     * there is already an option <code>optionName</code> this function does
+     * nothing.
+     *
+     * @param optionName new option name
+     */
+    default void addOptionName(String optionName) {
+        throw new IllegalArgumentException("Not implemented for this class");
+    }
 }

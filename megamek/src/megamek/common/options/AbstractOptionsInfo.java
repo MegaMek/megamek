@@ -33,34 +33,34 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * The OptionsInfo name that must be unique. Every instance of the
      * AbstractOptionsInfo must have unique name, it's used to query the NLS
      * dependent information from the common resource bundle.
-     * 
-     * @see getOptionDisplayableName
-     * @see getGroupDisplayableName
-     * @see getOptionDescription
+     *
+     * @see #getOptionDisplayableName
+     * @see #getGroupDisplayableName
+     * @see #getOptionDescription
      */
-    private String name;
+    private final String name;
 
     /**
      * Hashtable of the <code>OptionInfo</code> used to store/find option
      * info.
      */
-    private Hashtable<String, OptionInfo> optionsHash = new Hashtable<>();
+    private final Hashtable<String, OptionInfo> optionsHash = new Hashtable<>();
 
     /**
      * List of option groups. The order of groups is important. The first group
      * added by <code>addGroup</code> is the first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>
      */
-    private Vector<IBasicOptionGroup> groups = new Vector<>();
+    private final Vector<IBasicOptionGroup> groups = new Vector<>();
 
     /**
      * Flag that indicates that this filling the options info data is
      * completed. <code>addGroup</code> and <code>addOptionInfo</code> will
      * have no effect if it's <code>true</code>
-     * 
-     * @see finish
-     * @see addGroup
-     * @see addOptionInfo
+     *
+     * @see #finish
+     * @see #addGroup
+     * @see #addOptionInfo
      */
     private boolean finished;
 
@@ -70,13 +70,13 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      *
      * @see AbstractOptionsInfo()
      */
-    private static HashSet<String> names = new HashSet<>();
+    private static final HashSet<String> names = new HashSet<>();
 
     /**
      * Protected constructor. It is called only by descendants. The name must be
      * unique because it's used to query the NLS dependent information from the
      * resource bundle.
-     * 
+     *
      * @param name options info name
      */
     protected AbstractOptionsInfo(String name) {
@@ -89,7 +89,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
     @Override
@@ -99,7 +99,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
     @Override
@@ -132,9 +132,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     void addOptionInfo(IBasicOptionGroup group, String name) {
         if (!finished) {
-            // TODO: I'm not happy about this cast but this is better than it
-            // was before.
-            ((OptionGroup) group).addOptionName(name);
+            group.addOptionName(name);
             setOptionInfo(name, new OptionInfo(name));
         }
     }
@@ -142,8 +140,8 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * Returns the user-friendly NLS dependent name suitable for displaying in
      * the options editor dialogs etc.
-     * 
-     * @param groupName
+     *
+     * @param groupName group name
      * @return group displayable name
      */
     protected String getGroupDisplayableName(String groupName) {
@@ -161,9 +159,9 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * Records that filling of this structure is finished. <code>addGroup</code>
      * and <code>addOptionInfo</code> will have no effect after call of this
      * function
-     * 
-     * @see addGroup
-     * @see addOptionInfo
+     *
+     * @see #addGroup
+     * @see #addOptionInfo
      */
     void finish() {
         finished = true;
@@ -183,15 +181,12 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
     /**
      * Private model class to store the option info
-     * 
-     * @see addOptionInfo
-     * @see getOptionInfo
+     *
+     * @see #addOptionInfo
+     * @see #getOptionInfo
      */
     private class OptionInfo implements IOptionInfo {
-        private String name;
-        private int textFieldLength = 3;
-
-        private boolean labelBeforeTextField = false;
+        private final String name;
 
         public OptionInfo(String optionName) {
             this.name = optionName;
@@ -214,12 +209,12 @@ public class AbstractOptionsInfo implements IOptionsInfo {
 
         @Override
         public int getTextFieldLength() {
-            return textFieldLength;
+            return 3;
         }
 
         @Override
         public boolean isLabelBeforeTextField() {
-            return labelBeforeTextField;
+            return false;
         }
     }
 }

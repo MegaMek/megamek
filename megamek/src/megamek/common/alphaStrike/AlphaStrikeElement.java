@@ -75,6 +75,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private String model = "";
     private int mulId = -1;
     private int pointValue;
+    private int basePointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
 
     private String forceString = "";
@@ -191,6 +192,14 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     @Override
     public int getPointValue() {
         return pointValue;
+    }
+
+    public int getBasePointValue() {
+        return basePointValue;
+    }
+
+    public void setBasePointValue(int basePointValue) {
+        this.basePointValue = basePointValue;
     }
 
     @Override

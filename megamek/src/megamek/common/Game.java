@@ -26,6 +26,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -37,6 +38,7 @@ import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -52,6 +54,7 @@ import static java.util.stream.Collectors.toList;
 public final class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final MMLogger logger = MMLogger.create(Game.class);
 
+    @Serial
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -270,7 +273,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    protected void clearMinefieldsHelper() {
+    void clearMinefieldsHelper() {
         minefields.clear();
         vibrabombs.removeAllElements();
         getPlayersList().forEach(Player::removeMinefields);
@@ -303,12 +306,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return options;
     }
 
-    public void setOptions(final @Nullable GameOptions options) {
+    public void setOptions(final @Nullable IGameOptions options) {
         if (options == null) {
             logger.error("Can't set the game options to null!");
         } else {
-            this.options = options;
-            processGameEvent(new GameSettingsChangeEvent(this));
+            if (options instanceof GameOptions) {
+                this.options = (GameOptions) options;
+                processGameEvent(new GameSettingsChangeEvent(this));
+            } else {
+                logger.error("Can't set the game options to a non-GameOptions object!");
+            }
         }
     }
 

@@ -149,4 +149,12 @@ public abstract class Roll implements Serializable {
         return getIntValue() - targetRoll.getValue();
     }
 
+    /**
+     * Determines if the roll is a simple failure.
+     * @return true if the roll is a simple failure, false otherwise
+     */
+    public boolean isSimpleFailure() {
+        return getIntValue() == 2;
+    }
+
 }

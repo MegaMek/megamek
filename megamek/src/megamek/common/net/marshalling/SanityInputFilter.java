@@ -116,7 +116,7 @@ public class SanityInputFilter implements ObjectInputFilter {
             }
         }
 
-        logger.info("Class is Rejected: {}", className);
+        logger.trace("Class is Rejected: {}", className);
 
         return Status.REJECTED;
     }

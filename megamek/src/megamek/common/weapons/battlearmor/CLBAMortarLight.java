@@ -19,6 +19,7 @@ import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -74,7 +75,7 @@ public class CLBAMortarLight extends Weapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

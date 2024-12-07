@@ -19,13 +19,14 @@ import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
 /**
  * Added per IO Pg 53 - Tech Manual shows this is an IS weapon only
  * But IO seems to have made this a Clan weapon as well
- * 
+ *
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */
@@ -74,7 +75,7 @@ public class CLBAMortarHeavy extends Weapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

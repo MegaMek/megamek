@@ -16,6 +16,7 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentTypeLookup;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
@@ -62,7 +63,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

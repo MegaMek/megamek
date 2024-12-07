@@ -26,6 +26,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
@@ -92,7 +93,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

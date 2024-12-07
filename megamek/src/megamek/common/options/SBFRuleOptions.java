@@ -19,6 +19,7 @@
 package megamek.common.options;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Vector;
 
 public class SBFRuleOptions extends BasicGameOptions {
@@ -99,6 +100,11 @@ public class SBFRuleOptions extends BasicGameOptions {
     @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return SBFRuleOptionsInfo.getInstance();
+    }
+
+    @Override
+    public Map<String, IOption> getOptionsHash() {
+        return Map.of();
     }
 
     private static class SBFRuleOptionsInfo extends AbstractOptionsInfo {

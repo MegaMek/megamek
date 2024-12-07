@@ -14,16 +14,7 @@
  */
 package megamek.common;
 
-import java.awt.Image;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -32,49 +23,23 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
-import megamek.common.enums.MPBoosters;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.enums.*;
+import megamek.common.equipment.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.jacksonadapters.EntityDeserializer;
-import megamek.common.options.GameOptions;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.PartialRepairs;
-import megamek.common.options.Quirks;
+import megamek.common.options.*;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
-import megamek.common.weapons.AlamoMissileWeapon;
-import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -83,6 +48,24 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+
+import java.awt.*;
+import java.io.Serial;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/**
+ *
+ * https://www.techinterviewhandbook.org/coding-interview-study-plan/
+ * https://neetcode.io/roadmap
+ *
+ */
+
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -93,7 +76,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private static final MMLogger logger = MMLogger.create(Entity.class);
 
+    @Serial
     private static final long serialVersionUID = 1430806396279853295L;
+
+    private static final Set<Integer> CLAN_TECH_LEVELS = Set.of(
+        TechConstants.T_CLAN_TW,
+        TechConstants.T_CLAN_ADVANCED,
+        TechConstants.T_CLAN_EXPERIMENTAL,
+        TechConstants.T_CLAN_UNOFFICIAL
+    );
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
     public static final int UNLIMITED_JUMP_DOWN = 999;
@@ -505,6 +496,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * A list of all remaining equipment.
      */
     protected List<MiscMounted> miscList = new ArrayList<>();
+    private Set<BigInteger> miscFlags = new HashSet<>();
+    private Map<BigInteger, Set<Long>> miscSubTypes = new HashMap<>();
 
     protected ArrayList<INarcPod> pendingINarcPods = new ArrayList<>();
     protected ArrayList<INarcPod> iNarcPods = new ArrayList<>();
@@ -664,7 +657,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Contains the ids of all entities that have been detected by this entity's
      * sensors.
      * Used for double-blind on space maps - SO p117
-     *
      * Entities need only be cleared from this when they move out of range,
      * are destroyed, or move off the board
      */
@@ -674,7 +666,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Contains the ids of all entities that this entity has established a firing
      * solution on.
      * Used for double-blind on space maps - SO p117
-     *
      * Entities need only be cleared from this when they move out of range,
      * are destroyed, or move off the board
      */
@@ -1483,9 +1474,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     @Override
     public boolean isClan() {
-        return (IntStream.of(TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
-                TechConstants.T_CLAN_EXPERIMENTAL, TechConstants.T_CLAN_UNOFFICIAL)
-                .anyMatch(i -> (techLevel == i)));
+        return CLAN_TECH_LEVELS.contains(techLevel);
     }
 
     public boolean isClanArmor(int loc) {
@@ -1497,9 +1486,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }
-        return IntStream.of(TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
-                TechConstants.T_CLAN_EXPERIMENTAL, TechConstants.T_CLAN_UNOFFICIAL)
-                .anyMatch(i -> (getArmorTechLevel(loc) == i));
+
+        return CLAN_TECH_LEVELS.contains(getArmorTechLevel(loc));
     }
 
     @Override
@@ -1806,7 +1794,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else {
             isActive = isActive && deployed;
         }
-
         return isActive;
     }
 
@@ -2265,7 +2252,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public int getElevation() {
         if (game != null) {
-            Entity carrier = game.getEntity(getTransportId());
+            var carrier = game.getEntity(getTransportId());
             if (carrier != null) {
                 return carrier.getElevation();
             }
@@ -4038,6 +4025,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         if (mounted instanceof MiscMounted) {
             miscList.add((MiscMounted) mounted);
+            initializeMiscFlags();
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
                 && !(mounted instanceof WeaponMounted)) {
@@ -4563,6 +4551,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
+    private void initializeMiscFlags() {
+        miscFlags.clear();
+        miscSubTypes.clear();
+
+        for (MiscMounted m : miscList) {
+            if (m.isReady()) {
+                miscFlags.add(m.getType().getFlags());
+                miscSubTypes.computeIfAbsent(m.getType().getFlags(), k -> new HashSet<>()).add(m.getType().getSubType());
+            }
+        }
+    }
+
     /**
      * Removes the first misc eq. whose name equals the specified string. Used
      * for removing broken tree clubs.
@@ -4572,11 +4572,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (mounted.getName().equals(toRemove)) {
                 miscList.remove(mounted);
                 equipmentList.remove(mounted);
+                initializeMiscFlags();
                 break;
             }
         }
     }
-
     /**
      * Clear all bombs and bomb attacks
      */
@@ -4647,24 +4647,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param secondary A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
      */
+//    public boolean hasWorkingMisc(BigInteger flag, long secondary) {
+//        for (MiscMounted m : miscList) {
+//            if (m.isReady() && m.getType().hasFlag(flag)
+//                    && ((secondary == -1) || m.getType().hasSubType(secondary))) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
     public boolean hasWorkingMisc(BigInteger flag, long secondary) {
-        for (MiscMounted m : miscList) {
-            if (m.isReady() && m.getType().hasFlag(flag)
-                    && ((secondary == -1) || m.getType().hasSubType(secondary))) {
-                return true;
-            }
+        if (secondary == -1) {
+            return miscFlags.contains(flag);
+        } else {
+            return miscSubTypes.getOrDefault(flag, Collections.emptySet()).contains(secondary);
         }
-        return false;
     }
 
     public boolean hasMisc(BigInteger flag) {
-        return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
+        return miscFlags.contains(flag);
     }
 
     public List<MiscMounted> getMiscEquipment(BigInteger flag) {
-        return miscList.stream()
+        if (miscFlags.contains(flag)) {
+            return miscList.stream()
                 .filter(item -> item.getType().hasFlag(flag))
                 .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -9901,7 +9912,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // check game options
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGIBLE_FIRING)) {
             return true;
         }
 
@@ -9927,7 +9938,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         // check game options
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGIBLE_MOVEMENT)) {
             return true;
         }
         // Must be active: this is slightly different from isActive();
@@ -10021,7 +10032,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return true;
         }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL)) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGIBLE_PHYSICAL)) {
             return true;
         }
 
@@ -11958,7 +11969,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
 
-        final GameOptions gameOpts = game.getOptions();
+        final var gameOpts = game.getOptions();
 
         // if the small craft does not already have ECM, then give them a single
         // hex ECM so they can change the mode
@@ -12713,12 +12724,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if this unit has Environmental Sealing
      */
     public boolean hasEnvironmentalSealing() {
-        for (MiscMounted misc : miscList) {
-            if (misc.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                return true;
-            }
-        }
-        return false;
+        return hasMisc(MiscType.F_ENVIRONMENTAL_SEALING);
     }
 
     /**
@@ -12960,7 +12966,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getStartingPos(boolean inheritFromOwner) {
         if (inheritFromOwner && startingPos == Board.START_NONE) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingPos();
             } else {
@@ -15411,7 +15417,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartOffset();
             } else {
@@ -15434,7 +15440,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartWidth();
             } else {
@@ -15457,7 +15463,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnyNWx();
             } else {
@@ -15480,7 +15486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnyNWy();
             } else {
@@ -15503,7 +15509,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnySEx();
             } else {
@@ -15526,7 +15532,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            final GameOptions gOpts = getGame().getOptions();
+            final var gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnySEy();
             } else {
@@ -15692,7 +15698,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The GameOptions of this Entity's game if it has one, otherwise a
      *         default options object.
      */
-    protected final GameOptions gameOptions() {
+    protected final IGameOptions gameOptions() {
         return game != null ? game.getOptions() : new GameOptions();
     }
 

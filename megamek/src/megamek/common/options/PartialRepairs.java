@@ -22,6 +22,8 @@ import megamek.common.Mek;
 import megamek.common.Tank;
 import megamek.common.Warship;
 
+import java.util.Map;
+
 /**
  * Contains the options for partial repair properties
  *
@@ -130,6 +132,11 @@ public class PartialRepairs extends AbstractOptions {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public Map<String, IOption> getOptionsHash() {
+        return Map.of();
     }
 
     private static class PartialRepairInfo extends AbstractOptionsInfo {

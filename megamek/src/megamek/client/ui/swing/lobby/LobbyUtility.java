@@ -18,25 +18,6 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
@@ -52,6 +33,14 @@ import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class provides static helper functions for the Lobby aka ChatLounge.
@@ -69,7 +58,7 @@ public class LobbyUtility {
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
      * <P>
-     * See also {@link #startPosOverlap(Player, Player)}
+     * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player) {
         return isValidStartPos(game, player, player.getStartingPos());
@@ -83,7 +72,7 @@ public class LobbyUtility {
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
      * <P>
-     * See also {@link #startPosOverlap(Player, Player)}
+     * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player, int pos) {
         if (!isExclusiveDeployment(game)) {

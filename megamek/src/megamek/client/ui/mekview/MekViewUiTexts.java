@@ -16,23 +16,29 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.modifiers;
+package megamek.client.ui.mekview;
+
+import megamek.MegaMek;
+
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
- * This interface is implemented by modifiers that affect systems of a unit that don't have a Mounted or other object to represent
- * them such as Gyro.
+ * This manages the GUI strings for the MekView only.
  */
-public interface SystemModifier extends EquipmentModifier {
+public class MekViewUiTexts {
+
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.Mekview",
+        MegaMek.getMMOptions().getLocale());
 
     /**
-     * The systems that a modifier can apply to and which are not Mounteds in Entity
+     * Returns the internationalized text for the given key in the resource bundle *without* throwing an exception for missing keys.
      */
-    enum EntitySystem {
-        GYRO, CONTROLS, LIFE_SUPPORT, COCKPIT, AVIONICS, NONE
+    public static String uiString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException ignored) {
+            return '!' + key + '!';
+        }
     }
-
-    /**
-     * @return The system (Gyro, Cockpit etc) that this modifier comes from.
-     */
-    EntitySystem system();
 }

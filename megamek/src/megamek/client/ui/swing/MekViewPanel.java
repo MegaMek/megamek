@@ -38,11 +38,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 
+import megamek.client.ui.mekview.MekView;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
-import megamek.common.MekView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
 

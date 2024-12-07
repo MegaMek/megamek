@@ -17,7 +17,7 @@
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package megamek.common;
+package megamek.client.ui;
 
 /**
  * Enum of valid formatting styles, to use with MekView objects

@@ -291,10 +291,14 @@ factions:
           # modifiers that apply to the unit; this must also be done for modifiers that apply
           # to systems like Gyro, Controls, Engine; always write as list
           unit:
-            # Gyro/controls problems: unit cannot twist
+            - type: runmp
+              delta: -1
+              # The system that this modifier comes from: gyro, avionics, controls, life support, cockpit
+              system: gyro
+
+            # Gyro/controls problems: unit cannot twist (turret/torso)
             - type: notwist
-#            - type: runmp
-#              delta: -1
+              system: gyro
 
           # note that a heat modifier can be applied to a jump jet slot, resulting in modified heat when jumping; all
           # heat modifiers on JJ slots stack

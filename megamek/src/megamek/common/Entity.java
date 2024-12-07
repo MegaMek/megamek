@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
+import megamek.client.ui.ViewFormatting;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
@@ -3148,7 +3149,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getRunMP(MPCalculationSetting mpCalculationSetting) {
-        return applyRunMPEquipmentModifiers((int) Math.ceil(getWalkMP(mpCalculationSetting) * 1.5));
+        int baseRunMP = (int) Math.ceil(getWalkMP(mpCalculationSetting) * 1.5);
+        return applyRunMPEquipmentModifiers(baseRunMP);
     }
 
     /**

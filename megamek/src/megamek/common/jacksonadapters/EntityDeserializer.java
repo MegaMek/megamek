@@ -63,6 +63,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
     private static final String MODIFIERS = "modifiers";
     private static final String UNIT = "unit";
     private static final String ENGINE = "engine";
+    private static final String AVIONICS = "avionics";
     public static final String FLEE_AREA = "fleefrom";
     private static final String AREA = "area";
 
@@ -341,6 +342,7 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
                 Engine engine = entity.getEngine();
                 parseModifiers(modifiersNode.get(ENGINE)).forEach(engine::addEquipmentModifier);
             }
+
         }
     }
 
@@ -354,6 +356,8 @@ public class EntityDeserializer extends StdDeserializer<Entity> {
             } else {
                 throw new IllegalArgumentException("Invalid equipment slot " + location + ":" + (slot + 1) + " on " + entity);
             }
+        } else {
+            throw new IllegalArgumentException("Empty slot " + location + ":" + (slot + 1) + " on " + entity);
         }
     }
 

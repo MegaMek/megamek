@@ -22,12 +22,12 @@ import java.util.Vector;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.mekview.MekView;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.MekFileParser;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
-import megamek.common.MekView;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;

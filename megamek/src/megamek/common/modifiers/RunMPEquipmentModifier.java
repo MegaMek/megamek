@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.modifiers;
 
 public class RunMPEquipmentModifier extends AbstractSystemModifier {
@@ -24,8 +23,8 @@ public class RunMPEquipmentModifier extends AbstractSystemModifier {
     private final int deltaMP;
 
     /**
-     * Creates a modifier that adds the given delta to run/flank/max thrust MP. The delta value may be any value but should realistically be
-     * negative.
+     * Creates a modifier that adds the given delta to run/flank/max thrust MP. The delta value may be any value but will realistically be
+     * negative. See Mercenaries Supplemental Update, p.138 (superior rules to CO 4th, p.215).
      *
      * @param deltaMP      The MP to add
      * @param reason       The origin of the modifier

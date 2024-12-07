@@ -20,7 +20,12 @@ factions:
           engine:
             - type: walkmp
               delta: -2
-#      - fullname: Vedette Medium Tank
+      - fullname: Vedette Medium Tank
+        modifiers:
+          unit:
+            - type: runmp
+              delta: -2
+              system: controls
 #      - fullname: Mauna Kea Command Vessel
 #      - fullname: Moray Heavy Attack Submarine
 #      - fullname: Cavalry Attack Helicopter

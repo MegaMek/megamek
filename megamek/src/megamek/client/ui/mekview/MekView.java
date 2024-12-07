@@ -1,35 +1,35 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.client.ui.mekview;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import megamek.MMConstants;
-import megamek.client.ui.Messages;
+import megamek.client.ui.ViewFormatting;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -45,12 +45,13 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+import static megamek.client.ui.mekview.MekViewUiTexts.uiString;
+
 /**
  * A utility class for retrieving unit information in a formatted string.
  *
- * The information is encoded in a series of classes that implement a common
- * {@link ViewElement}
- * interface, which can format the element either in html or in plain text.
+ * The information is encoded in a series of classes that implement a common {@link ViewElement} interface, which can format the element
+ * either in html or in plain text.
  *
  * @author Ryan McConnell
  * @since January 20, 2003
@@ -259,26 +260,26 @@ public class MekView {
         String techLevel = entity.getStaticTechLevel().toString();
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
-                techLevel += Messages.getString("MekView.MixedClan");
+                techLevel += uiString("MixedClan");
             } else {
-                techLevel += Messages.getString("MekView.MixedIS");
+                techLevel += uiString("MixedIS");
             }
         } else {
             if (entity.isClan()) {
-                techLevel += Messages.getString("MekView.Clan");
+                techLevel += uiString("Clan");
             } else {
-                techLevel += Messages.getString("MekView.IS");
+                techLevel += uiString("IS");
             }
         }
-        sHead.add(new LabeledElement(Messages.getString("MekView.BaseTechLevel"), techLevel));
+        sHead.add(new LabeledElement(uiString("BaseTechLevel"), techLevel));
         if (!entity.isDesignValid()) {
-            sHead.add(new SingleLine(Messages.getString("MekView.DesignInvalid")));
+            sHead.add(new SingleLine(uiString("DesignInvalid")));
         }
 
         TableElement tpTable = new TableElement(3);
         String tableSpacer = "     ";
-        tpTable.setColNames(Messages.getString("MekView.Level"), tableSpacer,
-                Messages.getString("MekView.Era"));
+        tpTable.setColNames(uiString("Level"), tableSpacer,
+                uiString("Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
 
         String eraText = entity.getExperimentalRange()
@@ -298,40 +299,39 @@ public class MekView {
 
         String extinctRange = entity.getExtinctionRange();
         if (extinctRange.length() > 1) {
-            tpTable.addRow(Messages.getString("MekView.Extinct"), tableSpacer, extinctRange);
+            tpTable.addRow(uiString("Extinct"), tableSpacer, extinctRange);
         }
         sHead.add(tpTable);
 
-        sHead.add(new LabeledElement(Messages.getString("MekView.TechRating"), entity.getFullRatingName()));
+        sHead.add(new LabeledElement(uiString("TechRating"), entity.getFullRatingName()));
         sHead.add(new SingleLine());
 
         if (!isInf) {
-            sHead.add(new LabeledElement(Messages.getString("MekView.Weight"),
-                    Math.round(entity.getWeight()) + Messages.getString("MekView.tons")));
+            sHead.add(new LabeledElement(uiString("Weight"),
+                    Math.round(entity.getWeight()) + uiString("tons")));
         }
         DecimalFormatSymbols unusualSymbols = new DecimalFormatSymbols();
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
         DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols);
-        sHead.add(new LabeledElement(Messages.getString("MekView.BV"),
+        sHead.add(new LabeledElement(uiString("BV"),
                 dFormatter.format(entity.calculateBattleValue(false, ignorePilotBV))));
         double cost = entity.getCost(false);
         if (useAlternateCost && entity.getAlternateCost() > 0) {
             cost = entity.getAlternateCost();
         }
-        sHead.add(new LabeledElement(Messages.getString("MekView.Cost"),
+        sHead.add(new LabeledElement(uiString("Cost"),
                 dFormatter.format(cost) + " C-bills"));
         String source = entity.getSource();
         if (!source.isBlank()) {
             if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
-                sHead.add(new HyperLinkElement(Messages.getString("MekView.Source"), MMConstants.BT_URL_SHRAPNEL,
+                sHead.add(new HyperLinkElement(uiString("Source"), MMConstants.BT_URL_SHRAPNEL,
                         source));
             } else {
-                sHead.add(new LabeledElement(Messages.getString("MekView.Source"), source));
+                sHead.add(new LabeledElement(uiString("Source"), source));
             }
         } else {
-            sHead.add(new LabeledElement(Messages.getString("MekView.Source"),
-                    Messages.getString("MekView.Unknown")));
+            sHead.add(new LabeledElement(uiString("Source"), uiString("unknown")));
         }
 
         if (entity.hasRole()) {
@@ -383,27 +383,27 @@ public class MekView {
                             .append(warningEnd());
                 }
             }
-            if (entity.isConventionalInfantry() && ((Infantry) entity).getMount() != null) {
-                moveString.append(" (").append(((Infantry) entity).getMount().getName()).append(")");
+            if ((entity instanceof Infantry infantry) && infantry.getMount() != null) {
+                moveString.append(" (").append(infantry.getMount().getName()).append(")");
             }
 
             // TODO : Add STOL message as part of the movement line
             if (isConvFighter && ((Aero) entity).isVSTOL()) {
-                sBasic.add(new LabeledElement(Messages.getString("MekView.Movement"),
+                sBasic.add(new LabeledElement(uiString("Movement"),
                         moveString.toString().concat(
-                                String.format(" (%s)", Messages.getString("MekView.VSTOL")))));
+                                String.format(" (%s)", uiString("VSTOL")))));
             } else {
-                sBasic.add(new LabeledElement(Messages.getString("MekView.Movement"), moveString.toString()));
+                sBasic.add(new LabeledElement(uiString("Movement"), moveString.toString()));
             }
         }
         if (isBA && ((BattleArmor) entity).isBurdened()) {
             sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.Burdened")
+                    + uiString("Burdened")
                     + italicsEnd()));
         }
         if (isBA && ((BattleArmor) entity).hasDWP()) {
             sBasic.add(new SingleLine(italicsStart()
-                    + Messages.getString("MekView.DWPBurdened")
+                    + uiString("DWPBurdened")
                     + italicsEnd()));
         }
         if (entity instanceof QuadVee) {
@@ -437,10 +437,10 @@ public class MekView {
             if (isMek && entity.hasArmoredEngine()) {
                 engineName += " (armored)";
             }
-            sBasic.add(new LabeledElement(Messages.getString("MekView.Engine"), engineName));
+            sBasic.add(new LabeledElement(uiString("engine"), engineName));
         }
         if (!entity.hasPatchworkArmor() && entity.hasBARArmor(1)) {
-            sBasic.add(new LabeledElement(Messages.getString("MekView.BARRating"),
+            sBasic.add(new LabeledElement(uiString("BARRating"),
                     String.valueOf(entity.getBARRating(0))));
         }
 
@@ -449,7 +449,7 @@ public class MekView {
             StringBuilder hsString = new StringBuilder(String.valueOf(a.getHeatSinks()));
             if (a.getPodHeatSinks() > 0) {
                 hsString.append(" (").append(a.getPodHeatSinks()).append(" ")
-                        .append(Messages.getString("MekView.Pod")).append(")");
+                        .append(uiString("Pod")).append(")");
             }
             if (!a.formatHeat().equals(Integer.toString(a.getHeatSinks()))) {
                 hsString.append(" [")
@@ -459,9 +459,9 @@ public class MekView {
                 hsString.append(warningStart()).append(" (").append(a.getHeatSinkHits())
                         .append(" damaged)").append(warningEnd());
             }
-            sBasic.add(new LabeledElement(Messages.getString("MekView.HeatSinks"), hsString.toString()));
+            sBasic.add(new LabeledElement(uiString("HeatSinks"), hsString.toString()));
 
-            sBasic.add(new LabeledElement(Messages.getString("MekView.Cockpit"),
+            sBasic.add(new LabeledElement(uiString("cockpit"),
                     a.getCockpitTypeString()));
         }
 
@@ -481,7 +481,7 @@ public class MekView {
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(aMek.getHeatSinkTypeName() + "s", hsString.toString()));
-            sBasic.add(new LabeledElement(Messages.getString("MekView.Cockpit"),
+            sBasic.add(new LabeledElement(uiString("cockpit"),
                     aMek.getCockpitTypeString()
                             + (aMek.hasArmoredCockpit() ? " (armored)" : "")));
 
@@ -493,13 +493,13 @@ public class MekView {
             if (aMek.hasArmoredGyro()) {
                 gyroString += " (armored)";
             }
-            sBasic.add(new LabeledElement(Messages.getString("MekView.Gyro"), gyroString));
+            sBasic.add(new LabeledElement(uiString("gyro"), gyroString));
         }
 
         if (isAero) {
             Aero a = (Aero) entity;
             if (!a.getCritDamageString().isEmpty()) {
-                sBasic.add(new LabeledElement(Messages.getString("MekView.SystemDamage"),
+                sBasic.add(new LabeledElement(uiString("SystemDamage"),
                         warningStart() + a.getCritDamageString() + warningEnd()));
             }
 
@@ -507,12 +507,12 @@ public class MekView {
             if (a.getCurrentFuel() < a.getFuel()) {
                 fuel += "/" + a.getFuel();
             }
-            sBasic.add(new LabeledElement(Messages.getString("MekView.FuelPoints"),
-                    String.format(Messages.getString("MekView.Fuel.format"), fuel, a.getFuelTonnage())));
+            sBasic.add(new LabeledElement(uiString("FuelPoints"),
+                    String.format(uiString("Fuel.format"), fuel, a.getFuelTonnage())));
 
             // Display Strategic Fuel Use for Small Craft and up
             if (isSmallCraft || isJumpship) {
-                sBasic.add(new LabeledElement(Messages.getString("MekView.TonsPerBurnDay"),
+                sBasic.add(new LabeledElement(uiString("TonsPerBurnDay"),
                         String.format("%2.2f", a.getStrategicFuelUse())));
             }
         }
@@ -537,7 +537,7 @@ public class MekView {
 
             if (!activeUnitQuirksNames.isEmpty()) {
                 sQuirks.add(new SingleLine());
-                ItemList list = new ItemList(Messages.getString("MekView.Quirks"));
+                ItemList list = new ItemList(uiString("Quirks"));
                 activeUnitQuirksNames.forEach(list::addItem);
                 sQuirks.add(list);
             }
@@ -555,7 +555,7 @@ public class MekView {
             }
             if (!wpQuirksList.isEmpty()) {
                 sQuirks.add(new SingleLine());
-                ItemList list = new ItemList(Messages.getString("MekView.WeaponQuirks"));
+                ItemList list = new ItemList(uiString("WeaponQuirks"));
                 wpQuirksList.forEach(list::addItem);
                 sQuirks.add(list);
             }
@@ -574,19 +574,19 @@ public class MekView {
 
         List<String> unitModifiers = getEquipmentModifiers(entity);
         if (!unitModifiers.isEmpty()) {
-            equipmentModifierList.add("Systems: " + String.join(", ", unitModifiers));
+            equipmentModifierList.add(uiString("systems") + ": " + String.join(", ", unitModifiers));
         }
 
         if (entity.hasEngine()) {
             List<String> engineModifiers = getEquipmentModifiers(entity.getEngine());
             if (!engineModifiers.isEmpty()) {
-                equipmentModifierList.add("Engine: " + String.join(", ", engineModifiers));
+                equipmentModifierList.add(uiString("engine") + ": " + String.join(", ", engineModifiers));
             }
         }
 
         if (!equipmentModifierList.isEmpty()) {
             sQuirks.add(new SingleLine());
-            ItemList list = new ItemList(Messages.getString("MekView.EquipmentMods"));
+            ItemList list = new ItemList(uiString("equipmentmods"));
             equipmentModifierList.forEach(list::addItem);
             sQuirks.add(list);
         }
@@ -618,8 +618,8 @@ public class MekView {
                 sInvalid.add(new SingleLine());
                 String[] errorLines = sb.toString().split("\n");
                 String label = entity.hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
-                        ? Messages.getString("MekView.InvalidButIllegalQuirk")
-                        : Messages.getString("MekView.InvalidReasons");
+                        ? uiString("InvalidButIllegalQuirk")
+                        : uiString("InvalidReasons");
                 ItemList errorList = new ItemList(label);
                 Arrays.stream(errorLines).forEach(errorList::addItem);
                 sInvalid.add(errorList);
@@ -628,15 +628,34 @@ public class MekView {
     }
 
     private List<String> getEquipmentModifiers(Modifiable modifiable) {
-        return modifiable.getModifiers().stream().map(m -> "%s (%s)".formatted(modifierReason(m), modifierText(m))).toList();
+        return modifiable.getModifiers().stream().map(this::equipmentModifierText).toList();
+    }
+
+    private String equipmentModifierText(EquipmentModifier modifier) {
+        if (modifier instanceof AbstractSystemModifier systemModifier) {
+            return "%s %s (%s)".formatted(modifierReason(modifier), modifierSystem(systemModifier), modifierText(modifier));
+        } else {
+            return "%s (%s)".formatted(modifierReason(modifier), modifierText(modifier));
+        }
+    }
+
+    private String modifierSystem(AbstractSystemModifier modifier) {
+        return switch (modifier.system()) {
+            case CONTROLS -> uiString("controls");
+            case AVIONICS -> uiString("avionics");
+            case LIFE_SUPPORT -> uiString("lifesupport");
+            case GYRO -> uiString("gyro");
+            case COCKPIT -> uiString("cockpit");
+            case NONE -> uiString("unknown");
+        };
     }
 
     private String modifierReason(EquipmentModifier modifier) {
         return switch (modifier.reason()) {
-            case SALVAGE_QUALITY -> Messages.getString("MekView.SalvageQuality");
-            case PARTIAL_REPAIR -> Messages.getString("MekView.PartialRepair");
-            case DAMAGED -> Messages.getString("MekView.Damaged");
-            case UNKNOWN -> "Unknown";
+            case SALVAGE_QUALITY -> uiString("SalvageQuality");
+            case PARTIAL_REPAIR -> uiString("PartialRepair");
+            case DAMAGED -> uiString("damaged");
+            case UNKNOWN -> uiString("unknown");
         };
     }
 
@@ -652,9 +671,31 @@ public class MekView {
         } else if (modifier instanceof NoTwistModifier) {
             return "unit cannot twist";
         } else if (modifier instanceof WalkMPEquipmentModifier walkMPModifier) {
-            return walkMPModifier.formattedMPModifier() + " walk MP";
+            return "%s %s MP".formatted(walkMPModifier.formattedMPModifier(), walkEquivalentText());
+        } else if (modifier instanceof RunMPEquipmentModifier runMPModifier) {
+            return "%s %s MP".formatted(runMPModifier.formattedMPModifier(), runEquivalentText());
         } else {
-            return "unknown";
+            return uiString("unknown");
+        }
+    }
+
+    private String walkEquivalentText() {
+        if (entity instanceof Mek || entity instanceof Infantry || entity instanceof ProtoMek) {
+            return uiString("walk");
+        } else if (entity.isAero()) {
+            return uiString("safethrust");
+        } else {
+            return uiString("cruise");
+        }
+    }
+
+    private String runEquivalentText() {
+        if ((entity instanceof Mek) || (entity instanceof Infantry) || (entity instanceof ProtoMek)) {
+            return uiString("run");
+        } else if (entity.isAero()) {
+            return uiString("maxthrust");
+        } else {
+            return uiString("flank");
         }
     }
 
@@ -687,20 +728,11 @@ public class MekView {
      * @return The formatted data.
      */
     private String getReadout(List<ViewElement> section) {
-        Function<ViewElement, String> mapper;
-        switch (formatting) {
-            case HTML:
-                mapper = ViewElement::toHTML;
-                break;
-            case NONE:
-                mapper = ViewElement::toPlainText;
-                break;
-            case DISCORD:
-                mapper = ViewElement::toDiscord;
-                break;
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        Function<ViewElement, String> mapper = switch (formatting) {
+            case HTML -> ViewElement::toHTML;
+            case NONE -> ViewElement::toPlainText;
+            case DISCORD -> ViewElement::toDiscord;
+        };
         return section.stream().map(mapper).collect(Collectors.joining());
     }
 
@@ -791,24 +823,22 @@ public class MekView {
         int maxArmor = (entity.getTotalInternal() * 2) + 3;
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            retVal.add(new LabeledElement(Messages.getString("MekView.Men"),
+            retVal.add(new LabeledElement(uiString("Men"),
                     entity.getTotalInternal()
                             + " (" + inf.getSquadSize() + "/" + inf.getSquadCount()
                             + ")"));
         } else {
             String internal = String.valueOf(entity.getTotalInternal());
             if (isMek) {
-                internal += Messages.getString("MekView."
-                        + EquipmentType.getStructureTypeName(entity
-                                .getStructureType()));
+                internal += uiString(EquipmentType.getStructureTypeName(entity.getStructureType()));
             }
-            retVal.add(new LabeledElement(Messages.getString("MekView.Internal"),
+            retVal.add(new LabeledElement(uiString("Internal"),
                     internal));
         }
 
         if (isInf && !isBA) {
             Infantry inf = (Infantry) entity;
-            retVal.add(new LabeledElement(Messages.getString("MekView.Armor"),
+            retVal.add(new LabeledElement(uiString("Armor"),
                     inf.getArmorDesc()));
         } else {
             String armor = String.valueOf(entity.getTotalArmor());
@@ -821,15 +851,15 @@ public class MekView {
             if (isBA) {
                 armor += " " + EquipmentType.getArmorTypeName(entity.getArmorType(1)).trim();
             }
-            retVal.add(new LabeledElement(Messages.getString("MekView.Armor"), armor));
+            retVal.add(new LabeledElement(uiString("Armor"), armor));
 
         }
         // Walk through the entity's locations.
 
         if (!(isInf && !isBA)) {
             TableElement locTable = new TableElement(5);
-            locTable.setColNames("", "Internal", "Armor", "", ""); // last two columns are patchwork armor and location
-                                                                   // damage
+            locTable.setColNames("", "Internal", uiString("Armor"), "", "");
+            // last two columns are patchwork armor and location damage
             locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                     TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
             for (int loc = 0; loc < entity.locations(); loc++) {
@@ -882,7 +912,7 @@ public class MekView {
 
         List<ViewElement> retVal = new ArrayList<>();
 
-        retVal.add(new LabeledElement(Messages.getString("MekView.SI"),
+        retVal.add(new LabeledElement(uiString("SI"),
                 renderArmor(a.getSI(), a.get0SI(), formatting)));
 
         // if it is a jumpship get sail and KF integrity
@@ -891,24 +921,24 @@ public class MekView {
 
             // TODO: indicate damage.
             if (js.hasSail()) {
-                retVal.add(new LabeledElement(Messages.getString("MekView.SailIntegrity"),
+                retVal.add(new LabeledElement(uiString("SailIntegrity"),
                         String.valueOf(js.getSailIntegrity())));
             }
 
             if (js.getDriveCoreType() != Jumpship.DRIVE_CORE_NONE) {
-                retVal.add(new LabeledElement(Messages.getString("MekView.KFIntegrity"),
+                retVal.add(new LabeledElement(uiString("KFIntegrity"),
                         String.valueOf(js.getKFIntegrity())));
             }
         }
 
         String armor = String.valueOf(entity.isCapitalFighter() ? a.getCapArmor() : a.getTotalArmor());
         if (isJumpship) {
-            armor += Messages.getString("MekView.CapitalArmor");
+            armor += uiString("CapitalArmor");
         }
         if (!entity.hasPatchworkArmor()) {
             armor += " " + ArmorType.forEntity(entity).getName();
         }
-        retVal.add(new LabeledElement(Messages.getString("MekView.Armor"),
+        retVal.add(new LabeledElement(uiString("Armor"),
                 armor));
 
         // Walk through the entity's locations.
@@ -940,12 +970,9 @@ public class MekView {
                             entity.getOArmor(loc), formatting);
                 }
                 if (entity.hasPatchworkArmor()) {
-                    row[2] = Messages.getString("MekView."
-                            + EquipmentType.getArmorTypeName(entity
-                                    .getArmorType(loc)).trim());
+                    row[2] = uiString(EquipmentType.getArmorTypeName(entity.getArmorType(loc)).trim());
                     if (entity.hasBARArmor(loc)) {
-                        row[2] += Messages.getString("MekView.BARRating")
-                                + entity.getBARRating(loc);
+                        row[2] += uiString("BARRating") + entity.getBARRating(loc);
                     }
                 }
                 locTable.addRow(row);
@@ -961,10 +988,10 @@ public class MekView {
 
         List<ViewElement> retVal = new ArrayList<>();
 
-        retVal.add(new LabeledElement(Messages.getString("MekView.Armor"),
+        retVal.add(new LabeledElement(uiString("Armor"),
                 String.valueOf(fs.getTotalArmor())));
 
-        retVal.add(new LabeledElement(Messages.getString("MekView.ActiveFighters"),
+        retVal.add(new LabeledElement(uiString("ActiveFighters"),
                 String.valueOf(fs.getActiveSubEntities().size())));
 
         return retVal;
@@ -999,10 +1026,10 @@ public class MekView {
             WeaponType wtype = mounted.getType();
 
             if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
-                row[0] += Messages.getString("MekView.IS");
+                row[0] += uiString("IS");
             }
             if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
-                row[0] += Messages.getString("MekView.Clan");
+                row[0] += uiString("Clan");
             }
 
             int damagedWeaponsInBay = 0;
@@ -1017,7 +1044,7 @@ public class MekView {
             if (entity.isOmni()) {
                 row[2] = Messages.getString(mounted.isOmniPodMounted() ? "MekView.Pod" : "MekView.Fixed");
             } else if (damagedWeaponsInBay > 0 && !showDetail) {
-                row[2] = warningStart() + Messages.getString("MekView.WeaponDamage") + ")" + warningEnd();
+                row[2] = warningStart() + uiString("WeaponDamage") + ")" + warningEnd();
             }
             if (mounted.isDestroyed()) {
                 if (mounted.isRepairable()) {
@@ -1035,10 +1062,10 @@ public class MekView {
                     row = new String[] { m.getDesc(), "", "", "" };
 
                     if (entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
-                        row[0] += Messages.getString("MekView.IS");
+                        row[0] += uiString("IS");
                     }
                     if (!entity.isClan() && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
-                        row[0] += Messages.getString("MekView.Clan");
+                        row[0] += uiString("Clan");
                     }
                     if (m.isDestroyed()) {
                         if (m.isRepairable()) {
@@ -1121,8 +1148,8 @@ public class MekView {
                         String.valueOf((int) mounted.getSize() * ((InfantryWeapon) mounted.getType()).getShots()),
                         "" };
                 if (entity.isOmni()) {
-                    row[3] = mounted.isOmniPodMounted() ? Messages.getString("MekView.Pod")
-                            : Messages.getString("MekView.Fixed");
+                    row[3] = mounted.isOmniPodMounted() ? uiString("Pod")
+                            : uiString("Fixed");
                 }
                 int shotsLeft = 0;
                 for (Mounted<?> current = mounted.getLinked(); current != null; current = current.getLinked()) {
@@ -1187,11 +1214,11 @@ public class MekView {
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "" };
             if (entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_IS)) {
-                row[0] += Messages.getString("MekView.IS");
+                row[0] += uiString("IS");
             }
             if (!entity.isClan()
                     && (mounted.getType().getTechBase() == ITechnology.TECH_BASE_CLAN)) {
-                row[0] += Messages.getString("MekView.Clan");
+                row[0] += uiString("Clan");
             }
 
             if (entity.isOmni()) {
@@ -1215,7 +1242,7 @@ public class MekView {
             retVal.add(new SingleLine());
             // Reformat the list to a table to keep the formatting similar between blocks
             TableElement transportTable = new TableElement(1);
-            transportTable.setColNames(Messages.getString("MekView.CarryingCapacity"));
+            transportTable.setColNames(uiString("CarryingCapacity"));
             transportTable.setJustification(TableElement.JUSTIFIED_LEFT);
             String separator = formatting == ViewFormatting.HTML ? "<br>" : "\n";
             String[] transportersLines = transportersString.split(separator);
@@ -1229,28 +1256,28 @@ public class MekView {
             Aero a = (Aero) entity;
 
             TableElement crewTable = new TableElement(2);
-            crewTable.setColNames(Messages.getString("MekView.Crew"), "");
+            crewTable.setColNames(uiString("Crew"), "");
             crewTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_RIGHT);
-            crewTable.addRow(Messages.getString("MekView.Officers"), String.valueOf(a.getNOfficers()));
-            crewTable.addRow(Messages.getString("MekView.Enlisted"),
+            crewTable.addRow(uiString("Officers"), String.valueOf(a.getNOfficers()));
+            crewTable.addRow(uiString("Enlisted"),
                     String.valueOf(Math.max(a.getNCrew()
                             - a.getBayPersonnel() - a.getNGunners() - a.getNOfficers(), 0)));
-            crewTable.addRow(Messages.getString("MekView.Gunners"), String.valueOf(a.getNGunners()));
-            crewTable.addRow(Messages.getString("MekView.BayPersonnel"), String.valueOf(a.getBayPersonnel()));
+            crewTable.addRow(uiString("Gunners"), String.valueOf(a.getNGunners()));
+            crewTable.addRow(uiString("BayPersonnel"), String.valueOf(a.getBayPersonnel()));
             if (a.getNPassenger() > 0) {
-                crewTable.addRow(Messages.getString("MekView.Passengers"), String.valueOf(a.getNPassenger()));
+                crewTable.addRow(uiString("Passengers"), String.valueOf(a.getNPassenger()));
             }
             if (a.getNMarines() > 0) {
-                crewTable.addRow(Messages.getString("MekView.Marines"), String.valueOf(a.getNMarines()));
+                crewTable.addRow(uiString("Marines"), String.valueOf(a.getNMarines()));
             }
             if (a.getNBattleArmor() > 0) {
-                crewTable.addRow(Messages.getString("MekView.BAMarines"), String.valueOf(a.getNBattleArmor()));
+                crewTable.addRow(uiString("BAMarines"), String.valueOf(a.getNBattleArmor()));
             }
             retVal.add(new SingleLine());
             retVal.add(crewTable);
         }
         if (isVehicle && ((Tank) entity).getExtraCrewSeats() > 0) {
-            retVal.add(new SingleLine(Messages.getString("MekView.ExtraCrewSeats")
+            retVal.add(new SingleLine(uiString("ExtraCrewSeats")
                     + ((Tank) entity).getExtraCrewSeats()));
         }
         return retVal;
@@ -1744,16 +1771,11 @@ public class MekView {
      * @return A String that is used to mark the beginning of a warning.
      */
     private String warningStart() {
-        switch (formatting) {
-            case HTML:
-                return "<font color=\"red\">";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RED.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<font color=\"red\">";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RED.toString();
+        };
     }
 
     /**
@@ -1762,16 +1784,11 @@ public class MekView {
      * @return A String that is used to mark the end of a warning.
      */
     private String warningEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</font>";
-            case NONE:
-                return "*";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "</font>";
+            case NONE -> "*";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
     }
 
     /**
@@ -1782,16 +1799,11 @@ public class MekView {
      * @return The starting element for italicized text.
      */
     private String italicsStart() {
-        switch (formatting) {
-            case HTML:
-                return "<i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.UNDERLINE.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "<i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.UNDERLINE.toString();
+        };
     }
 
     /**
@@ -1800,15 +1812,10 @@ public class MekView {
      * @return The ending element for italicized text.
      */
     private String italicsEnd() {
-        switch (formatting) {
-            case HTML:
-                return "</i>";
-            case NONE:
-                return "";
-            case DISCORD:
-                return DiscordFormat.RESET.toString();
-            default:
-                throw new IllegalStateException("Impossible");
-        }
+        return switch (formatting) {
+            case HTML -> "</i>";
+            case NONE -> "";
+            case DISCORD -> DiscordFormat.RESET.toString();
+        };
     }
 }

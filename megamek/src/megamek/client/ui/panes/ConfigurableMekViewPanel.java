@@ -32,14 +32,14 @@ import javax.swing.JPanel;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
+import megamek.client.ui.ViewFormatting;
 import megamek.client.ui.WrapLayout;
+import megamek.client.ui.mekview.MekView;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MekViewPanel;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.MekView;
-import megamek.common.ViewFormatting;
 import megamek.common.annotations.Nullable;
 
 /**

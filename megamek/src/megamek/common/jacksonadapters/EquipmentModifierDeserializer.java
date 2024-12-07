@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import megamek.common.modifiers.*;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -38,8 +39,10 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
     private static final String TYPE_JAM = "jam";
     private static final String TYPE_NOTWIST = "notwist";
     private static final String TYPE_WALKMP = "walkmp";
+    private static final String TYPE_RUNMP = "runmp";
     private static final String DELTA = "delta";
     private static final String ON = "on";
+    private static final String SYSTEM = "system";
 
     protected EquipmentModifierDeserializer(Class<?> vc) {
         super(vc);
@@ -53,6 +56,10 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
 
     public static EquipmentModifier parseNode(JsonNode node) {
         String type = node.get(TYPE).asText();
+        SystemModifier.EntitySystem system = SystemModifier.EntitySystem.NONE;
+        if (node.has(SYSTEM)) {
+            system = SystemModifier.EntitySystem.valueOf(node.get(SYSTEM).asText().toUpperCase(Locale.ROOT));
+        }
         return switch (type) {
             case TYPE_HEAT -> new HeatModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
             case TYPE_DAMAGE -> new DamageModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
@@ -60,6 +67,7 @@ public class EquipmentModifierDeserializer extends StdDeserializer<EquipmentModi
             case TYPE_JAM -> new WeaponJamModifier(parseRollValues(node.get(ON)), EquipmentModifier.Reason.DAMAGED);
             case TYPE_NOTWIST -> new NoTwistModifier(EquipmentModifier.Reason.DAMAGED, SystemModifier.EntitySystem.GYRO);
             case TYPE_WALKMP -> new WalkMPEquipmentModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED);
+            case TYPE_RUNMP -> new RunMPEquipmentModifier(node.get(DELTA).asInt(), EquipmentModifier.Reason.DAMAGED, system);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }

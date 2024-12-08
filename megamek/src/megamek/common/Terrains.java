@@ -453,6 +453,12 @@ public class Terrains implements Serializable {
             case PAVEMENT:
                 return 200;
             case ROAD:
+                if (level == 3) {
+                    return 20;
+                }
+                if (level == 4) {
+                    return 50;
+                }
                 return 150;
             case ICE:
             case BLACK_ICE:

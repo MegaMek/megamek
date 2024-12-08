@@ -365,7 +365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private boolean wigeLiftoffHover = false;
     protected int mpUsedLastRound = 0;
-    public boolean gotPavementBonus = false;
+    public boolean gotPavementOrRoadBonus = false;
     public int wigeBonus = 0;
     public boolean inReverse = false;
     protected boolean struck = false;
@@ -3252,7 +3252,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return true if the <code>Entity</code> gets a movement bonus on pavement
      */
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         return false;
     }
 
@@ -6459,7 +6459,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         movedBackwards = false;
         isPowerReverse = false;
         wigeLiftoffHover = false;
-        gotPavementBonus = false;
+        gotPavementOrRoadBonus = false;
         wigeBonus = 0;
         inReverse = false;
         hitBySwarmsEntity.clear();
@@ -7677,7 +7677,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:
                 maxSafeMP = getSprintMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
-                if (isEligibleForPavementBonus() && gotPavementBonus) {
+                if (isEligibleForPavementOrRoadBonus() && gotPavementOrRoadBonus) {
                     maxSafeMP++;
                 }
                 break;
@@ -7685,7 +7685,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // Max safe MP is based on whatever is the current maximum.
                 // http://bg.battletech.com/forums/index.php?topic=6681.msg154097#msg154097
                 maxSafeMP = getRunMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
-                if (isEligibleForPavementBonus() && gotPavementBonus) {
+                if (isEligibleForPavementOrRoadBonus() && gotPavementOrRoadBonus) {
                     maxSafeMP++;
                 }
                 break;

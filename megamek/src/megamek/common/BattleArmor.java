@@ -1045,7 +1045,7 @@ public class BattleArmor extends Infantry {
 
     // Only for ground vehicles and certain infantry
     @Override
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         return false;
     }
 

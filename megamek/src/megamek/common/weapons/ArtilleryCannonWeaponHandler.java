@@ -17,8 +17,10 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -169,6 +171,10 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
                 // The appropriate term here is "Bwahahahahaha..."
+                gameManager.drawNukeHitOnBoard(targetPos);
+                gameManager.getGame().processGameEvent(
+                    new GamePlayerStrategicActionEvent(gameManager,
+                        new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {

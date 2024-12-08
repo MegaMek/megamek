@@ -73,4 +73,6 @@ public interface GameListener extends java.util.EventListener {
      * @param event
      */
     default void gameUnitChange(GameEvent event) { }
+
+    default void gamePlayerStrategicAction(GamePlayerStrategicActionEvent e) { }
 }

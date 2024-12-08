@@ -32,7 +32,7 @@ import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.gmCommands.GamemasterCommandPanel;
+import megamek.client.ui.swing.commands.ClientCommandPanel;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -693,7 +693,7 @@ public class MapMenu extends JPopupMenu {
             new RescueCommand(null, null)
         ).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new GamemasterCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
+            item.addActionListener(evt -> new ClientCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
             menu.add(item);
         });
 

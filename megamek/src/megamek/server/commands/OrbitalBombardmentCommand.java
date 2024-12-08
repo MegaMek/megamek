@@ -15,8 +15,7 @@ package megamek.server.commands;
 
 import megamek.client.ui.Messages;
 import megamek.server.Server;
-import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -41,9 +40,9 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument(X, Messages.getString("Gamemaster.cmd.x")),
-            new IntegerArgument(Y, Messages.getString("Gamemaster.cmd.y")),
-            new IntegerArgument(DMG, Messages.getString("Gamemaster.cmd.orbitalbombardment.dmg"), 10, Integer.MAX_VALUE, 100),
+            new CoordXArgument(X, Messages.getString("Gamemaster.cmd.x")),
+            new CoordYArgument(Y, Messages.getString("Gamemaster.cmd.y")),
+            new IntegerArgument(DMG, Messages.getString("Gamemaster.cmd.orbitalbombardment.dmg"), 10, 1_000_000, 100),
             new IntegerArgument(RADIUS, Messages.getString("Gamemaster.cmd.orbitalbombardment.radius"), 1, 10, 4));
     }
 
@@ -51,7 +50,7 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
      * Run this command with the arguments supplied
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
 
         var orbitalBombardmentBuilder = new OrbitalBombardment.Builder();
 

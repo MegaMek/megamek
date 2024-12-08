@@ -134,6 +134,8 @@ public interface IGameManager {
 
     void requestTeamChange(int teamId, Player player);
 
+
+
     List<ServerCommand> getCommandList(Server server);
 
     void addReport(ReportEntry r);
@@ -147,4 +149,10 @@ public interface IGameManager {
      */
     void calculatePlayerInitialCounts();
 
+    /**
+     * Requests a team change for a player.
+     * @param teamID ID of the team the player will be passed to
+     * @param player player
+     */
+    void requestTeamChangeForPlayer(int teamID, Player player);
 }

@@ -7248,7 +7248,7 @@ public class Compute {
             case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                         || wtype.hasFlag(WeaponType.F_PULSE)
-                        || weapon.curMode().getName().equals("Pulse")
+                        || weapon.curMode().getName().startsWith("Pulse")
                         || (wtype instanceof HAGWeapon)) {
                     return false;
                 }

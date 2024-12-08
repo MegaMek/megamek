@@ -25,9 +25,10 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
 
     public CLERLaserSmallPrototype() {
         super();
-        name = "Prototype ER Small Laser";
+        name = "Prototype ER Small Laser (CP)";
         setInternalName("CLERSmallLaserPrototype");
-        shortName = "ER Small Laser (P)";
+        shortName = "ER Small Laser (CP)";
+        addLookupName("Prototype ER Small Laser");
         heat = 2;
         damage = 3;
         shortRange = 2;
@@ -57,7 +58,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
                 .setPrototypeFactions(F_CSJ)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
-    
+
     @Override
     public boolean isAlphaStrikePointDefense() {
         return true;

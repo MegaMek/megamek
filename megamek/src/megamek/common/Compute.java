@@ -6919,7 +6919,12 @@ public class Compute {
         // Vehicle flamers have damage and heat modes so lets make sure this is
         // an actual dial down Damage.
         if ((damage.trim().length() > 6) && damage.contains("damage")) {
-            toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+            try {
+                toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+            }
+            catch (NumberFormatException e) {
+                logger.warn("Failed to get dialed down damage. " + e.getMessage());
+            }
         }
 
         return Math.min(wtype.getDamage(range), toReturn);

@@ -55,10 +55,12 @@ public abstract class EnergyWeapon extends Weapon {
                 for (; dmg >= 0; dmg--) {
                     addMode("Damage " + dmg);
                 }
+                removeMode("");
             } else {
                 int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
                 for (; dmg >= 0; dmg--) {
                     removeMode("Damage " + dmg);
+                    removeMode("Pulse Damage" + dmg);
                 }
             }
         }

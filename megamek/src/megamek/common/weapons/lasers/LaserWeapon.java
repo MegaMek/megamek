@@ -47,25 +47,17 @@ public abstract class LaserWeapon extends EnergyWeapon {
         super.adaptToGameOptions(gOp);
 
         if (!(this instanceof PulseLaserWeapon)) {
-            if (!(gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS))) {
-                for (EquipmentMode mode : Collections.list(getModes())){
-                    if(mode.getName().startsWith("Pulse Damage ")){
-                        removeMode(mode.getName());
-                    }
-                }
+            if (modes.isEmpty()) {
                 addMode("");
                 addMode("Pulse");
             }
-            else{
-                removeMode("");
-                removeMode("Pulse");
-                for (EquipmentMode mode : Collections.list(getModes())){
-                    if(mode.getName().startsWith("Damage ")){
+            else {
+                for (var mode : Collections.list(getModes())) {
+                    if(!mode.getName().contains("Pulse")) {
                         addMode("Pulse " + mode.getName());
                     }
                 }
             }
-
         }
     }
 
@@ -79,7 +71,9 @@ public abstract class LaserWeapon extends EnergyWeapon {
         } else if(this instanceof PulseLaserWeapon) {
             return super.getModesCount();
         }
-        return super.getModesCount() / 2;
+
+        //Only works if laser pulse module's "Pulse" modes are added last.
+        return (int) modes.stream().filter(mode -> !mode.getName().startsWith("Pulse")).count();
     }
 
     @Override

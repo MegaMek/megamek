@@ -47,13 +47,13 @@ public abstract class LaserWeapon extends EnergyWeapon {
         super.adaptToGameOptions(gOp);
 
         if (!(this instanceof PulseLaserWeapon)) {
-            if (modes.isEmpty()) {
+            if (!hasModes()) {
                 addMode("");
                 addMode("Pulse");
             }
             else {
                 for (var mode : Collections.list(getModes())) {
-                    if(!mode.getName().contains("Pulse")) {
+                    if(!mode.getName().contains("Pulse") && !mode.getName().isEmpty()) {
                         addMode("Pulse " + mode.getName());
                     }
                 }

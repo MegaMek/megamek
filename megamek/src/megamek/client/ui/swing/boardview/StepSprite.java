@@ -397,7 +397,7 @@ class StepSprite extends Sprite {
         Entity e = step.getEntity();
 
         // If the step is using a road bonus, mark it.
-        if (step.isOnlyPavement() && e.isEligibleForPavementBonus()) {
+        if (step.isOnlyPavementOrRoad() && e.isEligibleForPavementOrRoadBonus()) {
             costStringBuf.append('+');
         }
 

@@ -414,9 +414,22 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return True if there is pavement, a road or a bridge in the hex.
+     * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
+        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)){
+            return true;
+        }
+        else if (containsTerrain(Terrains.ROAD)){
+            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD)); //Return false if the road is dirt or gravel
+        }
+        return false;
+    }
+
+    /**
+     * @return True if there is pavement, a road or a bridge in the hex.
+     */
+    public boolean hasPavementOrRoad() {
         return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
     }
 

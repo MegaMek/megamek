@@ -111,7 +111,7 @@ public class MoveStep implements Serializable {
     private boolean prevStepOnPavement; // prev
     private boolean hasJustStood;
     private boolean thisStepBackwards;
-    private boolean onlyPavement; // additive
+    private boolean onlyPavementOrRoad; // additive
     private boolean isPavementStep;
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
@@ -542,7 +542,7 @@ public class MoveStep implements Serializable {
             setPavementStep(true);
         } else {
             setPavementStep(false);
-            setOnlyPavement(false);
+            setOnlyPavementOrRoad(false);
         }
 
         setHasJustStood(false);
@@ -837,7 +837,7 @@ public class MoveStep implements Serializable {
                     setPavementStep(true);
                 } else {
                     setPavementStep(false);
-                    setOnlyPavement(false);
+                    setOnlyPavementOrRoad(false);
                 }
 
                 // Infantry can turn for free, except for field artillery
@@ -1235,7 +1235,7 @@ public class MoveStep implements Serializable {
         mpUsed = prev.mpUsed;
         totalHeat = prev.totalHeat;
         isPavementStep = prev.isPavementStep;
-        onlyPavement = prev.onlyPavement;
+        onlyPavementOrRoad = prev.onlyPavementOrRoad;
         wigeBonus = prev.wigeBonus;
         nWigeDescent = prev.nWigeDescent;
         thisStepBackwards = prev.thisStepBackwards;
@@ -1343,15 +1343,27 @@ public class MoveStep implements Serializable {
         // check pavement & water
         if (position != null) {
             Hex curHex = game.getBoard().getHex(position);
-            if (curHex.hasPavement()) {
-                onlyPavement = true;
-                isPavementStep = true;
+            if (curHex.hasPavementOrRoad()) {
+                if (curHex.hasPavement()) {
+                    isPavementStep = true;
+                    onlyPavementOrRoad = true;
+                }
+                else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_DIRT)){
+                    if (entity.getMovementMode().isHover()){
+                        onlyPavementOrRoad = true;
+                    }
+                }
+                else if (curHex.containsTerrain(Terrains.ROAD, Terrains.ROAD_LVL_GRAVEL)){
+                    if (entity.getMovementMode().isHover() || entity.getMovementMode().isTracked()){
+                        onlyPavementOrRoad=true;
+                    }
+                }
                 // if we previously moved, and didn't get a pavement bonus, we
                 // shouldn't now get one, either (this can happen when skidding
                 // onto a pavement hex
-                if (!entity.gotPavementBonus
+                if (!entity.gotPavementOrRoadBonus
                         && (entity.delta_distance > 0)) {
-                    onlyPavement = false;
+                    onlyPavementOrRoad = false;
                 }
             }
             // if entity already moved into water it can't run now
@@ -1688,8 +1700,8 @@ public class MoveStep implements Serializable {
         return mpUsed;
     }
 
-    public boolean isOnlyPavement() {
-        return onlyPavement;
+    public boolean isOnlyPavementOrRoad() {
+        return onlyPavementOrRoad;
     }
 
     public int getWiGEBonus() {
@@ -1823,8 +1835,8 @@ public class MoveStep implements Serializable {
         isSelfDestructing = b;
     }
 
-    protected void setOnlyPavement(boolean b) {
-        onlyPavement = b;
+    protected void setOnlyPavementOrRoad(boolean b) {
+        onlyPavementOrRoad = b;
     }
 
     protected void setWiGEBonus(int i) {
@@ -2297,10 +2309,10 @@ public class MoveStep implements Serializable {
 
         int bonus = wigeBonus;
         entity.wigeBonus = wigeBonus;
-        if (entity.isEligibleForPavementBonus()
-                && isOnlyPavement()) {
+        if (entity.isEligibleForPavementOrRoadBonus()
+                && isOnlyPavementOrRoad()) {
             bonus++;
-            entity.gotPavementBonus = true;
+            entity.gotPavementOrRoadBonus = true;
         }
         int tmpWalkMP = cachedEntityState.getWalkMP() + bonus;
 

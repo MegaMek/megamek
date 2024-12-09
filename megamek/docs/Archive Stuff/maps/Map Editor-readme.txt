@@ -110,7 +110,7 @@ information on the board file format, and the tileset file format.
         water: 0+; the hex elevation is the elevation for the surface of the
             water, and the water level is the depth of the water
         pavement: 1
-        road: 1
+        road: 1-4; 1 for normal, 2 for alley (legacy), 3 for dirt, 4 for gravel
         fire: 1-2; 1 for normal fire, 2 for inferno fire
         smoke: 1-2; 1 for light smoke, 2 for heavy smoke
         swamp: 1-3; 1 for normal, 2 for just became quicksand, 3 for quicksand

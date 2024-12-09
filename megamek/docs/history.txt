@@ -21,6 +21,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6216: Add additional board auto tags
 + PR #6208: Megamek side of MekHQ CombatMaths PR #5155
 + PR #6230: Allow fleeing at end of movement
++ Fix #3018: Fixes Battle Armor Plasma Rifles not applying TacOps Optional Rules
++ Fix #3827: Fixes target's side's ECM not effecting sensor spottingFixes
++ Fix: Disable Simultaneous Movement due to numerous issues
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

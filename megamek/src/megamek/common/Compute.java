@@ -6915,7 +6915,7 @@ public class Compute {
         // Vehicle flamers have damage and heat modes so lets make sure this is
         // an actual dial down Damage.
         if ((damage.trim().length() > 6) && damage.contains("damage")) {
-            toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage")+6).trim());
+            toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
         }
 
         return Math.min(wtype.getDamage(range), toReturn);

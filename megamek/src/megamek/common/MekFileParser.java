@@ -68,7 +68,8 @@ public class MekFileParser {
             try (InputStream is = new FileInputStream(f.getAbsolutePath())) {
                 parse(is, f.getName());
             } catch (Exception ex) {
-                logger.error("", ex);
+                // TODO Luana
+                // logger.error("Error parsing file {}", f.getName(), ex);
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
                 } else {

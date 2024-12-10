@@ -22,6 +22,8 @@ import java.util.Vector;
  * Abstract base class for Singletons representing Options' static information
  * such as displayable name, description etc. The derived classes must implement
  * the Singleton pattern
+ *
+ * TODO: This class iw BONKERs and should not exist, we need a better way to deal with options info
  */
 public class AbstractOptionsInfo implements IOptionsInfo {
     protected static final String GROUP_SUFFIX = ".group.";

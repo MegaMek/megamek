@@ -14,8 +14,7 @@
 
 package megamek.common.options;
 
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.io.Serial;
 import java.util.Map;
 import java.util.Vector;
 
@@ -25,115 +24,117 @@ import java.util.Vector;
  * @author Cord
  */
 public class PilotOptions extends AbstractOptions {
+
+    @Serial
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
     public static final String MD_ADVANTAGES = "MDAdvantages";
 
-    private static final Object[][] ADV_OPTIONS = {
-        { OptionsConstants.PILOT_ANIMAL_MIMIC, false },
-        { OptionsConstants.PILOT_CROSS_COUNTRY, false },
-        { OptionsConstants.PILOT_DODGE_MANEUVER, false },
-        { OptionsConstants.PILOT_HVY_LIFTER, false },
-        { OptionsConstants.PILOT_HOPPING_JACK, false },
-        { OptionsConstants.PILOT_HOT_DOG, false },
-        { OptionsConstants.PILOT_JUMPING_JACK, false },
-        { OptionsConstants.PILOT_MANEUVERING_ACE, false },
-        { OptionsConstants.PILOT_MELEE_MASTER, false },
-        { OptionsConstants.PILOT_MELEE_SPECIALIST, false },
-        { OptionsConstants.PILOT_APTITUDE_PILOTING, false },
-        { OptionsConstants.PILOT_SHAKY_STICK, false },
-        { OptionsConstants.PILOT_TM_FOREST_RANGER, false },
-        { OptionsConstants.PILOT_TM_FROGMAN, false },
-        { OptionsConstants.PILOT_TM_MOUNTAINEER, false },
-        { OptionsConstants.PILOT_TM_NIGHTWALKER, false },
-        { OptionsConstants.PILOT_TM_SWAMP_BEAST, false },
-        { OptionsConstants.PILOT_ZWEIHANDER, false },
+    private static final Option.OptionValue[] ADV_OPTIONS = {
+        Option.of(OptionsConstants.PILOT_ANIMAL_MIMIC, false ),
+        Option.of(OptionsConstants.PILOT_CROSS_COUNTRY, false ),
+        Option.of(OptionsConstants.PILOT_DODGE_MANEUVER, false ),
+        Option.of(OptionsConstants.PILOT_HVY_LIFTER, false ),
+        Option.of(OptionsConstants.PILOT_HOPPING_JACK, false ),
+        Option.of(OptionsConstants.PILOT_HOT_DOG, false ),
+        Option.of(OptionsConstants.PILOT_JUMPING_JACK, false ),
+        Option.of(OptionsConstants.PILOT_MANEUVERING_ACE, false ),
+        Option.of(OptionsConstants.PILOT_MELEE_MASTER, false ),
+        Option.of(OptionsConstants.PILOT_MELEE_SPECIALIST, false ),
+        Option.of(OptionsConstants.PILOT_APTITUDE_PILOTING, false ),
+        Option.of(OptionsConstants.PILOT_SHAKY_STICK, false ),
+        Option.of(OptionsConstants.PILOT_TM_FOREST_RANGER, false ),
+        Option.of(OptionsConstants.PILOT_TM_FROGMAN, false ),
+        Option.of(OptionsConstants.PILOT_TM_MOUNTAINEER, false ),
+        Option.of(OptionsConstants.PILOT_TM_NIGHTWALKER, false ),
+        Option.of(OptionsConstants.PILOT_TM_SWAMP_BEAST, false ),
+        Option.of(OptionsConstants.PILOT_ZWEIHANDER, false ),
 
         // Gunnery Abilities
-        { OptionsConstants.GUNNERY_BLOOD_STALKER, false },
-        { OptionsConstants.GUNNERY_CLUSTER_HITTER, false },
-        { OptionsConstants.GUNNERY_CLUSTER_MASTER, false },
-        { OptionsConstants.GUNNERY_GOLDEN_GOOSE, false },
-        { OptionsConstants.GUNNERY_SPECIALIST, new Vector<String>() },
-        { OptionsConstants.GUNNERY_MULTI_TASKER, false },
-        { OptionsConstants.PILOT_APTITUDE_GUNNERY, false },
-        { OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false },
-        { OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false },
-        { OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<String>() },
-        { OptionsConstants.GUNNERY_SANDBLASTER, new Vector<String>() },
-        { OptionsConstants.GUNNERY_SNIPER, false },
-        { OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<String>() },
+        Option.of(OptionsConstants.GUNNERY_BLOOD_STALKER, false ),
+        Option.of(OptionsConstants.GUNNERY_CLUSTER_HITTER, false ),
+        Option.of(OptionsConstants.GUNNERY_CLUSTER_MASTER, false ),
+        Option.of(OptionsConstants.GUNNERY_GOLDEN_GOOSE, false ),
+        Option.of(OptionsConstants.GUNNERY_SPECIALIST, new Vector<String>() ),
+        Option.of(OptionsConstants.GUNNERY_MULTI_TASKER, false ),
+        Option.of(OptionsConstants.PILOT_APTITUDE_GUNNERY, false ),
+        Option.of(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false ),
+        Option.of(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false ),
+        Option.of(OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<String>() ),
+        Option.of(OptionsConstants.GUNNERY_SANDBLASTER, new Vector<String>() ),
+        Option.of(OptionsConstants.GUNNERY_SNIPER, false ),
+        Option.of(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<String>() ),
 
         // Misc Abilities
-        { OptionsConstants.MISC_EAGLE_EYES, false },
-        { OptionsConstants.MISC_ENV_SPECIALIST, new Vector<String>() },
-        { OptionsConstants.MISC_FORWARD_OBSERVER, false },
-        { OptionsConstants.MISC_HUMAN_TRO, new Vector<String>() },
-        { OptionsConstants.MISC_IRON_MAN, false },
-        { OptionsConstants.MISC_PAIN_RESISTANCE, false },
-        { OptionsConstants.MISC_TACTICAL_GENIUS, false },
+        Option.of(OptionsConstants.MISC_EAGLE_EYES, false ),
+        Option.of(OptionsConstants.MISC_ENV_SPECIALIST, new Vector<String>() ),
+        Option.of(OptionsConstants.MISC_FORWARD_OBSERVER, false ),
+        Option.of(OptionsConstants.MISC_HUMAN_TRO, new Vector<String>() ),
+        Option.of(OptionsConstants.MISC_IRON_MAN, false ),
+        Option.of(OptionsConstants.MISC_PAIN_RESISTANCE, false ),
+        Option.of(OptionsConstants.MISC_TACTICAL_GENIUS, false ),
 
         // Infantry abilities
-        { OptionsConstants.INFANTRY_FOOT_CAV, false },
-        { OptionsConstants.INFANTRY_URBAN_GUERRILLA, false },
+        Option.of(OptionsConstants.INFANTRY_FOOT_CAV, false ),
+        Option.of(OptionsConstants.INFANTRY_URBAN_GUERRILLA, false ),
 
         // Unofficial
-        { OptionsConstants.UNOFF_EI_IMPLANT, false },
-        { OptionsConstants.UNOFF_GUNNERY_LASER, false },
-        { OptionsConstants.UNOFF_GUNNERY_MISSILE, false },
-        { OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false },
-        { OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false },
-        { OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false },
-        { OptionsConstants.UNOFF_WEATHERED, false },
-        { OptionsConstants.UNOFF_ALLWEATHER, false },
-        { OptionsConstants.UNOFF_BLIND_FIGHTER, false },
-        { OptionsConstants.UNOFF_SENSOR_GEEK, false },
-        { OptionsConstants.UNOFF_SMALL_PILOT, false },
+        Option.of(OptionsConstants.UNOFF_EI_IMPLANT, false ),
+        Option.of(OptionsConstants.UNOFF_GUNNERY_LASER, false ),
+        Option.of(OptionsConstants.UNOFF_GUNNERY_MISSILE, false ),
+        Option.of(OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false ),
+        Option.of(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false ),
+        Option.of(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false ),
+        Option.of(OptionsConstants.UNOFF_WEATHERED, false ),
+        Option.of(OptionsConstants.UNOFF_ALLWEATHER, false ),
+        Option.of(OptionsConstants.UNOFF_BLIND_FIGHTER, false ),
+        Option.of(OptionsConstants.UNOFF_SENSOR_GEEK, false ),
+        Option.of(OptionsConstants.UNOFF_SMALL_PILOT, false )
     };
 
-    private static final Object[][] EDGE_OPTIONS = {
-        { OptionsConstants.EDGE, 0 },
-        { OptionsConstants.EDGE_WHEN_HEADHIT, true },
-        { OptionsConstants.EDGE_WHEN_TAC, true },
-        { OptionsConstants.EDGE_WHEN_KO, true },
-        { OptionsConstants.EDGE_WHEN_EXPLOSION, true },
-        { OptionsConstants.EDGE_WHEN_MASC_FAILS, true },
-        { OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true },
-        { OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true },
-        { OptionsConstants.EDGE_WHEN_AERO_KO, true },
-        { OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true },
-        { OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true },
-        { OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true }
+    private static final Option.OptionValue[] EDGE_OPTIONS = {
+        Option.of(OptionsConstants.EDGE, 0 ),
+        Option.of(OptionsConstants.EDGE_WHEN_HEADHIT, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_TAC, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_KO, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_EXPLOSION, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_MASC_FAILS, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_KO, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true ),
+        Option.of(OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true)
     };
 
-    private static final Object[][] MD_OPTIONS = {
-        { OptionsConstants.MD_PAIN_SHUNT, false },
-        { OptionsConstants.MD_COMM_IMPLANT, false },
-        { OptionsConstants.MD_BOOST_COMM_IMPLANT, false },
-        { OptionsConstants.MD_CYBER_IMP_AUDIO, false },
-        { OptionsConstants.MD_CYBER_IMP_VISUAL, false },
-        { OptionsConstants.MD_CYBER_IMP_LASER, false },
-        { OptionsConstants.MD_MM_IMPLANTS, false },
-        { OptionsConstants.MD_ENH_MM_IMPLANTS, false },
-        { OptionsConstants.MD_FILTRATION, false },
-        { OptionsConstants.MD_GAS_EFFUSER_PHERO, false },
-        { OptionsConstants.MD_GAS_EFFUSER_TOXIN, false },
-        { OptionsConstants.MD_DERMAL_ARMOR, false },
-        { OptionsConstants.MD_DERMAL_CAMO_ARMOR, false },
-        { OptionsConstants.MD_TSM_IMPLANT, false },
-        { OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false },
-        { OptionsConstants.MD_VDNI, false },
-        { OptionsConstants.MD_BVDNI, false },
-        { OptionsConstants.MD_PROTO_DNI, false },
-        { OptionsConstants.MD_PL_ENHANCED, false },
-        { OptionsConstants.MD_PL_IENHANCED, false },
-        { OptionsConstants.MD_PL_EXTRA_LIMBS, false },
-        { OptionsConstants.MD_PL_TAIL, false },
-        { OptionsConstants.MD_PL_MASC, false },
-        { OptionsConstants.MD_PL_GLIDER, false },
-        { OptionsConstants.MD_PL_FLIGHT, false },
-        { OptionsConstants.MD_SUICIDE_IMPLANTS, false }
+    private static final Option.OptionValue[] MD_OPTIONS = {
+        Option.of(OptionsConstants.MD_PAIN_SHUNT, false ),
+        Option.of(OptionsConstants.MD_COMM_IMPLANT, false ),
+        Option.of(OptionsConstants.MD_BOOST_COMM_IMPLANT, false ),
+        Option.of(OptionsConstants.MD_CYBER_IMP_AUDIO, false ),
+        Option.of(OptionsConstants.MD_CYBER_IMP_VISUAL, false ),
+        Option.of(OptionsConstants.MD_CYBER_IMP_LASER, false ),
+        Option.of(OptionsConstants.MD_MM_IMPLANTS, false ),
+        Option.of(OptionsConstants.MD_ENH_MM_IMPLANTS, false ),
+        Option.of(OptionsConstants.MD_FILTRATION, false ),
+        Option.of(OptionsConstants.MD_GAS_EFFUSER_PHERO, false ),
+        Option.of(OptionsConstants.MD_GAS_EFFUSER_TOXIN, false ),
+        Option.of(OptionsConstants.MD_DERMAL_ARMOR, false ),
+        Option.of(OptionsConstants.MD_DERMAL_CAMO_ARMOR, false ),
+        Option.of(OptionsConstants.MD_TSM_IMPLANT, false ),
+        Option.of(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false ),
+        Option.of(OptionsConstants.MD_VDNI, false ),
+        Option.of(OptionsConstants.MD_BVDNI, false ),
+        Option.of(OptionsConstants.MD_PROTO_DNI, false ),
+        Option.of(OptionsConstants.MD_PL_ENHANCED, false ),
+        Option.of(OptionsConstants.MD_PL_IENHANCED, false ),
+        Option.of(OptionsConstants.MD_PL_EXTRA_LIMBS, false ),
+        Option.of(OptionsConstants.MD_PL_TAIL, false ),
+        Option.of(OptionsConstants.MD_PL_MASC, false ),
+        Option.of(OptionsConstants.MD_PL_GLIDER, false ),
+        Option.of(OptionsConstants.MD_PL_FLIGHT, false ),
+        Option.of(OptionsConstants.MD_SUICIDE_IMPLANTS, false)
     };
 
     public PilotOptions() {
@@ -142,9 +143,6 @@ public class PilotOptions extends AbstractOptions {
 
     @Override
     public void initialize() {
-        // Pre-size optionsHash (just a guess: total options * 2)
-        int totalOptions = ADV_OPTIONS.length + EDGE_OPTIONS.length + MD_OPTIONS.length;
-        optionsHash = new Hashtable<>(totalOptions * 2);
         var optionsInfo = PilotOptionsInfo.getInstance();
         IBasicOptionGroup advGroup = optionsInfo.addGroup(OptionsConstants.ADV, LVL3_ADVANTAGES);
         IBasicOptionGroup edgeGroup = optionsInfo.addGroup(OptionsConstants.EDGE, EDGE_ADVANTAGES);
@@ -155,27 +153,11 @@ public class PilotOptions extends AbstractOptions {
         addOptions(optionsInfo, mdGroup, MD_OPTIONS);
     }
 
-    private void addOptions(AbstractOptionsInfo optionsInfo, IBasicOptionGroup group, Object[][] options) {
-        for (Object[] entry : options) {
-            String name = (String) entry[0];
-            Object defaultValue = entry[1];
-
-            if (defaultValue instanceof Boolean) {
-                addOption(optionsInfo, group, name, IOption.BOOLEAN, defaultValue);
-            } else if (defaultValue instanceof Integer) {
-                addOption(optionsInfo, group, name, IOption.INTEGER, defaultValue);
-            } else if (defaultValue instanceof Vector) {
-                addOption(optionsInfo, group, name, IOption.CHOICE, "");
-            } else {
-                // fallback to boolean if not recognized, or handle other types as needed
-                addOption(optionsInfo, group, name, IOption.BOOLEAN, defaultValue);
-            }
+    private void addOptions(AbstractOptionsInfo optionsInfo, IBasicOptionGroup group, Option.OptionValue[] options) {
+        for (var entry : options) {
+            optionsHash.put(entry.getName(), new Option(this, entry.getName(), entry.getType(), entry.getValue()));
+            optionsInfo.addOptionInfo(group, entry.getName());
         }
-    }
-
-    protected void addOption(AbstractOptionsInfo optionsInfo, IBasicOptionGroup group, String name, int type, Object defaultValue) {
-        optionsHash.put(name, new Option(this, name, type, defaultValue));
-        optionsInfo.addOptionInfo(group, name);
     }
 
     /*

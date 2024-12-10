@@ -212,6 +212,7 @@ public record SBFInitiativeHelper(SBFGameManager gameManager) implements SBFGame
             addReport(new SBFReportHeader(1000).add(game().getCurrentRound()));
         } else {
             if (game().getCurrentRound() == 0) {
+                addReport(new SBFReportHeader(1200));
                 addReport(new SBFReportHeader(1005));
             } else {
                 addReport(new SBFReportHeader(1010).add(game().getCurrentRound()));

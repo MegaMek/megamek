@@ -329,10 +329,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
                 .booleanValue();
-
+        var players = getPlayersList();
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Player player : getPlayersList()) {
+        for (Player player : players) {
             // Ignore players not on a team
             if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 continue;
@@ -348,7 +348,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             // Now, go through all the teams, and add the appropriate player
             for (int t = Player.TEAM_NONE + 1; t < Player.TEAM_NAMES.length; t++) {
                 Team new_team = null;
-                for (Player player : getPlayersList()) {
+                for (Player player : players) {
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);

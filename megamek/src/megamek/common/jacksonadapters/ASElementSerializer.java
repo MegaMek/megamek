@@ -18,37 +18,28 @@
  */
 package megamek.common.jacksonadapters;
 
-import static megamek.common.jacksonadapters.MMUReader.*;
-
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
-import megamek.common.Entity;
-import megamek.common.ForceAssignable;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import megamek.common.UnitRole;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 
+import java.io.IOException;
+
+import static megamek.common.jacksonadapters.MMUReader.*;
+
 /**
  * This Jackson serializer writes AlphaStrikeElements to YAML output.
- *
  * When the unit is canon (found in the MekSummaryCache and marked as canon), then the full name
  * (chassis+model) is written in addition to the unit type (ASElement); for deserialization, the unit is
  * re-converted from the TW Entity.
- *
  * For a non-canon unit, the chassis, model and AS values are written as far as needed to reconstruct the unit
  * without the cache (this does not include TMM, Threshold and PV which can be calculated from the other
  * AS values).
- *
  * The pilot skill is written unless it is 4. When the skill is missing, deserialization assumes 4.
- *
  * In addition, any transients like damage are written if present (2024: only partially implemented).
  */
 public class ASElementSerializer extends StdSerializer<ASCardDisplayable> {

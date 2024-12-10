@@ -138,6 +138,18 @@ public class MMRoll extends Roll {
         return this.total;
     }
 
+    @Override
+    public int[] getIntValues() {
+        if (!all.isEmpty()) {
+            int[] values = new int[all.size()];
+            for (int i = 0; i < all.size(); i++) {
+                values[i] = all.get(i);
+            }
+            return values;
+        }
+        return new int[0];
+    }
+
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.

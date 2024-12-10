@@ -13,16 +13,14 @@
  */
 package megamek.common.options;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -40,12 +38,13 @@ import megamek.utilities.xml.MMXMLUtility;
 
 /**
  * Contains the options determining play in the current game.
- *
+ * TODO: This class and every other "Options" need to be refactored, probably using enums?
  * @author Ben
  */
 public class GameOptions extends BasicGameOptions {
     private static final MMLogger logger = MMLogger.create(GameOptions.class);
 
+    @Serial
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml";
 
@@ -53,268 +52,264 @@ public class GameOptions extends BasicGameOptions {
         super();
     }
 
-
-    // Base options: { optionName, defaultValue }
-    private static final Object[][] BASE_OPTIONS = {
-        { OptionsConstants.BASE_PUSH_OFF_BOARD, true },
-        { OptionsConstants.BASE_DUMPING_FROM_ROUND, 1 },
-        { OptionsConstants.BASE_LOBBY_AMMO_DUMP, false },
-        { OptionsConstants.BASE_SHOW_BAY_DETAIL, false },
-        { OptionsConstants.BASE_INDIRECT_FIRE, true },
-        { OptionsConstants.BASE_FLAMER_HEAT, false },
-        { OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, false },
-        { OptionsConstants.BASE_AUTO_AMS, true },
-        { OptionsConstants.BASE_RANDOM_BASEMENTS, true },
-        { OptionsConstants.BASE_BREEZE, false }
+    private static final Option.OptionValue[] BASE_OPTIONS = {
+        Option.of(OptionsConstants.BASE_PUSH_OFF_BOARD, true),
+        Option.of(OptionsConstants.BASE_DUMPING_FROM_ROUND, 1),
+        Option.of(OptionsConstants.BASE_LOBBY_AMMO_DUMP, false),
+        Option.of(OptionsConstants.BASE_SHOW_BAY_DETAIL, false),
+        Option.of(OptionsConstants.BASE_INDIRECT_FIRE, true),
+        Option.of(OptionsConstants.BASE_FLAMER_HEAT, false),
+        Option.of(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, false),
+        Option.of(OptionsConstants.BASE_AUTO_AMS, true),
+        Option.of(OptionsConstants.BASE_RANDOM_BASEMENTS, true),
+        Option.of(OptionsConstants.BASE_BREEZE, false)
     };
 
-    private static final Object[][] VICTORY_OPTIONS = {
-        { OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false },
-        { OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1 },
-        { OptionsConstants.VICTORY_USE_BV_DESTROYED, false },
-        { OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100 },
-        { OptionsConstants.VICTORY_USE_BV_RATIO, false },
-        { OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300 },
-        { OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false },
-        { OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10 },
-        { OptionsConstants.VICTORY_USE_KILL_COUNT, false },
-        { OptionsConstants.VICTORY_GAME_KILL_COUNT, 4 },
-        { OptionsConstants.VICTORY_COMMANDER_KILLED, false }
+    private static final Option.OptionValue[] VICTORY_OPTIONS = {
+        Option.of(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false),
+        Option.of(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1),
+        Option.of(OptionsConstants.VICTORY_USE_BV_DESTROYED, false),
+        Option.of(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100),
+        Option.of(OptionsConstants.VICTORY_USE_BV_RATIO, false),
+        Option.of(OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300),
+        Option.of(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false),
+        Option.of(OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10),
+        Option.of(OptionsConstants.VICTORY_USE_KILL_COUNT, false),
+        Option.of(OptionsConstants.VICTORY_GAME_KILL_COUNT, 4),
+        Option.of(OptionsConstants.VICTORY_COMMANDER_KILLED, false)
     };
 
-    private static final Object[][] ALLOWED_OPTIONS = {
-        { OptionsConstants.ALLOWED_CANON_ONLY, false },
-        { OptionsConstants.ALLOWED_YEAR, 3150 },
-        { OptionsConstants.ALLOWED_TECHLEVEL, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD] },
-        { OptionsConstants.ALLOWED_ERA_BASED, false },
-        { OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false },
-        { OptionsConstants.ALLOWED_SHOW_EXTINCT, true },
-        { OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false },
-        { OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false },
-        { OptionsConstants.ALLOWED_ALLOW_NUKES, false },
-        { OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false }
+    private static final Option.OptionValue[] ALLOWED_OPTIONS = {
+        Option.of(OptionsConstants.ALLOWED_CANON_ONLY, false),
+        Option.of(OptionsConstants.ALLOWED_YEAR, 3150),
+        Option.of(OptionsConstants.ALLOWED_TECHLEVEL, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]),
+        Option.of(OptionsConstants.ALLOWED_ERA_BASED, false),
+        Option.of(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false),
+        Option.of(OptionsConstants.ALLOWED_SHOW_EXTINCT, true),
+        Option.of(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false),
+        Option.of(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false),
+        Option.of(OptionsConstants.ALLOWED_ALLOW_NUKES, false),
+        Option.of(OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false)
     };
 
-    private static final Object[][] ADVANCED_RULES_OPTIONS = {
-        { OptionsConstants.ADVANCED_MINEFIELDS, false },
-        { OptionsConstants.ADVANCED_HIDDEN_UNITS, true },
-        { OptionsConstants.ADVANCED_BLACK_ICE, false },
-        { OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false },
-        { OptionsConstants.ADVANCED_DOUBLE_BLIND, false },
-        { OptionsConstants.ADVANCED_TACOPS_SENSORS, false },
-        { OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false },
-        { OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false },
-        { OptionsConstants.ADVANCED_TEAM_VISION, true },
-        { OptionsConstants.ADVANCED_TACOPS_BAP, false },
-        { OptionsConstants.ADVANCED_TACOPS_ECCM, false },
-        { OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false },
-        { OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5 },
-        { OptionsConstants.ADVANCED_TACOPS_DIG_IN, false },
-        { OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false },
-        { OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false },
-        { OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false },
-        { OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false },
-        { OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false },
-        { OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false },
-        { OptionsConstants.ADVANCED_TACOPS_FATIGUE, false },
-        { OptionsConstants.ADVANCED_TACOPS_FUMBLES, false },
-        { OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false },
-        { OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false },
-        { OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false },
-        { OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false },
-        { OptionsConstants.ADVANCED_ASSAULT_DROP, false },
-        { OptionsConstants.ADVANCED_PARATROOPERS, false },
-        { OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false },
-        { OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false },
-        { OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false },
-        { OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false },
-        { OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5 },
-        { OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false },
-        { OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false },
-        { OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false },
-        { OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false },
-        { OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false },
-        { OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false },
-        { OptionsConstants.ADVANCED_METAL_CONTENT, false },
-        { OptionsConstants.ADVANCED_BA_GRAB_BARS, false },
-        { OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false },
-        { OptionsConstants.ADVANCED_ALTERNATE_MASC, false },
-        { OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false },
-        { OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS, false }
+    private static final Option.OptionValue[] ADVANCED_RULES_OPTIONS = {
+        Option.of(OptionsConstants.ADVANCED_MINEFIELDS, false),
+        Option.of(OptionsConstants.ADVANCED_HIDDEN_UNITS, true),
+        Option.of(OptionsConstants.ADVANCED_BLACK_ICE, false),
+        Option.of(OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false),
+        Option.of(OptionsConstants.ADVANCED_DOUBLE_BLIND, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_SENSORS, false),
+        Option.of(OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false),
+        Option.of(OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false),
+        Option.of(OptionsConstants.ADVANCED_TEAM_VISION, true),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_BAP, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_ECCM, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false),
+        Option.of(OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_DIG_IN, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_FATIGUE, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_FUMBLES, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false),
+        Option.of(OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false),
+        Option.of(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false),
+        Option.of(OptionsConstants.ADVANCED_ASSAULT_DROP, false),
+        Option.of(OptionsConstants.ADVANCED_PARATROOPERS, false),
+        Option.of(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false),
+        Option.of(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false),
+        Option.of(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false),
+        Option.of(OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false),
+        Option.of(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5),
+        Option.of(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false),
+        Option.of(OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false),
+        Option.of(OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false),
+        Option.of(OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false),
+        Option.of(OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false),
+        Option.of(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false),
+        Option.of(OptionsConstants.ADVANCED_METAL_CONTENT, false),
+        Option.of(OptionsConstants.ADVANCED_BA_GRAB_BARS, false),
+        Option.of(OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false),
+        Option.of(OptionsConstants.ADVANCED_ALTERNATE_MASC, false),
+        Option.of(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false),
+        Option.of(OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS, false)
     };
 
-    private static final Object[][] ADVANCED_COMBAT_OPTIONS = {
-        { OptionsConstants.ADVCOMBAT_TACOPS_AMS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false },
-        { OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_RANGE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_BURST, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false },
-        { OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false },
-        { OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false },
-        { OptionsConstants.ADVCOMBAT_NO_TAC, false },
-        { OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false },
-        { OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false },
-        { OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10 },
-        { OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false },
-        { OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false },
-        { OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false },
-        { OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false },
-        { OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false },
-        { OptionsConstants.ADVCOMBAT_UNJAM_UAC, false },
-        { OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false },
-        { OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false },
-        { OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false },
-        { OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE, 5 },
-        { OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE, 1088 },
-        { OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT, 15 },
-        { OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE, false },
-        { OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS, false },
-        { OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false },
-        { OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false },
-        { OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false },
-        { OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false }
+    private static final Option.OptionValue[] ADVANCED_COMBAT_OPTIONS = {
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_AMS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_RANGE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_BURST, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false),
+        Option.of(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false),
+        Option.of(OptionsConstants.ADVCOMBAT_NO_TAC, false),
+        Option.of(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false),
+        Option.of(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10),
+        Option.of(OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false),
+        Option.of(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false),
+        Option.of(OptionsConstants.ADVCOMBAT_UNJAM_UAC, false),
+        Option.of(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false),
+        Option.of(OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE, 5),
+        Option.of(OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE, 1088),
+        Option.of(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT, 15),
+        Option.of(OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false),
+        Option.of(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false),
+        Option.of(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false),
+        Option.of(OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false)
     };
 
-    private static final Object[][] ADVANCED_GROUND_MOVEMENT_OPTIONS = {
-        { OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_EVADE, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false },
-        { OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS, false },
-        { OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false },
-        { OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4 },
-        { OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false },
-        { OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false },
-        { OptionsConstants.ADVGRNDMOV_TURN_MODE, false },
-        { OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false },
-        { OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false },
-        { OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false },
-        { OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4 },
-        { OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false },
-        { OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false },
-        { OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false },
-        { OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false },
-        { OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false },
-        { OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false },
-        { OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false },
-        { OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false },
-        { OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false }
+    private static final Option.OptionValue[] ADVANCED_GROUND_MOVEMENT_OPTIONS = {
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false),
+        Option.of(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4),
+        Option.of(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TURN_MODE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4),
+        Option.of(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false),
+        Option.of(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false)
     };
 
-    private static final Object[][] ADVANCED_AERO_RULES_OPTIONS = {
-        { OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true },
-        { OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false },
-        { OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false },
-        { OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false },
-        { OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false },
-        { OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_ECM, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50 },
-        { OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false },
-        { OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false },
-        { OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false },
-        { OptionsConstants.ADVAERORULES_AT2_NUKES, false },
-        { OptionsConstants.ADVAERORULES_AERO_SANITY, false },
-        { OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true },
-        { OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false },
-        { OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false },
-        { OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false },
-        { OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false },
-        { OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false },
-        { OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE, false },
-        { OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false },
-        { OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL, false }
+    private static final Option.OptionValue[] ADVANCED_AERO_RULES_OPTIONS = {
+        Option.of(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false),
+        Option.of(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false),
+        Option.of(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false),
+        Option.of(OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false),
+        Option.of(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_ECM, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false),
+        Option.of(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false),
+        Option.of(OptionsConstants.ADVAERORULES_AT2_NUKES, false),
+        Option.of(OptionsConstants.ADVAERORULES_AERO_SANITY, false),
+        Option.of(OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true),
+        Option.of(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false),
+        Option.of(OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false),
+        Option.of(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false),
+        Option.of(OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false),
+        Option.of(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false),
+        Option.of(OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE, false),
+        Option.of(OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false),
+        Option.of(OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL, false)
     };
 
-    private static final Object[][] INITIATIVE_OPTIONS = {
-        { OptionsConstants.INIT_INF_MOVE_EVEN, false },
-        { OptionsConstants.INIT_INF_DEPLOY_EVEN, false },
-        { OptionsConstants.INIT_INF_MOVE_LATER, false },
-        { OptionsConstants.INIT_INF_MOVE_MULTI, false },
-        { OptionsConstants.INIT_PROTOS_MOVE_EVEN, false },
-        { OptionsConstants.INIT_PROTOS_MOVE_LATER, false },
-        { OptionsConstants.INIT_PROTOS_MOVE_MULTI, false },
-        { OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3 },
-        { OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false },
-        { OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false },
-        { OptionsConstants.INIT_SIMULTANEOUS_FIRING, false },
-        { OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false },
-        { OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false },
-        { OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false }
+    private static final Option.OptionValue[] INITIATIVE_OPTIONS = {
+        Option.of(OptionsConstants.INIT_INF_MOVE_EVEN, false),
+        Option.of(OptionsConstants.INIT_INF_DEPLOY_EVEN, false),
+        Option.of(OptionsConstants.INIT_INF_MOVE_LATER, false),
+        Option.of(OptionsConstants.INIT_INF_MOVE_MULTI, false),
+        Option.of(OptionsConstants.INIT_PROTOS_MOVE_EVEN, false),
+        Option.of(OptionsConstants.INIT_PROTOS_MOVE_LATER, false),
+        Option.of(OptionsConstants.INIT_PROTOS_MOVE_MULTI, false),
+        Option.of(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3),
+        Option.of(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false),
+        Option.of(OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false),
+        Option.of(OptionsConstants.INIT_SIMULTANEOUS_FIRING, false),
+        Option.of(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false),
+        Option.of(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false),
+        Option.of(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false)
     };
 
-    private static final Object[][] RPG_OPTIONS = {
-        { OptionsConstants.RPG_PILOT_ADVANTAGES, false },
-        { OptionsConstants.EDGE, false },
-        { OptionsConstants.RPG_MANEI_DOMINI, false },
-        { OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false },
-        { OptionsConstants.RPG_COMMAND_INIT, false },
-        { OptionsConstants.RPG_RPG_GUNNERY, false },
-        { OptionsConstants.RPG_ARTILLERY_SKILL, false },
-        { OptionsConstants.RPG_TOUGHNESS, false },
-        { OptionsConstants.RPG_CONDITIONAL_EJECTION, false },
-        { OptionsConstants.RPG_BEGIN_SHUTDOWN, false }
+    private static final Option.OptionValue[] RPG_OPTIONS = {
+        Option.of(OptionsConstants.RPG_PILOT_ADVANTAGES, false),
+        Option.of(OptionsConstants.EDGE, false),
+        Option.of(OptionsConstants.RPG_MANEI_DOMINI, false),
+        Option.of(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false),
+        Option.of(OptionsConstants.RPG_COMMAND_INIT, false),
+        Option.of(OptionsConstants.RPG_RPG_GUNNERY, false),
+        Option.of(OptionsConstants.RPG_ARTILLERY_SKILL, false),
+        Option.of(OptionsConstants.RPG_TOUGHNESS, false),
+        Option.of(OptionsConstants.RPG_CONDITIONAL_EJECTION, false),
+        Option.of(OptionsConstants.RPG_BEGIN_SHUTDOWN, false)
     };
-
 
     @Override
     public synchronized void initialize() {
         super.initialize();
-
 
         IBasicOptionGroup baseGroup = addGroup("basic");
         addOptions(baseGroup, BASE_OPTIONS);
@@ -342,273 +337,16 @@ public class GameOptions extends BasicGameOptions {
 
         IBasicOptionGroup rpgGroup = addGroup("rpg");
         addOptions(rpgGroup, RPG_OPTIONS);
-//
-//        IBasicOptionGroup base = addGroup("basic");
-//        addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true);
-//        addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1);
-//        addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false);
-//        addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false);
-//        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true);
-//        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false);
-//        addOption(base, OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, false);
-//        addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
-//        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
-//        addOption(base, OptionsConstants.BASE_BREEZE, false);
-//
-//        IBasicOptionGroup victory = addGroup("victory");
-//        addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);
-//        addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1);
-//        addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false);
-//        addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100);
-//        addOption(victory, OptionsConstants.VICTORY_USE_BV_RATIO, false);
-//        addOption(victory, OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300);
-//        addOption(victory, OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false);
-//        addOption(victory, OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10);
-//        addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false);
-//        addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4);
-//        addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false);
-//
-//        IBasicOptionGroup allowed = addGroup("allowedUnits");
-//        addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150);
-//        addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE,
-//                TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
-//        addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
-//        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
-//        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);
-//
-//        IBasicOptionGroup advancedRules = addGroup("advancedRules");
-//        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BAP, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false);
-//        addOption(advancedRules, OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS, false);
-//
-//        IBasicOptionGroup advancedCombat = addGroup("advancedCombat");
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FLOATING_CRITS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RANGE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BURST, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VTOL_STRAFING, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UNJAM_UAC, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NUM_HEXES_PREDESIGNATE, 5);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAP_AREA_PREDESIGNATE, 1088);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT, 15);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false);
-//        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_MULTI_USE_AMS, false);
-//
-//        IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement");
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_EVADE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_REVERSE_GEAR, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TURN_MODE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false);
-//        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false);
-//
-//        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules");
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE, false);
-//        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false);
-//        addOption(advAeroRules, OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL, false);
-//
-//        IBasicOptionGroup initiative = addGroup("initiative");
-//        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false);
-//        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false);
-//        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false);
-//        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false);
-//        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false);
-//        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false);
-//        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false);
-//        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false);
-//        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3);
-//        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false);
-//        //addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false);
-//        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false);
-//        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false);
-//        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false);
-//        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false);
-//        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false);
-//
-//        IBasicOptionGroup rpg = addGroup("rpg");
-//        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false);
-//        addOption(rpg, OptionsConstants.EDGE, false);
-//        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false);
-//        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false);
-//        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false);
-//        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false);
-//        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
-//        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
-//        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
-//        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
+    private void addOptions(IBasicOptionGroup group, Option.OptionValue[] options) {
+        for (var entry : options) {
+            int type = entry.getType();
 
-    private void addOptions(IBasicOptionGroup group, Object[][] options) {
-        for (Object[] entry : options) {
-            String name = (String) entry[0];
-            Object defaultValue = entry[1];
-
-            int type = IOption.BOOLEAN;
-            if (defaultValue instanceof Integer) {
-                type = IOption.INTEGER;
-            } else if (defaultValue instanceof String
-                && OptionsConstants.ALLOWED_TECHLEVEL.equals(name)) {
-                // Tech level is a CHOICE type
+            if (type == IOption.STRING && OptionsConstants.ALLOWED_TECHLEVEL.equals(entry.getName())) {
                 type = IOption.CHOICE;
             }
-
-            addOption(group, name, type, defaultValue);
+            addOption(group, entry.getName(), type, entry.getValue());
         }
     }
 

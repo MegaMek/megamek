@@ -35,8 +35,151 @@ public class Option implements IOption, Serializable {
 
     private transient IOptionInfo info;
 
+    public static OptionValue of(String name, Object defaultValue) {
+        if (defaultValue instanceof Boolean) {
+            return new OptionBoolean(name, (Boolean) defaultValue);
+        } else if (defaultValue instanceof Integer) {
+            return new OptionInteger(name, (Integer) defaultValue);
+        } else if (defaultValue instanceof Float) {
+            return new OptionFloat(name, (Float) defaultValue);
+        } else if (defaultValue instanceof String) {
+            return new OptionString(name, (String) defaultValue);
+        } else if (defaultValue instanceof Vector) {
+            return new OptionChoice(name, (Vector<String>) defaultValue);
+        }
+        throw new IllegalArgumentException("Invalid default value type");
+    }
+
+    public static abstract class OptionValue {
+        abstract Object getValue();
+        abstract int getType();
+        abstract String getName();
+    }
+
+    public static class OptionBoolean extends OptionValue {
+        private final boolean value;
+        private final String name;
+
+        public OptionBoolean(String name, boolean value) {
+            this.value = value;
+            this.name = name;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
+        }
+        @Override
+        public int getType() {
+            return BOOLEAN;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class OptionInteger extends OptionValue {
+        private final String name;
+        private final int value;
+        public OptionInteger(String name, int value) {
+            this.value = value;
+            this.name = name;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
+        }
+        @Override
+        public int getType() {
+            return INTEGER;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class OptionFloat extends OptionValue {
+        private final String name;
+        private final float value;
+        public OptionFloat(String name, float value) {
+            this.value = value;
+            this.name = name;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
+        }
+        @Override
+        public int getType() {
+            return FLOAT;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class OptionString extends OptionValue {
+        private final String value;
+        private final String name;
+        public OptionString(String name, String value) {
+            this.value = value;
+            this.name = name;
+        }
+
+        @Override
+        public Object getValue() {
+            return value;
+        }
+        @Override
+        public int getType() {
+            return STRING;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class OptionChoice extends OptionValue {
+        // private final Vector<String> value;
+        private final String name;
+
+        public OptionChoice(String name, Vector<String> value) {
+            // this.value = "";
+            this.name = name;
+        }
+
+        @Override
+        public Object getValue() {
+            // return value;
+            return "";
+        }
+        @Override
+        public int getType() {
+            return CHOICE;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
     public Option(AbstractOptions owner, String name, String defaultValue) {
         this(owner, name, STRING, defaultValue);
+    }
+
+    public Option(AbstractOptions owner, OptionValue defaultValue) {
+        this(owner, defaultValue.getName(), defaultValue.getType(), defaultValue.getValue());
     }
 
     public Option(AbstractOptions owner, String name, boolean defaultValue) {
@@ -244,7 +387,7 @@ public class Option implements IOption, Serializable {
             info = owner.getOptionInfo(name);
         }
     }
-    
+
     @Override
     public String toString() {
         return "Option - " + getName() + ": " + getValue();

@@ -13,15 +13,14 @@
  */
 package megamek.common.options;
 
-import static java.util.stream.Collectors.toList;
-import static megamek.common.options.OptionsConstants.*;
+import megamek.common.*;
 
 import java.io.Serial;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import static java.util.stream.Collectors.toList;
+import static megamek.common.options.OptionsConstants.*;
 
 /**
  * Contains the options determining Unit Quirks of a unit (but not weapon quirks). When changing this, note
@@ -51,57 +50,147 @@ public class Quirks extends AbstractOptions {
     //Weak Head Armor
     //Weak Undercarriage (no landing)
     //Ramshackle
+    public enum QuirkCategory {
+        POSITIVE, NEGATIVE
+    }
 
-    // Arrays of quirk names for positive and negative groups
-    private static final String[] POS_QUIRK_NAMES = {
-        QUIRK_POS_ANIMALISTIC, QUIRK_POS_ANTI_AIR, QUIRK_POS_ATMO_FLYER, QUIRK_POS_BATTLE_COMP,
-        QUIRK_POS_BARREL_FIST_LA, QUIRK_POS_BARREL_FIST_RA, QUIRK_POS_BATTLE_FIST_LA, QUIRK_POS_BATTLE_FIST_RA,
-        QUIRK_POS_COMBAT_COMPUTER, QUIRK_POS_COMMAND_MEK, QUIRK_POS_COMPACT, QUIRK_POS_COWL,
-        QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, QUIRK_POS_DISTRACTING, QUIRK_POS_DOCKING_ARMS, QUIRK_POS_EASY_MAINTAIN,
-        QUIRK_POS_EASY_PILOT, QUIRK_POS_EXT_TWIST, QUIRK_POS_FAST_RELOAD, QUIRK_POS_FINE_MANIPULATORS,
-        QUIRK_POS_GOOD_REP_1, QUIRK_POS_GOOD_REP_2, QUIRK_POS_HYPER_ACTUATOR, QUIRK_POS_IMP_COM,
-        QUIRK_POS_IMP_LIFE_SUPPORT, QUIRK_POS_IMP_TARG_L, QUIRK_POS_IMP_TARG_M, QUIRK_POS_IMP_TARG_S,
-        QUIRK_POS_IMPROVED_SENSORS, QUIRK_POS_INTERNAL_BOMB, QUIRK_POS_LOW_PROFILE, QUIRK_POS_MULTI_TRAC,
-        QUIRK_POS_NIMBLE_JUMPER, QUIRK_POS_OVERHEAD_ARMS, QUIRK_POS_POWER_REVERSE, QUIRK_POS_PRO_ACTUATOR,
-        QUIRK_POS_REINFORCED_LEGS, QUIRK_POS_RUGGED_1, QUIRK_POS_RUGGED_2, QUIRK_POS_RUMBLE_SEAT,
-        QUIRK_POS_SCOUT_BIKE, QUIRK_POS_SEARCHLIGHT, QUIRK_POS_STABLE, QUIRK_POS_TRAILER_HITCH,
-        QUIRK_POS_UBIQUITOUS_IS, QUIRK_POS_UBIQUITOUS_CLAN, QUIRK_POS_VAR_RNG_TARG_L, QUIRK_POS_VAR_RNG_TARG_S,
-        QUIRK_POS_VESTIGIAL_HANDS_LA, QUIRK_POS_VESTIGIAL_HANDS_RA, QUIRK_POS_VTOL_ROTOR_COAXIAL, QUIRK_POS_VTOL_ROTOR_DUAL
-    };
+    public enum Quirk {
+        // Positive quirks
+        QUIRK_POS_ANIMALISTIC("animalistic", QuirkCategory.POSITIVE),
+        QUIRK_POS_ANTI_AIR("anti_air", QuirkCategory.POSITIVE),
+        QUIRK_POS_ATMO_FLYER("atmo_flyer", QuirkCategory.POSITIVE),
+        QUIRK_POS_BATTLE_COMP("battle_computer", QuirkCategory.POSITIVE),
+        QUIRK_POS_BARREL_FIST_LA("barrel_fists_la", QuirkCategory.POSITIVE),
+        QUIRK_POS_BARREL_FIST_RA("barrel_fists_ra", QuirkCategory.POSITIVE),
+        QUIRK_POS_BATTLE_FIST_LA("battle_fists_la", QuirkCategory.POSITIVE),
+        QUIRK_POS_BATTLE_FIST_RA("battle_fists_ra", QuirkCategory.POSITIVE),
+        QUIRK_POS_COMBAT_COMPUTER("combat_computer", QuirkCategory.POSITIVE),
+        QUIRK_POS_COMMAND_MEK("command_mech", QuirkCategory.POSITIVE),
+        QUIRK_POS_COMPACT("compact_mech", QuirkCategory.POSITIVE),
+        QUIRK_POS_COWL("cowl", QuirkCategory.POSITIVE),
+        QUIRK_POS_DIRECTIONAL_TORSO_MOUNT("directional_torso_mount", QuirkCategory.POSITIVE),
+        QUIRK_POS_DISTRACTING("distracting", QuirkCategory.POSITIVE),
+        QUIRK_POS_DOCKING_ARMS("docking_arms", QuirkCategory.POSITIVE),
+        QUIRK_POS_EASY_MAINTAIN("easy_maintain", QuirkCategory.POSITIVE),
+        QUIRK_POS_EASY_PILOT("easy_pilot", QuirkCategory.POSITIVE),
+        QUIRK_POS_EXT_TWIST("ext_twist", QuirkCategory.POSITIVE),
+        QUIRK_POS_FAST_RELOAD("fast_reload", QuirkCategory.POSITIVE),
+        QUIRK_POS_FINE_MANIPULATORS("fine_manipulators", QuirkCategory.POSITIVE),
+        QUIRK_POS_GOOD_REP_1("good_rep_1", QuirkCategory.POSITIVE),
+        QUIRK_POS_GOOD_REP_2("good_rep_2", QuirkCategory.POSITIVE),
+        QUIRK_POS_HYPER_ACTUATOR("hyper_actuator", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMP_COM("imp_com", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMP_LIFE_SUPPORT("imp_life_support", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMP_TARG_L("imp_target_long", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMP_TARG_M("imp_target_med", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMP_TARG_S("imp_target_short", QuirkCategory.POSITIVE),
+        QUIRK_POS_IMPROVED_SENSORS("imp_sensors", QuirkCategory.POSITIVE),
+        QUIRK_POS_INTERNAL_BOMB("internal_bomb", QuirkCategory.POSITIVE),
+        QUIRK_POS_LOW_PROFILE("low_profile", QuirkCategory.POSITIVE),
+        QUIRK_POS_MULTI_TRAC("multi_trac", QuirkCategory.POSITIVE),
+        QUIRK_POS_NIMBLE_JUMPER("nimble_jumper", QuirkCategory.POSITIVE),
+        QUIRK_POS_OVERHEAD_ARMS("overhead_arms", QuirkCategory.POSITIVE),
+        QUIRK_POS_POWER_REVERSE("power_reverse", QuirkCategory.POSITIVE),
+        QUIRK_POS_PRO_ACTUATOR("pro_actuator", QuirkCategory.POSITIVE),
+        QUIRK_POS_REINFORCED_LEGS("reinforced_legs", QuirkCategory.POSITIVE),
+        QUIRK_POS_RUGGED_1("rugged_1", QuirkCategory.POSITIVE),
+        QUIRK_POS_RUGGED_2("rugged_2", QuirkCategory.POSITIVE),
+        QUIRK_POS_RUMBLE_SEAT("rumble_seat", QuirkCategory.POSITIVE),
+        QUIRK_POS_SCOUT_BIKE("scout_bike", QuirkCategory.POSITIVE),
+        QUIRK_POS_SEARCHLIGHT("searchlight", QuirkCategory.POSITIVE),
+        QUIRK_POS_STABLE("stable", QuirkCategory.POSITIVE),
+        QUIRK_POS_TRAILER_HITCH("trailer_hitch", QuirkCategory.POSITIVE),
+        QUIRK_POS_UBIQUITOUS_IS("ubiquitous_is", QuirkCategory.POSITIVE),
+        QUIRK_POS_UBIQUITOUS_CLAN("ubiquitous_clan", QuirkCategory.POSITIVE),
+        QUIRK_POS_VAR_RNG_TARG_L("variable_range_long", QuirkCategory.POSITIVE),
+        QUIRK_POS_VAR_RNG_TARG_S("variable_range_short", QuirkCategory.POSITIVE),
+        QUIRK_POS_VESTIGIAL_HANDS_LA("vestigial_hands_la", QuirkCategory.POSITIVE),
+        QUIRK_POS_VESTIGIAL_HANDS_RA("vestigial_hands_ra", QuirkCategory.POSITIVE),
+        QUIRK_POS_VTOL_ROTOR_COAXIAL("vtol_rotor_coaxial", QuirkCategory.POSITIVE),
+        QUIRK_POS_VTOL_ROTOR_DUAL("vtol_rotor_dual", QuirkCategory.POSITIVE),
 
-    private static final String[] NEG_QUIRK_NAMES = {
-        QUIRK_NEG_BAD_REP_IS, QUIRK_NEG_BAD_REP_CLAN, QUIRK_NEG_CRAMPED_COCKPIT, QUIRK_NEG_DIFFICULT_EJECT,
-        QUIRK_NEG_DIFFICULT_MAINTAIN, QUIRK_NEG_EM_INTERFERENCE_WHOLE, QUIRK_NEG_EXP_ACTUATOR, QUIRK_NEG_FLAWED_COOLING,
-        QUIRK_NEG_FRAGILE_FUEL, QUIRK_NEG_GAS_HOG, QUIRK_NEG_HARD_PILOT, QUIRK_NEG_ILLEGAL_DESIGN,
-        QUIRK_NEG_LARGE_DROPPER, QUIRK_NEG_LOW_ARMS, QUIRK_NEG_NO_ARMS, QUIRK_NEG_NO_EJECT,
-        QUIRK_NEG_NO_TWIST, QUIRK_NEG_NON_STANDARD, QUIRK_NEG_OBSOLETE, QUIRK_NEG_POOR_LIFE_SUPPORT,
-        QUIRK_NEG_POOR_PERFORMANCE, QUIRK_NEG_POOR_SEALING, QUIRK_NEG_POOR_TARG_L, QUIRK_NEG_POOR_TARG_M,
-        QUIRK_NEG_POOR_TARG_S, QUIRK_NEG_POOR_WORK, QUIRK_NEG_PROTOTYPE, QUIRK_NEG_RAMSHACKLE,
-        QUIRK_NEG_SENSOR_GHOSTS, QUIRK_NEG_SUSCEPTIBLE_CWS, QUIRK_NEG_UNBALANCED, QUIRK_NEG_UNSTREAMLINED,
-        QUIRK_NEG_WEAK_HEAD_1, QUIRK_NEG_WEAK_HEAD_2, QUIRK_NEG_WEAK_HEAD_3, QUIRK_NEG_WEAK_HEAD_4,
-        QUIRK_NEG_WEAK_HEAD_5, QUIRK_NEG_WEAK_LEGS, QUIRK_NEG_WEAK_UNDERCARRIAGE, QUIRK_NEG_ATMO_INSTABILITY,
-        QUIRK_NEG_OVERSIZED
-    };
+        // Negative quirks
+        QUIRK_NEG_ATMO_INSTABILITY("atmo_instability", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_BAD_REP_IS("bad_rep_is", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_BAD_REP_CLAN("bad_rep_clan", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_CRAMPED_COCKPIT("cramped_cockpit", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_DIFFICULT_EJECT("difficult_eject", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_DIFFICULT_MAINTAIN("difficult_maintain", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_EM_INTERFERENCE_WHOLE("em_inter_whole", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_EXP_ACTUATOR("exp_actuator", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_FLAWED_COOLING("flawed_cooling", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_FRAGILE_FUEL("fragile_fuel", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_GAS_HOG("gas_hog", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_HARD_PILOT("hard_pilot", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_ILLEGAL_DESIGN("illegal_design", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_LARGE_DROPPER("large_dropper", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_LOW_ARMS("low_arms", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_NO_ARMS("no_arms", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_NO_EJECT("no_eject", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_NO_TWIST("no_twist", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_NON_STANDARD("non_standard", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_OBSOLETE("obsolete", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_OVERSIZED("oversized", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_LIFE_SUPPORT("poor_life_support", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_PERFORMANCE("poor_performance", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_SEALING("poor_sealing", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_TARG_L("poor_target_long", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_TARG_M("poor_target_med", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_TARG_S("poor_target_short", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_POOR_WORK("poor_work", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_PROTOTYPE("prototype", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_RAMSHACKLE("ramshackle", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_SENSOR_GHOSTS("sensor_ghosts", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_SUSCEPTIBLE_CWS("susceptible_cws", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_UNBALANCED("unbalanced", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_UNSTREAMLINED("unstreamlined", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_HEAD_1("weak_head_1", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_HEAD_2("weak_head_2", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_HEAD_3("weak_head_3", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_HEAD_4("weak_head_4", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_HEAD_5("weak_head_5", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_LEGS("weak_legs", QuirkCategory.NEGATIVE),
+        QUIRK_NEG_WEAK_UNDERCARRIAGE("weak_undercarriage", QuirkCategory.NEGATIVE);
+
+        private final QuirkCategory category;
+        private final String identifier;
+
+        Quirk(String identifier, QuirkCategory category) {
+            this.identifier = identifier;
+            this.category = category;
+        }
+
+        public QuirkCategory getCategory() {
+            return category;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public static Quirk fromIdentifier(String id) {
+            for (Quirk q : values()) {
+                if (q.identifier.equals(id)) {
+                    return q;
+                }
+            }
+            throw new IllegalArgumentException("Unknown quirk identifier: " + id);
+        }
+    }
 
     @Override
     public synchronized void initialize() {
-        // Calculate total options for pre-sizing (optional)
-        int totalOptions = POS_QUIRK_NAMES.length + NEG_QUIRK_NAMES.length;
-        optionsHash = new Hashtable<>(totalOptions);
         var optionInfo = getOptionsInfoImp();
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS);
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
 
-        // Add positive quirks
-        for (String quirk : POS_QUIRK_NAMES) {
-            addOption(optionInfo, posQuirk, quirk);
+        for (Quirk q : Quirk.values()) {
+            if (q.getCategory() == QuirkCategory.POSITIVE) {
+                addOption(optionInfo, posQuirk, q.getIdentifier());
+            } else {
+                addOption(optionInfo, negQuirk, q.getIdentifier());
+            }
         }
-
-        // Add negative quirks
-        for (String quirk : NEG_QUIRK_NAMES) {
-            addOption(optionInfo, negQuirk, quirk);
-        }
-
     }
 
     private void addOption(AbstractOptionsInfo quirksInfo, IBasicOptionGroup group, String name) {

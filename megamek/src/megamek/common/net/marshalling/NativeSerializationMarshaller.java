@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -39,6 +40,12 @@ class NativeSerializationMarshaller extends PacketMarshaller {
     @Override
     public Packet unmarshall(final InputStream stream) throws Exception {
         final ObjectInputStream in = new ObjectInputStream(stream);
-        return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
+        var packed_command = PACKET_COMMANDS[in.readInt()];
+        try {
+            return new Packet(packed_command, (Object[]) in.readObject());
+        } catch (final Exception e) {
+            Logger.getLogger(getClass().getName()).warning("Failed to unmarshall packet: " + e.getMessage());
+            throw e;
+        }
     }
 }

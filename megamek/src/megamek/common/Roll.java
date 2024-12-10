@@ -85,6 +85,9 @@ public abstract class Roll implements Serializable {
      */
     public abstract int getIntValue();
 
+
+    public abstract int[] getIntValues();
+
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.

@@ -60,14 +60,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- *
- * https://www.techinterviewhandbook.org/coding-interview-study-plan/
- * https://neetcode.io/roadmap
- *
- */
-
-
-/**
  * Entity is a master class for basically anything on the board except terrain.
  */
 @JsonDeserialize(using = EntityDeserializer.class)
@@ -78,13 +70,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Serial
     private static final long serialVersionUID = 1430806396279853295L;
-
-    private static final Set<Integer> CLAN_TECH_LEVELS = Set.of(
-        TechConstants.T_CLAN_TW,
-        TechConstants.T_CLAN_ADVANCED,
-        TechConstants.T_CLAN_EXPERIMENTAL,
-        TechConstants.T_CLAN_UNOFFICIAL
-    );
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
     public static final int UNLIMITED_JUMP_DOWN = 999;
@@ -496,8 +481,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * A list of all remaining equipment.
      */
     protected List<MiscMounted> miscList = new ArrayList<>();
-    private Set<BigInteger> miscFlags = new HashSet<>();
-    private Map<BigInteger, Set<Long>> miscSubTypes = new HashMap<>();
 
     protected ArrayList<INarcPod> pendingINarcPods = new ArrayList<>();
     protected ArrayList<INarcPod> iNarcPods = new ArrayList<>();
@@ -1474,7 +1457,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     @Override
     public boolean isClan() {
-        return CLAN_TECH_LEVELS.contains(techLevel);
+        return (IntStream.of(TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
+                TechConstants.T_CLAN_EXPERIMENTAL, TechConstants.T_CLAN_UNOFFICIAL)
+                .anyMatch(i -> (techLevel == i)));
     }
 
     public boolean isClanArmor(int loc) {
@@ -1486,8 +1471,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }
-
-        return CLAN_TECH_LEVELS.contains(getArmorTechLevel(loc));
+        return IntStream.of(TechConstants.T_CLAN_TW, TechConstants.T_CLAN_ADVANCED,
+                TechConstants.T_CLAN_EXPERIMENTAL, TechConstants.T_CLAN_UNOFFICIAL)
+                .anyMatch(i -> (getArmorTechLevel(loc) == i));
     }
 
     @Override
@@ -4025,7 +4011,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         if (mounted instanceof MiscMounted) {
             miscList.add((MiscMounted) mounted);
-            initializeMiscFlags();
         }
         if (!(mounted instanceof AmmoMounted) && !(mounted instanceof MiscMounted)
                 && !(mounted instanceof WeaponMounted)) {
@@ -4551,18 +4536,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    private void initializeMiscFlags() {
-        miscFlags.clear();
-        miscSubTypes.clear();
-
-        for (MiscMounted m : miscList) {
-            if (m.isReady()) {
-                miscFlags.add(m.getType().getFlags());
-                miscSubTypes.computeIfAbsent(m.getType().getFlags(), k -> new HashSet<>()).add(m.getType().getSubType());
-            }
-        }
-    }
-
     /**
      * Removes the first misc eq. whose name equals the specified string. Used
      * for removing broken tree clubs.
@@ -4572,11 +4545,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (mounted.getName().equals(toRemove)) {
                 miscList.remove(mounted);
                 equipmentList.remove(mounted);
-                initializeMiscFlags();
                 break;
             }
         }
     }
+
     /**
      * Clear all bombs and bomb attacks
      */
@@ -4647,35 +4620,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param secondary A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
      */
-//    public boolean hasWorkingMisc(BigInteger flag, long secondary) {
-//        for (MiscMounted m : miscList) {
-//            if (m.isReady() && m.getType().hasFlag(flag)
-//                    && ((secondary == -1) || m.getType().hasSubType(secondary))) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     public boolean hasWorkingMisc(BigInteger flag, long secondary) {
-        if (secondary == -1) {
-            return miscFlags.contains(flag);
-        } else {
-            return miscSubTypes.getOrDefault(flag, Collections.emptySet()).contains(secondary);
+        for (MiscMounted m : miscList) {
+            if (m.isReady() && m.getType().hasFlag(flag)
+                    && ((secondary == -1) || m.getType().hasSubType(secondary))) {
+                return true;
+            }
         }
+        return false;
     }
 
     public boolean hasMisc(BigInteger flag) {
-        return miscFlags.contains(flag);
+        return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
     }
 
     public List<MiscMounted> getMiscEquipment(BigInteger flag) {
-        if (miscFlags.contains(flag)) {
-            return miscList.stream()
+        return miscList.stream()
                 .filter(item -> item.getType().hasFlag(flag))
                 .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
     }
 
     /**
@@ -12724,7 +12686,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if this unit has Environmental Sealing
      */
     public boolean hasEnvironmentalSealing() {
-        return hasMisc(MiscType.F_ENVIRONMENTAL_SEALING);
+        for (MiscMounted misc : miscList) {
+            if (misc.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

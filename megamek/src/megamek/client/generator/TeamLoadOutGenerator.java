@@ -1771,8 +1771,8 @@ public class TeamLoadOutGenerator {
         }
 
         // Oops, nothing left - rocket launchers are always popular
-        // XXX: Add prototype RLs as well.
         if (Arrays.stream(bombLoad).sum() == 0) {
+            // Rocket Launchers are a good option after CI era
             if (
                 checkLegality(
                     BombType.createBombByType(BombType.B_RL),
@@ -1782,6 +1782,18 @@ public class TeamLoadOutGenerator {
                 )
             ) {
                 bombLoad[BombType.B_RL] = bombUnits;
+                return bombLoad;
+            }
+            // Otherwise, Prototype Rocket Launchers are almost always in style.
+            if (
+                checkLegality(
+                    BombType.createBombByType(BombType.B_RLP),
+                    faction,
+                    techBase,
+                    mixedTech
+                )
+            ){
+                bombLoad[BombType.B_RLP] = bombUnits;
                 return bombLoad;
             }
         }

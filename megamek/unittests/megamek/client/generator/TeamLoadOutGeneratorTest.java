@@ -598,7 +598,7 @@ class TeamLoadOutGeneratorTest {
     }
 
     /**
-     * We expect CAP Pirate flights in the 3SW era to mount no ordnance.
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
      */
     @Test
     void testGenerateExternalOrdnanceCAP3SWEraPirates() {
@@ -624,8 +624,72 @@ class TeamLoadOutGeneratorTest {
             techBase,
             mixedTech
         );
-        int[] expected = new int[17];
+        int[] expected = new int[BombType.B_NUM];
+        expected[BombType.B_RLP] = bombUnits;
         assertArrayEquals(expected, generatedBombs);
+    }
 
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
+     */
+    @Test
+    void testGenerateExternalOrdnanceCAPPostCIEraPirates() {
+        // Game setup
+        int year = 3075;
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+        // Bomber info
+        int bombUnits = 20;
+        boolean airOnly = true;
+        boolean isPirate = true;
+        int quality = ForceDescriptor.RATING_5;
+        String faction = "PIR";
+        String techBase = "IS";
+        boolean mixedTech = false;
+        int[] generatedBombs = tlg.generateExternalOrdnance(
+            bombUnits,
+            airOnly,
+            isPirate,
+            quality,
+            year,
+            faction,
+            techBase,
+            mixedTech
+        );
+        // Should always get some regular rocket launchers
+        assertTrue(generatedBombs[BombType.B_RL] > 0);
+        // Should not use RL-Ps when RLs are available
+        assertEquals(0, generatedBombs[BombType.B_RLP]);
+    }
+
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
+     */
+    @Test
+    void testGenerateExternalOrdnanceCAP2800Clan() {
+        // Game setup
+        int year = 2800;
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+        // Bomber info
+        int bombUnits = 20;
+        boolean airOnly = true;
+        boolean isPirate = false;
+        int quality = ForceDescriptor.RATING_1;
+        String faction = "CSJ";
+        String techBase = "CL";
+        boolean mixedTech = false;
+        int[] generatedBombs = tlg.generateExternalOrdnance(
+            bombUnits,
+            airOnly,
+            isPirate,
+            quality,
+            year,
+            faction,
+            techBase,
+            mixedTech
+        );
+        // Pre-2823, Clan units can take RL-P bombs
+        assertTrue(generatedBombs[BombType.B_RLP] > 0);
     }
 }

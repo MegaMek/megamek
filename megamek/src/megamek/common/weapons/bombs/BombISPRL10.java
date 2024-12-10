@@ -16,7 +16,6 @@ package megamek.common.weapons.bombs;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.SimpleTechLevel;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.missiles.MissileWeapon;
 
 /**
@@ -28,9 +27,9 @@ public class BombISPRL10 extends MissileWeapon {
     public BombISPRL10() {
         super();
 
-        this.name = "Prototype Rocket Launcher Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_PRL));
-        addLookupName("PRL 10 (Bomb)");
+        this.name = "Rocket Launcher (Prototype) Pod";
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_RLP));
+        addLookupName("RL-P 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;
@@ -48,7 +47,7 @@ public class BombISPRL10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
-        rulesRefs = "229, TM";
+        rulesRefs = "73, 195, 217, IO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setIntroLevel(false)
             .setUnofficial(false)

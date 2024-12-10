@@ -15,21 +15,22 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.missiles.MissileWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class BombISRL10 extends MissileWeapon {
+public class BombISPRL10 extends MissileWeapon {
     private static final long serialVersionUID = 5763858241912399084L;
 
-    public BombISRL10() {
+    public BombISPRL10() {
         super();
 
-        this.name = "Rocket Launcher Pod";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
-        addLookupName("RL 10 (Bomb)");
+        this.name = "Prototype Rocket Launcher Pod";
+        this.setInternalName(BombType.getBombWeaponName(BombType.B_PRL));
+        addLookupName("PRL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;
@@ -41,21 +42,22 @@ public class BombISRL10 extends MissileWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
-        this.flags = flags.or(F_MISSILE).or(F_BOMB_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        this.flags = flags.or(F_MISSILE).or(F_BOMB_WEAPON).or(F_PROTOTYPE).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
         rulesRefs = "229, TM";
-        new TechAdvancement(TECH_BASE_IS)
+        techAdvancement.setTechBase(TECH_BASE_ALL)
             .setIntroLevel(false)
             .setUnofficial(false)
             .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-            .setISAdvancement(3060, 3064, 3067, DATE_NONE, DATE_NONE)
+            .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+            .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false, false, false)
-            .setPrototypeFactions(F_MH)
-            .setProductionFactions(F_MH);
+            .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+            .setClanApproximate(true, false, false, true, false)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 }

@@ -42,6 +42,8 @@ public class BombType extends AmmoType {
     public static final int B_FAE_SMALL = 15;
     public static final int B_FAE_LARGE = 16;
     public static final int B_NUM     = 17;
+    // Prototype Rocket Launcher Pod
+    public static final int B_PRL     = 18;
 
     public static final String[] bombNames = { "HE Bomb","Cluster Bomb","Laser-guided Bomb",
                                               "Rocket", "TAG", "AAA Missile", "AS Missile",
@@ -242,6 +244,8 @@ public class BombType extends AmmoType {
                 return createSmallFuelAirBomb();
             case B_FAE_LARGE:
                 return createLargeFuelAirBomb();
+            case B_PRL:
+                return createPrototypeRocketBomb();
             default:
                 return null;
         }
@@ -619,6 +623,30 @@ public class BombType extends AmmoType {
         bomb.rackSize = 10;
         bomb.ammoType = AmmoType.T_RL_BOMB;
         bomb.bombType = BombType.B_RL;
+        bomb.shots = 1;
+        bomb.bv = 18;
+        bomb.cost = 15000;
+        bomb.rulesRefs = "229, TM";
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3055, 3064, 3067);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
+
+        return bomb;
+    }
+
+    private static BombType createPrototypeRocketBomb() {
+        BombType bomb = new BombType();
+
+        bomb.name = "Prototype Rocket Launcher Pod";
+        bomb.setInternalName("P" + BombType.getBombInternalName(BombType.B_RL));
+        bomb.addLookupName("PRL 10 (Bomb)");
+        bomb.damagePerShot = 1;
+        // This works but is fragile
+        bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB).or(WeaponType.F_PROTOTYPE);
+        bomb.rackSize = 10;
+        bomb.ammoType = AmmoType.T_RL_BOMB;
+        bomb.bombType = BombType.B_PRL;
         bomb.shots = 1;
         bomb.bv = 18;
         bomb.cost = 15000;

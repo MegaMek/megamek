@@ -22,6 +22,7 @@ package megamek.server.victory;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 
 /**
  * Interface for classes judging whether a victory occurred or not. These classes must not modify
@@ -49,5 +50,5 @@ public interface VictoryCondition {
      * @param context The context to consider, see {@link VictoryCondition} (currently unused)
      * @return The result of the victory condition test
      */
-    VictoryResult checkVictory(Game game, Map<String, Object> context);
+    VictoryResult checkVictory(IGame game, Map<String, Object> context);
 }

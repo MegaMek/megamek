@@ -90,7 +90,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
 
                 // TODO: elements without skill?
                 unit = new SBFUnitConverter(elements,
-                        node.get(GENERAL_NAME).textValue(), elements, new DummyCalculationReport()).createSbfUnit();
+                        node.get(GENERAL_NAME).textValue(), new DummyCalculationReport()).createSbfUnit();
             } else {
                 // When no elements are given, read the unit's values
                 // They will be ignored when elements are present!

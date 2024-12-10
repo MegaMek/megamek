@@ -76,6 +76,11 @@ public class MMShuffle extends Roll {
         return this.one + this.two;
     }
 
+    @Override
+    public int[] getIntValues() {
+        return new int[] {this.one, this.two};
+    }
+
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.

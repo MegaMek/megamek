@@ -21,9 +21,11 @@ package megamek.common.alphaStrike;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is an Alpha Strike game object that holds all game information. This is intentionally a stub and
@@ -32,7 +34,7 @@ import java.util.List;
  */
 public class ASGame extends AbstractGame {
 
-    private GameOptions options = new GameOptions();
+    private IGameOptions options = new GameOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
     private GamePhase lastPhase = GamePhase.UNKNOWN;
     private Board board = new Board();
@@ -48,7 +50,7 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
-    public GameOptions getOptions() {
+    public IGameOptions getOptions() {
         return null;
     }
 
@@ -134,8 +136,64 @@ public class ASGame extends AbstractGame {
     }
 
     @Override
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        return 0;
+    }
+
+    @Override
     public ReportEntry getNewReport(int messageId) {
         return new Report(messageId);
+    }
+
+    @Override
+    public void setVictoryPlayerId(int victoryPlayerId) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void setVictoryTeam(int victoryTeam) {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public void cancelVictory() {
+        // NOT IMPLEMENTED
+    }
+
+    @Override
+    public int getVictoryPlayerId() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public int getVictoryTeam() {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public boolean gameTimerIsExpired() {
+        // NOT IMPLEMENTED
+        return false;
+    }
+
+    @Override
+    public int getLiveCommandersOwnedBy(Player player) {
+        // NOT IMPLEMENTED
+        return 0;
+    }
+
+    @Override
+    public Optional<Player> playerForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> idForPlayername(String playerName) {
+        // NOT IMPLEMENTED
+        return Optional.empty();
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

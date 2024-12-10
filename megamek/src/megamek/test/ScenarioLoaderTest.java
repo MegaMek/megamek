@@ -1,13 +1,5 @@
 package megamek.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import megamek.common.Game;
 import megamek.common.MekSummaryCache;
 import megamek.common.scenario.ScenarioLoader;
@@ -15,6 +7,14 @@ import megamek.common.scenario.ScenarioLoaderException;
 import megamek.common.scenario.ScenarioV1;
 import megamek.server.Server;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class ScenarioLoaderTest {
     private List<String> errCache = new ArrayList<>();

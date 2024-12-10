@@ -43,6 +43,7 @@ import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.*;
+import megamek.common.options.BasicGameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.logging.MMLogger;
@@ -223,25 +224,31 @@ public class ScenarioV2 implements Scenario {
     }
 
     private void parseOptions(IGame game) {
-        game.getOptions().initialize();
-        if (node.has(OPTIONS)) {
-            JsonNode optionsNode = node.get(OPTIONS);
-            if (optionsNode.has(OPTIONS_FILE)) {
-                File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
-                game.getOptions().loadOptions(optionsFile, true);
-            } else {
-                game.getOptions().loadOptions();
-            }
+        var options = game.getOptions();
 
-            if (optionsNode.has(OPTIONS_ON)) {
-                JsonNode onNode = optionsNode.get(OPTIONS_ON);
-                onNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
-            }
-            if (optionsNode.has(OPTIONS_OFF)) {
-                JsonNode offNode = optionsNode.get(OPTIONS_OFF);
-                offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
+        if (options instanceof BasicGameOptions basicGameOptions) {
+            basicGameOptions.initialize();
+            if (node.has(OPTIONS)) {
+                JsonNode optionsNode = node.get(OPTIONS);
+                if (optionsNode.has(OPTIONS_FILE)) {
+                    File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
+                    basicGameOptions.loadOptions(optionsFile, true);
+                } else {
+                    basicGameOptions.loadOptions();
+                }
+
+                if (optionsNode.has(OPTIONS_ON)) {
+                    JsonNode onNode = optionsNode.get(OPTIONS_ON);
+                    onNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(true));
+                }
+                if (optionsNode.has(OPTIONS_OFF)) {
+                    JsonNode offNode = optionsNode.get(OPTIONS_OFF);
+                    offNode.iterator().forEachRemaining(n -> game.getOptions().getOption(n.textValue()).setValue(false));
+                }
             }
         }
+
+
     }
 
     private void parseDeployment(JsonNode playerNode, Player player) {

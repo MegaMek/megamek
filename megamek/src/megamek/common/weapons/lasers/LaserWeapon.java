@@ -13,27 +13,25 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
+import megamek.common.options.IGameOptions;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.InsulatedLaserWeaponHandler;
 import megamek.common.weapons.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+
 /**
  * @author Andrew Hunter
  * @since Sep 2, 2004
  */
 public abstract class LaserWeapon extends EnergyWeapon {
+    @Serial
     private static final long serialVersionUID = -9210696480919833245L;
 
     public LaserWeapon() {
@@ -45,7 +43,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         if (!(this instanceof PulseLaserWeapon)) {

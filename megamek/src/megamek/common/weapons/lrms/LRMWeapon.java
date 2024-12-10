@@ -25,6 +25,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMAntiTSMHandler;
@@ -87,7 +88,7 @@ public abstract class LRMWeapon extends MissileWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

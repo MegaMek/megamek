@@ -67,11 +67,11 @@ public final class Force implements Serializable {
         setParent(parent.getId());
         setOwnerId(parent.getOwnerId());
     }
-    
+
     /**
      * Creates a force with name n and id nId. Without either a parent or owner
      * this force is a stub and should not be added to a Forces object. Used to
-     * parse the forceString, e.g. when loading a MUL. 
+     * parse the forceString, e.g. when loading a MUL.
      */
     public Force(final String name, final int id, final Camouflage camouflage) {
         setName(Objects.requireNonNull(name));
@@ -102,7 +102,7 @@ public final class Force implements Serializable {
     public void setName(String n) {
         name = n;
     }
-    
+
     public int getId() {
         return id;
     }
@@ -130,11 +130,11 @@ public final class Force implements Serializable {
     public int getOwnerId() {
         return ownerId;
     }
-    
+
     void setOwnerId(int newOwner) {
         ownerId = newOwner;
     }
-    
+
     /** Returns the Force ID of this force's parent force; -1 if top-level. */
     public int getParentId() {
         return parent;
@@ -143,37 +143,37 @@ public final class Force implements Serializable {
     public @Nullable Force getParent(final Game game) {
         return game.getForces().getForce(getParentId());
     }
-    
+
     void setParent(int newParentId) {
         parent = newParentId;
     }
-    
+
     public boolean isTopLevel() {
         return parent == NO_FORCE;
     }
-    
+
     public int subForceCount() {
         return subForces.size();
     }
-    
+
     public int entityCount() {
         return entities.size();
     }
-    
-    /** 
+
+    /**
      * Returns the number of direct children of this force, i.e. the
-     * number of direct members + the number of direct subforces. 
+     * number of direct members + the number of direct subforces.
      */
     public int getChildCount() {
         return entities.size() + subForces.size();
     }
-    
+
     /** Returns true if the force contains neither units nor subforces. */
     public boolean isEmpty() {
         return getChildCount() == 0;
     }
-    
-    /** 
+
+    /**
      * Returns the id of the entity at the provided index from the list of
      * direct members of this force (not subforces). Indices outside of
      * 0 ... entityCount() - 1 will result in an exception.
@@ -181,85 +181,85 @@ public final class Force implements Serializable {
     public int getEntityId(int index) {
         return entities.get(index);
     }
-    
-    /** 
+
+    /**
      * Returns the id of the force at the provided index from the list of
-     * subforces of this force. Indices outside of 0 ... subForceCount() - 1 
+     * subforces of this force. Indices outside of 0 ... subForceCount() - 1
      * will result in an exception.
      */
     public int getSubForceId(int index) {
         return subForces.get(index);
     }
-    
-    /** 
+
+    /**
      * Returns true if the provided unit is among the force's direct members.
      * Does NOT check if the unit is part of any subforce.
      */
     public boolean containsEntity(ForceAssignable unit) {
         return containsEntity(unit.getId());
     }
-    
-    /** 
-     * Returns true if the provided entity is among the force's direct members. 
-     * Does NOT check if the entity is part of any subforce. 
+
+    /**
+     * Returns true if the provided entity is among the force's direct members.
+     * Does NOT check if the entity is part of any subforce.
      */
     public boolean containsEntity(int id) {
         return entities.contains(id);
     }
-    
-    /** 
+
+    /**
      * Returns the index of the provided unit in the list of direct members of this force.
      * Returns -1 if the unit is no direct member of this force.
      */
     public int entityIndex(ForceAssignable unit) {
         return entities.indexOf(unit.getId());
     }
-    
-    /** 
-     * Returns true if the provided force is among this force's direct subforces. 
+
+    /**
+     * Returns true if the provided force is among this force's direct subforces.
      */
     public boolean containsSubForce(Force force) {
         return subForces.contains(force.getId());
     }
-    
-    /** 
+
+    /**
      * Returns the index of the provided force in the list of direct subforces of this force.
-     * Returns -1 if the force is no direct subforce of this force.  
+     * Returns -1 if the force is no direct subforce of this force.
      */
     public int subForceIndex(Force force) {
         return subForces.indexOf(force.getId());
     }
-    
+
     void addSubForce(Force subForce) {
         subForces.add(subForce.getId());
     }
-    
+
     public List<Integer> getEntities() {
         return Collections.unmodifiableList(entities);
     }
-    
+
     public List<Integer> getSubForces() {
         return Collections.unmodifiableList(subForces);
     }
-    
+
     void addEntity(ForceAssignable unit) {
         entities.add(unit.getId());
     }
-    
+
     void removeEntity(ForceAssignable unit) {
         entities.remove((Integer) unit.getId());
     }
-    
+
     /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
         entities.remove((Integer) id);
     }
-    
+
     /** Removes the given id from the list of (direct) subforces. */
     void removeSubForce(int id) {
         subForces.remove((Integer) id);
     }
-    
+
     @Override
     protected Force clone() {
         Force clone = new Force(name, id, camouflage.clone());
@@ -269,16 +269,16 @@ public final class Force implements Serializable {
         clone.entities = new ArrayList<>(entities);
         return clone;
     }
-    
+
     @Override
     public String toString() {
         List<String> en = entities.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
         List<String> sf = subForces.stream().map(e -> Integer.toString(e)).collect(Collectors.toList());
-        return name + ": [" + id + "]; Parent: " + parent + "; Entities: " 
+        return name + ": [" + id + "]; Parent: " + parent + "; Entities: "
                 + String.join(",", en) + "; Subforces: " + String.join(",", sf)
                 + "; Owner: " + ownerId;
     }
-    
+
     /** Moves up the given entityId by one position if possible. Returns true when an actual change occurred. */
     boolean moveUp(int unitId) {
         if (!containsEntity(unitId)) {
@@ -291,7 +291,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves down the given unitId by one position if possible. Returns true when an actual change occurred. */
     boolean moveDown(int unitId) {
         if (!containsEntity(unitId)) {
@@ -304,7 +304,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves up the given subforce by one position if possible. Returns true when an actual change occurred. */
     boolean moveUp(Force subforce) {
         if (!containsSubForce(subforce)) {
@@ -317,7 +317,7 @@ public final class Force implements Serializable {
         }
         return false;
     }
-    
+
     /** Moves down the given subforce by one position if possible. Returns true when an actual change occurred. */
     boolean moveDown(Force subforce) {
         if (!containsSubForce(subforce)) {

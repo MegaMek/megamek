@@ -26,6 +26,7 @@ import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -244,7 +245,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return getType().hasModeType(mode);
     }
 
-    public void adaptToGameOptions(GameOptions options) {
+    public void adaptToGameOptions(IGameOptions options) {
         if (getType() instanceof Weapon) {
             ((Weapon) getType()).adaptToGameOptions(options);
         }

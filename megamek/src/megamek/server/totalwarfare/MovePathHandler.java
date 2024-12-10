@@ -1561,6 +1561,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
                             if (!getGame().getBoard().contains(curPos)) {
+                                curPos = curPos.translated(step.getFacing(), -1); //Return its position to on-map so it can be targeted this turn
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                                 return;

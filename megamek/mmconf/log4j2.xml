@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Configuration status="info">
     <Properties>
-<!--        <Property name="layout">%d{ABSOLUTE} %-5p [%logger{36}] {%t}%n%l - %m%n%ex%n</Property> -->
-        <Property name="layout">%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p (%F:%L) [%c{1.}] {%t} - %m%n%ex</Property>
+        <Property name="layout">%d{ABSOLUTE} %-5p [%logger{36}] {%t}%n%l - %m%n%ex%n</Property>
     </Properties>
 
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT" follow="true">
+        <Console name="dev">
             <PatternLayout pattern="${layout}" />
         </Console>
         <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
@@ -18,28 +17,30 @@
         <File name="MekHQLog" fileName="logs/mekhq.log" append="false">
             <PatternLayout pattern="${layout}" />
         </File>
+        <Null name="null" />
     </Appenders>
 
     <Loggers>
         <Logger name="megamek.client.bot" level="error" additivity="false">
             <AppenderRef ref="MegaMekLog" />
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
         </Logger>
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="MegaMekLog" />
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
         </Logger>
         <Logger name="megameklab" level="info" additivity="false">
             <AppenderRef ref="MegaMekLabLog" />
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
         </Logger>
         <Logger name="mekhq" level="info" additivity="false">
             <AppenderRef ref="MekHQLog" />
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
         </Logger>
 
         <Root level="info">
-            <AppenderRef ref="Console" />
+            <AppenderRef ref="MegaMekLog" />
+            <AppenderRef ref="${env:mm.profile:-null}" />
         </Root>
     </Loggers>
 </Configuration>

@@ -4,6 +4,7 @@ import megamek.common.annotations.Nullable;
 
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Optional;
 
 public interface IGameOptions {
 
@@ -87,6 +88,16 @@ public interface IGameOptions {
      * @return the option or <code>null</code> if there is no such option
      */
     @Nullable IOption getOption(String name);
+
+    /**
+     * Returns an Optional option by name or <code>Optional empty</code> if there is no such option
+     *
+     * @param name option name
+     * @return the Optional option or <code>empty</code> if there is no such option
+     */
+    default Optional<IOption> getOptionOpt(String name) {
+        return Optional.ofNullable(getOption(name));
+    }
 
     /**
      * Returns the value of the desired option as the <code>boolean</code>

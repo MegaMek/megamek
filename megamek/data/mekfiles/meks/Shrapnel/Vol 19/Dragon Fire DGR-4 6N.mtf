@@ -1,55 +1,49 @@
-generator:Mordel.Net Code Release 2.24.13.1 on 2-Oct-2024
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-02
 chassis:Dragon Fire
-model:DGR-9D
-source:Shrapnel 19
+model:DGR-4/6N
 
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3150
-Rules Level:2
+techbase:Inner Sphere
+era:3080
+source:Shrapnel 19
+rules level:2
 role:Brawler
 
 quirk:good_rep_1
 quirk:no_arms
 
-Mass:75
-Engine:225 XL Engine(IS)
-Structure:IS Endo-Composite
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:XL Gyro
+mass:75
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:3
-Jump MP:0
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard (IS)
-LA Armor:24
-RA Armor:24
-LT Armor:26
-RT Armor:26
-CT Armor:38
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:26
+RT armor:26
+CT armor:38
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
-Weapons:6
-ER Medium Laser, Head
-ER Large Laser, Right Torso
-Rotary AC/5, Right Torso
-ER Medium Laser, Left Torso
-ER PPC, Right Arm
+Weapons:5
 Gauss Rifle, Left Arm
+LB 10-X AC, Right Arm
+ER Medium Laser, Left Torso
+ER Large Laser, Center Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
@@ -57,47 +51,50 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
+IS Endo Steel
+-Empty-
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERPPC
-CLERPPC
-Endo-Composite
-Endo-Composite
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERMediumLaser
+ISERMediumLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
 IS Gauss Ammo
 IS Gauss Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-CLERLargeLaser
-Endo-Composite
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -108,17 +105,17 @@ Gyro
 Gyro
 Gyro
 Gyro
-Gyro
-Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+ISERMediumLaser
 Sensors
 Life Support
 -Empty-
@@ -133,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Composite
-Endo-Composite
+IS Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -147,21 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Composite
-Endo-Composite
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-Center Leg:
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -182,6 +165,7 @@ manufacturer:J.B. BattleMechs Inc
 primaryfactory:Storfors
 systemmanufacturer:CHASSIS:Royalstar ATE with Endo Steel
 systemmanufacturer:ENGINE:Pitban 300 XL
-systemmanufacturer:ARMOR:ArcShield Maxi II with CASE II
+systemmanufacturer:ARMOR:ArcShield Maxi II
 systemmanufacturer:COMMUNICATIONS:CeresCom Model 21-Rs with Guardian ECM
 systemmanufacturer:TARGETING:FireScan with IndirecTrack
+

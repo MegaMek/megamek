@@ -1,6 +1,5 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,22 +13,19 @@
  */
 package megamek.common.options;
 
-import java.io.Serial;
+import megamek.common.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * Parent class for options settings
  */
-public abstract class AbstractOptions implements Serializable, IGameOptions {
-
-    @Serial
+public abstract class AbstractOptions implements IGameOptions, Serializable {
     private static final long serialVersionUID = 6406883135074654379L;
-
-    protected final Hashtable<String, IOption> optionsHash;
+    private final Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
     protected AbstractOptions() {
-        optionsHash = new Hashtable<>(512);
         initialize();
         getOptionsInfoImp().finish();
     }
@@ -63,17 +59,8 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
     }
 
     @Override
-    public IOptionsInfo getOptionsInfo() {
-        return getOptionsInfoImp();
-    }
-
-    protected IBasicOptionGroup addGroup(String groupName) {
-        return getOptionsInfoImp().addGroup(groupName);
-    }
-
-
     public Enumeration<IOptionGroup> getGroups() {
-        return new AbstractOptions.GroupsEnumeration();
+        return new GroupsEnumeration();
     }
 
     /**
@@ -87,17 +74,6 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
     }
 
     /**
-     * Returns the UI specific data to allow the user to set the option
-     *
-     * @param name option name
-     * @return UI specific data
-     * @see IOptionInfo
-     */
-    public IOptionInfo getOptionInfo(String name) {
-        return getOptionsInfo().getOptionInfo(name);
-    }
-
-    /**
      * Returns a collection of all of the options in this options container, regardless of whether they're
      * active/selected or not. Note that this Collection is unmodifiable, but the contained IOptions are not
      * copied, so changing their state will affect this options object.
@@ -108,39 +84,73 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
         return Collections.unmodifiableCollection(optionsHash.values());
     }
 
+    /**
+     * Returns the UI specific data to allow the user to set the option
+     *
+     * @param name option name
+     * @return UI specific data
+     * @see IOptionInfo
+     */
+    public IOptionInfo getOptionInfo(String name) {
+        return getOptionsInfo().getOptionInfo(name);
+    }
+
     @Override
-    public IOption getOption(String name) {
+    public @Nullable IOption getOption(String name) {
         return optionsHash.get(name);
     }
 
+    /**
+     * Returns the value of the desired option as the <code>String</code>
+     *
+     * @param name option name
+     * @return the value of the desired option as the <code>String</code>
+     */
+    public String stringOption(String name) {
+        return getOption(name).stringValue();
+    }
+
+    @Override
+    public IOptionsInfo getOptionsInfo() {
+        return getOptionsInfoImp();
+    }
+
+    Map<String, IOption> getOptionsHash() {
+        return optionsHash;
+    }
+
     protected abstract AbstractOptionsInfo getOptionsInfoImp();
+
+    protected IBasicOptionGroup addGroup(String groupName) {
+        return getOptionsInfoImp().addGroup(groupName);
+    }
 
     protected IBasicOptionGroup addGroup(String groupName, String key) {
         return getOptionsInfoImp().addGroup(groupName, key);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            String defaultValue) {
+                             String defaultValue) {
         addOption(group, name, IOption.STRING, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            boolean defaultValue) {
+                             boolean defaultValue) {
         addOption(group, name, IOption.BOOLEAN, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            int defaultValue) {
+                             int defaultValue) {
         addOption(group, name, IOption.INTEGER, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            float defaultValue) {
+                             float defaultValue) {
         addOption(group, name, IOption.FLOAT, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name, Vector<String> defaultValue) {
-        addOption(group, name, IOption.CHOICE, ""); // defaultValue is ignored and set as empty string
+        addOption(group, name, IOption.CHOICE, "");
     }
 
     protected void addOption(IBasicOptionGroup group, String name, int type, Object defaultValue) {
@@ -148,9 +158,11 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
         getOptionsInfoImp().addOptionInfo(group, name);
     }
 
+
+
     protected class GroupsEnumeration implements Enumeration<IOptionGroup> {
 
-        private final Enumeration<IBasicOptionGroup> groups;
+        private Enumeration<IBasicOptionGroup> groups;
 
         GroupsEnumeration() {
             groups = getOptionsInfo().getGroups();
@@ -178,7 +190,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
 
         protected class GroupProxy implements IOptionGroup {
 
-            private final IBasicOptionGroup group;
+            private IBasicOptionGroup group;
 
             GroupProxy(IBasicOptionGroup group) {
                 this.group = group;
@@ -197,7 +209,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
             @Override
             public String getDisplayableName() {
                 return getOptionsInfoImp().getGroupDisplayableName(
-                        group.getName());
+                    group.getName());
             }
 
             @Override
@@ -255,4 +267,5 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
 
         }
     }
+
 }

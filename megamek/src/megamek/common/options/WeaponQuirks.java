@@ -17,9 +17,7 @@ import megamek.common.*;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
-import java.io.Serial;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,30 +30,8 @@ import static java.util.stream.Collectors.toList;
  */
 public class WeaponQuirks extends AbstractOptions {
 
-    @Serial
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks";
-
-    // All quirks you add:
-    private static final String[] QUIRKS = {
-        OptionsConstants.QUIRK_WEAP_POS_ACCURATE,
-        OptionsConstants.QUIRK_WEAP_NEG_INACCURATE,
-        OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON,
-        OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING,
-        OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING,
-        OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING,
-        OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE,
-        OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS,
-        OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED,
-        OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE,
-        OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD,
-        OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT,
-        OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS,
-        OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE,
-        OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL,
-        OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED,
-        OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED
-    };
 
     public WeaponQuirks() {
         super();
@@ -63,13 +39,25 @@ public class WeaponQuirks extends AbstractOptions {
 
     @Override
     public void initialize() {
-        var wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS);
-        var wpnInfo = getOptionsInfoImp();
+        IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED, false);
 
-        for (String quirkName : QUIRKS) {
-            optionsHash.put(quirkName, new Option(this, quirkName, IOption.BOOLEAN, false));
-            wpnInfo.addOptionInfo(wpnQuirk, quirkName);
-        }
     }
 
     //TODO
@@ -96,27 +84,25 @@ public class WeaponQuirks extends AbstractOptions {
         return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
     }
 
-    public static boolean isQuirkLegalFor(IOption quirk, Entity en,
-            EquipmentType etype) {
+    public static boolean isQuirkLegalFor(IOption quirk, Entity en, EquipmentType etype) {
         String qName = quirk.getName();
         // There may be some non-WeaponType quirks, specifically melee weapons
         if (!(etype instanceof WeaponType) && !etype.hasFlag(MiscType.F_CLUB)) {
             return false;
         } else if (etype.hasFlag(MiscType.F_CLUB)) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
                 return false;
             }
             return true;
         }
 
         // Anything else is a WeaponType
-        assert etype instanceof WeaponType;
         WeaponType wtype = (WeaponType) etype;
 
         if (!(wtype instanceof AmmoWeapon)) {
@@ -146,11 +132,10 @@ public class WeaponQuirks extends AbstractOptions {
             }
         }
 
-        boolean coolingQuirks = qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING);
         if (en instanceof Tank || en instanceof BattleArmor || en instanceof ProtoMek) {
-            if (coolingQuirks) {
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
                 return false;
             }
         }
@@ -160,7 +145,9 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         if (wtype.getHeat() == 0) {
-            if (coolingQuirks) {
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
                 return false;
             }
         }
@@ -199,19 +186,16 @@ public class WeaponQuirks extends AbstractOptions {
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
-            return !(en instanceof Jumpship);
+            if (en instanceof Jumpship) {
+                return false;
+            }
         }
 
         return true;
     }
 
-    @Override
-    public Map<String, IOption> getOptionsHash() {
-        return Map.of();
-    }
-
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
-        private static final AbstractOptionsInfo instance = new WeaponQuirksInfo();
+        private static AbstractOptionsInfo instance = new WeaponQuirksInfo();
 
         public static AbstractOptionsInfo getInstance() {
             return instance;

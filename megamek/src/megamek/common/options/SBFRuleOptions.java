@@ -102,11 +102,6 @@ public class SBFRuleOptions extends BasicGameOptions {
         return SBFRuleOptionsInfo.getInstance();
     }
 
-    @Override
-    public Map<String, IOption> getOptionsHash() {
-        return Map.of();
-    }
-
     private static class SBFRuleOptionsInfo extends AbstractOptionsInfo {
         private static final AbstractOptionsInfo instance = new SBFRuleOptionsInfo();
 

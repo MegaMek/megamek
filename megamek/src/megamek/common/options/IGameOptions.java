@@ -30,8 +30,6 @@ public interface IGameOptions {
 
     IOptionsInfo getOptionsInfo();
 
-    Map<String, IOption> getOptionsHash();
-
     /**
      * Returns a string of all the quirk "codes" for this entity, using sep as
      * the separator

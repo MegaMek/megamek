@@ -42,7 +42,9 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
+    public static final String AUTORESOLVE_GAMELOG_KEEP = "KeepAutoResolveGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
+    public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
@@ -88,6 +90,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
+        store.setDefault(AUTO_RESOLVE_GAMELOG_FILENAME, "acar_gamelog.html");
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -202,6 +205,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(GAMELOG_FILENAME);
     }
 
+    public String getAutoResolveGameLogFilename() {
+        return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
+    }
+
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -220,6 +227,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public boolean keepGameLog() {
         return store.getBoolean(GAMELOG_KEEP);
+    }
+
+    public boolean keepAutoResolveGameLog() {
+        return store.getBoolean(AUTORESOLVE_GAMELOG_KEEP);
     }
 
     public boolean memoryDumpOn() {
@@ -248,6 +259,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setKeepGameLog(boolean state) {
         store.setValue(GAMELOG_KEEP, state);
+    }
+
+    public void setKeepAutoResolveGameLog(boolean state) {
+        store.setValue(AUTORESOLVE_GAMELOG_KEEP, state);
     }
 
     public void setLastConnectAddr(String serverAddr) {

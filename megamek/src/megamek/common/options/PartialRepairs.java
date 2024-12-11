@@ -136,11 +136,6 @@ public class PartialRepairs extends AbstractOptions {
         }
     }
 
-    @Override
-    public Map<String, IOption> getOptionsHash() {
-        return Map.of();
-    }
-
     private static class PartialRepairInfo extends AbstractOptionsInfo {
         private static AbstractOptionsInfo instance = new PartialRepairInfo();
 

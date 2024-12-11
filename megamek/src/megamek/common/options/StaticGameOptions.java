@@ -17,12 +17,17 @@ public class StaticGameOptions implements IGameOptions {
         tableInfo.putAll(optionsHash);
     }
 
+    public static final StaticGameOptions EMPTY = empty();
+
     public static StaticGameOptions empty() {
         return new StaticGameOptions(Map.of());
     }
 
     public static StaticGameOptions create(IGameOptions gameOptions) {
-        return new StaticGameOptions(gameOptions.getOptionsHash());
+        if (gameOptions instanceof AbstractOptions abstractOptions) {
+            return new StaticGameOptions(abstractOptions.getOptionsHash());
+        }
+        return EMPTY;
     }
 
     @Override
@@ -78,11 +83,6 @@ public class StaticGameOptions implements IGameOptions {
     @Override
     public IOptionsInfo getOptionsInfo() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, IOption> getOptionsHash() {
-        return tableInfo;
     }
 
 }

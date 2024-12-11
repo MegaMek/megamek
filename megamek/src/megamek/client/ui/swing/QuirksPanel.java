@@ -98,7 +98,7 @@ public class QuirksPanel extends JPanel {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
                     IOption option = j.nextElement();
-                    if (!WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
+                    if (WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
                         continue;
                     }
                     addWeaponQuirk(key, option, editable);

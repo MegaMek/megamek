@@ -134,6 +134,17 @@ public abstract class Roll implements Serializable {
     }
 
     /**
+     * Determines if the roll is a success based on the target number
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccess(int targetRoll) {
+        return getIntValue() > 2 && getIntValue() >= targetRoll;
+    }
+
+    /**
      * Determines if the roll is a success based on the target roll.
      *
      * @param targetRoll the target roll to compare against
@@ -141,6 +152,17 @@ public abstract class Roll implements Serializable {
      */
     public boolean isTargetRollSuccessWithoutSimpleFailure(TargetRoll targetRoll) {
         return getIntValue() >= targetRoll.getValue();
+    }
+
+    /**
+     * Determines if the roll is a success based on the target number
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccessWithoutSimpleFailure(int targetRoll) {
+        return getIntValue() >= targetRoll;
     }
 
     /**

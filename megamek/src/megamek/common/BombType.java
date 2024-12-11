@@ -60,7 +60,7 @@ public class BombType extends AmmoType {
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
                                                       "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo",
-                                                      "RL 10 Ammo (Bomb)" };
+                                                      "RL-P 10 Ammo (Bomb)" };
 
     public static final String[] bombWeaponNames = { null, null, null, "BombRL", "BombTAG", "AAA Missile",
                                                     "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",

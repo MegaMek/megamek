@@ -41,14 +41,17 @@ public class BombType extends AmmoType {
     public static final int B_ALAMO   = 14;
     public static final int B_FAE_SMALL = 15;
     public static final int B_FAE_LARGE = 16;
-    public static final int B_NUM     = 17;
+    // Rocket Launcher (Prototype) Pod
+    public static final int B_RLP = 17;
+    public static final int B_NUM     = 18;
 
     public static final String[] bombNames = { "HE Bomb","Cluster Bomb","Laser-guided Bomb",
                                               "Rocket", "TAG", "AAA Missile", "AS Missile",
                                               "ASEW Missile", "Arrow IV Missile",
                                               "Arrow IV Homing Missile", "Inferno Bomb",
                                               "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
-                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)" };
+                                              "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)",
+                                              "Prototype Rocket"};
 
     public static final String[] bombInternalNames = { "HEBomb","ClusterBomb","LGBomb",
                                                       "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
@@ -56,13 +59,15 @@ public class BombType extends AmmoType {
                                                       "ASEWMissile Ammo", "ArrowIVMissile Ammo",
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",
                                                       "LAAMissile Ammo", "ThunderBomb", "TorpedoBomb",
-                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo" };
+                                                      "AlamoMissile Ammo", "FABombSmall Ammo", "FABombLarge Ammo",
+                                                      "RL-P 10 Ammo (Bomb)" };
 
     public static final String[] bombWeaponNames = { null, null, null, "BombRL", "BombTAG", "AAA Missile",
                                                     "AS Missile", "ASEWMissile", "BombArrowIV", "BombArrowIV",
-                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null };
+                                                    null, "LAAMissile", null, null, "AlamoMissile", null, null,
+                                                    "BombRLP"};
 
-    public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5, 6, 6, 5, 5, 1, 2, 1, 1, 10, 1, 2 };
+    public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5, 6, 6, 5, 5, 1, 2, 1, 1, 10, 1, 2, 1 };
 
     public static final Map<String, Integer> blastRadius;
     private int bombType;
@@ -173,6 +178,7 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createLaserGuidedBomb());
 //        EquipmentType.addType(BombType.createCLLaserGuidedBomb());
         EquipmentType.addType(BombType.createRocketBomb());
+        EquipmentType.addType(BombType.createPrototypeRocketBomb());
         EquipmentType.addType(BombType.createTAGBomb());
 //        EquipmentType.addType(BombType.createCLTAGBomb());
         EquipmentType.addType(BombType.createAAAMissileBomb());
@@ -242,6 +248,8 @@ public class BombType extends AmmoType {
                 return createSmallFuelAirBomb();
             case B_FAE_LARGE:
                 return createLargeFuelAirBomb();
+            case B_RLP:
+                return createPrototypeRocketBomb();
             default:
                 return null;
         }
@@ -628,6 +636,35 @@ public class BombType extends AmmoType {
         bomb.techAdvancement.setTechRating(RATING_B);
         bomb.techAdvancement.setAvailability(RATING_X, RATING_X, RATING_B, RATING_B);
 
+        return bomb;
+    }
+
+    private static BombType createPrototypeRocketBomb() {
+        BombType bomb = new BombType();
+
+        bomb.name = "Rocket Launcher (Prototype) Pod";
+        bomb.setInternalName(BombType.getBombInternalName(BombType.B_RLP));
+        bomb.addLookupName("RL-P 10 (Bomb)");
+        bomb.damagePerShot = 1;
+        // This works but is fragile
+        bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB).or(WeaponType.F_PROTOTYPE);
+        bomb.rackSize = 10;
+        bomb.ammoType = AmmoType.T_RL_BOMB;
+        bomb.bombType = BombType.B_RLP;
+        bomb.shots = 1;
+        bomb.bv = 15;
+        bomb.cost = 15000;
+        bomb.rulesRefs = "73, 195, 217, IO";
+        bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+            .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false, false, false)
+            .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+            .setClanApproximate(true, false, false, true, false)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
         return bomb;
     }
 

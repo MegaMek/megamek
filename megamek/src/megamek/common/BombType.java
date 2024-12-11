@@ -178,6 +178,7 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createLaserGuidedBomb());
 //        EquipmentType.addType(BombType.createCLLaserGuidedBomb());
         EquipmentType.addType(BombType.createRocketBomb());
+        EquipmentType.addType(BombType.createPrototypeRocketBomb());
         EquipmentType.addType(BombType.createTAGBomb());
 //        EquipmentType.addType(BombType.createCLTAGBomb());
         EquipmentType.addType(BombType.createAAAMissileBomb());

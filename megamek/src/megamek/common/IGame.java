@@ -20,11 +20,16 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.event.GameEntityEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.BasicGameOptions;
+import megamek.common.options.IGameOptions;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.server.scriptedevent.TriggeredEvent;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,7 +71,7 @@ public interface IGame {
 
     // endregion
 
-    BasicGameOptions getOptions();
+    IGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1
@@ -328,7 +333,6 @@ public interface IGame {
     /**
      * This is a Client-side method to replace or add units that are sent from the
      * server.
-     *
      * Adds the given units to the list of units or objects in the current game.
      * When a unit's ID is already
      * present the currently assigned unit will be replaced with the given new one.
@@ -343,6 +347,13 @@ public interface IGame {
      *         should have a reason for their removal set.
      */
     List<InGameObject> getGraveyard();
+
+    /**
+     * @return the number of non-destroyed entities owned by the player, including
+     *         entities not yet
+     *         deployed. Ignores offboard units and captured Mek pilots.
+     */
+    int getLiveDeployedEntitiesOwnedBy(Player player);
 
     // endregion
 
@@ -446,5 +457,56 @@ public interface IGame {
      */
     void addScriptedEvent(TriggeredEvent event);
 
-    // endregion
+
+    /**
+     * Setter for property victoryPlayerId.
+     *
+     * @param victoryPlayerId New value of property victoryPlayerId.
+     */
+    void setVictoryPlayerId(int victoryPlayerId);
+
+    /**
+     * Setter for property victoryPlayerId.
+     *
+     * @param victoryTeam New value of property victoryPlayerId.
+     */
+    void setVictoryTeam(int victoryTeam);
+
+    /**
+     * Cancels a victory
+     */
+    void cancelVictory();
+
+
+    /**
+     * Getter for property victoryPlayerId.
+     *
+     * @return Value of property victoryPlayerId.
+     */
+    int getVictoryPlayerId();
+
+    /**
+     * Getter for property victoryTeam.
+     *
+     * @return Value of property victoryTeam.
+     */
+    int getVictoryTeam();
+
+    /**
+     * Verify if the game has ended due a time limit
+     * @return true if the game has ended due to a time limit
+     */
+    boolean gameTimerIsExpired();
+
+    /**
+     * Get how many commanders still alive are owned by the player
+     * @param player the object player
+     * @return the number of commanders owned by the player
+     */
+    int getLiveCommandersOwnedBy(Player player);
+
+    Optional<Player> playerForPlayername(String playerName);
+
+    Optional<Integer> idForPlayername(String playerName);
+
 }

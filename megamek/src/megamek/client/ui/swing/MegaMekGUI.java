@@ -17,43 +17,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.Compute.d6;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BaseMultiResolutionImage;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
@@ -85,6 +48,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.jacksonadapters.BotParser;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -92,15 +56,38 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
-import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;
+import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import org.apache.commons.lang3.NotImplementedException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BaseMultiResolutionImage;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+
+import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(MegaMekGUI.class);
@@ -485,11 +472,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IGameManager getGameManager(GameType gameType) {
         return switch (gameType) {
-            /*
-             * Not implemented:
-             * case AS-> new ASGameManager();
-             * case BF-> new BFGameManager();
-             */
+            case AS-> throw new NotImplementedException("ASGameManager");
+            case BF-> throw new NotImplementedException("BFGameManager");
             case SBF -> new SBFGameManager();
             default -> new TWGameManager();
         };
@@ -497,11 +481,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IClientGUI getClientGUI(GameType gameType, IClient client, MegaMekController controller) {
         return switch (gameType) {
-            /*
-             * Not implemented:
-             * case AS-> new ASGameManager();
-             * case BF-> new BFGameManager();
-             */
+            case AS-> throw new NotImplementedException("AS IClientGUI");
+            case BF-> throw new NotImplementedException("BF IClientGUI");
             case SBF -> new SBFClientGUI((SBFClient) client, controller);
             default -> new ClientGUI((Client) client, controller);
         };
@@ -509,11 +490,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private IClient getClient(GameType gameType, String playerName, String host, int port) {
         return switch (gameType) {
-            /*
-             * Not implemented:
-             * case AS-> new ASClient();
-             * case BF-> new BFClient();
-             */
+            case AS-> throw new NotImplementedException("AS IClient");
+            case BF-> throw new NotImplementedException("BF IClient");
             case SBF -> new SBFClient(playerName, host, port);
             default -> new Client(playerName, host, port);
         };
@@ -776,8 +754,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // popup options dialog
         if (!scenario.hasFixedGameOptions() && game instanceof Game) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, ((Game) game).getOptions(), false);
-            god.update(((Game) game).getOptions());
+            GameOptionsDialog god = new GameOptionsDialog(frame, (GameOptions) game.getOptions(), false);
+            god.update((GameOptions) game.getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
@@ -787,8 +765,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         // popup planetary conditions dialog
-        if ((game instanceof PlanetaryConditionsUsing) && !scenario.hasFixedPlanetaryConditions()) {
-            PlanetaryConditionsUsing plGame = (PlanetaryConditionsUsing) game;
+        if ((game instanceof PlanetaryConditionsUsing plGame) && !scenario.hasFixedPlanetaryConditions()) {
             PlanetaryConditionsDialog pcd = new PlanetaryConditionsDialog(frame, plGame.getPlanetaryConditions());
             pcd.update(plGame.getPlanetaryConditions());
             pcd.setVisible(true);
@@ -1164,8 +1141,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * display based
      * on DPI, but does not work as expected for ImageIcon
      *
-     * @param splashScreens
-     * @return
+     * @param splashScreens list of splash screen to load
+     * @return MultiResolutionImage
      */
     private BaseMultiResolutionImage getMultiResolutionSplashScreen(final List<String> splashScreens) {
         List<String> filenames = new ArrayList<>();

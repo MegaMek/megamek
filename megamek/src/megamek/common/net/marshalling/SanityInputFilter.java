@@ -53,6 +53,9 @@ public class SanityInputFilter implements ObjectInputFilter {
             // Java Net
             Pattern.compile("java\\.net\\.URI"),
 
+            // Java Math
+            Pattern.compile("java\\.math\\.BigInteger"),
+
             // Java Util
             Pattern.compile("java\\.util\\.AbstractMap"),
             Pattern.compile("java\\.util\\.ArrayList"),
@@ -116,7 +119,7 @@ public class SanityInputFilter implements ObjectInputFilter {
             }
         }
 
-        logger.info("Class is Rejected: {}", className);
+        logger.trace("Class is Rejected: {}", className);
 
         return Status.REJECTED;
     }

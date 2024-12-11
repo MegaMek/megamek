@@ -27,9 +27,9 @@ public abstract class BasicGameOptions extends AbstractOptions {
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic");
         addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_MOVEMENT, false);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_FIRING, false);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_PHYSICAL, true);
         addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true);
         addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true);
         addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false);

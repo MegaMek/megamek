@@ -20,38 +20,27 @@
  */
 package megamek.client.generator;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 import megamek.common.Configuration;
 import megamek.common.MekSummary;
 import megamek.common.MekSummaryCache;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.time.StopWatch;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.Predicate;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * This class sets up a random unit generator that can then be used to read in
  * user-created input files of random assignment tables
  * <p>
- * Files must be located in in the directory defined by
+ * Files must be located in the directory defined by
  * {@link Configuration#armyTablesDir()}. All files should comma-delimited text
  * files.
  * </p>
@@ -69,19 +58,21 @@ import megamek.logging.MMLogger;
 public class RandomUnitGenerator implements Serializable {
     private static final MMLogger logger = MMLogger.create(RandomUnitGenerator.class);
 
+    @Serial
     private static final long serialVersionUID = 5765118329881301375L;
 
     // The RATs are stored in a hashmap of string vectors. The keys are the RAT
     // names and the vectors just contain the unit names listed a number of times
     // equal to the frequency
     private final Map<String, RatEntry> rats = new HashMap<>();
+    private static final CountDownLatch latch = new CountDownLatch(1);
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
 
-    private ArrayList<ActionListener> listeners;
+    private final ArrayList<ActionListener> listeners;
 
     /**
      * Plain old data class used to represent nodes in a Random Assignment Table
@@ -109,7 +100,7 @@ public class RandomUnitGenerator implements Serializable {
      *
      * @author arlith
      */
-    protected class RatEntry {
+    public static class RatEntry {
         private Vector<String> units;
         private Vector<Float> weights;
 
@@ -317,7 +308,7 @@ public class RandomUnitGenerator implements Serializable {
             String ratFileNameLC = ratFile.getName().toLowerCase(Locale.ROOT);
 
             if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) {
-                // This is a Subversion work directory. Lets ignore it.
+                // This is a Subversion work directory. Let's ignore it.
                 continue;
             }
 
@@ -328,7 +319,7 @@ public class RandomUnitGenerator implements Serializable {
                 // recursion is fun
                 loadRatsFromDirectory(ratFile, msc, newNode);
 
-                // Prune empty nodes (this removes the "Unofficial" place holder)
+                // Prune empty nodes (this removes the "Unofficial" placeholder)
                 if (newNode.children.isEmpty()) {
                     node.children.remove(newNode);
                 }
@@ -349,7 +340,7 @@ public class RandomUnitGenerator implements Serializable {
                         }
                     }
                 } catch (Exception ex) {
-                    logger.error(ex, "Unable to load " + ratFile.getName());
+                    logger.error("Unable to load {}", ratFile.getName(), ex);
                 }
             }
 
@@ -360,7 +351,7 @@ public class RandomUnitGenerator implements Serializable {
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
             } catch (Exception ex) {
-                logger.error(ex, "Unable to load " + ratFile.getName());
+                logger.error("Unable to load {}", ratFile.getName(), ex);
             }
         }
     }
@@ -447,7 +438,7 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            logger.error(e, "generate");
+            logger.error("Error to generate", e);
         }
         return units;
     }
@@ -497,14 +488,25 @@ public class RandomUnitGenerator implements Serializable {
             rug.initializing = true;
             interrupted = false;
             rug.loader = new Thread(() -> {
-                long start = System.currentTimeMillis();
+                var stopwatch = StopWatch.create();
+                stopwatch.start();
                 rug.populateUnits();
-                long end = System.currentTimeMillis();
-                logger.info("Loaded Rats in: " + (end - start) + "ms.");
+                stopwatch.stop();
+                logger.info("Loaded Rats in: {}", stopwatch.toString());
+                rug.initialized = true;
+                latch.countDown();
             }, "Random Unit Generator unit populater");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();
         }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            logger.error("Initialization interrupted", e);
+            Thread.currentThread().interrupt();
+        }
+
         return rug;
     }
 

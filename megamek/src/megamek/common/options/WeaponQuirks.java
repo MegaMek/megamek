@@ -84,20 +84,19 @@ public class WeaponQuirks extends AbstractOptions {
         return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
     }
 
-    public static boolean isQuirkLegalFor(IOption quirk, Entity en,
-            EquipmentType etype) {
+    public static boolean isQuirkLegalFor(IOption quirk, Entity en, EquipmentType etype) {
         String qName = quirk.getName();
         // There may be some non-WeaponType quirks, specifically melee weapons
         if (!(etype instanceof WeaponType) && !etype.hasFlag(MiscType.F_CLUB)) {
             return false;
         } else if (etype.hasFlag(MiscType.F_CLUB)) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
                 return false;
             }
             return true;

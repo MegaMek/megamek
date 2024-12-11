@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * Parent class for options settings
  */
-public abstract class AbstractOptions implements Serializable {
+public abstract class AbstractOptions implements IGameOptions, Serializable {
     private static final long serialVersionUID = 6406883135074654379L;
     private final Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
@@ -32,22 +32,15 @@ public abstract class AbstractOptions implements Serializable {
 
     protected abstract void initialize();
 
-    /**
-     * Returns a count of all options in this object.
-     * @return Option count.
-     */
-    public int count() { 
+    @Override
+    public int count() {
         return count(null);
     }
-    
-    /**
-     * Returns a count of all options in this object with the given group key.
-     * @param groupKey the group key to filter on. Null signifies to return all options indiscriminately.
-     * @return Option count.
-     */
+
+    @Override
     public int count(String groupKey) {
         int count = 0;
-        
+
         for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements(); ) {
             IOptionGroup group = i.nextElement();
             if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
@@ -61,63 +54,11 @@ public abstract class AbstractOptions implements Serializable {
                 }
             }
         }
-        
+
         return count;
     }
-    
-    /**
-     * Returns a string of all the quirk "codes" for this entity, using sep as
-     * the separator
-     * @param separator The separator to insert between codes, in addition to a space
-     */
-    public String getOptionList(String separator) {
-        return getOptionListString(separator, null);
-    }
-    
-    /**
-     * Returns a string of all the quirk "codes" for this entity, using sep as
-     * the separator, filtering on a specific group key.
-     * @param separator The separator to insert between codes, in addition to a space
-     * @param groupKey The group key to use to filter options. Null signifies to return all options indiscriminately.
-     */
-    public String getOptionListString(String separator, String groupKey) {
-        StringBuilder listBuilder = new StringBuilder();
-        
-        if (null == separator) {
-            separator = "";
-        }
 
-        for (Enumeration<IOptionGroup> i = getGroups(); i.hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            
-            if ((groupKey != null) && !group.getKey().equalsIgnoreCase(groupKey)) {
-                continue;
-            }
-            
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption option = j.nextElement();
-                if (option != null && option.booleanValue()) {
-                    if (listBuilder.length() > 0) {
-                        listBuilder.append(separator);
-                    }
-                    listBuilder.append(option.getName());
-                    if ((option.getType() == IOption.STRING)
-                            || (option.getType() == IOption.CHOICE)
-                            || (option.getType() == IOption.INTEGER)) {
-                        listBuilder.append(" ").append(option.stringValue());
-                    }
-                }
-            }
-        }
-        return listBuilder.toString();
-    }
-
-    /**
-     * Returns the <code>Enumeration</code> of the option groups in thioptions container.
-     *
-     * @return <code>Enumeration</code> of the <code>IOptionGroup</code>
-     */
+    @Override
     public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }
@@ -154,49 +95,9 @@ public abstract class AbstractOptions implements Serializable {
         return getOptionsInfo().getOptionInfo(name);
     }
 
-    /**
-     * Returns the option by name or <code>null</code> if there is no such option
-     *
-     * @param name option name
-     * @return the option or <code>null</code> if there is no such option
-     */
+    @Override
     public @Nullable IOption getOption(String name) {
         return optionsHash.get(name);
-    }
-
-    /**
-     * Returns the value of the desired option as the <code>boolean</code>
-     *
-     * @param name option name
-     * @return the value of the desired option as the <code>boolean</code>
-     */
-    public boolean booleanOption(String name) {
-        IOption opt = getOption(name);
-        if (opt == null) {
-            return false;
-        } else {
-            return opt.booleanValue();
-        }
-    }
-
-    /**
-     * Returns the value of the desired option as the <code>int</code>
-     *
-     * @param name option name
-     * @return the value of the desired option as the <code>int</code>
-     */
-    public int intOption(String name) {
-        return getOption(name).intValue();
-    }
-
-    /**
-     * Returns the value of the desired option as the <code>float</code>
-     *
-     * @param name option name
-     * @return the value of the desired option as the <code>float</code>
-     */
-    public float floatOption(String name) {
-        return getOption(name).floatValue();
     }
 
     /**
@@ -209,8 +110,13 @@ public abstract class AbstractOptions implements Serializable {
         return getOption(name).stringValue();
     }
 
-    IOptionsInfo getOptionsInfo() {
+    @Override
+    public IOptionsInfo getOptionsInfo() {
         return getOptionsInfoImp();
+    }
+
+    Map<String, IOption> getOptionsHash() {
+        return optionsHash;
     }
 
     protected abstract AbstractOptionsInfo getOptionsInfoImp();
@@ -224,22 +130,22 @@ public abstract class AbstractOptions implements Serializable {
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            String defaultValue) {
+                             String defaultValue) {
         addOption(group, name, IOption.STRING, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            boolean defaultValue) {
+                             boolean defaultValue) {
         addOption(group, name, IOption.BOOLEAN, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            int defaultValue) {
+                             int defaultValue) {
         addOption(group, name, IOption.INTEGER, defaultValue);
     }
 
     protected void addOption(IBasicOptionGroup group, String name,
-            float defaultValue) {
+                             float defaultValue) {
         addOption(group, name, IOption.FLOAT, defaultValue);
     }
 
@@ -251,6 +157,8 @@ public abstract class AbstractOptions implements Serializable {
         optionsHash.put(name, new Option(this, name, type, defaultValue));
         getOptionsInfoImp().addOptionInfo(group, name);
     }
+
+
 
     protected class GroupsEnumeration implements Enumeration<IOptionGroup> {
 
@@ -301,7 +209,7 @@ public abstract class AbstractOptions implements Serializable {
             @Override
             public String getDisplayableName() {
                 return getOptionsInfoImp().getGroupDisplayableName(
-                        group.getName());
+                    group.getName());
             }
 
             @Override

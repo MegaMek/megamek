@@ -22,12 +22,16 @@ import megamek.common.Mek;
 import megamek.common.Tank;
 import megamek.common.Warship;
 
+import java.io.Serial;
+import java.util.Map;
+
 /**
  * Contains the options for partial repair properties
  *
  * @author Neth (Thomas Pfau)
  */
 public class PartialRepairs extends AbstractOptions {
+    @Serial
     private static final long serialVersionUID = 7618380522964885742L;
     public static final String PART_REPAIRS = "PartRepairs";
 

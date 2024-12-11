@@ -85,7 +85,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false);
         addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150);
         addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE,
-                TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
+            TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
         addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
@@ -346,7 +346,7 @@ public class GameOptions extends BasicGameOptions {
 
             if (null != tempOption) {
                 if (!tempOption.getValue().toString()
-                        .equals(value.toString())) {
+                    .equals(value.toString())) {
                     try {
                         switch (tempOption.getType()) {
                             case IOption.STRING:
@@ -371,7 +371,7 @@ public class GameOptions extends BasicGameOptions {
                         option = tempOption;
                     } catch (Exception ex) {
                         logger.error(String.format(
-                                "Error trying to load option '%s' with a value of '%s'!", name, value));
+                            "Error trying to load option '%s' with a value of '%s'!", name, value));
                     }
                 }
             } else {
@@ -404,7 +404,7 @@ public class GameOptions extends BasicGameOptions {
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
 
             JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class,
-                    new GameOptionsXML(options));
+                new GameOptionsXML(options));
 
             marshaller.marshal(element, new File(file));
         } catch (Exception ex) {

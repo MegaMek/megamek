@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -55,9 +56,9 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
                 .setProductionFactions(F_FW).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
     }
-    
+
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Indirect Fire

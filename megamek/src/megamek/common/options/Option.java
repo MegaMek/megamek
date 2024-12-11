@@ -87,7 +87,7 @@ public class Option implements IOption, Serializable {
     public String getDisplayableNameWithValue() {
         updateInfo();
         return info.getDisplayableName()
-                + ((type == IOption.INTEGER) || (type == IOption.CHOICE) ? " [" + value + "]" : "");
+            + ((type == IOption.INTEGER) || (type == IOption.CHOICE) ? " [" + value + "]" : "");
     }
 
     @Override
@@ -244,7 +244,7 @@ public class Option implements IOption, Serializable {
             info = owner.getOptionInfo(name);
         }
     }
-    
+
     @Override
     public String toString() {
         return "Option - " + getName() + ": " + getValue();

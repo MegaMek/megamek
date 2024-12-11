@@ -594,12 +594,10 @@ public final class Player extends TurnOrdered {
 
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
-            if (object instanceof Entity && ((Entity) object).getOwner().equals(this)) {
-                Entity entity = (Entity) object;
+            if (object instanceof Entity entity && entity.getOwnerId() == this.id) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
                     bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
-
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }

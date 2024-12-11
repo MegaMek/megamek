@@ -86,6 +86,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
+import megamek.common.options.GameOptions;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.AddBotUtil;
@@ -1928,7 +1929,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
             try {
                 // Read the units from the file.
-                final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions())
+                final Vector<Entity> loadedUnits = new MULParser(unitFile, (GameOptions) getClient().getGame().getOptions())
                         .getEntities();
 
                 // in the Lounge, set default deployment to "Before Game Start", round 0

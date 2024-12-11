@@ -18,6 +18,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -39,7 +40,7 @@ public abstract class GaussWeapon extends AmmoWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         super.adaptToGameOptions(gOp);
 
         // Add modes for powering down Gauss weapons PPC field inhibitors according to TacOps, p.102

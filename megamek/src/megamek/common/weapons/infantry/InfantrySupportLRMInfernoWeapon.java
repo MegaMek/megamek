@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -58,9 +59,9 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
 
     }
-    
+
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gOp) {
         removeMode("");
         removeMode(MODE_MISSILE_INDIRECT);
         removeMode(MODE_INDIRECT_HEAT);

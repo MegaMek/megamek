@@ -134,7 +134,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            logger.error("Trying to resize a unit icon of height or width 0!");
+            logger.debug("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

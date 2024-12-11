@@ -62,30 +62,39 @@ public final class ASConverter {
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return standardConversion(entity, true, conversionReport);
+        return standardConversion(entity, false, true, conversionReport);
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return standardConversion(entity, true, new DummyCalculationReport());
+        return standardConversion(entity, false, true, new DummyCalculationReport());
+    }
+
+    public static AlphaStrikeElement convertAndKeepRefs(Entity entity) {
+        return standardConversion(entity, true, true, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return standardConversion(entity, includePilot, new DummyCalculationReport());
+        return standardConversion(entity, false, includePilot, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        return standardConversion(entity, includePilot, conversionReport);
+        return standardConversion(entity, false, includePilot, conversionReport);
     }
 
-    private static AlphaStrikeElement standardConversion(Entity entity, boolean includePilot,
+    private static AlphaStrikeElement standardConversion(Entity entity, boolean keepRefs, boolean includePilot,
             CalculationReport conversionReport) {
         Entity undamagedEntity = getUndamagedEntity(entity);
+
         if (undamagedEntity == null) {
             logger.error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
         if (entity.getGame() != null) {
             undamagedEntity.setGame(entity.getGame());
+        }
+        if (keepRefs) {
+            undamagedEntity.setId(entity.getId());
+            undamagedEntity.setOwner(entity.getOwner());
         }
         return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }
@@ -94,7 +103,7 @@ public final class ASConverter {
             CalculationReport conversionReport, Crew originalCrew) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
-            logger.error("Cannot convert this type of Entity: " + entity.getShortName());
+            logger.error("Cannot convert this type of Entity: {}", entity.getShortName());
             return null;
         }
 
@@ -109,7 +118,7 @@ public final class ASConverter {
         element.setMulId(entity.getMulId());
         element.setRole(entity.getRole());
         element.setFluff(entity.getFluff());
-
+        element.setId(entity.getId());
         if (entity.getShortName().length() < 15) {
             conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());
         } else {
@@ -168,6 +177,7 @@ public final class ASConverter {
         }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+        element.setBasePointValue(pvConverter.getBasePointValue());
         element.setConversionReport(conversionReport);
         return element;
     }
@@ -236,13 +246,13 @@ public final class ASConverter {
         return tmmForMovement(movement, new DummyCalculationReport());
     }
 
-    /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
-    private static @Nullable Entity getUndamagedEntity(Entity entity) {
+    /** Retrieves a fresh (undamaged and unmodified) copy of the given entity. */
+    public static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Could not obtain clean Entity for entity {}.", entity, e);
             return null;
         }
     }

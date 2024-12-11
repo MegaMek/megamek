@@ -26,6 +26,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -37,6 +38,7 @@ import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryHelper;
 import megamek.server.victory.VictoryResult;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -52,6 +54,7 @@ import static java.util.stream.Collectors.toList;
 public final class Game extends AbstractGame implements Serializable, PlanetaryConditionsUsing {
     private static final MMLogger logger = MMLogger.create(Game.class);
 
+    @Serial
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -270,7 +273,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    protected void clearMinefieldsHelper() {
+    void clearMinefieldsHelper() {
         minefields.clear();
         vibrabombs.removeAllElements();
         getPlayersList().forEach(Player::removeMinefields);
@@ -303,12 +306,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return options;
     }
 
-    public void setOptions(final @Nullable GameOptions options) {
+    public void setOptions(final @Nullable IGameOptions options) {
         if (options == null) {
             logger.error("Can't set the game options to null!");
         } else {
-            this.options = options;
-            processGameEvent(new GameSettingsChangeEvent(this));
+            if (options instanceof GameOptions) {
+                this.options = (GameOptions) options;
+                processGameEvent(new GameSettingsChangeEvent(this));
+            } else {
+                logger.error("Can't set the game options to a non-GameOptions object!");
+            }
         }
     }
 
@@ -322,10 +329,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
                 .booleanValue();
-
+        var players = getPlayersList();
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Player player : getPlayersList()) {
+        for (Player player : players) {
             // Ignore players not on a team
             if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 continue;
@@ -341,7 +348,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
             // Now, go through all the teams, and add the appropriate player
             for (int t = Player.TEAM_NONE + 1; t < Player.TEAM_NAMES.length; t++) {
                 Team new_team = null;
-                for (Player player : getPlayersList()) {
+                for (Player player : players) {
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);
@@ -520,6 +527,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *         entities not yet
      *         deployed. Ignores offboard units and captured Mek pilots.
      */
+    @Override
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -537,6 +545,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *         Ignores offboard
      *         units and captured Mek pilots.
      */
+    @Override
     public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : inGameTWEntities()) {
@@ -755,6 +764,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return lastPhase;
     }
 
+    @Override
     public void setLastPhase(GamePhase lastPhase) {
         this.lastPhase = lastPhase;
     }
@@ -2609,6 +2619,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return Value of property victoryPlayerId.
      */
+    @Override
     public int getVictoryPlayerId() {
         return victoryPlayerId;
     }
@@ -2618,6 +2629,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param victoryPlayerId New value of property victoryPlayerId.
      */
+    @Override
     public void setVictoryPlayerId(int victoryPlayerId) {
         this.victoryPlayerId = victoryPlayerId;
     }
@@ -2627,6 +2639,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @return Value of property victoryTeam.
      */
+    @Override
     public int getVictoryTeam() {
         return victoryTeam;
     }
@@ -2636,6 +2649,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      *
      * @param victoryTeam New value of property victoryTeam.
      */
+    @Override
     public void setVictoryTeam(int victoryTeam) {
         this.victoryTeam = victoryTeam;
     }
@@ -3082,6 +3096,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return reports;
     }
 
+    /**
+     * Verify if the game has ended due a time limit
+     * @return true if the game has ended due to a time limit
+     */
+    @Override
     public boolean gameTimerIsExpired() {
         return getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)
                 && (getRoundCount() == getOptions().intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT));
@@ -3409,6 +3428,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * Cancels a victory
      */
+    @Override
     public void cancelVictory() {
         setForceVictory(false);
         setVictoryPlayerId(Player.PLAYER_NONE);
@@ -3443,6 +3463,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * @return The ID of the Player with the given name, if there is such a Player.
      */
+    @Override
     public Optional<Integer> idForPlayername(String playerName) {
         return playerForPlayername(playerName).map(Player::getId);
     }
@@ -3450,6 +3471,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     /**
      * @return The ID of the Player with the given name, if there is such a Player.
      */
+    @Override
     public Optional<Player> playerForPlayername(String playerName) {
         return getPlayersList().stream().filter(p -> p.getName().equals(playerName)).findFirst();
     }

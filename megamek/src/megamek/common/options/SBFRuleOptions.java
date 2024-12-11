@@ -19,6 +19,7 @@
 package megamek.common.options;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Vector;
 
 public class SBFRuleOptions extends BasicGameOptions {

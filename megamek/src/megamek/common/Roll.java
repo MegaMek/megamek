@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,7 +20,7 @@ import java.io.Serializable;
  * Encapsulate all information known about a requested roll. This information
  * can be logged for full statistical analysis and auditing, so hopefully people
  * will <b>finally</b> stop questioning whether the RNG is any good.
- * 
+ *
  * @author Suvarov454
  * @since July 20, 2004, 4:21 PM
  */
@@ -32,7 +33,7 @@ public abstract class Roll implements Serializable {
 
     /**
      * Get the next unique identifier.
-     * 
+     *
      * @return the next unique <code>long</code> identifier.
      */
     private static long getNextId() {
@@ -41,7 +42,7 @@ public abstract class Roll implements Serializable {
 
     /**
      * No one should call the default constructor.
-     
+
     private Roll() {
         throw new UnsupportedOperationException(
                 "Default Roll constructor called.");
@@ -64,7 +65,7 @@ public abstract class Roll implements Serializable {
 
     /**
      * Store the configuration information for this roll.
-     * 
+     *
      * @param count - the <code>int</code> number of results possible on each
      *            virtual die.
      * @param start - the <code>int</code> value that is the start of the
@@ -79,15 +80,18 @@ public abstract class Roll implements Serializable {
     /**
      * Get the value of the roll. This is the total of each of the rolls of each
      * virtual die.
-     * 
+     *
      * @return the <code>int</code> value of the roll.
      */
     public abstract int getIntValue();
 
+
+    public abstract int[] getIntValues();
+
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.
-     * 
+     *
      * @return the <code>String</code> value of the roll.
      */
     @Override
@@ -96,14 +100,14 @@ public abstract class Roll implements Serializable {
     /**
      * Get a <code>String</code> report that can be parsed to analyse the
      * roll.
-     * 
+     *
      * @return the <code>String</code> details of the roll.
      */
     public abstract String getReport();
 
     /**
      * Formats <code>Roll</code> output for test harnesses.
-     * 
+     *
      * @param roll - the <code>Roll</code> to be reported.
      */
     protected static void output(Roll roll) {
@@ -117,4 +121,65 @@ public abstract class Roll implements Serializable {
         System.out.print(roll.getReport());
         System.out.println(".");
     }
+
+    /**
+     * Determines if the roll is a success based on the target roll.
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccess(TargetRoll targetRoll) {
+        return getIntValue() > 2 && getIntValue() >= targetRoll.getValue();
+    }
+
+    /**
+     * Determines if the roll is a success based on the target number
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccess(int targetRoll) {
+        return getIntValue() > 2 && getIntValue() >= targetRoll;
+    }
+
+    /**
+     * Determines if the roll is a success based on the target roll.
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccessWithoutSimpleFailure(TargetRoll targetRoll) {
+        return getIntValue() >= targetRoll.getValue();
+    }
+
+    /**
+     * Determines if the roll is a success based on the target number
+     * A 2 is always a failure
+     *
+     * @param targetRoll the target roll to compare against
+     * @return true if the roll's value is greater than the target roll's value, false otherwise
+     */
+    public boolean isTargetRollSuccessWithoutSimpleFailure(int targetRoll) {
+        return getIntValue() >= targetRoll;
+    }
+
+    /**
+     * Returns the margin of success/failure of the roll compared to the target roll.
+     * @param targetRoll the target roll to compare against
+     * @return the margin of success/failure
+     */
+    public int getMarginOfSuccess(TargetRoll targetRoll) {
+        return getIntValue() - targetRoll.getValue();
+    }
+
+    /**
+     * Determines if the roll is a simple failure.
+     * @return true if the roll is a simple failure, false otherwise
+     */
+    public boolean isSimpleFailure() {
+        return getIntValue() == 2;
+    }
+
 }

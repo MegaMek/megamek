@@ -21,10 +21,10 @@ import megamek.common.weapons.missiles.MissileWeapon;
 /**
  * @author Jay Lawson
  */
-public class BombISPRL10 extends MissileWeapon {
+public class BombISRLP10 extends MissileWeapon {
     private static final long serialVersionUID = 5763858241912399084L;
 
-    public BombISPRL10() {
+    public BombISRLP10() {
         super();
 
         this.name = "Rocket Launcher (Prototype) Pod";

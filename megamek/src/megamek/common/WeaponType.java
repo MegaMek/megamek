@@ -2061,7 +2061,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBombTAG());
         EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
-        EquipmentType.addType(new BombISPRL10());
+        EquipmentType.addType(new BombISRLP10());
         EquipmentType.addType(new AlamoMissileWeapon());
         EquipmentType.addType(new SpaceBombAttack());
         EquipmentType.addType(new DiveBombAttack());

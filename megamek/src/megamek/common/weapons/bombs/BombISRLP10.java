@@ -13,10 +13,12 @@
  */
 package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
-import megamek.common.BombType;
-import megamek.common.SimpleTechLevel;
+import megamek.common.*;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PrototypeRLHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
@@ -58,5 +60,11 @@ public class BombISRLP10 extends MissileWeapon {
             .setClanAdvancement(DATE_ES, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
             .setClanApproximate(true, false, false, true, false)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+                                              WeaponAttackAction waa, Game game, TWGameManager manager) {
+        return new PrototypeRLHandler(toHit, waa, game, manager);
     }
 }

@@ -509,4 +509,11 @@ public interface IGame {
 
     Optional<Integer> idForPlayername(String playerName);
 
+    default Map<Integer, Integer> getTeamByPlayer() {
+        Map<Integer, Integer> teamByPlayer = new HashMap<>();
+        for (var player : getPlayersList()) {
+            teamByPlayer.put(player.getId(), player.getTeam());
+        }
+        return teamByPlayer;
+    }
 }

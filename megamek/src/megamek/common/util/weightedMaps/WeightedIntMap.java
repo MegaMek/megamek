@@ -19,7 +19,11 @@
 package megamek.common.util.weightedMaps;
 
 import megamek.common.Compute;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.annotations.Nullable;
+
+import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Constructs a table of values each with an int weight that makes them more or less likely to be
@@ -29,6 +33,7 @@ import megamek.common.annotations.Nullable;
  */
 public class WeightedIntMap<T> extends AbstractWeightedMap<Integer, T> {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = -568712793616821291L;
     //endregion Variable Declarations
 
@@ -41,4 +46,5 @@ public class WeightedIntMap<T> extends AbstractWeightedMap<Integer, T> {
     public @Nullable T randomItem() {
         return isEmpty() ? null : randomItem(Compute.randomInt(lastKey()) + 1);
     }
+
 }

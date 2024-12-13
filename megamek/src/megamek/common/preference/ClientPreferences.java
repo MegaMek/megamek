@@ -297,6 +297,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(GAMELOG_FILENAME, name);
     }
 
+    public void setAutoResolveGameLogFilename(String name) {
+        store.setValue(AUTO_RESOLVE_GAMELOG_FILENAME, name);
+    }
+
     public void setPrintEntityChange(boolean print) {
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }

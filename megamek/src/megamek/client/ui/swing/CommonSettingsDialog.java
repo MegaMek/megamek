@@ -203,6 +203,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField mmlPath;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
+    private JTextField autoResolveGameLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(
@@ -315,6 +316,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
+    private JLabel autoResolveGameLogFilenameLabel;
 
     private final JCheckBox gameSummaryBV = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
@@ -1839,6 +1841,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(gameLogFilename);
         comps.add(row);
 
+        addLineSpacer(comps);
+
+        autoResolveGameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+        autoResolveGameLogFilename = new JTextField(15);
+        autoResolveGameLogFilename.setMaximumSize(new Dimension(250, 40));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(autoResolveGameLogFilenameLabel);
+        row.add(autoResolveGameLogFilename);
+        comps.add(row);
+
         addSpacer(comps, 5);
         comps.add(checkboxEntry(stampFilenames, null));
 
@@ -1949,6 +1962,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             keepGameLog.setSelected(CLIENT_PREFERENCES.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CLIENT_PREFERENCES.getGameLogFilename());
+            autoResolveGameLogFilename.setEnabled(keepGameLog.isSelected());
+            autoResolveGameLogFilename.setText(CLIENT_PREFERENCES.getAutoResolveGameLogFilename());
             userDir.setText(CLIENT_PREFERENCES.getUserDir());
             mmlPath.setText(CLIENT_PREFERENCES.getMmlPath());
             stampFilenames.setSelected(CLIENT_PREFERENCES.stampFilenames());
@@ -2056,6 +2071,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
             gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
+
+            autoResolveGameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
 
             getFocus.setSelected(GUIP.getFocus());
 
@@ -2427,6 +2444,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CLIENT_PREFERENCES.setKeepGameLog(keepGameLog.isSelected());
         CLIENT_PREFERENCES.setGameLogFilename(gameLogFilename.getText());
+        CLIENT_PREFERENCES.setAutoResolveGameLogFilename(autoResolveGameLogFilename.getText());
         CLIENT_PREFERENCES.setUserDir(userDir.getText());
         CLIENT_PREFERENCES.setMmlPath(mmlPath.getText());
         CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());
@@ -2786,6 +2804,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
             gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
+            autoResolveGameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
+            autoResolveGameLogFilename.setEnabled(keepGameLog.isSelected());
             // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
         } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());

@@ -18,18 +18,21 @@ package megamek.common.util.weightedMaps;
 
 import megamek.common.annotations.Nullable;
 
+import java.io.Serial;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K, T> {
     //region Variable Declarations
+    @Serial
     private static final long serialVersionUID = 6745329554873562471L;
     //endregion Variable Declarations
 
     /**
      * @param weight the weight to put the item at
      * @param value  the value of the item
-     * @return the return value of {@link TreeMap#put}, or null if the value is not added to the map
+     * @return the return value of {@link TreeMap#put(Object, Object)}, or null if the value is not added to the map
      */
     public abstract @Nullable T add(final K weight, final T value);
 
@@ -37,6 +40,13 @@ public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K
      * @return a random item from the weighted map, or null if it is empty
      */
     public abstract @Nullable T randomItem();
+
+    /**
+     * @return an optional random item from the weighted map, or Optional empty if it is empty
+     */
+    public Optional<T> randomOptionalItem() {
+        return isEmpty() ? Optional.empty() : Optional.ofNullable(randomItem());
+    }
 
     /**
      * @param key the key of the item to get (used for simplification and unit testing reasons)

@@ -39,6 +39,6 @@ public class SBFFormationReportEntry extends SBFReportEntry {
 
     @Override
     protected String reportText() {
-        return "<span style='color:" + playerColorHex + ";'>" + formationName + "</span>";
+        return "<span style='color:" + playerColorHex + "; font-weight: bold;'>" + formationName + "</span>";
     }
 }

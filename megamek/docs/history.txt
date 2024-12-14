@@ -8,7 +8,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5086: Updated SRMAXHandler to ignore specialty armors
 + PR #6209: Implement RISC laser pulse module
 + Fix #6211: Added null check for lastUnitMember
-+ PR #6203: Dev Tool to Find duplicate boards
++ PR #6203, #6266: Dev Tools: to Find duplicate boards, log to console with environment variable mm.profile=dev
 + PR #6181: Rename TroopSpace to InfantryCompartment
 + Fix #6217: Too many gunners for aerospace in MekHQ
 + Fix #6069: Stops bays from loading BA and protomek ammunition

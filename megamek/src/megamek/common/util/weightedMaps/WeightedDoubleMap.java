@@ -20,6 +20,7 @@ package megamek.common.util.weightedMaps;
 
 import megamek.common.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

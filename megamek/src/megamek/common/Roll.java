@@ -19,7 +19,7 @@ import java.io.Serializable;
  * Encapsulate all information known about a requested roll. This information
  * can be logged for full statistical analysis and auditing, so hopefully people
  * will <b>finally</b> stop questioning whether the RNG is any good.
- * 
+ *
  * @author Suvarov454
  * @since July 20, 2004, 4:21 PM
  */
@@ -32,20 +32,12 @@ public abstract class Roll implements Serializable {
 
     /**
      * Get the next unique identifier.
-     * 
+     *
      * @return the next unique <code>long</code> identifier.
      */
     private static long getNextId() {
         return nextId++;
     }
-
-    /**
-     * No one should call the default constructor.
-     
-    private Roll() {
-        throw new UnsupportedOperationException(
-                "Default Roll constructor called.");
-    }*/
 
     /**
      * The unique identifier for this roll.
@@ -64,7 +56,7 @@ public abstract class Roll implements Serializable {
 
     /**
      * Store the configuration information for this roll.
-     * 
+     *
      * @param count - the <code>int</code> number of results possible on each
      *            virtual die.
      * @param start - the <code>int</code> value that is the start of the
@@ -79,7 +71,7 @@ public abstract class Roll implements Serializable {
     /**
      * Get the value of the roll. This is the total of each of the rolls of each
      * virtual die.
-     * 
+     *
      * @return the <code>int</code> value of the roll.
      */
     public abstract int getIntValue();
@@ -87,7 +79,7 @@ public abstract class Roll implements Serializable {
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.
-     * 
+     *
      * @return the <code>String</code> value of the roll.
      */
     @Override
@@ -96,14 +88,14 @@ public abstract class Roll implements Serializable {
     /**
      * Get a <code>String</code> report that can be parsed to analyse the
      * roll.
-     * 
+     *
      * @return the <code>String</code> details of the roll.
      */
     public abstract String getReport();
 
     /**
      * Formats <code>Roll</code> output for test harnesses.
-     * 
+     *
      * @param roll - the <code>Roll</code> to be reported.
      */
     protected static void output(Roll roll) {
@@ -116,5 +108,44 @@ public abstract class Roll implements Serializable {
         System.out.print("The string report is ");
         System.out.print(roll.getReport());
         System.out.println(".");
+    }
+
+    /**
+     * Simple check if the total roll of the virtual die is a success.
+     *
+     * @return the <code>bool</code> value of the roll, true if success.
+     */
+    public boolean isTargetRollSuccess(int target) {
+        return getIntValue() >= target;
+    }
+
+    /**
+     * Simple check if the total roll of the virtual die is a success.
+     *
+     * @return the <code>bool</code> value of the roll, true if success.
+     */
+    public boolean isTargetRollSuccess(TargetRoll target) {
+        return getIntValue() >= target.getValue();
+    }
+
+    /**
+     * Simple check if the total roll of the virtual die is a success.
+     * Automatic failure on a 2.
+     *
+     * @return the <code>bool</code> value of the roll, true if success.
+     */
+    public boolean isTargetRollSuccess2isFailure(int target) {
+        return (2 < getIntValue()) && (getIntValue() >= target);
+    }
+
+
+    /**
+     * Simple check if the total roll of the virtual die is a success.
+     * Automatic failure on a 2.
+     *
+     * @return the <code>bool</code> value of the roll, true if success.
+     */
+    public boolean isTargetRollSuccess2isFailure(TargetRoll target) {
+        return (2 < getIntValue()) && (getIntValue() >= target.getValue());
     }
 }

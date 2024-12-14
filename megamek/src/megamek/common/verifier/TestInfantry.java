@@ -384,6 +384,9 @@ public class TestInfantry extends TestEntity {
 
         InfantryMount mount = infantry.getMount();
         int activeTroopers = infantry.getInternal(Infantry.LOC_INFANTRY);
+        if (activeTroopers < 0) {
+            return 0;
+        }
         double weight;
 
         if (mount != null) {

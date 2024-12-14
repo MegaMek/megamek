@@ -22,6 +22,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -419,8 +420,8 @@ public class Compute {
             return null;
         }
 
-        // no stacking violations for flying aeros
-        if (entering.isAirborne()) {
+        // no stacking violations for flying aeros, except during deployment - no crushing units during deployment!
+        if (entering.isAirborne() && !((game.getPhase().equals(GamePhase.DEPLOYMENT) && elevation == 0))) {
             return null;
         }
 

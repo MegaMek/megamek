@@ -670,6 +670,7 @@ Mad Dog (Vulture) A|Vulture (Mad Dog) A
 Mad Dog (Vulture) B|Vulture (Mad Dog) B
 Mad Dog (Vulture) C|Vulture (Mad Dog) C
 Mad Dog (Vulture) Prime|Vulture (Mad Dog) Prime
+Vulture Mk III (Mad Dog Mk III) (Prime)|Vulture Mk III (Mad Dog Mk III) Prime
 Marauder IIC (Standard)|Marauder IIC
 Marauder Red Hunter|Marauder (Red Hunter-3146)
 Mist Lynx (Koshi) A|Koshi (Mist Lynx) A
@@ -711,6 +712,8 @@ Raijin RJN101-C|Raijin RJN-101-C
 Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum'|Rock Hound AM-PRM-RH7 'Rock Possum' ProspectorMech
 Rock Hound ProspectorMech AM-PRM-RH7|Rock Hound AM-PRM-RH7 ProspectorMech
 Rock Hound ProspectorMech 'Rock Otter'AM-PRM-RH7A|Rock Hound AM-PRM-RH7A 'Rock Otter' ProspectorMech
+Rock Hound ProspectorMech AM-PRM-RH7A 'Rock Otter'|Rock Hound AM-PRM-RH7A 'Rock Otter' ProspectorMech
+Space Hound ProspectorMech AM-PRM-SH1|Space Hound AM-PRM-SH1 ProspectorMech
 Sarissa SecurityMech MN2-A|Sarissa MN2-A SecurityMech
 Stone Rhino (Behemoth) 4|Behemoth (Stone Rhino) 4
 Stone Rhino (Behemoth) 5|Behemoth (Stone Rhino) 5

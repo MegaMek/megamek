@@ -21,8 +21,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
+import megamek.common.options.IGameOptions;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.InsulatedLaserWeaponHandler;
@@ -45,8 +44,8 @@ public abstract class LaserWeapon extends EnergyWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         if (!(this instanceof PulseLaserWeapon)) {
             addMode("");

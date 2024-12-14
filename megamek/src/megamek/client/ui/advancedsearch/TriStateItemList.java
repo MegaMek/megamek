@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import megamek.common.options.AbstractOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 
@@ -34,7 +34,7 @@ class TriStateItemList {
 
     private final JList<TriStateItem> list = new JList<>(new DefaultListModel<>());
 
-    TriStateItemList(AbstractOptions opts, int visibleRows) {
+    TriStateItemList(IGameOptions opts, int visibleRows) {
         List<String> qs = new ArrayList<>();
         for (final Enumeration<IOptionGroup> optionGroups = opts.getGroups(); optionGroups.hasMoreElements(); ) {
             final IOptionGroup group = optionGroups.nextElement();

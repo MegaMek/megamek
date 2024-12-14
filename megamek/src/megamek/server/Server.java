@@ -817,22 +817,7 @@ public class Server implements Runnable {
      * Adds a new player to the game
      */
     private Player addNewPlayer(int connId, String name, boolean isBot) {
-        int team = Player.TEAM_UNASSIGNED;
-        if (getGame().getPhase().isLounge()) {
-            team = Player.TEAM_NONE;
-            final BasicGameOptions gOpts = getGame().getOptions();
-            if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
-                for (Player p : getGame().getPlayersList()) {
-                    if (p.getTeam() > team) {
-                        team = p.getTeam();
-                    }
-                }
-                team++;
-            } else {
-                team = 1;
-            }
-
-        }
+        int team = getTeam(isBot);
         Player newPlayer = new Player(connId, name);
         newPlayer.setBot(isBot);
         PlayerColour colour = newPlayer.getColour();
@@ -852,6 +837,26 @@ public class Server implements Runnable {
         getGame().addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);
         return newPlayer;
+    }
+
+    private int getTeam(boolean isBot) {
+        int team = Player.TEAM_UNASSIGNED;
+        if (getGame().getPhase().isLounge()) {
+            team = Player.TEAM_NONE;
+            final var gOpts = getGame().getOptions();
+            if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
+                for (Player p : getGame().getPlayersList()) {
+                    if (p.getTeam() > team) {
+                        team = p.getTeam();
+                    }
+                }
+                team++;
+            } else {
+                team = 1;
+            }
+
+        }
+        return team;
     }
 
     /**

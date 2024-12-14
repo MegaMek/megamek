@@ -27,6 +27,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.common.Coords;
 import megamek.common.net.marshalling.SanityInputFilter;
+import megamek.common.options.AbstractOptionsImpl;
 import megamek.server.victory.VictoryCondition;
 
 /**
@@ -60,7 +61,7 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.Mounted.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);
         xStream.allowTypeHierarchy(megamek.common.icons.AbstractIcon.class);
-        xStream.allowTypeHierarchy(megamek.common.options.AbstractOptions.class);
+        xStream.allowTypeHierarchy(AbstractOptionsImpl.class);
         xStream.allowTypeHierarchy(megamek.common.options.IOption.class);
         xStream.allowTypeHierarchy(megamek.common.weapons.AttackHandler.class);
         xStream.allowTypeHierarchy(VictoryCondition.class);

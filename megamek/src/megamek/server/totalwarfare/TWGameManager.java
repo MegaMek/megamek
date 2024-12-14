@@ -143,8 +143,8 @@ public class TWGameManager extends AbstractGameManager {
 
     public TWGameManager() {
         EquipmentType.initializeTypes();
-        game.getOptions().initialize();
-        game.getOptions().loadOptions();
+        ((GameOptions) game.getOptions()).initialize();
+        ((GameOptions) game.getOptions()).loadOptions();
 
         game.setPhase(GamePhase.LOUNGE);
         MapSettings mapSettings = game.getMapSettings();
@@ -1355,7 +1355,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
         final GamePhase currPhase = game.getPhase();
-        final GameOptions gameOpts = game.getOptions();
+        final var gameOpts = game.getOptions();
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)

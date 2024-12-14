@@ -29,7 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
-import megamek.common.options.AbstractOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -504,7 +504,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
      * @param optionsInstance AbstractOptions instance
      * @param quirksAndPartReps
      */
-    public void addOptionsToList(AbstractOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
+    public void addOptionsToList(IGameOptions optionsInstance, PMMultiLineLabel quirksAndPartReps) {
         for (Enumeration<IOptionGroup> optionGroups = optionsInstance.getGroups(); optionGroups.hasMoreElements();) {
             IOptionGroup group = optionGroups.nextElement();
             if (optionsInstance.count(group.getKey()) > 0) {

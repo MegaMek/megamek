@@ -17,43 +17,6 @@
  */
 package megamek.client.ui.swing;
 
-import static megamek.common.Compute.d6;
-
-import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BaseMultiResolutionImage;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
@@ -85,6 +48,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.jacksonadapters.BotParser;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -92,15 +56,37 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;
-import megamek.server.sbf.SBFGameManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.IGameManager;
 import megamek.server.Server;
+import megamek.server.sbf.SBFGameManager;
 import megamek.server.totalwarfare.TWGameManager;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BaseMultiResolutionImage;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+
+import static megamek.common.Compute.d6;
 
 public class MegaMekGUI implements IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(MegaMekGUI.class);
@@ -438,7 +424,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
         } catch (Exception ex) {
-            logger.error(ex, "Failed to start Server");
+            logger.error("Failed to start Server", ex);
             frame.setVisible(true);
             return false;
         }
@@ -657,6 +643,19 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return false;
         }
 
+        final Version version = getVersion(n);
+        if (SuiteConstants.VERSION.is(version)) {
+            return true;
+        } else {
+            final String message = String.format(
+                    Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
+                    version, SuiteConstants.VERSION);
+            logger.error(message, Messages.getString("MegaMek.LoadGameAlert.title"));
+            return false;
+        }
+    }
+
+    private static Version getVersion(Node n) {
         final NodeList nl = n.getChildNodes();
         String release = null;
         String major = null;
@@ -686,16 +685,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
 
-        final Version version = new Version(release, major, minor, snapshot);
-        if (SuiteConstants.VERSION.is(version)) {
-            return true;
-        } else {
-            final String message = String.format(
-                    Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
-                    version, SuiteConstants.VERSION);
-            logger.error(message, Messages.getString("MegaMek.LoadGameAlert.title"));
-            return false;
-        }
+        return new Version(release, major, minor, snapshot);
     }
 
     private void parsePlayerNames(final Node nodePlayers, final Vector<String> playerNames) {
@@ -775,9 +765,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         // popup options dialog
-        if (!scenario.hasFixedGameOptions() && game instanceof Game) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, ((Game) game).getOptions(), false);
-            god.update(((Game) game).getOptions());
+        if (!scenario.hasFixedGameOptions() && game instanceof Game twGame) {
+            GameOptionsDialog god = new GameOptionsDialog(frame, (GameOptions) twGame.getOptions(), false);
+            god.update((GameOptions) twGame.getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {
@@ -1182,8 +1172,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (String filename : filenames) {
             File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
             if (!file.exists()) {
-                logger
-                        .error("MainMenu Error: background icon doesn't exist: " + file.getAbsolutePath());
+                logger.error("MainMenu Error: background icon doesn't exist: {}", file.getAbsolutePath());
             } else {
                 BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
                 images.add(img);

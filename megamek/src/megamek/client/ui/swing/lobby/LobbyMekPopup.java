@@ -129,7 +129,7 @@ class LobbyMekPopup {
             ChatLounge lobby) {
         ClientGUI clientGui = lobby.getClientgui();
         Game game = lobby.game();
-        GameOptions opts = game.getOptions();
+        var opts = game.getOptions();
 
         boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
         boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);

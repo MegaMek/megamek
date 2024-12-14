@@ -1598,7 +1598,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         && unusedVelocity
                         && !offOrReturn
                         && !cmd.contains(MoveStepType.LAND)
-                        && !cmd.contains(MoveStepType.EJECT)) {
+                        && !cmd.contains(MoveStepType.EJECT)
+                        && !cmd.contains(MoveStepType.FLEE)) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title");
                     String body = Messages.getString("MovementDisplay.VelocityLeft.message");
                     clientgui.doAlertDialog(title, body);

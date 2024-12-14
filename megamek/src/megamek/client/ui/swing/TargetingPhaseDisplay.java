@@ -18,7 +18,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -31,7 +30,15 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.TriggerAPPodAction;
+import megamek.common.actions.TriggerBPodAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -71,8 +78,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         FIRE_FLIP_ARMS("fireFlipArms"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
         FIRE_CANCEL("fireCancel"),
-        FIRE_DISENGAGE("fireDisengage"),
-        FIRE_CLEAR_WEAPON("fireClearWeaponJam");
+        FIRE_DISENGAGE("fireDisengage");
 
         String cmd;
 
@@ -311,9 +317,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if ((cmd == TargetingCommand.FIRE_DISENGAGE) && ((ce() == null) || !ce().isOffBoard())) {
                 continue;
             }
-            if (cmd == TargetingCommand.FIRE_CLEAR_WEAPON && !(ce() instanceof Tank)) {
-                continue;
-            }
             buttonList.add(buttons.get(cmd));
         }
         return buttonList;
@@ -381,9 +384,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (!ce().isOffBoard()) {
                 clientgui.showFiringSolutions(ce());
             }
-
-            updateClearWeaponJam();
-
         } else {
             logger.error("Tried to select non-existent entity: " + en);
         }
@@ -481,7 +481,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         setFireModeEnabled(false);
         setNextTargetEnabled(false);
         setDisengageEnabled(false);
-        setFireClearWeaponJamEnabled(false);
     }
 
     /**
@@ -638,8 +637,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 waa.updateTurnsTilHit(clientgui.getClient().getGame());
             }
         }
-
-        updateClearWeaponJam();
 
         updateDisplayForPendingAttack(mounted, waa);
     }
@@ -1256,34 +1253,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clear();
             addAttack(new DisengageAction(currentEntity));
             ready();
-        } else if(ev.getActionCommand().equals(TargetingCommand.FIRE_CLEAR_WEAPON.getCmd())) {
-            doClearWeaponJam();
-        }
-    }
-
-    /**
-     * clear weapon jam
-     */
-    protected void doClearWeaponJam() {
-        ArrayList<Mounted<?>> weapons = ((Tank) ce()).getJammedWeapons();
-        String[] names = new String[weapons.size()];
-        for (int loop = 0; loop < names.length; loop++) {
-            names[loop] = weapons.get(loop).getDesc();
-        }
-        String input = (String) JOptionPane.showInputDialog(clientgui.getFrame(),
-            Messages.getString("FiringDisplay.ClearWeaponJam.question"),
-            Messages.getString("FiringDisplay.ClearWeaponJam.title"),
-            JOptionPane.QUESTION_MESSAGE, null, names, null);
-
-        if (input != null) {
-            for (int loop = 0; loop < names.length; loop++) {
-                if (input.equals(names[loop])) {
-                    RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
-                        ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
-                    addAttack(rwma);
-                    ready();
-                }
-            }
         }
     }
 
@@ -1309,11 +1278,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 && ce().isUsingSearchlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(clientgui.getClient().getGame(), currentEntity, target, null));
-    }
-
-    private void updateClearWeaponJam(){
-        setFireClearWeaponJamEnabled((ce() instanceof Tank) && ((Tank) ce()).canUnjamWeapon()
-            && attacks.isEmpty());
     }
 
     private void setFireEnabled(boolean enabled) {
@@ -1359,12 +1323,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void setDisengageEnabled(boolean enabled) {
         if (buttons.containsKey(TargetingCommand.FIRE_DISENGAGE)) {
             buttons.get(TargetingCommand.FIRE_DISENGAGE).setEnabled(enabled);
-        }
-    }
-
-    private void setFireClearWeaponJamEnabled(boolean enabled) {
-        if (buttons.containsKey(TargetingCommand.FIRE_CLEAR_WEAPON)) {
-            buttons.get(TargetingCommand.FIRE_CLEAR_WEAPON).setEnabled(enabled);
         }
     }
 

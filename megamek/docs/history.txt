@@ -25,6 +25,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #3827: Fixes target's side's ECM not effecting sensor spottingFixes
 + Fix: Disable Simultaneous Movement due to numerous issues
 + PR #6250: Adds an automatic board tag for underwater bridges
++ Fix #6224, #6248: Aircraft that fly off are now nudged back onto the board to be targetable before actually leaving the map
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

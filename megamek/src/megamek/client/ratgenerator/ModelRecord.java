@@ -150,7 +150,7 @@ public class ModelRecord extends AbstractUnitRecord {
     /**
      * @return true, if unit is base IS tech and mounts Clan tech equipment
      */
-    public boolean isMixedTech() {
+    public boolean isMixedISTech() {
         return mixedTech;
     }
 

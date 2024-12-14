@@ -589,10 +589,10 @@ public class RATGenerator {
             // class are the same for all models although a few outliers exist, so
             // just look for the first.
             if (weightClasses != null && !weightClasses.isEmpty()) {
-                boolean validChassis = Arrays.stream(curChassis.getModels().
+                boolean validChassis = curChassis.
+                    getModels().
                     stream().
                     mapToInt(ModelRecord::getWeightClass).
-                    toArray()).
                     anyMatch(weightClasses::contains);
                 if (!validChassis) {
                     continue;

@@ -18,6 +18,7 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -43,18 +44,13 @@ public class NoFiresCommand extends GamemasterServerCommand {
         this.reason = Messages.getString("Gamemaster.cmd.firefight.reason");
     }
 
-    @Override
-    public List<Argument<?>> defineArguments() {
-        return List.of();
-    }
-
     /**
      * Run this command with the arguments supplied
      *
      * @see ServerCommand#run(int, String[])
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         try {
             getAllCoords().forEach(this::firefight);
         } catch (Exception e) {

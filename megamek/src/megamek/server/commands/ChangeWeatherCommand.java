@@ -17,6 +17,7 @@ import megamek.client.ui.Messages;
 import megamek.common.planetaryconditions.*;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.OptionalEnumArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -70,7 +71,7 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
      * Run this command with the arguments supplied
      */
     @Override
-    public void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         if (getGameManager().getGame().getBoard().inSpace()) {
             server.sendServerChat(connId, "There is no planetary conditions to change outside of a planet");
             return;
@@ -81,9 +82,9 @@ public class ChangeWeatherCommand extends GamemasterServerCommand {
         getGameManager().getGame().setPlanetaryConditions(planetaryConditions);
     }
 
-    private BiConsumer<String, Condition<?>> updatePlanetaryConditions(int connId, Map<String, Argument<?>> args) {
+    private BiConsumer<String, Condition<?>> updatePlanetaryConditions(int connId, Arguments args) {
         return (prefix, condition) -> {
-            if (args.containsKey(prefix) && ((OptionalEnumArgument<?>) args.get(prefix)).isPresent()) {
+            if (args.hasArg(prefix) && ((OptionalEnumArgument<?>) args.get(prefix)).isPresent()) {
                 var value = ((OptionalEnumArgument<?>) args.get(prefix)).getValue();
                 condition.updatePlanetaryCondition(value, connId, server);
             }

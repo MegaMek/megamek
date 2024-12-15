@@ -18,11 +18,12 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
-import megamek.server.commands.arguments.IntegerArgument;
+import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.CoordXArgument;
+import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,7 +36,6 @@ public class FirefightCommand extends GamemasterServerCommand {
     private static final String FIRESTARTER = "firefight";
     private static final String X = "x";
     private static final String Y = "y";
-    private static final String TYPE = "type";
 
     public FirefightCommand(Server server, TWGameManager gameManager) {
         super(server,
@@ -48,8 +48,8 @@ public class FirefightCommand extends GamemasterServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument(X, Messages.getString("Gamemaster.cmd.x")),
-            new IntegerArgument(Y, Messages.getString("Gamemaster.cmd.y"))
+            new CoordXArgument(X, Messages.getString("Gamemaster.cmd.x")),
+            new CoordYArgument(Y, Messages.getString("Gamemaster.cmd.y"))
         );
     }
 
@@ -59,7 +59,7 @@ public class FirefightCommand extends GamemasterServerCommand {
      * @see ServerCommand#run(int, String[])
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         int xArg = (int) args.get(X).getValue() - 1;
         int yArg = (int) args.get(Y).getValue() - 1;
         firefight(new Coords(xArg, yArg));

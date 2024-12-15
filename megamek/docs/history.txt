@@ -26,6 +26,16 @@ MEGAMEK VERSION HISTORY:
 + Fix: Disable Simultaneous Movement due to numerous issues
 + PR #6250: Adds an automatic board tag for underwater bridges
 + Fix #6224, #6248: Aircraft that fly off are now nudged back onto the board to be targetable before actually leaving the map
++ PR #6244: Force generator math updates
++ PR #6245: add new chat commands, updates a bit the commands gui, give nukes to GMs
++ Fix #1618, #5595: Implement dirt and gravel roads
++ Fix #6247: NPE with TacOps Energy Weapons when Changing Firing Mode
++ Fix #6240: Era-illegal asf bombs
++ Fix #6264: Destroyed Infantry no longer have negative weight
++ PR #6268: Cleanup board names
++ Fix #1437: Check for stacking for elevation 0 Aeros during deployment
++ Fix #6261: Allow aerospace to flee with remaining movement
++ PR #6265: Config interface extracted
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

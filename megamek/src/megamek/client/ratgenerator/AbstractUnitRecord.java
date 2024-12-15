@@ -40,23 +40,30 @@ public class AbstractUnitRecord {
     }
 
     /**
-     * Adjusts availability rating for the first couple years after introduction.
+     * Adjusts availability rating for +/- dynamic. Also reduces availability by
+     * introduction year, with 1 year before heavily reduced for pre-production
+     * prototypes and first year slightly reduced for working out initial
+     * production.
      *
-     * @param ar The AvailabilityRecord for the chassis or model.
-     * @param rating The force equipment rating.
+     * @param avRating       The AvailabilityRecord for the chassis or model.
+     * @param equipRating   The force equipment rating.
      * @param ratingLevels The number of equipment rating levels used by the faction.
-     * @param year The game year
+     * @param year     The game year
      * @return The adjusted availability rating.
      */
-    public int calcAvailability(AvailabilityRating ar, int rating, int ratingLevels, int year) {
-        int retVal = ar.adjustForRating(rating, ratingLevels);
+    public int calcAvailability(AvailabilityRating avRating, int equipRating, int ratingLevels, int year) {
+        int retVal = avRating.adjustForRating(equipRating, ratingLevels);
 
-        if (introYear == year) {
+        // Pre-production prototypes are heavily reduced
+        if (year == introYear - 1) {
             retVal -= 2;
         }
-        if (introYear == year + 1) {
+
+        // Initial production year is slightly reduced
+        if (year == introYear) {
             retVal -= 1;
         }
+
         return Math.max(retVal, 0);
     }
 

@@ -1195,12 +1195,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && game.getPhase().isFiring()) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
-                if (entity.usesWeaponBays()) {
+                if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        for (WeaponMounted weapon : mounted.getBayWeapons()) {
-                            currentHeatBuildup += weapon.getCurrentHeat();
-                        }
+                        currentHeatBuildup += mounted.getCurrentHeat();
                     } else {
                         // check whether arc has fired
                         int loc = mounted.getLocation();
@@ -1257,15 +1255,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
-            wArcHeatL.setVisible(true);
-            wArcHeatR.setVisible(true);
             m_chBayWeapon.setVisible(true);
             wBayWeapon.setVisible(true);
         } else {
-            wArcHeatL.setVisible(false);
-            wArcHeatR.setVisible(false);
             m_chBayWeapon.setVisible(false);
             wBayWeapon.setVisible(false);
+        }
+
+        if (entity.isLargeCraft()) {
+            wArcHeatL.setVisible(true);
+            wArcHeatR.setVisible(true);
+        }
+        else {
+            wArcHeatL.setVisible(false);
+            wArcHeatR.setVisible(false);
         }
 
         wDamageTrooperL.setVisible(false);

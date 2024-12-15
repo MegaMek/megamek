@@ -208,8 +208,8 @@ class PlayerTable extends JTable {
 
             String msg_start = Messages.getString("ChatLounge.Start");
 
-            final GameOptions gOpts = lobby.game().getOptions();
-            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+            final var gOpts = lobby.game().getOptions();
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0) && !player.isBot() && player.getId() != 0) {
                 result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
             } else if ((!lobby.client().getLocalPlayer().isGameMaster()
                     && (isEnemy)

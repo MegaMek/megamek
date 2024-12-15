@@ -19,18 +19,17 @@
  */
 package megamek.server.victory;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import megamek.common.Game;
 import megamek.common.IGame;
-import megamek.common.options.BasicGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.server.scriptedevent.TriggeredEvent;
 import megamek.server.scriptedevent.VictoryTriggeredEvent;
 import megamek.server.trigger.TriggerSituation;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class manages the victory conditions of a game. As victory conditions could potentially have some state they need to save in
@@ -157,7 +156,7 @@ public class VictoryHelper implements Serializable {
      * conditions include those set in the game options as well as those added by code (e.g. through a scenario).
      */
     private void buildVClist(IGame game) {
-        BasicGameOptions options = game.getOptions();
+        var options = game.getOptions();
         neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
         if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victoryConditions.add(new BVDestroyedVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));

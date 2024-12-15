@@ -21,15 +21,15 @@ package megamek.common.options;
 import java.io.File;
 import java.util.Vector;
 
-public abstract class BasicGameOptions extends AbstractOptions {
+public abstract class BasicGameOptions extends AbstractOptionsImpl {
 
     @Override
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic");
         addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false);
-        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_MOVEMENT, false);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_FIRING, false);
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGIBLE_PHYSICAL, true);
         addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true);
         addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true);
         addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false);
@@ -39,7 +39,7 @@ public abstract class BasicGameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false);
         addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false);
         addOption(base, OptionsConstants.BASE_SET_DEFAULT_TEAM_1, false);
-        addOption(base, OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0, false);
+        addOption(base, OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0, false);
         addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false);
         addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false);
         addOption(base, OptionsConstants.BASE_BRIDGECF, 0);

@@ -69,7 +69,7 @@ public class LobbyUtility {
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
      * <P>
-     * See also {@link #startPosOverlap(Player, Player)}
+     * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player) {
         return isValidStartPos(game, player, player.getStartingPos());
@@ -83,21 +83,21 @@ public class LobbyUtility {
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
      * <P>
-     * See also {@link #startPosOverlap(Player, Player)}
+     * See also {@link #startPosOverlap(int, int)}
      */
     static boolean isValidStartPos(Game game, Player player, int pos) {
         if (!isExclusiveDeployment(game)) {
             return true;
         } else {
-            final GameOptions gOpts = game.getOptions();
+            final var gOpts = game.getOptions();
             List<Player> players = game.getPlayersList();
 
-            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot()
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0) && !player.isBot()
                     && player.getId() != 0) {
                 return true;
             }
 
-            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0)) {
                 players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
             }
 
@@ -112,11 +112,11 @@ public class LobbyUtility {
     }
 
     /**
-     * Returns true when double blind and exclusive deployment are on,
+     * Returns true when double-blind and exclusive deployment are on,
      * meaning that player's deployment zones may not overlap.
      */
     static boolean isExclusiveDeployment(Game game) {
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
     }
@@ -125,7 +125,7 @@ public class LobbyUtility {
      * Returns true when blind drop is on.
      */
     static boolean isBlindDrop(Game game) {
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
     }
 
@@ -133,16 +133,16 @@ public class LobbyUtility {
      * Returns true when real blind drop is on.
      */
     static boolean isRealBlindDrop(Game game) {
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
     }
 
     /**
-     * Returns true when teams share vision is on, reagardless of whether
-     * double blind is on.
+     * Returns true when teams share vision is on, regardless of whether
+     * double-blind is on.
      */
     static boolean isTeamsShareVision(Game game) {
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
     }
 

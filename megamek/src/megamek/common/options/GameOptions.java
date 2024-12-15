@@ -13,18 +13,6 @@
  */
 package megamek.common.options;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
@@ -36,6 +24,13 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Contains the options determining play in the current game.
@@ -45,6 +40,7 @@ import megamek.utilities.xml.MMXMLUtility;
 public class GameOptions extends BasicGameOptions {
     private static final MMLogger logger = MMLogger.create(GameOptions.class);
 
+    @Serial
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml";
 
@@ -330,7 +326,7 @@ public class GameOptions extends BasicGameOptions {
             }
             logger.info(logMessages.toString());
         } catch (Exception e) {
-            logger.error("Error loading XML for game options: " + e.getMessage(), e);
+            logger.error("Error loading XML for game options: {}", e.getMessage(), e);
         }
 
         return changedOptions;
@@ -370,12 +366,11 @@ public class GameOptions extends BasicGameOptions {
 
                         option = tempOption;
                     } catch (Exception ex) {
-                        logger.error(String.format(
-                                "Error trying to load option '%s' with a value of '%s'!", name, value));
+                        logger.warn("Error trying to load option {} with a value of {}!", name, value);
                     }
                 }
             } else {
-                logger.warn("Invalid option '" + name + "' when trying to load options file!");
+                logger.warn("Invalid option '{}' when trying to load options file!", name);
             }
         }
 
@@ -390,7 +385,7 @@ public class GameOptions extends BasicGameOptions {
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      *
      * @param options <code>Vector</code> of <code>IBasicOption</code>
-     * @param file
+     * @param file string with the name of the file
      */
     public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
@@ -423,7 +418,7 @@ public class GameOptions extends BasicGameOptions {
     }
 
     private static class GameOptionsInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new GameOptionsInfo();
+        private static final AbstractOptionsInfo instance = new GameOptionsInfo();
 
         protected GameOptionsInfo() {
             super("GameOptionsInfo");

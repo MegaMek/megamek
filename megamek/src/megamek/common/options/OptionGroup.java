@@ -1,38 +1,37 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
 package megamek.common.options;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
 public class OptionGroup implements IBasicOptionGroup, Serializable {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = 6445683666789832313L;
 
-    private Vector<String> optionNames = new Vector<>();
+    private final Vector<String> optionNames = new Vector<>();
 
-    private String name;
+    private final String name;
     private String key;
 
     /**
      * Creates new OptionGroup
-     * 
+     *
      * @param name group name
      * @param key optional key
      */
@@ -43,7 +42,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
 
     /**
      * Creates new OptionGroup with empty key
-     * 
+     *
      * @param name option name
      */
     public OptionGroup(String name) {
@@ -73,7 +72,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
      * Adds new option name to this group. The option names are unique, so if
      * there is already an option <code>optionName</code> this function does
      * nothing.
-     * 
+     *
      * @param optionName new option name
      */
     public void addOptionName(String optionName) {

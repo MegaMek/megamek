@@ -26,6 +26,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
@@ -64,7 +65,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public final Version version = MMConstants.VERSION;
 
-    private GameOptions options = new GameOptions();
+    private IGameOptions options = new GameOptions();
 
     private MapSettings mapSettings = MapSettings.getInstance();
 
@@ -302,7 +303,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     @Override
     public GameOptions getOptions() {
-        return options;
+        return (GameOptions) options;
     }
 
     public void setOptions(final @Nullable GameOptions options) {

@@ -19,11 +19,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
-
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -32,25 +27,32 @@ import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Vector;
+
 public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
     private static final MMLogger logger = MMLogger.create(ArtilleryBayWeaponIndirectHomingHandler.class);
 
+    @Serial
     private static final long serialVersionUID = -7243477723032010917L;
     boolean amsEngaged = false;
     boolean apdsEngaged = false;
-    boolean advancedAMS = false;
-    boolean advancedPD = false;
+    boolean advancedAMS;
+    boolean advancedPD;
 
     /**
-     * @param t
-     * @param w
-     * @param g
+     * @param toHitData
+     * @param weaponAttackAction
+     * @param game
      */
-    public ArtilleryWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, Game g, TWGameManager m) {
-        super(t, w, g, m);
-        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
-        advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
+    public ArtilleryWeaponIndirectHomingHandler(ToHitData toHitData,
+            WeaponAttackAction weaponAttackAction, Game game, TWGameManager gameManager) {
+        super(toHitData, weaponAttackAction, game, gameManager);
+        advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
+        advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
 
     /*
@@ -225,17 +227,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         if ((bldg != null) && (bldgAbsorbs > 0)) {
             // building absorbs some damage
             r = new Report(6010);
-            if (entityTarget != null) {
-                r.subject = entityTarget.getId();
-            }
+            r.subject = entityTarget.getId();
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
             Vector<Report> buildingReport = gameManager.damageBuilding(bldg,
                     nDamPerHit, target.getPosition());
-            if (entityTarget != null) {
-                for (Report report : buildingReport) {
-                    report.subject = entityTarget.getId();
-                }
+            for (Report report : buildingReport) {
+                report.subject = entityTarget.getId();
             }
             vPhaseReport.addAll(buildingReport);
         }
@@ -310,7 +308,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * Uses a CFR to let the player choose from eligible TAG
      */
     public void convertHomingShotToEntityTarget() {
-        boolean debug = logger.isDebugEnabled();
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
 
         final Coords tc = target.getPosition();
@@ -352,11 +349,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             newTarget = ti.target;
             if (!ti.missed && (newTarget != null)) {
                 v.add(ti);
-                if (debug) {
-                    logger.debug(new StringBuilder("Found valid TAG on target ")
-                            .append(ti.target.getDisplayName()).append("; Range to original target is ")
-                            .append(tc.distance(ti.target.getPosition())));
-                }
+                logger.debug(new StringBuilder("Found valid TAG on target ")
+                        .append(ti.target.getDisplayName()).append("; Range to original target is ")
+                        .append(tc.distance(ti.target.getPosition())));
             }
         }
 
@@ -428,10 +423,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
     @Override
     protected boolean checkPDConditions() {
         advancedPD = game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
-        if ((target == null) || !advancedPD || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
-            return false;
-        }
-        return true;
+        return (target != null) && advancedPD && (target.getTargetType() == Targetable.TYPE_ENTITY);
     }
 
     /**
@@ -458,11 +450,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         return CapMissileAMSMod;
     }
 
-    @Override
-    protected int getCapMissileAMSMod() {
-        return CapMissileAMSMod;
-    }
-
     protected int handleAMS(Vector<Report> vPhaseReport) {
 
         int hits = 1;
@@ -473,7 +460,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             // target
             gameManager.assignAMS();
             calcCounterAV();
-            // Report AMS/Pointdefense failure due to Overheating.
+            // Report AMS/Point-defense failure due to Overheating.
             if (pdOverheated
                     && (!(amsBayEngaged
                             || amsBayEngagedCap

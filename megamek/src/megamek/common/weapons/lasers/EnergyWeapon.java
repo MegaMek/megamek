@@ -17,7 +17,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
@@ -41,8 +41,8 @@ public abstract class EnergyWeapon extends Weapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Add modes for dialed-down damage according to TacOps, p.102
         // Adds a mode for each damage value down to zero; zero is included
@@ -50,7 +50,7 @@ public abstract class EnergyWeapon extends Weapon {
         // The bombast laser has its own rules with to-hit modifiers and does not
         // get additional dial-down
         if (!(this instanceof ISBombastLaser)) {
-            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
                 int dmg = (damage == WeaponType.DAMAGE_VARIABLE) ? damageShort : damage;
                 for (; dmg >= 0; dmg--) {
                     addMode("Damage " + dmg);

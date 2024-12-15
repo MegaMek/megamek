@@ -383,10 +383,8 @@ public class TestInfantry extends TestEntity {
         report.addEmptyLine();
 
         InfantryMount mount = infantry.getMount();
-        int activeTroopers = infantry.getInternal(Infantry.LOC_INFANTRY);
-        if (activeTroopers < 0) {
-            activeTroopers = 0;
-        }
+        int activeTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
+
         double weight;
 
         if (mount != null) {

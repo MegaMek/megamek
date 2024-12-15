@@ -153,7 +153,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *      TeleMissile entity in the physical phase
      */
     protected int getLargeCraftHeat(Entity e) {
-        int totalheat = 0;
+        int totalHeat = 0;
         if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             if (e.usesWeaponBays()) {
@@ -163,7 +163,35 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     if (prevAttack.getEntityId() == e.getId()) {
                         WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
                         for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
-                            totalheat += bayW.getCurrentHeat();
+                            totalHeat += bayW.getCurrentHeat();
+                        }
+                    }
+                }
+            } else if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                // create an array of booleans of locations
+                boolean[] usedFrontArc = new boolean[ae.locations()];
+                boolean[] usedRearArc = new boolean[ae.locations()];
+                for (int i = 0; i < ae.locations(); i++) {
+                    usedFrontArc[i] = false;
+                    usedRearArc[i] = false;
+                }
+                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
+                    AttackHandler ah = i.nextElement();
+                    WeaponAttackAction prevAttack = ah.getWaa();
+                    if (prevAttack.getEntityId() == e.getId()) {
+                        WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
+                        boolean rearMount = prevWeapon.isRearMounted();
+                        int loc = prevWeapon.getLocation();
+                        if (!rearMount) {
+                            if (!usedFrontArc[loc]) {
+                                totalHeat += ae.getHeatInArc(loc, rearMount);
+                                usedFrontArc[loc] = true;
+                            }
+                        } else {
+                            if (!usedRearArc[loc]) {
+                                totalHeat += ae.getHeatInArc(loc, rearMount);
+                                usedRearArc[loc] = true;
+                            }
                         }
                     }
                 }
@@ -173,12 +201,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     WeaponAttackAction prevAttack = ah.getWaa();
                     if (prevAttack.getEntityId() == e.getId()) {
                         Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
-                        totalheat += prevWeapon.getCurrentHeat();
+                        totalHeat += prevWeapon.getCurrentHeat();
                     }
                 }
             }
         }
-        return totalheat;
+        return totalHeat;
     }
 
     /**
@@ -1903,12 +1931,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return;
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (ae.usesWeaponBays() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+            if (ae.isLargeCraft() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!ae.hasArcFired(loc, rearMount)) {
                     ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
                     ae.setArcFired(loc, rearMount);
+                    logger.error(String.format("Arc Heat: %s Buildup: %s", ae.getHeatInArc(loc, rearMount), ae.heatBuildup));
                 }
             } else {
                 ae.heatBuildup += (weapon.getCurrentHeat());

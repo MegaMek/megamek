@@ -620,7 +620,6 @@ Gargoyle (Man O' War) Prime|Man O' War (Gargoyle) Prime
 Gotterdammerung GTD-20C|Götterdämmerung GTD-20C
 Gotterdammerung GTD-20S|Götterdämmerung GTD-20S
 Gotterdammerung GTD-30S|Götterdämmerung GTD-30S
-Grommet D90 MilitiaMech|Grommet D90 MilitiaMech
 Guard SecurityMech GS-107X|Guard GS-107X SecurityMech
 Guard SecurityMech GS-54|Guard GS-54 SecurityMech
 Gulon MiningMech GLN-1A|Gulon GLN-1A MiningMech
@@ -695,10 +694,8 @@ Opossum SalvageMech OPO-3 MOD|Opossum OPO-3 SalvageMech MOD
 Pacifier SecurityMech CCU-36|Pacifier CCU-36 SecurityMech
 Pacifier SecurityMech CCU-40|Pacifier CCU-40 SecurityMech
 Patron LoaderMech PTN-1|Patron PTN-1 LoaderMech
-Patron LoaderMech|Patron LoaderMech
 Patron MilitiaMech PTN-2|Patron PTN-2 MilitiaMech
 Patron MilitiaMech PTN-2M|Patron PTN-2M MilitiaMech
-Peacemaker PM-6 PoliceMech|Peacemaker PM-6 PoliceMech
 Peregrine (Horned Owl) (Standard)|Peregrine (Horned Owl)
 Phoenix Hawk LAM PXH-HK2|Phoenix Hawk LAM PHX-HK2
 Phoenix Hawk PXH-1b (Special)|Phoenix Hawk PXH-1b 'Special'
@@ -1361,7 +1358,7 @@ Lyonesse Escort (Standard)|Lyonesse Escort
 Machina Domini Interface Armor (Standard)(Sqd1)|Machina Domini Interface Armor (Sqd1)
 Mad Cat III (Standard)|Mad Cat III
 Mad Cat Mk II (Standard)|Mad Cat Mk II
-Mad Cat Mk IV (Savage Wolf) PR (Standard)|Mad Cat Mk IV (Savage Wolf) PR
+Mad Cat Mk IV (Savage Wolf) PR (Standard)|Mad Cat Mk IV PR (Savage Wolf)
 Magi Infantry Support Vehicle (Standard)|Magi Infantry Support Vehicle
 Main Gauche Light Support Tank (Standard)|Main Gauche Light Support Tank
 Mamono IFV (Standard)|Mamono IFV

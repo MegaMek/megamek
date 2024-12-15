@@ -4006,6 +4006,13 @@
 				<availability>General:4</availability>
 			</model>
 		</chassis>
+        <chassis name='TrackBike' unitType='Tank'>
+            <availability>Periphery:2-,PIR:3</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
         <chassis name='Tracked Quad' unitType='Tank'>
             <availability>CLAN:2,PP:3,IS:2,Periphery:2</availability>
             <model name=''>

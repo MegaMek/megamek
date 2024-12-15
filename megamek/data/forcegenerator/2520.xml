@@ -1843,10 +1843,10 @@
 			</model>
 		</chassis>
         <chassis name='TrackBike' unitType='Tank'>
-            <availability>IS:2,Periphery:2</availability>
+            <availability>Periphery:2-,PIR:3</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
-                <availability>IS:8,Periphery:8</availability>
+                <roles>cargo,support</roles>
+                <availability>Periphery:8,PIR:8</availability>
             </model>
         </chassis>
         <chassis name='Tracked Quad' unitType='Tank'>

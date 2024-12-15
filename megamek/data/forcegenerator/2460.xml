@@ -1033,10 +1033,10 @@
 			</model>
 		</chassis>
         <chassis name='TrackBike' unitType='Tank'>
-            <availability>IS:2:2469,Periphery:2:2469</availability>
+            <availability>IS:1:2469,Periphery:2:2469,PIR:3:2469</availability>
             <model name=''>
                 <roles>cargo,support</roles>
-                <availability>IS:8,Periphery:8</availability>
+                <availability>IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
         <chassis name='Tracked Quad' unitType='Tank'>

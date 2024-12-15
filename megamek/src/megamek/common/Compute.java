@@ -22,6 +22,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -419,8 +420,8 @@ public class Compute {
             return null;
         }
 
-        // no stacking violations for flying aeros
-        if (entering.isAirborne()) {
+        // no stacking violations for flying aeros, except during deployment - no crushing units during deployment!
+        if (entering.isAirborne() && !((game.getPhase().equals(GamePhase.DEPLOYMENT) && elevation == 0))) {
             return null;
         }
 
@@ -6914,13 +6915,17 @@ public class Compute {
             return toReturn;
         }
 
-        String damage = weapon.curMode().getName();
+        String damage = weapon.curMode().getName().toLowerCase();
 
         // Vehicle flamers have damage and heat modes so lets make sure this is
         // an actual dial down Damage.
-        if ((damage.trim().toLowerCase().indexOf("damage") == 0)
-                && (damage.trim().length() > 6)) {
-            toReturn = Integer.parseInt(damage.substring(6).trim());
+        if ((damage.trim().length() > 6) && damage.contains("damage")) {
+            try {
+                toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+            }
+            catch (NumberFormatException e) {
+                logger.warn("Failed to get dialed down damage. " + e.getMessage());
+            }
         }
 
         return Math.min(wtype.getDamage(range), toReturn);
@@ -7252,7 +7257,7 @@ public class Compute {
             case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                         || wtype.hasFlag(WeaponType.F_PULSE)
-                        || weapon.curMode().getName().equals("Pulse")
+                        || weapon.curMode().getName().startsWith("Pulse")
                         || (wtype instanceof HAGWeapon)) {
                     return false;
                 }

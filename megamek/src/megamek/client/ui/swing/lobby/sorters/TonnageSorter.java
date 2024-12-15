@@ -21,13 +21,14 @@ package megamek.client.ui.swing.lobby.sorters;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /** A Lobby Mek Table sorter that sorts by tonnage. */
 public class TonnageSorter implements MekTableSorter {
-    
+
     private Sorting direction;
-    
+
     /** A Lobby Mek Table sorter that sorts by tonnage. */
     public TonnageSorter(MekTableSorter.Sorting dir) {
         direction = dir;
@@ -55,9 +56,9 @@ public class TonnageSorter implements MekTableSorter {
     public int getColumnIndex() {
         return MekTableModel.COL_UNIT;
     }
-    
+
     @Override
-    public boolean isAllowed(GameOptions opts) {
+    public boolean isAllowed(IGameOptions opts) {
         return !opts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
     }
 

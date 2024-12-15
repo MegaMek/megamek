@@ -43,6 +43,7 @@ import megamek.common.hexarea.HexArea;
 import megamek.common.icons.Camouflage;
 import megamek.common.icons.FileCamouflage;
 import megamek.common.jacksonadapters.*;
+import megamek.common.options.GameOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.strategicBattleSystems.SBFGame;
 import megamek.logging.MMLogger;
@@ -223,14 +224,15 @@ public class ScenarioV2 implements Scenario {
     }
 
     private void parseOptions(IGame game) {
-        game.getOptions().initialize();
+        var gameOptions = ((GameOptions) game.getOptions());
+        gameOptions.initialize();
         if (node.has(OPTIONS)) {
             JsonNode optionsNode = node.get(OPTIONS);
             if (optionsNode.has(OPTIONS_FILE)) {
                 File optionsFile = new File(scenariofile.getParentFile(), optionsNode.get(OPTIONS_FILE).textValue());
-                game.getOptions().loadOptions(optionsFile, true);
+                gameOptions.loadOptions(optionsFile, true);
             } else {
-                game.getOptions().loadOptions();
+                gameOptions.loadOptions();
             }
 
             if (optionsNode.has(OPTIONS_ON)) {

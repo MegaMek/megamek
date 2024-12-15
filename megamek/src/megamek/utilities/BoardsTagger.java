@@ -92,7 +92,8 @@ public class BoardsTagger {
         TAG_ARMOREDBUILDING("ArmoredBuilding"),
         TAG_IMPASSABLE("Impassable"),
         TAG_ELEVATOR("Elevator"),
-        TAG_MULTIPLETHEME("MultipleTheme");
+        TAG_MULTIPLETHEME("MultipleTheme"),
+        TAG_UNDERWATERBRIDGE("UnderWaterBridge");
 
         private String tagName;
         private static final Map<String, Tags> internalTagMap;
@@ -233,6 +234,7 @@ public class BoardsTagger {
         int impassable = 0;
         int elevator = 0;
         int multipleTheme = 0;
+        int underWaterBridge = 0;
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -291,6 +293,11 @@ public class BoardsTagger {
                 }
                 impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
                 elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
+                if (hex.containsTerrain(WATER)
+                    && hex.containsTerrain(BRIDGE)
+                    && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
+                    underWaterBridge++;
+                }
             }
         }
 
@@ -359,6 +366,7 @@ public class BoardsTagger {
         multipleTheme += snowTheme > 0 ? 1 : 0;
         multipleTheme += volcanic > 0 ? 1 : 0;
         matchingTags.put(Tags.TAG_MULTIPLETHEME, multipleTheme > 1);
+        matchingTags.put(Tags.TAG_UNDERWATERBRIDGE, underWaterBridge > 0);
 
         // Remove (see below) any auto tags that might be present so that auto tags that
         // no longer apply

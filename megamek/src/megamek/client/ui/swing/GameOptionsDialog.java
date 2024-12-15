@@ -104,7 +104,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     public GameOptionsDialog(ClientGUI cg) {
         super(cg.frame, "GameOptionsDialog", "GameOptionsDialog.title");
         clientGui = cg;
-        init(cg.getFrame(), cg.getClient().getGame().getOptions());
+        init(cg.getFrame(), (GameOptions) cg.getClient().getGame().getOptions());
     }
 
     /**

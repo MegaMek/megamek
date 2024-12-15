@@ -817,22 +817,7 @@ public class Server implements Runnable {
      * Adds a new player to the game
      */
     private Player addNewPlayer(int connId, String name, boolean isBot) {
-        int team = Player.TEAM_UNASSIGNED;
-        if (getGame().getPhase().isLounge()) {
-            team = Player.TEAM_NONE;
-            final BasicGameOptions gOpts = getGame().getOptions();
-            if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
-                for (Player p : getGame().getPlayersList()) {
-                    if (p.getTeam() > team) {
-                        team = p.getTeam();
-                    }
-                }
-                team++;
-            } else {
-                team = 1;
-            }
-
-        }
+        int team = getTeam(isBot);
         Player newPlayer = new Player(connId, name);
         newPlayer.setBot(isBot);
         PlayerColour colour = newPlayer.getColour();
@@ -852,6 +837,26 @@ public class Server implements Runnable {
         getGame().addPlayer(connId, newPlayer);
         validatePlayerInfo(connId);
         return newPlayer;
+    }
+
+    private int getTeam(boolean isBot) {
+        int team = Player.TEAM_UNASSIGNED;
+        if (getGame().getPhase().isLounge()) {
+            team = Player.TEAM_NONE;
+            final var gOpts = getGame().getOptions();
+            if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
+                for (Player p : getGame().getPlayersList()) {
+                    if (p.getTeam() > team) {
+                        team = p.getTeam();
+                    }
+                }
+                team++;
+            } else {
+                team = 1;
+            }
+
+        }
+        return team;
     }
 
     /**
@@ -1183,8 +1188,24 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Player can request its own change of team
+     * @param teamId target team id
+     * @param player player requesting the change
+     * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead.
+     */
+    @Deprecated
     public void requestTeamChange(int teamId, Player player) {
         gameManager.requestTeamChange(teamId, player);
+    }
+
+    /**
+     * Player can request its own change of team
+     * @param teamID target team id
+     * @param player player requesting the change
+     */
+    public void requestTeamChangeForPlayer(int teamID, Player player) {
+        gameManager.requestTeamChangeForPlayer(teamID, player);
     }
 
     public void requestGameMaster(Player player) {

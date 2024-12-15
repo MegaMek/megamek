@@ -13,21 +13,17 @@
  */
 package megamek.common.options;
 
-import megamek.common.Aero;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Jumpship;
-import megamek.common.Mek;
-import megamek.common.Tank;
-import megamek.common.Warship;
+import megamek.common.*;
+
+import java.io.Serial;
 
 /**
  * Contains the options for partial repair properties
  *
  * @author Neth (Thomas Pfau)
  */
-public class PartialRepairs extends AbstractOptions {
+public class PartialRepairs extends AbstractOptionsImpl {
+    @Serial
     private static final long serialVersionUID = 7618380522964885742L;
     public static final String PART_REPAIRS = "PartRepairs";
 
@@ -133,7 +129,7 @@ public class PartialRepairs extends AbstractOptions {
     }
 
     private static class PartialRepairInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new PartialRepairInfo();
+        private static final AbstractOptionsInfo instance = new PartialRepairInfo();
 
         public static AbstractOptionsInfo getInstance() {
             return instance;

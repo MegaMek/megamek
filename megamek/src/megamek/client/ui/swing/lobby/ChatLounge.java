@@ -1217,8 +1217,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Board newBoard = ServerBoardHelper.getPossibleGameBoard(mapSettings, false);
         boardPreviewGame.setBoard(newBoard);
         previewBV.setLocalPlayer(client().getLocalPlayer());
-        final GameOptions gOpts = game().getOptions();
-        boardPreviewGame.setOptions(gOpts);
+        final var gOpts = game().getOptions();
+        boardPreviewGame.setOptions((GameOptions) gOpts);
         previewBV.setShowLobbyPlayerDeployment(showPlayerDeployment.isSelected());
 
         for (Player player : boardPreviewGame.getPlayersList()) {
@@ -1254,7 +1254,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         allEntities.sort(activeSorter);
 
         boolean localUnits = false;
-        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        var opts = clientgui.getClient().getGame().getOptions();
 
         for (Entity entity : allEntities) {
             // Remember if the local player has units.
@@ -1709,7 +1709,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Do nothing
     }
 
-    private ActionListener lobbyListener = new ActionListener() {
+    private final ActionListener lobbyListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ev) {
             // Are we ignoring events?
@@ -1736,7 +1736,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 doBotSettings();
             } else if (ev.getSource().equals(butOptions)) {
                 clientgui.getGameOptionsDialog().setEditable(true);
-                clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
+                clientgui.getGameOptionsDialog().update((GameOptions) clientgui.getClient().getGame().getOptions());
                 clientgui.getGameOptionsDialog().setVisible(true);
             } else if (ev.getSource().equals(butCompact)) {
                 toggleCompact();
@@ -2176,7 +2176,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** OK Refreshes the Map Summary, Tech Level and Game Year labels. */
     private void refreshLabels() {
-        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        var opts = clientgui.getClient().getGame().getOptions();
 
         String txt = Messages.getString("ChatLounge.GameYear");
         txt += opts.intOption(OptionsConstants.ALLOWED_YEAR);
@@ -2221,7 +2221,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void ready() {
         final Client client = clientgui.getClient();
         final Game game = client.getGame();
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
 
         // enforce exclusive deployment zones in double blind
         for (Player player : client.getGame().getPlayersList()) {
@@ -2475,7 +2475,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * shown/saved/etc.
      */
     private boolean unitsVisible(Player player) {
-        GameOptions opts = clientgui.getClient().getGame().getOptions();
+        var opts = clientgui.getClient().getGame().getOptions();
         boolean isBlindDrop = opts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         return !player.isEnemyOf(localPlayer()) || !isBlindDrop;
@@ -3184,7 +3184,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         private void sorterPopup(MouseEvent e) {
             ScalingPopup popup = new ScalingPopup();
-            GameOptions opts = clientgui.getClient().getGame().getOptions();
+            var opts = clientgui.getClient().getGame().getOptions();
             for (MekTableSorter sorter : union(unitSorters, bvSorters)) {
                 // Offer only allowed sorters and only one sorting direction
                 if (sorter.isAllowed(opts) && sorter.getSortingDirection() != Sorting.ASCENDING) {

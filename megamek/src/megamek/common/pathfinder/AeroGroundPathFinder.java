@@ -14,22 +14,13 @@
 */
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.IAero;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.logging.MMLogger;
+
+import java.util.*;
 
 /**
  * This set of classes is intended for use for pathfinding by aerodyne units on
@@ -275,7 +266,7 @@ public class AeroGroundPathFinder {
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_RIGHT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || !pathIsRedundant(path)) {
+            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
                 retval.add(path);
             }
         }
@@ -283,13 +274,13 @@ public class AeroGroundPathFinder {
         for (MovePath path : generateSidePaths(mp, MoveStepType.TURN_LEFT)) {
             // we want to avoid adding paths that don't visit new hexes
             // off-board paths will get thrown out later
-            if (path.fliesOffBoard() || !pathIsRedundant(path)) {
+            if (path.fliesOffBoard() || pathIsntRedundant(path)) {
                 retval.add(path);
             }
         }
 
         ForwardToTheEnd(mp);
-        if (mp.fliesOffBoard() || !pathIsRedundant(mp)) {
+        if (mp.fliesOffBoard() || pathIsntRedundant(mp)) {
             retval.add(mp);
         }
 
@@ -302,8 +293,8 @@ public class AeroGroundPathFinder {
         List<MovePath> retval = new ArrayList<>();
         MovePath straightLine = mp.clone();
 
-        if (logger.isDebugEnabled() && STACK_DEPTH - mp.length() < 10) {
-            logger.debug("Aero pathing stack depth: " + mp.length() + " (out of " + STACK_DEPTH + ")");
+        if (STACK_DEPTH - mp.length() < 10) {
+            logger.debug("Aero pathing stack depth: {} (out of {})", mp.length(), STACK_DEPTH);
         }
 
         boolean firstTurn = true;
@@ -413,7 +404,11 @@ public class AeroGroundPathFinder {
         }
     }
 
-    private Map<Coords, MovePath> visitedCoords = new HashMap<>();
+    private final Map<Coords, MovePath> visitedCoords = new HashMap<>();
+
+    protected boolean pathIsntRedundant(MovePath mp) {
+        return !pathIsRedundant(mp);
+    }
 
     /**
      * Determines if the given move path is "redundant".

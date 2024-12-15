@@ -13,21 +13,18 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
+import megamek.common.options.IGameOptions;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.InsulatedLaserWeaponHandler;
 import megamek.common.weapons.PulseLaserWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.Collections;
 
 /**
  * @author Andrew Hunter
@@ -45,12 +42,21 @@ public abstract class LaserWeapon extends EnergyWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         if (!(this instanceof PulseLaserWeapon)) {
-            addMode("");
-            addMode("Pulse");
+            if (!hasModes()) {
+                addMode("");
+                addMode("Pulse");
+            }
+            else {
+                for (var mode : Collections.list(getModes())) {
+                    if(!mode.getName().contains("Pulse") && !mode.getName().isEmpty()) {
+                        addMode("Pulse " + mode.getName());
+                    }
+                }
+            }
         }
     }
 
@@ -60,10 +66,13 @@ public abstract class LaserWeapon extends EnergyWeapon {
         if ((linkedBy instanceof MiscMounted)
                 && !linkedBy.isInoperable()
                 && ((MiscMounted) linkedBy).getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-            return 2;
-        } else {
-            return 0;
+            return super.getModesCount();
+        } else if(this instanceof PulseLaserWeapon) {
+            return super.getModesCount();
         }
+
+        //Only works if laser pulse module's "Pulse" modes are added last.
+        return (int) modes.stream().filter(mode -> !mode.getName().startsWith("Pulse")).count();
     }
 
     @Override
@@ -71,7 +80,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
         if ((mounted == null) || !(mounted.getLinkedBy() instanceof MiscMounted) || !mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
             return super.getToHitModifier(mounted);
         }
-        return mounted.curMode().getName().equals("Pulse") ? -2 : 0;
+        return mounted.curMode().getName().startsWith("Pulse") ? -2 : 0;
     }
 
     @Override

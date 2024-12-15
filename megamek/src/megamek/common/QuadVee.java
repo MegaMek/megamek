@@ -367,7 +367,7 @@ public class QuadVee extends QuadMek {
     }
 
     @Override
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         // Since pavement bonus only applies if driving on pavement the entire turn,
         // there is no pavement bonus unless it spends the entire turn in vehicle mode.
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow;

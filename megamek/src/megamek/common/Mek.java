@@ -1350,7 +1350,7 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         // eligible if using Mek tracks
         return movementMode == EntityMovementMode.TRACKED;
     }

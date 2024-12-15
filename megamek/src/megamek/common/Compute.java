@@ -246,8 +246,8 @@ public class Compute {
     }
 
     /**
-     * Generates a number between 0 and maxValue - 1.
-     * e.g. randomInt(2) will generate either 0s or 1s
+     * Generates a number between 0 and  max value exclusive (this means maxValue-1).
+     * e.g. randomInt(3) will generate 0, 1, or 2.
      */
     public static int randomInt(int maxValue) {
         Roll roll = new MMRoll(random, maxValue);

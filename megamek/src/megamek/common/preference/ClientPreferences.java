@@ -43,6 +43,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
+    public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
@@ -88,6 +89,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
+        store.setDefault(AUTO_RESOLVE_GAMELOG_FILENAME, "simulation.html");
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -202,6 +204,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(GAMELOG_FILENAME);
     }
 
+    public String getAutoResolveGameLogFilename() {
+        return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
+    }
+
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -280,6 +286,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setGameLogFilename(String name) {
         store.setValue(GAMELOG_FILENAME, name);
+    }
+
+    public void setAutoResolveGameLogFilename(String name) {
+        store.setValue(AUTO_RESOLVE_GAMELOG_FILENAME, name);
     }
 
     public void setPrintEntityChange(boolean print) {
@@ -417,4 +427,5 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public void setMmlPath(String mmlPath) {
         store.setValue(MML_PATH, mmlPath.isBlank() ? "" : new File(mmlPath).getAbsolutePath());
     }
+
 }

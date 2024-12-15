@@ -67,7 +67,7 @@ public interface IGame {
 
     // endregion
 
-    IGameOptions getOptions();
+    BasicGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1
@@ -448,4 +448,64 @@ public interface IGame {
     void addScriptedEvent(TriggeredEvent event);
 
     // endregion
+
+
+    /**
+     * Setter for property victoryPlayerId.
+     *
+     * @param victoryPlayerId New value of property victoryPlayerId.
+     */
+    void setVictoryPlayerId(int victoryPlayerId);
+
+    /**
+     * Setter for property victoryPlayerId.
+     *
+     * @param victoryTeam New value of property victoryPlayerId.
+     */
+    void setVictoryTeam(int victoryTeam);
+
+    /**
+     * Cancels a victory
+     */
+    void cancelVictory();
+
+
+    /**
+     * Getter for property victoryPlayerId.
+     *
+     * @return Value of property victoryPlayerId.
+     */
+    int getVictoryPlayerId();
+
+    /**
+     * Getter for property victoryTeam.
+     *
+     * @return Value of property victoryTeam.
+     */
+    int getVictoryTeam();
+
+    /**
+     * Verify if the game has ended due a time limit
+     * @return true if the game has ended due to a time limit
+     */
+    boolean gameTimerIsExpired();
+
+    /**
+     * Get how many commanders still alive are owned by the player
+     * @param player the object player
+     * @return the number of commanders owned by the player
+     */
+    int getLiveCommandersOwnedBy(Player player);
+
+    Optional<Player> playerForPlayername(String playerName);
+
+    Optional<Integer> idForPlayername(String playerName);
+
+    default Map<Integer, Integer> getTeamByPlayer() {
+        Map<Integer, Integer> teamByPlayer = new HashMap<>();
+        for (var player : getPlayersList()) {
+            teamByPlayer.put(player.getId(), player.getTeam());
+        }
+        return teamByPlayer;
+    }
 }

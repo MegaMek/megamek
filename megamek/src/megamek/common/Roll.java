@@ -148,4 +148,28 @@ public abstract class Roll implements Serializable {
     public boolean isTargetRollSuccess2isFailure(TargetRoll target) {
         return (2 < getIntValue()) && (getIntValue() >= target.getValue());
     }
+
+    /**
+     * Get the individual dice values of the roll.
+     * @return the <code>int[]</code> array of the individual dice values.
+     */
+    public abstract int[] getIntValues();
+
+
+    /**
+     * Returns the margin of success/failure of the roll compared to the target roll.
+     * @param targetRoll the target roll to compare against
+     * @return the margin of success/failure
+     */
+    public int getMarginOfSuccess(TargetRoll targetRoll) {
+        return getIntValue() - targetRoll.getValue();
+    }
+
+    /**
+     * Determines if the roll is a simple failure.
+     * @return true if the roll is a simple failure, false otherwise
+     */
+    public boolean isSimpleFailure() {
+        return getIntValue() == 2;
+    }
 }

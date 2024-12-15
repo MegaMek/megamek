@@ -616,6 +616,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         }
     }
 
+    @Override
+    public boolean hasMoreTurns() {
+        return super.hasMoreTurns();
+    }
+
     /**
      * @return the first GameTurn object for the specified player, or null if the
      *         player has no

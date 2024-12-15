@@ -1359,6 +1359,7 @@ Machina Domini Interface Armor (Standard)(Sqd1)|Machina Domini Interface Armor (
 Mad Cat III (Standard)|Mad Cat III
 Mad Cat Mk II (Standard)|Mad Cat Mk II
 Mad Cat Mk IV (Savage Wolf) PR (Standard)|Mad Cat Mk IV PR (Savage Wolf)
+Mad Cat Mk IV (Savage Wolf) PR 2|Mad Cat Mk IV PR (Savage Wolf) 2
 Magi Infantry Support Vehicle (Standard)|Magi Infantry Support Vehicle
 Main Gauche Light Support Tank (Standard)|Main Gauche Light Support Tank
 Mamono IFV (Standard)|Mamono IFV

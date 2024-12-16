@@ -34,7 +34,7 @@ import java.util.Map;
 public class EnemyCmdrDestroyedVictory implements VictoryCondition, Serializable {
 
     @Override
-    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
         VictoryResult victoryResult = new VictoryResult(true);
         // check all players/teams for killing enemy commanders
         // score is 1.0 when enemy commanders are dead

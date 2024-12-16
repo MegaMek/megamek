@@ -50,7 +50,7 @@ public class VictoryHelper implements Serializable {
      *
      * @param game The game
      */
-    public VictoryHelper(IGame game) {
+    public VictoryHelper(Game game) {
         checkForVictory = game.getOptions().booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY);
 
         if (checkForVictory) {
@@ -68,7 +68,7 @@ public class VictoryHelper implements Serializable {
      * @see VictoryResult#noResult()
      * @see VictoryResult#drawResult()
      */
-    public VictoryResult checkForVictory(IGame game, Map<String, Object> context) {
+    public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
         // Always check for chat-command /victory, so games without victory conditions can be completed
         VictoryResult playerAgreedVR = playerAgreedVC.checkVictory(game, context);
         if (playerAgreedVR.isVictory()) {
@@ -109,13 +109,13 @@ public class VictoryHelper implements Serializable {
      * @return True when the game ends right now (at the end of round victory check) through a scripted event, either a game-end
      * event or a victory event that is set to be game-ending.
      */
-    private boolean gameEndsByScriptedEvent(IGame game) {
+    private boolean gameEndsByScriptedEvent(Game game) {
         return game.scriptedEvents().stream()
             .filter(TriggeredEvent::isGameEnding)
             .anyMatch(event -> event.trigger().isTriggered(game, TriggerSituation.ROUND_END));
     }
 
-    private VictoryResult checkOptionalVictoryConditions(IGame game, Map<String, Object> context) {
+    private VictoryResult checkOptionalVictoryConditions(Game game, Map<String, Object> context) {
         boolean isVictory = false;
         VictoryResult combinedResult = new VictoryResult(true);
 
@@ -155,22 +155,21 @@ public class VictoryHelper implements Serializable {
      * Returns a list of victory conditions that are checked if victory conditions are checked at all as per this game's options. The
      * conditions include those set in the game options as well as those added by code (e.g. through a scenario).
      */
-    private void buildVClist(IGame iGame) {
-        if (iGame instanceof Game game) {
-            var options = game.getOptions();
-            neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
-            if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
-                victoryConditions.add(new BVDestroyedVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
-            }
-            if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_RATIO)) {
-                victoryConditions.add(new BVRatioVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT)));
-            }
-            if (options.booleanOption(OptionsConstants.VICTORY_USE_KILL_COUNT)) {
-                victoryConditions.add(new KillCountVictory(options.intOption(OptionsConstants.VICTORY_GAME_KILL_COUNT)));
-            }
-            if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
-                victoryConditions.add(new EnemyCmdrDestroyedVictory());
-            }
+    private void buildVClist(Game game) {
+
+        var options = game.getOptions();
+        neededVictoryConditionCount = options.intOption(OptionsConstants.VICTORY_ACHIEVE_CONDITIONS);
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
+            victoryConditions.add(new BVDestroyedVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
+        }
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_BV_RATIO)) {
+            victoryConditions.add(new BVRatioVictoryCondition(options.intOption(OptionsConstants.VICTORY_BV_RATIO_PERCENT)));
+        }
+        if (options.booleanOption(OptionsConstants.VICTORY_USE_KILL_COUNT)) {
+            victoryConditions.add(new KillCountVictory(options.intOption(OptionsConstants.VICTORY_GAME_KILL_COUNT)));
+        }
+        if (options.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
+            victoryConditions.add(new EnemyCmdrDestroyedVictory());
         }
     }
 }

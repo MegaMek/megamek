@@ -22,7 +22,9 @@ package megamek.server.victory;
 import megamek.common.*;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implements a kill count victory condition.  Victory is achieved if a team (or
@@ -39,7 +41,7 @@ public class KillCountVictory implements VictoryCondition, Serializable {
     }
 
     @Override
-    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
         boolean isVictory = false;
         VictoryResult victoryResult = new VictoryResult(true);
         Map<Integer, Integer> killsPerTeam = new HashMap<>();

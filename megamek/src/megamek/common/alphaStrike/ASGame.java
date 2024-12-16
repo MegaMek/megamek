@@ -140,58 +140,7 @@ public class ASGame extends AbstractGame {
         return new Report(messageId);
     }
 
-    @Override
-    public void setVictoryPlayerId(int victoryPlayerId) {
-
-    }
-
-    @Override
-    public void setVictoryTeam(int victoryTeam) {
-
-    }
-
-    @Override
-    public void cancelVictory() {
-
-    }
-
-    @Override
-    public int getVictoryPlayerId() {
-        return 0;
-    }
-
-    @Override
-    public int getVictoryTeam() {
-        return 0;
-    }
-
-    @Override
-    public boolean gameTimerIsExpired() {
-        return false;
-    }
-
-    @Override
-    public int getLiveCommandersOwnedBy(Player player) {
-        return 0;
-    }
-
-    @Override
-    public Optional<Player> playerForPlayername(String playerName) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Integer> idForPlayername(String playerName) {
-        return Optional.empty();
-    }
-
-    @Override
-    public int getLiveDeployedEntitiesOwnedBy(Player player) {
-        return 0;
-    }
-
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof AlphaStrikeElement;
     }
-
 }

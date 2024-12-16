@@ -50,5 +50,5 @@ public interface VictoryCondition {
      * @param context The context to consider, see {@link VictoryCondition} (currently unused)
      * @return The result of the victory condition test
      */
-    VictoryResult checkVictory(IGame game, Map<String, Object> context);
+    VictoryResult checkVictory(Game game, Map<String, Object> context);
 }

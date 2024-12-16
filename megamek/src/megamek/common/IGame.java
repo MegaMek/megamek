@@ -20,11 +20,9 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.options.BasicGameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.server.scriptedevent.TriggeredEvent;
 
@@ -329,7 +327,6 @@ public interface IGame {
     /**
      * This is a Client-side method to replace or add units that are sent from the
      * server.
-     *
      * Adds the given units to the list of units or objects in the current game.
      * When a unit's ID is already
      * present the currently assigned unit will be replaced with the given new one.
@@ -445,61 +442,9 @@ public interface IGame {
      *
      * @param event The new event to add
      */
-    void addScriptedEvent(TriggeredEvent event);
+    default void addScriptedEvent(TriggeredEvent event) {}
 
     // endregion
-
-
-    /**
-     * Setter for property victoryPlayerId.
-     *
-     * @param victoryPlayerId New value of property victoryPlayerId.
-     */
-    void setVictoryPlayerId(int victoryPlayerId);
-
-    /**
-     * Setter for property victoryPlayerId.
-     *
-     * @param victoryTeam New value of property victoryPlayerId.
-     */
-    void setVictoryTeam(int victoryTeam);
-
-    /**
-     * Cancels a victory
-     */
-    void cancelVictory();
-
-
-    /**
-     * Getter for property victoryPlayerId.
-     *
-     * @return Value of property victoryPlayerId.
-     */
-    int getVictoryPlayerId();
-
-    /**
-     * Getter for property victoryTeam.
-     *
-     * @return Value of property victoryTeam.
-     */
-    int getVictoryTeam();
-
-    /**
-     * Verify if the game has ended due a time limit
-     * @return true if the game has ended due to a time limit
-     */
-    boolean gameTimerIsExpired();
-
-    /**
-     * Get how many commanders still alive are owned by the player
-     * @param player the object player
-     * @return the number of commanders owned by the player
-     */
-    int getLiveCommandersOwnedBy(Player player);
-
-    Optional<Player> playerForPlayername(String playerName);
-
-    Optional<Integer> idForPlayername(String playerName);
 
     default Map<Integer, Integer> getTeamByPlayer() {
         Map<Integer, Integer> teamByPlayer = new HashMap<>();
@@ -508,16 +453,4 @@ public interface IGame {
         }
         return teamByPlayer;
     }
-
-    int getLiveDeployedEntitiesOwnedBy(Player player);
-
-    default Enumeration<Entity> getWreckedEntities() {
-        return Collections.emptyEnumeration();
-    }
-
-    default Enumeration<Entity> getCarcassEntities() {
-        return Collections.emptyEnumeration();
-    }
-
-    default void processGameEvent(GameEntityChangeEvent gameEntityChangeEvent) {}
 }

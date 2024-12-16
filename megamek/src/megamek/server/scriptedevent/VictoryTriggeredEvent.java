@@ -47,7 +47,7 @@ import java.util.Map;
 public record VictoryTriggeredEvent(Trigger trigger, boolean endsGame, String playerName) implements TriggeredEvent, VictoryCondition {
 
     @Override
-    public VictoryResult checkVictory(IGame game, Map<String, Object> context) {
+    public VictoryResult checkVictory(Game game, Map<String, Object> context) {
         if (trigger.isTriggered(game, TriggerSituation.ROUND_END)) {
             VictoryResult victoryResult = new VictoryResult(true);
             int winningTeam = game.playerForPlayername(playerName).map(Player::getTeam).orElse(Player.TEAM_NONE);

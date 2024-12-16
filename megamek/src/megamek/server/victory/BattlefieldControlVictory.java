@@ -19,12 +19,11 @@
  */
 package megamek.server.victory;
 
+import megamek.common.Game;
+import megamek.common.Player;
+
 import java.io.Serializable;
 import java.util.Map;
-
-import megamek.common.Game;
-import megamek.common.IGame;
-import megamek.common.Player;
 
 /**
  * This class represents a battlefield control (units of only one team left alive) victory
@@ -34,7 +33,7 @@ import megamek.common.Player;
 public class BattlefieldControlVictory implements VictoryCondition, Serializable {
 
     @Override
-    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
         // check all players/teams for aliveness
         int playersAlive = 0;
         Player lastPlayer = null;

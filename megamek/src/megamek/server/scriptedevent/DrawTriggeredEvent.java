@@ -19,7 +19,6 @@
 package megamek.server.scriptedevent;
 
 import megamek.common.Game;
-import megamek.common.IGame;
 import megamek.server.trigger.Trigger;
 import megamek.server.trigger.TriggerSituation;
 import megamek.server.victory.VictoryCondition;
@@ -44,7 +43,7 @@ import java.util.Map;
 public record DrawTriggeredEvent(Trigger trigger, boolean endsGame) implements TriggeredEvent, VictoryCondition {
 
     @Override
-    public VictoryResult checkVictory(IGame game, Map<String, Object> context) {
+    public VictoryResult checkVictory(Game game, Map<String, Object> context) {
         if (trigger.isTriggered(game, TriggerSituation.ROUND_END)) {
             return VictoryResult.drawResult();
         } else {

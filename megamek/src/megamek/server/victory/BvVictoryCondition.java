@@ -30,14 +30,14 @@ import java.io.Serializable;
  */
 public interface BvVictoryCondition extends VictoryCondition, Serializable {
 
-    default int getFriendlyBV(IGame game, Player player) {
+    default int getFriendlyBV(Game game, Player player) {
         return game.getPlayersList().stream()
                 .filter(Player::isNotObserver)
                 .filter(p -> !p.isEnemyOf(player))
                 .mapToInt(Player::getBV).sum();
     }
 
-    default int getEnemyBV(IGame game, Player player) {
+    default int getEnemyBV(Game game, Player player) {
         return game.getPlayersList().stream()
                 .filter(Player::isNotObserver)
                 .filter(p -> p.isEnemyOf(player))

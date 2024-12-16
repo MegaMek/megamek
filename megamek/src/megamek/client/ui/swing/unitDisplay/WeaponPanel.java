@@ -1261,8 +1261,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chBayWeapon.setVisible(false);
             wBayWeapon.setVisible(false);
         }
-
-        if (entity.isLargeCraft() && !(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY))) {
+        if (entity.isLargeCraft() && (game == null || !(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)))) {
             wArcHeatL.setVisible(true);
             wArcHeatR.setVisible(true);
         }

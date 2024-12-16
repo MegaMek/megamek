@@ -1536,14 +1536,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         int loc = prevWeapon.getLocation();
                         boolean rearMount = prevWeapon.isRearMounted();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                            if (!weapon.getBayWeapons().isEmpty()) {
-                                for (WeaponMounted bWeapon : prevWeapon.getBayWeapons()) {
-                                    totalHeat += bWeapon.getCurrentHeat();
-                                }
-                            }
-                            else {
-                                    totalHeat += prevWeapon.getCurrentHeat();
-                            }
+                            totalHeat += prevWeapon.getHeatByBay();
                         } else {
                             if (!rearMount) {
                                 if (!usedFrontArc[loc]) {
@@ -1567,14 +1560,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             int currentHeat = ae.getHeatInArc(loc, rearMount);
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 currentHeat = 0;
-                if (!weapon.getBayWeapons().isEmpty()) {
-                    for (WeaponMounted bWeapon : weapon.getBayWeapons()) {
-                        currentHeat += bWeapon.getCurrentHeat();
-                    }
-                }
-                else {
-                    currentHeat += weapon.getCurrentHeat();
-                }
+                currentHeat += weapon.getHeatByBay();
             }
             // check to see if this is currently the only arc being fired
             boolean onlyArc = true;

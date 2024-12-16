@@ -11631,7 +11631,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((mounted.getLocation() == location)
                     && (mounted.isRearMounted() == rearMount)) {
                 arcHeat += mounted.getCurrentHeat();
-                logger.error(String.format("Location: %s Rear Mount: %s Weapon: %s Heat: %s Arc Heat %s", location, rearMount, mounted.getName(), mounted.getCurrentHeat(), arcHeat));
             }
         }
         return arcHeat;

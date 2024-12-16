@@ -261,22 +261,15 @@ public class MultiTargetFireControl extends FireControl {
         Map<Integer, Double> arcDamage = new HashMap<>();
 
         int heatCapacity = shooter.getHeatCapacity();
-        shooter.getWeapons();
-        shooter.getWeaponList();
-        logger.error(String.format("Weapons Length: %s", shooter.getWeaponList().size()));
-        for ( WeaponMounted weapon : shooter.getWeaponList()){
-
-        }
-        for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()){
-            logger.error(String.format("Weapon in list: %s", weapon.getName()));
+        // account for artillery fired during the Targeting (offboard) phase; we reduce the heat capacity and treat
+        // the arc's heat as 0 because this arc has already fired - so it can be included in the solution for "free"
+        for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
             int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getLocation()) : shooter.getWeaponArc(weapon.getLocation());
             if (!arcShots.containsKey(arc)) {
                 heatCapacity -= shooter.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
                 arcShots.put(arc, new ArrayList<>());
                 arcHeat.put(arc, 0);
                 arcDamage.put(arc, 1.0);
-
-                logger.error(String.format("Arc: %s Heat: %s", arc, arcHeat.get(arc)));
             }
         }
 
@@ -288,20 +281,15 @@ public class MultiTargetFireControl extends FireControl {
                 arc = -arc;
             }
 
-            logger.error(String.format("Shot: %s Rear: %s Arc: %s Raw arc: %s", shot.getWeapon().getName(), shot.getWeapon().isRearMounted(), arc,shooter.getWeaponArc(shooter.getEquipmentNum(shot.getWeapon())) ));
-
             if (!arcShots.containsKey(arc)) {
                 arcShots.put(arc, new ArrayList<>());
                 arcHeat.put(arc,
                         shooter.getHeatInArc(shot.getWeapon().getLocation(), shot.getWeapon().isRearMounted()));
                 arcDamage.put(arc, 0.0);
-
-                logger.error(String.format("Arc: %s Heat: %s", arc, arcHeat.get(arc)));
             }
 
             arcShots.get(arc).add(shot);
             arcDamage.put(arc, arcDamage.get(arc) + shot.getExpectedDamage());
-            logger.error(String.format("Arc: %s Damage: %s", arc, arcDamage.get(arc)));
         }
 
         // initialize the backpack
@@ -317,8 +305,6 @@ public class MultiTargetFireControl extends FireControl {
         double[][] damageBackpack = new double[arcShots.keySet().size() + 1][heatCapacity + 1];
         Integer[] arcHeatKeyArray = new Integer[arcHeat.keySet().size()];
         System.arraycopy(arcHeat.keySet().toArray(), 0, arcHeatKeyArray, 0, arcHeat.keySet().size());
-
-        logger.error(String.format("Heat Key Array Length: %s Attempted Output: %s", arcHeatKeyArray.length, arcHeatKeyArray));
 
         // now, we essentially solve the backpack problem, where the arcs are the items:
         // arc expected damage is the "value", and arc heat is the "weight", while the
@@ -365,7 +351,6 @@ public class MultiTargetFireControl extends FireControl {
         // unless there is no firing solution at all, in which case we skip this part
         if (!arcBackpack.isEmpty()) {
             for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(heatCapacity - 1)) {
-                logger.error(String.format("final arc: %s", arc));
                 retVal.addAll(arcShots.get(arc));
             }
         }

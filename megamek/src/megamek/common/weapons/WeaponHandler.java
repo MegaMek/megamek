@@ -147,61 +147,46 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * during the round
      * Used to determine whether point defenses can engage.
      *
-     * @param e the entity you wish to get heat data from
+     * @param entity the entity you wish to get heat data from
      * @see TeleMissileAttackAction which contains a modified version of this to
      *      work against a
      *      TeleMissile entity in the physical phase
      */
-    protected int getLargeCraftHeat(Entity e) {
+    protected int getLargeCraftHeat(Entity entity) {
         int totalHeat = 0;
-        if (e.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-                || e.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            if (e.usesWeaponBays()) {
-                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
-                    if (prevAttack.getEntityId() == e.getId()) {
-                        WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
-                        for (WeaponMounted bayW : prevWeapon.getBayWeapons()) {
-                            totalHeat += bayW.getCurrentHeat();
-                        }
+
+        if (!entity.isLargeCraft()) {
+            return totalHeat;
+        }
+
+        for (Enumeration<AttackHandler> attack = game.getAttacks(); attack.hasMoreElements(); ) {
+            AttackHandler attackHandler = attack.nextElement();
+            WeaponAttackAction prevAttack = attackHandler.getWaa();
+            if (prevAttack.getEntityId() == entity.getId()) {
+                WeaponMounted prevWeapon = (WeaponMounted) entity.getEquipment(prevAttack.getWeaponId());
+                if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
+                    totalHeat += prevWeapon.getHeatByBay();
+                } else {
+                    boolean rearMount = prevWeapon.isRearMounted();
+                    int loc = prevWeapon.getLocation();
+
+                    // create an array of booleans of locations
+                    boolean[] usedFrontArc = new boolean[ae.locations()];
+                    boolean[] usedRearArc = new boolean[ae.locations()];
+                    for (int i = 0; i < ae.locations(); i++) {
+                        usedFrontArc[i] = false;
+                        usedRearArc[i] = false;
                     }
-                }
-            } else if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                // create an array of booleans of locations
-                boolean[] usedFrontArc = new boolean[ae.locations()];
-                boolean[] usedRearArc = new boolean[ae.locations()];
-                for (int i = 0; i < ae.locations(); i++) {
-                    usedFrontArc[i] = false;
-                    usedRearArc[i] = false;
-                }
-                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
-                    if (prevAttack.getEntityId() == e.getId()) {
-                        WeaponMounted prevWeapon = (WeaponMounted) e.getEquipment(prevAttack.getWeaponId());
-                        boolean rearMount = prevWeapon.isRearMounted();
-                        int loc = prevWeapon.getLocation();
-                        if (!rearMount) {
-                            if (!usedFrontArc[loc]) {
-                                totalHeat += ae.getHeatInArc(loc, rearMount);
-                                usedFrontArc[loc] = true;
-                            }
-                        } else {
-                            if (!usedRearArc[loc]) {
-                                totalHeat += ae.getHeatInArc(loc, rearMount);
-                                usedRearArc[loc] = true;
-                            }
+                    if (!rearMount) {
+                        if (!usedFrontArc[loc]) {
+                            totalHeat += ae.getHeatInArc(loc, rearMount);
+                            usedFrontArc[loc] = true;
                         }
-                    }
-                }
-            } else {
-                for (Enumeration<AttackHandler> i = game.getAttacks(); i.hasMoreElements();) {
-                    AttackHandler ah = i.nextElement();
-                    WeaponAttackAction prevAttack = ah.getWaa();
-                    if (prevAttack.getEntityId() == e.getId()) {
-                        Mounted<?> prevWeapon = e.getEquipment(prevAttack.getWeaponId());
-                        totalHeat += prevWeapon.getCurrentHeat();
+                    } else {
+                        if (!usedRearArc[loc]) {
+                            totalHeat += ae.getHeatInArc(loc, rearMount);
+                            usedRearArc[loc] = true;
+                        }
                     }
                 }
             }

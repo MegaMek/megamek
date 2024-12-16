@@ -1262,7 +1262,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wBayWeapon.setVisible(false);
         }
 
-        if (entity.isLargeCraft()) {
+        if (entity.isLargeCraft() && !(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY))) {
             wArcHeatL.setVisible(true);
             wArcHeatR.setVisible(true);
         }

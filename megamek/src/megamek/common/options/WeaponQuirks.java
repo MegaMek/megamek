@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author Taharqa (Jay Lawson)
  */
-public class WeaponQuirks extends AbstractOptionsImpl {
+public class WeaponQuirks extends AbstractOptions {
     @Serial
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks";

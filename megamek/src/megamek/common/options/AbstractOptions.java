@@ -15,19 +15,20 @@ package megamek.common.options;
 
 import megamek.common.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
 /**
  * Parent class for options settings
  */
-public abstract class AbstractOptionsImpl implements Serializable, IGameOptions {
+public abstract class AbstractOptions implements Serializable, IGameOptions {
 
     @Serial
     private static final long serialVersionUID = 6406883135074654379L;
     protected final Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
-    protected AbstractOptionsImpl() {
+    protected AbstractOptions() {
         initialize();
         getOptionsInfoImp().finish();
     }

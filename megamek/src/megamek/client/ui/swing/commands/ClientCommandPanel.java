@@ -14,6 +14,7 @@
 package megamek.client.ui.swing.commands;
 
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 import megamek.common.Coords;
 import megamek.common.annotations.Nullable;
 import megamek.server.commands.ClientServerCommand;
@@ -63,7 +64,7 @@ public class ClientCommandPanel extends JDialog {
     private void addTitleAndDescription() {
 
         var title = new JLabel(command.getLongName());
-        title.setFont(new Font("Arial", Font.BOLD, 18));
+        new FlatLafStyleBuilder().size(1.5).bold().apply(title);
         var gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = yPosition++;
@@ -82,7 +83,7 @@ public class ClientCommandPanel extends JDialog {
         add(new JSeparator(), gridBagConstraints);
 
         var helpLabel = new JLabel(command.getHelpHtml());
-        helpLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        new FlatLafStyleBuilder().size(1).apply(helpLabel);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = yPosition++;
@@ -112,133 +113,111 @@ public class ClientCommandPanel extends JDialog {
 
     private JComponent getArgumentComponent(Argument<?> argument) {
         if (argument instanceof CoordXArgument intArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JSpinner spinner = createSpinner(intArg);
-            spinner.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition);
-            add(spinner, gridBagConstraints);
-            return spinner;
+            return getJSpinner(argument, createSpinner(intArg), 0);
+
         } else if (argument instanceof CoordYArgument intArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(2, yPosition);
-            add(label, labelConstraintBag);
-            JSpinner spinner = createSpinner(intArg);
-            spinner.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(3, yPosition++);
-            add(spinner, gridBagConstraints);
-            return spinner;
+            return getJSpinner(argument, createSpinner(intArg), 2);
+
         } else if (argument instanceof PlayerArgument playerArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JComboBox<String> comboBox = createPlayerComboBox(playerArg);
-            comboBox.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(comboBox, gridBagConstraints);
-            return comboBox;
+            return getStringJComboBox(argument.getName(), createPlayerComboBox(playerArg), argument.getHelp());
+
         } else if (argument instanceof UnitArgument unitArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JComboBox<String> comboBox = createUnitComboBox(unitArg);
-            comboBox.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(comboBox, gridBagConstraints);
-            return comboBox;
+            return getStringJComboBox(argument.getName(), createUnitComboBox(unitArg), argument.getHelp());
+
         } else if (argument instanceof TeamArgument teamArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JComboBox<String> comboBox = createTeamsComboBox(teamArg);
-            comboBox.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(comboBox, gridBagConstraints);
-            return comboBox;
+            return getStringJComboBox(argument.getName(), createTeamsComboBox(teamArg), argument.getHelp());
+
         } else if (argument instanceof IntegerArgument intArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JSpinner spinner = createSpinner(intArg);
-            spinner.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(spinner, gridBagConstraints);
-            return spinner;
+            return getJSpinner(argument, createSpinner(intArg));
+
         } else if (argument instanceof OptionalIntegerArgument intArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JSpinner spinner = createSpinner(intArg);
-            spinner.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(spinner, gridBagConstraints);
-            return spinner;
+            return getJSpinner(argument, createSpinner(intArg));
+
         } else if (argument instanceof OptionalEnumArgument<?> enumArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JComboBox<String> comboBox = createOptionalEnumComboBox(enumArg);
-            comboBox.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(comboBox, gridBagConstraints);
-            return comboBox;
+            return getStringJComboBox(argument.getName(), createOptionalEnumComboBox(enumArg), argument.getHelp());
+
         } else if (argument instanceof EnumArgument<?> enumArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JComboBox<String> comboBox = createEnumComboBox(enumArg);
-            comboBox.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(comboBox, gridBagConstraints);
-            return comboBox;
+            return getStringJComboBox(argument.getName(), createEnumComboBox(enumArg), argument.getHelp());
+
         } else if (argument instanceof OptionalPasswordArgument) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JPasswordField passwordField = new JPasswordField();
-            passwordField.setToolTipText(argument.getHelp());
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(passwordField, gridBagConstraints);
-            return passwordField;
+            return getJPasswordField(argument);
+
         } else if (argument instanceof StringArgument stringArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JTextField textField = new JTextField();
-            textField.setToolTipText(argument.getHelp());
-            if (stringArg.hasDefaultValue()) {
-                textField.setText(stringArg.getValue());
-            }
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(textField, gridBagConstraints);
-            return textField;
+            return getJTextField(argument.getName(), argument.getHelp(), stringArg.hasDefaultValue(), stringArg.getValue());
+
         } else if (argument instanceof OptionalStringArgument stringArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JTextField textField = new JTextField();
-            textField.setToolTipText(argument.getHelp());
-            if (stringArg.getValue().isPresent()) {
-                textField.setText(stringArg.getValue().get());
-            }
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(textField, gridBagConstraints);
-            return textField;
+            return getJTextField(argument.getName(), argument.getHelp(), stringArg.getValue().isPresent(), stringArg.getValue().get());
+
         } else if (argument instanceof BooleanArgument boolArg) {
-            JLabel label = new JLabel(argument.getName() + ":");
-            var labelConstraintBag = getGridBagConstraints(0, yPosition);
-            add(label, labelConstraintBag);
-            JCheckBox checkBox = new JCheckBox();
-            checkBox.setToolTipText(argument.getHelp());
-            if (boolArg.hasDefaultValue()) {
-                checkBox.setSelected(boolArg.getValue());
-            }
-            var gridBagConstraints = getGridBagConstraints(1, yPosition++);
-            add(checkBox, gridBagConstraints);
-            return checkBox;
+            return getJCheckBox(argument, boolArg);
         }
+
         return null;
+    }
+
+    private JCheckBox getJCheckBox(Argument<?> argument, BooleanArgument boolArg) {
+        JLabel label = new JLabel(argument.getName() + ":");
+        var labelConstraintBag = getGridBagConstraints(0, yPosition);
+        add(label, labelConstraintBag);
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setToolTipText(argument.getHelp());
+        if (boolArg.hasDefaultValue()) {
+            checkBox.setSelected(boolArg.getValue());
+        }
+        var gridBagConstraints = getGridBagConstraints(1, yPosition++);
+        add(checkBox, gridBagConstraints);
+        return checkBox;
+    }
+
+    private JTextField getJTextField(String argument, String argument1, boolean stringArg, String stringArg1) {
+        JLabel label = new JLabel(argument + ":");
+        var labelConstraintBag = getGridBagConstraints(0, yPosition);
+        add(label, labelConstraintBag);
+        JTextField textField = new JTextField();
+        textField.setToolTipText(argument1);
+        if (stringArg) {
+            textField.setText(stringArg1);
+        }
+        var gridBagConstraints = getGridBagConstraints(1, yPosition++);
+        add(textField, gridBagConstraints);
+        return textField;
+    }
+
+    private JPasswordField getJPasswordField(Argument<?> argument) {
+        JLabel label = new JLabel(argument.getName() + ":");
+        var labelConstraintBag = getGridBagConstraints(0, yPosition);
+        add(label, labelConstraintBag);
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setToolTipText(argument.getHelp());
+        var gridBagConstraints = getGridBagConstraints(1, yPosition++);
+        add(passwordField, gridBagConstraints);
+        return passwordField;
+    }
+
+    private JComboBox<String> getStringJComboBox(String argument, JComboBox<String> playerArg, String tooltipText) {
+        JLabel label = new JLabel(argument + ":");
+        var labelConstraintBag = getGridBagConstraints(0, yPosition);
+        add(label, labelConstraintBag);
+        playerArg.setToolTipText(tooltipText);
+        var gridBagConstraints = getGridBagConstraints(1, yPosition++);
+        add(playerArg, gridBagConstraints);
+        return playerArg;
+    }
+
+    private JSpinner getJSpinner(Argument<?> argument, JSpinner spinner) {
+        return getJSpinner(argument, spinner, 0);
+    }
+
+    private JSpinner getJSpinner(Argument<?> argument, JSpinner spinner, int startingX) {
+        JLabel label = new JLabel(argument.getName() + ":");
+        var labelConstraintBag = getGridBagConstraints(startingX, yPosition);
+        add(label, labelConstraintBag);
+
+        spinner.setToolTipText(argument.getHelp());
+        var gridBagConstraints = getGridBagConstraints(startingX+1, yPosition);
+        add(spinner, gridBagConstraints);
+
+        return spinner;
     }
 
     private GridBagConstraints getGridBagConstraints(int x, int y) {

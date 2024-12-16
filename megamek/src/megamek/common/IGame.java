@@ -20,6 +20,7 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
@@ -517,4 +518,6 @@ public interface IGame {
     default Enumeration<Entity> getCarcassEntities() {
         return Collections.emptyEnumeration();
     }
+
+    default void processGameEvent(GameEntityChangeEvent gameEntityChangeEvent) {}
 }

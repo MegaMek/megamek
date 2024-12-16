@@ -1198,7 +1198,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        currentHeatBuildup += mounted.getCurrentHeat();
+                        currentHeatBuildup += mounted.getHeatByBay();
                     } else {
                         // check whether arc has fired
                         int loc = mounted.getLocation();

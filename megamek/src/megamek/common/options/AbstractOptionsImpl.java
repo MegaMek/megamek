@@ -15,7 +15,6 @@ package megamek.common.options;
 
 import megamek.common.annotations.Nullable;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
@@ -26,7 +25,7 @@ public abstract class AbstractOptionsImpl implements Serializable, IGameOptions 
 
     @Serial
     private static final long serialVersionUID = 6406883135074654379L;
-    private final Hashtable<String, IOption> optionsHash = new Hashtable<>();
+    protected final Hashtable<String, IOption> optionsHash = new Hashtable<>();
 
     protected AbstractOptionsImpl() {
         initialize();
@@ -34,6 +33,10 @@ public abstract class AbstractOptionsImpl implements Serializable, IGameOptions 
     }
 
     protected abstract void initialize();
+
+    public Map<String, IOption> getOptionMap() {
+        return optionsHash;
+    }
 
     @Override
     public int count() {

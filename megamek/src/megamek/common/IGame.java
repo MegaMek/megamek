@@ -66,8 +66,7 @@ public interface IGame {
     List<? extends PlayerTurn> getTurnsList();
 
     // endregion
-
-    BasicGameOptions getOptions();
+    IGameOptions getOptions();
 
     /**
      * @return The current game round, with 0 typically indicating deployment and 1
@@ -507,5 +506,15 @@ public interface IGame {
             teamByPlayer.put(player.getId(), player.getTeam());
         }
         return teamByPlayer;
+    }
+
+    int getLiveDeployedEntitiesOwnedBy(Player player);
+
+    default Enumeration<Entity> getWreckedEntities() {
+        return Collections.emptyEnumeration();
+    }
+
+    default Enumeration<Entity> getCarcassEntities() {
+        return Collections.emptyEnumeration();
     }
 }

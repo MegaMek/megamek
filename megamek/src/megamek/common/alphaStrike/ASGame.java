@@ -25,6 +25,7 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is an Alpha Strike game object that holds all game information. This is intentionally a stub and
@@ -137,6 +138,56 @@ public class ASGame extends AbstractGame {
     @Override
     public ReportEntry getNewReport(int messageId) {
         return new Report(messageId);
+    }
+
+    @Override
+    public void setVictoryPlayerId(int victoryPlayerId) {
+
+    }
+
+    @Override
+    public void setVictoryTeam(int victoryTeam) {
+
+    }
+
+    @Override
+    public void cancelVictory() {
+
+    }
+
+    @Override
+    public int getVictoryPlayerId() {
+        return 0;
+    }
+
+    @Override
+    public int getVictoryTeam() {
+        return 0;
+    }
+
+    @Override
+    public boolean gameTimerIsExpired() {
+        return false;
+    }
+
+    @Override
+    public int getLiveCommandersOwnedBy(Player player) {
+        return 0;
+    }
+
+    @Override
+    public Optional<Player> playerForPlayername(String playerName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> idForPlayername(String playerName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        return 0;
     }
 
     private boolean isSupportedUnitType(InGameObject object) {

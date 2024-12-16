@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 
 /**
@@ -33,7 +34,7 @@ import megamek.common.Player;
 public class BattlefieldControlVictory implements VictoryCondition, Serializable {
 
     @Override
-    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
         // check all players/teams for aliveness
         int playersAlive = 0;
         Player lastPlayer = null;

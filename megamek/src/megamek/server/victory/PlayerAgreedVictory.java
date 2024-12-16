@@ -19,7 +19,7 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class PlayerAgreedVictory implements VictoryCondition, Serializable {
 
     @Override
-    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
         if (!game.isForceVictory()) {
             return VictoryResult.noResult();
         }

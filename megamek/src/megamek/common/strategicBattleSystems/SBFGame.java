@@ -316,6 +316,11 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return Optional.empty();
     }
 
+    @Override
+    public int getLiveDeployedEntitiesOwnedBy(Player player) {
+        return 0;
+    }
+
     public SBFFullGameReport getGameReport() {
         return gameReport;
     }

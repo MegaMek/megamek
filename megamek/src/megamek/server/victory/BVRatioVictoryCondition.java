@@ -19,7 +19,7 @@
  */
 package megamek.server.victory;
 
-import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
 
@@ -41,7 +41,7 @@ public class BVRatioVictoryCondition implements BvVictoryCondition {
     }
 
     @Override
-    public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
+    public VictoryResult checkVictory(IGame game, Map<String, Object> ctx) {
         boolean isVictory = false;
         VictoryResult victoryResult = new VictoryResult(true);
         HashSet<Integer> doneTeams = new HashSet<>();

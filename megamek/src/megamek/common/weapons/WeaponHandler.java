@@ -1924,7 +1924,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     ae.setArcFired(loc, rearMount);
                 }
             } else {
-                ae.heatBuildup += (weapon.getCurrentHeat());
+                ae.heatBuildup += (weapon.getHeatByBay());
             }
         }
     }

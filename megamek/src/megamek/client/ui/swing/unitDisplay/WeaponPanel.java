@@ -1217,7 +1217,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     }
                 } else {
                     if (!mounted.isBombMounted()) {
-                        currentHeatBuildup += mounted.getCurrentHeat();
+                        currentHeatBuildup += mounted.getHeatByBay();
                     }
                 }
             }

@@ -27,7 +27,7 @@ import megamek.common.*;
  *
  * @author Taharqa (Jay Lawson)
  */
-public class Quirks extends AbstractOptionsImpl {
+public class Quirks extends AbstractOptions {
     @Serial
     private static final long serialVersionUID = 7618380522964885740L;
     public static final String POS_QUIRKS = "PosQuirks";

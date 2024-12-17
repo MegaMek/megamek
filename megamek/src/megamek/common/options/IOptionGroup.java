@@ -22,7 +22,7 @@ import java.util.Enumeration;
  * that belongs to this group. Instances of this interface are ONLY returned as
  * the members of the <code>Enumeration</code> returned by the AbstractOptions#getGroups()
  *
- * @see AbstractOptionsImpl#getGroups()
+ * @see AbstractOptions#getGroups()
  */
 public interface IOptionGroup extends IBasicOptionGroup {
 
@@ -36,13 +36,13 @@ public interface IOptionGroup extends IBasicOptionGroup {
 
     /**
      * @return the <code>Enumeration</code> of the <code>IOption</code>
-     * @see AbstractOptionsImpl#getGroups()
+     * @see AbstractOptions#getGroups()
      */
     Enumeration<IOption> getOptions();
 
     /**
      * @return the <code>Enumeration</code> of the <code>IOption</code> sorted in alpha-numerically ascending order.
-     * @see AbstractOptionsImpl#getGroups()
+     * @see AbstractOptions#getGroups()
      */
     Enumeration<IOption> getSortedOptions();
 }

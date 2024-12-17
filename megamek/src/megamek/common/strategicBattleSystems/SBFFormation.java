@@ -81,10 +81,10 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int jumpUsedThisTurn = 0;
 
     public enum MoraleStatus {
-        NORMAL, SHAKEN, BROKEN, ROUTED
+        NORMAL, SHAKEN, UNSTEADY, BROKEN, ROUTED
     }
 
-    private MoraleStatus moraleStatus = MoraleStatus.NORMAL;
+    protected MoraleStatus moraleStatus = MoraleStatus.NORMAL;
 
     public String getName() {
         return name;
@@ -188,6 +188,10 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public void setUnits(List<SBFUnit> units) {
         this.units = units;
+    }
+
+    public void removeUnit(SBFUnit unit) {
+        units.remove(unit);
     }
 
     public CalculationReport getConversionReport() {
@@ -492,6 +496,10 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return moraleStatus == MoraleStatus.SHAKEN;
     }
 
+    public boolean isUnsteady() {
+        return moraleStatus == MoraleStatus.UNSTEADY;
+    }
+
     public boolean isBroken() {
         return moraleStatus == MoraleStatus.BROKEN;
     }
@@ -502,5 +510,9 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     public MoraleStatus moraleStatus() {
         return moraleStatus;
+    }
+
+    public void setMoraleStatus(MoraleStatus status) {
+        moraleStatus = status;
     }
 }

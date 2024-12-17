@@ -43,7 +43,7 @@ public final class VictoryResult {
     public VictoryResult(boolean win) {
         this.isVictory = win;
     }
-    
+
     public VictoryResult(boolean win, int player, int team) {
         this.isVictory = win;
         if (player != Player.PLAYER_NONE) {
@@ -53,11 +53,11 @@ public final class VictoryResult {
             setTeamScore(team, 1.0);
         }
     }
-    
+
     public static VictoryResult noResult() {
         return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
-    
+
     public static VictoryResult drawResult() {
         return new VictoryResult(true, Player.PLAYER_NONE, Player.TEAM_NONE);
     }

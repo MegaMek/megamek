@@ -163,6 +163,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int USE_STRUCTURAL_RATING = -1;
 
     protected transient Game game;
+    protected transient IGame iGame;
 
     protected int id = Entity.NONE;
 
@@ -1062,6 +1063,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return game;
     }
 
+    public void setIGame(IGame iGame) {
+        this.iGame = iGame;
+        if (iGame instanceof Game) {
+            game = (Game) iGame;
+        }
+    }
+
     /**
      * This sets the game the entity belongs to. It also restores the entity and
      * checks that the game is in a consistent state. This function takes care
@@ -1080,7 +1088,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             Player player = game.getPlayer(ownerId);
             if (null == player) {
-                logger.error("Entity can't find player #" + ownerId);
+                logger.debug("Entity can't find player #" + ownerId);
             } else {
                 setOwner(player);
             }

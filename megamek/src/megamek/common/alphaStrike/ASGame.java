@@ -25,6 +25,7 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is an Alpha Strike game object that holds all game information. This is intentionally a stub and
@@ -142,5 +143,4 @@ public class ASGame extends AbstractGame {
     private boolean isSupportedUnitType(InGameObject object) {
         return object instanceof AlphaStrikeElement;
     }
-
 }

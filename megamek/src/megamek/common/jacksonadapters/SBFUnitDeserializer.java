@@ -26,7 +26,10 @@ import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.strategicBattleSystems.*;
+import megamek.common.strategicBattleSystems.SBFElementType;
+import megamek.common.strategicBattleSystems.SBFMovementMode;
+import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.common.strategicBattleSystems.SBFUnitConverter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -89,8 +92,7 @@ public class SBFUnitDeserializer extends StdDeserializer<SBFUnit> {
                         .forEach(elements::add);
 
                 // TODO: elements without skill?
-                unit = new SBFUnitConverter(elements,
-                        node.get(GENERAL_NAME).textValue(), elements, new DummyCalculationReport()).createSbfUnit();
+                unit = new SBFUnitConverter(elements, node.get(GENERAL_NAME).textValue(), new DummyCalculationReport()).createSbfUnit();
             } else {
                 // When no elements are given, read the unit's values
                 // They will be ignored when elements are present!

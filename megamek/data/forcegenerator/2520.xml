@@ -374,7 +374,7 @@
 			</model>
 		</chassis>
 		<chassis name='BattleMech Recovery Vehicle' unitType='Tank'>
-            <availability>IS:6,Periphery:6</availability>
+            <availability>IS:6,Periphery:6,Periphery.Deep:0</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>
@@ -409,14 +409,14 @@
 			</model>
 		</chassis>
         <chassis name='Burro Heavy Support Truck' unitType='Tank'>
-            <availability>IS:8,Periphery:7</availability>
+            <availability>IS:8,Periphery:7,Periphery.Deep:0</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
         </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-			<availability>IS:5,Periphery:4,PIR:2</availability>
+			<availability>IS:5,Periphery:4,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
 				<availability>IS:8,Periphery:8,PIR:3</availability>
@@ -640,7 +640,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dromedary Water Transport' unitType='Tank'>
-			<availability>IS:1,TC:3,Periphery:2</availability>
+			<availability>IS:1,TC:3,Periphery:2,Periphery.Deep:5</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>IS:8,Periphery:8</availability>
@@ -680,7 +680,7 @@
 			</model>
 		</chassis>
         <chassis name='Eagre Firefighting ATV' unitType='Tank'>
-            <availability>IS:2,Periphery:2</availability>
+            <availability>IS:3,Periphery:4</availability>
             <model name=''>
                 <roles>civilian</roles>
                 <availability>IS:8,Periphery:8</availability>
@@ -704,7 +704,7 @@
 			</model>
 		</chassis>
 		<chassis name='Engineering Vehicle' unitType='Tank'>
-			<availability>IS:3:2570,Periphery:3:2570,PIR:2-:2570</availability>
+			<availability>IS:3:2570,Periphery:3:2570,Periphery.Deep:1:2570,PIR:2-:2570</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
 				<availability>IS:8,Periphery:8,PIR:0</availability>
@@ -958,7 +958,7 @@
             </model>
         </chassis>
 		<chassis name='Heavy BattleMech Recovery Vehicle' unitType='Tank'>
-			<availability>IS:4,Periphery:3,PIR:1</availability>
+			<availability>IS:4,Periphery:3,Periphery.Deep:0,PIR:1</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>IS:8,Periphery:8</availability>
@@ -1595,7 +1595,7 @@
 			</model>
 		</chassis>
         <chassis name='Prime Mover' unitType='Tank'>
-            <availability>IS:7,Periphery:7</availability>
+            <availability>IS:7,Periphery:7,Periphery.Deep:0</availability>
             <model name='(Original)'>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>
@@ -1843,14 +1843,14 @@
 			</model>
 		</chassis>
         <chassis name='TrackBike' unitType='Tank'>
-            <availability>Periphery:2-,PIR:3</availability>
+            <availability>Periphery:2-,Periphery.Deep:4-,PIR:3</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>Periphery:8,PIR:8</availability>
             </model>
         </chassis>
         <chassis name='Tracked Quad' unitType='Tank'>
-            <availability>IS:2,Periphery:2</availability>
+            <availability>IS:2,Periphery:2,Periphery.Deep:4</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>

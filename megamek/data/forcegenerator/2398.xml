@@ -214,14 +214,14 @@
 			</model>
 		</chassis>
         <chassis name='Burro Heavy Support Truck' unitType='Tank'>
-            <availability>IS:6:2430,Periphery:6:2430</availability>
+            <availability>IS:6:2430,Periphery:6:2430,Periphery.Deep:0</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
         </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-			<availability>LA:5:2407,IS:4:2408,Periphery:4:2410,PIR:2</availability>
+			<availability>LA:5:2407,IS:4:2408,Periphery:4:2410,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
 				<availability>IS:8,Periphery:8</availability>
@@ -688,7 +688,7 @@
 			</model>
 		</chassis>
         <chassis name='Prime Mover' unitType='Tank'>
-            <availability>IS:6:2420,Periphery:6:2420</availability>
+            <availability>IS:6:2420,Periphery:6:2420,Periphery.Deep:0</availability>
             <model name='(Original)'>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>

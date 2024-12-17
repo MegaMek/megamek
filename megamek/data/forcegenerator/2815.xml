@@ -763,7 +763,7 @@
 			</model>
 		</chassis>
 		<chassis name='BattleMech Recovery Vehicle' unitType='Tank'>
-            <availability>CLAN:6,PP:4,IS:6,Periphery:6</availability>
+            <availability>CLAN:6,PP:4,IS:6,Periphery:6,Periphery.Deep:0</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -859,7 +859,7 @@
 			</model>
 		</chassis>
         <chassis name='Buffalo' unitType='Tank'>
-            <availability>CLAN:6,PP:4+,IS:6+,Periphery:4+,PIR:2</availability>
+            <availability>CLAN:6,PP:4+,IS:6+,Periphery:4+,Periphery.Deep:0,PIR:2</availability>
             <model name='BFFL Hovertruck'>
                 <roles>cargo,civilian</roles>
                 <availability>CLAN:8,PP:8,IS:8,Periphery:8,PIR:8</availability>
@@ -889,7 +889,7 @@
 			</model>
 		</chassis>
         <chassis name='Burro Heavy Support Truck' unitType='Tank'>
-            <availability>CLAN:8,PP:5,IS:7,CS:8,Periphery:6</availability>
+            <availability>CLAN:8,PP:5,IS:7,CS:8,Periphery:6,Periphery.Deep:0</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -912,7 +912,7 @@
             </model>
         </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-			<availability>CLAN:3,CGS:4,PP:3,IS:5,Periphery:4,PIR:2</availability>
+			<availability>CLAN:3,CGS:4,PP:3,IS:4,LA:5,Periphery:4,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
 				<availability>CLAN:6,PP:8,IS:8,Periphery:8,PIR:3</availability>
@@ -1310,7 +1310,7 @@
 			</model>
 		</chassis>
 		<chassis name='Coolant Truck' unitType='Tank'>
-			<availability>CLAN:3,PP:3,IS:4,Periphery:3,PIR:0</availability>
+			<availability>CLAN:3,PP:3,IS:4,Periphery:3,Periphery.Deep:0,PIR:0</availability>
 			<model name='(Hover)'>
 				<roles>support</roles>
 				<availability>PP:2,IS:2</availability>
@@ -1588,7 +1588,7 @@
 			</model>
 		</chassis>
 		<chassis name='Dromedary Water Transport' unitType='Tank'>
-			<availability>CLAN:1,PP:2,IS:1,TC:3,Periphery:2</availability>
+			<availability>CLAN:1,PP:2,IS:1,TC:3,Periphery:2,Periphery.Deep:5</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -1625,7 +1625,7 @@
 			</model>
 		</chassis>
         <chassis name='Eagre Firefighting ATV' unitType='Tank'>
-            <availability>CLAN:2,PP:2,IS:2,Periphery:2</availability>
+            <availability>CLAN:2,PP:4,IS:3,Periphery:4</availability>
             <model name=''>
                 <roles>civilian</roles>
                 <availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -1652,7 +1652,7 @@
 			</model>
 		</chassis>
 		<chassis name='Engineering Vehicle' unitType='Tank'>
-			<availability>CLAN:2,CGS:3,PP:4,IS:4,Periphery:4,PIR:2-</availability>
+			<availability>CLAN:2,CGS:3,PP:4,IS:4,Periphery:4,Periphery.Deep:2,PIR:2-</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
 				<availability>CLAN:8,PP:8,IS:8,Periphery:8,PIR:0</availability>
@@ -1880,7 +1880,7 @@
 			</model>
 			<model name='(RL)'>
 				<roles>support,sr_fire_support</roles>
-				<availability>PP:6,Periphery:6</availability>
+				<availability>PP:6,Periphery:6-,Periphery.Deep:6,PIR:6</availability>
 			</model>
 			<model name='(SRM)'>
 				<roles>cargo,support</roles>
@@ -2205,7 +2205,7 @@
             </model>
         </chassis>
 		<chassis name='Heavy BattleMech Recovery Vehicle' unitType='Tank'>
-			<availability>CLAN:3,PP:2+,IS:4,Periphery:3,PIR:2</availability>
+			<availability>CLAN:3,PP:2+,IS:4,Periphery:3,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -2500,7 +2500,7 @@
 			</model>
 		</chassis>
 		<chassis name='J-27 Ordnance Transport' unitType='Tank'>
-			<availability>CLAN:6,PP:6,IS:6,Periphery:5</availability>
+			<availability>CLAN:6,PP:6,IS:6,Periphery:5,Periphery.Deep:3</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>CLAN:2-,PP:5,IS:8,CS:4-,Periphery:8</availability>
@@ -2958,18 +2958,18 @@
 			</model>
 		</chassis>
 		<chassis name='MASH Truck' unitType='Tank'>
-            <availability>CLAN:5,PP:5,IS:6,Periphery:5,PIR:3</availability>
+            <availability>CLAN:5,PP:5,IS:6,Periphery:5,Periphery.Deep:2+,PIR:3</availability>
             <model name=''>
                 <roles>support</roles>
-                <availability>CLAN:4,PP:3,IS:5,CS:6,Periphery:4,PIR:0</availability>
+                <availability>CLAN:4,PP:3,IS:5,CS:6,Periphery:4,Periphery.Deep:0,PIR:0</availability>
             </model>
             <model name='(ICE)'>
                 <roles>support</roles>
-                <availability>IS:5-,CS:0,Periphery:5</availability>
+                <availability>IS:5-,CS:0,Periphery:5,Periphery.Deep:8</availability>
             </model>
             <model name='(Small)'>
                 <roles>support</roles>
-                <availability>CLAN:8,PP:8,IS:6,CS:7,Periphery:6,PIR:6</availability>
+                <availability>CLAN:8,PP:8,IS:6,CS:7,Periphery:6,Periphery.Deep:0,PIR:6</availability>
             </model>
 		</chassis>
 		<chassis name='Magi Infantry Support Vehicle' unitType='Tank'>
@@ -3208,18 +3208,18 @@
 			</model>
 		</chassis>
 		<chassis name='Mobile Headquarters' unitType='Tank'>
-			<availability>CLAN:1+,IS:2+,CS:3+</availability>
+			<availability>CLAN:1+,IS:2+,CS:3+,TC:1+</availability>
 			<model name=''>
                 <roles>command,support</roles>
-				<availability>CLAN:8,IS:8,CC:6,DC:6</availability>
+				<availability>CLAN:8,IS:8,CC:6,DC:6,TC:5+</availability>
 			</model>
 			<model name='(LL)'>
                 <roles>command,support</roles>
-				<availability>IS:4,DC:8,CC:8</availability>
+				<availability>IS:4,DC:8,CC:8,TC:8</availability>
 			</model>
 			<model name='(LRM)'>
                 <roles>command,support</roles>
-				<availability>IS:4,CC:6,DC:6</availability>
+				<availability>IS:4,CC:6,DC:6,TC:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Mobile Long Tom Artillery' unitType='Tank'>
@@ -3657,7 +3657,7 @@
 			</model>
 		</chassis>
         <chassis name='Prime Mover' unitType='Tank'>
-            <availability>CLAN:6,PP:4,IS:8,Periphery:8</availability>
+            <availability>CLAN:6,PP:4,IS:8,Periphery:8,Periphery.Deep:0</availability>
             <model name='(Original)'>
                 <roles>cargo,support</roles>
                 <availability>CLAN:8,PP:8,IS:8,Periphery:8</availability>
@@ -3793,7 +3793,7 @@
 			</model>
 		</chassis>
         <chassis name='Rock Rover Half-Track' unitType='Tank'>
-            <availability>IS:3,DC:1,Periphery:2</availability>
+            <availability>IS:3,DC:1,Periphery:2,Periphery.Deep:6</availability>
             <model name='RRV'>
                 <roles>cargo,support</roles>
                 <availability>IS:8,Periphery:8</availability>
@@ -4424,14 +4424,14 @@
 			</model>
 		</chassis>
         <chassis name='TrackBike' unitType='Tank'>
-            <availability>Periphery:2-,PIR:3</availability>
+            <availability>Periphery:2-,Periphery.Deep:4-,PIR:3</availability>
             <model name=''>
                 <roles>cargo,support</roles>
-                <availability>IS:8,Periphery:8,PIR:8</availability>
+                <availability>Periphery:8,PIR:8</availability>
             </model>
         </chassis>
         <chassis name='Tracked Quad' unitType='Tank'>
-            <availability>CLAN:2,PP:3,IS:2,Periphery:2</availability>
+            <availability>CLAN:2,PP:3,IS:2,Periphery:2,Periphery.Deep:4</availability>
             <model name=''>
                 <roles>cargo,support</roles>
                 <availability>IS:8,CLAN:8,PP:8,Periphery:8</availability>

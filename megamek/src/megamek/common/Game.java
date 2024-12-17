@@ -1135,12 +1135,7 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * @return The entity with the given id number or throw a no such element exception.
      */
     public Entity getEntityOrThrow(final int id) {
-        InGameObject possibleEntity = inGameObjects.get(id);
-        var entity = (possibleEntity instanceof Entity) ? (Entity) possibleEntity : null;
-        if (entity == null) {
-            throw new NoSuchElementException("No value present");
-        }
-        return entity;
+        return (Entity) getInGameObject(id).orElseThrow();
     }
 
     /**
@@ -2563,20 +2558,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         return forceVictory;
     }
 
-    /**
-     * Getter for property ignorePlayerDefeatVotes.
-     * @return Value of property ignorePlayerDefeatVotes.
-     */
+
     public boolean isIgnorePlayerDefeatVotes() {
         return ignorePlayerDefeatVotes;
     }
 
-    /**
-     * Getter for property endImmediately. This tells us that the game should end even if it is not the end of the round in a
-     * forced victory
-     *
-     * @return Value of property endImmediately.
-     */
     public boolean isEndImmediately() {
         return endImmediately;
     }
@@ -2592,6 +2578,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     /**
      * Setter for property endImmediately.
+     * The endImmediately flag is used to signal that the game should check for victory conditions
+     * as soon as possible, instead of waiting for the end phase. This does bypass the server option to not
+     * end the game immediately, so it should be used with caution.
      *
      * @param endImmediately New value of property endImmediately.
      */
@@ -2600,7 +2589,10 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
     }
 
     /**
-     * Setter for property ignorePlayerDefeatVotes.
+     * Setter for property ignorePlayerDefeatVotes. This flag is used to signal that the game should ignore the need
+     * for players voting for the end of the game. This is used to give the gamemaster the ability to end the game
+     * without player input.
+     *
      * @param ignorePlayerDefeatVotes New value of property ignorePlayerDefeatVotes.
      */
     public void setIgnorePlayerDefeatVotes(boolean ignorePlayerDefeatVotes) {

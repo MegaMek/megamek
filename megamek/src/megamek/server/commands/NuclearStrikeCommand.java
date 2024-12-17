@@ -74,8 +74,8 @@ public class NuclearStrikeCommand extends ClientServerCommand {
 
         var nukeType = (NukeType) args.get("type").getValue();
         int[] nuke = {
-            ((IntegerArgument) args.get("x")).getValue() - 1,
-            ((IntegerArgument) args.get("y")).getValue() - 1,
+            (int) args.get("x").getValue() - 1,
+            (int) args.get("y").getValue() - 1,
             nukeType.ordinal()
         };
 

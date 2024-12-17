@@ -40,7 +40,7 @@ public class KickCommand extends ClientServerCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new IntegerArgument("playerID", "The player ID to kick."),
+            new PlayerArgument("playerID", "The player ID to kick."),
             new OptionalPasswordArgument("password", "The server password.")
         );
     }
@@ -56,7 +56,7 @@ public class KickCommand extends ClientServerCommand {
 
     @Override
     protected void runCommand(int connId, Arguments args) {
-        var kickedId = ((IntegerArgument) args.get("playerId")).getValue();
+        var kickedId = (int) args.get("playerId").getValue();
         var passwordOpt = (OptionalPasswordArgument) args.get("password");
 
         if (serverPasswordCheckFailed(connId, passwordOpt)) {

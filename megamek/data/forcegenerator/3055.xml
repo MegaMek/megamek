@@ -1036,8 +1036,8 @@
 		<chassis name='Apple-Churchill Surveillance VTOL' unitType='VTOL'>
 			<availability>CC:4,SIC:4</availability>
 			<model name=''>
-				<roles>support</roles>
-				<availability>General:5</availability>
+				<roles>civilian</roles>
+				<availability>CC:8,SIC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Aquarius Escort' unitType='Small Craft'>
@@ -2645,16 +2645,16 @@
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
 			<availability>CS:4,WOB:5</availability>
 			<model name=''>
-				<roles>cargo</roles>
-				<availability>CS:8,WOB:8</availability>
+				<roles>cargo,support</roles>
+				<availability>CS:5,WOB:8</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,WOB:3</availability>
+				<availability>CS:1+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
-				<availability>CS:4,WOB:5</availability>
+				<availability>CS:6,WOB:3</availability>
 			</model>
 		</chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>
@@ -5723,6 +5723,13 @@
 				<availability>LA:6,FS:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Lama-Deux Firefighting VTOL' unitType='VTOL'>
+            <availability>IS:6</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Lancelot' unitType='Mek'>
 			<availability>CS:6,CIH:5,FRR:4,CLAN:4,NIOPS:6,CFM:5,WOB:6,CGS:5,BAN:7,DC:5</availability>
 			<model name='C'>
@@ -5797,6 +5804,20 @@
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Lexan Oceanic Luxury VTOL' unitType='VTOL'>
+            <availability>IS:2+</availability>
+            <model name='Series VI'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Lexan Oceanic Personal VTOL' unitType='VTOL'>
+            <availability>IS:4+</availability>
+            <model name='Series II'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
             </model>
         </chassis>
 		<chassis name='Liberator Cruiser' unitType='Warship'>
@@ -7302,6 +7323,13 @@
 				<availability>HL:4,IS:6,Periphery.Deep:4,Periphery:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Peacekeeper SWAT Carrier' unitType='VTOL'>
+            <availability>DC:3+</availability>
+            <model name=''>
+                <roles>apc,civilian</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
 			<availability>HL:3,IS:5,Periphery.Deep:8,WOB:5-,SIC:6,FS:7,Periphery:4,CWIE:4,CS:5-,LA:7,DC:7</availability>
 			<model name=''>

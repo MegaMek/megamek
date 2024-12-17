@@ -1356,7 +1356,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-			<availability>CLAN:8,BAN:8,IS:3+,CS:8</availability>
+			<availability>CLAN:2-,BAN:6,IS:3+,CS:8</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
 				<availability>CLAN:8,BAN:0,CS:3</availability>

@@ -619,10 +619,10 @@
             </model>
         </chassis>
 		<chassis name='Apple-Churchill Surveillance VTOL' unitType='VTOL'>
-			<availability>CC:4</availability>
+			<availability>CC:4:2971</availability>
 			<model name=''>
-				<roles>support</roles>
-				<availability>General:5</availability>
+				<roles>civilian</roles>
+				<availability>CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Aquarius Escort' unitType='Small Craft'>
@@ -1622,18 +1622,18 @@
 			</model>
 		</chassis>
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-			<availability>CS:4</availability>
+			<availability>CS:6</availability>
 			<model name=''>
-				<roles>cargo</roles>
-				<availability>CS:8</availability>
+				<roles>cargo,support</roles>
+				<availability>CS:3</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4</availability>
+				<availability>CS:1+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
-				<availability>CS:4</availability>
+				<availability>CS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>

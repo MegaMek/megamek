@@ -617,8 +617,8 @@
 		<chassis name='Apple-Churchill Surveillance VTOL' unitType='VTOL'>
 			<availability>CC:4</availability>
 			<model name=''>
-				<roles>support</roles>
-				<availability>General:5</availability>
+				<roles>civilian</roles>
+				<availability>CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Aquarius Escort' unitType='Small Craft'>
@@ -1747,16 +1747,16 @@
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
 			<availability>CS:4</availability>
 			<model name=''>
-				<roles>cargo</roles>
-				<availability>CS:8</availability>
+				<roles>cargo,support</roles>
+				<availability>CS:3</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4</availability>
+				<availability>CS:1+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
-				<availability>CS:4</availability>
+				<availability>CS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>
@@ -3773,6 +3773,13 @@
 				<availability>General:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Lama-Deux Firefighting VTOL' unitType='VTOL'>
+            <availability>IS:8:3022</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Lancelot' unitType='Mek'>
 			<availability>CS:6,CIH:5,CLAN:4,NIOPS:6,CFM:5,CGS:5,BAN:7,DC:1</availability>
 			<model name='C'>
@@ -4921,6 +4928,13 @@
 				<availability>FWL:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Peacekeeper SWAT Carrier' unitType='VTOL'>
+            <availability>DC:2+:3021</availability>
+            <model name=''>
+                <roles>apc,civilian</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
 			<availability>HL:5,IS:9,Periphery.Deep:7,Periphery:7</availability>
 			<model name=''>

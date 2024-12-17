@@ -1490,22 +1490,22 @@
 			</model>
 		</chassis>
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-			<availability>CS:4,CLAN:3-,IS:4</availability>
+			<availability>CLAN:1-,BAN:4,IS:3+,CS:8</availability>
 			<model name=''>
-				<roles>cargo</roles>
-				<availability>CS:8,CLAN:7-,IS:3</availability>
+				<roles>cargo,support</roles>
+				<availability>CLAN:8,BAN:0,CS:3</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,IS:1</availability>
+				<availability>CS:1+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
-				<availability>CS:4,IS:2</availability>
+				<availability>CLAN:2,BAN:2,IS:2,CS:8</availability>
 			</model>
 			<model name='(Original)'>
-                <roles>cargo</roles>
-				<availability>CLAN:3-,IS:4</availability>
+                <roles>cargo,support</roles>
+                <availability>BAN:8,IS:8,CS:2</availability>
 			</model>
 		</chassis>
         <chassis name='Command Van' unitType='Tank'>

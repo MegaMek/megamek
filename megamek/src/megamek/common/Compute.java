@@ -255,6 +255,25 @@ public class Compute {
     }
 
     /**
+     * Generates a number between 0 and  max value inclusive (this means maxValue).
+     * e.g. randomInt(3) will generate 0, 1, 2 or 3.
+     */
+    public static int randomIntInclusive(int maxValue) {
+        Roll roll = new MMRoll(random, maxValue + 1);
+        return roll.getIntValue();
+    }
+
+
+    /**
+     * Generates a number between 1 and  max value inclusive (this means maxValue).
+     * e.g. randomInt(3) will generate 1, 2 or 3.
+     */
+    public static int randomRealIntInclusive(int maxValue) {
+        Roll roll = new MMRoll(random, maxValue);
+        return roll.getIntValue() + 1;
+    }
+
+    /**
      * Wrapper to random#randomFloat()
      */
     public static float randomFloat() {

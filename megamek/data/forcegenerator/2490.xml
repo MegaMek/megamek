@@ -361,10 +361,10 @@
 			</model>
 		</chassis>
 		<chassis name='Caravan Heavy Transport' unitType='Conventional Fighter'>
-			<availability>IS:8,Periphery:8</availability>
+			<availability>IS:4-,Periphery:6-,Periphery.Deep:7,PIR:6</availability>
 			<model name=''>
                 <roles>cargo,support</roles>
-				<availability>IS:8,Periphery:8</availability>
+				<availability>IS:8,Periphery:8,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Carter Medical Emergency Response Vehicle' unitType='Tank'>
@@ -1411,10 +1411,10 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:3-</availability>
+            <availability>FS:4+,IS:3+</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:4</availability>
+				<availability>IS:8,FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>

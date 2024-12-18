@@ -1301,10 +1301,10 @@
 			</model>
 		</chassis>
 		<chassis name='Boomerang Spotter Plane' unitType='Conventional Fighter'>
-			<availability>CC:4,MERC.KH:3,FRR:4,SIC:5,FS:6,MERC:2,Periphery:3,MERC.WD:4,LA:6,FWL:4,DA:4,DC:4</availability>
+			<availability>IS:3,FS:4,Periphery:3,PIR:0</availability>
 			<model name=''>
                 <roles>recon,support</roles>
-				<availability>General:8-</availability>
+				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Bowman' unitType='Mek'>
@@ -1632,7 +1632,7 @@
 			<availability>CC:2</availability>
 			<model name=''>
 				<roles>support</roles>
-				<availability>General:6</availability>
+				<availability>CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Cheetah' unitType='AeroSpaceFighter'>
@@ -1861,6 +1861,13 @@
 				<availability>CS:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Comet Airliner' unitType='Conventional Fighter'>
+            <availability>IS:7,DC:5-</availability>
+            <model name='ACL-800'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>
 			<availability>CLAN:4</availability>
 			<model name='(2995)'>
@@ -2193,10 +2200,10 @@
 			</model>
 		</chassis>
 		<chassis name='Delta Air Cruiser' unitType='Conventional Fighter'>
-			<availability>FS:2</availability>
+			<availability>FS:6</availability>
 			<model name='MA-80'>
 				<roles>civilian</roles>
-				<availability>General:6-</availability>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Demolisher Heavy Tank' unitType='Tank'>
@@ -2931,6 +2938,12 @@
 				<availability>CLAN:5,BAN:2</availability>
 			</model>
 		</chassis>
+        <chassis name='Graceful Crane Air Bus' unitType='Conventional Fighter'>
+            <availability>DC:3+</availability>
+            <model name=''>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Grand Dragon' unitType='Mek'>
 			<availability>FRR:6,DC:6</availability>
 			<model name='DRG-1G'>
@@ -3826,10 +3839,10 @@
 			</model>
 		</chassis>
 		<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
-			<availability>LA:3</availability>
+			<availability>IS:5</availability>
 			<model name='KC-6'>
-				<roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<roles>cargo,civilian</roles>
+				<availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Kingfisher' unitType='Mek' omni='Clan'>
@@ -5260,14 +5273,14 @@
 			</model>
 		</chassis>
 		<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-			<availability>CC:5,CS:7,IS:6,SIC:5,FS:5,MERC:4,Periphery:5</availability>
+			<availability>CLAN:5,BAN:0,IS:8,Periphery:5,HL:4,Periphery.Deep:3+,PIR:3+</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<availability>CLAN:8,IS:8,Periphery:8,HL:8,PIR:8</availability>
 			</model>
 			<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-				<roles>cargo</roles>
-				<availability>FS:2:3030</availability>
+                <roles>ground_support</roles>
+                <availability>FS:2-</availability>
 			</model>
 		</chassis>
 		<chassis name='Po Heavy Tank' unitType='Tank'>
@@ -5350,10 +5363,10 @@
 			</model>
 		</chassis>
 		<chassis name='Protector High-Speed Medevac' unitType='Conventional Fighter'>
-			<availability>FS:4</availability>
+			<availability>IS:4,FS:5,CC:0</availability>
 			<model name='C-790'>
 				<roles>support</roles>
-				<availability>General:5</availability>
+				<availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
@@ -5618,10 +5631,10 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:3-,FC:2-</availability>
+            <availability>FS:3+,IS:2+</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:2</availability>
+                <availability>IS:8,FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>
@@ -6155,10 +6168,10 @@
 			</model>
 		</chassis>
 		<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
-			<availability>CC:2,SIC:2</availability>
+			<availability>CC:2+,SIC:1+</availability>
 			<model name='(Original)'>
-				<roles>cargo,support</roles>
-				<availability>General:3</availability>
+                <roles>support</roles>
+                <availability>CC:8,SIC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Storm Giant' unitType='Mek'>
@@ -6167,6 +6180,12 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Stratos Airliner' unitType='Conventional Fighter'>
+            <availability>DC:6</availability>
+            <model name='WK-1000'>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Striker Light Tank' unitType='Tank'>
 			<availability>CC:5,LA:4,FRR:4,PIR:4,FWL:4,IS:5,SIC:5,FS:7,MERC:4,DC:5</availability>
 			<model name=''>
@@ -6585,8 +6604,8 @@
 		<chassis name='Tsuru VIP Aircraft' unitType='Conventional Fighter'>
 			<availability>DC:1</availability>
 			<model name=''>
-				<roles>cargo,support</roles>
-				<availability>General:8</availability>
+				<roles>support</roles>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
         <chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
@@ -7103,10 +7122,10 @@
 			</model>
 		</chassis>
 		<chassis name='Zanadu Air Bus' unitType='Conventional Fighter'>
-			<availability>LA:2,FC:2</availability>
+            <availability>IS:5,DC:0</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:5</availability>
+                <availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Zephyr Hovertank' unitType='Tank'>

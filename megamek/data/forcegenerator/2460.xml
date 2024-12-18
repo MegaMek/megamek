@@ -939,10 +939,10 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:1-</availability>
+			<availability>FS:4+:2463,IS:3+:2464</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:2</availability>
+				<availability>IS:8,FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>

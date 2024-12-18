@@ -561,6 +561,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Caravan Heavy Transport' unitType='Conventional Fighter'>
+            <availability>Periphery:4-,Periphery.Deep:7,PIR:4-</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Carter Medical Emergency Response Vehicle' unitType='Tank'>
 			<availability>IS:2-,Periphery:3,PIR:2</availability>
 			<model name=''>
@@ -2255,7 +2262,7 @@
 			<availability>SL:8:2598,IS:8:2599,FWL:8:2598</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>SL:8,IS:8,FS:6</availability>
+				<availability>SL:8,IS:8,FWL:8</availability>
 			</model>
 			<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
 				<availability>FS:2-</availability>
@@ -2392,11 +2399,11 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:5-</availability>
-			<model name=''>
-				<roles>civilian</roles>
-				<availability>General:6</availability>
-			</model>
+            <availability>FS:4+,IS:3+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,FS:8</availability>
+            </model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>
 			<availability>General:6</availability>

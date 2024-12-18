@@ -3183,14 +3183,14 @@
 			</model>
 		</chassis>
 		<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-			<availability>CS:3,FWL:8,IS:6,FS:5,MERC:4,Periphery:5</availability>
+			<availability>SL:8,SLIE:5,CLAN:5,PP:5,IS:8,Periphery:5,Periphery.Deep:2+,PIR:3+</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<availability>SL:8,SLIE:8,CLAN:8,PP:8,IS:8,Periphery:8,PIR:8</availability>
 			</model>
 			<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-				<roles>cargo</roles>
-				<availability>FS:3</availability>
+                <roles>ground_support</roles>
+				<availability>FS:2-</availability>
 			</model>
 		</chassis>
 		<chassis name='Potemkin Troop Cruiser' unitType='Warship'>
@@ -3406,11 +3406,11 @@
             </model>
         </chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:5-</availability>
-			<model name=''>
-				<roles>civilian</roles>
-				<availability>General:6</availability>
-			</model>
+            <availability>FS:4+,IS:3+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,FS:8</availability>
+            </model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>
 			<availability>General:8,SL.R:7</availability>
@@ -3753,12 +3753,12 @@
 		<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 			<availability>CC:4</availability>
 			<model name=''>
-				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<roles>support</roles>
+				<availability>CC:8</availability>
 			</model>
 			<model name='(Original)'>
-				<roles>cargo,support</roles>
-				<availability>General:5-</availability>
+				<roles>support</roles>
+				<availability>CC:5-</availability>
 			</model>
 		</chassis>
 		<chassis name='Striker' unitType='Mek'>

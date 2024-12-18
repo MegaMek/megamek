@@ -69,10 +69,11 @@ public class NukeCommand extends ClientServerCommand {
         if (typeOpt.isPresent()) {
             //
             try {
-                int[] nuke = new int[3];
-                nuke[0] = ((IntegerArgument) args.get("x")).getValue() - 1;
-                nuke[1] = ((IntegerArgument) args.get("y")).getValue() - 1;
-                nuke[2] = typeOpt.orElseThrow();
+                int[] nuke = new int[]{
+                    (int) args.get("x").getValue() - 1,
+                    (int) args.get("y").getValue() - 1,
+                    typeOpt.orElseThrow()
+                };
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(nuke[0] , nuke[1])) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");

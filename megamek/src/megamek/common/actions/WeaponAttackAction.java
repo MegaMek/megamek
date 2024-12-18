@@ -1030,7 +1030,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // are we bracing a location that's not where the weapon is located?
-        if (ae.isBracing() && (ae.braceLocation() != weapon.getLocation())) {
+        if (ae.isBracing() && weapon != null && (ae.braceLocation() != weapon.getLocation())) {
             return String.format(Messages.getString("WeaponAttackAction.BracingOtherLocation"),
                     ae.getLocationName(ae.braceLocation()), ae.getLocationName(weapon.getLocation()));
         }
@@ -1486,28 +1486,30 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // limit large craft to zero net heat and to heat by arc
         final int heatCapacity = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
+        if (ae.isLargeCraft() && (weapon != null)) {
             int totalHeat = 0;
 
-            // first check to see if there are any usable weapons
-            boolean usable = false;
-            for (WeaponMounted m : weapon.getBayWeapons()) {
-                WeaponType bayWType = m.getType();
-                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
-                if (m.canFire()) {
-                    if (bayWUsesAmmo) {
-                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
+            // first check to see if there are any usable bay weapons
+            if (!weapon.getBayWeapons().isEmpty()) {
+                boolean usable = false;
+                for (WeaponMounted m : weapon.getBayWeapons()) {
+                    WeaponType bayWType = m.getType();
+                    boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
+                    if (m.canFire()) {
+                        if (bayWUsesAmmo) {
+                            if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
+                                usable = true;
+                                break;
+                            }
+                        } else {
                             usable = true;
                             break;
                         }
-                    } else {
-                        usable = true;
-                        break;
                     }
                 }
-            }
-            if (!usable) {
-                return Messages.getString("WeaponAttackAction.BayNotReady");
+                if (!usable) {
+                    return Messages.getString("WeaponAttackAction.BayNotReady");
+                }
             }
 
             // create an array of booleans of locations
@@ -1534,9 +1536,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         int loc = prevWeapon.getLocation();
                         boolean rearMount = prevWeapon.isRearMounted();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                            for (WeaponMounted bWeapon : prevWeapon.getBayWeapons()) {
-                                totalHeat += bWeapon.getCurrentHeat();
-                            }
+                            totalHeat += prevWeapon.getHeatByBay();
                         } else {
                             if (!rearMount) {
                                 if (!usedFrontArc[loc]) {
@@ -1560,9 +1560,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             int currentHeat = ae.getHeatInArc(loc, rearMount);
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 currentHeat = 0;
-                for (WeaponMounted bWeapon : weapon.getBayWeapons()) {
-                    currentHeat += bWeapon.getCurrentHeat();
-                }
+                currentHeat += weapon.getHeatByBay();
             }
             // check to see if this is currently the only arc being fired
             boolean onlyArc = true;

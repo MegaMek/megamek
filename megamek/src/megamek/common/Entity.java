@@ -8491,7 +8491,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = chosenBay.getType();
+            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
         }
 
         return bayType;

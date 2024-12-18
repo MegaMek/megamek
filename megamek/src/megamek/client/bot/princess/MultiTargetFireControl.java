@@ -26,6 +26,7 @@ import java.util.Map;
 
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -259,6 +260,19 @@ public class MultiTargetFireControl extends FireControl {
         // damage values by arc: arc #, arc damage
         Map<Integer, Double> arcDamage = new HashMap<>();
 
+        int heatCapacity = shooter.getHeatCapacity();
+        // account for artillery fired during the Targeting (offboard) phase; we reduce the heat capacity and treat
+        // the arc's heat as 0 because this arc has already fired - so it can be included in the solution for "free"
+        for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
+            int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getLocation()) : shooter.getWeaponArc(weapon.getLocation());
+            if (!arcShots.containsKey(arc)) {
+                heatCapacity -= shooter.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
+                arcShots.put(arc, new ArrayList<>());
+                arcHeat.put(arc, 0);
+                arcDamage.put(arc, 1.0);
+            }
+        }
+
         // assemble the data we'll need to solve the backpack problem
         for (WeaponFireInfo shot : shotList) {
             int arc = shooter.getWeaponArc(shooter.getEquipmentNum(shot.getWeapon()));
@@ -280,15 +294,15 @@ public class MultiTargetFireControl extends FireControl {
 
         // initialize the backpack
         Map<Integer, Map<Integer, List<Integer>>> arcBackpack = new HashMap<>();
-        for (int x = 0; x < arcShots.keySet().size(); x++) {
+        for (int x = 0; x <= arcShots.keySet().size(); x++) {
             arcBackpack.put(x, new HashMap<>());
 
-            for (int y = 0; y < shooter.getHeatCapacity(); y++) {
+            for (int y = 0; y <= heatCapacity; y++) {
                 arcBackpack.get(x).put(y, new ArrayList<>());
             }
         }
 
-        double[][] damageBackpack = new double[arcShots.keySet().size()][shooter.getHeatCapacity()];
+        double[][] damageBackpack = new double[arcShots.keySet().size() + 1][heatCapacity + 1];
         Integer[] arcHeatKeyArray = new Integer[arcHeat.keySet().size()];
         System.arraycopy(arcHeat.keySet().toArray(), 0, arcHeatKeyArray, 0, arcHeat.keySet().size());
 
@@ -296,15 +310,15 @@ public class MultiTargetFireControl extends FireControl {
         // arc expected damage is the "value", and arc heat is the "weight", while the
         // backpack capacity is the unit's heat capacity.
         // while we're at it, we assemble the list of arcs fired for each cell
-        for (int arcIndex = 0; arcIndex < arcHeatKeyArray.length; arcIndex++) {
-            for (int heatIndex = 0; heatIndex < shooter.getHeatCapacity(); heatIndex++) {
-                int previousArc = arcIndex > 0 ? arcHeatKeyArray[arcIndex - 1] : 0;
+        for (int arcIndex = 0; arcIndex <= arcHeatKeyArray.length; arcIndex++) {
+            for (int heatIndex = 0; heatIndex <= heatCapacity; heatIndex++) {
+                int currentArc = arcIndex > 0 ? arcHeatKeyArray[arcIndex - 1] : 0;
 
                 if (arcIndex == 0 || heatIndex == 0) {
                     damageBackpack[arcIndex][heatIndex] = 0;
-                } else if (arcHeat.get(previousArc) <= heatIndex) {
-                    int previousHeatIndex = heatIndex - arcHeat.get(previousArc);
-                    double currentArcDamage = arcDamage.get(previousArc)
+                } else if (arcHeat.get(currentArc) <= heatIndex) {
+                    int previousHeatIndex = heatIndex - arcHeat.get(currentArc);
+                    double currentArcDamage = arcDamage.get(currentArc)
                             + damageBackpack[arcIndex - 1][previousHeatIndex];
                     double accumulatedPreviousArcDamage = damageBackpack[arcIndex - 1][heatIndex];
 
@@ -315,7 +329,7 @@ public class MultiTargetFireControl extends FireControl {
                         // make sure we don't accidentally update the cell we're examining
                         List<Integer> appendedArcList = new ArrayList<>(
                                 arcBackpack.get(arcIndex - 1).get(previousHeatIndex));
-                        appendedArcList.add(previousArc);
+                        appendedArcList.add(currentArc);
                         arcBackpack.get(arcIndex).put(heatIndex, appendedArcList);
                     } else {
                         // we *can* add this arc to the list, but it won't take us past the damage
@@ -336,7 +350,7 @@ public class MultiTargetFireControl extends FireControl {
         // solution
         // unless there is no firing solution at all, in which case we skip this part
         if (!arcBackpack.isEmpty()) {
-            for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(shooter.getHeatCapacity() - 1)) {
+            for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(heatCapacity - 1)) {
                 retVal.addAll(arcShots.get(arc));
             }
         }

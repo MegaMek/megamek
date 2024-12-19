@@ -208,7 +208,7 @@ public final class ASConverter {
      * only
      * false for entities of some special types such as TeleMissile.
      * GunEmplacement can is being allowed conversion as of 50.02 even though its not
-     * currently officially supported in rules as written, as it generates a valid unit that can be used in
+     * currently officially supported in rules as written, but it generates a valid unit that can be used in
      * auto-resolution and other parts of the game. (Luana Coppio)
      * Also returns false if entity is null.
      */

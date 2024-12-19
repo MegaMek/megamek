@@ -907,7 +907,7 @@ public class Infantry extends Entity {
         int totalCrewNeeded = 0;
         for (Mounted<?> weapon : originalFieldWeapons()) {
             totalCrewNeeded += requiredCrewForFieldWeapon((WeaponType) weapon.getType());
-            if (totalCrewNeeded <= activeTroopers && !weapon.isDestroyed()) {
+            if (activeTroopers >= totalCrewNeeded && !weapon.isDestroyed()) {
                 weapon.setHit(false);
             }
         }

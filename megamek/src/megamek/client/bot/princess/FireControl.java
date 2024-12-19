@@ -3560,6 +3560,9 @@ public class FireControl {
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
             }
+            if (weaponDamage == WeaponType.DAMAGE_ARTILLERY){
+                weaponDamage = 1; //Set it to something
+            }
 
             if (weaponDamage > maxJammedDamage) {
                 maxDamageWeaponID = shooter.getEquipmentNum(mounted);

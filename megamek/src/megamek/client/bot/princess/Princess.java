@@ -1057,7 +1057,15 @@ public class Princess extends BotClient {
 
         FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
 
-        sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+        if (!firingPlan.getEntityActionVector().isEmpty()) {
+            sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+        }
+        else {
+            if (this.fireControls == null) {
+                initializeFireControls();
+            }
+            sendAttackData(entityToFire.getId(), getFireControl(entityToFire).getUnjamWeaponPlan(entityToFire));
+        }
         sendDone(true);
     }
 

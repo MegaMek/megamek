@@ -9356,14 +9356,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Um, basically everything can spot for LRM indirect fire.
-     * Except for off-board units and units that sprinted.
+     * Except for off-board units, units that sprinted,
+     * and units evading.
      *
      * @return true, if the entity is eligible to spot
      */
     public boolean canSpot() {
         return isActive() && !isOffBoard() &&
                 (moved != EntityMovementType.MOVE_SPRINT) &&
-                (moved != EntityMovementType.MOVE_VTOL_SPRINT);
+                (moved != EntityMovementType.MOVE_VTOL_SPRINT) &&
+                (!isEvading());
     }
 
     @Override

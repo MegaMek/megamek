@@ -140,9 +140,12 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    logger.info("%s: Calculated %d / %d turns for phase %s",
+                    logger.info(
+                        String.format("%s: Calculated %d / %d turns for phase %s",
                             getName(), calculatedTurnsThisPhase,
-                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase());
+                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase()
+                        )
+                    );
                 }
                 calculatedTurnsThisPhase = 0;
             }

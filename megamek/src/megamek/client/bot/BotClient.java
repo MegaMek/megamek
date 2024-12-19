@@ -654,7 +654,6 @@ public abstract class BotClient extends Client {
             return dest;
         }
 
-        logger.error("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
     }

@@ -1475,6 +1475,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
         if (entityPosLookup.isEmpty() && !inGameTWEntities().isEmpty()) {
             resetEntityPositionLookup();
         }
+        // For sanity check
+        GamePhase phase = getPhase();
+
         Set<Integer> posEntities = entityPosLookup.get(c);
         List<Entity> vector = new ArrayList<>();
         if (posEntities != null) {
@@ -1492,9 +1495,9 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
                 if (e.isTargetable() || ignore) {
                     vector.add(e);
 
-                    // Sanity check
+                    // Sanity check: report out-of-place entities if it's not the deployment phase
                     HashSet<Coords> positions = e.getOccupiedCoords();
-                    if (!positions.contains(c)) {
+                    if (!phase.isDeployment() && !positions.contains(c)) {
                         logger.error(e.getDisplayName() + " is not in " + c + "!");
                     }
                 }

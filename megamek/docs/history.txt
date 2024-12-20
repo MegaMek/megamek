@@ -42,6 +42,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6281: Entities can no longer spot if evading (TO:AR, 16-17)
 + PR #6284: FixeD NPE when checking if ejection is possible
 + Fix #6259: error spam and deployment hang with combined arms forces
++ PR #6294: Added reference to the log file inside gameLogger
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),
@@ -133,7 +134,6 @@ MEGAMEK VERSION HISTORY:
 + PR #6194: Map Set 8 rename to use lowercase x and small updates to boards
 + PR #6195: Correct issue with lobby map help, path and dialog sizing
 + Data: Fixes for #6184, #6155, #6141,#6134,#6129,#6047,#6044,#6036,#6035,#6022,#5580,#5554, #3919
-+ PR #5389: Abstract Combat Auto Resolve
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

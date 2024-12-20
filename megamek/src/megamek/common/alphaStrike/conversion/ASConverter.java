@@ -206,14 +206,16 @@ public final class ASConverter {
     /**
      * Returns true if the given entity can be converted to AlphaStrike. This is
      * only
-     * false for entities of some special types such as TeleMissile or
-     * GunEmplacement.
+     * false for entities of some special types such as TeleMissile.
+     * GunEmplacement is being allowed conversion as of 50.02 even though its not
+     * currently officially supported in rules as written, but it generates a valid unit that can be used in
+     * auto-resolution and other parts of the game. (Luana Coppio)
      * Also returns false if entity is null.
      */
     public static boolean canConvert(@Nullable Entity entity) {
         return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
                 || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
-                || (entity instanceof ArmlessMek) || (entity instanceof GunEmplacement));
+                || (entity instanceof ArmlessMek));
     }
 
     /**

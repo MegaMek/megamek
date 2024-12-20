@@ -4427,7 +4427,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
             } else {
-                immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+                if(Compute.allowAimedShotWith(weapon, aimingMode)) {
+                    immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+                } else {
+                    immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
+                }
             }
 
             if (immobileMod != null) {

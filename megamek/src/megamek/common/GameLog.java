@@ -62,6 +62,10 @@ public class GameLog {
         append("Log file opened " + LocalDateTime.now());
     }
 
+    public File getLogFile() {
+        return logfile;
+    }
+
     public void append(String toLog) {
         if (writer == null) {
             return;

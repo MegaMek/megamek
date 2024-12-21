@@ -559,4 +559,17 @@ public class Terrains implements Serializable {
                 return 0;
         }
     }
+
+
+    /**
+     * Returns true if the terrain is a base terrain type, excluding "Clear"
+     * @param terrainType
+     * @return
+     */
+    public static boolean isBaseTerrain(int terrainType){
+        return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
+            || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+            || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+            || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
+    }
 }

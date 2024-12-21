@@ -137,4 +137,59 @@ public class MathUtility {
         return Math.min(Math.max(value, min), max);
     }
     // endregion Clamp
+
+    // region Clamp01
+    /**
+     * @param value the int value to clamp
+     * @return The value if it is inside the range 0-1;
+     *         the 0 value if value is below that range and 1 value if value
+     *         is above that range.
+     *         clamp01(2) returns 1,
+     *         clamp01(-1) returns 0,
+     *         clamp01(1) returns 1.
+     */
+    public static int clamp01(final int value) {
+        return Math.min(Math.max(value, 0), 1);
+    }
+
+    /**
+     * @param value the double value to clamp
+     * @return The value if it is inside the range 0-1;
+     *         the 0 value if value is below that range and 1 value if value
+     *         is above that range.
+     *         clamp01(0.1d) returns 0.1d,
+     *         clamp01(-1) returns 0d,
+     *         clamp01(1) returns 1d.
+     */
+    public static double clamp01(final double value) {
+        return Math.min(Math.max(value, 0d), 1d);
+    }
+
+    /**
+     * @param value the float value to clamp
+     * @return The value if it is inside the range 0-1;
+     *         the 0 value if value is below that range and 1 value if value
+     *         is above that range.
+     *         clamp01(0.4f) returns 0.4f,
+     *         clamp01(-1) returns 0f,
+     *         clamp01(1) returns 1f.
+     */
+    public static float clamp01(final float value) {
+        return Math.min(Math.max(value, 0f), 1f);
+    }
+
+    /**
+     * @param value the long value to clamp
+     * @return The value if it is inside the range 0-1;
+     *         the 0 value if value is below that range and 1 value if value
+     *         is above that range.
+     *         clamp01(2) returns 1,
+     *         clamp01(-1) returns 0,
+     *         clamp01(1) returns 1.
+     */
+    public static long clamp01(final long value) {
+        return Math.min(Math.max(value, 0), 1);
+    }
+    // endregion Clamp
+
 }

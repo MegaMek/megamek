@@ -14450,6 +14450,60 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return maxRange;
     }
 
+    public int getOptimalRange() {
+        Map<Integer, Integer> rangeDamages = new TreeMap<>();
+        if ((ETYPE_MEK == getEntityType())
+            || (ETYPE_INFANTRY == getEntityType())
+            || (ETYPE_PROTOMEK == getEntityType())) {
+            // account for physical attacks.
+            rangeDamages.put(1,
+                PunchAttackAction.getDamageFor(this, PunchAttackAction.BOTH, false, false)
+                + KickAttackAction.getDamageFor(this, KickAttackAction.BOTH, false));
+        }
+
+        for (WeaponMounted weapon : getWeaponList()) {
+            if (!weapon.isReady()) {
+                continue;
+            }
+
+            WeaponType type = weapon.getType();
+
+            if (isAirborne()) {
+                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
+
+                var range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
+                rangeDamages.put(range, rangeDamages.getOrDefault(range, 0) + type.getDamage(range));
+            } else {
+                var range = type.getShortRange();
+                rangeDamages.put(range, rangeDamages.getOrDefault(range, 0) + type.getDamage(range));
+            }
+        }
+
+        var keys = new ArrayList<>(rangeDamages.keySet());
+        Collections.sort(keys);
+
+        if (keys.isEmpty()) {
+            return -1;
+        }
+
+        if (keys.size() == 1) {
+            return keys.get(0);
+        }
+
+        var totalDamage = rangeDamages.values().stream().mapToInt(Integer::intValue).sum();
+        var halfDamage = totalDamage / 2;
+        var accumulator = 0;
+        for (int i = rangeDamages.size() -1; i > 0; i--) {
+            accumulator += rangeDamages.get(keys.get(i));
+            if (accumulator > halfDamage / 2) {
+                return keys.get(i);
+            }
+        }
+
+        return keys.get(keys.size() -1);
+    }
+
     public int getHeat() {
         return heat;
     }

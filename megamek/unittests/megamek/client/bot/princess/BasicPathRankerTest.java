@@ -439,6 +439,12 @@ class BasicPathRankerTest {
         when(mockPath.getLastStep()).thenReturn(mockLastStep);
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
+        final TargetRoll mockTargetRoll = MockGenerators.mockTargetRoll(8);
+        final TargetRoll mockTargetRollTwo = MockGenerators.mockTargetRoll(5);
+        final List<TargetRoll> testRollList = List.of(mockTargetRoll, mockTargetRollTwo);
+
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
         final Board mockBoard = mock(Board.class);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         final Coords boardCenter = spy(new Coords(8, 8));
@@ -461,6 +467,7 @@ class BasicPathRankerTest {
         when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         when(mockPrincess.getGame()).thenReturn(mockGame);
+        when(mockMover.getGame()).thenReturn(mockGame);
 
         final List<Entity> testEnemies = new ArrayList<>();
 

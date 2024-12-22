@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.ui.Messages;
 import org.apache.logging.log4j.Level;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -37,6 +38,9 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+
+import static megamek.client.ui.SharedUtility.predictLeapDamage;
+import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
 
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
@@ -370,6 +374,39 @@ public abstract class PathRanker implements IPathRanker {
         getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
 
         return successProbability;
+    }
+
+    /**
+     * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker
+     * and various conditions.
+     *
+     * Note:
+     * @param movingEntity
+     * @param fallTolerance
+     * @param path
+     * @param msg
+     * @return
+     */
+    protected double calculateMovePathPSRDamage(Entity movingEntity, double fallTolerance, MovePath path, StringBuilder msg) {
+        double damage = 0.0;
+
+        // MovePath pathCopy = path.clone();
+        List<TargetRoll> pilotingRolls = getPSRList(path);
+        for (TargetRoll roll : pilotingRolls) {
+            // Have to use if/else as switch/case won't allow runtime loading of strings without SDK 17 LTS support
+            String description = roll.getLastPlainDesc().toLowerCase();
+            if (
+                description.contains(Messages.getString("TacOps.movement.leaping.leg_damage"))
+            ) {
+                damage += predictLeapDamage(movingEntity, roll, msg);
+            } else if (
+                description.contains(Messages.getString("TacOps.movement.leaping.fall_damage"))
+            ) {
+                damage += predictLeapFallDamage(movingEntity, roll, msg);
+            }
+        }
+
+        return damage;
     }
 
     protected List<TargetRoll> getPSRList(MovePath path) {

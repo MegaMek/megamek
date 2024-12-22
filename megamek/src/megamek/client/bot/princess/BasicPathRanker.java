@@ -503,12 +503,13 @@ public class BasicPathRanker extends PathRanker {
         double successProbability = getMovePathSuccessProbability(pathCopy, formula);
         double utility = -calculateFallMod(successProbability, formula);
 
+        // Worry about how badly we can damage ourselves on this path!
+        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, fallTolerance, pathCopy, formula);
+        expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
+        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
+
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
-
-        double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
-
-        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
 
         boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);

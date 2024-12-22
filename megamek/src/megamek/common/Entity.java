@@ -13168,21 +13168,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3 times
         int xbv = 0;
-        if ((game != null)
-                && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
+        if (game != null) {
+            int totalForceBV = 0;
+            double multiplier = 0.05;
+            if ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                         || (hasC3M() && (calculateFreeC3Nodes() < 3))
                         || (hasC3S() && (c3Master > NONE))
-                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
-            int totalForceBV = 0;
-            totalForceBV += baseBV;
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
+                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
+
+                totalForceBV += baseBV;
+                for (Entity e : game.getC3NetworkMembers(this)) {
+                    if (!equals(e) && onSameC3NetworkAs(e)) {
+                        totalForceBV += e.calculateBattleValue(true, true);
+                    }
                 }
-            }
-            double multiplier = 0.05;
-            if (hasBoostedC3()) {
-                multiplier = 0.07;
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
+
+            } else if (hasNovaCEWS()) {//Nova CEWS applies 5% to every mek with Nova on the team {
+                totalForceBV = game.getEntitiesVector().stream().filter(entity -> !equals(entity) && entity.hasNovaCEWS() && !entity.owner.isEnemyOf(this.owner)).toList().stream().mapToInt(e -> e.calculateBattleValue(true, true)).sum();
             }
             xbv += (int) Math.round(totalForceBV * multiplier);
         }

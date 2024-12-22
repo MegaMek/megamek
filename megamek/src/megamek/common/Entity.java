@@ -13186,8 +13186,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     multiplier = 0.07;
                 }
 
-            } else if (hasNovaCEWS()) {//Nova CEWS applies 5% to every mek with Nova on the team {
-                totalForceBV = game.getEntitiesVector().stream().filter(entity -> !equals(entity) && entity.hasNovaCEWS() && !entity.owner.isEnemyOf(this.owner)).toList().stream().mapToInt(e -> e.calculateBattleValue(true, true)).sum();
+            } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                for (Entity entity : game.getEntitiesVector()) {
+                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
+                    totalForceBV += baseBV;
+                }
             }
             xbv += (int) Math.round(totalForceBV * multiplier);
         }

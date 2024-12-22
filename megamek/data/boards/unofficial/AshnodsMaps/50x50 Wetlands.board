@@ -2,6 +2,7 @@ size 50 50
 tag "Foliage (Auto)"
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Swamp (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"

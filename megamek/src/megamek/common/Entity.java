@@ -13167,7 +13167,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        int xbv = 0;
+        // Nova CEWS is quirky and handled apart from the other C3
+        int extraBV = 0;
         if (game != null) {
             int totalForceBV = 0;
             double multiplier = 0.05;
@@ -13175,11 +13176,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         || (hasC3M() && (calculateFreeC3Nodes() < 3))
                         || (hasC3S() && (c3Master > NONE))
                         || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
-
                 totalForceBV += baseBV;
-                for (Entity e : game.getC3NetworkMembers(this)) {
-                    if (!equals(e) && onSameC3NetworkAs(e)) {
-                        totalForceBV += e.calculateBattleValue(true, true);
+                for (Entity entity : game.getC3NetworkMembers(this)) {
+                    if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
                     }
                 }
                 if (hasBoostedC3()) {
@@ -13196,9 +13196,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     totalForceBV += baseBV;
                 }
             }
-            xbv += (int) Math.round(totalForceBV * multiplier);
+            extraBV += (int) Math.round(totalForceBV * multiplier);
         }
-        return xbv;
+        return extraBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {

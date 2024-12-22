@@ -550,6 +550,15 @@ public class Terrains implements Serializable {
                 return 2;
             case BUILDING:
                 return terrainLevel + 1;
+            case ROAD:
+                switch (terrainLevel) {
+                    case ROAD_LVL_DIRT:
+                        return 2;
+                    case ROAD_LVL_GRAVEL:
+                        return 1;
+                    default:
+                        return 0;
+                }
             case SNOW:
                 return (terrainLevel == 2) ? 1 : 0;
             case ICE:

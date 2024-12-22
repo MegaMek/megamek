@@ -515,7 +515,15 @@ public interface IAero {
         boolean clear = false;
         for (Coords pos : landingPositions) {
             Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-            if ((hex == null) || hex.hasPavementOrRoad()) {
+            if (hex == null) {
+                continue;
+            }
+            if (hex.hasPavementOrRoad()) {
+                if (hex.containsTerrain(Terrains.ROAD)) { //Check for dirt or gravel road, they're harder to land on
+                    if (Terrains.landingModifier(Terrains.ROAD, hex.terrainLevel(Terrains.ROAD)) > 0) {
+                        terrains.add(List.of(Terrains.ROAD, hex.terrainLevel(Terrains.ROAD)));
+                    }
+                }
                 continue;
             }
             if (hex.getBaseTerrainType() == 0) {

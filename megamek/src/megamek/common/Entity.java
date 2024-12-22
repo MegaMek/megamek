@@ -13167,26 +13167,38 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        int xbv = 0;
-        if ((game != null)
-                && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
+        // Nova CEWS is quirky and handled apart from the other C3
+        int extraBV = 0;
+        if (game != null) {
+            int totalForceBV = 0;
+            double multiplier = 0.05;
+            if ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                         || (hasC3M() && (calculateFreeC3Nodes() < 3))
                         || (hasC3S() && (c3Master > NONE))
-                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
-            int totalForceBV = 0;
-            totalForceBV += baseBV;
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
+                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
+                totalForceBV += baseBV;
+                for (Entity entity : game.getC3NetworkMembers(this)) {
+                    if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
+
+            } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                for (Entity entity : game.getEntitiesVector()) {
+                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
+                    totalForceBV += baseBV;
                 }
             }
-            double multiplier = 0.05;
-            if (hasBoostedC3()) {
-                multiplier = 0.07;
-            }
-            xbv += (int) Math.round(totalForceBV * multiplier);
+            extraBV += (int) Math.round(totalForceBV * multiplier);
         }
-        return xbv;
+        return extraBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {

@@ -186,7 +186,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     private String strUnlinkAll() {
         List<Entity> novaUnits = getMyNovaUnits();
         for (Entity e : novaUnits) {
-            setNewNetworkID(e, e.getOriginalNovaC3NetId());
+            strUnlinkID(e.getId());
         }
         return "Everything unlinked";
     }
@@ -196,7 +196,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         StringBuilder returnValue = new StringBuilder();
 
         List<Integer> allReadyReported = new LinkedList<>();
-        List<Entity> novaUnits = getMyNovaUnits();
+        List<Entity> novaUnits = getAlliedNovaUnits();
         List<Entity> network;
 
         for (Entity ent : novaUnits) {
@@ -255,7 +255,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
      */
     private List<Entity> listNetwork(Entity e, boolean planned) {
         List<Entity> novaNetworkMembers = new LinkedList<>();
-        List<Entity> novaUnits = getMyNovaUnits();
+        List<Entity> novaUnits = getAlliedNovaUnits();
 
         for (Entity ent : novaUnits) {
             if (planned) {
@@ -278,6 +278,22 @@ public class AssignNovaNetworkCommand extends ClientCommand {
         List<Entity> novaUnits = new LinkedList<>();
         for (Entity ent : getClient().getEntitiesVector()) {
             if ((ent.getOwnerId() == getClient().getLocalPlayer().getId()) && ent.hasNovaCEWS()) {
+                novaUnits.add(ent);
+            }
+        }
+        return novaUnits;
+    }
+
+    /**
+     * @return a list of all nova CEWS units the clients could connect with.
+     */
+    private List<Entity> getAlliedNovaUnits() {
+        List<Entity> novaUnits = new LinkedList<>();
+        for (Entity ent : getClient().getEntitiesVector()) {
+            if (ent.hasNovaCEWS()
+                && (ent.getOwnerId() == (getClient().getLocalPlayer().getId())
+                || (getClient().getLocalPlayer()) != null
+                && !getClient().getLocalPlayer().isEnemyOf(ent.getOwner()))){
                 novaUnits.add(ent);
             }
         }

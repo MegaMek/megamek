@@ -162,7 +162,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         server.sendServerChat(connID, "Called /nova Debug");
         server.sendServerChat(connID,
                 "Check if server really thinks that stuff is connected");
-        List<Entity> novaUnits = getMyNovaUnits(connID);
+        List<Entity> novaUnits = getAlliedNovaUnits(connID);
         List<Entity> opponent = gameManager.getGame().getEntitiesVector();
         for (Entity e : novaUnits) {
             List<Entity> curNetwork = listNetwork(connID, e, false);
@@ -220,15 +220,15 @@ public class AssignNovaNetServerCommand extends ServerCommand {
             return "ID Mismatch!\n";
         }
 
-        if (ent1.getOwnerId() != connID) {
-            return "This unit doesn't belong to you!\n";
+        if (ent1.getOwnerId() == connID || ent2.getOwnerId() == connID || ent3.getOwnerId() == connID) {
+            if (ent1.isEnemyOf(ent2) || ent1.isEnemyOf(ent3) || ent2.isEnemyOf(ent3)) {
+                return "These units are not on the same team!";
+            }
         }
-        if (ent2.getOwnerId() != connID) {
-            return "This unit doesn't belong to you!\n";
+        else {
+            return "None of these units belong to you!\n";
         }
-        if (ent3.getOwnerId() != connID) {
-            return "This unit doesn't belong to you!\n";
-        }
+
         if (!ent1.hasActiveNovaCEWS()) {
             return "ID: " + id1 + " has no active nova CEWS. Aborting.";
         }
@@ -238,9 +238,9 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         if (!ent3.hasActiveNovaCEWS()) {
             return "ID: " + id3 + " has no active nova CEWS. Aborting.";
         }
-        rval += strUnlinkID(connID, id1);
-        rval += strUnlinkID(connID, id2);
-        rval += strUnlinkID(connID, id3);
+        rval += strUnlinkID(ent1.getOwnerId(), id1);
+        rval += strUnlinkID(ent2.getOwnerId(), id2);
+        rval += strUnlinkID(ent3.getOwnerId(), id3);
 
         setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
         setNewNetworkID(connID, ent3, ent1.getNewRoundNovaNetworkString());
@@ -257,11 +257,13 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         if ((ent1 == null) || (ent2 == null)) {
             return "ID Mismatch!\n";
         }
-        if (ent1.getOwnerId() != connID) {
-            return "This unit doesn't belong to you!\n";
+        if (ent1.getOwnerId() == connID || ent2.getOwnerId() == connID) {
+            if (ent1.isEnemyOf(ent2)) {
+                return "These units are not on the same team!";
+            }
         }
-        if (ent2.getOwnerId() != connID) {
-            return "This unit doesn't belong to you!\n";
+        else {
+            return "None of these units belong to you!\n";
         }
         if (!ent1.hasActiveNovaCEWS()) {
             return "ID: " + id1 + " has no active nova CEWS. Aborting.";
@@ -270,8 +272,8 @@ public class AssignNovaNetServerCommand extends ServerCommand {
             return "ID: " + id2 + " has no active nova CEWS. Aborting.";
         }
 
-        rval += strUnlinkID(connID, id1);
-        rval += strUnlinkID(connID, id2);
+        rval += strUnlinkID(ent1.getOwnerId(), id1);
+        rval += strUnlinkID(ent2.getOwnerId(), id2);
         setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
 
         return rval + "New Network! Linked Units: " + id1 + ", " + id2 + "\n";
@@ -291,7 +293,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         List<Entity> network = listNetwork(connID, ent, true);
         if (network.size() < 2) {
             // no other member, we're done.
-            return "Unit " + id + " was allready unlinked\n";
+            return "Unit " + id + " was already unlinked\n";
         }
         // there are other members in that network. Need to find a different ID
         // for them.
@@ -320,7 +322,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     private String strUnlinkAll(int connID) {
         List<Entity> novaUnits = getMyNovaUnits(connID);
         for (Entity e : novaUnits) {
-            setNewNetworkID(connID, e, e.getOriginalNovaC3NetId());
+            strUnlinkID(connID, e.getId());
         }
         return "Everything unlinked";
     }
@@ -384,7 +386,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         }
 
         if (rval != "") {
-            rval = "Unit " + id + " is in the Network consisting of:\n";
+            rval = "Unit " + id + " is in the Network consisting of:\n" + rval;
         } else {
             rval = "Error. No ID match.\n";
         }
@@ -393,28 +395,28 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     }
 
     /**
-     * Returns a list with all members of e 's nova network, including e.
+     * Returns a list with all members of entity 's nova network, including entity.
      *
-     * @param e
+     * @param entity
      *                the entity.
      * @param planned
      *                set this to true if you want to calculate based on next turns
      *                net.
      * @return
      */
-    private List<Entity> listNetwork(int connID, Entity e, boolean planned) {
+    private List<Entity> listNetwork(int connID, Entity entity, boolean planned) {
         List<Entity> novaNetworkMembers = new LinkedList<>();
-        List<Entity> novaUnits = getMyNovaUnits(connID);
+        List<Entity> novaUnits = getAlliedNovaUnits(connID);
 
-        for (Entity ent : novaUnits) {
+        for (Entity novaUnit : novaUnits) {
             if (planned) {
-                if (ent.getNewRoundNovaNetworkString() == e
-                        .getNewRoundNovaNetworkString()) {
-                    novaNetworkMembers.add(ent);
+                if (novaUnit.getNewRoundNovaNetworkString().equals(entity
+                        .getNewRoundNovaNetworkString())) {
+                    novaNetworkMembers.add(novaUnit);
                 }
             } else {
-                if (ent.getC3NetId() == e.getC3NetId()) {
-                    novaNetworkMembers.add(ent);
+                if (novaUnit.getC3NetId().equals(entity.getC3NetId())) {
+                    novaNetworkMembers.add(novaUnit);
                 }
             }
         }
@@ -430,6 +432,24 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         List<Entity> novaUnits = new LinkedList<>();
         for (Entity ent : gameManager.getGame().getEntitiesVector()) {
             if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
+                novaUnits.add(ent);
+            }
+        }
+        return novaUnits;
+    }
+
+    /**
+     * Return a list of all nova CEWS units the clients units could connect with.
+     *
+     * @return
+     */
+    private List<Entity> getAlliedNovaUnits(int connID) {
+        List<Entity> novaUnits = new LinkedList<>();
+        for (Entity ent : gameManager.getGame().getEntitiesVector()) {
+            if ((ent.hasNovaCEWS()
+                && (ent.getOwnerId() == connID)
+                || (gameManager.getGame().getPlayer(connID)) != null
+                && !gameManager.getGame().getPlayer(connID).isEnemyOf(ent.getOwner()))){
                 novaUnits.add(ent);
             }
         }

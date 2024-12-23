@@ -264,7 +264,7 @@ public class SharedUtility {
                         new PilotingRollData(
                             entity.getId(),
                             2 * leapDistance,
-                            Messages.getString("TacOps.movement.leaping.leg_damage")
+                            Messages.getString("TacOps.leaping.leg_damage")
                         )
                     );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
@@ -274,7 +274,7 @@ public class SharedUtility {
                         new PilotingRollData(
                             entity.getId(),
                             leapDistance,
-                            Messages.getString("TacOps.movement.leaping.fall_damage"))
+                            Messages.getString("TacOps.leaping.fall_damage"))
                     );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
@@ -950,6 +950,10 @@ public class SharedUtility {
         int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue();
         double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
             * (fallHeight + 1);
+        msg.append("\nPredicting expected Leap fall damage:")
+            .append(String.format("\n\tFall height: %d", fallHeight))
+            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%')
+            .append(String.format("\n\tExpected total damage from fall: %.2f", fallDamage * (1 - odds) ));
         return fallDamage * (1 - odds);
     }
 
@@ -968,14 +972,22 @@ public class SharedUtility {
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
         int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue() / 2;
         double legDamage = fallHeight * (legMultiplier);
+        msg.append("\nPredicting expected Leap damage:")
+            .append(String.format("\n\tFall height: %d", fallHeight))
+            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%');
+
         int[] legLocations = {BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM};
 
-        // Add required crits; say the effective leg "damage" from a crit is 100 for now.
+        // Add required crits; say the effective leg "damage" from a crit is 20 for now.
         legDamage += legMultiplier * CRIT_VALUE;
+        msg.append(
+            String.format("\n\tAdding %d leg critical chances as %d additional damage", legMultiplier, legMultiplier * CRIT_VALUE)
+        );
 
         // Add additional crits for each leg that would take internal damage
         for (int i=0;i<legMultiplier; i++) {
             if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
+                msg.append("\n\tAdditional critical due to internal structure damage...");
                 legDamage += CRIT_VALUE;
             }
         }

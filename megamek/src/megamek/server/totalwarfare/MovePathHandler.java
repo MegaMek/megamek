@@ -2276,7 +2276,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            2 * leapDistance, Messages.getString("TacOps.movement.leaping.leg_damage")));
+                            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         // do leg damage
@@ -2299,7 +2299,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            leapDistance, Messages.getString("TacOps.movement.leaping.fall_damage")));
+                            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         entity.setElevation(lastElevation);

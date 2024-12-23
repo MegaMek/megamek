@@ -590,7 +590,7 @@ public class BasicPathRanker extends PathRanker {
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
         double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
-        double braveryMod = successProbability * ((maximumDamageDone * braveryValue) - expectedDamageTaken);
+        double braveryMod = (successProbability * (maximumDamageDone * braveryValue)) - expectedDamageTaken;
         formula.append(" + braveryMod [")
                 .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
                 .append(LOG_PERCENT.format(successProbability))

@@ -548,4 +548,40 @@ public class PathEnumerator {
 
         return mapHasBridges.get();
     }
+
+    /**
+     * Find paths with a similar direction and step count to the provided path, within the selected unit's
+     * already-computed unit paths.
+     * @param moverId
+     * @param prunedPath
+     * @return
+     */
+    protected List<MovePath> getSimilarUnitPaths(int moverId, BulldozerMovePath prunedPath) {
+        int mpDelta = 2;
+        int distanceDelta = 2;
+
+        List<MovePath> paths = new ArrayList<>();
+        if (!getUnitPaths().containsKey(moverId)) {
+            return paths;
+        }
+        List<MovePath> unitPaths = getUnitPaths().get(moverId);
+
+        Coords target = prunedPath.getDestination();
+        int prunedDistance = target.distance(prunedPath.getFinalCoords());
+
+        for (MovePath movePath: unitPaths) {
+            // We want unit paths that use similar amounts of MP to get similarly close to the BMP's destination
+            if (Math.abs((target.distance(movePath.getFinalCoords()) - prunedDistance)) > distanceDelta) {
+                continue;
+            }
+
+            if (Math.abs(movePath.getMpUsed() - prunedPath.getMpUsed()) > mpDelta ) {
+                continue;
+            }
+
+            paths.add(movePath);
+        }
+
+        return paths;
+    }
 }

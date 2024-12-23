@@ -64,14 +64,14 @@ class SharedUtilityTest {
     TargetRoll generateLeapRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            2 * leapDistance, Messages.getString("TacOps.movement.leaping.leg_damage")));
+            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
         return rollTarget;
     }
 
     TargetRoll generateLeapFallRoll(Entity entity, int leapDistance) {
         TargetRoll rollTarget = entity.getBasePilotingRoll(moveType);
         rollTarget.append(new PilotingRollData(entity.getId(),
-            leapDistance, Messages.getString("TacOps.movement.leaping.fall_damage")));
+            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
         return rollTarget;
     }
 

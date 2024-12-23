@@ -396,11 +396,11 @@ public abstract class PathRanker implements IPathRanker {
             // Have to use if/else as switch/case won't allow runtime loading of strings without SDK 17 LTS support
             String description = roll.getLastPlainDesc().toLowerCase();
             if (
-                description.contains(Messages.getString("TacOps.movement.leaping.leg_damage"))
+                description.contains(Messages.getString("TacOps.leaping.leg_damage"))
             ) {
                 damage += predictLeapDamage(movingEntity, roll, msg);
             } else if (
-                description.contains(Messages.getString("TacOps.movement.leaping.fall_damage"))
+                description.contains(Messages.getString("TacOps.leaping.fall_damage"))
             ) {
                 damage += predictLeapFallDamage(movingEntity, roll, msg);
             }

@@ -4682,7 +4682,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // direction the attack comes from matters
             else if ((te instanceof Tank
                 || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                && targHex.containsTerrain(Terrains.FORTIFIED)) {
+                && targetHexContainsFortified) {
                 // TODO make this a LoS mod so that attacks will come in from
                 // directions that grant Hull Down Mods
                 int moveInDirection;

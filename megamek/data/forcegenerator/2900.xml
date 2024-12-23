@@ -4434,13 +4434,6 @@
 				<availability>HL:6,CLAN:8,IS:8,Periphery.Deep:7,MERC:8,Periphery:8,DC:8</availability>
 			</model>
 		</chassis>
-		<chassis name='Paramour Mobile Repair Vehicle' unitType='Tank'>
-			<availability>FWL:4</availability>
-			<model name=''>
-                <roles>support</roles>
-				<availability>General:8</availability>
-			</model>
-		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>
 			<availability>CC:6,HL:7,IS:8,Periphery.Deep:8,FS:7,CIR:6,Periphery:9,OA:5,LA:8,FWL:7,DC:6</availability>
 			<model name=''>

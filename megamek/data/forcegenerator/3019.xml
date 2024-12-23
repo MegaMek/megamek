@@ -1306,7 +1306,7 @@
             <availability>IS:2:3020,Periphery:2:3021,Periphery.Deep:4:3021,PIR:4:3021</availability>
             <model name=''>
                 <roles>cargo,civilian</roles>
-                <availability>IS:8,Periphery:8,PIR:*</availability>
+                <availability>IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Burke Defense Tank' unitType='Tank'>
@@ -2530,7 +2530,7 @@
 			</model>
 			<model name='(SRM)'>
 				<roles>cargo,support</roles>
-				<availability>HL:3,IS:5,Periphery.Deep:5,Periphery:5</availability>
+				<availability>IS:5,Periphery:5,HL:3,Periphery.Deep:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Flea' unitType='Mek'>
@@ -4473,22 +4473,22 @@
 			</model>
 		</chassis>
 		<chassis name='Mobile Headquarters' unitType='Tank'>
-			<availability>CLAN:1+,BAN:0,IS:1+,CS:3+,TC:1+</availability>
+			<availability>CLAN:1+,BAN:0,IS:1+,CS:3+,MERC.WD:3+,TC:1+</availability>
 			<model name=''>
                 <roles>command,support</roles>
-				<availability>CLAN:8,IS:1+,CC:0,DC:0</availability>
+				<availability>CLAN:8,IS:1+,MERC.WD:8,CC:0,DC:0</availability>
 			</model>
 			<model name='(ICE - LL)'>
                 <roles>command,support</roles>
-				<availability>IS:5,CC:8,DC:8,TC:5</availability>
+				<availability>IS:5,CC:8,DC:8,MERC.WD:0,TC:5</availability>
 			</model>
 			<model name='(ICE - LRM)'>
                 <roles>command,support</roles>
-				<availability>IS:4,CC:6,DC:6,TC:5</availability>
+				<availability>IS:4,CC:6,DC:6,MERC.WD:0,TC:5</availability>
 			</model>
 			<model name='(ICE)'>
                 <roles>command,support</roles>
-				<availability>IS:8,CC:5,DC:5,TC:8</availability>
+				<availability>IS:8,CC:5,DC:5,MERC.WD:0,TC:8</availability>
 			</model>
 			<model name='(LL)'>
                 <roles>command,support</roles>
@@ -4903,13 +4903,6 @@
 			<model name='PNT-9R'>
 				<roles>fire_support</roles>
 				<availability>HL:6,IS:8,Periphery.Deep:7,MERC:8,Periphery:8,DC:8</availability>
-			</model>
-		</chassis>
-		<chassis name='Paramour Mobile Repair Vehicle' unitType='Tank'>
-			<availability>FWL:2</availability>
-			<model name=''>
-                <roles>support</roles>
-				<availability>General:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>

@@ -60,20 +60,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
                         turnsTilHit = 2;
                     }
                 } else {
-                    // See indirect flight times table, TO p181
-                    if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
-                        turnsTilHit = 0;
-                    } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {
-                        turnsTilHit = 1;
-                    } else if (distance <= (15 * Board.DEFAULT_BOARD_HEIGHT)) {
-                        turnsTilHit = 2;
-                    } else if (distance <= (21 * Board.DEFAULT_BOARD_HEIGHT)) {
-                        turnsTilHit = 3;
-                    } else if (distance <= (26 * Board.DEFAULT_BOARD_HEIGHT)) {
-                        turnsTilHit = 4;
-                    } else {
-                        turnsTilHit = 5;
-                    }
+                    turnsTilHit = Compute.turnsTilHit(distance);
                 }
             }
             return;

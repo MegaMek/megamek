@@ -7636,7 +7636,7 @@ public class Compute {
 
     public static int turnsTilHit(int distance) {
         final int turnsTilHit;
-        // See indirect flight times table, TO p181
+        // See indirect flight times table, TO:AR p149
         if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
             turnsTilHit = 0;
         } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {

@@ -10272,7 +10272,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2),
-                        -getOffBoardDistance()));
+                        -getOffBoardDistance() - 1));
                 setFacing(3);
                 break;
             case SOUTH:
@@ -10290,7 +10290,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 setFacing(5);
                 break;
             case WEST:
-                setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
+                setPosition(new Coords(-getOffBoardDistance() - 1, (game.getBoard()
                         .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 break;

@@ -4250,35 +4250,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
         }
 
-        // Hull Down
-        if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mek) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                    && (los.getTargetCover() > LosEffects.COVER_NONE)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-            }
-            // tanks going Hull Down is different rules then 'Meks, the
-            // direction the attack comes from matters
-            else if ((te instanceof Tank
-                    || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                    && targHex.containsTerrain(Terrains.FORTIFIED)) {
-                // TODO make this a LoS mod so that attacks will come in from
-                // directions that grant Hull Down Mods
-                int moveInDirection;
-
-                if (!((Tank) te).isBackedIntoHullDown()) {
-                    moveInDirection = ToHitData.SIDE_FRONT;
-                } else {
-                    moveInDirection = ToHitData.SIDE_REAR;
-                }
-
-                if ((te.sideTable(ae.getPosition()) == moveInDirection)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_LEFT)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
-                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-                }
-            }
-        }
-
         // Infantry taking cover per TacOps special rules
         if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
             if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
@@ -4668,7 +4639,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus, underWater);
+            toHit.append(los.losModifiers(game, eistatus, underWater));
         }
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)
@@ -4698,6 +4669,35 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 toHit.setCoverLocSecondary(los.getCoverLocSecondary());
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
                 toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
+            }
+        }
+
+        // Hull Down - Some cover states are dependent on LOS
+        if ((te != null) && te.isHullDown()) {
+            if ((te instanceof Mek) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
+                && (los.getTargetCover() > LosEffects.COVER_NONE)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
+            }
+            // tanks going Hull Down is different rules then 'Meks, the
+            // direction the attack comes from matters
+            else if ((te instanceof Tank
+                || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
+                && targHex.containsTerrain(Terrains.FORTIFIED)) {
+                // TODO make this a LoS mod so that attacks will come in from
+                // directions that grant Hull Down Mods
+                int moveInDirection;
+
+                if (!((Tank) te).isBackedIntoHullDown()) {
+                    moveInDirection = ToHitData.SIDE_FRONT;
+                } else {
+                    moveInDirection = ToHitData.SIDE_REAR;
+                }
+
+                if ((te.sideTable(ae.getPosition()) == moveInDirection)
+                    || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_LEFT)
+                    || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
+                }
             }
         }
 

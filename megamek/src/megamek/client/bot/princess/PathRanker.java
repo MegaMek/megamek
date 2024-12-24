@@ -379,18 +379,17 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker
      * and various conditions.
-     *
+     * <p>
      * Note:
+     *
      * @param movingEntity
-     * @param fallTolerance
      * @param path
      * @param msg
      * @return
      */
-    protected double calculateMovePathPSRDamage(Entity movingEntity, double fallTolerance, MovePath path, StringBuilder msg) {
+    protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path, StringBuilder msg) {
         double damage = 0.0;
 
-        // MovePath pathCopy = path.clone();
         List<TargetRoll> pilotingRolls = getPSRList(path);
         for (TargetRoll roll : pilotingRolls) {
             // Have to use if/else as switch/case won't allow runtime loading of strings without SDK 17 LTS support

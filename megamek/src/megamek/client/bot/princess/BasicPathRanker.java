@@ -504,7 +504,7 @@ public class BasicPathRanker extends PathRanker {
         double utility = -calculateFallMod(successProbability, formula);
 
         // Worry about how badly we can damage ourselves on this path!
-        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, fallTolerance, pathCopy, formula);
+        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy, formula);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
 

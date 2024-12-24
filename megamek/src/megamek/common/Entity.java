@@ -163,6 +163,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int USE_STRUCTURAL_RATING = -1;
 
     protected transient Game game;
+    protected transient IGame iGame;
 
     protected int id = Entity.NONE;
 
@@ -1062,6 +1063,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return game;
     }
 
+    public void setIGame(IGame iGame) {
+        this.iGame = iGame;
+        if (iGame instanceof Game) {
+            game = (Game) iGame;
+        }
+    }
+
     /**
      * This sets the game the entity belongs to. It also restores the entity and
      * checks that the game is in a consistent state. This function takes care
@@ -1080,7 +1088,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             Player player = game.getPlayer(ownerId);
             if (null == player) {
-                logger.error("Entity can't find player #" + ownerId);
+                logger.debug("Entity can't find player #" + ownerId);
             } else {
                 setOwner(player);
             }
@@ -8483,7 +8491,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            bayType = chosenBay.getType();
+            bayType = String.format("%s bay #%s", chosenBay.getType(), chosenBay.getBayNumber());
         }
 
         return bayType;
@@ -9348,14 +9356,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Um, basically everything can spot for LRM indirect fire.
-     * Except for off-board units and units that sprinted.
+     * Except for off-board units, units that sprinted,
+     * and units evading.
      *
      * @return true, if the entity is eligible to spot
      */
     public boolean canSpot() {
         return isActive() && !isOffBoard() &&
                 (moved != EntityMovementType.MOVE_SPRINT) &&
-                (moved != EntityMovementType.MOVE_VTOL_SPRINT);
+                (moved != EntityMovementType.MOVE_VTOL_SPRINT) &&
+                (!isEvading());
     }
 
     @Override
@@ -13157,26 +13167,38 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        int xbv = 0;
-        if ((game != null)
-                && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
+        // Nova CEWS is quirky and handled apart from the other C3
+        int extraBV = 0;
+        if (game != null) {
+            int totalForceBV = 0;
+            double multiplier = 0.05;
+            if ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                         || (hasC3M() && (calculateFreeC3Nodes() < 3))
                         || (hasC3S() && (c3Master > NONE))
-                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
-            int totalForceBV = 0;
-            totalForceBV += baseBV;
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
+                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
+                totalForceBV += baseBV;
+                for (Entity entity : game.getC3NetworkMembers(this)) {
+                    if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
+
+            } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                for (Entity entity : game.getEntitiesVector()) {
+                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
+                    totalForceBV += baseBV;
                 }
             }
-            double multiplier = 0.05;
-            if (hasBoostedC3()) {
-                multiplier = 0.07;
-            }
-            xbv += (int) Math.round(totalForceBV * multiplier);
+            extraBV += (int) Math.round(totalForceBV * multiplier);
         }
-        return xbv;
+        return extraBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {

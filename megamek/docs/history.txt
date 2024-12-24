@@ -36,6 +36,21 @@ MEGAMEK VERSION HISTORY:
 + Fix #1437: Check for stacking for elevation 0 Aeros during deployment
 + Fix #6261: Allow aerospace to flee with remaining movement
 + PR #6265: Config interface extracted
++ PR #6278: GM Command Refactoring
++ Fix #4259: Fixing Dropship Heat-by-Arc for Players and Princess
++ PR #6282: fix error with wrong type cast on GM commands for nukes and kick
++ Fix #6281: Entities can no longer spot if evading (TO:AR, 16-17)
++ PR #6284: FixeD NPE when checking if ejection is possible
++ Fix #6259: error spam and deployment hang with combined arms forces
++ PR #6294: Added reference to the log file inside gameLogger
++ PR #6289: Allows gunEmplacement to be converted to Alpha Strike
++ Fix #6079: Reworded destroyed aero bay door to avoid indefinite article usage
++ Fix #6252: Offboard Artillery cannot unjam critted weapons
++ Fix #6290: When setting internal for infantry restore field weapons if applicable
++ Fix #6273: Prevent flak from making aimed shots on immobile targets
++ Fix #3360: Fixed takeoff logic and preventing smoke-assisted landings
++ Fix #5115: Added Nova CEWS to getExtraC3BV
++ PR #6306: Fixed dirt and gravel roads landing modifiers and interactioins with moderate+ rain
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

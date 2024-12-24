@@ -2,6 +2,7 @@ size 78 78
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Roads (Auto)"
 tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"

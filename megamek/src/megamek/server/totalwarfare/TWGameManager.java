@@ -364,6 +364,7 @@ public class TWGameManager extends AbstractGameManager {
      * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead.
      */
     @Override
+    @Deprecated
     public void requestTeamChange(int team, Player player) {
         requestedTeam = team;
         playerChangingTeam = player;
@@ -413,6 +414,7 @@ public class TWGameManager extends AbstractGameManager {
      * Changes the team of the player specified in the team change request and updates the game state.
      * @deprecated Planned to be removed at a later date
      */
+    @Deprecated
     private void legacyProcessTeamChangeRequest() {
         if (playerChangingTeam != null && changePlayersTeam) {
             playerChangingTeam.setTeam(requestedTeam);

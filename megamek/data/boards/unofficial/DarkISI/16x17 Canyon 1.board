@@ -1,6 +1,7 @@
 size 16 17
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Roads (Auto)"
 hex 0101 0 "road:1:9" ""
 hex 0201 0 "" ""

@@ -2,6 +2,7 @@ size 34 34
 option exit_roads_to_pavement false
 tag "MarsTheme (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"
 tag "MultipleTheme (Auto)"

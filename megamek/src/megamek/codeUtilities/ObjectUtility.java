@@ -21,10 +21,7 @@ package megamek.codeUtilities;
 import megamek.common.Compute;
 import megamek.common.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ObjectUtility {
 
@@ -126,5 +123,14 @@ public class ObjectUtility {
      */
     public static @Nullable <T> T getRandomItem(final @Nullable List<? extends T> list) {
         return ((list == null) || list.isEmpty()) ? null : list.get(Compute.randomInt(list.size()));
+    }
+
+
+    public static <T> Optional<T> getRandomItemSafe(List<T> list) {
+        var size = list.size();
+        if (size == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(list.get(Compute.randomInt(size)));
     }
 }

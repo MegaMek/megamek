@@ -21,7 +21,7 @@ package megamek.common.options;
 import java.io.File;
 import java.util.Vector;
 
-public abstract class BasicGameOptions extends AbstractOptionsImpl {
+public abstract class BasicGameOptions extends AbstractOptions {
 
     @Override
     public synchronized void initialize() {

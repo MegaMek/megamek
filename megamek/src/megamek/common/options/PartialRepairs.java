@@ -22,7 +22,7 @@ import java.io.Serial;
  *
  * @author Neth (Thomas Pfau)
  */
-public class PartialRepairs extends AbstractOptionsImpl {
+public class PartialRepairs extends AbstractOptions {
     @Serial
     private static final long serialVersionUID = 7618380522964885742L;
     public static final String PART_REPAIRS = "PartRepairs";

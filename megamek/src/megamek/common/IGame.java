@@ -23,7 +23,6 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
-import megamek.common.options.BasicGameOptions;
 import megamek.common.options.IGameOptions;
 import megamek.server.scriptedevent.TriggeredEvent;
 
@@ -66,7 +65,6 @@ public interface IGame {
     List<? extends PlayerTurn> getTurnsList();
 
     // endregion
-
     IGameOptions getOptions();
 
     /**
@@ -329,7 +327,6 @@ public interface IGame {
     /**
      * This is a Client-side method to replace or add units that are sent from the
      * server.
-     *
      * Adds the given units to the list of units or objects in the current game.
      * When a unit's ID is already
      * present the currently assigned unit will be replaced with the given new one.
@@ -445,7 +442,15 @@ public interface IGame {
      *
      * @param event The new event to add
      */
-    void addScriptedEvent(TriggeredEvent event);
+    default void addScriptedEvent(TriggeredEvent event) {}
 
     // endregion
+
+    default Map<Integer, Integer> getTeamByPlayer() {
+        Map<Integer, Integer> teamByPlayer = new HashMap<>();
+        for (var player : getPlayersList()) {
+            teamByPlayer.put(player.getId(), player.getTeam());
+        }
+        return teamByPlayer;
+    }
 }

@@ -215,6 +215,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField mmlPath;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
+    private JTextField autoResolveLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(
@@ -327,6 +328,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
+    private JLabel autoResolveLogFilenameLabel;
 
     private final JCheckBox gameSummaryBV = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
@@ -1851,6 +1853,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(gameLogFilename);
         comps.add(row);
 
+        autoResolveLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+        autoResolveLogFilename = new JTextField(15);
+        autoResolveLogFilename.setMaximumSize(new Dimension(250, 40));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(autoResolveLogFilenameLabel);
+        row.add(autoResolveLogFilename);
+        comps.add(row);
+
         addSpacer(comps, 5);
         comps.add(checkboxEntry(stampFilenames, null));
 
@@ -1961,6 +1972,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             keepGameLog.setSelected(CLIENT_PREFERENCES.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CLIENT_PREFERENCES.getGameLogFilename());
+            autoResolveLogFilename.setEnabled(keepGameLog.isSelected());
+            autoResolveLogFilename.setText(CLIENT_PREFERENCES.getAutoResolveGameLogFilename());
             userDir.setText(CLIENT_PREFERENCES.getUserDir());
             mmlPath.setText(CLIENT_PREFERENCES.getMmlPath());
             stampFilenames.setSelected(CLIENT_PREFERENCES.stampFilenames());
@@ -2439,6 +2452,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CLIENT_PREFERENCES.setKeepGameLog(keepGameLog.isSelected());
         CLIENT_PREFERENCES.setGameLogFilename(gameLogFilename.getText());
+        CLIENT_PREFERENCES.setAutoResolveGameLogFilename(autoResolveLogFilename.getText());
         CLIENT_PREFERENCES.setUserDir(userDir.getText());
         CLIENT_PREFERENCES.setMmlPath(mmlPath.getText());
         CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());

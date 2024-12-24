@@ -18,8 +18,6 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import java.util.Objects;
-
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
@@ -29,6 +27,8 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
+
+import java.util.Objects;
 
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion
@@ -62,22 +62,31 @@ public final class ASConverter {
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return standardConversion(entity, true, conversionReport);
+        return standardConversion(entity, false, true, conversionReport);
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return standardConversion(entity, true, new DummyCalculationReport());
+        return standardConversion(entity, false, true, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return standardConversion(entity, includePilot, new DummyCalculationReport());
+        return standardConversion(entity, false, includePilot, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        return standardConversion(entity, includePilot, conversionReport);
+        return standardConversion(entity, false, includePilot, conversionReport);
     }
 
-    private static AlphaStrikeElement standardConversion(Entity entity, boolean includePilot,
+    /**
+     * Converts the given entity to Alpha Strike, keeping the references to the original Entity
+     * @param entity The entity to convert
+     * @return The converted Alpha Strike element
+     */
+    public static AlphaStrikeElement convertAndKeepRefs(Entity entity) {
+        return standardConversion(entity, true, true, new DummyCalculationReport());
+    }
+
+    private static AlphaStrikeElement standardConversion(Entity entity, boolean keepRefs, boolean includePilot,
             CalculationReport conversionReport) {
         Entity undamagedEntity = getUndamagedEntity(entity);
         if (undamagedEntity == null) {
@@ -86,6 +95,10 @@ public final class ASConverter {
         }
         if (entity.getGame() != null) {
             undamagedEntity.setGame(entity.getGame());
+        }
+        if (keepRefs) {
+            undamagedEntity.setId(entity.getId());
+            undamagedEntity.setOwner(entity.getOwner());
         }
         return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }
@@ -109,6 +122,7 @@ public final class ASConverter {
         element.setMulId(entity.getMulId());
         element.setRole(entity.getRole());
         element.setFluff(entity.getFluff());
+        element.setId(entity.getId());
 
         if (entity.getShortName().length() < 15) {
             conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());
@@ -168,6 +182,7 @@ public final class ASConverter {
         }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
+        element.setBasePointValue(pvConverter.getBasePointValue());
         element.setConversionReport(conversionReport);
         return element;
     }
@@ -191,14 +206,16 @@ public final class ASConverter {
     /**
      * Returns true if the given entity can be converted to AlphaStrike. This is
      * only
-     * false for entities of some special types such as TeleMissile or
-     * GunEmplacement.
+     * false for entities of some special types such as TeleMissile.
+     * GunEmplacement is being allowed conversion as of 50.02 even though its not
+     * currently officially supported in rules as written, but it generates a valid unit that can be used in
+     * auto-resolution and other parts of the game. (Luana Coppio)
      * Also returns false if entity is null.
      */
     public static boolean canConvert(@Nullable Entity entity) {
         return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
                 || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
-                || (entity instanceof ArmlessMek) || (entity instanceof GunEmplacement));
+                || (entity instanceof ArmlessMek));
     }
 
     /**
@@ -236,15 +253,17 @@ public final class ASConverter {
         return tmmForMovement(movement, new DummyCalculationReport());
     }
 
-    /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
-    private static @Nullable Entity getUndamagedEntity(Entity entity) {
+    /**
+     * @return Retrieves a fresh (undamaged and unmodified) copy of the given entity.
+     */
+    public static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MekSummary ms = MekSummaryCache.getInstance().getMek(entity.getShortNameRaw());
             return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            logger.error("Could not obtain clean Entity for entity {}.", entity, e);
         }
+        return null;
     }
 
     /**
@@ -256,16 +275,12 @@ public final class ASConverter {
     }
 
     public static int toInt(ASArcs arc) {
-        switch (arc) {
-            case LEFT:
-                return 1;
-            case RIGHT:
-                return 2;
-            case REAR:
-                return 3;
-            default:
-                return 0;
-        }
+        return switch (arc) {
+            case LEFT -> 1;
+            case RIGHT -> 2;
+            case REAR -> 3;
+            default -> 0;
+        };
     }
 
     /**

@@ -1195,12 +1195,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && game.getPhase().isFiring()) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
-                if (entity.usesWeaponBays()) {
+                if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        for (WeaponMounted weapon : mounted.getBayWeapons()) {
-                            currentHeatBuildup += weapon.getCurrentHeat();
-                        }
+                        currentHeatBuildup += mounted.getHeatByBay();
                     } else {
                         // check whether arc has fired
                         int loc = mounted.getLocation();
@@ -1219,7 +1217,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     }
                 } else {
                     if (!mounted.isBombMounted()) {
-                        currentHeatBuildup += mounted.getCurrentHeat();
+                        currentHeatBuildup += mounted.getHeatByBay();
                     }
                 }
             }
@@ -1257,16 +1255,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
-            wArcHeatL.setVisible(true);
-            wArcHeatR.setVisible(true);
             m_chBayWeapon.setVisible(true);
             wBayWeapon.setVisible(true);
         } else {
-            wArcHeatL.setVisible(false);
-            wArcHeatR.setVisible(false);
             m_chBayWeapon.setVisible(false);
             wBayWeapon.setVisible(false);
         }
+        if ((!entity.isLargeCraft())
+                || ((game != null) && (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)))){
+            wArcHeatL.setVisible(false);
+            wArcHeatR.setVisible(false);
+        }
+        else {
+            wArcHeatL.setVisible(true);
+            wArcHeatR.setVisible(true);
+        }
+
 
         wDamageTrooperL.setVisible(false);
         wDamageTrooperR.setVisible(false);

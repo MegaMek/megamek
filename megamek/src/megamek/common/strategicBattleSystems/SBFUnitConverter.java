@@ -37,16 +37,14 @@ public class SBFUnitConverter {
     //TODO: How do MAS/LMAS/STL work? If all have a mix of them, the unit gets all?
 
     private final List<AlphaStrikeElement> elements;
-    private final List<AlphaStrikeElement> elementsBaseSkill;
     private final SBFUnit unit = new SBFUnit();
     private final CalculationReport report;
     private int roundedAverageMove = 0;
 
     public SBFUnitConverter(List<AlphaStrikeElement> elements, String name,
-                            List<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
+                            CalculationReport report) {
         this.elements = elements;
         unit.setName(Objects.requireNonNullElse(name, "Unknown"));
-        this.elementsBaseSkill = elementsBaseSkill;
         this.report = report;
     }
 
@@ -58,7 +56,7 @@ public class SBFUnitConverter {
         report.addEmptyLine();
         report.addSubHeader("Unit \"" + unit.getName() + "\":");
 
-        if ((elements == null) || (elementsBaseSkill == null) || (elements.isEmpty()) || (elementsBaseSkill.isEmpty())) {
+        if ((elements == null) || (elements.isEmpty())) {
             report.addLine("Error: No elements.", "");
             return unit;
         }
@@ -672,9 +670,9 @@ public class SBFUnitConverter {
     }
 
     private void calcUnitPointValue() {
-        double sum = (double) elementsBaseSkill.stream().mapToInt(AlphaStrikeElement::getPointValue).sum() / 3;
+        double sum = (double) elements.stream().mapToInt(AlphaStrikeElement::getBasePointValue).sum() / 3;
         int intermediate = (int) Math.round(sum);
-        String calculation = "(" + elementsBaseSkill.stream().map(e -> e.getPointValue() + "")
+        String calculation = "(" + elements.stream().map(e -> e.getBasePointValue() + "")
                 .collect(joining(" + ")) + ") / 3 = " + formatForReport(sum) + ", rn";
         double result = intermediate;
         String skillCalculation = "";

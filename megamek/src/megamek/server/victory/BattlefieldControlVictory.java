@@ -19,11 +19,11 @@
  */
 package megamek.server.victory;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import megamek.common.Game;
 import megamek.common.Player;
+
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * This class represents a battlefield control (units of only one team left alive) victory

@@ -22,7 +22,7 @@ import java.util.Vector;
  *
  * @author Cord
  */
-public class PilotOptions extends AbstractOptionsImpl {
+public class PilotOptions extends AbstractOptions {
     @Serial
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";

@@ -379,8 +379,8 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker
      * and various conditions.
-     * <p>
-     * Note:
+     *
+     * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
      *
      * @param movingEntity
      * @param path

@@ -446,10 +446,10 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     private List<Entity> getAlliedNovaUnits(int connID) {
         List<Entity> novaUnits = new LinkedList<>();
         for (Entity ent : gameManager.getGame().getEntitiesVector()) {
-            if ((ent.hasNovaCEWS()
-                && (ent.getOwnerId() == connID)
-                || (gameManager.getGame().getPlayer(connID)) != null
-                && !gameManager.getGame().getPlayer(connID).isEnemyOf(ent.getOwner()))){
+            if (ent.hasNovaCEWS()
+                && ((ent.getOwnerId() == connID)
+                    || (gameManager.getGame().getPlayer(connID) != null
+                        && !gameManager.getGame().getPlayer(connID).isEnemyOf(ent.getOwner())))){
                 novaUnits.add(ent);
             }
         }

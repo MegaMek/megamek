@@ -37,13 +37,51 @@ public interface Curve {
     double evaluate(double x);
 
     default void drawAxes(Graphics g, int width, int height) {
-        // Center lines
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawLine(0, height/2, width, height/2);   // X-axis
-        g.drawLine(width/2, 0, width/2, height);   // Y-axis
+        // Draw axis labels (0 to 1 with 0.05 increments)
+        int padding = 10; // Padding for text from the axis lines
+        double increment = 0.05;
 
-        // Restore color to black
+        // Draw Y-axis labels
+        for (double y = 0.0; y <= 1.0; y += increment) {
+            int yPos = (int) (height - (y * height)); // Map 0-1 range to pixel coordinates
+            g.setColor(Color.BLACK);
+            g.drawLine(0, yPos, width, yPos);   // X-axis
+
+            g.setColor(Color.WHITE);
+            g.drawString(String.format("%.2f", y), padding, yPos + 5); // Label
+
+        }
+
+        // Draw X-axis labels
+        for (double x = 0.0; x <= 1.0; x += increment) {
+            int xPos = (int) (x * width); // Map 0-1 range to pixel coordinates
+            g.setColor(Color.BLACK);
+            g.drawLine(xPos, 0, xPos, height);   // Y-axis
+
+            g.setColor(Color.WHITE);
+            g.drawString(String.format("%.2f", x), xPos - 10, height); // Label
+        }
+
+
+
+        // Restore color
         g.setColor(Color.BLACK);
+    }
+
+    default void drawPoint(Graphics g,  int width, int height, Color color, double xPosNormalized) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(color);
+        g2d.setStroke(new BasicStroke(1));
+        double y = this.evaluate(xPosNormalized);
+
+        int px1 = (int)(xPosNormalized * width);
+        int py1 = 0;
+
+        g2d.drawLine(px1, py1, px1, height);
+        g2d.drawString(
+            String.format("Input: %.2f, Eval: %.2f", xPosNormalized, y),
+            40, 20 // Position of the text
+        );
     }
 
     default void drawCurve(Graphics g, int width, int height, Color color) {

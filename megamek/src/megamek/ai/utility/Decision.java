@@ -51,7 +51,7 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
 
     @Override
     public String getName() {
-        return (action.name() + "::" + decisionScoreEvaluator.getName()).replace(" ", "_").toUpperCase();
+        return (action.name() + "::" + decisionScoreEvaluator.getName()).replace(" ", "_");
     }
 
     public Action getAction() {

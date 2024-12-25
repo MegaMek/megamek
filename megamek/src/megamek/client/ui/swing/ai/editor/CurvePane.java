@@ -29,11 +29,16 @@ public class CurvePane extends JPanel {
     private JSpinner cParamSpinner;
     private JPanel curveGraph;
     private JPanel basePane;
+    private HoverStateModel hoverStateModel;
 
     public CurvePane() {
         $$$setupUI$$$();
         setLayout(new BorderLayout());
         add(basePane, BorderLayout.CENTER);
+    }
+
+    public void setHoverStateModel(HoverStateModel model) {
+        ((CurveGraph) this.curveGraph).setHoverStateModel(model);
     }
 
     /**
@@ -175,15 +180,7 @@ public class CurvePane extends JPanel {
             }
         });
 
-        curveGraph = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                if (selectedCurve.get() == null) {
-                    return;
-                }
-                selectedCurve.get().drawCurve(g, getWidth(), getHeight(), Color.BLUE);
-            }
-        };
+        curveGraph = new CurveGraph(selectedCurve);
 
         curveGraph.setPreferredSize(new Dimension(800, 600));
         bParamSpinner = new JSpinner(new SpinnerNumberModel(0d, -100d, 100d, 0.01d));

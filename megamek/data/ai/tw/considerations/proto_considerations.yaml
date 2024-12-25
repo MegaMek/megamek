@@ -1,0 +1,16 @@
+--- !<MyUnitArmor>
+name: "MyUnitArmor"
+curve: !<LinearCurve>
+  m: 0.5
+  b: 0.3
+parameters:
+  minValue: 0
+  maxValue: 10
+--- !<TargetWithinOptimalRange>
+name: "TargetWithinOptimalRange"
+curve: !<LogisticCurve>
+  m: 1.0
+  b: 0.5
+  k: 10.0
+  c: 0.0
+parameters: {}

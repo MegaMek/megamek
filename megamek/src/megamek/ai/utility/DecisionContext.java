@@ -13,56 +13,75 @@
  */
 package megamek.ai.utility;
 
-import megamek.common.Entity;
-import megamek.common.IGame;
+import java.util.*;
 
-import java.util.Optional;
 
-public  class DecisionContext {
+public abstract class DecisionContext<IN_GAME_OBJECT, TARGETABLE> {
 
-    private final Agent agent;
-    private final IGame worldState;
+    private final Agent<IN_GAME_OBJECT, TARGETABLE> agent;
+    private final World<IN_GAME_OBJECT, TARGETABLE> world;
+    private final IN_GAME_OBJECT currentUnit;
+    private final List<TARGETABLE> targetUnits;
+    private final Map<String, Double> damageCache;
+    private final static int DAMAGE_CACHE_SIZE = 10_000;
 
-    public DecisionContext(Agent agent, IGame game) {
+    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world) {
+        this(agent, world, null, Collections.emptyList());
+    }
+
+    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit) {
+        this(agent, world, currentUnit, Collections.emptyList());
+    }
+
+    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit, List<TARGETABLE> targetUnits) {
         this.agent = agent;
-        this.worldState = game;
+        this.world = world;
+        this.currentUnit = currentUnit;
+        this.targetUnits = targetUnits;
+        this.damageCache = new LinkedHashMap<>(32, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, Double> eldest) {
+                return size() > DAMAGE_CACHE_SIZE;
+            }
+        };
     }
 
-    public IGame getWorldState() {
-        return worldState;
+    public World<IN_GAME_OBJECT, TARGETABLE> getWorld() {
+        return world;
     }
 
-    public Agent getAgent() {
+    public Agent<IN_GAME_OBJECT, TARGETABLE> getAgent() {
         return agent;
     }
 
-    public Optional<Entity> getTarget() {
-        // TODO implement this correctly
-        return agent.getCharacter().getEnemyEntities().stream().findAny();
+    public List<TARGETABLE> getTargets() {
+        return targetUnits;
     }
 
-    public Optional<Entity> getFiringUnit() {
-        // TODO implement this correctly
-        return Optional.ofNullable(agent.getCharacter().getEntityToFire(agent.getCharacter().getFireControlState()));
+    public Optional<IN_GAME_OBJECT> getCurrentUnit() {
+        return Optional.ofNullable(currentUnit);
     }
 
-    public Optional<Entity> getCurrentUnit() {
-        // TODO implement this correctly
-        return getFiringUnit();
+    public List<TARGETABLE> getEnemyUnits() {
+        return world.getEnemyUnits();
     }
 
-    // Decision Identifier - enum of what you are trying to do?
-    // Link to intelligence controller object - who is asking?
-    // Link to content data with parameters - what do you need?
+    public double getUnitMaxDamageAtRange(TARGETABLE unit, int enemyRange) {
+        String cacheKey = unit.hashCode() + "-" + enemyRange;
+        if (damageCache.containsKey(cacheKey)) {
+            return damageCache.get(cacheKey);
+        }
 
-    /*
-     * Example input - MyHealth
-     * class ConsiderationMyHealth extends Consideration {
-     * public float Score(DecisionContext context) {
-     *     var intelligence = context.getIntelligence();
-     *     var character = intelligence.getCharacter();
-     *     return character.getHealth() / character.getMaxHealth();
-     * }
-     */
+        double maxDamage = calculateUnitMaxDamageAtRange(unit, enemyRange);
+        damageCache.put(cacheKey, maxDamage);
+        return maxDamage;
+    }
 
+    public abstract double calculateUnitMaxDamageAtRange(TARGETABLE unit, int enemyRange);
+
+    public void clearCaches() {
+        damageCache.clear();
+    }
+
+    public abstract double getBonusFactor(DecisionContext<IN_GAME_OBJECT, TARGETABLE> lastContext);
 }

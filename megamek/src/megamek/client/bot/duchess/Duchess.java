@@ -14,89 +14,48 @@
 
 package megamek.client.bot.duchess;
 
-import megamek.client.bot.PhysicalOption;
+import megamek.ai.utility.Agent;
+import megamek.ai.utility.Intelligence;
+import megamek.client.bot.duchess.ai.utility.tw.context.TWWorld;
 import megamek.client.bot.princess.Princess;
-import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.Minefield;
-import megamek.common.MovePath;
-import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.Game;
 import megamek.logging.MMLogger;
 
-import java.util.Vector;
-
-public class Duchess extends Princess{
+public class Duchess implements Agent<Entity, Entity> {
     private static final MMLogger logger = MMLogger.create(Duchess.class);
 
-    /**
-     * Constructor - initializes a new instance of the Princess bot.
-     *
-     * @param name The display name.
-     * @param host The host address to which to connect.
-     * @param port The port on the host where to connect.
-     */
-    public Duchess(String name, String host, int port) {
-        super(name, host, port);
-    }
+    private final Intelligence<Entity, Entity> intelligence;
+    private final TWWorld world;
+    private final Princess princess;
 
-
-    @Override
-    public void initialize() {
-
+    public Duchess(Game game, Intelligence<Entity, Entity> intelligence, Princess princess) {
+        this.world = new TWWorld(game);
+        this.intelligence = intelligence;
+        this.princess = princess;
     }
 
     @Override
-    protected void processChat(GamePlayerChatEvent ge) {
-
+    public int getId() {
+        return princess.getLocalPlayerNumber();
     }
 
     @Override
-    protected void initMovement() {
-
+    public TWWorld getContext() {
+        return world;
     }
 
     @Override
-    protected void initFiring() {
+    public Intelligence<Entity, Entity> getIntelligence() {
+        return intelligence;
+    }
 
+    public TWWorld getWorld() {
+        return world;
     }
 
     @Override
-    protected MovePath calculateMoveTurn() {
-        return null;
-    }
-
-    @Override
-    protected void calculateFiringTurn() {
-
-    }
-
-    @Override
-    protected void calculateDeployment() {
-
-    }
-
-    @Override
-    protected PhysicalOption calculatePhysicalTurn() {
-        return null;
-    }
-
-    @Override
-    protected MovePath continueMovementFor(Entity entity) {
-        return null;
-    }
-
-    @Override
-    protected Vector<Minefield> calculateMinefieldDeployment() {
-        return null;
-    }
-
-    @Override
-    protected Vector<Coords> calculateArtyAutoHitHexes() {
-        return null;
-    }
-
-    @Override
-    protected void checkMorale() {
-
+    public Princess getClient() {
+        return princess;
     }
 }

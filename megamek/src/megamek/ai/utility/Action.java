@@ -17,10 +17,10 @@ package megamek.ai.utility;
 
 public enum Action {
 
-    DIRECT_ATTACK("Attack Unit"),
-    MOVE_TO_POSITION("Move to Position"),
-    INDIRECT_ATTACK("Indirect Attack"),
-    USE_SPECIAL_ABILITY("Use Special Ability");
+    AttackUnit("Attack Unit"),
+    MoveToPosition("Move to Position"),
+    IndirectAttack("Indirect Attack"),
+    UseSpecialAbility("Use Special Ability");
 
     private final String actionName;
 

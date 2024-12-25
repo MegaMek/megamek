@@ -15,18 +15,55 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+import java.awt.*;
+import java.util.StringJoiner;
+
 import static megamek.codeUtilities.MathUtility.clamp01;
 
+@JsonTypeName("LinearCurve")
 public class LinearCurve implements Curve {
-    private final double m;
-    private final double b;
+    private double m;
+    private double b;
 
-    public LinearCurve(double m, double b) {
+    @JsonCreator
+    public LinearCurve(
+        @JsonProperty("m") double m,
+        @JsonProperty("b") double b) {
         this.m = m;
         this.b = b;
     }
 
     public double evaluate(double x) {
         return clamp01(m * x + b);
+    }
+
+    public double getM() {
+        return m;
+    }
+
+    public double getB() {
+        return b;
+    }
+
+    @Override
+    public void setM(double m) {
+        this.m = m;
+    }
+
+    @Override
+    public void setB(double b) {
+        this.b = b;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", LinearCurve.class.getSimpleName() + "[", "]")
+            .add("m=" + m)
+            .add("b=" + b)
+            .toString();
     }
 }

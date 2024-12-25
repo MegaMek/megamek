@@ -53,23 +53,57 @@ public class AiProfileEditor extends JFrame {
     private JPanel decisionPane;
     private JComboBox<Action> actionComboBox;
     private JSpinner weightSpinner;
-    private JScrollPane evaluatorScrollPane;
     private JPanel uAiEditorPanel;
+    private JPanel considerationsPane1;
+    private JScrollPane profileScrollPane;
+    private JPanel decisionScoreEvaluatorPanel;
 
     public AiProfileEditor(MegaMekController controller) {
         this.controller = controller;
         $$$setupUI$$$();
         initialize();
         setTitle("AI Profile Editor");
-        setSize(1200, 800);
+        setSize(1200, 1000);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setContentPane(uAiEditorPanel);
         setVisible(true);
     }
 
     private void initialize() {
-        considerationsScrollPane.setViewportView(new ConsiderationPane());
-        evaluatorScrollPane.setViewportView(new DecisionScoreEvaluatorPane());
+
+        // Set layout for decisionScoreEvaluatorPanel
+        decisionScoreEvaluatorPanel.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.fill = GridBagConstraints.NONE; // Do not stretch
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHEAST; // Align to the top-right
+        gbc.insets = new Insets(0, 0, 0, 0); // No padding
+
+        // Add DecisionScoreEvaluatorPane to the panel
+        decisionScoreEvaluatorPanel.add(new DecisionScoreEvaluatorPane(), gbc);
+
+//
+//        GridBagConstraints gbc = new GridBagConstraints();
+//        gbc.gridx = 0;
+//        gbc.gridy = GridBagConstraints.RELATIVE;
+//        gbc.fill = GridBagConstraints.HORIZONTAL;
+//        gbc.weightx = 0.0;
+//        gbc.weighty = 0.0;
+//        gbc.anchor = GridBagConstraints.NORTHEAST;
+        var hover = new HoverStateModel();
+        var considerations = List.of(new ConsiderationPane(),
+            new ConsiderationPane(),
+            new ConsiderationPane(),
+            new ConsiderationPane());
+        for (var c : considerations) {
+            considerationsPane1.add(c, gbc);
+            c.setHoverStateModel(hover);
+        }
+
         newDecisionButton.addActionListener(e -> {
             var action = (Action) actionComboBox.getSelectedItem();
             var weight = (double) weightSpinner.getValue();
@@ -106,8 +140,8 @@ public class AiProfileEditor extends JFrame {
         addToMutableTreeNode(root, "Considerations", sharedData.getConsiderations());
         addToMutableTreeNode(root, "Decision Score Evaluators (DSE)", sharedData.getDecisionScoreEvaluators());
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
-        repositoryViewer = new JTree(treeModel);
 
+        repositoryViewer = new JTree(treeModel);
         actionComboBox = new JComboBox<>(Action.values());
 
         var model = new DecisionScoreEvaluatorTableModel<>(sharedData.getDecisions());
@@ -132,17 +166,9 @@ public class AiProfileEditor extends JFrame {
     private void $$$setupUI$$$() {
         createUIComponents();
         uAiEditorPanel = new JPanel();
-        uAiEditorPanel.setLayout(new GridBagLayout());
+        uAiEditorPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         final JSplitPane splitPane1 = new JSplitPane();
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(3, 3, 3, 3);
-        uAiEditorPanel.add(splitPane1, gbc);
+        uAiEditorPanel.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setLeftComponent(panel1);
@@ -161,9 +187,14 @@ public class AiProfileEditor extends JFrame {
         profilePane = new JPanel();
         profilePane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
         dseEditorPane.addTab("Profile", profilePane);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        profilePane.add(scrollPane1, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setViewportView(decisionScoreEvaluatorTable);
+        profileScrollPane = new JScrollPane();
+        profileScrollPane.setWheelScrollingEnabled(true);
+        profilePane.add(profileScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        decisionScoreEvaluatorTable.setColumnSelectionAllowed(false);
+        decisionScoreEvaluatorTable.setFillsViewportHeight(true);
+        decisionScoreEvaluatorTable.setMinimumSize(new Dimension(150, 32));
+        decisionScoreEvaluatorTable.setPreferredScrollableViewportSize(new Dimension(150, 32));
+        profileScrollPane.setViewportView(decisionScoreEvaluatorTable);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
         profilePane.add(panel3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -183,12 +214,10 @@ public class AiProfileEditor extends JFrame {
         label3.setText("Notes");
         panel3.add(label3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         decisionPane = new JPanel();
-        decisionPane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        decisionPane.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         dseEditorPane.addTab("Decision", decisionPane);
-        evaluatorScrollPane = new JScrollPane();
-        decisionPane.add(evaluatorScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
         decisionPane.add(panel4, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
         label4.setText("Action");
@@ -201,6 +230,9 @@ public class AiProfileEditor extends JFrame {
         panel4.add(label5, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel4.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        decisionScoreEvaluatorPanel = new JPanel();
+        decisionScoreEvaluatorPanel.setLayout(new GridBagLayout());
+        panel4.add(decisionScoreEvaluatorPanel, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         considerationsPane = new JPanel();
         considerationsPane.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         considerationsPane.setName("");
@@ -219,7 +251,12 @@ public class AiProfileEditor extends JFrame {
         descriptionDseTextField = new JTextField();
         dseConfigPane.add(descriptionDseTextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         considerationsScrollPane = new JScrollPane();
+        considerationsScrollPane.setHorizontalScrollBarPolicy(31);
+        considerationsScrollPane.setWheelScrollingEnabled(true);
         considerationsPane.add(considerationsScrollPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        considerationsPane1 = new JPanel();
+        considerationsPane1.setLayout(new GridBagLayout());
+        considerationsScrollPane.setViewportView(considerationsPane1);
     }
 
     /**

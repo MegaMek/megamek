@@ -17,6 +17,7 @@ package megamek.client.ui.swing.ai.editor;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class DecisionScoreEvaluatorPane extends JPanel {
     private JTextField nameField;
@@ -24,17 +25,29 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private JTextField notesField;
     private JPanel decisionScoreEvaluatorPane;
     private JPanel considerationsPane;
-    ;
+
 
     public DecisionScoreEvaluatorPane() {
         $$$setupUI$$$();
         setLayout(new BorderLayout());
         add(decisionScoreEvaluatorPane, BorderLayout.CENTER);
-        considerationsPane.add(new ConsiderationPane());
-        considerationsPane.add(new ConsiderationPane());
-        considerationsPane.add(new ConsiderationPane());
-        considerationsPane.add(new ConsiderationPane());
-        considerationsPane.add(new ConsiderationPane());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        var hoverState = new HoverStateModel();
+        var considerations = List.of(new ConsiderationPane(),
+            new ConsiderationPane(),
+            new ConsiderationPane(),
+            new ConsiderationPane());
+        for (var c : considerations) {
+            c.setHoverStateModel(hoverState);
+            considerationsPane.add(c, gbc);
+        }
     }
 
     /**
@@ -47,66 +60,39 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private void $$$setupUI$$$() {
         decisionScoreEvaluatorPane = new JPanel();
         decisionScoreEvaluatorPane.setLayout(new GridBagLayout());
-        final JLabel label1 = new JLabel();
-        label1.setText("Name");
-        label1.setVerticalAlignment(0);
-        label1.setVerticalTextPosition(0);
+        nameField = new JTextField();
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        decisionScoreEvaluatorPane.add(label1, gbc);
-        nameField = new JTextField();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         decisionScoreEvaluatorPane.add(nameField, gbc);
         descriptionField = new JTextField();
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         decisionScoreEvaluatorPane.add(descriptionField, gbc);
-        final JLabel label2 = new JLabel();
-        label2.setText("Considerations");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        decisionScoreEvaluatorPane.add(label2, gbc);
         notesField = new JTextField();
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         decisionScoreEvaluatorPane.add(notesField, gbc);
-        final JLabel label3 = new JLabel();
-        label3.setText("Notes");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        decisionScoreEvaluatorPane.add(label3, gbc);
-        final JLabel label4 = new JLabel();
-        label4.setText("Description");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        decisionScoreEvaluatorPane.add(label4, gbc);
         final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setHorizontalScrollBarPolicy(31);
+        scrollPane1.setMaximumSize(new Dimension(800, 32767));
+        scrollPane1.setMinimumSize(new Dimension(800, 600));
+        scrollPane1.setWheelScrollingEnabled(true);
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridx = 0;
+        gbc.gridy = 7;
         gbc.gridheight = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
@@ -114,7 +100,37 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         decisionScoreEvaluatorPane.add(scrollPane1, gbc);
         considerationsPane = new JPanel();
         considerationsPane.setLayout(new GridBagLayout());
+        considerationsPane.setMaximumSize(new Dimension(800, 2147483647));
+        considerationsPane.setMinimumSize(new Dimension(800, 600));
         scrollPane1.setViewportView(considerationsPane);
+        final JLabel label1 = new JLabel();
+        label1.setText("Considerations");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label1, gbc);
+        final JLabel label2 = new JLabel();
+        label2.setText("Notes:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label2, gbc);
+        final JLabel label3 = new JLabel();
+        label3.setText("Description:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label3, gbc);
+        final JLabel label4 = new JLabel();
+        label4.setText("Name:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label4, gbc);
     }
 
     /**

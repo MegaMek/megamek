@@ -70,6 +70,11 @@ public class MegaMek {
     private static final MMLogger logger = MMLogger.create(MegaMek.class);
     private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
 
+    public static boolean isDevelopment() {
+        // env variable mm.profile=dev
+        return "dev".equals(System.getenv("mm.profile"));
+    }
+
     public static void main(String... args) {
         ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
 

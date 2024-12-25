@@ -17,6 +17,7 @@ package megamek.client.ui.swing.ai.editor;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
 
@@ -30,10 +31,37 @@ public class ConsiderationPane extends JPanel {
     private JTable parametersTable;
     private JPanel considerationPane;
     private JPanel topThingsPane;
+    private JButton hideButton;
+    private JButton showButton;
+    private JButton newParameterButton;
 
     public ConsiderationPane() {
         $$$setupUI$$$();
         add(considerationPane);
+
+//        considerationComboBox.addActionListener(e -> {
+//            TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
+//            considerationName.setText(consideration.getName());
+//            ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
+//        });
+
+        hideButton.addActionListener(e -> {
+            curveContainer.setVisible(false);
+            showButton.setVisible(true);
+            hideButton.setVisible(false);
+        });
+
+        showButton.addActionListener(e -> {
+            curveContainer.setVisible(true);
+            hideButton.setVisible(true);
+            showButton.setVisible(false);
+        });
+
+        showButton.setVisible(false);
+    }
+
+    public void setHoverStateModel(HoverStateModel model) {
+        ((CurvePane) this.curveContainer).setHoverStateModel(model);
     }
 
     private void createUIComponents() {
@@ -56,44 +84,67 @@ public class ConsiderationPane extends JPanel {
         considerationPane = new JPanel();
         considerationPane.setLayout(new GridBagLayout());
         topThingsPane = new JPanel();
-        topThingsPane.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        topThingsPane.setLayout(new GridLayoutManager(6, 5, new Insets(0, 0, 0, 0), -1, -1));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = 5;
         gbc.gridheight = 2;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         considerationPane.add(topThingsPane, gbc);
-        topThingsPane.add(considerationComboBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        topThingsPane.add(considerationComboBox, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         considerationName = new JTextField();
-        topThingsPane.add(considerationName, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        topThingsPane.add(curveContainer, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(800, 600), new Dimension(800, 600), null, 0, false));
+        topThingsPane.add(considerationName, new GridConstraints(3, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        topThingsPane.add(curveContainer, new GridConstraints(5, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 300), new Dimension(400, 300), null, 0, false));
         final JLabel label1 = new JLabel();
-        label1.setText("Type");
-        topThingsPane.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label1.setText("Curve:");
+        topThingsPane.add(label1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
-        label2.setText("Name");
-        topThingsPane.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        label2.setText("Name:");
+        topThingsPane.add(label2, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
-        label3.setText("Curve");
-        topThingsPane.add(label3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        label4.setText("Parameters");
+        label3.setText("Type:");
+        topThingsPane.add(label3, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        hideButton = new JButton();
+        hideButton.setText("Hide");
+        topThingsPane.add(hideButton, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showButton = new JButton();
+        showButton.setText("Show");
+        topThingsPane.add(showButton, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        topThingsPane.add(spacer1, new GridConstraints(4, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        considerationPane.add(label4, gbc);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
+        gbc.gridwidth = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         considerationPane.add(parametersTable, gbc);
+        final JLabel label4 = new JLabel();
+        label4.setText("Parameters:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        considerationPane.add(label4, gbc);
+        final JPanel spacer2 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        considerationPane.add(spacer2, gbc);
+        newParameterButton = new JButton();
+        newParameterButton.setText("New Parameter");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        considerationPane.add(newParameterButton, gbc);
     }
 
     /**

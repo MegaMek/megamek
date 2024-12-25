@@ -227,14 +227,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
-        MegaMekButton connectSBF = new MegaMekButton("Connect to SBF",
-                UIComponents.MainMenuButton.getComp(), true);
-        connectSBF.setActionCommand(ClientGUI.FILE_GAME_CONNECT_SBF);
-        connectSBF.addActionListener(actionListener);
-        MegaMekButton botB = new MegaMekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
-                UIComponents.MainMenuButton.getComp(), true);
-        botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
-        botB.addActionListener(actionListener);
         MegaMekButton editB = new MegaMekButton(Messages.getString("MegaMek.MapEditor.label"),
                 UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand(ClientGUI.BOARD_NEW);
@@ -243,15 +235,25 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand(ClientGUI.MAIN_SKIN_NEW);
         skinEditB.addActionListener(actionListener);
+        MegaMekButton quitB = new MegaMekButton(Messages.getString("MegaMek.Quit.label"),
+            UIComponents.MainMenuButton.getComp(), true);
+        quitB.setActionCommand(ClientGUI.MAIN_QUIT);
+        quitB.addActionListener(actionListener);
+
+        // only if under development
         MegaMekButton editAi = new MegaMekButton(Messages.getString("MegaMek.AiEditor.label"),
             UIComponents.MainMenuButton.getComp(), true);
         editAi.setActionCommand(ClientGUI.NEW_AI);
         editAi.addActionListener(actionListener);
+        MegaMekButton connectSBF = new MegaMekButton("Connect to SBF",
+            UIComponents.MainMenuButton.getComp(), true);
+        connectSBF.setActionCommand(ClientGUI.FILE_GAME_CONNECT_SBF);
+        connectSBF.addActionListener(actionListener);
+        MegaMekButton botB = new MegaMekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
+            UIComponents.MainMenuButton.getComp(), true);
+        botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
+        botB.addActionListener(actionListener);
 
-        MegaMekButton quitB = new MegaMekButton(Messages.getString("MegaMek.Quit.label"),
-                UIComponents.MainMenuButton.getComp(), true);
-        quitB.setActionCommand(ClientGUI.MAIN_QUIT);
-        quitB.addActionListener(actionListener);
 
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
@@ -329,18 +331,24 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(scenB, gridbag, c);
         c.gridy++;
         addBag(connectB, gridbag, c);
-//        Connecting to an SBF game is not useful (yet)
-//        c.gridy++;
-//        addBag(connectSBF, gridbag, c);
+
         c.gridy++;
-//        Connecting as a bot was deemed not useful; leaving this for now to uncomment if necessary
-//        addBag(botB, gridbag, c);
-//        c.gridy++;
+
         addBag(editB, gridbag, c);
         c.gridy++;
         addBag(skinEditB, gridbag, c);
-        c.gridy++;
-        addBag(editAi, gridbag, c);
+
+        if (MegaMek.isDevelopment()) {
+//            c.gridy++;
+//            addBag(botB, gridbag, c);
+//
+//            c.gridy++;
+//            addBag(connectSBF, gridbag, c);
+
+            c.gridy++;
+            addBag(editAi, gridbag, c);
+        }
+
         c.gridy++;
         c.insets = new Insets(4, 4, 15, 12);
         addBag(quitB, gridbag, c);

@@ -17,13 +17,15 @@ package megamek.ai.utility;
 
 
 public enum DefaultCurve {
-
     LinearIncreasing(new LinearCurve(1.0, 0)),
     LinearDecreasing(new LinearCurve(-1.0, 1)),
+
     ParabolicPositive(new ParabolicCurve(4.0, 0.5, 1.0)),
     ParabolicNegative(new ParabolicCurve(-4.0, 0.5, 0.0)),
+
     LogisticIncreasing(new LogisticCurve(1.0, 0.5, 10.0, 0.0)),
     LogisticDecreasing(new LogisticCurve(1.0, 0.5, -10.0, 0.0)),
+
     LogitIncreasing(new LogitCurve(1.0, 0.5, -15.0, 0.0)),
     LogitDecreasing(new LogitCurve(1.0, 0.5, 15.0, 0.0));
 

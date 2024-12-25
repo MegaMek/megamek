@@ -13,42 +13,35 @@
  *
  */
 
-package megamek.client.bot.duchess.considerations;
+package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
-import megamek.ai.utility.Consideration;
-import megamek.ai.utility.Curve;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.common.Entity;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
  * This consideration is used to determine if a target is an easy target.
  */
-public class TargetWithinRange extends Consideration {
+@JsonTypeName("TargetWithinRange")
+public class TargetWithinRange extends TWConsideration {
 
-
-    protected TargetWithinRange(Curve curve) {
-        super(curve);
+    public TargetWithinRange() {
     }
 
     @Override
-    public double score(DecisionContext context) {
-        var target = context.getTarget();
-        var firingUnit = context.getFiringUnit();
+    public double score(DecisionContext<Entity, Entity> context) {
+        var targets = context.getTargets();
+        var firingUnit = context.getCurrentUnit().orElseThrow();
+        var maxRange = firingUnit.getMaxWeaponRange();
 
-        if (target.isEmpty() || firingUnit.isEmpty()) {
-            return 0d;
-        }
+        var distance = targets.stream()
+                .map(Entity::getPosition)
+                .mapToInt(c -> c.distance(firingUnit.getPosition()))
+                .max()
+                .orElse(Integer.MAX_VALUE);
 
-        var targetEntity = target.get();
-        var firingEntity = firingUnit.get();
-
-        if (!firingEntity.hasFiringSolutionFor(targetEntity.getId())) {
-            return 0d;
-        }
-
-        var distance = firingEntity.getPosition().distance(targetEntity.getPosition());
-        var maxRange = firingEntity.getMaxWeaponRange();
         return clamp01(1.00001d - (double) distance / maxRange);
     }
 }

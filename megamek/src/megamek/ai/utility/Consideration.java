@@ -13,23 +13,55 @@
  */
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
-public abstract class Consideration {
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = TWConsideration.class, name = "TWConsideration"),
+    @JsonSubTypes.Type(value = MyUnitArmor.class, name = "MyUnitArmor"),
+    @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
+    @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
+    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat")
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
+public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements NamedObject {
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("curve")
     private Curve curve;
+    @JsonProperty("parameters")
     private Map<String, Object> parameters;
 
-    protected Consideration(Curve curve) {
-        this(curve, new HashMap<>());
+    public Consideration() {
     }
 
-    protected Consideration(Curve curve, Map<String, Object> parameters) {
+    public Consideration(String name) {
+        this.name = name;
+    }
+
+    public Consideration(String name, Curve curve) {
+        this(name, curve, new HashMap<>());
+    }
+
+    public Consideration(String name, Curve curve, Map<String, Object> parameters) {
+        this.name = name;
         this.curve = curve;
         this.parameters = Map.copyOf(parameters);
     }
 
-    public abstract double score(DecisionContext context);
+    public abstract double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context);
 
     public Curve getCurve() {
         return curve;
@@ -73,5 +105,23 @@ public abstract class Consideration {
 
     public double computeResponseCurve(double score) {
         return curve.evaluate(score);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Consideration.class.getSimpleName() + "[", "]")
+            .add("name='" + name + "'")
+            .add("curve=" + curve)
+            .add("parameters=" + parameters)
+            .toString();
     }
 }

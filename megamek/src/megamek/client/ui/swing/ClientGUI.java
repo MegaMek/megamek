@@ -142,7 +142,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String BOARD_REMOVE_WATER = "boardRemoveWater";
     public static final String BOARD_REMOVE_BUILDINGS = "boardRemoveBuildings";
     public static final String BOARD_FLATTEN = "boardFlatten";
-
+    // AI submenu
+    public static final String NEW_AI = "fileAiNew";
     // unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";

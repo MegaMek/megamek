@@ -20,12 +20,15 @@
  */
 package megamek.client.ui.swing.util;
 
-import java.awt.KeyEventDispatcher;
+import megamek.client.ui.swing.BoardEditor;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IClientGUI;
+import megamek.client.ui.swing.ai.editor.AiProfileEditor;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.function.Supplier;
-
-import megamek.client.ui.swing.*;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated
@@ -66,6 +69,7 @@ public class MegaMekController implements KeyEventDispatcher {
 
     private static final int MAX_REPEAT_RATE = 100;
 
+    public AiProfileEditor aiEditor = null;
     public BoardEditor boardEditor = null;
     public IClientGUI clientgui = null;
 
@@ -248,8 +252,8 @@ public class MegaMekController implements KeyEventDispatcher {
     }
 
     /**
-     * Start a new repeating timer task for the given KeyCommandBind. If the given 
-     * KeyCommandBind already has a repeating task, a new one is not added. Also, 
+     * Start a new repeating timer task for the given KeyCommandBind. If the given
+     * KeyCommandBind already has a repeating task, a new one is not added. Also,
      * if there is no mapped CommandAction for the given KeyCommandBind no task is scheduled.
      */
     protected void startRepeating(KeyCommandBind kcb, final CommandAction action) {

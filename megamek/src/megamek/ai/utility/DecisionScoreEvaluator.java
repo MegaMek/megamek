@@ -15,55 +15,51 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-public class DecisionScoreEvaluator {
-    // Represents the decision process
-    // Evaluates input via considerations
-    //  Scores it
-    // if selected result into a decision
 
-    // weight - Weight goes from 1.0 to 5.0
-    //      it is an implicit representation of priority
-    //      1.0 -> basic action (search enemy)
-    //      2.0 -> tactical movement (move to cover, move to flank, move to attack)
-    //      3.0 -> Special action usage (spot for indirect fire, LAM conversion)
-    //      4.0 -> Emergency (move to cover,
-    //      5.0 -> Emergency (move away from orbital strike)
-    // name
-    // description
-    // notes
-
-    // considerations
-    //  considerations may have parameters
-    // Aggregate all considerations into a single score
-    // multiply the score by the weight
-
-    private AbstractAction action;
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = TWDecisionScoreEvaluator.class, name = "TWDecisionScoreEvaluator"),
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
+    private String name;
     private String description;
     private String notes;
-    private double weight;
-    private final List<Consideration> considerations = new ArrayList<>();
+    private final List<Consideration<IN_GAME_OBJECT, TARGETABLE>> considerations = new ArrayList<>();
 
-    public DecisionScoreEvaluator(AbstractAction action, String description, String notes, double weight) {
-        this(action, description, notes, weight, Collections.emptyList());
+    public DecisionScoreEvaluator() {
+        // no-args constructor for Jackson
     }
 
-    public DecisionScoreEvaluator(AbstractAction action, String description, String notes, double weight, List<Consideration> considerations) {
-        this.action = action;
+    public DecisionScoreEvaluator(String name, String description, String notes) {
+        this(name, description, notes, Collections.emptyList());
+    }
+
+    public DecisionScoreEvaluator(String name, String description, String notes, List<Consideration<IN_GAME_OBJECT, TARGETABLE>> considerations) {
+        this.name = name;
         this.description = description;
         this.notes = notes;
-        this.weight = weight;
         this.considerations.addAll(considerations);
     }
 
-    public double score(DecisionContext context, double bonus, double min) {
-
+    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, double min) {
         var finalScore = bonus;
+        var considerationSize = getConsiderations().size();
 
         for (var consideration : getConsiderations()) {
             if ((0.0f < finalScore) || (0.0f < min)) {
@@ -75,19 +71,50 @@ public class DecisionScoreEvaluator {
             finalScore *= clamp01(response);
         }
         // adjustment
-        var modificationFactor = 1 - (1 / getConsiderations().size());
+        var modificationFactor = 1 - (1 / considerationSize);
         var makeUpValue = (1 - finalScore) * modificationFactor;
         finalScore = finalScore + (makeUpValue * finalScore);
 
         return finalScore;
     }
 
-    public List<Consideration> getConsiderations() {
+
+    public List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations() {
         return considerations;
     }
 
-    public DecisionScoreEvaluator addConsideration(Consideration consideration) {
+    public DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> addConsideration(Consideration<IN_GAME_OBJECT, TARGETABLE> consideration) {
         considerations.add(consideration);
         return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

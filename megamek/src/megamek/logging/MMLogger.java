@@ -168,6 +168,18 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Error Level Logging w/ Exception
      *
+     * @param exception Exception that was caught via a try/catch block.
+     * @param message   Additional message to report to the log file.
+     */
+    public void error(Throwable exception, String message, Object... args) {
+        Sentry.captureException(exception);
+        message = String.format(message, args);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
+    }
+
+    /**
+     * Error Level Logging w/ Exception
+     *
      * This one was made to make it easier to replace the Log4J Calls
      *
      * @param message   Additional message to report to the log file.
@@ -199,6 +211,40 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void error(Throwable exception, String message, String title) {
         error(exception, message);
 
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
+    }
+
+    /**
+     * Formatted Error Level Logging w/ Exception w/ Dialog.
+     *
+     * @param message Message to write to the log file AND be displayed in the
+     *                error pane.
+     * @param title   Title of the error message box.
+     */
+    public void formattedErrorDialog(Throwable e, String title, String message, Object... args) {
+        message = String.format(message, args);
+        error(e, message);
+        Sentry.captureException(e);
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
+    }
+
+    /**
+     * Formatted Error Level Logging w/o Exception w/ Dialog.
+     *
+     * @param message Message to write to the log file AND be displayed in the
+     *                error pane.
+     * @param title   Title of the error message box.
+     */
+    public void formattedErrorDialog(String title, String message, Object... args) {
+        message = String.format(message, args);
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         } catch (Exception ignored) {

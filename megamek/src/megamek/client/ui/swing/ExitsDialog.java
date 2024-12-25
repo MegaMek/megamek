@@ -54,7 +54,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
     private JPanel panExits = new JPanel(new BorderLayout());
     private JButton butDone = new JButton(Messages.getString("BoardEditor.Done"));
 
-    ExitsDialog(JFrame frame) {
+    public ExitsDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetExits"), true);
         setResizable(false);
         butDone.addActionListener(this);
@@ -140,7 +140,7 @@ public class ExitsDialog extends JDialog implements ActionListener {
 
         button.setMargin(new Insets(0, 0, 0, 0));
         button.setBorder(BorderFactory.createEmptyBorder());
-        
+
         return button;
     }
 }

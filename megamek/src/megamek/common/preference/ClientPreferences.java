@@ -50,6 +50,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
     public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
+    public static final String AI_DIRECTORY = "AIDirectory";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
@@ -98,6 +99,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
         store.setDefault(AUTO_RESOLVE_GAMELOG_FILENAME, "simulation.html");
+        store.setDefault(AI_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "ai");
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -208,6 +210,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(GOAL_PLAYERS, n);
     }
 
+    public String getAiDirectory() {
+        return store.getString(AI_DIRECTORY);
+    }
+
     public String getGameLogFilename() {
         return store.getString(GAMELOG_FILENAME);
     }
@@ -290,6 +296,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setMaxPathfinderTime(int i) {
         store.setValue(MAX_PATHFINDER_TIME, i);
+    }
+
+    public void setAiDirectory(String name) {
+        store.setValue(AI_DIRECTORY, name);
     }
 
     public void setGameLogFilename(String name) {

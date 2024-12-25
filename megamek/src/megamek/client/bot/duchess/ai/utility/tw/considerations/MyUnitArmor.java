@@ -13,33 +13,26 @@
  *
  */
 
-package megamek.client.bot.duchess.considerations;
+package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
-import megamek.ai.utility.Consideration;
-import megamek.ai.utility.Curve;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.common.Entity;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
  * This consideration is used to determine if a target is an easy target.
  */
-public class MyUnitArmor extends Consideration {
+@JsonTypeName("MyUnitArmor")
+public class MyUnitArmor extends TWConsideration {
 
-
-    protected MyUnitArmor(Curve curve) {
-        super(curve);
+    public MyUnitArmor() {
     }
 
     @Override
-    public double score(DecisionContext context) {
-        var currentUnit = context.getCurrentUnit();
-        if (currentUnit.isEmpty()) {
-            return 0d;
-        }
-
-        var currentEntity = currentUnit.get();
-
-        return clamp01(currentEntity.getArmorRemainingPercent());
+    public double score(DecisionContext<Entity, Entity> context) {
+        var currentUnit = context.getCurrentUnit().orElseThrow();
+        return clamp01(currentUnit.getArmorRemainingPercent());
     }
 }

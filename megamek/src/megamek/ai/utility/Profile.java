@@ -15,26 +15,41 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.*;
+import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
+
 import java.util.List;
 
-public class Profile {
-
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = TWProfile.class, name = "TWProfile"),
+})
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Profile <A,B> implements NamedObject {
+    @JsonProperty("id")
+    private final int id;
+    @JsonProperty("name")
     private final String name;
+    @JsonProperty("description")
     private String description;
-    private final List<DecisionScoreEvaluator> decisionScoreEvaluators;
+    @JsonProperty("decisionScoreEvaluator")
+    private final List<DecisionScoreEvaluator<A, B>> decisionScoreEvaluator;
 
-    public Profile(String name, String description, List<DecisionScoreEvaluator> decisionScoreEvaluators) {
+    @JsonCreator
+    public Profile(int id, String name, String description, List<DecisionScoreEvaluator<A, B>> decisionScoreEvaluator) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.decisionScoreEvaluators = decisionScoreEvaluators;
+        this.decisionScoreEvaluator = decisionScoreEvaluator;
     }
 
+    @Override
     public String getName() {
         return name;
-    }
-
-    public List<DecisionScoreEvaluator> getDecisionScoreEvaluators() {
-        return decisionScoreEvaluators;
     }
 
     public String getDescription() {
@@ -43,5 +58,13 @@ public class Profile {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<DecisionScoreEvaluator<A, B>> getDecisionScoreEvaluator() {
+        return decisionScoreEvaluator;
     }
 }

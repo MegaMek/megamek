@@ -13,12 +13,8 @@
  *
  */
 
-package megamek.client.ui.ai.editor;
+package megamek.ai.utility;
 
-public class UtilityAiEditor {
-    // TODO Implement a Utility AI editor
-    // which allows you to create a "personality"
-    // Each personality has a set of Decision Score Evaluators
-    // Each Decision Score Evaluator has a single Action and multiple considerations
-    //
+public interface NamedObject {
+    String getName();
 }

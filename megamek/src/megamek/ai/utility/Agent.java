@@ -14,49 +14,11 @@
 
 package megamek.ai.utility;
 
-import megamek.client.bot.BotClient;
-import megamek.client.bot.princess.Princess;
-import megamek.common.IGame;
+import megamek.client.IClient;
 
-public interface Agent {
-
-    // IAUS - Infinite Axis Utility System
-    // Atomic actions
-    // Each has one or many considerations (axis)
-    // They describe why you would want to take this action
-    // Considerations have Input
-    // parameters
-    // Curve type
-    // - Linear
-    // - Parabolic
-    // - Logistic
-    // - Logit
-    // 4 parameter values
-    // - m, k, b, c
-    // Inputs are normalized
-    // if not normalized we can clamp between 0-1
-
-    // Infinite Axis utility system
-    // Modular influence maps
-    // Content tagging
-
-
-    // Agent is just a character
-    // They have properties
-    // some are defined
-    // some are calculated
-
-    // Series of records
-    // Each is a piece of data about the world as perceived by this agent
-    // Each piece of data has a bunch of attributes
-
-    // Attributes have name
-    // They must come from somewhere - equations? agents?
-    // Validations - its a range, tag, enumeration?
-    //
-    // Prefab equations - path finding, influence maps, distances, etc
-
-    IGame getContext();
-    Princess getCharacter();
-
+public interface Agent <IN_GAME_OBJECT, TARGETABLE>  {
+    int getId();
+    World<IN_GAME_OBJECT, TARGETABLE> getContext();
+    Intelligence<IN_GAME_OBJECT, TARGETABLE> getIntelligence();
+    IClient getClient();
 }

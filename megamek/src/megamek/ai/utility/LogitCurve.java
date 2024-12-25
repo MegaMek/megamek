@@ -15,15 +15,28 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.StringJoiner;
+
 import static megamek.codeUtilities.MathUtility.clamp01;
 
+@JsonTypeName("LogitCurve")
 public class LogitCurve implements Curve {
-    private final double m;
-    private final double b;
-    private final double k;
-    private final double c;
+    private double m;
+    private double b;
+    private double k;
+    private double c;
 
-    public LogitCurve(double m, double b, double k, double c) {
+    @JsonCreator
+    public LogitCurve(
+        @JsonProperty("m") double m,
+        @JsonProperty("b") double b,
+        @JsonProperty("k") double k,
+        @JsonProperty("k") double c) {
         this.m = m;
         this.b = b;
         this.k = k;
@@ -31,11 +44,58 @@ public class LogitCurve implements Curve {
     }
 
     public double evaluate(double x) {
-        // Ensure p is in the valid range
-        // Typically, you want 0 < p < 1 to avoid division by zero or log of zero.
-        if (x - c == 0) {
-            return 0d;
+        if (x <= c) {
+           x = c + 0.0001;
         }
-        return clamp01(b - (1.0 / k) * Math.log((m - (x - c)) / (x - c)));
+        if (x >= m + c) {
+           x = m + c - 0.0001;
+        }
+        return clamp01(b + (1 / k) * Math.log((m - (x - c)) / (x - c)));
+    }
+
+    public double getM() {
+        return m;
+    }
+
+    public double getB() {
+        return b;
+    }
+
+    public double getK() {
+        return k;
+    }
+
+    public double getC() {
+        return c;
+    }
+
+    @Override
+    public void setM(double m) {
+        this.m = m;
+    }
+
+    @Override
+    public void setB(double b) {
+        this.b = b;
+    }
+
+    @Override
+    public void setK(double k) {
+        this.k = k;
+    }
+
+    @Override
+    public void setC(double c) {
+        this.c = c;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", LogitCurve.class.getSimpleName() + "[", "]")
+            .add("m=" + m)
+            .add("b=" + b)
+            .add("k=" + k)
+            .add("c=" + c)
+            .toString();
     }
 }

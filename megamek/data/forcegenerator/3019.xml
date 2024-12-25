@@ -1257,7 +1257,7 @@
                 <availability>Periphery:2-,HL:3-,PIR:2-</availability>
             </model>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
@@ -1305,7 +1305,7 @@
         <chassis name='Bulldog Medium Truck' unitType='Tank'>
             <availability>IS:2:3020,Periphery:2:3021,Periphery.Deep:4:3021,PIR:4:3021</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>cargo,civilian,urban</roles>
                 <availability>IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
@@ -2126,7 +2126,7 @@
 		</chassis>
         <chassis name='Deusenberg VIP Luxury Hovercar' unitType='Tank'>
             <availability>IS:1+:3024</availability>
-            <model name='(original)'>
+            <model name='(Original)'>
                 <roles>civilian</roles>
                 <availability>IS:8</availability>
             </model>
@@ -2669,7 +2669,7 @@
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <deployedWith>req:Galaport Ground Tug</deployedWith>
-                <availability>CLAN:8,PP:8,IS:8</availability>
+                <availability>CLAN:8,IS:8</availability>
             </model>
         </chassis>
         <chassis name='Galaport Ground Tug' unitType='Tank'>
@@ -3832,12 +3832,12 @@
         <chassis name='Lesseps Dump Truck' unitType='Tank'>
             <availability>CLAN:8,BAN:6,IS:6-,Periphery:7</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,BAN:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>
         <chassis name='Lewis Skimmer Bus' unitType='Tank'>
-            <availability>IS:2:3026,Periphery:1:3027</availability>
+            <availability>IS:2:3026,Periphery:1:3027,Periphery.Deep:0</availability>
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <availability>IS:8,Periphery:8</availability>

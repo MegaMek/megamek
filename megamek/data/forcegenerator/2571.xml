@@ -515,7 +515,7 @@
         <chassis name='Brunel Dump Truck' unitType='Tank'>
             <availability>SL:5:2637,IS:5:2637,Periphery:4:2638,PIR:2:2638</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
@@ -1683,7 +1683,7 @@
         <chassis name='Lesseps Dump Truck' unitType='Tank'>
             <availability>SL:7,IS:7,Periphery:7</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>SL:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>

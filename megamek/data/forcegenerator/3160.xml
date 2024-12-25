@@ -1973,6 +1973,20 @@
 				<availability>CLAN:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Aston-Martin Fiver Roadster' unitType='Tank'>
+            <availability>IS:1+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Aston-Martin Fiver Traveler' unitType='Tank'>
+            <availability>IS:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Athena Combat Vehicle' unitType='Tank'>
 			<availability>CWE:5,CHH:8,RD:6,CDS:5,CP:5,CJF:3,RA:5</availability>
 			<model name=''>
@@ -2400,6 +2414,13 @@
 			<model name='Prime'>
 				<roles>apc</roles>
 				<availability>General:2</availability>
+			</model>
+		</chassis>
+        <chassis name='Bailey Armored Car' unitType='Tank'>
+            <availability>IS:2+,LA:2</availability>
+            <model name=''>
+                <roles>civilian,urban</roles>
+                <availability>IS:8,LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Balac Strike VTOL' unitType='VTOL'>
@@ -2851,6 +2872,12 @@
 				<availability>CHH:7,General:8,CP:9</availability>
 			</model>
 		</chassis>
+        <chassis name='Bayamo Hoverbike' unitType='Tank'>
+            <availability>IS:1,FS:2</availability>
+            <model name=''>
+                <availability>IS:8,FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Bear Cub' unitType='Mek'>
 			<availability>RD:6</availability>
 			<model name=''>
@@ -2861,6 +2888,13 @@
 			</model>
 			<model name='3'>
 				<availability>General:3</availability>
+			</model>
+		</chassis>
+        <chassis name='Beast Riot Car' unitType='Tank'>
+            <availability>SL3:3-</availability>
+            <model name=''>
+                <roles>civilian,urban</roles>
+                <availability>SL3:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Behemoth (Stone Rhino)' unitType='Mek'>
@@ -3476,18 +3510,18 @@
 			</model>
 		</chassis>
         <chassis name='Brunel Dump Truck' unitType='Tank'>
-            <availability>CLAN.IS:7,BAN:0,IS:6,Periphery:5,PIR:2</availability>
+            <availability>SL3:6,CLAN.IS:7,CWE:6,BAN:0,IS:6,Periphery:5,PIR:2</availability>
             <model name='(AC)'>
                 <roles>sr_fire_support</roles>
                 <availability>PIR:1-</availability>
             </model>
             <model name='(LRM)'>
                 <roles>fire_support</roles>
-                <availability>Periphery:2-,HL:3-,PIR:2-</availability>
+                <availability>Periphery:2-,PIR:2-</availability>
             </model>
             <model name=''>
                 <roles>cargo,civilian</roles>
-                <availability>CLAN.IS:8,IS:8,Periphery:8,PIR:8</availability>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Brutus Assault Tank' unitType='Tank'>
@@ -3521,6 +3555,13 @@
 				<availability>FWL:8,RF:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Buffalo' unitType='Tank'>
+            <availability>SL3:6,CLAN.IS:6,CWE:5,BAN:2+,IS:6+,Periphery:4+,SE:3+,Periphery.Deep:0,PIR:2</availability>
+            <model name='BFFL Hovertruck'>
+                <roles>cargo,civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,BAN:8,IS:8,Periphery:8,SE:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Bulldog Medium Tank' unitType='Tank'>
 			<availability>LA:3,FS:4,MERC:3,Periphery:1-,DC:5</availability>
 			<model name=''>
@@ -3536,6 +3577,13 @@
 				<availability>General:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Bulldog Medium Truck' unitType='Tank'>
+            <availability>SL3:2,CLAN.IS:2,IS:2,Periphery:2,Periphery.Deep:4,SE:4,PIR:4</availability>
+            <model name=''>
+                <roles>cargo,civilian,urban</roles>
+                <availability>SL3:8,CLAN.IS:8,IS:8,Periphery:8,SE:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Bullet Suicide Drone' unitType='Conventional Fighter'>
 			<availability>CC:2</availability>
             <model name=''>
@@ -4014,6 +4062,13 @@
 				<availability>RA:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Cellco Ranger' unitType='Tank'>
+            <availability>SL3:3-,CLAN.IS:3-,CWE:5,RD:4,IS:5,Periphery:4,SE:4,PIR:6</availability>
+            <model name='UPU-3000'>
+                <roles>civilian,urban</roles>
+                <availability>SL3:8,CLAN.IS:8,IS:8,Periphery:8,SE:8</availability>
+            </model>
+        </chassis>
         <chassis name='Centaur Battle Armor' unitType='BattleArmor'>
             <availability>SL3:3-</availability>
             <model name='(Sqd5)' mechanized='true'>
@@ -4148,6 +4203,13 @@
 				<availability>IS:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Ceres-Bikes Flashbang' unitType='Tank'>
+            <availability>CC:1</availability>
+            <model name='ZZ10000'>
+                <roles>civilian</roles>
+                <availability>CC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Cestus' unitType='Mek'>
 			<availability>LA:5,CLAN:1,MERC:4,FS:6</availability>
 			<model name='CTS-6Y'>
@@ -4233,6 +4295,13 @@
 				<availability>CC:4,RD:4,LA:4,MERC:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Champion Hoversports CS535 Hover Car' unitType='Tank'>
+            <availability>IS:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Chaparral Missile Artillery Tank' unitType='Tank'>
 			<availability>RD:2,IS:3,MERC:2,BAN:4,Periphery:2</availability>
 			<model name=''>
@@ -4912,6 +4981,13 @@
 				<availability>CLAN:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Corx Mobile Tunnel Miner' unitType='Tank'>
+            <availability>IS:1,CLAN.IS:1,BAN:0,Periphery:2,PIR:0</availability>
+            <model name=''>
+                <roles>civilian,engineer</roles>
+                <availability>IS:8,CLAN.IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Cossack' unitType='Mek'>
 			<availability>CC:6,MOC:4,CC.HG:8,MERC:2</availability>
 			<model name='C-1FC'>
@@ -5814,6 +5890,17 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Deusenberg VIP Luxury Hovercar' unitType='Tank'>
+            <availability>IS:1+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:4+</availability>
+            </model>
+            <model name='(Original)'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Devastator Heavy Tank' unitType='Tank'>
 			<availability>Periphery:2-</availability>
 			<model name=''>
@@ -5849,6 +5936,13 @@
             <model name='RCL-Z1 Armed MiningMech'>
                 <roles>inf_support</roles>
                 <availability>CDP:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Dillinger Police Vehicle' unitType='Tank'>
+            <availability>CWE:1,SL3:2,FWL:1</availability>
+            <model name=''>
+                <roles>civilian,urban</roles>
+                <availability>CWE:8,SL3:8,FWL:8</availability>
             </model>
         </chassis>
 		<chassis name='Diomede' unitType='Mek'>
@@ -6148,6 +6242,13 @@
 				<availability>SL3:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Durandel-British &apos;Blue Nova&apos; Convertible' unitType='Tank'>
+            <availability>IS:1,Periphery:1+,Periphery.Deep:0</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Eagle' unitType='AeroSpaceFighter'>
 			<availability>MOC:4,RA.OA:2,CLAN:3,IS:3,FWL:4,FS:4,CP:4,Periphery:3</availability>
 			<model name='EGL-R11'>
@@ -6196,6 +6297,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Eagre Firefighting ATV' unitType='Tank'>
+            <availability>SL3:2,CLAN.IS:2,BAN:4,IS:3,Periphery:4,SE:4</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,BAN:8,IS:8,Periphery:8,SE:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Eisenfaust' unitType='Mek'>
 			<availability>LA:6,MERC:4,Periphery:4-</availability>
 			<model name='EFT-4J'>
@@ -7272,6 +7380,13 @@
 			<model name='(2962)'>
 				<roles>corvette</roles>
 				<availability>General:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Freedom 900 Hover Jeep' unitType='Tank'>
+            <availability>SL3:2,CLAN.IS:2,CWE:3,IS:3,Periphery:3,Periphery.Deep:3,SE:3</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,IS:8,Periphery:8,SE:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Fujin' unitType='Mek'>
@@ -7400,6 +7515,21 @@
 				<availability>LA:8,MERC:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Galaport Ground Trailer' unitType='Tank'>
+            <availability>SL3:3,CLAN.IS:3,BAN:0,IS:3+,SE:3+</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Galaport Ground Tug</deployedWith>
+                <availability>SL3:8,CLAN.IS:8,IS:8,SE:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Galaport Ground Tug' unitType='Tank'>
+            <availability>SL3:3,CLAN.IS:3,BAN:0,IS:3+,SE:3+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,IS:8,SE:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Gallant' unitType='Mek'>
 			<availability>LA:6,IS:4,FS:6,MERC:4,CP:4,SL3:3-,MOC:4,TC:4,MH:3,CDP:4+</availability>
 			<model name='GLT-10-0'>
@@ -7569,6 +7699,17 @@
 				<availability>PIR:8,MERC:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Gienah-Durapaq Elite Land Train' unitType='Tank'>
+            <availability>CWE:2,LA:2,FWL:2</availability>
+            <model name='(Tractor) Series 3'>
+                <roles>civilian</roles>
+                <availability>CWE:8,LA:8,FWL:8</availability>
+            </model>
+            <model name='(Trailer) Series 3T'>
+                <roles>cargo,civilian</roles>
+                <availability>CWE:8,LA:8,FWL:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Gladiator (Executioner)' unitType='Mek' omni='Clan'>
 			<availability>CWE:2,RD:8,CDS:4,CLAN:4,CJF:3,BAN:4</availability>
 			<model name='A'>
@@ -8955,6 +9096,41 @@
 			<model name='(SRM)'>
 				<roles>apc,urban</roles>
 				<availability>PIR:6-,IS.pm:4,Periphery:6-</availability>
+            </model>
+        </chassis>
+        <chassis name='Hector Road Train Tractor' unitType='Tank'>
+            <availability>SL3:4,CLAN.IS:4,CWE:6,BAN:2+,IS:5,FWL:6,SE:3+</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,BAN:8,IS:8,SE:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Hector Road Train Trailer Module' unitType='Tank'>
+            <availability>SL3:3,CLAN.IS:3,CWE:5,BAN:2+,IS:4,FWL:5,SE:3+</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,BAN:8,IS:8,FWL:8,SE:8</availability>
+            </model>
+            <model name='(Liquid)'>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL3:6,CLAN.IS:6,CWE:6,BAN:6,IS:6,FWL:6,SE:6</availability>
+            </model>
+            <model name='(Livestock)'>
+                <roles>civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL3:2,CLAN.IS:2,CWE:2,BAN:2,IS:2,FWL:2,SE:4</availability>
+            </model>
+            <model name='(Passenger)'>
+                <roles>apc,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL3:6,CLAN.IS:6,CWE:6,BAN:6,IS:6,FWL:6,SE:4</availability>
+            </model>
+            <model name='(Refrigerated)'>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL3:3,CLAN.IS:3,CWE:3,BAN:3,IS:3,FWL:3,SE:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Heimdall Ground Monitor Tank' unitType='Tank' omni='Clan'>
@@ -9231,22 +9407,22 @@
 			</model>
 		</chassis>
         <chassis name='Hesiod' unitType='Tank'>
-            <availability>SL3:3+,FWL:4+</availability>
+            <availability>SL3:3+,CWE:3,FWL:4+</availability>
             <model name='A (Harvester)'>
                 <roles>civilian</roles>
-                <availability>FWL:8</availability>
+                <availability>SL3:8,CWE:8,FWL:8</availability>
             </model>
             <model name='B (Bulldozer)'>
                 <roles>engineer,support</roles>
-                <availability>SL3:6,FWL:6</availability>
+                <availability>SL3:6,CWE:6,FWL:6</availability>
             </model>
             <model name='C (Crane)'>
                 <roles>support</roles>
-                <availability>SL3:5,FWL:5</availability>
+                <availability>SL3:5,CWE:5,FWL:5</availability>
             </model>
             <model name='Prime (Cargo)'>
                 <roles>cargo,support</roles>
-                <availability>SL3:8,FWL:8</availability>
+                <availability>SL3:8,CWE:8,FWL:8</availability>
             </model>
         </chassis>
 		<chassis name='Hetzer Wheeled Assault Gun' unitType='Tank'>
@@ -9718,18 +9894,18 @@
             </model>
 		</chassis>
         <chassis name='Ibex RV' unitType='Tank'>
-            <availability>FWL:3,MH:2,Periphery.MW:2,Periphery.CM:3</availability>
+            <availability>CWE:3,FWL:3,MH:2,Periphery.MW:2,Periphery.CM:3</availability>
             <model name=''>
                 <roles>cargo,civilian</roles>
-                <availability>FWL:8,MH:8,Periphery.MW:8,Periphery.CM:8</availability>
+                <availability>CWE:8,FWL:8,MH:8,Periphery.MW:8,Periphery.CM:8</availability>
             </model>
             <model name='(Militarized:Gauss)'>
                 <roles>cargo,support</roles>
-                <availability>FWL:7</availability>
+                <availability>CWE:7,FWL:7</availability>
             </model>
             <model name='(Militarized:MG)'>
                 <roles>cargo,support</roles>
-                <availability>FWL:6-,MH:8,Periphery.NW:8,Periphery.CM:8</availability>
+                <availability>CWE:5,FWL:6-,MH:8,Periphery.NW:8,Periphery.CM:8</availability>
             </model>
         </chassis>
 		<chassis name='Icarus II' unitType='Mek'>
@@ -9769,6 +9945,13 @@
 			<model name='(3058)'>
 				<roles>destroyer</roles>
 				<availability>General:8</availability>
+			</model>
+		</chassis>
+        <chassis name='Ina-du Swamp Skimmer' unitType='Tank'>
+            <availability>LA:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Inazuma Corvette' unitType='Warship'>
@@ -9990,7 +10173,7 @@
 			<availability>SL3:6,CLAN.IS:6,BAN:6,IS:5,CC:3-,Periphery:5,Periphery.Deep:3,SE:5</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-                <availability>,SL3:2-,CLAN.IS:2-,BAN:3-,IS:4-,Periphery:8,TC:5-,MOC:6-,SE:6-</availability>
+                <availability>SL3:2-,CLAN.IS:2-,BAN:3-,IS:4-,Periphery:8,TC:5-,MOC:6-,SE:6-</availability>
 			</model>
 			<model name='(Armor)'>
 				<roles>cargo,support</roles>
@@ -10404,6 +10587,13 @@
 				<availability>FS:8</availability>
 			</model>
 		</chassis>
+        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+            <availability>IS:1,RD:1,CWE:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,RD:8,CWE:8</availability>
+			</model>
+		</chassis>
 		<chassis name='Jifty Transportable Field Repair Unit' unitType='Tank'>
 			<availability>SL3:4,CDS:3,CP:3,FS:4,CC:3,TC:3,Periphery.HR:2,FR:2</availability>
 			<model name='JI-50'>
@@ -10584,6 +10774,25 @@
 			<model name=''>
 				<roles>artillery</roles>
 				<availability>General:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Kallon UL-series Construction Vehicle' unitType='Tank'>
+            <availability>SL3:4,CWE:4,FS:5,FWL:5</availability>
+            <model name='UL-10 &apos;Backhoe&apos;'>
+                <roles>civilian,engineer</roles>
+                <availability>SL3:8,CWE:8,FS:8,FWL:8</availability>
+            </model>
+            <model name='UL-11 &apos;Rock Cutter&apos;'>
+                <roles>civilian,engineer</roles>
+                <availability>SL3:8,CWE:8,FS:8,FWL:8</availability>
+            </model>
+            <model name='UL-12 &apos;Chainsaw&apos;'>
+                <roles>civilian,engineer</roles>
+                <availability>SL3:6,CWE:6,FS:6,FWL:6</availability>
+            </model>
+            <model name='UL-14 &apos;Dual Bulldozer&apos;'>
+                <roles>civilian,engineer</roles>
+                <availability>SL3:8,CWE:8,FS:8,FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Kamakiri Attack VTOL' unitType='VTOL'>
@@ -10904,6 +11113,13 @@
             <model name='(Fusion)'>
                 <roles>ew_support,recon</roles>
                 <availability>CDS:5,RD:5,RA:5,CC:5,DC:5,LA:5</availability>
+            </model>
+        </chassis>
+        <chassis name='Knox Armored Car' unitType='Tank'>
+            <availability>SL3:2-,CLAN.IS:2-,CWE:3,IS:3,Periphery:4,SE:3</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,IS:8,Periphery:8,SE:8</availability>
             </model>
 		</chassis>
 		<chassis name='Kobold Battle Armor IIC' unitType='BattleArmor'>
@@ -11367,6 +11583,13 @@
 			<model name='(3056)'>
 				<roles>mek_carrier</roles>
 				<availability>IS:6,Periphery:3,FS:8,LA:8,ROS:8,FWL:8,CP:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Lesseps Dump Truck' unitType='Tank'>
+            <availability>SL3:4-,CLAN.IS:5,CWE:4-,BAN:6,IS:4-,Periphery:5,SE:4</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,BAN:8,IS:8,Periphery:8,SE:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Leviathan Heavy Transport' unitType='Warship'>
@@ -11387,6 +11610,13 @@
 			<availability>MERC:2</availability>
 			<model name=''>
 				<availability>General:6</availability>
+            </model>
+        </chassis>
+        <chassis name='Lewis Skimmer Bus' unitType='Tank'>
+            <availability>CLAN.IS:2,CWE:3,IS:3,Periphery:2,Periphery.Deep:0</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>CLAN.IS:8,CWE:8,IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Lexan Surveillance VTOL' unitType='VTOL'>
@@ -12171,6 +12401,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Magellan Series Four' unitType='Tank'>
+            <availability>IS:1,Periphery:1,SE:1,Periphery.Deep:2,PIR:0</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,Periphery:8,SE:8,Periphery.Deep:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Main Gauche Light Support Tank' unitType='Tank'>
 			<availability>CC:6,MOC:6,Periphery.MM:6,RF:8,LA:6,Periphery.CM:6,Periphery.ME:6,FWL:8,MH:6,MERC:6,CP:8,DA:8</availability>
 			<model name=''>
@@ -12376,6 +12613,13 @@
 				<availability>FS:4,CC:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Mao-Heng Charioteer' unitType='Tank'>
+            <availability>CC:2</availability>
+            <model name='(Original)'>
+                <roles>civilian</roles>
+                <availability>CC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Marauder Battle Armor' unitType='BattleArmor'>
 			<availability>MH:7,MERC:2,TC:4</availability>
 			<model name='(Sqd4)' mechanized='false'>
@@ -13455,6 +13699,13 @@
 				<availability>CC:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Motuo Che Shang No.2' unitType='Tank'>
+            <availability>CC:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>CC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Mule' unitType='Dropship'>
 			<availability>CLAN:5,IS:7,Periphery.Deep:6,BAN:4,Periphery:8</availability>
 			<model name='(2737)'>
@@ -13981,6 +14232,13 @@
 			<model name='OBK-M12'>
 				<roles>command,spotter</roles>
 				<availability>DC:3+</availability>
+            </model>
+        </chassis>
+        <chassis name='Obuzaabaa Tactical Vehicle' unitType='Tank'>
+            <availability>DC:3-</availability>
+            <model name=''>
+                <roles>apc,cargo,civilian,urban</roles>
+                <availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Ocelot' unitType='Mek'>
@@ -15168,6 +15426,13 @@
 				<availability>CC:4,CWE:4,CDS:4,LA:4,FWL:4,MERC:2</availability>
 			</model>
 		</chassis>
+        <chassis name='Pit Bull Medium Truck' unitType='Tank'>
+            <availability>Periphery:2,TC:3,Periphery.HR:3,Periphery.Deep:4,PIR:4</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>Periphery:8,TC:8,Periphery.HR:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pixiu Heavy Tank' unitType='Tank'>
 			<availability>CC:6+,MOC:4+</availability>
 			<model name=''>
@@ -15330,6 +15595,21 @@
             </model>
             <model name='SC XI-M-B LoaderMech MOD'>
                 <availability>General:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Prairie Schooner Land Train' unitType='Tank'>
+            <availability>FS:5</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Prairie Schooner Module' unitType='Tank'>
+            <availability>FS:5</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Prairie Schooner Land Train</deployedWith>
+                <availability>FS:8</availability>
             </model>
         </chassis>
 		<chassis name='Predator Tank Destroyer' unitType='Tank'>
@@ -16226,6 +16506,13 @@
 				<availability>LA:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Routemaster Hover Shuttle' unitType='Tank'>
+            <availability>SL3:4,CLAN.IS:4,BAN:0,IS:4,Periphery:4,SE:3</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,IS:8,Periphery:8,SE:8</availability>
+            </model>
+        </chassis>
         <chassis name='Rumbler-HT' unitType='Tank'>
             <availability>LA:3</availability>
             <model name=''>
@@ -16624,11 +16911,25 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Sasayaku Control Transport' unitType='Tank'>
+            <availability>DC:2</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sassanid' unitType='Dropship'>
 			<availability>CWE:4,CHH:6,RD:6,CLAN:5,CJF:4</availability>
 			<model name='(2875)'>
 				<roles>ba_carrier</roles>
 				<availability>CLAN:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Saturn Harvester' unitType='Tank'>
+            <availability>SL3:2,CLAN.IS:2,CWE:2,IS:1,FWL:2</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:2,IS:8,FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Satyr' unitType='ProtoMek'>
@@ -16662,6 +16963,13 @@
 			<model name='W'>
 				<roles>spotter,anti_infantry</roles>
 				<availability>CWE:3,CHH:3</availability>
+            </model>
+        </chassis>
+        <chassis name='Saurer-Bucher Fire Engine' unitType='Tank'>
+            <availability>SL3:5,CLAN.IS:5,CWE:5,BAN:0,IS:5,Periphery:5,SE:5,PIR:0</availability>
+            <model name='TLF-LL6500'>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,IS:8,Periphery:8,SE:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Savannah Master Hovercraft' unitType='Tank'>
@@ -17508,6 +17816,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Skoda &apos;Growler&apos; Service Utility Truck' unitType='Tank'>
+            <availability>SL3:7,CLAN.IS:8,CWE:7,BAN:8,IS:7,Periphery:7,SE:7,PIR:8</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL3:8,CLAN.IS:8,CWE:8,BAN:8,IS:8,Periphery:8,SE:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Skulker Wheeled Scout Tank Mk II' unitType='Tank'>
 			<availability>FS:8,MERC:4</availability>
 			<model name=''>
@@ -17542,6 +17857,13 @@
 				<availability>RA.OA:6,RD:6,FS:6,MERC:6,CDP:4,RA:6,DC:8,TC:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Slipper Hovercar LX-Series' unitType='Tank'>
+            <availability>IS:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sloth Battle Armor' unitType='BattleArmor'>
 			<availability>LA:4,FS:4,MERC:4</availability>
 			<model name='&apos;Huntsman&apos;(Sqd4)' mechanized='false'>
@@ -17829,6 +18151,13 @@
 				<availability>General:5</availability>
 			</model>
 		</chassis>
+        <chassis name='C-85 Sprinter Delivery Vehicle' unitType='Tank'>
+            <availability>CC:3</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>CC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sprite Ultraheavy ProtoMech' unitType='ProtoMek'>
 			<availability>CHH:4</availability>
 			<model name=''>

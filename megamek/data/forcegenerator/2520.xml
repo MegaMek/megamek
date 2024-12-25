@@ -1201,7 +1201,7 @@
         <chassis name='Lesseps Dump Truck' unitType='Tank'>
             <availability>IS:7:2523,Periphery:6:2524</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
         </chassis>

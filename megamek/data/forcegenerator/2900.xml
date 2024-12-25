@@ -1077,7 +1077,7 @@
                 <availability>Periphery:2-,HL:3-,PIR:2-</availability>
             </model>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
@@ -2391,7 +2391,7 @@
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <deployedWith>req:Galaport Ground Tug</deployedWith>
-                <availability>CLAN:8,PP:8,IS:8</availability>
+                <availability>CLAN:8,IS:8</availability>
             </model>
         </chassis>
         <chassis name='Galaport Ground Tug' unitType='Tank'>
@@ -3457,7 +3457,7 @@
         <chassis name='Lesseps Dump Truck' unitType='Tank'>
             <availability>CLAN:8,BAN:6,IS:7,Periphery:7</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,BAN:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>

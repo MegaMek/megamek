@@ -1959,7 +1959,7 @@
                 <availability>Periphery:2-,HL:3-,PIR:2-</availability>
             </model>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
         </chassis>
@@ -2013,7 +2013,7 @@
         <chassis name='Bulldog Medium Truck' unitType='Tank'>
             <availability>IS:2,Periphery:2,Periphery.Deep:4,PIR:4</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>cargo,civilian,urban</roles>
                 <availability>IS:8,Periphery:8,PIR:8</availability>
 			</model>
 		</chassis>
@@ -2206,13 +2206,6 @@
 				<availability>CLAN:7</availability>
 			</model>
 		</chassis>
-        <chassis name='Cellco Ranger' unitType='Tank'>
-            <availability>IS:4,Periphery:4,PIR:6</availability>
-            <model name='UPU-3000'>
-                <roles>civilian,urban</roles>
-                <availability>IS:8,Periphery:8</availability>
-            </model>
-        </chassis>
 		<chassis name='Cavalry Attack Helicopter' unitType='VTOL'>
 			<availability>LA:4,IS:3,CM:4,FS:6,MERC:4</availability>
 			<model name=''>
@@ -2232,6 +2225,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Cellco Ranger' unitType='Tank'>
+            <availability>CJF:3-,CSJ:5-,IS:4,Periphery:4,PIR:6</availability>
+            <model name='UPU-3000'>
+                <roles>civilian,urban</roles>
+                <availability>CJF:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Centipede Scout Car' unitType='Tank'>
 			<availability>LA:8,FS:6,MERC:3</availability>
 			<model name=''>
@@ -3180,7 +3180,7 @@
 		</chassis>
         <chassis name='Deusenberg VIP Luxury Hovercar' unitType='Tank'>
             <availability>IS:1+</availability>
-            <model name='(original)'>
+            <model name='(Original)'>
                 <roles>civilian</roles>
                 <availability>IS:8</availability>
             </model>
@@ -3941,7 +3941,7 @@
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <deployedWith>req:Galaport Ground Tug</deployedWith>
-                <availability>CLAN:8,PP:8,IS:8</availability>
+                <availability>CLAN:8,IS:8</availability>
             </model>
         </chassis>
         <chassis name='Galaport Ground Tug' unitType='Tank'>
@@ -5345,7 +5345,7 @@
 			</model>
 		</chassis>
         <chassis name='JI-002 Hoverbike' unitType='Tank'>
-            <availability>IS:1:3050</availability>
+            <availability>IS:1</availability>
             <model name=''>
                 <roles>civilian</roles>
                 <availability>IS:8</availability>
@@ -5426,7 +5426,7 @@
             </model>
             <model name='UL-12 &apos;Chainsaw&apos;'>
                 <roles>civilian,engineer</roles>
-                <availability>FS:8,FWL:8</availability>
+                <availability>FS:6,FWL:6</availability>
             </model>
             <model name='UL-14 &apos;Dual Bulldozer&apos;'>
                 <roles>civilian,engineer</roles>
@@ -5792,9 +5792,9 @@
 			</model>
 		</chassis>
         <chassis name='Lesseps Dump Truck' unitType='Tank'>
-            <availability>CLAN:8,BAN:6,IS:5-,Periphery:6</availability>
+            <availability>CLAN:8,CLAN.IS:6,BAN:6,IS:5-,Periphery:6</availability>
             <model name=''>
-                <roles>cargo,civilian</roles>
+                <roles>civilian</roles>
                 <availability>CLAN:8,BAN:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>
@@ -5806,7 +5806,7 @@
 			</model>
 		</chassis>
         <chassis name='Lewis Skimmer Bus' unitType='Tank'>
-            <availability>IS:3,Periphery:1</availability>
+            <availability>IS:3,Periphery:1,Periphery.Deep:0</availability>
             <model name=''>
                 <roles>cargo,civilian</roles>
                 <availability>IS:8,Periphery:8</availability>
@@ -6288,7 +6288,7 @@
 			</model>
 		</chassis>
         <chassis name='Mao-Heng Charioteer' unitType='Tank'>
-            <availability>CC:2:3042</availability>
+            <availability>CC:2</availability>
             <model name='(Original)'>
                 <roles>civilian</roles>
                 <availability>CC:8</availability>
@@ -7043,10 +7043,10 @@
 			</model>
 		</chassis>
         <chassis name='Obuzaabaa Tactical Vehicle' unitType='Tank'>
-            <availability>DC:3-</availability>
+            <availability>CSJ:4-,CNC:2-,DC:3-</availability>
             <model name=''>
                 <roles>apc,cargo,civilian,urban</roles>
-                <availability>DC:8</availability>
+                <availability>CSJ:8,CNC:8,DC:8</availability>
             </model>
         </chassis>
 		<chassis name='Odin Scout Tank' unitType='Tank'>

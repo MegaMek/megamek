@@ -1816,6 +1816,10 @@ public class TWGameManager extends AbstractGameManager {
         r = new Report(7600, Report.PUBLIC);
         reports.add(r);
 
+        r = new Report(1230, Report.PUBLIC);
+        r.add("<BR>");
+        reports.add(r);
+
         for (Entity e : entities) {
             r = new Report(1231);
             r.subject = e.getId();

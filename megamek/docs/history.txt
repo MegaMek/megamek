@@ -51,6 +51,12 @@ MEGAMEK VERSION HISTORY:
 + Fix #3360: Fixed takeoff logic and preventing smoke-assisted landings
 + Fix #5115: Added Nova CEWS to getExtraC3BV
 + PR #6306: Fixed dirt and gravel roads landing modifiers and interactioins with moderate+ rain
++ Fix #6305: Partial cover from water and hull down bonus
++ Fix #6271: Fixes offboard units placed in north and west
++ Fix #2090: /nova chat command updated to link with non-enemy units as long as one is owned
++ PR #6295: Princess improvement to consider leap damage along with path optimization
++ Fix #6297: Fixes movement path sprite rendering under unit sprites in non-isometric mode
++ Fix #6277: Fixes /kick command for players and bots
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

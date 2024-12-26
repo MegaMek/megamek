@@ -2490,6 +2490,8 @@ public class Princess extends BotClient {
                     // also return some paths that go a little slower than max speed
                     // in case the faster path would force an unwanted PSR or MASC check
                     prunedPaths.addAll(PathDecorator.decoratePath(prunedPath));
+                    // Return some of the already-computed unit paths as well.
+                    prunedPaths.addAll(getPrecognition().getPathEnumerator().getSimilarUnitPaths(mover.getId(), prunedPath));
                 }
                 return prunedPaths;
             }

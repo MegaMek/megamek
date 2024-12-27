@@ -116,6 +116,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             if (destinationCoords.contains(currentPath.getFinalCoords()) &&
                     ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
                 bestPath = currentPath;
+                // Keep a record of where this path is headed
+                bestPath.setDestination(closest);
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
             }
         }
@@ -124,8 +126,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     }
 
     /**
-     * Calculates the closest coordinates to the given entity Coordinates which you
-     * have to blow up to get into are considered to be further
+     * Calculates the closest coordinates to the given entity
+     * Coordinates which you have to blow up to get into are considered to be further
      */
     public static Coords getClosestCoords(Set<Coords> destinationRegion, Entity entity) {
         Coords bestCoords = null;

@@ -2,6 +2,7 @@ size 35 30
 tag "Rough (Auto)"
 tag "Cliffs (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Roads (Auto)"
 tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"

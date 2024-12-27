@@ -550,6 +550,15 @@ public class Terrains implements Serializable {
                 return 2;
             case BUILDING:
                 return terrainLevel + 1;
+            case ROAD:
+                switch (terrainLevel) {
+                    case ROAD_LVL_DIRT:
+                        return 2;
+                    case ROAD_LVL_GRAVEL:
+                        return 1;
+                    default:
+                        return 0;
+                }
             case SNOW:
                 return (terrainLevel == 2) ? 1 : 0;
             case ICE:
@@ -558,5 +567,18 @@ public class Terrains implements Serializable {
             default:
                 return 0;
         }
+    }
+
+
+    /**
+     * Returns true if the terrain is a base terrain type, excluding "Clear"
+     * @param terrainType
+     * @return
+     */
+    public static boolean isBaseTerrain(int terrainType){
+        return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
+            || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+            || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+            || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
     }
 }

@@ -957,12 +957,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, movementSprites);
         }
 
-        // draw movement, if valid
-        drawSprites(g, pathSprites);
-
-        // draw flight path indicators
-        drawSprites(g, fpiSprites);
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
@@ -978,6 +972,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // terrain; draw only the others here
             drawSprites(g, overTerrainSprites);
         }
+
+        // draw movement, if valid
+        drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw the ruler line
         if (rulerStart != null) {

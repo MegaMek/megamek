@@ -3,6 +3,7 @@ option exit_roads_to_pavement false
 tag "Cliffs (Auto)"
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "MediumForest (Auto)"
 tag "ArmoredBuilding (Auto)"
 tag "HardenedBuilding (Auto)"

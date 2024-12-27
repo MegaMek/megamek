@@ -122,10 +122,13 @@ public final class FontHandler {
 
         logger.info("Loading fonts from Java's GraphicsEnvironment");
         for (String fontName : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            allFontNames.add(fontName);
-            Font font = Font.decode(fontName);
-            if (font.canDisplayUpTo(SYMBOL_TEST_STRING) == -1) {
-                nonSymbolFontNames.add(fontName);
+            // Skip Aakar specifically; it causes graphical artefacts when present and selected as the default font.
+            if (!fontName.toLowerCase().contains("aakar")) {
+                allFontNames.add(fontName);
+                Font font = Font.decode(fontName);
+                if (font.canDisplayUpTo(SYMBOL_TEST_STRING) == -1) {
+                    nonSymbolFontNames.add(fontName);
+                }
             }
         }
         initialized = true;

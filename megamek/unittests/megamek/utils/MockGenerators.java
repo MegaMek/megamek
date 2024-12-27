@@ -190,6 +190,7 @@ public class MockGenerators {
 		final TargetRoll mockTargetRoll = mock(TargetRoll.class);
 		when(mockTargetRoll.getValue()).thenReturn(value);
 		when(mockTargetRoll.getDesc()).thenReturn("mock");
+        when(mockTargetRoll.getLastPlainDesc()).thenReturn("mock");
 		return mockTargetRoll;
 	}
 

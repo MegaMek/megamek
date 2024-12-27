@@ -56,7 +56,7 @@ public class KickCommand extends ClientServerCommand {
 
     @Override
     protected void runCommand(int connId, Arguments args) {
-        var kickedId = (int) args.get("playerId").getValue();
+        var kickedId = (int) args.get("playerID").getValue();
         var passwordOpt = (OptionalPasswordArgument) args.get("password");
 
         if (serverPasswordCheckFailed(connId, passwordOpt)) {

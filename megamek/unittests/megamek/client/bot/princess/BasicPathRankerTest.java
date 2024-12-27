@@ -439,6 +439,12 @@ class BasicPathRankerTest {
         when(mockPath.getLastStep()).thenReturn(mockLastStep);
         when(mockPath.getStepVector()).thenReturn(new Vector<>());
 
+        final TargetRoll mockTargetRoll = MockGenerators.mockTargetRoll(8);
+        final TargetRoll mockTargetRollTwo = MockGenerators.mockTargetRoll(5);
+        final List<TargetRoll> testRollList = List.of(mockTargetRoll, mockTargetRollTwo);
+
+        doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
+
         final Board mockBoard = mock(Board.class);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         final Coords boardCenter = spy(new Coords(8, 8));
@@ -461,6 +467,7 @@ class BasicPathRankerTest {
         when(mockGame.getArtilleryAttacks()).thenReturn(Collections.emptyEnumeration());
         when(mockGame.getPlanetaryConditions()).thenReturn(mockPC);
         when(mockPrincess.getGame()).thenReturn(mockGame);
+        when(mockMover.getGame()).thenReturn(mockGame);
 
         final List<Entity> testEnemies = new ArrayList<>();
 
@@ -529,10 +536,10 @@ class BasicPathRankerTest {
         doReturn(0.5)
                 .when(testRanker)
                 .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
-        expected = new RankedPath(-298.125, mockPath, "Calculation: {fall mod ["
+        expected = new RankedPath(-318.125, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(250) + " = " + LOG_DECIMAL.format(0.5) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
-                + LOG_DECIMAL.format(-3.12) + " = " + LOG_PERCENT.format(0.5)
+                + LOG_DECIMAL.format(-23.12) + " = " + LOG_PERCENT.format(0.5)
                 + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
                 + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
@@ -550,10 +557,10 @@ class BasicPathRankerTest {
         doReturn(0.75)
                 .when(testRanker)
                 .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
-        expected = new RankedPath(-174.6875, mockPath, "Calculation: {fall mod ["
+        expected = new RankedPath(-184.6875, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(125) + " = " + LOG_DECIMAL.format(0.25) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
-                + LOG_DECIMAL.format(-4.69) + " = " + LOG_PERCENT.format(0.75)
+                + LOG_DECIMAL.format(-14.69) + " = " + LOG_PERCENT.format(0.75)
                 + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
                 + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "

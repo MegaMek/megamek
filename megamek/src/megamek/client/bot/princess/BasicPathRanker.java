@@ -503,12 +503,13 @@ public class BasicPathRanker extends PathRanker {
         double successProbability = getMovePathSuccessProbability(pathCopy, formula);
         double utility = -calculateFallMod(successProbability, formula);
 
+        // Worry about how badly we can damage ourselves on this path!
+        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy, formula);
+        expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
+        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
+
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
-
-        double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
-
-        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
 
         boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
@@ -589,7 +590,7 @@ public class BasicPathRanker extends PathRanker {
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
         double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
-        double braveryMod = successProbability * ((maximumDamageDone * braveryValue) - expectedDamageTaken);
+        double braveryMod = (successProbability * (maximumDamageDone * braveryValue)) - expectedDamageTaken;
         formula.append(" + braveryMod [")
                 .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
                 .append(LOG_PERCENT.format(successProbability))

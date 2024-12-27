@@ -24,7 +24,7 @@
 			<corner_top_left>FlatDarcula/unit/TLC.gif</corner_top_left>
 			<corner_top_right>FlatDarcula/unit/TRC.gif</corner_top_right>
 			<corner_bottom_left>FlatDarcula/unit/BLC.gif</corner_bottom_left>
-			<corner_bottom_right>FlatDarcula/unit/RRC.gif</corner_bottom_right>
+			<corner_bottom_right>FlatDarcula/unit/BRC.gif</corner_bottom_right>
 			<!-- Border lines: these images will be tiled -->
 			<edge>
 				<edgeIcon>

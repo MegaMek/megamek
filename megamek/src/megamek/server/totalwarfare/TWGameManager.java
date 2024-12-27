@@ -364,6 +364,7 @@ public class TWGameManager extends AbstractGameManager {
      * @deprecated Planned to be removed. Use {@link #requestTeamChangeForPlayer(int, Player)} instead.
      */
     @Override
+    @Deprecated
     public void requestTeamChange(int team, Player player) {
         requestedTeam = team;
         playerChangingTeam = player;
@@ -413,6 +414,7 @@ public class TWGameManager extends AbstractGameManager {
      * Changes the team of the player specified in the team change request and updates the game state.
      * @deprecated Planned to be removed at a later date
      */
+    @Deprecated
     private void legacyProcessTeamChangeRequest() {
         if (playerChangingTeam != null && changePlayersTeam) {
             playerChangingTeam.setTeam(requestedTeam);
@@ -1244,7 +1246,7 @@ public class TWGameManager extends AbstractGameManager {
                         fleeDirection = "North";
                         break;
                     case Board.START_E:
-                        fleeDirection = "Ease";
+                        fleeDirection = "East";
                         break;
                     case Board.START_S:
                         fleeDirection = "South";
@@ -1811,7 +1813,11 @@ public class TWGameManager extends AbstractGameManager {
         r.add("</pre>");
         reports.add(r);
 
-        r = new Report(7600);
+        r = new Report(7600, Report.PUBLIC);
+        reports.add(r);
+
+        r = new Report(1230, Report.PUBLIC);
+        r.add("<BR>");
         reports.add(r);
 
         for (Entity e : entities) {
@@ -20669,12 +20675,15 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            var removeIncoming = hexes.get(coord).stream()
-                .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
-                .toList();
+            if ((hexes != null) && (hexes.get(coord) != null)) {
+                var removeIncoming = hexes.get(coord).stream()
+                    .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
+                    .toList();
 
-            for (var shd : removeIncoming) {
-                getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+
+                for (var shd : removeIncoming) {
+                    getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+                }
             }
 
             String imageSignature = nuke.getImageSignature(coord);

@@ -2792,14 +2792,14 @@
 			</model>
 		</chassis>
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-			<availability>CS:4,WOB:7</availability>
+			<availability>CS:4,WOB:5</availability>
 			<model name=''>
-				<roles>cargo</roles>
+				<roles>cargo,support</roles>
 				<availability>CS:8,WOB:8</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,WOB:3</availability>
+				<availability>CS:1+,WOB:3</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
@@ -5755,7 +5755,7 @@
 				<availability>MOC:3+,OA:3+,FRR:5+,MERC:3+,DC:3+,TC:3+</availability>
 			</model>
 		</chassis>
-        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+        <chassis name='JI-002 HoverBike' unitType='Tank'>
             <availability>IS:1</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -7922,7 +7922,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>IS:4,DC:8</availability>
@@ -9722,6 +9722,13 @@
 				<availability>CS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Swiftran RTC-215M' unitType='VTOL'>
+            <availability>FS:8</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Talon' unitType='Mek'>
 			<availability>CS:1,LA:3+,CLAN:5,FS:2,MERC:2,DC:1</availability>
 			<model name='TLN-5W'>
@@ -10004,10 +10011,10 @@
 			</model>
 		</chassis>
 		<chassis name='Tonbo Superheavy Transport' unitType='VTOL'>
-			<availability>DC:4</availability>
+			<availability>DC:4+:3059</availability>
 			<model name=''>
 				<roles>apc,support</roles>
-				<availability>General:8</availability>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Tornado PA(L)' unitType='BattleArmor'>

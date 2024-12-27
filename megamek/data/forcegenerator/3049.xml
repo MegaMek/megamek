@@ -4815,7 +4815,7 @@
 				<availability>FRR:4+,DC:5+</availability>
 			</model>
 		</chassis>
-        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+        <chassis name='JI-002 HoverBike' unitType='Tank'>
             <availability>IS:1:3050</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -6603,7 +6603,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>IS:4,DC:8</availability>
@@ -8052,6 +8052,13 @@
 				<availability>CS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Swiftran RTC-215M' unitType='VTOL'>
+            <availability>FS:8:3053</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Talon' unitType='Mek'>
 			<availability>CLAN:6</availability>
 			<model name='TLN-5W'>

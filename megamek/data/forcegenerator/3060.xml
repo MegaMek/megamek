@@ -3306,12 +3306,12 @@
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
 			<availability>CS:4,WOB:7</availability>
 			<model name=''>
-				<roles>cargo</roles>
+				<roles>cargo,support</roles>
 				<availability>CS:8,WOB:8</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,WOB:3</availability>
+				<availability>CS:1+,WOB:3</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
@@ -6280,7 +6280,7 @@
 				<availability>CS:2,FRR:2,FWL:4,WOB:2</availability>
 			</model>
 		</chassis>
-        <chassis name='Hesiod' unitType='Tank'>
+        <chassis name='Hesiod Utility Vehicle' unitType='Tank'>
             <availability>IS:4+:3060</availability>
             <model name='A (Harvester)'>
                 <roles>civilian</roles>
@@ -7095,7 +7095,7 @@
 				<availability>FS:8</availability>
 			</model>
 		</chassis>
-        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+        <chassis name='JI-002 HoverBike' unitType='Tank'>
             <availability>IS:1</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -9826,7 +9826,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>IS:4,DC:8</availability>
@@ -12181,6 +12181,13 @@
 				<availability>CS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Swiftran RTC-215M' unitType='VTOL'>
+            <availability>FS:8</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sylph Battle Armor' unitType='BattleArmor'>
 			<availability>CCC:6,CSR:2,CDS:2,CSA:2</availability>
 			<model name='(Sqd5)' mechanized='true'>
@@ -12606,10 +12613,10 @@
 			</model>
 		</chassis>
 		<chassis name='Tonbo Superheavy Transport' unitType='VTOL'>
-			<availability>DC:5</availability>
+			<availability>DC:5+</availability>
 			<model name=''>
 				<roles>apc,support</roles>
-				<availability>General:8</availability>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Tornado PA(L)' unitType='BattleArmor'>

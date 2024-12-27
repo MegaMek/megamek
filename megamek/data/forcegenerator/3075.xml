@@ -4338,12 +4338,12 @@
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
 			<availability>CS:4,WOB:7</availability>
 			<model name=''>
-				<roles>cargo</roles>
+				<roles>cargo,support</roles>
 				<availability>CS:8,WOB:8</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,WOB:3</availability>
+				<availability>CS:1+,WOB:3</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
@@ -8443,7 +8443,7 @@
 				<availability>WOB:8</availability>
 			</model>
 		</chassis>
-        <chassis name='Hesiod' unitType='Tank'>
+        <chassis name='Hesiod Utility Vehicle' unitType='Tank'>
             <availability>FWL:4+</availability>
             <model name='A (Harvester)'>
                 <roles>civilian</roles>
@@ -9469,7 +9469,7 @@
 				<availability>FS:8</availability>
 			</model>
 		</chassis>
-        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+        <chassis name='JI-002 HoverBike' unitType='Tank'>
             <availability>IS:1</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -13361,7 +13361,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>IS:4,DC:8</availability>
@@ -16049,6 +16049,13 @@
 				<availability>SOC:7,CCO:5</availability>
 			</model>
 		</chassis>
+        <chassis name='St. Christopher Cargo Transport' unitType='VTOL'>
+            <availability>LA:5+</availability>
+            <model name='C1'>
+                <roles>cargo,support</roles>
+                <availability>LA:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Stalker' unitType='Mek'>
 			<availability>MOC:6,CC:5,HL:9,CLAN:3,IS:6,Periphery.Deep:9,WOB:4,CIR:8,Periphery:10,TC:8,CS:5,OA:8,LA:7,FWL:8,NIOPS:5,DC:5</availability>
 			<model name='STK-3F'>
@@ -16615,6 +16622,13 @@
 				<availability>CS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Swiftran RTC-215M' unitType='VTOL'>
+            <availability>IS:5,FS:8,CC:0</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>IS:8,FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sylph Battle Armor' unitType='BattleArmor'>
 			<availability>CSA:2,CCC:6,CSR:4,CDS:2</availability>
 			<model name='(Sqd5)' mechanized='true'>
@@ -17231,10 +17245,10 @@
 			</model>
 		</chassis>
 		<chassis name='Tonbo Superheavy Transport' unitType='VTOL'>
-			<availability>DC:6</availability>
+			<availability>DC:6+</availability>
 			<model name=''>
 				<roles>apc,support</roles>
-				<availability>General:8</availability>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Tornado PA(L)' unitType='BattleArmor'>

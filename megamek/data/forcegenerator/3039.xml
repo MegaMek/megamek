@@ -5454,7 +5454,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>DC:8</availability>

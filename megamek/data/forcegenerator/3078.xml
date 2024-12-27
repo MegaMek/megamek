@@ -4537,12 +4537,12 @@
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
 			<availability>CS:4,MOC:3,LA:2,ROS:2,WOB:7,FR:2,FS:2,DC:2</availability>
 			<model name=''>
-				<roles>cargo</roles>
+				<roles>cargo,support</roles>
 				<availability>MOC:6,CS:8,WOB:8,FR:6</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>CS:4,ROS:2,WOB:3,FS:2,DC:2</availability>
+				<availability>CS:4,ROS:2,WOB:3,LA:2+,FS:2+,DC:2+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
@@ -5824,7 +5824,7 @@
 				<availability>MH:8</availability>
 			</model>
 		</chassis>
-        <chassis name='Dreadnought Mk II Land Train Trailer' unitType='Tank'>
+        <chassis name='Dreadnought Mk II Land Trailer' unitType='Tank'>
             <availability>MH:2+:3081</availability>
             <model name='Configuration #1'>
                 <roles>cargo,support</roles>
@@ -7252,7 +7252,7 @@
             <model name='(Cargo)'>
                 <roles>cargo,support</roles>
                 <deployedWith>req:Generic Expandable Services Vehicle</deployedWith>
-                <availability>CLAN.IS:8IS:8,FS:8</availability>
+                <availability>CLAN.IS:8,IS:8,FS:8</availability>
             </model>
         </chassis>
 		<chassis name='Ghost' unitType='Mek'>
@@ -8819,7 +8819,7 @@
 				<availability>WOB:8</availability>
 			</model>
 		</chassis>
-        <chassis name='Hesiod' unitType='Tank'>
+        <chassis name='Hesiod Utility Vehicle' unitType='Tank'>
             <availability>FWL:4+</availability>
             <model name='A (Harvester)'>
                 <roles>civilian</roles>
@@ -9870,7 +9870,7 @@
 				<availability>FS:8</availability>
 			</model>
 		</chassis>
-        <chassis name='JI-002 Hoverbike' unitType='Tank'>
+        <chassis name='JI-002 HoverBike' unitType='Tank'>
             <availability>IS:1</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -10786,10 +10786,10 @@
             </model>
         </chassis>
 		<chassis name='Lexan Surveillance VTOL' unitType='VTOL'>
-			<availability>LA.pm:4</availability>
+			<availability>LA:4:3080</availability>
 			<model name='(Production)'>
-				<roles>recon</roles>
-				<availability>General:8</availability>
+				<roles>recon,support</roles>
+				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Liberator Cruiser' unitType='Warship'>
@@ -13935,7 +13935,7 @@
 			</model>
 			<model name='(Cargo)'>
                 <roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>IS:8</availability>
 			</model>
 			<model name='(Kurita)'>
 				<availability>IS:4,DC:8</availability>
@@ -16747,6 +16747,13 @@
 				<availability>CCO:5</availability>
 			</model>
 		</chassis>
+        <chassis name='St. Christopher Cargo Transport' unitType='VTOL'>
+            <availability>LA:5</availability>
+            <model name='C1'>
+                <roles>cargo,support</roles>
+                <availability>LA:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Stalker' unitType='Mek'>
 			<availability>MOC:6,CC:5,HL:9,CLAN:3,IS:6,Periphery.Deep:9,WOB:4,CIR:8,Periphery:10,TC:8,CS:5,OA:8,LA:7,CGB.FRR:6,ROS:4,FWL:8,NIOPS:5,DC:5</availability>
 			<model name='STK-3F'>
@@ -17313,6 +17320,13 @@
 				<availability>CS:4,ROS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Swiftran RTC-215M' unitType='VTOL'>
+            <availability>IS:6,CC:0</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sylph Battle Armor' unitType='BattleArmor'>
 			<availability>CSA:2,CCC:6,CSR:2,CDS:2</availability>
 			<model name='(Sqd5)' mechanized='true'>
@@ -17965,10 +17979,10 @@
 			</model>
 		</chassis>
 		<chassis name='Tonbo Superheavy Transport' unitType='VTOL'>
-			<availability>DC:6</availability>
+			<availability>DC:6+</availability>
 			<model name=''>
 				<roles>apc,support</roles>
-				<availability>General:8</availability>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Tornado PA(L)' unitType='BattleArmor'>

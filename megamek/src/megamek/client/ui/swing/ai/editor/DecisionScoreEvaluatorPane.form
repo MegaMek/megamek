@@ -64,7 +64,8 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Considerations"/>
+          <labelFor value="e934c"/>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.considerations"/>
         </properties>
       </component>
       <component id="85e7" class="javax.swing.JLabel">
@@ -73,7 +74,8 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Notes:"/>
+          <labelFor value="c202"/>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.notes"/>
         </properties>
       </component>
       <component id="51bfb" class="javax.swing.JLabel">
@@ -82,7 +84,8 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Description:"/>
+          <labelFor value="3546d"/>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.description"/>
         </properties>
       </component>
       <component id="6cab0" class="javax.swing.JLabel">
@@ -91,7 +94,8 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Name:"/>
+          <labelFor value="21c8d"/>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.name"/>
         </properties>
       </component>
     </children>

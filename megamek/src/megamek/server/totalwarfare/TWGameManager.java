@@ -1246,7 +1246,7 @@ public class TWGameManager extends AbstractGameManager {
                         fleeDirection = "North";
                         break;
                     case Board.START_E:
-                        fleeDirection = "Ease";
+                        fleeDirection = "East";
                         break;
                     case Board.START_S:
                         fleeDirection = "South";
@@ -1813,7 +1813,11 @@ public class TWGameManager extends AbstractGameManager {
         r.add("</pre>");
         reports.add(r);
 
-        r = new Report(7600);
+        r = new Report(7600, Report.PUBLIC);
+        reports.add(r);
+
+        r = new Report(1230, Report.PUBLIC);
+        r.add("<BR>");
         reports.add(r);
 
         for (Entity e : entities) {

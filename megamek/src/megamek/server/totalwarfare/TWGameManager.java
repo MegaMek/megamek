@@ -20675,12 +20675,15 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            var removeIncoming = hexes.get(coord).stream()
-                .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
-                .toList();
+            if ((hexes != null) && (hexes.get(coord) != null)) {
+                var removeIncoming = hexes.get(coord).stream()
+                    .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
+                    .toList();
 
-            for (var shd : removeIncoming) {
-                getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+
+                for (var shd : removeIncoming) {
+                    getGame().getBoard().removeSpecialHexDisplay(coord, shd);
+                }
             }
 
             String imageSignature = nuke.getImageSignature(coord);

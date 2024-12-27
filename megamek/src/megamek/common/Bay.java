@@ -126,6 +126,7 @@ public class Bay implements Transporter, ITechnology {
     public int getMinDoors() {
         return minDoors;
     }
+
     public void setDoors(int d) {
         doors = d;
         doorsNext = d;

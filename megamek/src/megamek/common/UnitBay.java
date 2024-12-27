@@ -25,14 +25,12 @@ package megamek.common;
  */
 public class UnitBay extends Bay{
 
-    // Minimum number of doors for all unit bays (except infantry) is 1
-    int minDoors = 1;
-
     /**
      * The default constructor is only for serialization.
      */
     protected UnitBay() {
         super();
+        minDoors = 1;
     }
 
     /**
@@ -46,5 +44,6 @@ public class UnitBay extends Bay{
      */
     public UnitBay(double space, int doors, int bayNumber) {
         super(space, doors, bayNumber);
+        minDoors = 1;
     }
 }

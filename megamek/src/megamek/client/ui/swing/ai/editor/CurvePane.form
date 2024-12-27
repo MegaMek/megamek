@@ -22,7 +22,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
-          <text value="Type"/>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.curve.type"/>
         </properties>
       </component>
       <grid id="b1aeb" binding="curveGraph" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

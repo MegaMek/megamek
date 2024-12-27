@@ -98,40 +98,32 @@ public class TWUtilityAIRepository {
         return List.copyOf(profiles.values());
     }
 
-    public boolean addDecision(TWDecision decision) {
+    public void addDecision(TWDecision decision) {
         if (decisions.containsKey(decision.getName())) {
-            logger.warn("Decision with name {} already exists", decision.getName());
-            return false;
+            logger.info("Decision with name {} already exists, overwriting", decision.getName());
         }
         decisions.put(decision.getName(), decision);
-        return true;
     }
 
-    public boolean addConsideration(TWConsideration consideration) {
+    public void addConsideration(TWConsideration consideration) {
         if (considerations.containsKey(consideration.getName())) {
-            logger.warn("Consideration with name {} already exists", consideration.getName());
-            return false;
+            logger.info("Consideration with name {} already exists, overwriting", consideration.getName());
         }
         considerations.put(consideration.getName(), consideration);
-        return true;
     }
 
-    public boolean addDecisionScoreEvaluator(TWDecisionScoreEvaluator decisionScoreEvaluator) {
+    public void addDecisionScoreEvaluator(TWDecisionScoreEvaluator decisionScoreEvaluator) {
         if (decisionScoreEvaluators.containsKey(decisionScoreEvaluator.getName())) {
-            logger.warn("DecisionScoreEvaluator with name {} already exists", decisionScoreEvaluator.getName());
-            return false;
+            logger.info("DecisionScoreEvaluator with name {} already exists, overwriting", decisionScoreEvaluator.getName());
         }
         decisionScoreEvaluators.put(decisionScoreEvaluator.getName(), decisionScoreEvaluator);
-        return true;
     }
 
-    public boolean addProfile(TWProfile profile) {
+    public void addProfile(TWProfile profile) {
         if (profiles.containsKey(profile.getName())) {
-            logger.warn("Profile with name {} already exists", profile.getName());
-            return false;
+            logger.info("Profile with name {} already exists, overwriting", profile.getName());
         }
         profiles.put(profile.getName(), profile);
-        return true;
     }
 
     private <T> void persistToFile(File outputFile, Collection<T> objects) {

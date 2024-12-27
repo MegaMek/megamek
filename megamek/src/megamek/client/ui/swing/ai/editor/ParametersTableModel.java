@@ -17,14 +17,13 @@ package megamek.client.ui.swing.ai.editor;
 
 import megamek.logging.MMLogger;
 
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ParametersTableModel implements TableModel {
+public class ParametersTableModel extends AbstractTableModel {
     private static final MMLogger logger = MMLogger.create(ParametersTableModel.class);
     private final Map<String, Object> hashRows = new HashMap<>();
     private final List<Row> rowValues = new ArrayList<>();
@@ -50,6 +49,15 @@ public class ParametersTableModel implements TableModel {
         }
         hashRows.put(parameterName, value);
         rowValues.add(new Row(parameterName, value));
+        fireTableRowsInserted(rowValues.size() - 1, rowValues.size() - 1);
+    }
+
+    public String newParameterName() {
+        int i = 0;
+        while (hashRows.containsKey("Parameter " + i)) {
+            i++;
+        }
+        return "Parameter " + i;
     }
 
     public Map<String, Object> getParameters() {
@@ -97,19 +105,14 @@ public class ParametersTableModel implements TableModel {
             rowValues.set(rowIndex, new Row(row.name, aValue));
             hashRows.put(row.name, aValue);
         } else {
+            if (hashRows.containsKey((String) aValue)) {
+                logger.formattedErrorDialog("Parameter already exists",
+                    "Could not rename parameter %s, another parameters with the same name is already present.", aValue);
+                return;
+            }
             rowValues.set(rowIndex, new Row((String) aValue, row.value));
             hashRows.remove(row.name);
             hashRows.put((String) aValue, row.value);
         }
-    }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-
     }
 }

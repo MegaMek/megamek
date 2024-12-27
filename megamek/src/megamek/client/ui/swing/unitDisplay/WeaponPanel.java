@@ -1256,10 +1256,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String heatMessage = heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity;
         String tempIndicatoer = "";
 
-        if (game.getPlanetaryConditions().isExtremeTemperature()) {
+        if ((game != null) && (game.getPlanetaryConditions().isExtremeTemperature())) {
             tempIndicatoer = " " + game.getPlanetaryConditions().getTemperatureIndicator();
         }
-        
+
         heatMessage += cambatComputerIndicator + tempIndicatoer;
 
         currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));

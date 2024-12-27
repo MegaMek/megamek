@@ -13,6 +13,8 @@
  */
 package megamek.common.verifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 import megamek.common.*;
@@ -36,19 +38,19 @@ public enum BayData {
     VEHICLE_SH ("Superheavy Vehicle", 200.0, 15, SuperHeavyVehicleBay.techAdvancement(),
             (size, num) -> new SuperHeavyVehicleBay(size, 1, num)),
     INFANTRY_FOOT ("Infantry (Foot)", 5.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.FOOT)),
+            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.FOOT)),
     INFANTRY_JUMP ("Infantry (Jump)", 6.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.JUMP)),
+            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.JUMP)),
     INFANTRY_MOTORIZED ("Infantry (Motorized)", 7.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MOTORIZED)),
+            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.MOTORIZED)),
     INFANTRY_MECHANIZED ("Infantry (Mek. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 1, num, InfantryBay.PlatoonType.MECHANIZED)),
+            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.MECHANIZED)),
     IS_BATTLE_ARMOR ("BattleArmor (IS)", 8.0, 6, BattleArmorBay.techAdvancement(),
-            (size, num) -> new BattleArmorBay(size, 1, num, false, false)),
+            (size, num) -> new BattleArmorBay(size, 0, num, false, false)),
     CLAN_BATTLE_ARMOR ("BattleArmor (Clan)", 10.0, 6, BattleArmorBay.techAdvancement(),
-            (size, num) -> new BattleArmorBay(size, 1, num, true, false)),
+            (size, num) -> new BattleArmorBay(size, 0, num, true, false)),
     CS_BATTLE_ARMOR ("BattleArmor (CS)", 12.0, 6, BattleArmorBay.techAdvancement(),
-            (size, num) -> new BattleArmorBay(size, 1, num, false, true)),
+            (size, num) -> new BattleArmorBay(size, 0, num, false, true)),
     FIGHTER ("Fighter", 150.0, 2, ASFBay.techAdvancement(),
             (size, num) -> new ASFBay(size, 1, num)),
     SMALL_CRAFT ("Small Craft", 200.0, 5, SmallCraftBay.techAdvancement(),
@@ -70,21 +72,31 @@ public enum BayData {
     ARTS_REPAIR_PRESSURIZED ("ARTS Standard Repair Facility (Pressurized)", 0.09375, 0, Bay.artsTechAdvancement(),
             (size, num) -> new NavalRepairFacility(size, 1, num, 0, true, true)),
     CARGO ("Cargo", 1.0, 0, CargoBay.techAdvancement(),
-            (size, num) -> new CargoBay(size, 1, num)),
+            (size, num) -> new CargoBay(size, 0, num)),
     LIQUID_CARGO ("Cargo (Liquid)", 1/0.91, 0, CargoBay.techAdvancement(),
-            (size, num) -> new LiquidCargoBay(size, 1, num)),
+            (size, num) -> new LiquidCargoBay(size, 0, num)),
     REFRIGERATED_CARGO ("Cargo (Refrigerated)", 1/0.87, 0, CargoBay.techAdvancement(),
-            (size, num) -> new RefrigeratedCargoBay(size, 1, num)),
+            (size, num) -> new RefrigeratedCargoBay(size, 0, num)),
     INSULATED_CARGO ("Cargo (Insulated)", 1/0.87, 0, CargoBay.techAdvancement(),
-            (size, num) -> new InsulatedCargoBay(size, 1, num)),
+            (size, num) -> new InsulatedCargoBay(size, 0, num)),
     LIVESTOCK_CARGO ("Cargo Livestock)", 1/0.83, 0, CargoBay.techAdvancement(),
-            (size, num) -> new LivestockCargoBay(size, 1, num));
+            (size, num) -> new LivestockCargoBay(size, 0, num));
 
     private final String name;
     private final double weight;
     private final int personnel;
     private final TechAdvancement techAdvancement;
     private final BiFunction<Double,Integer,Bay> init;
+
+    static final List<Enum> noMinDoorBayTypes = new ArrayList<>();
+
+    static {
+         noMinDoorBayTypes.addAll(List.of(
+             INFANTRY_FOOT, INFANTRY_JUMP, INFANTRY_MECHANIZED, INFANTRY_MOTORIZED,
+             IS_BATTLE_ARMOR, CLAN_BATTLE_ARMOR, CS_BATTLE_ARMOR,
+             CARGO, INSULATED_CARGO, LIQUID_CARGO, LIVESTOCK_CARGO, REFRIGERATED_CARGO
+         ));
+    }
 
     BayData(String name, double weight, int personnel,
             TechAdvancement techAdvancement, BiFunction<Double,Integer,Bay> init) {
@@ -117,6 +129,15 @@ public enum BayData {
      */
     public int getPersonnel() {
         return personnel;
+    }
+
+    /**
+     * Return the minimum number of doors required for the Bay type this BayType
+     * encapsulates.
+     * @return 0 if no minimum door count applies, or 1 otherwise.
+     */
+    public int getMinDoors() {
+        return noMinDoorBayTypes.contains(this) ? 0 : 1;
     }
 
     /**

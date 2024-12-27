@@ -60,6 +60,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6032: Filter out Aakar font from Java font family names
 + Fix #6309: Fix typo and log errors
 + Fix #6293: Prevent NPE when using non-scheduled Nuke
++ Fix MML #1667: incorrect cargo bay minimum doors
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

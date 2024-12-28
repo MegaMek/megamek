@@ -1,4 +1,4 @@
-#Saved from version 0.50.1-SNAPSHOT on 2024-09-05
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-27
 <UnitType>
 SupportTank
 </UnitType>
@@ -51,9 +51,9 @@ cargobay:1.0:1:1::-1:0
 51
 </armor_type>
 
-<armor_tech>
-1
-</armor_tech>
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <armor>
 7

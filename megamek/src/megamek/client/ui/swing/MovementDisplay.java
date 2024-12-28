@@ -37,7 +37,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.AbstractOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -1598,7 +1598,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         && unusedVelocity
                         && !offOrReturn
                         && !cmd.contains(MoveStepType.LAND)
-                        && !cmd.contains(MoveStepType.EJECT)) {
+                        && !cmd.contains(MoveStepType.EJECT)
+                        && !cmd.contains(MoveStepType.FLEE)) {
                     String title = Messages.getString("MovementDisplay.VelocityLeft.title");
                     String body = Messages.getString("MovementDisplay.VelocityLeft.message");
                     clientgui.doAlertDialog(title, body);
@@ -2248,7 +2249,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         || (gear == MovementDisplay.GEAR_TURN)
                         || (gear == MovementDisplay.GEAR_BACKUP))
                 && ((cmd.getMpUsed() <= ce.getWalkMP())
-                        || (cmd.getLastStep().isOnlyPavement()
+                        || (cmd.getLastStep().isOnlyPavementOrRoad()
                                 && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                 && !(opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TANK_CREWS)
                         && (cmd.getMpUsed() > 0) && (ce instanceof Tank)
@@ -4632,7 +4633,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
         final String actionCmd = ev.getActionCommand();
-        final AbstractOptions opts = clientgui.getClient().getGame().getOptions();
+        final IGameOptions opts = clientgui.getClient().getGame().getOptions();
         if (actionCmd.equals(MoveCommand.MOVE_NEXT.getCmd())) {
             selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
         } else if (actionCmd.equals(
@@ -4653,7 +4654,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
                     || ((cmd.getMpUsed() > ce.getWalkMP())
-                            && !(cmd.getLastStep().isOnlyPavement()
+                            && !(cmd.getLastStep().isOnlyPavementOrRoad()
                                     && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                     || (opts.booleanOption("tacops_tank_crews")
                             && (cmd.getMpUsed() > 0) && (ce instanceof Tank)

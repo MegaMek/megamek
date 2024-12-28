@@ -25,7 +25,11 @@ import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
 
+import static java.util.List.of;
+
 public class SharedUtility {
+
+    private static int CRIT_VALUE = 100;
 
     public static String doPSRCheck(MovePath md) {
         return (String) doPSRCheck(md, true);
@@ -46,7 +50,7 @@ public class SharedUtility {
 
     /**
      * Function that carries out PSR checks specific only to airborne aero units
-     * 
+     *
      * @param md           The path to check
      * @param stringResult Whether to return the report as a string
      * @return Collection of PSRs that will be required for this activity
@@ -256,11 +260,22 @@ public class SharedUtility {
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            2 * leapDistance,
+                            Messages.getString("TacOps.leaping.leg_damage")
+                        )
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            leapDistance,
+                            Messages.getString("TacOps.leaping.fall_damage"))
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
@@ -359,7 +374,7 @@ public class SharedUtility {
                             || (moveType == EntityMovementType.MOVE_SPRINT)
                             || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                         int limit = entity.getRunningGravityLimit();
-                        if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                        if (step.isOnlyPavementOrRoad() && entity.isEligibleForPavementOrRoadBonus()) {
                             limit++;
                         }
                         if (step.getMpUsed() > limit) {
@@ -928,4 +943,57 @@ public class SharedUtility {
             return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElse(null);
         }
     }
+
+    public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data, StringBuilder msg) {
+        // Rough guess based on normal pilots
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue();
+        double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
+            * (fallHeight + 1);
+        msg.append("\nPredicting expected Leap fall damage:")
+            .append(String.format("\n\tFall height: %d", fallHeight))
+            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%')
+            .append(String.format("\n\tExpected total damage from fall: %.2f", fallDamage * (1 - odds) ));
+        return fallDamage * (1 - odds);
+    }
+
+    /** Per TacOps p 20, a leap carries the following risks:
+     * 1. risk of damaging each leg by distance leaped (3 or more per leg); mod is 2 x distance leaped.
+     * 1.a 1 critical roll _per leg_.
+     * 1.b 1 _additional_ critical per leg that takes internal structure damage due to leaping damage.
+     * 2. risk of falling; mod is distance leaped.
+     * @param movingEntity
+     * @param data
+     * @param msg
+     * @return
+     */
+    public static double predictLeapDamage(Entity movingEntity, TargetRoll data, StringBuilder msg) {
+        int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue() / 2;
+        double legDamage = fallHeight * (legMultiplier);
+        msg.append("\nPredicting expected Leap damage:")
+            .append(String.format("\n\tFall height: %d", fallHeight))
+            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%');
+
+        int[] legLocations = {BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM};
+
+        // Add required crits; say the effective leg "damage" from a crit is 20 for now.
+        legDamage += legMultiplier * CRIT_VALUE;
+        msg.append(
+            String.format("\n\tAdding %d leg critical chances as %d additional damage", legMultiplier, legMultiplier * CRIT_VALUE)
+        );
+
+        // Add additional crits for each leg that would take internal damage
+        for (int i=0;i<legMultiplier; i++) {
+            if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
+                msg.append("\n\tAdditional critical due to internal structure damage...");
+                legDamage += CRIT_VALUE;
+            }
+        }
+
+        // Calculate odds of receiving this damage and return
+        return legDamage * (1 - odds);
+    }
+
 }

@@ -8,7 +8,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5086: Updated SRMAXHandler to ignore specialty armors
 + PR #6209: Implement RISC laser pulse module
 + Fix #6211: Added null check for lastUnitMember
-+ PR #6203: Dev Tool to Find duplicate boards
++ PR #6203, #6266: Dev Tools: to Find duplicate boards, log to console with environment variable mm.profile=dev
 + PR #6181: Rename TroopSpace to InfantryCompartment
 + Fix #6217: Too many gunners for aerospace in MekHQ
 + Fix #6069: Stops bays from loading BA and protomek ammunition
@@ -23,7 +23,45 @@ MEGAMEK VERSION HISTORY:
 + PR #6230: Allow fleeing at end of movement
 + Fix #3018: Fixes Battle Armor Plasma Rifles not applying TacOps Optional Rules
 + Fix #3827: Fixes target's side's ECM not effecting sensor spottingFixes
-
++ Fix: Disable Simultaneous Movement due to numerous issues
++ PR #6250: Adds an automatic board tag for underwater bridges
++ Fix #6224, #6248: Aircraft that fly off are now nudged back onto the board to be targetable before actually leaving the map
++ PR #6244: Force generator math updates
++ PR #6245: add new chat commands, updates a bit the commands gui, give nukes to GMs
++ Fix #1618, #5595: Implement dirt and gravel roads
++ Fix #6247: NPE with TacOps Energy Weapons when Changing Firing Mode
++ Fix #6240: Era-illegal asf bombs
++ Fix #6264: Destroyed Infantry no longer have negative weight
++ PR #6268: Cleanup board names
++ Fix #1437: Check for stacking for elevation 0 Aeros during deployment
++ Fix #6261: Allow aerospace to flee with remaining movement
++ PR #6265: Config interface extracted
++ PR #6278: GM Command Refactoring
++ Fix #4259: Fixing Dropship Heat-by-Arc for Players and Princess
++ PR #6282: fix error with wrong type cast on GM commands for nukes and kick
++ Fix #6281: Entities can no longer spot if evading (TO:AR, 16-17)
++ PR #6284: FixeD NPE when checking if ejection is possible
++ Fix #6259: error spam and deployment hang with combined arms forces
++ PR #6294: Added reference to the log file inside gameLogger
++ PR #6289: Allows gunEmplacement to be converted to Alpha Strike
++ Fix #6079: Reworded destroyed aero bay door to avoid indefinite article usage
++ Fix #6252: Offboard Artillery cannot unjam critted weapons
++ Fix #6290: When setting internal for infantry restore field weapons if applicable
++ Fix #6273: Prevent flak from making aimed shots on immobile targets
++ Fix #3360: Fixed takeoff logic and preventing smoke-assisted landings
++ Fix #5115: Added Nova CEWS to getExtraC3BV
++ PR #6306: Fixed dirt and gravel roads landing modifiers and interactioins with moderate+ rain
++ Fix #6305: Partial cover from water and hull down bonus
++ Fix #6271: Fixes offboard units placed in north and west
++ Fix #2090: /nova chat command updated to link with non-enemy units as long as one is owned
++ PR #6295: Princess improvement to consider leap damage along with path optimization
++ Fix #6297: Fixes movement path sprite rendering under unit sprites in non-isometric mode
++ Fix #6277: Fixes /kick command for players and bots
++ Fix #6032: Filter out Aakar font from Java font family names
++ Fix #6309: Fix typo and log errors
++ Fix #6293: Prevent NPE when using non-scheduled Nuke
++ Fix MML #1667: incorrect cargo bay minimum doors
++ PR #6321: add indicators heat in the weapon display
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
@@ -1561,6 +1562,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
                             if (!getGame().getBoard().contains(curPos)) {
+                                curPos = curPos.translated(step.getFacing(), -1); //Return its position to on-map so it can be targeted this turn
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                                 return;
@@ -2274,7 +2276,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            2 * leapDistance, "leaping (leg damage)"));
+                            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         // do leg damage
@@ -2297,7 +2299,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            leapDistance, "leaping (fall)"));
+                            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         entity.setElevation(lastElevation);

@@ -1097,6 +1097,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
                 + en.heatBuildup) // heat we're building up this round
                 - Math.min(9, en.coolFromExternal); // cooling from external
+
         // sources
         if (en instanceof Mek) {
             if (en.infernos.isStillBurning()) { // hit with inferno ammo
@@ -1195,12 +1196,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && game.getPhase().isFiring()) {
                 hasFiredWeapons = true;
                 // add heat from weapons fire to heat tracker
-                if (entity.usesWeaponBays()) {
+                if (entity.isLargeCraft()) {
                     // if using bay heat option then don't add total arc
                     if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                        for (WeaponMounted weapon : mounted.getBayWeapons()) {
-                            currentHeatBuildup += weapon.getCurrentHeat();
-                        }
+                        currentHeatBuildup += mounted.getHeatByBay();
                     } else {
                         // check whether arc has fired
                         int loc = mounted.getLocation();
@@ -1219,7 +1218,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     }
                 } else {
                     if (!mounted.isBombMounted()) {
-                        currentHeatBuildup += mounted.getCurrentHeat();
+                        currentHeatBuildup += mounted.getHeatByBay();
                     }
                 }
             }
@@ -1231,8 +1230,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             currentHeatBuildup++;
         }
 
+        String cambatComputerIndicator = "";
         if (en.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             currentHeatBuildup -= 4;
+            cambatComputerIndicator = " \uD83D\uDCBB";
         }
 
         // check for negative values due to extreme temp
@@ -1252,20 +1253,34 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             sheatOverCapacity = " " + heatOverCapacity + " " + msg_over;
         }
 
+        String heatMessage = heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity;
+        String tempIndicatoer = "";
+
+        if ((game != null) && (game.getPlanetaryConditions().isExtremeTemperature())) {
+            tempIndicatoer = " " + game.getPlanetaryConditions().getTemperatureIndicator();
+        }
+
+        heatMessage += cambatComputerIndicator + tempIndicatoer;
+
         currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
-        currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity);
+        currentHeatBuildupR.setText(heatMessage);
 
         // change what is visible based on type
         if (entity.usesWeaponBays()) {
-            wArcHeatL.setVisible(true);
-            wArcHeatR.setVisible(true);
             m_chBayWeapon.setVisible(true);
             wBayWeapon.setVisible(true);
         } else {
-            wArcHeatL.setVisible(false);
-            wArcHeatR.setVisible(false);
             m_chBayWeapon.setVisible(false);
             wBayWeapon.setVisible(false);
+        }
+        if ((!entity.isLargeCraft())
+                || ((game != null) && (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)))){
+            wArcHeatL.setVisible(false);
+            wArcHeatR.setVisible(false);
+        }
+        else {
+            wArcHeatL.setVisible(true);
+            wArcHeatR.setVisible(true);
         }
 
         wDamageTrooperL.setVisible(false);

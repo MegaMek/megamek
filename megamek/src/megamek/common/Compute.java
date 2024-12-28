@@ -22,6 +22,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -245,12 +246,31 @@ public class Compute {
     }
 
     /**
-     * Generates a number between 0 and maxValue - 1.
-     * e.g. randomInt(2) will generate either 0s or 1s
+     * Generates a number between 0 and  max value exclusive (this means maxValue-1).
+     * e.g. randomInt(3) will generate 0, 1, or 2.
      */
     public static int randomInt(int maxValue) {
         Roll roll = new MMRoll(random, maxValue);
         return roll.getIntValue();
+    }
+
+    /**
+     * Generates a number between 0 and  max value inclusive (this means maxValue).
+     * e.g. randomInt(3) will generate 0, 1, 2 or 3.
+     */
+    public static int randomIntInclusive(int maxValue) {
+        Roll roll = new MMRoll(random, maxValue + 1);
+        return roll.getIntValue();
+    }
+
+
+    /**
+     * Generates a number between 1 and  max value inclusive (this means maxValue).
+     * e.g. randomInt(3) will generate 1, 2 or 3.
+     */
+    public static int randomRealIntInclusive(int maxValue) {
+        Roll roll = new MMRoll(random, maxValue);
+        return roll.getIntValue() + 1;
     }
 
     /**
@@ -419,8 +439,8 @@ public class Compute {
             return null;
         }
 
-        // no stacking violations for flying aeros
-        if (entering.isAirborne()) {
+        // no stacking violations for flying aeros, except during deployment - no crushing units during deployment!
+        if (entering.isAirborne() && !((game.getPhase().equals(GamePhase.DEPLOYMENT) && elevation == 0))) {
             return null;
         }
 
@@ -6914,13 +6934,17 @@ public class Compute {
             return toReturn;
         }
 
-        String damage = weapon.curMode().getName();
+        String damage = weapon.curMode().getName().toLowerCase();
 
         // Vehicle flamers have damage and heat modes so lets make sure this is
         // an actual dial down Damage.
-        if ((damage.trim().toLowerCase().indexOf("damage") == 0)
-                && (damage.trim().length() > 6)) {
-            toReturn = Integer.parseInt(damage.substring(6).trim());
+        if ((damage.trim().length() > 6) && damage.contains("damage")) {
+            try {
+                toReturn = Integer.parseInt(damage.substring(damage.indexOf("damage") + 6).trim());
+            }
+            catch (NumberFormatException e) {
+                logger.warn("Failed to get dialed down damage. " + e.getMessage());
+            }
         }
 
         return Math.min(wtype.getDamage(range), toReturn);
@@ -7252,7 +7276,7 @@ public class Compute {
             case TARGETING_COMPUTER:
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                         || wtype.hasFlag(WeaponType.F_PULSE)
-                        || weapon.curMode().getName().equals("Pulse")
+                        || weapon.curMode().getName().startsWith("Pulse")
                         || (wtype instanceof HAGWeapon)) {
                     return false;
                 }
@@ -7612,7 +7636,7 @@ public class Compute {
 
     public static int turnsTilHit(int distance) {
         final int turnsTilHit;
-        // See indirect flight times table, TO p181
+        // See indirect flight times table, TO:AR p149
         if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
             turnsTilHit = 0;
         } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {

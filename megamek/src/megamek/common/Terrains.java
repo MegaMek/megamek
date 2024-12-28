@@ -42,7 +42,11 @@ public class Terrains implements Serializable {
 
     // Terrain modifications
     public static final int PAVEMENT = 12;
-    public static final int ROAD = 13;
+    public static final int ROAD = 13; // 1: normal 2: alley 3: dirt 4: gravel
+
+    public static final int ROAD_LVL_DIRT = 3;
+    public static final int ROAD_LVL_GRAVEL = 4;
+
     public static final int SWAMP = 14; // 1: normal 2: just became quicksand 3:
                                         // quicksand
     public static final int MUD = 15;
@@ -146,7 +150,7 @@ public class Terrains implements Serializable {
 
     // This is for low atmosphere maps to indicate that an empty hex is to be drawn as sky, not grassland
     public static final int SKY = 56;
-    
+
     public static final int DEPLOYMENT_ZONE = 57;
 
     /**
@@ -449,6 +453,12 @@ public class Terrains implements Serializable {
             case PAVEMENT:
                 return 200;
             case ROAD:
+                if (level == 3) {
+                    return 20;
+                }
+                if (level == 4) {
+                    return 50;
+                }
                 return 150;
             case ICE:
             case BLACK_ICE:
@@ -540,6 +550,15 @@ public class Terrains implements Serializable {
                 return 2;
             case BUILDING:
                 return terrainLevel + 1;
+            case ROAD:
+                switch (terrainLevel) {
+                    case ROAD_LVL_DIRT:
+                        return 2;
+                    case ROAD_LVL_GRAVEL:
+                        return 1;
+                    default:
+                        return 0;
+                }
             case SNOW:
                 return (terrainLevel == 2) ? 1 : 0;
             case ICE:
@@ -548,5 +567,18 @@ public class Terrains implements Serializable {
             default:
                 return 0;
         }
+    }
+
+
+    /**
+     * Returns true if the terrain is a base terrain type, excluding "Clear"
+     * @param terrainType
+     * @return
+     */
+    public static boolean isBaseTerrain(int terrainType){
+        return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
+            || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+            || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+            || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
     }
 }

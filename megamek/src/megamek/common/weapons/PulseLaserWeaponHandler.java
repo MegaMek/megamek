@@ -42,7 +42,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         WeaponMounted laser = waa.getEntity(game).getWeapon(waa.getWeaponId());
 
-        if ((roll.getIntValue() == 2) && laser.curMode().equals("Pulse")) {
+        if ((roll.getIntValue() == 2) && laser.curMode().getName().startsWith("Pulse")) {
             vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(), laser.getLocation(), laser.getLinkedBy()));
         }
         return false;

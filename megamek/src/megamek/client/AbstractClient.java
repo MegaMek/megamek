@@ -166,7 +166,7 @@ public abstract class AbstractClient implements IClient {
             }
         }
 
-        logger.info("%s client shutdown complete.", getName());
+        logger.info("{} client shutdown complete.", getName());
     }
 
     /** The client has become disconnected from the server */

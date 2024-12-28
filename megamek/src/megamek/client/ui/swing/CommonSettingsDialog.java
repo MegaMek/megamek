@@ -215,6 +215,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField mmlPath;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
+    private JTextField autoResolveLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(
@@ -327,6 +328,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
+    private JLabel autoResolveLogFilenameLabel;
 
     private final JCheckBox gameSummaryBV = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
@@ -470,7 +472,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ClientGUI clientgui = null;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
     private static final ButtonOrderPreferences BOP = ButtonOrderPreferences.getInstance();
 
@@ -1851,6 +1853,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(gameLogFilename);
         comps.add(row);
 
+        autoResolveLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.autoResolveLogFileName"));
+        autoResolveLogFilename = new JTextField(15);
+        autoResolveLogFilename.setMaximumSize(new Dimension(250, 40));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(autoResolveLogFilenameLabel);
+        row.add(autoResolveLogFilename);
+        comps.add(row);
+
         addSpacer(comps, 5);
         comps.add(checkboxEntry(stampFilenames, null));
 
@@ -1942,7 +1953,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             // Select the correct char set (give a nice default to start).
             unitStartChar.setSelectedIndex(0);
             for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-                if (unitStartChar.getItemAt(loop).charAt(0) == CP.getUnitStartChar()) {
+                if (unitStartChar.getItemAt(loop).charAt(0) == CLIENT_PREFERENCES.getUnitStartChar()) {
                     unitStartChar.setSelectedIndex(loop);
                     break;
                 }
@@ -1956,31 +1967,33 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             tfSoundMuteMyTurnFileName.setText(GUIP.getSoundBingFilenameMyTurn());
             tfSoundMuteOthersFileName.setText(GUIP.getSoundBingFilenameOthersTurn());
 
-            maxPathfinderTime.setText(Integer.toString(CP.getMaxPathfinderTime()));
+            maxPathfinderTime.setText(Integer.toString(CLIENT_PREFERENCES.getMaxPathfinderTime()));
 
-            keepGameLog.setSelected(CP.keepGameLog());
+            keepGameLog.setSelected(CLIENT_PREFERENCES.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
-            gameLogFilename.setText(CP.getGameLogFilename());
-            userDir.setText(CP.getUserDir());
-            mmlPath.setText(CP.getMmlPath());
-            stampFilenames.setSelected(CP.stampFilenames());
+            gameLogFilename.setText(CLIENT_PREFERENCES.getGameLogFilename());
+            autoResolveLogFilename.setEnabled(keepGameLog.isSelected());
+            autoResolveLogFilename.setText(CLIENT_PREFERENCES.getAutoResolveGameLogFilename());
+            userDir.setText(CLIENT_PREFERENCES.getUserDir());
+            mmlPath.setText(CLIENT_PREFERENCES.getMmlPath());
+            stampFilenames.setSelected(CLIENT_PREFERENCES.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
-            stampFormat.setText(CP.getStampFormat());
-            reportKeywordsTextPane.setText(CP.getReportKeywords());
-            showIPAddressesInChat.setSelected(CP.getShowIPAddressesInChat());
-            startSearchlightsOn.setSelected(CP.getStartSearchlightsOn());
+            stampFormat.setText(CLIENT_PREFERENCES.getStampFormat());
+            reportKeywordsTextPane.setText(CLIENT_PREFERENCES.getReportKeywords());
+            showIPAddressesInChat.setSelected(CLIENT_PREFERENCES.getShowIPAddressesInChat());
+            startSearchlightsOn.setSelected(CLIENT_PREFERENCES.getStartSearchlightsOn());
 
-            defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
-            useAverageSkills.setSelected(CP.useAverageSkills());
-            useGPinUnitSelection.setSelected(CP.useGPinUnitSelection());
-            generateNames.setSelected(CP.generateNames());
-            showUnitId.setSelected(CP.getShowUnitId());
+            defaultAutoejectDisabled.setSelected(CLIENT_PREFERENCES.defaultAutoejectDisabled());
+            useAverageSkills.setSelected(CLIENT_PREFERENCES.useAverageSkills());
+            useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
+            generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
+            showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
 
             int index = 0;
-            if (CP.getLocaleString().startsWith("de")) {
+            if (CLIENT_PREFERENCES.getLocaleString().startsWith("de")) {
                 index = 1;
             }
-            if (CP.getLocaleString().startsWith("ru")) {
+            if (CLIENT_PREFERENCES.getLocaleString().startsWith("ru")) {
                 index = 2;
             }
             displayLocale.setSelectedIndex(index);
@@ -2008,7 +2021,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             for (int i = 0; i < tileSets.size(); i++) {
                 String name = tileSets.get(i);
                 tileSetChoice.addItem(name.substring(0, name.length() - 8));
-                if (name.equals(CP.getMapTileset())) {
+                if (name.equals(CLIENT_PREFERENCES.getMapTileset())) {
                     tileSetChoice.setSelectedIndex(i);
                 }
             }
@@ -2413,7 +2426,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             logger.error(ex, "okAction");
         }
         GUIP.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
-        CP.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
+        CLIENT_PREFERENCES.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
 
         GUIP.setMouseWheelZoom(mouseWheelZoom.isSelected());
         GUIP.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
@@ -2430,33 +2443,34 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setSoundBingFilenameOthersTurn(tfSoundMuteOthersFileName.getText());
 
         try {
-            CP.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
+            CLIENT_PREFERENCES.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
         } catch (Exception ex) {
             logger.error(ex, "okAction");
         }
 
         GUIP.setGetFocus(getFocus.isSelected());
 
-        CP.setKeepGameLog(keepGameLog.isSelected());
-        CP.setGameLogFilename(gameLogFilename.getText());
-        CP.setUserDir(userDir.getText());
-        CP.setMmlPath(mmlPath.getText());
-        CP.setStampFilenames(stampFilenames.isSelected());
-        CP.setStampFormat(stampFormat.getText());
-        CP.setReportKeywords(reportKeywordsTextPane.getText());
-        CP.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
-        CP.setStartSearchlightsOn(startSearchlightsOn.isSelected());
+        CLIENT_PREFERENCES.setKeepGameLog(keepGameLog.isSelected());
+        CLIENT_PREFERENCES.setGameLogFilename(gameLogFilename.getText());
+        CLIENT_PREFERENCES.setAutoResolveGameLogFilename(autoResolveLogFilename.getText());
+        CLIENT_PREFERENCES.setUserDir(userDir.getText());
+        CLIENT_PREFERENCES.setMmlPath(mmlPath.getText());
+        CLIENT_PREFERENCES.setStampFilenames(stampFilenames.isSelected());
+        CLIENT_PREFERENCES.setStampFormat(stampFormat.getText());
+        CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
+        CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
+        CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
 
-        CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
-        CP.setUseAverageSkills(useAverageSkills.isSelected());
-        CP.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
-        CP.setGenerateNames(generateNames.isSelected());
-        CP.setShowUnitId(showUnitId.isSelected());
+        CLIENT_PREFERENCES.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
+        CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());
+        CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
+        CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
+        CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
 
-        CP.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
+        CLIENT_PREFERENCES.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
 
         GUIP.setShowMapsheets(showMapsheets.isSelected());
         GUIP.setAOHexShadows(aOHexShadows.isSelected());
@@ -2493,11 +2507,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex());
-            if (!CP.getMapTileset().equals(tileSetFileName) &&
+            if (!CLIENT_PREFERENCES.getMapTileset().equals(tileSetFileName) &&
                     (clientgui != null) && (clientgui.getBoardView() != null)) {
                 clientgui.getBoardView().clearShadowMap();
             }
-            CP.setMapTileset(tileSetFileName);
+            CLIENT_PREFERENCES.setMapTileset(tileSetFileName);
         }
 
         ToolTipManager.sharedInstance().setInitialDelay(GUIP.getTooltipDelay());

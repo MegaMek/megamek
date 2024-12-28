@@ -17,6 +17,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
@@ -130,7 +131,6 @@ public class DisasterCommand extends GamemasterServerCommand {
                 server.sendServerChat("The star is going supernova!");
                 server.sendServerChat("Everything is on fire! We are doomed!");
                 break;
-
             case SANDSTORM:
                 new ChangeWeatherCommand(server, gameManager).run(connId, new String[]{"weather", "blowsand=1", "wind=4", "winddir=6"});
                 server.sendServerChat("A sandstorm is approaching!");
@@ -188,7 +188,7 @@ public class DisasterCommand extends GamemasterServerCommand {
      * Run this command with the arguments supplied
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         if (args.get(TYPE).getValue().equals(Disaster.RANDOM)) {
             if (getGameManager().getGame().getBoard().inSpace()) {
                 runDisasterCommand(connId, Disaster.getRandomSpaceDisaster());

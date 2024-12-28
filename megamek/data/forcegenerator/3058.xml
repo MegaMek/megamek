@@ -132,8 +132,8 @@
 		</faction>
 		<faction key='CJF'>
 			<pctOmni>25,25,53,90,100</pctOmni>
-			<pctClan>53,53,80,46,100</pctClan>
-			<pctSL>47,47,20,54,0</pctSL>
+			<pctClan>53,53,80,96,100</pctClan>
+			<pctSL>47,47,20,4,0</pctSL>
 			<pctClan unitType='Vehicle'>0,0,20,20,20</pctClan>
 			<pctSL unitType='Vehicle'>100,100,80,80,80</pctSL>
 			<salvage pct='17'>CHH:0,CSR:0,CIH:0,CI:0,CSV:2,CFM:0,CCO:0,CGS:0,CSA:0,CDS:0,CW:6,LA:5,CNC:0,CSJ:0,CGB:0</salvage>

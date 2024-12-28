@@ -16,7 +16,7 @@ package megamek.common.weapons.artillery;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryCannonWeaponHandler;
@@ -64,11 +64,11 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {

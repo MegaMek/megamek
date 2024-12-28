@@ -25,7 +25,7 @@ import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.*;
@@ -125,11 +125,11 @@ public abstract class ACWeapon extends AmmoWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Modes for allowing standard and light AC rapid fire
-        IOption rapidAc = gOp.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
+        IOption rapidAc = gameOptions.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC);
         if ((rapidAc != null) && rapidAc.booleanValue()) {
             addMode("");
             addMode(Weapon.MODE_AC_RAPID);

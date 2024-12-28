@@ -20,8 +20,10 @@ import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
 import megamek.common.SpecialHexDisplay.Type;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
@@ -336,9 +338,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (atype.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
             // The appropriate term here is "Bwahahahahaha..."
             if (target.isOffBoard()) {
+                gameManager.getGame().processGameEvent(
+                    new GamePlayerStrategicActionEvent(gameManager,
+                        new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 AreaEffectHelper.doNuclearExplosion((Entity) aaa.getTarget(game), finalPos, 1, vPhaseReport,
                         gameManager);
             } else {
+                gameManager.drawNukeHitOnBoard(targetPos);
+                gameManager.getGame().processGameEvent(
+                    new GamePlayerStrategicActionEvent(gameManager,
+                        new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(finalPos, 1, vPhaseReport);
             }
             return false;

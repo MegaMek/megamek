@@ -414,9 +414,22 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return True if there is pavement, a road or a bridge in the hex.
+     * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
+        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)){
+            return true;
+        }
+        else if (containsTerrain(Terrains.ROAD)){
+            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD)); //Return false if the road is dirt or gravel
+        }
+        return false;
+    }
+
+    /**
+     * @return True if there is pavement, a road or a bridge in the hex.
+     */
+    public boolean hasPavementOrRoad() {
         return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
     }
 
@@ -562,19 +575,32 @@ public class Hex implements Serializable {
                 || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
     }
 
+    /**
+     * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
+     * @return
+     */
     public boolean isClearForTakeoff() {
-        for (final Integer i : terrains.keySet()) {
-            if (containsTerrain(i) && (i != Terrains.PAVEMENT) && (i != Terrains.ROAD) && (i != Terrains.FLUFF)
-                    && (i != Terrains.ARMS) && (i != Terrains.LEGS) && (i != Terrains.SNOW) && (i != Terrains.MUD)
-                    && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
-                return false;
-            }
+        if (hasPavementOrRoad()) {
+            return true;
         }
-        return true;
+        return getBaseTerrainType() == 0;
     }
 
     public boolean isClearForLanding() {
         return !containsTerrain(Terrains.IMPASSABLE);
+    }
+
+    /**
+     * Returns the "Base Terrain" for the hex, or 0 if it is clear
+     * @return
+     */
+    public int getBaseTerrainType() {
+        for (int terrain : terrains.keySet()) {
+            if (Terrains.isBaseTerrain(terrain)) {
+                return terrain;
+            }
+        }
+        return 0;
     }
 
     public int getFireTurn() {

@@ -28,7 +28,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Player;
-import megamek.common.options.AbstractOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -230,7 +230,7 @@ class IsometricSprite extends HexSprite {
             return false;
         }
 
-        AbstractOptions opts = this.bv.game.getOptions();
+        IGameOptions opts = this.bv.game.getOptions();
         return opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ((e.getOwner().getId() == localPlayer.getId())
                         || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)

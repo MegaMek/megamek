@@ -19,7 +19,9 @@ package megamek.common.util.weightedMaps;
 import megamek.common.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K, T> {
     //region Variable Declarations
@@ -45,5 +47,12 @@ public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K
     protected @Nullable T randomItem(final K key) {
         final Map.Entry<K, T> item = ceilingEntry(key);
         return (item == null) ? null : item.getValue();
+    }
+
+    /**
+     * @return a random item from the weighted map boxed in an Optional, empty if the map is empty
+     */
+    public Optional<T> randomOptionalItem() {
+        return Optional.ofNullable(randomItem());
     }
 }

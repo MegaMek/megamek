@@ -19,6 +19,7 @@
 package megamek.server.scriptedevent;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.logging.MMLogger;
 import megamek.server.trigger.Trigger;

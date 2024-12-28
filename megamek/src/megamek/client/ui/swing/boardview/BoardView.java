@@ -957,12 +957,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, movementSprites);
         }
 
-        // draw movement, if valid
-        drawSprites(g, pathSprites);
-
-        // draw flight path indicators
-        drawSprites(g, fpiSprites);
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
@@ -978,6 +972,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // terrain; draw only the others here
             drawSprites(g, overTerrainSprites);
         }
+
+        // draw movement, if valid
+        drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -1321,9 +1321,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         java.util.List<Player> players = game.getPlayersList();
-        final GameOptions gOpts = game.getOptions();
+        final var gOpts = game.getOptions();
 
-        if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+        if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0)) {
             players = new ArrayList<>(
                     players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList()));
         }
@@ -4294,7 +4294,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         public void gameEntityChange(GameEntityChangeEvent e) {
             final Vector<UnitLocation> mp = e.getMovePath();
             final Entity en = e.getEntity();
-            final GameOptions gopts = game.getOptions();
+            final var gopts = game.getOptions();
 
             updateEcmList();
 

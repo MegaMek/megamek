@@ -43,7 +43,7 @@ import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.AbstractOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
@@ -586,7 +586,7 @@ public class EquipChoicePanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         panMunitions.setLayout(gbl);
         Game game = clientgui.getClient().getGame();
-        AbstractOptions gameOpts = game.getOptions();
+        IGameOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
 
         if (entity.usesWeaponBays() || entity instanceof Dropship) {

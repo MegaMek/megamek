@@ -18,12 +18,12 @@ import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
+import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The Server Command "/firestorm" that starts a blazing inferno on the board.
@@ -52,13 +52,14 @@ public class FirestormCommand extends GamemasterServerCommand {
         );
     }
 
+
     /**
      * Run this command with the arguments supplied
      *
      * @see ServerCommand#run(int, String[])
      */
     @Override
-    protected void runAsGM(int connId, Map<String, Argument<?>> args) {
+    protected void runCommand(int connId, Arguments args) {
         if (getGameManager().getGame().getBoard().inSpace()) {
             server.sendServerChat(connId, "Can't start a firestorm in space");
         }

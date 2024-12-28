@@ -1030,7 +1030,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // are we bracing a location that's not where the weapon is located?
-        if (ae.isBracing() && (ae.braceLocation() != weapon.getLocation())) {
+        if (ae.isBracing() && weapon != null && (ae.braceLocation() != weapon.getLocation())) {
             return String.format(Messages.getString("WeaponAttackAction.BracingOtherLocation"),
                     ae.getLocationName(ae.braceLocation()), ae.getLocationName(weapon.getLocation()));
         }
@@ -1486,28 +1486,30 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // limit large craft to zero net heat and to heat by arc
         final int heatCapacity = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
+        if (ae.isLargeCraft() && (weapon != null)) {
             int totalHeat = 0;
 
-            // first check to see if there are any usable weapons
-            boolean usable = false;
-            for (WeaponMounted m : weapon.getBayWeapons()) {
-                WeaponType bayWType = m.getType();
-                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
-                if (m.canFire()) {
-                    if (bayWUsesAmmo) {
-                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
+            // first check to see if there are any usable bay weapons
+            if (!weapon.getBayWeapons().isEmpty()) {
+                boolean usable = false;
+                for (WeaponMounted m : weapon.getBayWeapons()) {
+                    WeaponType bayWType = m.getType();
+                    boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
+                    if (m.canFire()) {
+                        if (bayWUsesAmmo) {
+                            if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
+                                usable = true;
+                                break;
+                            }
+                        } else {
                             usable = true;
                             break;
                         }
-                    } else {
-                        usable = true;
-                        break;
                     }
                 }
-            }
-            if (!usable) {
-                return Messages.getString("WeaponAttackAction.BayNotReady");
+                if (!usable) {
+                    return Messages.getString("WeaponAttackAction.BayNotReady");
+                }
             }
 
             // create an array of booleans of locations
@@ -1534,9 +1536,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         int loc = prevWeapon.getLocation();
                         boolean rearMount = prevWeapon.isRearMounted();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                            for (WeaponMounted bWeapon : prevWeapon.getBayWeapons()) {
-                                totalHeat += bWeapon.getCurrentHeat();
-                            }
+                            totalHeat += prevWeapon.getHeatByBay();
                         } else {
                             if (!rearMount) {
                                 if (!usedFrontArc[loc]) {
@@ -1560,9 +1560,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             int currentHeat = ae.getHeatInArc(loc, rearMount);
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 currentHeat = 0;
-                for (WeaponMounted bWeapon : weapon.getBayWeapons()) {
-                    currentHeat += bWeapon.getCurrentHeat();
-                }
+                currentHeat += weapon.getHeatByBay();
             }
             // check to see if this is currently the only arc being fired
             boolean onlyArc = true;
@@ -4252,35 +4250,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
         }
 
-        // Hull Down
-        if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mek) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                    && (los.getTargetCover() > LosEffects.COVER_NONE)) {
-                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-            }
-            // tanks going Hull Down is different rules then 'Meks, the
-            // direction the attack comes from matters
-            else if ((te instanceof Tank
-                    || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                    && targHex.containsTerrain(Terrains.FORTIFIED)) {
-                // TODO make this a LoS mod so that attacks will come in from
-                // directions that grant Hull Down Mods
-                int moveInDirection;
-
-                if (!((Tank) te).isBackedIntoHullDown()) {
-                    moveInDirection = ToHitData.SIDE_FRONT;
-                } else {
-                    moveInDirection = ToHitData.SIDE_REAR;
-                }
-
-                if ((te.sideTable(ae.getPosition()) == moveInDirection)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_LEFT)
-                        || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
-                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
-                }
-            }
-        }
-
         // Infantry taking cover per TacOps special rules
         if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
             if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
@@ -4429,7 +4398,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)) {
                 immobileMod = new ToHitData(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
             } else {
-                immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+                if(Compute.allowAimedShotWith(weapon, aimingMode)) {
+                    immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+                } else {
+                    immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
+                }
             }
 
             if (immobileMod != null) {
@@ -4666,7 +4639,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus, underWater);
+            toHit.append(los.losModifiers(game, eistatus, underWater));
         }
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)
@@ -4696,6 +4669,35 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 toHit.setCoverLocSecondary(los.getCoverLocSecondary());
                 toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
                 toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());
+            }
+        }
+
+        // Hull Down - Some cover states are dependent on LOS
+        if ((te != null) && te.isHullDown()) {
+            if ((te instanceof Mek) && !(te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
+                && (los.getTargetCover() > LosEffects.COVER_NONE)) {
+                toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
+            }
+            // tanks going Hull Down is different rules then 'Meks, the
+            // direction the attack comes from matters
+            else if ((te instanceof Tank
+                || (te instanceof QuadVee && te.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
+                && targetHexContainsFortified) {
+                // TODO make this a LoS mod so that attacks will come in from
+                // directions that grant Hull Down Mods
+                int moveInDirection;
+
+                if (!((Tank) te).isBackedIntoHullDown()) {
+                    moveInDirection = ToHitData.SIDE_FRONT;
+                } else {
+                    moveInDirection = ToHitData.SIDE_REAR;
+                }
+
+                if ((te.sideTable(ae.getPosition()) == moveInDirection)
+                    || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_LEFT)
+                    || (te.sideTable(ae.getPosition()) == ToHitData.SIDE_RIGHT)) {
+                    toHit.addModifier(2, Messages.getString("WeaponAttackAction.HullDown"));
+                }
             }
         }
 

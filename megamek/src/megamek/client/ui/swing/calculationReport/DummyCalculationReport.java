@@ -90,7 +90,7 @@ public class DummyCalculationReport implements CalculationReport {
 
     @Override
     public JComponent toJComponent() {
-        return new JLabel("This is an intentionally calculation report.");
+        return new JLabel("This is an intentionally empty calculation report.");
     }
 
     @Override

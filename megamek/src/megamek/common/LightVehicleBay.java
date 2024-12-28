@@ -23,7 +23,7 @@ package megamek.common;
  * Represents a Transport Bay (TM p.239) for carrying light vehicles (not heavier than 50t) aboard large spacecraft
  * or other units.
  */
-public final class LightVehicleBay extends Bay {
+public final class LightVehicleBay extends UnitBay {
     private static final long serialVersionUID = -1587851184051479305L;
 
     /**
@@ -88,7 +88,7 @@ public final class LightVehicleBay extends Bay {
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         return LightVehicleBay.techAdvancement();

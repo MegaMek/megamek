@@ -1529,7 +1529,7 @@
 			</model>
 			<model name='(LRM)'>
 				<roles>support,fire_support</roles>
-				<availability>PP:6:2801,IS:4:2801,Periphery:4:2801,PIR:2801:5</availability>
+				<availability>PP:6:2801,IS:4:2801,Periphery:4:2801,PIR:5:2801</availability>
 			</model>
 			<model name='(Mortar)'>
 				<roles>support,fire_support</roles>

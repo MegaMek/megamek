@@ -3190,10 +3190,10 @@
 			</model>
 		</chassis>
 		<chassis name='Boomerang Spotter Plane' unitType='Conventional Fighter'>
-			<availability>CC:4,OP:4,MERC.KH:3,FRR:4,FR:2,FS:6,MERC:6,Periphery:3,DTA:4,MERC.WD:5,RF:4,LA:5,FWL:4,MSC:4,DA:4,RCM:4,DC:4</availability>
+			<availability>IS:3,FS:4,Periphery:3,PIR:0</availability>
 			<model name=''>
                 <roles>recon,support</roles>
-				<availability>General:8-</availability>
+				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Bowman' unitType='Mek'>
@@ -4014,7 +4014,7 @@
 			<availability>CC:4</availability>
 			<model name=''>
 				<roles>support</roles>
-				<availability>General:6</availability>
+				<availability>CC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Cheetah' unitType='AeroSpaceFighter'>
@@ -6240,13 +6240,6 @@
 			<model name='FLC-9R'>
                 <roles>cavalry</roles>
 				<availability>IS:6</availability>
-			</model>
-		</chassis>
-		<chassis name='Federated-Boeing Longhaul' unitType='Conventional Fighter'>
-			<availability>DTA:4,OP:4,RF:4,FWL:4,MSC:4,FS:5,DA:4,RCM:4</availability>
-			<model name='FB-335'>
-				<roles>cargo,support</roles>
-				<availability>General:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Feng Huang Cruiser' unitType='Warship'>
@@ -9952,14 +9945,14 @@
 			</model>
 		</chassis>
 		<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
-			<availability>LA:4</availability>
+			<availability>CLAN.IS:4,IS:5,LA:6,FS:6</availability>
 			<model name='KC-6'>
-				<roles>cargo,support</roles>
-				<availability>General:2-</availability>
+                <roles>cargo,civilian</roles>
+                <availability>CLAN.IS:8,IS:8</availability>
 			</model>
 			<model name='KC-9'>
 				<roles>cargo,support</roles>
-				<availability>General:4</availability>
+				<availability>CLAN.IS:8,IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Kingfisher' unitType='Mek' omni='Clan'>
@@ -10945,6 +10938,13 @@
                 <availability>MH:8</availability>
             </model>
 		</chassis>
+        <chassis name='Longhaul Cargo Aircraft' unitType='Conventional Fighter'>
+            <availability>IS:2,FS:3</availability>
+            <model name='FB-335'>
+                <roles>cargo,support</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
         <chassis name='Luciano White Wolverine' unitType='Tank'>
             <availability>IS:1,Periphery:1,PIR:0</availability>
             <model name=''>
@@ -12312,10 +12312,10 @@
 			</model>
 		</chassis>
 		<chassis name='Mosquito Radar Plane' unitType='Conventional Fighter'>
-			<availability>IS:3</availability>
+			<availability>IS:4</availability>
 			<model name='IX'>
-				<roles>recon</roles>
-				<availability>General:4</availability>
+				<roles>recon,support</roles>
+				<availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
@@ -14012,14 +14012,14 @@
 			</model>
 		</chassis>
 		<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-			<availability>CC:5,MOC:5,FVC:4,IS:6,FR:5,FS:5,MERC:4,DC:7,Periphery:5</availability>
+			<availability>CLAN:5,BAN:0,IS:8,Periphery:5,HL:5,Periphery.Deep:3+,CEI:4,PIR:3+</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<availability>CLAN:8,IS:8,Periphery:8,HL:8,PIR:8</availability>
 			</model>
 			<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-				<roles>cargo</roles>
-				<availability>FVC:2,FS:3</availability>
+                <roles>ground_support</roles>
+                <availability>FS:2-</availability>
 			</model>
 		</chassis>
 		<chassis name='Planetlifter Support Aircraft' unitType='Conventional Fighter'>
@@ -14234,10 +14234,10 @@
 			</model>
 		</chassis>
 		<chassis name='Protector High-Speed Medevac' unitType='Conventional Fighter'>
-			<availability>LA:4,FS:4</availability>
+			<availability>IS:4,FS:5,CC:0</availability>
 			<model name='C-790'>
 				<roles>support</roles>
-				<availability>General:5</availability>
+				<availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
@@ -16709,10 +16709,14 @@
 		</chassis>
 		<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 			<availability>CC:2</availability>
-			<model name=''>
-				<roles>cargo,support</roles>
-				<availability>General:5</availability>
-			</model>
+            <model name=''>
+                <roles>support</roles>
+                <availability>CC:8</availability>
+            </model>
+            <model name='(Original)'>
+                <roles>support</roles>
+                <availability>CC:3-</availability>
+            </model>
 		</chassis>
 		<chassis name='Storm Raider' unitType='Mek'>
 			<availability>RF:2,LA:3,ROS:2,MH:2,MERC:2,FS:2,Periphery:2</availability>
@@ -18043,6 +18047,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Tsuru VIP Aircraft' unitType='Conventional Fighter'>
+            <availability>DC:1</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Tufana Hovercraft' unitType='Tank'>
 			<availability>CC:4,MOC:4,PR:6,RF:6,PG:6,FWL:4,RFS:6</availability>
 			<model name=''>
@@ -19690,33 +19701,32 @@
 			</model>
 		</chassis>
 		<chassis name='Zugvogel Omni Support Aircraft' unitType='Conventional Fighter'>
-			<availability>MERC.KH:5,MERC.WD:4,CW:2,IS:6,MERC:5,Periphery:5</availability>
+			<availability>IS:4+:3087,LA:5+:3086,Periphery:3+:3087,HL:0,Periphery.Deep:0,PIR:0</availability>
 			<model name='A'>
-				<roles>support,spotter</roles>
-				<availability>General:6</availability>
+				<roles>command,support,spotter</roles>
+				<availability>IS:4+,Periphery:2+</availability>
 			</model>
 			<model name='B'>
 				<roles>support</roles>
-				<availability>General:6</availability>
+				<availability>IS:6,Periphery:6</availability>
 			</model>
 			<model name='C'>
 				<roles>support</roles>
-				<availability>General:6</availability>
+				<availability>IS:6+,Periphery:4+</availability>
 			</model>
 			<model name='D &apos;Raubvogel&apos;'>
-				<availability>General:6</availability>
+				<availability>IS:6,Periphery:6</availability>
 			</model>
 			<model name='E'>
-				<roles>support</roles>
-				<availability>General:6</availability>
+				<roles>apc,support</roles>
+				<availability>IS:5,Periphery:4+</availability>
 			</model>
 			<model name='F'>
-				<roles>support</roles>
-				<availability>General:5</availability>
+				<availability>IS:5+:3095,Periphery:0,MOC:2+</availability>
 			</model>
 			<model name='Prime'>
-				<roles>cargo</roles>
-				<availability>General:8</availability>
+				<roles>cargo,support</roles>
+				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 	</units>

@@ -499,7 +499,7 @@
 			</model>
 		</chassis>
         <chassis name='Bombduster' unitType='Tank'>
-            <availability>IS:2,Periphery;2</availability>
+            <availability>IS:2,Periphery:2</availability>
             <model name=''>
                 <roles>cargo,engineer,support</roles>
                 <availability>IS:8,Periphery:8</availability>

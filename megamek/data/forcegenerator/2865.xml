@@ -1742,7 +1742,7 @@
             </model>
         </chassis>
 		<chassis name='Elemental Battle Armor' unitType='BattleArmor'>
-			<availability>CW:8:2868,CHH:2869</availability>
+			<availability>CW:8:2868,CHH:8:2869</availability>
 			<model name='[Flamer](Sqd5)' mechanized='true'>
 				<availability>CW:8,CHH:8</availability>
 			</model>

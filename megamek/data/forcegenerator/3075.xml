@@ -4375,6 +4375,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Comet Airliner' unitType='Conventional Fighter'>
+            <availability>CLAN.IS:3,IS:7,DC:4-,Periphery:3,TC:5,MOC:4,Periphery.Deep:0,PIR:0</availability>
+            <model name='ACL-800'>
+                <roles>civilian</roles>
+                <availability>CLAN.IS:8,IS:8,Periphery:8,TC:8,MOC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>
 			<availability>SOC:2,CLAN:4</availability>
 			<model name='(2995)'>
@@ -5265,10 +5272,10 @@
 			</model>
 		</chassis>
 		<chassis name='Delta Air Cruiser' unitType='Conventional Fighter'>
-			<availability>FS:4</availability>
+			<availability>FS:6</availability>
 			<model name='MA-80'>
 				<roles>civilian</roles>
-				<availability>General:8-</availability>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Demolisher Heavy Tank' unitType='Tank'>
@@ -7233,6 +7240,13 @@
 				<availability>DTA:6,FWL:5,WOB:5</availability>
 			</model>
 		</chassis>
+        <chassis name='Graceful Crane Air Bus' unitType='Conventional Fighter'>
+            <availability>DC:3+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Grand Crusader II' unitType='Mek'>
 			<availability>WOB:6</availability>
 			<model name='GRN-D-03'>
@@ -9463,7 +9477,7 @@
 			</model>
 		</chassis>
 		<chassis name='Jetta Coruna 4X' unitType='Conventional Fighter'>
-			<availability>FS:3</availability>
+			<availability>FS:1+</availability>
 			<model name=''>
                 <roles>civilian</roles>
 				<availability>FS:8</availability>
@@ -14803,10 +14817,10 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:2-</availability>
+            <availability>FS:3+,IS:2+</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:2</availability>
+				<availability>IS:8,FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='S7-P Bus' unitType='Small Craft'>
@@ -16372,6 +16386,13 @@
 				<availability>CC:3-</availability>
 			</model>
 		</chassis>
+        <chassis name='Stratos Airliner' unitType='Conventional Fighter'>
+            <availability>DC:6</availability>
+            <model name='WK-1000'>
+                <roles>civilian</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Strider' unitType='Mek' omni='IS'>
 			<availability>DC:7,FWL:4,MERC:4</availability>
 			<model name='SR1-O'>
@@ -18999,10 +19020,10 @@
 			</model>
 		</chassis>
 		<chassis name='Zanadu Air Bus' unitType='Conventional Fighter'>
-			<availability>LA:2</availability>
+            <availability>IS:5,DC:0</availability>
 			<model name=''>
 				<roles>civilian</roles>
-				<availability>General:5</availability>
+				<availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Zechetinu Corvette' unitType='Warship'>

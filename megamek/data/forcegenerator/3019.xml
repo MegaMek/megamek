@@ -2796,6 +2796,7 @@
         <chassis name='Graceful Crane Air Bus' unitType='Conventional Fighter'>
             <availability>DC:5+</availability>
             <model name=''>
+                <roles>civilian</roles>
                 <availability>DC:8</availability>
             </model>
         </chassis>
@@ -5931,6 +5932,7 @@
         <chassis name='Stratos Airliner' unitType='Conventional Fighter'>
             <availability>DC:6</availability>
             <model name='WK-1000'>
+                <roles>civilian</roles>
                 <availability>DC:8</availability>
             </model>
         </chassis>

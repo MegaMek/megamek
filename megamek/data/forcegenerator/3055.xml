@@ -1286,13 +1286,6 @@
 				<availability>CLAN:2-</availability>
 			</model>
 		</chassis>
-		<chassis name='Avanti Aerospace Airliner' unitType='Conventional Fighter'>
-			<availability>LA:4,FC:5,FS:5</availability>
-			<model name='ACL-800'>
-				<roles>civilian</roles>
-				<availability>General:5-</availability>
-			</model>
-		</chassis>
 		<chassis name='Avar' unitType='AeroSpaceFighter' omni='Clan'>
 			<availability>CSA:4,CCC:4,CSR:4,CW:5,CLAN:4,CNC:5,BAN:5,CWIE:5</availability>
 			<model name='A'>
@@ -2658,10 +2651,10 @@
 			</model>
 		</chassis>
         <chassis name='Comet Airliner' unitType='Conventional Fighter'>
-            <availability>IS:7,DC:4-</availability>
+            <availability>CLAN.IS:3,CSJ:0,IS:7,DC:4-,TC:4</availability>
             <model name='ACL-800'>
                 <roles>civilian</roles>
-                <availability>IS:8</availability>
+                <availability>CLAN.IS:8,IS:8,TC:8</availability>
             </model>
         </chassis>
 		<chassis name='Comitatus JumpShip' unitType='Jumpship'>
@@ -4132,6 +4125,7 @@
         <chassis name='Graceful Crane Air Bus' unitType='Conventional Fighter'>
             <availability>DC:3+</availability>
             <model name=''>
+                <roles>civilian</roles>
                 <availability>DC:8</availability>
 			</model>
 		</chassis>
@@ -8846,6 +8840,7 @@
         <chassis name='Stratos Airliner' unitType='Conventional Fighter'>
             <availability>DC:6</availability>
             <model name='WK-1000'>
+                <roles>civilian</roles>
                 <availability>DC:8</availability>
             </model>
         </chassis>

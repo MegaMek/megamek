@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public  class DecisionScoreEvaluatorTableModel<DECISION extends Decision<?,?>> extends AbstractTableModel {
+public  class DecisionTableModel<DECISION extends Decision<?,?>> extends AbstractTableModel {
 
     private final List<DECISION> rows;
     private final String[] columnNames = { "ID", "Decision", "Evaluator" };
 
-    public DecisionScoreEvaluatorTableModel(List<DECISION> initialRows) {
+    public DecisionTableModel(List<DECISION> initialRows) {
         this.rows = new ArrayList<>(initialRows);
     }
 

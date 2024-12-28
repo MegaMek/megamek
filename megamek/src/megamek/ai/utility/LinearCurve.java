@@ -37,6 +37,11 @@ public class LinearCurve implements Curve {
         this.b = b;
     }
 
+    @Override
+    public LinearCurve copy() {
+        return new LinearCurve(m, b);
+    }
+
     public double evaluate(double x) {
         return clamp01(m * x + b);
     }
@@ -61,7 +66,7 @@ public class LinearCurve implements Curve {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", LinearCurve.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", LinearCurve.class.getSimpleName() + " [", "]")
             .add("m=" + m)
             .add("b=" + b)
             .toString();

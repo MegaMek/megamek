@@ -98,11 +98,27 @@ public class TWUtilityAIRepository {
         return List.copyOf(profiles.values());
     }
 
+    public boolean hasDecision(String name) {
+        return decisions.containsKey(name);
+    }
+
+    public void removeDecision(TWDecision decision) {
+        decisions.remove(decision.getName());
+    }
+
     public void addDecision(TWDecision decision) {
         if (decisions.containsKey(decision.getName())) {
             logger.info("Decision with name {} already exists, overwriting", decision.getName());
         }
         decisions.put(decision.getName(), decision);
+    }
+
+    public boolean hasConsideration(String name) {
+        return considerations.containsKey(name);
+    }
+
+    public void removeConsideration(TWConsideration consideration) {
+        considerations.remove(consideration.getName());
     }
 
     public void addConsideration(TWConsideration consideration) {
@@ -112,6 +128,14 @@ public class TWUtilityAIRepository {
         considerations.put(consideration.getName(), consideration);
     }
 
+    public boolean hasDecisionScoreEvaluator(String name) {
+        return decisionScoreEvaluators.containsKey(name);
+    }
+
+    public void removeDecisionScoreEvaluator(TWDecisionScoreEvaluator decisionScoreEvaluator) {
+        decisionScoreEvaluators.remove(decisionScoreEvaluator.getName());
+    }
+
     public void addDecisionScoreEvaluator(TWDecisionScoreEvaluator decisionScoreEvaluator) {
         if (decisionScoreEvaluators.containsKey(decisionScoreEvaluator.getName())) {
             logger.info("DecisionScoreEvaluator with name {} already exists, overwriting", decisionScoreEvaluator.getName());
@@ -119,24 +143,19 @@ public class TWUtilityAIRepository {
         decisionScoreEvaluators.put(decisionScoreEvaluator.getName(), decisionScoreEvaluator);
     }
 
+    public boolean hasProfile(String name) {
+        return profiles.containsKey(name);
+    }
+
+    public void removeProfile(TWProfile profile) {
+        profiles.remove(profile.getName());
+    }
+
     public void addProfile(TWProfile profile) {
         if (profiles.containsKey(profile.getName())) {
             logger.info("Profile with name {} already exists, overwriting", profile.getName());
         }
         profiles.put(profile.getName(), profile);
-    }
-
-    private <T> void persistToFile(File outputFile, Collection<T> objects) {
-        if (objects.isEmpty()) {
-            return;
-        }
-        try (SequenceWriter seqWriter = mapper.writer().writeValues(outputFile)) {
-            for (var object : objects) {
-                seqWriter.write(object);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private List<TWDecisionScoreEvaluator> loadDecisionScoreEvaluators(File inputFile) {
@@ -155,26 +174,44 @@ public class TWUtilityAIRepository {
     }
 
     private <T> List<T> loadObjects(File inputFile, Class<T> clazz) {
-        List<T> objects = new ArrayList<>();
-
         if (inputFile.isDirectory()) {
-            var files = inputFile.listFiles();
-            if (files != null) {
-                for (var file : files) {
-                    if (file.isFile()) {
-                        try (MappingIterator<T> it = mapper.readerFor(clazz).readValues(file)) {
-                            objects.addAll(it.readAll());
-                        } catch (IOException e) {
-                            logger.error(e, "Could not load file: {}", file);
-                        }
-                    }
-                }
-            }
-        } else {
-            logger.formattedErrorDialog("Invalid directory", "Input file {} is not a directory", inputFile);
+            var objects = objectsFromDirectory(inputFile, clazz);
+            logger.info("Loaded {} objects of type {} from directory {}", objects.size(), clazz.getSimpleName(), inputFile);
+            return objects;
         }
-        logger.info("Loaded {} objects of type {} from directory {}", objects.size(), clazz.getSimpleName(), inputFile);
+        if (inputFile.isFile()) {
+            var objects = objectsFromFile(clazz, inputFile);
+            if (objects != null) {
+                logger.info("Loaded {} objects of type {} from file {}", objects.size(), clazz.getSimpleName(), inputFile);
+                return objects;
+            }
+        }
+        logger.formattedErrorDialog("Invalid directory", "Input file {} is not a directory", inputFile);
+        return Collections.emptyList();
+    }
+
+    private <T> List<T> objectsFromDirectory(File inputFile, Class<T> clazz) {
+        List<T> objects = new ArrayList<>();
+        var files = inputFile.listFiles();
+        if (files != null) {
+            for (var file : files) {
+                objects.addAll(objectsFromFile(clazz, file));
+            }
+        }
         return objects;
+    }
+
+    private <T> List<T> objectsFromFile(Class<T> clazz, File file) {
+        if (file.isFile()) {
+            try (MappingIterator<T> it = mapper.readerFor(clazz).readValues(file)) {
+                return it.readAll();
+            } catch (IOException e) {
+                logger.error(e, "Could not load file: {}", file);
+            }
+        } else if (file.isDirectory()) {
+            return objectsFromDirectory(file, clazz);
+        }
+        return Collections.emptyList();
     }
 
     public void persistData() {
@@ -193,6 +230,19 @@ public class TWUtilityAIRepository {
         persistToFile(new File(userDataAiTwDir, CONSIDERATIONS + File.separator + "custom_considerations.yaml"), considerations.values());
         persistToFile(new File(userDataAiTwDir, DECISIONS + File.separator + "custom_decisions.yaml"), decisions.values());
         persistToFile(new File(userDataAiTwDir, PROFILES + File.separator + "custom_profiles.yaml"), profiles.values());
+    }
+
+    private <T> void persistToFile(File outputFile, Collection<T> objects) {
+        if (objects.isEmpty()) {
+            return;
+        }
+        try (SequenceWriter seqWriter = mapper.writer().writeValues(outputFile)) {
+            for (var object : objects) {
+                seqWriter.write(object);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void createDirectoryStructureIfMissing(File directory) {

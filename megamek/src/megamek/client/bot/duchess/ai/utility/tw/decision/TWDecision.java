@@ -21,6 +21,9 @@ import megamek.ai.utility.Decision;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.common.Entity;
 
+import java.util.HashMap;
+import java.util.StringJoiner;
+
 @JsonTypeName("TWDecision")
 public class TWDecision extends Decision<Entity, Entity> {
 
@@ -29,5 +32,14 @@ public class TWDecision extends Decision<Entity, Entity> {
 
     public TWDecision(Action action, double weight, DecisionScoreEvaluator<Entity, Entity> decisionScoreEvaluator) {
         super(action, weight, decisionScoreEvaluator);
+    }
+
+    public TWDecision(Action action, double weight) {
+        this(action, weight, new TWDecisionScoreEvaluator());
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 }

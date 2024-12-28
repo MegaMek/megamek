@@ -21,7 +21,10 @@ import com.intellij.uiDesigner.core.Spacer;
 import megamek.ai.utility.Action;
 import megamek.ai.utility.NamedObject;
 import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
+import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecision;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.GUIPreferences;
@@ -30,7 +33,10 @@ import megamek.client.ui.swing.util.MegaMekController;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Method;
@@ -44,27 +50,24 @@ public class AiProfileEditor extends JFrame {
 
     private JButton newDecisionButton;
     private JTree repositoryViewer;
-    private JTabbedPane dseEditorPane;
-    private JPanel dseConfigPane;
-    private JTextField nameDseTextField;
-    private JTextField descriptionDseTextField;
-    private JScrollPane considerationsScrollPane;
-    private JPanel considerationsPane;
-    private JTextField notesTextField;
+    private JTabbedPane mainEditorTabbedPane;
+    private JPanel dseTabPane;
     private JTextField descriptionTextField;
     private JTextField profileNameTextField;
     private JButton newConsiderationButton;
-    private JPanel profilePane;
-    private JTable decisionScoreEvaluatorTable;
-    private JPanel decisionPane;
+    private JPanel profileTabPane;
+    private JTable profileDecisionTable;
+    private JPanel decisionTabPane;
     private JComboBox<Action> actionComboBox;
     private JSpinner weightSpinner;
     private JPanel uAiEditorPanel;
-    private JPanel considerationsPane1;
     private JScrollPane profileScrollPane;
-    private JPanel decisionScoreEvaluatorPanel;
+    private JPanel decisionTabDsePanel;
+    private JPanel dsePane;
+    private JPanel considerationTabPane;
+    private JPanel considerationEditorPanel;
 
-    private boolean hasChanges = false;
+    private boolean hasChanges = true;
     private boolean ignoreHotKeys = false;
 
     public AiProfileEditor(MegaMekController controller) {
@@ -73,53 +76,36 @@ public class AiProfileEditor extends JFrame {
         initialize();
         setTitle("AI Profile Editor");
         setSize(1200, 1000);
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setContentPane(uAiEditorPanel);
         setVisible(true);
     }
 
     private void initialize() {
-
-        // Set layout for decisionScoreEvaluatorPanel
-        decisionScoreEvaluatorPanel.setLayout(new GridBagLayout());
-
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = GridBagConstraints.RELATIVE;
-        gbc.fill = GridBagConstraints.NONE; // Do not stretch
+        gbc.fill = GridBagConstraints.EAST;
         gbc.weightx = 0.0;
         gbc.weighty = 0.0;
-        gbc.anchor = GridBagConstraints.NORTHEAST; // Align to the top-right
-        gbc.insets = new Insets(0, 0, 0, 0); // No padding
-
-        // Add DecisionScoreEvaluatorPane to the panel
-        decisionScoreEvaluatorPanel.add(new DecisionScoreEvaluatorPane(), gbc);
-
-//
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        gbc.gridx = 0;
-//        gbc.gridy = GridBagConstraints.RELATIVE;
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        gbc.weightx = 0.0;
-//        gbc.weighty = 0.0;
-//        gbc.anchor = GridBagConstraints.NORTHEAST;
-        var hover = new HoverStateModel();
-        var considerations = List.of(new ConsiderationPane(),
-            new ConsiderationPane(),
-            new ConsiderationPane(),
-            new ConsiderationPane());
-        for (var c : considerations) {
-            considerationsPane1.add(c, gbc);
-            c.setHoverStateModel(hover);
-        }
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        gbc.insets = new Insets(0, 0, 0, 0);
 
         newDecisionButton.addActionListener(e -> {
             var action = (Action) actionComboBox.getSelectedItem();
             var weight = (double) weightSpinner.getValue();
-            var dse = new TWDecision(action, weight, sharedData.getDecisionScoreEvaluators().get(0));
-            var model = decisionScoreEvaluatorTable.getModel();
+            var dse = new TWDecision(action, weight);
+            var model = profileDecisionTable.getModel();
             //noinspection unchecked
-            ((DecisionScoreEvaluatorTableModel<TWDecision>) model).addRow(dse);
+            ((DecisionTableModel<TWDecision>) model).addRow(dse);
+        });
+
+        newConsiderationButton.addActionListener(e -> {
+            var action = (Action) actionComboBox.getSelectedItem();
+            var weight = (double) weightSpinner.getValue();
+            var dse = new TWDecision(action, weight);
+            var model = profileDecisionTable.getModel();
+            //noinspection unchecked
+            ((DecisionTableModel<TWDecision>) model).addRow(dse);
         });
 
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -137,6 +123,74 @@ public class AiProfileEditor extends JFrame {
 
             }
         });
+
+
+        // Add mouse listener for double-click events
+        repositoryViewer.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    TreePath path = repositoryViewer.getPathForLocation(e.getX(), e.getY());
+                    if (path != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        if (node.isLeaf()) {
+                            handleNodeAction(node);
+                        }
+                    }
+                }
+            }
+        });
+
+        repositoryViewer.addTreeSelectionListener(e -> {
+            TreePath path = e.getPath();
+            if (path != null) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                if (node.isLeaf()) {
+                    handleNodeAction(node);
+                }
+            }
+        });
+    }
+
+
+    private void handleNodeAction(DefaultMutableTreeNode node) {
+        var obj = node.getUserObject();
+        if (obj instanceof TWDecision twDecision) {
+            openDecision(twDecision);
+        } else if (obj instanceof TWProfile twProfile) {
+            openProfile(twProfile);
+        } else if (obj instanceof TWDecisionScoreEvaluator twDse) {
+            openDecisionScoreEvaluator(twDse);
+        } else if (obj instanceof TWConsideration twConsideration) {
+            openConsideration(twConsideration);
+        }
+    }
+
+//    decisionScoreEvaluatorTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
+//    decisionTabDsePanel = new DecisionScoreEvaluatorPane();
+//    dsePane = new DecisionScoreEvaluatorPane();
+
+    private void openConsideration(TWConsideration twConsideration) {
+        ((ConsiderationPane) considerationEditorPanel).setConsideration(twConsideration);
+        mainEditorTabbedPane.setSelectedComponent(considerationTabPane);
+    }
+
+    private void openDecision(TWDecision twDecision) {
+        ((DecisionScoreEvaluatorPane) decisionTabDsePanel).setDecisionScoreEvaluator(twDecision.getDecisionScoreEvaluator());
+        mainEditorTabbedPane.setSelectedComponent(decisionTabPane);
+    }
+
+    private void openProfile(TWProfile twProfile) {
+        // profileTab.setProfile(twProfile);
+        profileNameTextField.setText(twProfile.getName());
+        descriptionTextField.setText(twProfile.getDescription());
+        profileDecisionTable.setModel(new DecisionTableModel<>(twProfile.getDecisions()));
+        mainEditorTabbedPane.setSelectedComponent(profileTabPane);
+    }
+
+    private void openDecisionScoreEvaluator(TWDecisionScoreEvaluator twDse) {
+        ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(twDse);
+        mainEditorTabbedPane.setSelectedComponent(dseTabPane);
     }
 
     private DialogResult showSavePrompt() {
@@ -159,7 +213,8 @@ public class AiProfileEditor extends JFrame {
     }
 
     private void persistProfile() {
-        var model = (DecisionScoreEvaluatorTableModel<TWDecision>) decisionScoreEvaluatorTable.getModel();
+        //noinspection unchecked
+        var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
         var updatedList = model.getDecisions();
         System.out.println("== Updated DecisionScoreEvaluator List ==");
         for (int i = 0; i < updatedList.size(); i++) {
@@ -170,34 +225,55 @@ public class AiProfileEditor extends JFrame {
                 dse.getDecisionScoreEvaluator().getName());
             sharedData.addDecision(dse);
         }
+        sharedData.persistDataToUserData();
     }
 
     public JFrame getFrame() {
         return this;
     }
 
+    private enum TreeViewHelper {
+        PROFILES("Profiles"),
+        DECISIONS("Decisions"),
+        DSE("Decision Score Evaluators (DSE)"),
+        CONSIDERATIONS("Considerations");
+
+        private final String name;
+
+        TreeViewHelper(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     private void createUIComponents() {
         weightSpinner = new JSpinner(new SpinnerNumberModel(1d, 0d, 4d, 0.01d));
 
-        var root = new DefaultMutableTreeNode("Utility AI Repository");
-        addToMutableTreeNode(root, "Profiles", sharedData.getProfiles());
-        addToMutableTreeNode(root, "Decisions", sharedData.getDecisions());
-        addToMutableTreeNode(root, "Considerations", sharedData.getConsiderations());
-        addToMutableTreeNode(root, "Decision Score Evaluators (DSE)", sharedData.getDecisionScoreEvaluators());
+        var root = new DefaultMutableTreeNode(Messages.getString("aiEditor.tree.title"));
+        addToMutableTreeNode(root, TreeViewHelper.PROFILES.getName(), sharedData.getProfiles());
+        addToMutableTreeNode(root, TreeViewHelper.DECISIONS.getName(), sharedData.getDecisions());
+        addToMutableTreeNode(root, TreeViewHelper.DSE.getName(), sharedData.getDecisionScoreEvaluators());
+        addToMutableTreeNode(root, TreeViewHelper.CONSIDERATIONS.getName(), sharedData.getConsiderations());
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
         repositoryViewer = new JTree(treeModel);
         actionComboBox = new JComboBox<>(Action.values());
-
-        var model = new DecisionScoreEvaluatorTableModel<>(sharedData.getDecisions());
-        decisionScoreEvaluatorTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
+        var model = new DecisionTableModel<>(sharedData.getDecisions());
+        profileDecisionTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
+        decisionTabDsePanel = new DecisionScoreEvaluatorPane();
+        dsePane = new DecisionScoreEvaluatorPane();
+        considerationEditorPanel = new ConsiderationPane();
     }
 
     private <T extends NamedObject> void addToMutableTreeNode(DefaultMutableTreeNode root, String nodeName, List<T> items) {
-        var profilesNode = new DefaultMutableTreeNode(nodeName);
-        root.add(profilesNode);
-        for (var profile : items) {
-            profilesNode.add(new DefaultMutableTreeNode(profile.getName()));
+        var categoryNode = new DefaultMutableTreeNode(nodeName);
+        root.add(categoryNode);
+        for (var item : items) {
+            var childNode = new DefaultMutableTreeNode(item);
+            categoryNode.add(childNode);
         }
     }
 
@@ -227,83 +303,65 @@ public class AiProfileEditor extends JFrame {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setRightComponent(panel2);
-        dseEditorPane = new JTabbedPane();
-        panel2.add(dseEditorPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
-        profilePane = new JPanel();
-        profilePane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        dseEditorPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile"), profilePane);
+        mainEditorTabbedPane = new JTabbedPane();
+        panel2.add(mainEditorTabbedPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        profileTabPane = new JPanel();
+        profileTabPane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile"), profileTabPane);
         profileScrollPane = new JScrollPane();
         profileScrollPane.setWheelScrollingEnabled(true);
-        profilePane.add(profileScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        decisionScoreEvaluatorTable.setColumnSelectionAllowed(false);
-        decisionScoreEvaluatorTable.setFillsViewportHeight(true);
-        decisionScoreEvaluatorTable.setMinimumSize(new Dimension(150, 32));
-        decisionScoreEvaluatorTable.setPreferredScrollableViewportSize(new Dimension(150, 32));
-        profileScrollPane.setViewportView(decisionScoreEvaluatorTable);
+        profileTabPane.add(profileScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        profileDecisionTable.setColumnSelectionAllowed(false);
+        profileDecisionTable.setFillsViewportHeight(true);
+        profileDecisionTable.setMinimumSize(new Dimension(150, 32));
+        profileDecisionTable.setPreferredScrollableViewportSize(new Dimension(150, 32));
+        profileScrollPane.setViewportView(profileDecisionTable);
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
-        profilePane.add(panel3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel3.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        profileTabPane.add(panel3, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         profileNameTextField = new JTextField();
         panel3.add(profileNameTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         descriptionTextField = new JTextField();
         panel3.add(descriptionTextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        notesTextField = new JTextField();
-        panel3.add(notesTextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label1 = new JLabel();
         this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile.name"));
         panel3.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "AiEditor.description"));
         panel3.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label3 = new JLabel();
-        this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.notes"));
-        panel3.add(label3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        decisionPane = new JPanel();
-        decisionPane.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        dseEditorPane.addTab("Decision", decisionPane);
+        decisionTabPane = new JPanel();
+        decisionTabPane.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.decision"), decisionTabPane);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
-        decisionPane.add(panel4, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.action"));
-        panel4.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        decisionTabPane.add(panel4, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label3 = new JLabel();
+        this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.action"));
+        panel4.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         actionComboBox.setEditable(false);
         panel4.add(actionComboBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(300, -1), null, null, 0, false));
         panel4.add(weightSpinner, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(100, -1), new Dimension(100, -1), new Dimension(100, -1), 0, false));
-        final JLabel label5 = new JLabel();
-        this.$$$loadLabelText$$$(label5, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.weight"));
-        panel4.add(label5, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.weight"));
+        panel4.add(label4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel4.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        decisionScoreEvaluatorPanel = new JPanel();
-        decisionScoreEvaluatorPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel4.add(decisionScoreEvaluatorPanel, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        considerationsPane = new JPanel();
-        considerationsPane.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        considerationsPane.setName("");
-        dseEditorPane.addTab("Considerations", considerationsPane);
-        dseConfigPane = new JPanel();
-        dseConfigPane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        considerationsPane.add(dseConfigPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label6 = new JLabel();
-        label6.setText("Name");
-        dseConfigPane.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label7 = new JLabel();
-        label7.setText("Description");
-        dseConfigPane.add(label7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        nameDseTextField = new JTextField();
-        dseConfigPane.add(nameDseTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        descriptionDseTextField = new JTextField();
-        dseConfigPane.add(descriptionDseTextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        considerationsScrollPane = new JScrollPane();
-        considerationsScrollPane.setHorizontalScrollBarPolicy(31);
-        considerationsScrollPane.setWheelScrollingEnabled(true);
-        considerationsPane.add(considerationsScrollPane, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        considerationsPane1 = new JPanel();
-        considerationsPane1.setLayout(new GridBagLayout());
-        considerationsScrollPane.setViewportView(considerationsPane1);
-        label4.setLabelFor(actionComboBox);
-        label5.setLabelFor(weightSpinner);
+        panel4.add(decisionTabDsePanel, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        dseTabPane = new JPanel();
+        dseTabPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        dseTabPane.setName("");
+        mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.dse"), dseTabPane);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setHorizontalScrollBarPolicy(31);
+        scrollPane1.setWheelScrollingEnabled(true);
+        dseTabPane.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setViewportView(dsePane);
+        considerationTabPane = new JPanel();
+        considerationTabPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.consideration"), considerationTabPane);
+        considerationTabPane.add(considerationEditorPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        label3.setLabelFor(actionComboBox);
+        label4.setLabelFor(weightSpinner);
     }
 
     private static Method $$$cachedGetBundleMethod$$$ = null;

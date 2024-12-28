@@ -18,8 +18,10 @@ package megamek.client.ui.swing.ai.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import megamek.ai.utility.Consideration;
 import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
+import megamek.common.Entity;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,17 +39,19 @@ public class ConsiderationPane extends JPanel {
     private JPanel topThingsPane;
     private JButton hideButton;
     private JButton showButton;
-    private JButton newParameterButton;
 
     public ConsiderationPane() {
         $$$setupUI$$$();
         add(considerationPane);
 
-//        considerationComboBox.addActionListener(e -> {
-//            TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
-//            considerationName.setText(consideration.getName());
-//            ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
-//        });
+        considerationComboBox.addActionListener(e -> {
+            TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
+            if (consideration != null) {
+                considerationName.setText(consideration.getName());
+                ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
+                ((CurvePane) (curveContainer)).setCurve(consideration.getCurve());
+            }
+        });
 
         hideButton.addActionListener(e -> {
             curveContainer.setVisible(false);
@@ -61,16 +65,17 @@ public class ConsiderationPane extends JPanel {
             showButton.setVisible(false);
         });
         showButton.setVisible(false);
+    }
 
-        newParameterButton.addActionListener(e -> {
-            var model = (ParametersTableModel) parametersTable.getModel();
-            var newParameterName = model.newParameterName();
-            model.addRow(newParameterName, 0);
-        });
+    public void setConsideration(Consideration<?, ?> consideration) {
+        considerationComboBox.setSelectedItem(consideration);
+        considerationName.setText(consideration.getName());
+        ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
+        ((CurvePane) curveContainer).setCurve(consideration.getCurve());
     }
 
     public void setHoverStateModel(HoverStateModel model) {
-        ((CurvePane) this.curveContainer).setHoverStateModel(model);
+        ((CurvePane) curveContainer).setHoverStateModel(model);
     }
 
     private void createUIComponents() {
@@ -78,6 +83,8 @@ public class ConsiderationPane extends JPanel {
         parametersTable.setModel(new ParametersTableModel());
 
         considerationComboBox = new JComboBox<>(TWUtilityAIRepository.getInstance().getConsiderations().toArray(new TWConsideration[0]));
+        considerationComboBox.setSelectedItem(null);
+
         curveContainer = new CurvePane();
     }
 
@@ -106,7 +113,7 @@ public class ConsiderationPane extends JPanel {
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.name"));
         topThingsPane.add(label2, new GridConstraints(2, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
-        this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.type"));
+        this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.considerationType"));
         topThingsPane.add(label3, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hideButton = new JButton();
         this.$$$loadButtonText$$$(hideButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.hide"));
@@ -119,16 +126,9 @@ public class ConsiderationPane extends JPanel {
         final JLabel label4 = new JLabel();
         this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.parameters"));
         considerationPane.add(label4, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        newParameterButton = new JButton();
-        this.$$$loadButtonText$$$(newParameterButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.new.parameter"));
-        considerationPane.add(newParameterButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        considerationPane.add(scrollPane1, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         parametersTable.setFillsViewportHeight(false);
-        parametersTable.setPreferredScrollableViewportSize(new Dimension(100, 75));
-        scrollPane1.setViewportView(parametersTable);
-        final Spacer spacer2 = new Spacer();
-        considerationPane.add(spacer2, new GridConstraints(2, 3, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        parametersTable.setPreferredScrollableViewportSize(new Dimension(100, 50));
+        considerationPane.add(parametersTable, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         label2.setLabelFor(considerationName);
         label3.setLabelFor(considerationComboBox);
     }

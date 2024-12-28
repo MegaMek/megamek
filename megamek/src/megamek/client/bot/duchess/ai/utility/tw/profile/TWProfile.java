@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Decision;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.ai.utility.Profile;
 import megamek.common.Entity;
@@ -33,8 +34,8 @@ public class TWProfile extends Profile<Entity, Entity> {
         @JsonProperty("id") int id,
         @JsonProperty("name") String name,
         @JsonProperty("description") String description,
-        @JsonProperty("decisionScoreEvaluator") List<DecisionScoreEvaluator<Entity, Entity>> decisionScoreEvaluator)
+        @JsonProperty("decisions") List<Decision<Entity, Entity>> decisions)
     {
-        super(id, name, description, decisionScoreEvaluator);
+        super(id, name, description, decisions);
     }
 }

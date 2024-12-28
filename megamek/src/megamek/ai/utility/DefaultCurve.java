@@ -17,22 +17,36 @@ package megamek.ai.utility;
 
 
 public enum DefaultCurve {
-    LinearIncreasing(new LinearCurve(1.0, 0)),
+    Linear(new LinearCurve(1.0, 0)),
     LinearDecreasing(new LinearCurve(-1.0, 1)),
 
-    ParabolicPositive(new ParabolicCurve(4.0, 0.5, 1.0)),
+    Parabolic(new ParabolicCurve(4.0, 0.5, 1.0)),
     ParabolicNegative(new ParabolicCurve(-4.0, 0.5, 0.0)),
 
-    LogisticIncreasing(new LogisticCurve(1.0, 0.5, 10.0, 0.0)),
+    Logistic(new LogisticCurve(1.0, 0.5, 10.0, 0.0)),
     LogisticDecreasing(new LogisticCurve(1.0, 0.5, -10.0, 0.0)),
 
-    LogitIncreasing(new LogitCurve(1.0, 0.5, -15.0, 0.0)),
+    Logit(new LogitCurve(1.0, 0.5, -15.0, 0.0)),
     LogitDecreasing(new LogitCurve(1.0, 0.5, 15.0, 0.0));
 
     private final Curve curve;
 
     DefaultCurve(Curve curve) {
         this.curve = curve;
+    }
+
+    public static DefaultCurve fromCurve(Curve curve) {
+        if (curve instanceof LinearCurve) {
+            return Linear;
+        } else if (curve instanceof ParabolicCurve) {
+            return Parabolic;
+        } else if (curve instanceof LogisticCurve) {
+            return Logistic;
+        } else if (curve instanceof LogitCurve) {
+            return Logit;
+        }
+        // Return Linear as default
+        return Linear;
     }
 
     public Curve getCurve() {

@@ -29,7 +29,7 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
     private final List<DSE> dse;
 
     public DecisionScoreEvaluatorTable(
-        DecisionScoreEvaluatorTableModel<DECISION> model, Action[] actionList, List<DSE> dse) {
+        DecisionTableModel<DECISION> model, Action[] actionList, List<DSE> dse) {
         super(model);
         this.actionList = actionList;
         this.dse = dse;
@@ -40,8 +40,8 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
     }
 
     @Override
-    public DecisionScoreEvaluatorTableModel<DECISION> getModel() {
-        return (DecisionScoreEvaluatorTableModel<DECISION>) super.getModel();
+    public DecisionTableModel<DECISION> getModel() {
+        return (DecisionTableModel<DECISION>) super.getModel();
     }
 
     @Override

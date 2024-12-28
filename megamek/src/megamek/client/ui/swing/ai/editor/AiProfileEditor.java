@@ -27,6 +27,7 @@ import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluato
 import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.CommonMenuBar;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.MegaMekController;
 
@@ -68,6 +69,7 @@ public class AiProfileEditor extends JFrame {
     private JPanel considerationEditorPanel;
     private ConsiderationPane considerationPane;
 
+    private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForAiEditor();
 
     private boolean hasChanges = true;
     private boolean ignoreHotKeys = false;
@@ -155,6 +157,29 @@ public class AiProfileEditor extends JFrame {
                 }
             }
         });
+
+        menuBar.addActionListener(e -> {
+            if (!ignoreHotKeys) {
+                switch (e.getActionCommand()) {
+                    case "Save":
+                        persistProfile();
+                        break;
+                    case "Close":
+                        if (!hasChanges || (showSavePrompt() != DialogResult.CANCELLED)) {
+                            if (controller != null) {
+                                controller.removeAllActions();
+                                controller.aiEditor = null;
+                            }
+                            getFrame().dispose();
+                        }
+                        break;
+                    case "Help":
+//                        controller.showHelp("aiEditor");
+                        break;
+                }
+            }
+        });
+        getFrame().setJMenuBar(menuBar);
     }
 
 

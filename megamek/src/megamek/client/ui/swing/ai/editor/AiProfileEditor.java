@@ -66,6 +66,8 @@ public class AiProfileEditor extends JFrame {
     private JPanel dsePane;
     private JPanel considerationTabPane;
     private JPanel considerationEditorPanel;
+    private ConsiderationPane considerationPane;
+
 
     private boolean hasChanges = true;
     private boolean ignoreHotKeys = false;
@@ -89,6 +91,9 @@ public class AiProfileEditor extends JFrame {
         gbc.weighty = 0.0;
         gbc.anchor = GridBagConstraints.NORTHEAST;
         gbc.insets = new Insets(0, 0, 0, 0);
+        considerationPane = new ConsiderationPane();
+        considerationPane.setMinimumSize(new Dimension(considerationEditorPanel.getWidth(), considerationEditorPanel.getHeight()));
+        considerationEditorPanel.add(considerationPane, gbc);
 
         newDecisionButton.addActionListener(e -> {
             var action = (Action) actionComboBox.getSelectedItem();
@@ -171,7 +176,7 @@ public class AiProfileEditor extends JFrame {
 //    dsePane = new DecisionScoreEvaluatorPane();
 
     private void openConsideration(TWConsideration twConsideration) {
-        ((ConsiderationPane) considerationEditorPanel).setConsideration(twConsideration);
+        considerationPane.setConsideration(twConsideration);
         mainEditorTabbedPane.setSelectedComponent(considerationTabPane);
     }
 
@@ -265,7 +270,7 @@ public class AiProfileEditor extends JFrame {
         profileDecisionTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
         decisionTabDsePanel = new DecisionScoreEvaluatorPane();
         dsePane = new DecisionScoreEvaluatorPane();
-        considerationEditorPanel = new ConsiderationPane();
+
     }
 
     private <T extends NamedObject> void addToMutableTreeNode(DefaultMutableTreeNode root, String nodeName, List<T> items) {
@@ -346,20 +351,26 @@ public class AiProfileEditor extends JFrame {
         panel4.add(label4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         panel4.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        panel4.add(decisionTabDsePanel, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        panel4.add(scrollPane1, new GridConstraints(1, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setViewportView(decisionTabDsePanel);
         dseTabPane = new JPanel();
         dseTabPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         dseTabPane.setName("");
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.dse"), dseTabPane);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setHorizontalScrollBarPolicy(31);
-        scrollPane1.setWheelScrollingEnabled(true);
-        dseTabPane.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setViewportView(dsePane);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        scrollPane2.setHorizontalScrollBarPolicy(31);
+        scrollPane2.setWheelScrollingEnabled(true);
+        dseTabPane.add(scrollPane2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane2.setViewportView(dsePane);
         considerationTabPane = new JPanel();
         considerationTabPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.consideration"), considerationTabPane);
-        considerationTabPane.add(considerationEditorPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JScrollPane scrollPane3 = new JScrollPane();
+        considerationTabPane.add(scrollPane3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        considerationEditorPanel = new JPanel();
+        considerationEditorPanel.setLayout(new GridBagLayout());
+        scrollPane3.setViewportView(considerationEditorPanel);
         label3.setLabelFor(actionComboBox);
         label4.setLabelFor(weightSpinner);
     }

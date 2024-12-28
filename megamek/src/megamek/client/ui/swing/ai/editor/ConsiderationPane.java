@@ -37,8 +37,6 @@ public class ConsiderationPane extends JPanel {
     private JTable parametersTable;
     private JPanel considerationPane;
     private JPanel topThingsPane;
-    private JButton hideButton;
-    private JButton showButton;
 
     public ConsiderationPane() {
         $$$setupUI$$$();
@@ -52,19 +50,6 @@ public class ConsiderationPane extends JPanel {
                 ((CurvePane) (curveContainer)).setCurve(consideration.getCurve());
             }
         });
-
-        hideButton.addActionListener(e -> {
-            curveContainer.setVisible(false);
-            showButton.setVisible(true);
-            hideButton.setVisible(false);
-        });
-
-        showButton.addActionListener(e -> {
-            curveContainer.setVisible(true);
-            hideButton.setVisible(true);
-            showButton.setVisible(false);
-        });
-        showButton.setVisible(false);
     }
 
     public void setConsideration(Consideration<?, ?> consideration) {
@@ -98,10 +83,14 @@ public class ConsiderationPane extends JPanel {
     private void $$$setupUI$$$() {
         createUIComponents();
         considerationPane = new JPanel();
-        considerationPane.setLayout(new GridLayoutManager(4, 6, new Insets(0, 0, 0, 0), -1, -1));
+        considerationPane.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationPane.setAutoscrolls(false);
+        considerationPane.setMaximumSize(new Dimension(800, 600));
+        considerationPane.setMinimumSize(new Dimension(800, 300));
+        considerationPane.setPreferredSize(new Dimension(800, 600));
         topThingsPane = new JPanel();
         topThingsPane.setLayout(new GridLayoutManager(6, 6, new Insets(0, 0, 0, 0), -1, -1));
-        considerationPane.add(topThingsPane, new GridConstraints(0, 0, 2, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        considerationPane.add(topThingsPane, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         topThingsPane.add(considerationComboBox, new GridConstraints(1, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         considerationName = new JTextField();
         topThingsPane.add(considerationName, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
@@ -115,17 +104,9 @@ public class ConsiderationPane extends JPanel {
         final JLabel label3 = new JLabel();
         this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.considerationType"));
         topThingsPane.add(label3, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        hideButton = new JButton();
-        this.$$$loadButtonText$$$(hideButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.hide"));
-        topThingsPane.add(hideButton, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        showButton = new JButton();
-        this.$$$loadButtonText$$$(showButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.show"));
-        topThingsPane.add(showButton, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        topThingsPane.add(spacer1, new GridConstraints(4, 3, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
         this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.parameters"));
-        considerationPane.add(label4, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        considerationPane.add(label4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         parametersTable.setFillsViewportHeight(false);
         parametersTable.setPreferredScrollableViewportSize(new Dimension(100, 50));
         considerationPane.add(parametersTable, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -173,33 +154,6 @@ public class ConsiderationPane extends JPanel {
         component.setText(result.toString());
         if (haveMnemonic) {
             component.setDisplayedMnemonic(mnemonic);
-            component.setDisplayedMnemonicIndex(mnemonicIndex);
-        }
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private void $$$loadButtonText$$$(AbstractButton component, String text) {
-        StringBuffer result = new StringBuffer();
-        boolean haveMnemonic = false;
-        char mnemonic = '\0';
-        int mnemonicIndex = -1;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '&') {
-                i++;
-                if (i == text.length()) break;
-                if (!haveMnemonic && text.charAt(i) != '&') {
-                    haveMnemonic = true;
-                    mnemonic = text.charAt(i);
-                    mnemonicIndex = result.length();
-                }
-            }
-            result.append(text.charAt(i));
-        }
-        component.setText(result.toString());
-        if (haveMnemonic) {
-            component.setMnemonic(mnemonic);
             component.setDisplayedMnemonicIndex(mnemonicIndex);
         }
     }

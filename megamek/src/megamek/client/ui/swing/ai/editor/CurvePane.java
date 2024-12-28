@@ -15,6 +15,8 @@
 
 package megamek.client.ui.swing.ai.editor;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.*;
 
 import javax.swing.*;

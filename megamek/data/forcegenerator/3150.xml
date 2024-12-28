@@ -14062,7 +14062,7 @@
                 <availability>CC:8</availability>
             </model>
         </chassis>
-        <chassis name='Motuo Che Shang No.2' unitType='Tank'>
+        <chassis name='Mótuö Chë Shang No.2' unitType='Tank'>
             <availability>CC:1</availability>
             <model name=''>
                 <roles>civilian</roles>
@@ -22581,7 +22581,7 @@
             </model>
             <model name='E'>
 				<roles>apc,support</roles>
-				<availability>,RD:6,IS:5,Periphery:4+</availability>
+				<availability>RD:6,IS:5,Periphery:4+</availability>
             </model>
             <model name='F'>
 				<availability>RD:7,IS:5+,Periphery:0,MOC:2+</availability>

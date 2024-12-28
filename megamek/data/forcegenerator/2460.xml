@@ -853,7 +853,7 @@
 				<availability>General:5</availability>
 			</model>
 		</chassis>
-        <chassis name='Motuo Che Shang No.2' unitType='Tank'>
+        <chassis name='Mótuö Chë Shang No.2' unitType='Tank'>
             <availability>CC:1:2469</availability>
             <model name=''>
                 <roles>civilian</roles>

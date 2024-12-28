@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-27
 <UnitType>
 FixedWingSupport
 </UnitType>
@@ -44,9 +35,6 @@ Fire Support
 Aerodyne
 </motion_type>
 
-<transporters>
-</transporters>
-
 <SafeThrust>
 4
 </SafeThrust>
@@ -70,6 +58,14 @@ Aerodyne
 <engine_type>
 0
 </engine_type>
+
+<armor_type>
+51
+</armor_type>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
 
 <omni>
 1
@@ -99,9 +95,9 @@ CLLRM15:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLMediumChemLaser:OMNI
-CLMediumChemLaser:OMNI
-CLMediumChemLaser:OMNI
+CLMediumChemicalLaser:OMNI
+CLMediumChemicalLaser:OMNI
+CLMediumChemicalLaser:OMNI
 </Aft Equipment>
 
 <Wings Equipment>
@@ -144,6 +140,10 @@ Advanced Fire Control
 4
 </structural_tech_rating>
 
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
 <source>
 Record Sheets: 3145 New Tech New Upgrades
 </source>
@@ -155,3 +155,4 @@ Record Sheets: 3145 New Tech New Upgrades
 <baseChassisFireConWeight>
 5.5
 </baseChassisFireConWeight>
+

@@ -22,7 +22,7 @@ package megamek.common;
 /**
  * Represents a Transport Bay (TM p.239) for carrying Meks or LAMs aboard large spacecraft other units.
  */
-public final class MekBay extends Bay {
+public final class MekBay extends UnitBay {
     private static final long serialVersionUID = 927162989742234173L;
 
     /**

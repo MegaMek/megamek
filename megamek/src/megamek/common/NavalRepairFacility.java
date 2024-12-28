@@ -19,14 +19,14 @@ import java.text.DecimalFormat;
 /**
  * Standard naval repair facilities for space stations (jumpships and warships can also carry a single facility).
  * See TacOps 334-5 for rules.
- * 
+ *
  * @author Neoancient
  *
  */
-public class NavalRepairFacility extends Bay {
-    
+public class NavalRepairFacility extends UnitBay {
+
     private static final long serialVersionUID = -5983197195382933671L;
-    
+
     // No more than one bay is allowed per armor facing
     private int facing = Entity.LOC_NONE;
     private boolean pressurized = false;
@@ -76,7 +76,7 @@ public class NavalRepairFacility extends Bay {
         this.pressurized = pressurized;
         this.arts = arts;
     }
-    
+
     /**
      * Pressurized facility allows crew to work without encumbrance of life support gear. No game effect
      * that I could find.
@@ -94,7 +94,7 @@ public class NavalRepairFacility extends Bay {
     public boolean hasARTS() {
         return arts;
     }
-    
+
     public void setPressurized(boolean pressurized) {
         this.pressurized = pressurized;
     }
@@ -131,7 +131,7 @@ public class NavalRepairFacility extends Bay {
             return false;
         }
     }
-    
+
     @Override
     public double getWeight() {
         double factor;
@@ -145,12 +145,12 @@ public class NavalRepairFacility extends Bay {
         }
         return RoundWeight.nextHalfTon(totalSpace * factor);
     }
-    
+
     @Override
     public int getFacing() {
         return facing;
     }
-    
+
     /**
      * Sets the bay location
      * @param facing The armor facing (location) of the bay
@@ -159,7 +159,7 @@ public class NavalRepairFacility extends Bay {
     public void setFacing(int facing) {
         this.facing = facing;
     }
-    
+
     @Override
     public String toString() {
         return (arts ? "artsnavalrepair" : "navalrepair")
@@ -169,7 +169,7 @@ public class NavalRepairFacility extends Bay {
                 + bayNumber + FIELD_SEPARATOR
                 + FACING_PREFIX + getFacing();
     }
-    
+
     @Override
     public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder("Standard ");
@@ -185,12 +185,12 @@ public class NavalRepairFacility extends Bay {
         sb.append(DecimalFormat.getInstance().format(totalSpace)).append(" tons");
         return sb.toString();
     }
-    
+
     @Override
     public int hardpointCost() {
         return 2;
     }
-    
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(RATING_C)

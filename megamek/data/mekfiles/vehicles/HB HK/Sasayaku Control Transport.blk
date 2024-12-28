@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-27
 <UnitType>
 SupportTank
 </UnitType>
@@ -16,9 +7,9 @@ SupportTank
 Sasayaku Control Transport
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 7772
@@ -27,6 +18,10 @@ Sasayaku Control Transport
 <year>
 3055
 </year>
+
+<originalBuildYear>
+3055
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -41,8 +36,8 @@ Wheeled
 </motion_type>
 
 <transporters>
+cargobay:5.0:1:1::-1:0
 troopspace:2.0
-cargobay:5:1
 </transporters>
 
 <cruiseMP>
@@ -53,9 +48,13 @@ cargobay:5:1
 6
 </engine_type>
 
-<fuel>
-1
-</fuel>
+<armor_type>
+48
+</armor_type>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
 
 <armor>
 12
@@ -64,19 +63,10 @@ cargobay:5:1
 12
 </armor>
 
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
 <Body Equipment>
 ISOffRoadChassis
-Communications Equipment (2 ton)
-ISDroneCarrierControlSystem
-ISDroneExtra
+Communications Equipment:SIZE:2.0
+ISDroneCarrierControlSystem:SIZE:1.0
 </Body Equipment>
 
 <Front Equipment>
@@ -91,6 +81,18 @@ ISDroneExtra
 <Rear Equipment>
 </Rear Equipment>
 
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
 <source>
 Handbook: House Kurita
 </source>
@@ -98,3 +100,8 @@ Handbook: House Kurita
 <tonnage>
 25.0
 </tonnage>
+
+<fuel>
+1.0
+</fuel>
+

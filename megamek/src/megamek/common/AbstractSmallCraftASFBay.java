@@ -22,7 +22,7 @@ package megamek.common;
 /**
  * This is a base class for the very similar ASFBay and SmallCraftBay.
  */
-public abstract class AbstractSmallCraftASFBay extends Bay {
+public abstract class AbstractSmallCraftASFBay extends UnitBay {
 
     private final boolean hasArts;
 

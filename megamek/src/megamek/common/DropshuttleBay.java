@@ -17,17 +17,17 @@ package megamek.common;
 /**
  * Implements internal bays for dropships used by primitive jumpships.
  * See rules IO, p. 119.
- * 
+ *
  * @author Neoancient
  *
  */
-public class DropshuttleBay extends Bay {
-    
+public class DropshuttleBay extends UnitBay {
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6910402023514976670L;
-    
+
     // No more than one bay is allowed per armor facing
     private int facing = Entity.LOC_NONE;
 
@@ -44,7 +44,7 @@ public class DropshuttleBay extends Bay {
      * Create a new dropshuttle bay
      *
      * @param doors     The number of bay doors
-     * @param bayNumber The bay index, unique to the Entity 
+     * @param bayNumber The bay index, unique to the Entity
      * @param facing    The armor facing of the bay
      */
     public DropshuttleBay(int doors, int bayNumber, int facing) {
@@ -65,22 +65,22 @@ public class DropshuttleBay extends Bay {
 
     @Override
     public boolean canLoad(Entity unit) {
-        
+
         return unit.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 && (unit.getWeight() <= 5000)
                 && (currentSpace >= 1);
     }
-    
+
     @Override
     public double getWeight() {
         return 11000;
     }
-    
+
     @Override
     public int getFacing() {
         return facing;
     }
-    
+
     /**
      * Sets the bay location
      * @param facing The armor facing (location) of the bay
@@ -89,7 +89,7 @@ public class DropshuttleBay extends Bay {
     public void setFacing(int facing) {
         this.facing = facing;
     }
-    
+
     @Override
     public String toString() {
         String bayType = "dropshuttlebay";
@@ -103,12 +103,12 @@ public class DropshuttleBay extends Bay {
                 0
         );
     }
-    
+
     @Override
     public int hardpointCost() {
         return 2;
     }
-    
+
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_IS).setISAdvancement(2110, 2120, DATE_NONE, 2500)
                 .setISApproximate(true, false).setTechRating(RATING_C)

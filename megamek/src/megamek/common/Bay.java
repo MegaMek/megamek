@@ -37,26 +37,27 @@ public class Bay implements Transporter, ITechnology {
     public static final String FIELD_SEPARATOR = ":";
     public static final String FACING_PREFIX = "f";
 
-    /** Minimum number of doors for all bays (except infantry) is 1 **/
-    int minDoors = 1;
-    int doors = 1;
-    int doorsNext = 1;
-    int currentdoors = doors;
-    private int unloadedThisTurn = 0;
+    // Minimum number of doors for all unit bays (except infantry) is 1
+    // Minimum number of doors for all other bays is 0
+    protected int minDoors = 0;
+    protected int doors = 1;
+    protected int doorsNext = 1;
+    protected int currentdoors = doors;
+    protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
-    List<Integer> recoverySlots = new ArrayList<>();
-    int bayNumber = 0;
-    transient Game game = null;
-    private double damage;
+    protected List<Integer> recoverySlots = new ArrayList<>();
+    protected int bayNumber = 0;
+    protected transient Game game = null;
+    protected double damage;
 
     /** The troops being carried. */
-    Vector<Integer> troops = new Vector<>();
+    protected Vector<Integer> troops = new Vector<>();
 
     /** The total amount of space available for troops. */
-    double totalSpace;
+    protected double totalSpace;
 
     /** The current amount of space not occupied by troops or cargo. */
-    double currentSpace;
+    protected double currentSpace;
 
     /**
      * The default constructor is only for serialization.
@@ -125,6 +126,7 @@ public class Bay implements Transporter, ITechnology {
     public int getMinDoors() {
         return minDoors;
     }
+
     public void setDoors(int d) {
         doors = d;
         doorsNext = d;

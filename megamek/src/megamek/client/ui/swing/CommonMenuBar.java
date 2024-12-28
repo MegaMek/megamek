@@ -64,6 +64,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** True when this menu is attached to the board editor. */
     private boolean isBoardEditor = false;
 
+    /** True when this menu is attached to the AI editor. */
+    private boolean isAiEditor = false;
+
     /** True when this menu is attached to the game's main menu. */
     private boolean isMainMenu = false;
 
@@ -164,6 +167,22 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem viewIncGUIScale = new JMenuItem(getString("CommonMenuBar.viewIncGUIScale"));
     private final JMenuItem viewDecGUIScale = new JMenuItem(getString("CommonMenuBar.viewDecGUIScale"));
 
+    // The AI Editor Menu
+    private final JMenuItem aiEditorNew = new JMenuItem(getString("CommonMenuBar.aiEditor.New"));
+    private final JMenuItem aiEditorOpen = new JMenuItem(getString("CommonMenuBar.aiEditor.Open"));
+    private final JMenu aiEditorRecentProfile = new JMenu(getString("CommonMenuBar.aiEditor.RecentProfile"));
+    private final JMenuItem aiEditorSave = new JMenuItem(getString("CommonMenuBar.aiEditor.Save"));
+    private final JMenuItem aiEditorSaveAs = new JMenuItem(getString("CommonMenuBar.aiEditor.SaveAs"));
+    private final JMenuItem aiEditorReloadFromDisk = new JMenuItem(getString("CommonMenuBar.aiEditor.ReloadFromDisk"));
+    private final JMenuItem aiEditorUndo = new JMenuItem(getString("CommonMenuBar.aiEditor.Undo"));
+    private final JMenuItem aiEditorRedo = new JMenuItem(getString("CommonMenuBar.aiEditor.Redo"));
+    private final JMenuItem aiEditorNewDecision = new JMenuItem(getString("CommonMenuBar.aiEditor.NewDecision"));
+    private final JMenuItem aiEditorNewConsideration = new JMenuItem(getString("CommonMenuBar.aiEditor.NewConsideration"));
+    private final JMenuItem aiEditorNewDecisionScoreEvaluator = new JMenuItem(
+            getString("CommonMenuBar.aiEditor.NewDecisionScoreEvaluator"));
+    private final JMenuItem aiEditorExport = new JMenuItem(getString("CommonMenuBar.aiEditor.Export"));
+    private final JMenuItem aiEditorImport = new JMenuItem(getString("CommonMenuBar.aiEditor.Import"));
+
     // The Help menu
     private final JMenuItem helpContents = new JMenuItem(getString("CommonMenuBar.helpContents"));
     private final JMenuItem helpSkinning = new JMenuItem(getString("CommonMenuBar.helpSkinning"));
@@ -192,6 +211,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public static CommonMenuBar getMenuBarForBoardEditor() {
         var menuBar = new CommonMenuBar();
         menuBar.isBoardEditor = true;
+        menuBar.updateEnabledStates();
+        return menuBar;
+    }
+
+    public static CommonMenuBar getMenuBarForAiEditor() {
+        var menuBar = new CommonMenuBar();
+        menuBar.isAiEditor = true;
         menuBar.updateEnabledStates();
         return menuBar;
     }
@@ -360,6 +386,33 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
         toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
+        menu = new JMenu(Messages.getString("CommonMenuBar.AIEditorMenu"));
+        menu.setMnemonic(VK_A);
+        add(menu);
+        initMenuItem(aiEditorNew, menu, AI_EDITOR_NEW);
+        initMenuItem(aiEditorOpen, menu, AI_EDITOR_OPEN);
+        initMenuItem(aiEditorRecentProfile, menu, AI_EDITOR_RECENT_PROFILE);
+        initializeRecentAiProfilesMenu();
+        menu.addSeparator();
+        initMenuItem(aiEditorSave, menu, AI_EDITOR_SAVE);
+        initMenuItem(aiEditorSaveAs, menu, AI_EDITOR_SAVE_AS);
+        initMenuItem(aiEditorReloadFromDisk, menu, AI_EDITOR_RELOAD_FROM_DISK);
+        menu.addSeparator();
+        initMenuItem(aiEditorUndo, menu, AI_EDITOR_UNDO);
+        initMenuItem(aiEditorRedo, menu, AI_EDITOR_REDO);
+        menu.addSeparator();
+        initMenuItem(aiEditorNewDecision, menu, AI_EDITOR_NEW_DECISION);
+        aiEditorNewDecision.setSelected(GUIP.getShowSensorRange());
+        initMenuItem(aiEditorNewConsideration, menu, AI_EDITOR_NEW_CONSIDERATION);
+        aiEditorNewConsideration.setSelected(GUIP.getShowSensorRange());
+        initMenuItem(aiEditorNewDecisionScoreEvaluator, menu, AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR);
+        aiEditorNewDecisionScoreEvaluator.setSelected(GUIP.getShowSensorRange());
+        menu.addSeparator();
+        initMenuItem(aiEditorExport, menu, AI_EDITOR_EXPORT);
+        initMenuItem(aiEditorImport, menu, AI_EDITOR_IMPORT);
+
+
+
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);
@@ -406,7 +459,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
         gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
-        viewBotCommands.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.BOT_COMMANDS));
     }
 
     @Override
@@ -564,6 +616,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewForceDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
         viewBotCommands.setEnabled(isInGame);
+        aiEditorExport.setEnabled(isAiEditor);
+        aiEditorImport.setEnabled(isAiEditor);
+        aiEditorNew.setEnabled(isAiEditor);
+        aiEditorOpen.setEnabled(isAiEditor);
+        aiEditorRecentProfile.setEnabled(isAiEditor);
+        aiEditorSave.setEnabled(isAiEditor);
+        aiEditorSaveAs.setEnabled(isAiEditor);
+        aiEditorReloadFromDisk.setEnabled(isAiEditor);
+        aiEditorUndo.setEnabled(isAiEditor);
+        aiEditorRedo.setEnabled(isAiEditor);
+        aiEditorNewDecision.setEnabled(isAiEditor);
+        aiEditorNewConsideration.setEnabled(isAiEditor);
+        aiEditorNewDecisionScoreEvaluator.setEnabled(isAiEditor);
     }
 
     /**
@@ -617,8 +682,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
-        } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
-            viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
         }
     }
 
@@ -653,5 +716,15 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             initMenuItem(item, boardRecent, BOARD_RECENT + "|" + recentBoard);
         }
         boardRecent.setEnabled(!recentBoards.isEmpty());
+    }
+
+    private void initializeRecentAiProfilesMenu() {
+        List<String> recentProfiles = RecentProfileList.getRecentProfiles();
+        aiEditorRecentProfile.removeAll();
+        for (String recentProfile : recentProfiles) {
+            JMenuItem item = new JMenuItem(recentProfile);
+            initMenuItem(item, aiEditorRecentProfile, AI_EDITOR_RECENT_PROFILE + "|" + recentProfile);
+        }
+        aiEditorRecentProfile.setEnabled(!recentProfiles.isEmpty());
     }
 }

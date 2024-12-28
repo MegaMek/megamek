@@ -195,6 +195,21 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String FIRE_SAVE_WEAPON_ORDER = "saveWeaponOrder";
     // endregion fire menu
 
+    public static final String AI_EDITOR_NEW = "aiEditorNew";
+    public static final String AI_EDITOR_OPEN = "aiEditorOpen";
+    public static final String AI_EDITOR_RECENT_PROFILE = "aiEditorRecentProfile";
+    public static final String AI_EDITOR_SAVE = "aiEditorSave";
+    public static final String AI_EDITOR_SAVE_AS = "aiEditorSaveAs";
+    public static final String AI_EDITOR_RELOAD_FROM_DISK = "aiEditorReloadFromDisk";
+    public static final String AI_EDITOR_UNDO = "aiEditorUndo";
+    public static final String AI_EDITOR_REDO = "aiEditorRedo";
+    public static final String AI_EDITOR_NEW_DECISION = "aiEditorNewDecision";
+    public static final String AI_EDITOR_NEW_CONSIDERATION = "aiEditorNewConsideration";
+    public static final String AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR = "aiEditorNewDecisionScoreEvaluator";
+    public static final String AI_EDITOR_EXPORT = "aiEditorExport";
+    public static final String AI_EDITOR_IMPORT = "aiEditorImport";
+
+
     // region help menu
     public static final String HELP_CONTENTS = "helpContents";
     public static final String HELP_SKINNING = "helpSkinning";

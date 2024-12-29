@@ -112,7 +112,7 @@ public class MegaMek {
         }
 
         // log jvm parameters
-        logger.info( ManagementFactory.getRuntimeMXBean().getInputArguments());
+        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 

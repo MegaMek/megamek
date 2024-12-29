@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -32,6 +34,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -109,6 +112,9 @@ public class MegaMek {
                     parser.help()));
             System.exit(1);
         }
+
+        // log jvm parameters
+        logger.info( ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 

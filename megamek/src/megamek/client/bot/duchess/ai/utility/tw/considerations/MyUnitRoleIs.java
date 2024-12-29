@@ -16,9 +16,9 @@
 package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
+import megamek.common.UnitRole;
 
 import java.util.Map;
 
@@ -27,16 +27,23 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 /**
  * This consideration is used to determine if a target is an easy target.
  */
-@JsonTypeName("MyUnitArmor")
-public class MyUnitArmor extends TWConsideration {
+@JsonTypeName("MyUnitRoleIs")
+public class MyUnitRoleIs extends TWConsideration {
 
-    public MyUnitArmor() {
+    public MyUnitRoleIs() {
+        parameters = Map.of("role", UnitRole.AMBUSHER.name());
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
+        if (!hasParameter("role")) {
+            return 0d;
+        }
+
         var currentUnit = context.getCurrentUnit().orElseThrow();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        var role = UnitRole.valueOf(getStringParameter("role"));
+
+        return currentUnit.getRole().equals(role) ? 1d : 0d;
     }
 
 }

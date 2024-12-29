@@ -19,6 +19,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import megamek.ai.utility.Action;
+import megamek.ai.utility.Decision;
 import megamek.ai.utility.NamedObject;
 import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
@@ -30,32 +31,34 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.CommonMenuBar;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.common.Entity;
+import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
 
-public class AiProfileEditor extends JFrame {
+import static megamek.client.ui.swing.ClientGUI.*;
+
+public class AiProfileEditor extends JFrame implements ActionListener {
+    private static final MMLogger logger = MMLogger.create(AiProfileEditor.class);
+
     private final TWUtilityAIRepository sharedData = TWUtilityAIRepository.getInstance();
     private final GUIPreferences guip = GUIPreferences.getInstance();
     private final MegaMekController controller;
 
-    private JButton newDecisionButton;
     private JTree repositoryViewer;
     private JTabbedPane mainEditorTabbedPane;
     private JPanel dseTabPane;
     private JTextField descriptionTextField;
     private JTextField profileNameTextField;
-    private JButton newConsiderationButton;
     private JPanel profileTabPane;
     private JTable profileDecisionTable;
     private JPanel decisionTabPane;
@@ -67,11 +70,21 @@ public class AiProfileEditor extends JFrame {
     private JPanel dsePane;
     private JPanel considerationTabPane;
     private JPanel considerationEditorPanel;
+    private JButton saveProfileButton;
+    private JButton saveDseButton;
+    private JButton saveConsiderationButton;
+    private JButton saveDecisionButton;
+
     private ConsiderationPane considerationPane;
 
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForAiEditor();
+    private int profileId = -1;
 
-    private boolean hasChanges = true;
+    private boolean hasDecisionChanges = false;
+    private boolean hasProfileChanges = false;
+    private boolean hasDseChanges = false;
+    private boolean hasConsiderationChanges = false;
+    private boolean hasChangesToSave = false;
     private boolean ignoreHotKeys = false;
 
     public AiProfileEditor(MegaMekController controller) {
@@ -82,6 +95,10 @@ public class AiProfileEditor extends JFrame {
         setSize(1200, 1000);
         setContentPane(uAiEditorPanel);
         setVisible(true);
+    }
+
+    private boolean hasChanges() {
+        return hasDecisionChanges || hasProfileChanges || hasDseChanges || hasConsiderationChanges || hasChangesToSave;
     }
 
     private void initialize() {
@@ -96,31 +113,12 @@ public class AiProfileEditor extends JFrame {
         considerationPane = new ConsiderationPane();
         considerationPane.setMinimumSize(new Dimension(considerationEditorPanel.getWidth(), considerationEditorPanel.getHeight()));
         considerationEditorPanel.add(considerationPane, gbc);
-
-        newDecisionButton.addActionListener(e -> {
-            var action = (Action) actionComboBox.getSelectedItem();
-            var weight = (double) weightSpinner.getValue();
-            var dse = new TWDecision(action, weight);
-            var model = profileDecisionTable.getModel();
-            //noinspection unchecked
-            ((DecisionTableModel<TWDecision>) model).addRow(dse);
-        });
-
-        newConsiderationButton.addActionListener(e -> {
-            var action = (Action) actionComboBox.getSelectedItem();
-            var weight = (double) weightSpinner.getValue();
-            var dse = new TWDecision(action, weight);
-            var model = profileDecisionTable.getModel();
-            //noinspection unchecked
-            ((DecisionTableModel<TWDecision>) model).addRow(dse);
-        });
-
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 // When the board has changes, ask the user
-                if (!hasChanges || (showSavePrompt() != DialogResult.CANCELLED)) {
+                if (!hasChanges() || (showSavePrompt() != DialogResult.CANCELLED)) {
                     if (controller != null) {
                         controller.removeAllActions();
                         controller.aiEditor = null;
@@ -131,17 +129,26 @@ public class AiProfileEditor extends JFrame {
             }
         });
 
-
         // Add mouse listener for double-click events
         repositoryViewer.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                     TreePath path = repositoryViewer.getPathForLocation(e.getX(), e.getY());
                     if (path != null) {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                         if (node.isLeaf()) {
-                            handleNodeAction(node);
+                            handleOpenNodeAction(node);
+                        }
+                    }
+                } else if (e.getButton() != MouseEvent.BUTTON1) {
+                    TreePath path = repositoryViewer.getPathForLocation(e.getX(), e.getY());
+                    if (path != null) {
+                        repositoryViewer.setSelectionPath(path);
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        if (node.isLeaf()) {
+                            JPopupMenu contextMenu = createContextMenu(node);
+                            contextMenu.show(repositoryViewer, e.getX(), e.getY());
                         }
                     }
                 }
@@ -153,37 +160,99 @@ public class AiProfileEditor extends JFrame {
             if (path != null) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 if (node.isLeaf()) {
-                    handleNodeAction(node);
-                }
-            }
-        });
-
-        menuBar.addActionListener(e -> {
-            if (!ignoreHotKeys) {
-                switch (e.getActionCommand()) {
-                    case "Save":
-                        persistProfile();
-                        break;
-                    case "Close":
-                        if (!hasChanges || (showSavePrompt() != DialogResult.CANCELLED)) {
-                            if (controller != null) {
-                                controller.removeAllActions();
-                                controller.aiEditor = null;
-                            }
-                            getFrame().dispose();
-                        }
-                        break;
-                    case "Help":
-//                        controller.showHelp("aiEditor");
-                        break;
+                    handleOpenNodeAction(node);
                 }
             }
         });
         getFrame().setJMenuBar(menuBar);
+        menuBar.addActionListener(this);
+        saveProfileButton.addActionListener(e -> {
+            try {
+                persistProfile();
+            } catch (IllegalArgumentException ex) {
+                logger.formattedErrorDialog("Error saving profile",
+                    "One or more fields are empty or invalid in the Profile tab. Please correct the errors and try again.");
+            }
+        });
+        saveDseButton.addActionListener(e -> {
+            try {
+                persistDecisionScoreEvaluator();
+            } catch (IllegalArgumentException ex) {
+                logger.formattedErrorDialog("Error saving decision score evaluator",
+                    "One or more fields are empty or invalid in the Decision Score Evaluator tab. Please correct the errors and try again.");
+            }
+        });
+        saveConsiderationButton.addActionListener(e -> {
+            try {
+                persistConsideration();
+            } catch (IllegalArgumentException ex) {
+                logger.formattedErrorDialog("Error saving consideration",
+                    "One or more fields are empty or invalid in the Consideration tab. Please correct the errors and try again.");
+            }
+        });
+        saveDecisionButton.addActionListener(e -> {
+            try {
+                persistDecision();
+            } catch (IllegalArgumentException ex) {
+                logger.formattedErrorDialog("Error saving decision",
+                    "One or more fields are empty or invalid in the Decision tab. Please correct the errors and try again.");
+            }
+        });
+        saveProfileButton.setVisible(true);
+        saveDseButton.setVisible(false);
+        saveConsiderationButton.setVisible(false);
+        saveDecisionButton.setVisible(false);
+        mainEditorTabbedPane.addChangeListener(e -> {
+            if (mainEditorTabbedPane.getSelectedComponent() == profileTabPane) {
+                saveProfileButton.setVisible(true);
+                saveDseButton.setVisible(false);
+                saveConsiderationButton.setVisible(false);
+                saveDecisionButton.setVisible(false);
+            } else if (mainEditorTabbedPane.getSelectedComponent() == dseTabPane) {
+                saveProfileButton.setVisible(false);
+                saveDseButton.setVisible(true);
+                saveConsiderationButton.setVisible(false);
+                saveDecisionButton.setVisible(false);
+            } else if (mainEditorTabbedPane.getSelectedComponent() == considerationTabPane) {
+                saveProfileButton.setVisible(false);
+                saveDseButton.setVisible(false);
+                saveConsiderationButton.setVisible(true);
+                saveDecisionButton.setVisible(false);
+            } else if (mainEditorTabbedPane.getSelectedComponent() == decisionTabPane) {
+                saveProfileButton.setVisible(false);
+                saveDseButton.setVisible(false);
+                saveConsiderationButton.setVisible(false);
+                saveDecisionButton.setVisible(true);
+            }
+        });
+
+    }
+
+    private JPopupMenu createContextMenu(DefaultMutableTreeNode node) {
+        // Create a popup menu
+        JPopupMenu contextMenu = new JPopupMenu();
+
+        // Example menu item #1
+        JMenuItem menuItemAction = new JMenuItem("Open");
+        menuItemAction.addActionListener(evt -> {
+            handleOpenNodeAction(node);
+        });
+        contextMenu.add(menuItemAction);
+
+        // Example menu item #2
+        JMenuItem menuItemOther = new JMenuItem("Delete");
+        menuItemOther.addActionListener(evt -> {
+            // Another action
+            handleDeleteNodeAction(node);
+        });
+        contextMenu.add(menuItemOther);
+
+        return contextMenu;
     }
 
 
-    private void handleNodeAction(DefaultMutableTreeNode node) {
+
+    private void handleOpenNodeAction(DefaultMutableTreeNode node) {
         var obj = node.getUserObject();
         if (obj instanceof TWDecision twDecision) {
             openDecision(twDecision);
@@ -196,31 +265,49 @@ public class AiProfileEditor extends JFrame {
         }
     }
 
-//    decisionScoreEvaluatorTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
-//    decisionTabDsePanel = new DecisionScoreEvaluatorPane();
-//    dsePane = new DecisionScoreEvaluatorPane();
+
+    private void handleDeleteNodeAction(DefaultMutableTreeNode node) {
+        var obj = node.getUserObject();
+        if (obj instanceof TWDecision twDecision) {
+            sharedData.removeDecision(twDecision);
+            hasDecisionChanges = true;
+        } else if (obj instanceof TWProfile twProfile) {
+            sharedData.removeProfile(twProfile);
+            hasProfileChanges = true;
+        } else if (obj instanceof TWDecisionScoreEvaluator twDse) {
+            sharedData.removeDecisionScoreEvaluator(twDse);
+            hasDseChanges = true;
+        } else if (obj instanceof TWConsideration twConsideration) {
+            sharedData.removeConsideration(twConsideration);
+            hasConsiderationChanges = true;
+        }
+    }
 
     private void openConsideration(TWConsideration twConsideration) {
         considerationPane.setConsideration(twConsideration);
         mainEditorTabbedPane.setSelectedComponent(considerationTabPane);
+        hasConsiderationChanges = true;
     }
 
     private void openDecision(TWDecision twDecision) {
         ((DecisionScoreEvaluatorPane) decisionTabDsePanel).setDecisionScoreEvaluator(twDecision.getDecisionScoreEvaluator());
         mainEditorTabbedPane.setSelectedComponent(decisionTabPane);
+        hasDecisionChanges = true;
     }
 
     private void openProfile(TWProfile twProfile) {
-        // profileTab.setProfile(twProfile);
+        profileId = twProfile.getId();
         profileNameTextField.setText(twProfile.getName());
         descriptionTextField.setText(twProfile.getDescription());
         profileDecisionTable.setModel(new DecisionTableModel<>(twProfile.getDecisions()));
         mainEditorTabbedPane.setSelectedComponent(profileTabPane);
+        hasProfileChanges = true;
     }
 
     private void openDecisionScoreEvaluator(TWDecisionScoreEvaluator twDse) {
         ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(twDse);
         mainEditorTabbedPane.setSelectedComponent(dseTabPane);
+        hasDseChanges = true;
     }
 
     private DialogResult showSavePrompt() {
@@ -232,34 +319,154 @@ public class AiProfileEditor extends JFrame {
             JOptionPane.WARNING_MESSAGE);
         ignoreHotKeys = false;
         // When the user cancels or did not actually save the board, don't load anything
-        if (((savePrompt == JOptionPane.YES_OPTION) && !hasChanges)
+        if (((savePrompt == JOptionPane.YES_OPTION) && !hasChanges())
             || (savePrompt == JOptionPane.CANCEL_OPTION)
             || (savePrompt == JOptionPane.CLOSED_OPTION)) {
             return DialogResult.CANCELLED;
         } else {
-            persistProfile();
-            return DialogResult.CONFIRMED;
+            if (saveEverything()) {
+                return DialogResult.CONFIRMED;
+            } else {
+                return DialogResult.CANCELLED;
+            }
         }
+    }
+
+    private boolean saveEverything() {
+        try {
+            if (hasProfileChanges) {
+                persistProfile();
+            }
+            if (hasDecisionChanges) {
+                persistDecision();
+            }
+            if (hasDseChanges) {
+                persistDecisionScoreEvaluator();
+            }
+            if (hasConsiderationChanges) {
+                persistConsideration();
+            }
+            if (hasChangesToSave) {
+                sharedData.persistDataToUserData();
+                hasChangesToSave = false;
+            }
+            return true;
+        } catch (IllegalArgumentException ex) {
+            logger.formattedErrorDialog("Error saving data",
+                "One or more fields are empty or invalid. Please correct the errors and try again.");
+        }
+        return false;
+    }
+
+    private void persistConsideration() {
+        var consideration = considerationPane.getConsideration();
+        sharedData.addConsideration(consideration);
+        hasConsiderationChanges = false;
+        hasChangesToSave = true;
+        loadDataRepoViewer();
+    }
+
+    private void persistDecision() {
+        var dse = ((DecisionScoreEvaluatorPane) decisionTabDsePanel).getDecisionScoreEvaluator();
+        var decision = new TWDecision((Action) actionComboBox.getSelectedItem(), (double) weightSpinner.getValue(), dse);
+        sharedData.addDecision(decision);
+        hasDecisionChanges = false;
+        hasChangesToSave = true;
+        loadDataRepoViewer();
+    }
+
+    private void persistDecisionScoreEvaluator() {
+        var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
+        sharedData.addDecisionScoreEvaluator(dse);
+        hasDseChanges = false;
+        hasChangesToSave = true;
+        loadDataRepoViewer();
     }
 
     private void persistProfile() {
         //noinspection unchecked
         var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
-        var updatedList = model.getDecisions();
-        System.out.println("== Updated DecisionScoreEvaluator List ==");
-        for (int i = 0; i < updatedList.size(); i++) {
-            var dse = updatedList.get(i);
-            System.out.printf("Row %d -> Decision: %s, Evaluator: %s%n",
-                i,
-                dse.getAction().getActionName(),
-                dse.getDecisionScoreEvaluator().getName());
-            sharedData.addDecision(dse);
+        if (profileId <= 0) {
+            var maxId = sharedData.getProfiles().stream().map(TWProfile::getId).max(Integer::compareTo).orElse(0);
+            profileId = new Random().nextInt(maxId + 1, Integer.MAX_VALUE);
         }
-        sharedData.persistDataToUserData();
+        var decisions = model.getDecisions().stream().map(e -> (Decision<Entity, Entity>) e).toList();
+        sharedData.addProfile(new TWProfile(profileId, profileNameTextField.getText(), descriptionTextField.getText(), decisions));
+        hasProfileChanges = false;
+        hasChangesToSave = true;
+        loadDataRepoViewer();
     }
 
     public JFrame getFrame() {
         return this;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case AI_EDITOR_NEW:
+                createNewProfile();
+                break;
+            case AI_EDITOR_OPEN:
+                break;
+            case AI_EDITOR_RECENT_PROFILE:
+                break;
+            case AI_EDITOR_SAVE:
+                saveEverything();
+                break;
+            case AI_EDITOR_SAVE_AS:
+                // not implemented
+                break;
+            case AI_EDITOR_RELOAD_FROM_DISK:
+
+                break;
+            case AI_EDITOR_UNDO:
+                break;
+            case AI_EDITOR_REDO:
+                break;
+            case AI_EDITOR_NEW_DECISION:
+                createNewDecision();
+                break;
+            case AI_EDITOR_NEW_CONSIDERATION:
+                addNewConsideration();
+                break;
+            case AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR:
+                createNewDecisionScoreEvaluator();
+                break;
+            case AI_EDITOR_EXPORT:
+                break;
+            case AI_EDITOR_IMPORT:
+                break;
+        }
+    }
+
+    private void createNewProfile() {
+        profileId = -1;
+        profileNameTextField.setText("New Profile");
+        descriptionTextField.setText("");
+        initializeProfileUI();
+        mainEditorTabbedPane.setSelectedComponent(profileTabPane);
+        profileTabPane.updateUI();
+    }
+
+    private void createNewDecisionScoreEvaluator() {
+        ((DecisionScoreEvaluatorPane) dsePane).reset();
+        mainEditorTabbedPane.setSelectedComponent(dseTabPane);
+        dsePane.updateUI();
+    }
+
+    private void addNewConsideration() {
+        ((DecisionScoreEvaluatorPane) dsePane).addEmptyConsideration();
+        dsePane.updateUI();
+    }
+
+    private void createNewDecision() {
+        var action = (Action) actionComboBox.getSelectedItem();
+        var weight = (double) weightSpinner.getValue();
+        var dse = new TWDecision(action, weight);
+        var model = profileDecisionTable.getModel();
+        //noinspection unchecked
+        ((DecisionTableModel<TWDecision>) model).addRow(dse);
     }
 
     private enum TreeViewHelper {
@@ -282,6 +489,19 @@ public class AiProfileEditor extends JFrame {
     private void createUIComponents() {
         weightSpinner = new JSpinner(new SpinnerNumberModel(1d, 0d, 4d, 0.01d));
 
+        loadDataRepoViewer();
+        actionComboBox = new JComboBox<>(Action.values());
+        initializeProfileUI();
+        decisionTabDsePanel = new DecisionScoreEvaluatorPane();
+        dsePane = new DecisionScoreEvaluatorPane();
+    }
+
+    private void initializeProfileUI() {
+        var model = new DecisionTableModel<>(sharedData.getDecisions());
+        profileDecisionTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
+    }
+
+    private void loadDataRepoViewer() {
         var root = new DefaultMutableTreeNode(Messages.getString("aiEditor.tree.title"));
         addToMutableTreeNode(root, TreeViewHelper.PROFILES.getName(), sharedData.getProfiles());
         addToMutableTreeNode(root, TreeViewHelper.DECISIONS.getName(), sharedData.getDecisions());
@@ -290,12 +510,7 @@ public class AiProfileEditor extends JFrame {
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
         repositoryViewer = new JTree(treeModel);
-        actionComboBox = new JComboBox<>(Action.values());
-        var model = new DecisionTableModel<>(sharedData.getDecisions());
-        profileDecisionTable = new DecisionScoreEvaluatorTable<>(model, Action.values(), sharedData.getDecisionScoreEvaluators());
-        decisionTabDsePanel = new DecisionScoreEvaluatorPane();
-        dsePane = new DecisionScoreEvaluatorPane();
-
+        repositoryViewer.updateUI();
     }
 
     private <T extends NamedObject> void addToMutableTreeNode(DefaultMutableTreeNode root, String nodeName, List<T> items) {
@@ -321,15 +536,21 @@ public class AiProfileEditor extends JFrame {
         final JSplitPane splitPane1 = new JSplitPane();
         uAiEditorPanel.add(splitPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(200, 200), null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setLeftComponent(panel1);
-        newDecisionButton = new JButton();
-        this.$$$loadButtonText$$$(newDecisionButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.newDecision"));
-        panel1.add(newDecisionButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(233, 34), null, 0, false));
-        newConsiderationButton = new JButton();
-        this.$$$loadButtonText$$$(newConsiderationButton, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.newConsideration"));
-        panel1.add(newConsiderationButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(233, 34), null, 0, false));
-        panel1.add(repositoryViewer, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(233, 50), null, 0, false));
+        panel1.add(repositoryViewer, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(233, 50), null, 0, false));
+        saveProfileButton = new JButton();
+        saveProfileButton.setText("Save");
+        panel1.add(saveProfileButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveDseButton = new JButton();
+        saveDseButton.setText("Save");
+        panel1.add(saveDseButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveConsiderationButton = new JButton();
+        saveConsiderationButton.setText("Save");
+        panel1.add(saveConsiderationButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveDecisionButton = new JButton();
+        saveDecisionButton.setText("Save");
+        panel1.add(saveDecisionButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         splitPane1.setRightComponent(panel2);
@@ -339,10 +560,13 @@ public class AiProfileEditor extends JFrame {
         profileTabPane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile"), profileTabPane);
         profileScrollPane = new JScrollPane();
+        profileScrollPane.setDoubleBuffered(false);
         profileScrollPane.setWheelScrollingEnabled(true);
         profileTabPane.add(profileScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         profileDecisionTable.setColumnSelectionAllowed(false);
+        profileDecisionTable.setDragEnabled(true);
         profileDecisionTable.setFillsViewportHeight(true);
+        profileDecisionTable.setInheritsPopupMenu(true);
         profileDecisionTable.setMinimumSize(new Dimension(150, 32));
         profileDecisionTable.setPreferredScrollableViewportSize(new Dimension(150, 32));
         profileScrollPane.setViewportView(profileDecisionTable);
@@ -440,33 +664,6 @@ public class AiProfileEditor extends JFrame {
         component.setText(result.toString());
         if (haveMnemonic) {
             component.setDisplayedMnemonic(mnemonic);
-            component.setDisplayedMnemonicIndex(mnemonicIndex);
-        }
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private void $$$loadButtonText$$$(AbstractButton component, String text) {
-        StringBuffer result = new StringBuffer();
-        boolean haveMnemonic = false;
-        char mnemonic = '\0';
-        int mnemonicIndex = -1;
-        for (int i = 0; i < text.length(); i++) {
-            if (text.charAt(i) == '&') {
-                i++;
-                if (i == text.length()) break;
-                if (!haveMnemonic && text.charAt(i) != '&') {
-                    haveMnemonic = true;
-                    mnemonic = text.charAt(i);
-                    mnemonicIndex = result.length();
-                }
-            }
-            result.append(text.charAt(i));
-        }
-        component.setText(result.toString());
-        if (haveMnemonic) {
-            component.setMnemonic(mnemonic);
             component.setDisplayedMnemonicIndex(mnemonicIndex);
         }
     }

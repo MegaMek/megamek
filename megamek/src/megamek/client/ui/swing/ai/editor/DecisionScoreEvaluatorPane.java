@@ -19,11 +19,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
-import megamek.common.Entity;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -34,11 +35,46 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private JPanel decisionScoreEvaluatorPane;
     private JPanel considerationsPane;
     private final HoverStateModel hoverStateModel;
-
+    private final List<ConsiderationPane> considerationPaneList = new ArrayList<>();
     public DecisionScoreEvaluatorPane() {
         $$$setupUI$$$();
         add(decisionScoreEvaluatorPane, BorderLayout.WEST);
         hoverStateModel = new HoverStateModel();
+    }
+
+    public TWDecisionScoreEvaluator getDecisionScoreEvaluator() {
+        var dse = new TWDecisionScoreEvaluator();
+        dse.setName(nameField.getText());
+        dse.setDescription(descriptionField.getText());
+        dse.setNotes(notesField.getText());
+        for (var considerationPane : considerationPaneList) {
+            dse.addConsideration(considerationPane.getConsideration());
+        }
+        return dse;
+    }
+
+    public void addEmptyConsideration() {
+        considerationsPane.removeAll();
+        considerationsPane.setLayout(new GridLayoutManager((considerationPaneList.size()+1) * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        int row = 0;
+        var emptyConsideration = new ConsiderationPane();
+        emptyConsideration.setEmptyConsideration();
+        emptyConsideration.setHoverStateModel(hoverStateModel);
+        considerationsPane.add(emptyConsideration, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        for (var c : considerationPaneList) {
+            considerationsPane.add(c, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+            considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        }
+        considerationPaneList.add(0, emptyConsideration);
+    }
+
+    public void reset() {
+        nameField.setText("");
+        descriptionField.setText("");
+        notesField.setText("");
+        considerationsPane.removeAll();
+        considerationPaneList.clear();
     }
 
     public void setDecisionScoreEvaluator(DecisionScoreEvaluator<?, ?> dse) {
@@ -46,15 +82,17 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         descriptionField.setText(dse.getDescription());
         notesField.setText(dse.getNotes());
         considerationsPane.removeAll();
+
         var considerations = dse.getConsiderations();
         considerationsPane.setLayout(new GridLayoutManager(considerations.size() * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationPaneList.clear();
 
         int row = 0;
         for (var consideration : considerations) {
             var c = new ConsiderationPane();
             c.setConsideration(consideration);
             c.setHoverStateModel(hoverStateModel);
-
+            considerationPaneList.add(c);
             considerationsPane.add(c, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
             considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         }

@@ -389,25 +389,30 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu = new JMenu(Messages.getString("CommonMenuBar.AIEditorMenu"));
         menu.setMnemonic(VK_A);
         add(menu);
+
         initMenuItem(aiEditorNew, menu, AI_EDITOR_NEW);
         initMenuItem(aiEditorOpen, menu, AI_EDITOR_OPEN);
         initMenuItem(aiEditorRecentProfile, menu, AI_EDITOR_RECENT_PROFILE);
         initializeRecentAiProfilesMenu();
         menu.addSeparator();
+
         initMenuItem(aiEditorSave, menu, AI_EDITOR_SAVE);
         initMenuItem(aiEditorSaveAs, menu, AI_EDITOR_SAVE_AS);
         initMenuItem(aiEditorReloadFromDisk, menu, AI_EDITOR_RELOAD_FROM_DISK);
         menu.addSeparator();
+
         initMenuItem(aiEditorUndo, menu, AI_EDITOR_UNDO);
         initMenuItem(aiEditorRedo, menu, AI_EDITOR_REDO);
         menu.addSeparator();
-        initMenuItem(aiEditorNewDecision, menu, AI_EDITOR_NEW_DECISION);
-        aiEditorNewDecision.setSelected(GUIP.getShowSensorRange());
+
         initMenuItem(aiEditorNewConsideration, menu, AI_EDITOR_NEW_CONSIDERATION);
-        aiEditorNewConsideration.setSelected(GUIP.getShowSensorRange());
+        aiEditorNewConsideration.setMnemonic(VK_U);
         initMenuItem(aiEditorNewDecisionScoreEvaluator, menu, AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR);
-        aiEditorNewDecisionScoreEvaluator.setSelected(GUIP.getShowSensorRange());
+        aiEditorNewDecisionScoreEvaluator.setMnemonic(VK_I);
+        initMenuItem(aiEditorNewDecision, menu, AI_EDITOR_NEW_DECISION);
+        aiEditorNewDecision.setMnemonic(VK_O);
         menu.addSeparator();
+
         initMenuItem(aiEditorExport, menu, AI_EDITOR_EXPORT);
         initMenuItem(aiEditorImport, menu, AI_EDITOR_IMPORT);
 

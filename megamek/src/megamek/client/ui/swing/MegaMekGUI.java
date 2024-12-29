@@ -32,7 +32,6 @@ import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.ai.editor.AiProfileEditor;
-import megamek.client.ui.swing.ai.editor.UtilityAiEditor;
 import megamek.client.ui.swing.dialog.MainMenuUnitBrowserDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;

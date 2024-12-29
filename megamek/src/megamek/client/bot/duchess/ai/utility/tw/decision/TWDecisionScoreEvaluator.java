@@ -21,6 +21,7 @@ import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.common.Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonTypeName("TWDecisionScoreEvaluator")

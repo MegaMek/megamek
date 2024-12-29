@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -109,6 +110,9 @@ public class MegaMek {
                     parser.help()));
             System.exit(1);
         }
+
+        // log jvm parameters
+        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 

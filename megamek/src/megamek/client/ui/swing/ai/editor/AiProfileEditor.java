@@ -44,6 +44,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.ClientGUI.*;
 
@@ -387,8 +388,10 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         //noinspection unchecked
         var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
         if (profileId <= 0) {
-            var maxId = sharedData.getProfiles().stream().map(TWProfile::getId).max(Integer::compareTo).orElse(0);
-            profileId = new Random().nextInt(maxId + 1, Integer.MAX_VALUE);
+            var ids = sharedData.getProfiles().stream().map(TWProfile::getId).collect(Collectors.toSet());
+            while (ids.contains(profileId) || profileId <= 0) {
+                profileId = new Random().nextInt(1, Integer.MAX_VALUE);
+            }
         }
         var decisions = model.getDecisions().stream().map(e -> (Decision<Entity, Entity>) e).toList();
         sharedData.addProfile(new TWProfile(profileId, profileNameTextField.getText(), descriptionTextField.getText(), decisions));

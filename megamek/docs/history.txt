@@ -62,6 +62,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6293: Prevent NPE when using non-scheduled Nuke
 + Fix MML #1667: incorrect cargo bay minimum doors
 + PR #6321: add indicators heat in the weapon display
++ Fix #6324: Prevent NPE when laser bays get mode count
++ PR #6326 Log jvm parameter
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

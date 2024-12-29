@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -33,7 +34,9 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = MyUnitArmor.class, name = "MyUnitArmor"),
     @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
     @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
-    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat")
+    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
+    @JsonSubTypes.Type(value = MyUnitRoleIs.class, name = "MyUnitRoleIs"),
+    @JsonSubTypes.Type(value = TargetUnitsHaveRole.class, name = "TargetUnitsHaveRole"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements NamedObject {
@@ -42,7 +45,7 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     @JsonProperty("curve")
     private Curve curve;
     @JsonProperty("parameters")
-    private Map<String, Object> parameters;
+    protected Map<String, Object> parameters = Collections.emptyMap();
 
     public Consideration() {
     }
@@ -52,7 +55,7 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     }
 
     public Consideration(String name, Curve curve) {
-        this(name, curve, new HashMap<>());
+        this(name, curve, Collections.emptyMap());
     }
 
     public Consideration(String name, Curve curve, Map<String, Object> parameters) {
@@ -101,6 +104,10 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
 
     protected long getLongParameter(String key) {
         return (long) parameters.get(key);
+    }
+
+    protected boolean hasParameter(String key) {
+        return parameters.containsKey(key);
     }
 
     public double computeResponseCurve(double score) {

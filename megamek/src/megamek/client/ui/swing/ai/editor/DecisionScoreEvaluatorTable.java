@@ -21,11 +21,13 @@ import megamek.ai.utility.DecisionScoreEvaluator;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import java.awt.*;
 import java.util.List;
 
 public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE extends DecisionScoreEvaluator<?,?>> extends JTable {
 
     private final Action[] actionList;
+
     private final List<DSE> dse;
 
     public DecisionScoreEvaluatorTable(
@@ -40,6 +42,7 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public DecisionTableModel<DECISION> getModel() {
         return (DecisionTableModel<DECISION>) super.getModel();
     }
@@ -48,19 +51,45 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
     public TableCellEditor getCellEditor(int row, int column) {
         // Decision is column 1, Evaluator is column 2
         if (column == 1) {
-            // Create a combo box for Decisions
             JComboBox<Action> cb = new JComboBox<>(
                 actionList
             );
             return new DefaultCellEditor(cb);
         } else if (column == 2) {
-            // Create a combo box for Evaluators
+            return new SpinnerCellEditor(1d, 0d, 5d, 0.1d);
+        } else if (column == 3) {
             var cb = new JComboBox<>(
                 dse.toArray(new DecisionScoreEvaluator[0])
             );
             return new DefaultCellEditor(cb);
         }
         return super.getCellEditor(row, column);
+    }
+
+
+    public static class SpinnerCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JSpinner spinner;
+
+        public SpinnerCellEditor(double defaultValue, double min, double max, double step) {
+            spinner = new JSpinner(new SpinnerNumberModel(min, min, max, step));
+            spinner.setValue(defaultValue);
+            JComponent editor = spinner.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor) {
+                JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+                textField.setHorizontalAlignment(JFormattedTextField.LEFT);
+            }
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return spinner.getValue();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            spinner.setValue(value);
+            return spinner;
+        }
     }
 
 }

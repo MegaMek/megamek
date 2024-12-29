@@ -19,6 +19,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import megamek.ai.utility.Consideration;
+import megamek.ai.utility.DefaultCurve;
 import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
 import megamek.common.Entity;
@@ -28,6 +29,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class ConsiderationPane extends JPanel {
@@ -59,8 +61,26 @@ public class ConsiderationPane extends JPanel {
         ((CurvePane) curveContainer).setCurve(consideration.getCurve());
     }
 
+    public void setEmptyConsideration() {
+        considerationComboBox.setSelectedItem(null);
+        considerationName.setText("");
+        ((ParametersTableModel) parametersTable.getModel()).setParameters(Collections.emptyMap());
+        ((CurvePane) curveContainer).setCurve(DefaultCurve.Logit.getCurve());
+    }
+
     public void setHoverStateModel(HoverStateModel model) {
         ((CurvePane) curveContainer).setHoverStateModel(model);
+    }
+
+    public TWConsideration getConsideration() {
+        TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
+        if (consideration == null) {
+            throw new IllegalStateException("No consideration selected");
+        }
+        consideration.setName(considerationName.getText());
+        consideration.setParameters(((ParametersTableModel) parametersTable.getModel()).getParameters());
+        consideration.setCurve(((CurvePane) curveContainer).getCurve().copy());
+        return consideration;
     }
 
     private void createUIComponents() {

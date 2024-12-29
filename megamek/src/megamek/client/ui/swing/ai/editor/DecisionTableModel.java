@@ -22,12 +22,14 @@ import megamek.ai.utility.DecisionScoreEvaluator;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
-public  class DecisionTableModel<DECISION extends Decision<?,?>> extends AbstractTableModel {
+public class DecisionTableModel<DECISION extends Decision<?,?>> extends AbstractTableModel {
 
     private final List<DECISION> rows;
-    private final String[] columnNames = { "ID", "Decision", "Evaluator" };
+    private final String[] columnNames = { "ID", "Decision", "Weight", "Evaluator" };
+    private final Set<Integer> editableColumns = Set.of(1, 2, 3);
 
     public DecisionTableModel(List<DECISION> initialRows) {
         this.rows = new ArrayList<>(initialRows);
@@ -59,15 +61,15 @@ public  class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstrac
         return switch (columnIndex) {
             case 0 -> rowIndex;  // or some ID from dse
             case 1 -> dse.getAction().getActionName();
-            case 2 -> dse.getDecisionScoreEvaluator().getName();
+            case 2 -> dse.getWeight();
+            case 3 -> dse.getDecisionScoreEvaluator().getName();
             default -> null;
         };
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        // Let's keep ID read-only, but allow editing for Decision & Evaluator
-        return columnIndex == 1 || columnIndex == 2;
+        return editableColumns.contains(columnIndex);
     }
 
     @Override
@@ -81,6 +83,10 @@ public  class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstrac
                 }
                 break;
             case 2:
+                if (aValue instanceof Number weight) {
+                    dse.setWeight((Double) weight);
+                }
+            case 3:
                 if (aValue instanceof DecisionScoreEvaluator decisionScoreEvaluator) {
                     dse.setDecisionScoreEvaluator(decisionScoreEvaluator);
                 }

@@ -22,7 +22,6 @@ import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecision;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
 import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 import java.io.File;
@@ -62,16 +61,27 @@ public class TWUtilityAIRepository {
     }
 
     private void initialize() {
-//        persistData();
-        loadConsiderations(new MegaMekFile(Configuration.twAiDir(), CONSIDERATIONS).getFile())
+        loadRepository();
+        loadUserDataRepository();
+    }
+
+    private void loadRepository() {
+        loadData(Configuration.twAiDir());
+    }
+
+    private void loadUserDataRepository() {
+        loadData(Configuration.userDataAiTwDir());
+    }
+
+    private void loadData(File directory) {
+        loadConsiderations(new File(directory, CONSIDERATIONS))
             .forEach(twConsideration -> considerations.put(twConsideration.getClass().getSimpleName(), twConsideration));
-        loadDecisionScoreEvaluators(new MegaMekFile(Configuration.twAiDir(), EVALUATORS).getFile()).forEach(
+        loadDecisionScoreEvaluators(new File(directory, EVALUATORS)).forEach(
             twDecisionScoreEvaluator -> decisionScoreEvaluators.put(twDecisionScoreEvaluator.getName(), twDecisionScoreEvaluator));
-        loadDecisions(new MegaMekFile(Configuration.twAiDir(), DECISIONS).getFile()).forEach(
+        loadDecisions(new File(directory, DECISIONS)).forEach(
             twDecision -> decisions.put(twDecision.getName(), twDecision));
-        loadProfiles(new MegaMekFile(Configuration.twAiDir(), PROFILES).getFile()).forEach(
+        loadProfiles(new File(directory, PROFILES)).forEach(
             twProfile -> profiles.put(twProfile.getName(), twProfile));
-        persistDataToUserData();
     }
 
     public void reloadRepository() {
@@ -198,7 +208,7 @@ public class TWUtilityAIRepository {
                 objects.addAll(objectsFromFile(clazz, file));
             }
         }
-        return objects;
+        return objects.stream().filter(Objects::nonNull).toList();
     }
 
     private <T> List<T> objectsFromFile(Class<T> clazz, File file) {

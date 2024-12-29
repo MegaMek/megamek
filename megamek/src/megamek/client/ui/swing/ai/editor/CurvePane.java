@@ -48,6 +48,10 @@ public class CurvePane extends JPanel {
         updateCurveDataUI();
     }
 
+    public Curve getCurve() {
+        return selectedCurve.get();
+    }
+
     public void setHoverStateModel(HoverStateModel model) {
         ((CurveGraph) this.curveGraph).setHoverStateModel(model);
     }

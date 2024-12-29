@@ -38,4 +38,9 @@ public class TWProfile extends Profile<Entity, Entity> {
     {
         super(id, name, description, decisions);
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

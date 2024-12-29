@@ -83,9 +83,8 @@ public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Named
         return considerations;
     }
 
-    public DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> addConsideration(Consideration<IN_GAME_OBJECT, TARGETABLE> consideration) {
+    public void addConsideration(Consideration<IN_GAME_OBJECT, TARGETABLE> consideration) {
         considerations.add(consideration);
-        return this;
     }
 
     public String getDescription() {

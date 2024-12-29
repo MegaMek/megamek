@@ -50,6 +50,6 @@ public enum DefaultCurve {
     }
 
     public Curve getCurve() {
-        return curve;
+        return curve.copy();
     }
 }

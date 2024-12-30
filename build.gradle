@@ -15,7 +15,7 @@ allprojects {
 
 subprojects {
     group = 'org.megamek'
-    version = '0.50.02'
+    version = '0.50.03-SNAPSHOT'
 }
 
 // A properties_local.gradle file can be used to override any of the above options. For instance,

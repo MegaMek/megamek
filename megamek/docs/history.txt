@@ -65,6 +65,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6324: Prevent NPE when laser bays get mode count
 + PR #6326 Log jvm parameter
 + Fix #6313: Prevent NPE when opening player settings dialog in-game
++ PR #6330: Prevent annoying NPEs for players clicking around the board while waiting for turn interrupts to be resolved (point blank shots etc)
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

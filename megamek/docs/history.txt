@@ -1,6 +1,6 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.02-SNAPSHOT
+0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions
 + PR #6186: Allow pausing a Princess-only game
 + PR #6190: Allow printing unit list from MM

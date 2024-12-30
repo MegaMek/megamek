@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.enums.BuildingType;
 import megamek.logging.MMLogger;
 
 /**
@@ -276,8 +277,8 @@ public class BoardsTagger {
                 water += hex.containsTerrain(WATER) ? 1 : 0;
                 if (hex.containsTerrain(BUILDING)
                         && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
-                        && ((hex.terrainLevel(BUILDING) == Building.LIGHT)
-                                || (hex.terrainLevel(BUILDING) == Building.MEDIUM))) {
+                        && ((hex.terrainLevel(BUILDING) == BuildingType.LIGHT.getTypeValue())
+                                || (hex.terrainLevel(BUILDING) == BuildingType.MEDIUM.getTypeValue()))) {
                     stdBuildings++;
                     int height = hex.terrainLevel(BLDG_ELEV);
                     lowBuildings += (height <= 2) ? 1 : 0;
@@ -287,8 +288,8 @@ public class BoardsTagger {
                     hangar += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
                     fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
                     gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
-                    heavyBuilding += hex.terrainLevel(BUILDING) == Building.HEAVY ? 1 : 0;
-                    hardenedBuilding += hex.terrainLevel(BUILDING) == Building.HARDENED ? 1 : 0;
+                    heavyBuilding += hex.terrainLevel(BUILDING) == BuildingType.HEAVY.getTypeValue() ? 1 : 0;
+                    hardenedBuilding += hex.terrainLevel(BUILDING) == BuildingType.HARDENED.getTypeValue() ? 1 : 0;
                     armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ? 1 : 0;
                 }
                 impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;

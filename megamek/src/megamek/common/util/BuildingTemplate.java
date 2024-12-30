@@ -24,18 +24,18 @@ public class BuildingTemplate implements Serializable {
     public static final int BASEMENT_RANDOM = -1;
 
     private ArrayList<Coords> coordsList = new ArrayList<>();
-    private int type = Building.LIGHT;
+    private BuildingType type = BuildingType.LIGHT;
     private int CF = 15;
     private int height = 2;
     private int basement = BASEMENT_RANDOM;
 
     public BuildingTemplate(BuildingType type, ArrayList<Coords> coords) {
-        this.type = type.getTypeValue();
+        this.type = type;
         coordsList = coords;
         CF = Building.getDefaultCF(type);
     }
 
-    public BuildingTemplate(int type, ArrayList<Coords> coords, int CF,
+    public BuildingTemplate(BuildingType type, ArrayList<Coords> coords, int CF,
             int height, int basement) {
         this.type = type;
         this.coordsList = coords;
@@ -54,7 +54,7 @@ public class BuildingTemplate implements Serializable {
     /**
      * @return type of the building (Building.LIGHT - Building.HARDENED)
      */
-    public int getType() {
+    public BuildingType getType() {
         return type;
     }
 

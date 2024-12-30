@@ -10811,30 +10811,30 @@ public class TWGameManager extends AbstractGameManager {
 
         // Is there the rubble of a medium, heavy,
         // or hardened building in the hex?
-        else if (Building.LIGHT < curHex.terrainLevel(Terrains.RUBBLE)) {
+        else if (BuildingType.LIGHT.getTypeValue() < curHex.terrainLevel(Terrains.RUBBLE)) {
 
             // Finding a club is not guaranteed. The chances are
             // based on the type of building that produced the
             // rubble.
             boolean found = false;
             int roll = Compute.d6(2);
-            switch (curHex.terrainLevel(Terrains.RUBBLE)) {
-                case Building.MEDIUM:
+            switch (BuildingType.getType(curHex.terrainLevel(Terrains.RUBBLE))) {
+                case MEDIUM:
                     if (roll >= 7) {
                         found = true;
                     }
                     break;
-                case Building.HEAVY:
+                case HEAVY:
                     if (roll >= 6) {
                         found = true;
                     }
                     break;
-                case Building.HARDENED:
+                case HARDENED:
                     if (roll >= 5) {
                         found = true;
                     }
                     break;
-                case Building.WALL:
+                case WALL:
                     if (roll >= 13) {
                         found = true;
                     }
@@ -25687,8 +25687,8 @@ public class TWGameManager extends AbstractGameManager {
             // Have to check if it's inferno smoke or from a heavy/hardened
             // building
             // - heavy smoke from those
-            if (bInferno || (Building.MEDIUM < smokeHex.terrainLevel(Terrains.FUEL_TANK))
-                    || (Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING))) {
+            if (bInferno || (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.FUEL_TANK))
+                    || (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.BUILDING))) {
                 if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke fills hex
                     r = new Report(5180, Report.PUBLIC);

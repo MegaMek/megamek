@@ -25,21 +25,27 @@ import java.util.ResourceBundle;
 import megamek.MegaMek;
 
 public enum BuildingType {
-    UNKNOWN("BuildingType.UNKNOWN.text", -1),
-    LIGHT("BuildingType.LIGHT.text", 1),
-    MEDIUM("BuildingType.MEDIUM.text", 2),
-    HEAVY("BuildingType.HEAVY.text", 3),
-    HARDENED("BuildingType.HARDENED.text", 4),
-    WALL("BuildingType.WALL.text", 5);
+    UNKNOWN("BuildingType.UNKNOWN.text", -1, -1),
+    LIGHT("BuildingType.LIGHT.text", 1, 15),
+    MEDIUM("BuildingType.MEDIUM.text", 2, 40),
+    HEAVY("BuildingType.HEAVY.text", 3, 90),
+    HARDENED("BuildingType.HARDENED.text", 4, 120),
+    WALL("BuildingType.WALL.text", 5, 120);
     
     private final String name;
     private final int type;
+    private final int defaultCF;
     
-    private BuildingType(String name, int type) {
+    private BuildingType(String name, int type, int defaultCF) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.type = type;
+        this.defaultCF = defaultCF;
+    }
+    
+    public int getDefaultCF() {
+        return defaultCF;
     }
     
     public int getTypeValue() {

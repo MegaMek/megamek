@@ -52,12 +52,6 @@ public class Building implements Serializable {
      */
     protected static final int UNKNOWN = -1;
 
-    // The Building Types
-    public static final int LIGHT = 1;
-    public static final int MEDIUM = 2;
-    public static final int HEAVY = 3;
-    public static final int HARDENED = 4;
-    public static final int WALL = 5;
 
     /**
      * The Building Type of the building; equal to the terrain elevation of the
@@ -582,7 +576,7 @@ public class Building implements Serializable {
      */
     public static int getDefaultCF(BuildingType type) 
     {
-        return getDefaultCF(type.getTypeValue());
+        return type.getDefaultCF();
     }
     
     /**
@@ -596,23 +590,7 @@ public class Building implements Serializable {
      *         <code>Building.UNKNOWN</code> will be returned instead.
      */
     public static int getDefaultCF(int type) {
-        int retval = Building.UNKNOWN;
-        switch (type) {
-            case LIGHT:
-                retval = 15;
-                break;
-            case MEDIUM:
-                retval = 40;
-                break;
-            case HEAVY:
-                retval = 90;
-                break;
-            case HARDENED:
-            case WALL:
-                retval = 120;
-                break;
-        }
-        return retval;
+        return getDefaultCF(BuildingType.getType(type));
     }
 
     /**
@@ -643,24 +621,6 @@ public class Building implements Serializable {
     @Override
     public int hashCode() {
         return id;
-    }
-
-    /**
-     * Returns a string representation of the given building type, e.g. "Hardened".
-     */
-    public static String typeName(int type) {
-        switch (type) {
-            case Building.LIGHT:
-                return "Light";
-            case Building.MEDIUM:
-                return "Medium";
-            case Building.HEAVY:
-                return "Heavy";
-            case Building.HARDENED:
-                return "Hardened";
-            default:
-                return "Unknown";
-        }
     }
 
     /**

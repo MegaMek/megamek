@@ -1,4 +1,4 @@
-generator:MegaMek Suite 0.49.19-SNAPSHOT on 2024-03-16
+generator:MegaMek Suite 0.50.02-SNAPSHOT on 2024-12-30
 chassis:Orion
 model:C
 mul id:7998
@@ -9,7 +9,7 @@ era:3142
 source:Record Sheets: 3150
 rules level:3
 
-quirk:easy_pilot
+quirk:easy_maintain
 quirk:anti_air
 quirk:rugged_1
 

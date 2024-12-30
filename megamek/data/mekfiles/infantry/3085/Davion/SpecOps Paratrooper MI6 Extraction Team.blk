@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-30
 <UnitType>
 Infantry
 </UnitType>
@@ -25,11 +16,11 @@ MI6 Extraction Team
 </mul id:>
 
 <year>
-2500
+3064
 </year>
 
 <originalBuildYear>
-2500
+3064
 </originalBuildYear>
 
 <type>
@@ -44,14 +35,15 @@ Ambusher
 Leg
 </motion_type>
 
-<transporters>
-</transporters>
+<Troopers Equipment>
+Sneak Suit (Camo/IR/ECM)
+</Troopers Equipment>
 
 <Field Guns Equipment>
 </Field Guns Equipment>
 
 <source>
-TRO: 3085
+TRO: 308
 </source>
 
 <squad_size>
@@ -63,7 +55,7 @@ TRO: 3085
 </squadn>
 
 <secondn>
-2
+1
 </secondn>
 
 <Primary>
@@ -73,26 +65,6 @@ InfantryFederatedBarrettM42B
 <Secondary>
 Sonic Stunner
 </Secondary>
-
-<antimek>
-8
-</antimek>
-
-<armorKit>
-Sneak Suit (Camo/IR/ECM)
-</armorKit>
-
-<sneakcamo>
-true
-</sneakcamo>
-
-<sneakir>
-true
-</sneakir>
-
-<sneakecm>
-true
-</sneakecm>
 
 <specialization>
 512

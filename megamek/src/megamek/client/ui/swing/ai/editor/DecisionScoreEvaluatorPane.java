@@ -21,8 +21,9 @@ import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 
 import javax.swing.*;
-
 import java.awt.*;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,18 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         $$$setupUI$$$();
         add(decisionScoreEvaluatorPane, BorderLayout.WEST);
         hoverStateModel = new HoverStateModel();
+
+        // Add a MouseWheelListener to forward the event to the parent JScrollPane
+        this.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (getParent() instanceof JViewport viewport) {
+                    if (viewport.getParent() instanceof JScrollPane scrollPane) {
+                        scrollPane.dispatchEvent(SwingUtilities.convertMouseEvent(e.getComponent(), e, scrollPane));
+                    }
+                }
+            }
+        });
     }
 
     public TWDecisionScoreEvaluator getDecisionScoreEvaluator() {
@@ -96,6 +109,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
             considerationsPane.add(c, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
             considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         }
+        this.updateUI();
     }
 
     /**

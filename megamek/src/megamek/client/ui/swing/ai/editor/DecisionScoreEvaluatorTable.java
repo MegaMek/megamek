@@ -21,7 +21,6 @@ import megamek.ai.utility.DecisionScoreEvaluator;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
 import java.util.List;
 
 public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE extends DecisionScoreEvaluator<?,?>> extends JTable {
@@ -64,32 +63,6 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
             return new DefaultCellEditor(cb);
         }
         return super.getCellEditor(row, column);
-    }
-
-
-    public static class SpinnerCellEditor extends AbstractCellEditor implements TableCellEditor {
-        private final JSpinner spinner;
-
-        public SpinnerCellEditor(double defaultValue, double min, double max, double step) {
-            spinner = new JSpinner(new SpinnerNumberModel(min, min, max, step));
-            spinner.setValue(defaultValue);
-            JComponent editor = spinner.getEditor();
-            if (editor instanceof JSpinner.DefaultEditor) {
-                JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
-                textField.setHorizontalAlignment(JFormattedTextField.LEFT);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return spinner.getValue();
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            spinner.setValue(value);
-            return spinner;
-        }
     }
 
 }

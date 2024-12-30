@@ -156,15 +156,15 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             }
         });
 
-        repositoryViewer.addTreeSelectionListener(e -> {
-            TreePath path = e.getPath();
-            if (path != null) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-                if (node.isLeaf()) {
-                    handleOpenNodeAction(node);
-                }
-            }
-        });
+//        repositoryViewer.addTreeSelectionListener(e -> {
+//            TreePath path = e.getPath();
+//            if (path != null) {
+//                DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+//                if (node.isLeaf()) {
+//                    handleOpenNodeAction(node);
+//                }
+//            }
+//        });
         getFrame().setJMenuBar(menuBar);
         menuBar.addActionListener(this);
         saveProfileButton.addActionListener(e -> {
@@ -232,7 +232,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private JPopupMenu createContextMenu(DefaultMutableTreeNode node) {
         // Create a popup menu
         JPopupMenu contextMenu = new JPopupMenu();
-
+        var obj = node.getUserObject();
         // Example menu item #1
         JMenuItem menuItemAction = new JMenuItem("Open");
         menuItemAction.addActionListener(evt -> {
@@ -240,17 +240,79 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         });
         contextMenu.add(menuItemAction);
 
+        if (obj instanceof TWDecision twDecision) {
+            var action = new JMenuItem("Add to current Profile");
+            action.addActionListener(evt -> {
+                var model = profileDecisionTable.getModel();
+                //noinspection unchecked
+                ((DecisionTableModel<TWDecision>) model).addRow(twDecision);
+            });
+            contextMenu.add(action);
+        } else if (obj instanceof TWProfile) {
+            var action = getCopyProfileMenuItem((TWProfile) obj);
+            contextMenu.add(action);
+        } else if (obj instanceof TWDecisionScoreEvaluator twDse) {
+            var action = new JMenuItem("New Decision Score Evaluator");
+            action.addActionListener(evt -> {
+                createNewDecisionScoreEvaluator();
+            });
+            contextMenu.add(action);
+        } else if (obj instanceof TWConsideration twConsideration) {
+            var action = new JMenuItem("New Consideration");
+            action.addActionListener(evt -> {
+                addNewConsideration();
+            });
+            contextMenu.add(action);
+            // if the tab is a DSE, add the consideration to the DSE
+            if (mainEditorTabbedPane.getSelectedComponent() == dseTabPane) {
+                var action1 = new JMenuItem("Add to current Decision Score Evaluator");
+                action1.addActionListener(evt -> {
+                    var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
+                    dse.addConsideration(twConsideration);
+                    ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(dse);
+                });
+                contextMenu.add(action1);
+            } else if (mainEditorTabbedPane.getSelectedComponent() == decisionTabPane) {
+                var action1 = new JMenuItem("Add to current Decision");
+                action1.addActionListener(evt -> {
+                    var dse = ((DecisionScoreEvaluatorPane)decisionTabDsePanel).getDecisionScoreEvaluator();
+                    dse.addConsideration(twConsideration);
+                    ((DecisionScoreEvaluatorPane) decisionTabDsePanel).setDecisionScoreEvaluator(dse);
+                });
+                contextMenu.add(action1);
+            }
+        }
+
         // Example menu item #2
         JMenuItem menuItemOther = new JMenuItem("Delete");
         menuItemOther.addActionListener(evt -> {
             // Another action
-            handleDeleteNodeAction(node);
+            int deletePrompt = JOptionPane.showConfirmDialog(null,
+                Messages.getString("aiEditor.deleteNodePrompt"),
+                Messages.getString("BoardEditor.deleteNodeTitle"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+            if (deletePrompt == JOptionPane.YES_OPTION) {
+                handleDeleteNodeAction(node);
+            }
         });
         contextMenu.add(menuItemOther);
 
         return contextMenu;
     }
 
+    private JMenuItem getCopyProfileMenuItem(TWProfile obj) {
+        var action = new JMenuItem("Copy Profile");
+        action.addActionListener(evt -> {
+            profileId = -1;
+            profileNameTextField.setText(obj.getName() + " (Copy)");
+            descriptionTextField.setText(obj.getDescription());
+            profileDecisionTable.setModel(new DecisionTableModel<>(obj.getDecisions()));
+            mainEditorTabbedPane.setSelectedComponent(profileTabPane);
+            hasProfileChanges = true;
+        });
+        return action;
+    }
 
 
     private void handleOpenNodeAction(DefaultMutableTreeNode node) {
@@ -282,6 +344,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             sharedData.removeConsideration(twConsideration);
             hasConsiderationChanges = true;
         }
+        ((DefaultTreeModel) repositoryViewer.getModel()).removeNodeFromParent(node);
     }
 
     private void openConsideration(TWConsideration twConsideration) {
@@ -512,8 +575,12 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         addToMutableTreeNode(root, TreeViewHelper.CONSIDERATIONS.getName(), sharedData.getConsiderations());
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
-        repositoryViewer = new JTree(treeModel);
-        repositoryViewer.updateUI();
+        if (repositoryViewer == null) {
+            repositoryViewer = new JTree(treeModel);
+        } else {
+            repositoryViewer.setModel(treeModel);
+            repositoryViewer.updateUI();
+        }
     }
 
     private <T extends NamedObject> void addToMutableTreeNode(DefaultMutableTreeNode root, String nodeName, List<T> items) {

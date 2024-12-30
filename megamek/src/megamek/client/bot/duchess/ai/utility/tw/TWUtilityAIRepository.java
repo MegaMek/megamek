@@ -17,7 +17,7 @@ package megamek.client.bot.duchess.ai.utility.tw;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecision;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
@@ -65,31 +65,30 @@ public class TWUtilityAIRepository {
         loadUserDataRepository();
     }
 
-    private void loadRepository() {
-        loadData(Configuration.twAiDir());
-    }
-
-    private void loadUserDataRepository() {
-        loadData(Configuration.userDataAiTwDir());
-    }
-
-    private void loadData(File directory) {
-        loadConsiderations(new File(directory, CONSIDERATIONS))
-            .forEach(twConsideration -> considerations.put(twConsideration.getClass().getSimpleName(), twConsideration));
-        loadDecisionScoreEvaluators(new File(directory, EVALUATORS)).forEach(
-            twDecisionScoreEvaluator -> decisionScoreEvaluators.put(twDecisionScoreEvaluator.getName(), twDecisionScoreEvaluator));
-        loadDecisions(new File(directory, DECISIONS)).forEach(
-            twDecision -> decisions.put(twDecision.getName(), twDecision));
-        loadProfiles(new File(directory, PROFILES)).forEach(
-            twProfile -> profiles.put(twProfile.getName(), twProfile));
-    }
-
     public void reloadRepository() {
         decisionScoreEvaluators.clear();
         considerations.clear();
         profiles.clear();
         decisions.clear();
         initialize();
+    }
+
+    public void persistData() {
+        var twAiDir = Configuration.twAiDir();
+        createDirectoryStructureIfMissing(twAiDir);
+        persistToFile(new File(twAiDir, EVALUATORS + File.separator + "decision_score_evaluators.yaml"), decisionScoreEvaluators.values());
+        persistToFile(new File(twAiDir, CONSIDERATIONS + File.separator + "considerations.yaml"), considerations.values());
+        persistToFile(new File(twAiDir, DECISIONS + File.separator + "decisions.yaml"), decisions.values());
+        persistToFile(new File(twAiDir, PROFILES + File.separator + "profiles.yaml"), profiles.values());
+    }
+
+    public void persistDataToUserData() {
+        var userDataAiTwDir = Configuration.userDataAiTwDir();
+        createDirectoryStructureIfMissing(userDataAiTwDir);
+        persistToFile(new File(userDataAiTwDir, EVALUATORS + File.separator + "custom_decision_score_evaluators.yaml"), decisionScoreEvaluators.values());
+        persistToFile(new File(userDataAiTwDir, CONSIDERATIONS + File.separator + "custom_considerations.yaml"), considerations.values());
+        persistToFile(new File(userDataAiTwDir, DECISIONS + File.separator + "custom_decisions.yaml"), decisions.values());
+        persistToFile(new File(userDataAiTwDir, PROFILES + File.separator + "custom_profiles.yaml"), profiles.values());
     }
 
     public List<TWDecision> getDecisions() {
@@ -168,6 +167,25 @@ public class TWUtilityAIRepository {
         profiles.put(profile.getName(), profile);
     }
 
+    private void loadRepository() {
+        loadData(Configuration.twAiDir());
+    }
+
+    private void loadUserDataRepository() {
+        loadData(Configuration.userDataAiTwDir());
+    }
+
+    private void loadData(File directory) {
+        loadConsiderations(new File(directory, CONSIDERATIONS))
+            .forEach(twConsideration -> considerations.put(twConsideration.getClass().getSimpleName(), twConsideration));
+        loadDecisionScoreEvaluators(new File(directory, EVALUATORS)).forEach(
+            twDecisionScoreEvaluator -> decisionScoreEvaluators.put(twDecisionScoreEvaluator.getName(), twDecisionScoreEvaluator));
+        loadDecisions(new File(directory, DECISIONS)).forEach(
+            twDecision -> decisions.put(twDecision.getName(), twDecision));
+        loadProfiles(new File(directory, PROFILES)).forEach(
+            twProfile -> profiles.put(twProfile.getName(), twProfile));
+    }
+
     private List<TWDecisionScoreEvaluator> loadDecisionScoreEvaluators(File inputFile) {
         return loadObjects(inputFile, TWDecisionScoreEvaluator.class);
     }
@@ -222,24 +240,6 @@ public class TWUtilityAIRepository {
             return objectsFromDirectory(file, clazz);
         }
         return Collections.emptyList();
-    }
-
-    public void persistData() {
-        var twAiDir = Configuration.twAiDir();
-        createDirectoryStructureIfMissing(twAiDir);
-        persistToFile(new File(twAiDir, EVALUATORS + File.separator + "decision_score_evaluators.yaml"), decisionScoreEvaluators.values());
-        persistToFile(new File(twAiDir, CONSIDERATIONS + File.separator + "considerations.yaml"), considerations.values());
-        persistToFile(new File(twAiDir, DECISIONS + File.separator + "decisions.yaml"), decisions.values());
-        persistToFile(new File(twAiDir, PROFILES + File.separator + "profiles.yaml"), profiles.values());
-    }
-
-    public void persistDataToUserData() {
-        var userDataAiTwDir = Configuration.userDataAiTwDir();
-        createDirectoryStructureIfMissing(userDataAiTwDir);
-        persistToFile(new File(userDataAiTwDir, EVALUATORS + File.separator + "custom_decision_score_evaluators.yaml"), decisionScoreEvaluators.values());
-        persistToFile(new File(userDataAiTwDir, CONSIDERATIONS + File.separator + "custom_considerations.yaml"), considerations.values());
-        persistToFile(new File(userDataAiTwDir, DECISIONS + File.separator + "custom_decisions.yaml"), decisions.values());
-        persistToFile(new File(userDataAiTwDir, PROFILES + File.separator + "custom_profiles.yaml"), profiles.values());
     }
 
     private <T> void persistToFile(File outputFile, Collection<T> objects) {

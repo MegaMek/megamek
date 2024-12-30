@@ -58,18 +58,22 @@ public class LogitCurve implements Curve {
         return clamp01(b + (1 / k) * Math.log((m - (x - c)) / (x - c)));
     }
 
+    @Override
     public double getM() {
         return m;
     }
 
+    @Override
     public double getB() {
         return b;
     }
 
+    @Override
     public double getK() {
         return k;
     }
 
+    @Override
     public double getC() {
         return c;
     }

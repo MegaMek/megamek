@@ -46,10 +46,12 @@ public class LinearCurve implements Curve {
         return clamp01(m * x + b);
     }
 
+    @Override
     public double getM() {
         return m;
     }
 
+    @Override
     public double getB() {
         return b;
     }

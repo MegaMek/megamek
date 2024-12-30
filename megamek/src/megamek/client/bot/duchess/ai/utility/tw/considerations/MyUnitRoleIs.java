@@ -22,8 +22,6 @@ import megamek.common.UnitRole;
 
 import java.util.Map;
 
-import static megamek.codeUtilities.MathUtility.clamp01;
-
 /**
  * This consideration is used to determine if a target is an easy target.
  */
@@ -31,7 +29,8 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class MyUnitRoleIs extends TWConsideration {
 
     public MyUnitRoleIs() {
-        parameters = Map.of("role", UnitRole.AMBUSHER.name());
+        parameters = Map.of("role", UnitRole.AMBUSHER);
+        parameterTypes = Map.of("role", UnitRole.class);
     }
 
     @Override

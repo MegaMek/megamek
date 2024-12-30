@@ -15,9 +15,8 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import megamek.ai.utility.*;
+import megamek.ai.utility.Curve;
+import megamek.ai.utility.DefaultCurve;
 
 import javax.swing.*;
 import java.awt.*;
@@ -249,31 +248,54 @@ public class CurvePane extends JPanel {
     private void updateCurveDataUI() {
         curveGraph.repaint();
         var curve = selectedCurve.get();
-        if (curve instanceof LinearCurve) {
-            bParamSpinner.setValue(((LinearCurve) curve).getB());
-            mParamSpinner.setValue(((LinearCurve) curve).getM());
-            kParamSpinner.setEnabled(false);
-            cParamSpinner.setEnabled(false);
-        } else if (curve instanceof ParabolicCurve) {
-            bParamSpinner.setValue(((ParabolicCurve) curve).getB());
-            mParamSpinner.setValue(((ParabolicCurve) curve).getM());
-            kParamSpinner.setEnabled(true);
-            kParamSpinner.setValue(((ParabolicCurve) curve).getK());
-            cParamSpinner.setEnabled(false);
-        } else if (curve instanceof LogitCurve) {
-            bParamSpinner.setValue(((LogitCurve) curve).getB());
-            mParamSpinner.setValue(((LogitCurve) curve).getM());
-            kParamSpinner.setEnabled(true);
-            kParamSpinner.setValue(((LogitCurve) curve).getK());
-            cParamSpinner.setEnabled(true);
-            cParamSpinner.setValue(((LogitCurve) curve).getC());
-        } else if (curve instanceof LogisticCurve) {
-            bParamSpinner.setValue(((LogisticCurve) curve).getB());
-            mParamSpinner.setValue(((LogisticCurve) curve).getM());
-            kParamSpinner.setEnabled(true);
-            kParamSpinner.setValue(((LogisticCurve) curve).getK());
-            cParamSpinner.setEnabled(true);
-            cParamSpinner.setValue(((LogisticCurve) curve).getC());
+        Class<?> curveClass = curve.getClass();
+
+        // B
+        boolean hasB = isMethodOverridden(curveClass, Curve.class, "getB");
+        bParamSpinner.setEnabled(hasB);
+        if (hasB) {
+            bParamSpinner.setValue(curve.getB());
+        }
+
+        // M
+        boolean hasM = isMethodOverridden(curveClass, Curve.class, "getM");
+        mParamSpinner.setEnabled(hasM);
+        if (hasM) {
+            mParamSpinner.setValue(curve.getM());
+        }
+
+        // K
+        boolean hasK = isMethodOverridden(curveClass, Curve.class, "getK");
+        kParamSpinner.setEnabled(hasK);
+        if (hasK) {
+            kParamSpinner.setValue(curve.getK());
+        }
+
+        // C
+        boolean hasC = isMethodOverridden(curveClass, Curve.class, "getC");
+        cParamSpinner.setEnabled(hasC);
+        if (hasC) {
+            cParamSpinner.setValue(curve.getC());
+        }
+    }
+
+    public static boolean isMethodOverridden(
+        Class<?> clazz,
+        Class<?> interfaceClass,
+        String methodName,
+        Class<?>... paramTypes
+    ) {
+        try {
+            // The method from the interface
+            var interfaceMethod = interfaceClass.getMethod(methodName, paramTypes);
+            // The method as found on the concrete class
+            var classMethod = clazz.getMethod(methodName, paramTypes);
+
+            // If the declaring class is different, the method is overridden
+            return !classMethod.getDeclaringClass().equals(interfaceMethod.getDeclaringClass());
+        } catch (NoSuchMethodException e) {
+            // If the class or interface does not declare the method at all
+            return false;
         }
     }
 }

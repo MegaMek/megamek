@@ -29,7 +29,8 @@ import java.util.Map;
 public class TargetUnitsHaveRole extends TWConsideration {
 
     public TargetUnitsHaveRole() {
-        parameters = Map.of("role", UnitRole.AMBUSHER.name());
+        parameters = Map.of("role", UnitRole.AMBUSHER);
+        parameterTypes = Map.of("role", UnitRole.class);
     }
 
     @Override

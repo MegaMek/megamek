@@ -16,27 +16,24 @@
 package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
-
-import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine the armor percent.
+ * This consideration is used to determine if the unit is crippled or not.
  */
-@JsonTypeName("MyUnitArmor")
-public class MyUnitArmor extends TWConsideration {
+@JsonTypeName("MyUnitIsCrippled")
+public class MyUnitIsCrippled extends TWConsideration {
 
-    public MyUnitArmor() {
+    public MyUnitIsCrippled() {
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
         var currentUnit = context.getCurrentUnit().orElseThrow();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        return currentUnit.isCrippled(true) ? 1d : 0d;
     }
 
 }

@@ -27,7 +27,10 @@ public enum DefaultCurve {
     LogisticDecreasing(new LogisticCurve(1.0, 0.5, -10.0, 0.0)),
 
     Logit(new LogitCurve(1.0, 0.5, -15.0, 0.0)),
-    LogitDecreasing(new LogitCurve(1.0, 0.5, 15.0, 0.0));
+    LogitDecreasing(new LogitCurve(1.0, 0.5, 15.0, 0.0)),
+
+    BandPass(new BandPassCurve(0.5, 0.2, 0, 0)),
+    BandFilter(new BandFilterCurve(0.5, 0.2, 0, 0));
 
     private final Curve curve;
 
@@ -44,6 +47,10 @@ public enum DefaultCurve {
             return Logistic;
         } else if (curve instanceof LogitCurve) {
             return Logit;
+        } else if (curve instanceof BandPassCurve) {
+            return BandPass;
+        } else if (curve instanceof BandFilterCurve) {
+            return BandFilter;
         }
         // Return Linear as default
         return Linear;

@@ -9,9 +9,7 @@ considerations:
     curve: !<LinearCurve>
       m: 0.5
       b: 0.3
-    parameters:
-      minValue: 0
-      maxValue: 10
+    parameters: {}
   - !<TargetWithinOptimalRange>
     name: "TargetWithinOptimalRange"
     curve: !<LogisticCurve>
@@ -33,9 +31,7 @@ considerations:
       curveType: "LinearCurve"
       m: 0.5
       b: 0.3
-    parameters:
-      minValue: 0
-      maxValue: 10
+    parameters: {}
   - !<TargetWithinOptimalRange>
     name: "TargetWithinOptimalRange"
     curve:

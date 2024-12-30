@@ -18,36 +18,60 @@ package megamek.ai.utility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.awt.*;
 import java.util.StringJoiner;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-@JsonTypeName("ParabolicCurve")
-public class ParabolicCurve implements Curve {
+@JsonTypeName("BandPassCurve")
+public class BandPassCurve implements Curve {
     private double m;
     private double b;
     private double k;
+    private double c;
 
     @JsonCreator
-    public ParabolicCurve(
+    public BandPassCurve(
         @JsonProperty("m") double m,
         @JsonProperty("b") double b,
-        @JsonProperty("k") double k) {
+        @JsonProperty("k") double k,
+        @JsonProperty("c") double c) {
         this.m = m;
         this.b = b;
+        this.k = k;
+        this.c = c;
+    }
+
+    @Override
+    public BandPassCurve copy() {
+        return new BandPassCurve(m, b, k, c);
+    }
+
+    public double evaluate(double x) {
+        var bandStart = m - b / 2;
+        var bandEnd = m + b / 2;
+
+        return clamp01(x < bandStart ? 0d + k : x > bandEnd ? 0d + k : 1d + c);
+    }
+
+    @Override
+    public double getK() {
+        return k;
+    }
+
+    @Override
+    public void setK(double k) {
         this.k = k;
     }
 
     @Override
-    public ParabolicCurve copy() {
-        return new ParabolicCurve(m, b, k);
+    public double getC() {
+        return c;
     }
 
-    public double evaluate(double x) {
-        return clamp01(-m * Math.pow(x - b, 2) + k);
+    @Override
+    public void setC(double c) {
+        this.c = c;
     }
 
     @Override
@@ -61,11 +85,6 @@ public class ParabolicCurve implements Curve {
     }
 
     @Override
-    public double getK() {
-        return k;
-    }
-
-    @Override
     public void setM(double m) {
         this.m = m;
     }
@@ -76,16 +95,12 @@ public class ParabolicCurve implements Curve {
     }
 
     @Override
-    public void setK(double k) {
-        this.k = k;
-    }
-
-    @Override
     public String toString() {
-        return new StringJoiner(", ", ParabolicCurve.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", BandPassCurve.class.getSimpleName() + " [", "]")
             .add("m=" + m)
             .add("b=" + b)
             .add("k=" + k)
+            .add("c=" + c)
             .toString();
     }
 }

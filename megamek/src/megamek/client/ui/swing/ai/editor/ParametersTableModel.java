@@ -15,6 +15,7 @@
 
 package megamek.client.ui.swing.ai.editor;
 
+import megamek.ai.utility.Consideration;
 import megamek.logging.MMLogger;
 
 import javax.swing.table.AbstractTableModel;
@@ -25,52 +26,32 @@ import java.util.Map;
 
 public class ParametersTableModel extends AbstractTableModel {
     private static final MMLogger logger = MMLogger.create(ParametersTableModel.class);
-    private final Map<String, Object> hashRows = new HashMap<>();
     private final List<Row> rowValues = new ArrayList<>();
     private final String[] columnNames = { "Name", "Value" };
-    private final Class<?>[] columnClasses = { String.class, Object.class };
-    private record Row(String name, Object value) {}
+    private final Class<?>[] columnClasses = { String.class, String.class };
+    private record Row(String name, Object value, Class<?> clazz) {}
 
     public ParametersTableModel() {
     }
 
-    public ParametersTableModel(Map<String, Object> parameters) {
-        this.hashRows.putAll(parameters);
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            rowValues.add(new Row(entry.getKey(), entry.getValue()));
-        }
+    public void setParameters(Consideration<?,?> consideration) {
+        setParameters(consideration.getParameters(), consideration.getParameterTypes());
     }
 
-    public void setParameters(Map<String, Object> parameters) {
-        hashRows.clear();
+    public void setEmptyParameters() {
         rowValues.clear();
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            hashRows.put(entry.getKey(), entry.getValue());
-            rowValues.add(new Row(entry.getKey(), entry.getValue()));
-        }
         fireTableDataChanged();
     }
 
-    public void addRow(String parameterName, Object value) {
-        if (hashRows.containsKey(parameterName)) {
-            logger.formattedErrorDialog("Parameter already exists",
-                "Could not add parameter {}, another parameters with the same name is already present.", parameterName);
-            return;
-        }
-        hashRows.put(parameterName, value);
-        rowValues.add(new Row(parameterName, value));
-        fireTableRowsInserted(rowValues.size() - 1, rowValues.size() - 1);
-    }
-
-    public String newParameterName() {
-        int i = 0;
-        while (hashRows.containsKey("Parameter " + i)) {
-            i++;
-        }
-        return "Parameter " + i;
+    private void setParameters(Map<String, Object> parameters, Map<String, Class<?>> parameterTypes) {
+        rowValues.clear();
+        parameters.forEach((k, v) -> rowValues.add(new Row(k, v, parameterTypes.get(k))));
+        fireTableDataChanged();
     }
 
     public Map<String, Object> getParameters() {
+        Map<String, Object> hashRows = new HashMap<>();
+        rowValues.forEach(row -> hashRows.put(row.name, row.value));
         return hashRows;
     }
 
@@ -96,7 +77,7 @@ public class ParametersTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return columnIndex == 1;
     }
 
     @Override
@@ -108,21 +89,19 @@ public class ParametersTableModel extends AbstractTableModel {
         return row.value;
     }
 
+    public Class<?> getParameterValueAt(int rowIndex) {
+        return rowValues.get(rowIndex).clazz;
+    }
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         var row = rowValues.get(rowIndex);
         if (columnIndex == 1) {
-            rowValues.set(rowIndex, new Row(row.name, aValue));
-            hashRows.put(row.name, aValue);
-        } else {
-            if (hashRows.containsKey((String) aValue)) {
-                logger.formattedErrorDialog("Parameter already exists",
-                    "Could not rename parameter %s, another parameters with the same name is already present.", aValue);
-                return;
+            if (aValue.getClass().equals(row.clazz)) {
+                rowValues.set(rowIndex, new Row(row.name, aValue, row.clazz));
+            } else {
+                logger.error("Invalid value type: " + aValue.getClass() + " for " + row.clazz, "Invalid value type");
             }
-            rowValues.set(rowIndex, new Row((String) aValue, row.value));
-            hashRows.remove(row.name);
-            hashRows.put((String) aValue, row.value);
         }
     }
 }

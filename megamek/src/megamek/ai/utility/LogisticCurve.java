@@ -53,18 +53,22 @@ public class LogisticCurve implements Curve {
         return clamp01(m * (1 / (1 + Math.exp(-k * (x - b)))) + c);
     }
 
+    @Override
     public double getM() {
         return m;
     }
 
+    @Override
     public double getB() {
         return b;
     }
 
+    @Override
     public double getK() {
         return k;
     }
 
+    @Override
     public double getC() {
         return c;
     }

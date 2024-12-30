@@ -47,6 +47,8 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     @JsonProperty("parameters")
     protected Map<String, Object> parameters = Collections.emptyMap();
 
+    protected transient Map<String, Class<?>> parameterTypes = Collections.emptyMap();
+
     public Consideration() {
     }
 
@@ -78,35 +80,58 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
         return Map.copyOf(parameters);
     }
 
+    public Map<String, Class<?>> getParameterTypes() {
+        return Map.copyOf(parameterTypes);
+    }
+
+    public Class<?> getParameterType(String key) {
+        return parameterTypes.get(key);
+    }
+
     public void setParameters(Map<String, Object> parameters) {
+        var params = new HashMap<String, Object>();
+        for (var entry : parameters.entrySet()) {
+            var clazz = parameterTypes.get(entry.getKey());
+            if (clazz == null) {
+                throw new IllegalArgumentException("Unknown parameter: " + entry.getKey());
+            }
+            if (clazz.isAssignableFrom(entry.getValue().getClass())) {
+                throw new IllegalArgumentException("Invalid parameter type for " + entry.getKey() + ": " + entry.getValue().getClass());
+            }
+            params.put(entry.getKey(), entry.getValue());
+        }
         this.parameters = Map.copyOf(parameters);
     }
 
-    protected double getDoubleParameter(String key) {
-        return (double) parameters.get(key);
+    public double getDoubleParameter(String key) {
+        return (double) getParameter(key);
     }
 
-    protected int getIntParameter(String key) {
-        return (int) parameters.get(key);
+    public int getIntParameter(String key) {
+        return (int) getParameter(key);
     }
 
-    protected boolean getBooleanParameter(String key) {
-        return (boolean) parameters.get(key);
+    public boolean getBooleanParameter(String key) {
+        return (boolean) getParameter(key);
     }
 
-    protected String getStringParameter(String key) {
-        return (String) parameters.get(key);
+    public String getStringParameter(String key) {
+        return (String) getParameter(key);
     }
 
-    protected float getFloatParameter(String key) {
-        return (float) parameters.get(key);
+    public float getFloatParameter(String key) {
+        return (float) getParameter(key);
     }
 
-    protected long getLongParameter(String key) {
-        return (long) parameters.get(key);
+    public long getLongParameter(String key) {
+        return (long) getParameter(key);
     }
 
-    protected boolean hasParameter(String key) {
+    public Object getParameter(String key) {
+        return parameters.get(key);
+    }
+
+    public boolean hasParameter(String key) {
         return parameters.containsKey(key);
     }
 

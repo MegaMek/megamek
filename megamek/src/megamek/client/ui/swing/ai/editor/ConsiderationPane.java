@@ -17,24 +17,18 @@ package megamek.client.ui.swing.ai.editor;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DefaultCurve;
-import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
-import megamek.common.Entity;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.ResourceBundle;
 
 public class ConsiderationPane extends JPanel {
     private JTextField considerationName;
-    private JComboBox<TWConsideration> considerationComboBox;
+    private JComboBox<TWConsiderationClass> considerationComboBox;
     private JPanel curveContainer;
     private JTable parametersTable;
     private JPanel considerationPane;
@@ -45,26 +39,46 @@ public class ConsiderationPane extends JPanel {
         add(considerationPane);
 
         considerationComboBox.addActionListener(e -> {
-            TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
-            if (consideration != null) {
-                considerationName.setText(consideration.getName());
-                ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
-                ((CurvePane) (curveContainer)).setCurve(consideration.getCurve());
+            if (considerationComboBox.getSelectedItem() == null) {
+                return;
             }
+
+            var selectedClass = ((TWConsiderationClass) considerationComboBox.getSelectedItem()).getConsiderationClass();
+            if (selectedClass == null) {
+                return;
+            }
+
+            try {
+                // Create a new instance via reflection
+                var newInstance = (TWConsideration) selectedClass.getDeclaredConstructor().newInstance();
+
+                // Populate your fields (likely blank or default if no-arg constructor doesn't do much)
+                considerationName.setText(selectedClass.getSimpleName());
+                ((ParametersTableModel) parametersTable.getModel()).setParameters(newInstance);
+                ((CurvePane) curveContainer).setCurve(DefaultCurve.Linear.getCurve());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Failed to instantiate " + selectedClass.getSimpleName() + ": " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+
         });
     }
 
     public void setConsideration(Consideration<?, ?> consideration) {
-        considerationComboBox.setSelectedItem(consideration);
+        considerationComboBox.setSelectedItem(TWConsiderationClass.fromClass(consideration.getClass()));
         considerationName.setText(consideration.getName());
-        ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration.getParameters());
+        ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration);
         ((CurvePane) curveContainer).setCurve(consideration.getCurve());
     }
 
     public void setEmptyConsideration() {
         considerationComboBox.setSelectedItem(null);
         considerationName.setText("");
-        ((ParametersTableModel) parametersTable.getModel()).setParameters(Collections.emptyMap());
+        ((ParametersTableModel) parametersTable.getModel()).setEmptyParameters();
         ((CurvePane) curveContainer).setCurve(DefaultCurve.Logit.getCurve());
     }
 
@@ -73,21 +87,27 @@ public class ConsiderationPane extends JPanel {
     }
 
     public TWConsideration getConsideration() {
-        TWConsideration consideration = (TWConsideration) considerationComboBox.getSelectedItem();
-        if (consideration == null) {
+        var selectedItem = (TWConsiderationClass) considerationComboBox.getSelectedItem();
+        if (selectedItem == null) {
             throw new IllegalStateException("No consideration selected");
         }
-        consideration.setName(considerationName.getText());
-        consideration.setParameters(((ParametersTableModel) parametersTable.getModel()).getParameters());
-        consideration.setCurve(((CurvePane) curveContainer).getCurve().copy());
-        return consideration;
+
+        try {
+            var consideration = (TWConsideration) selectedItem.getConsiderationClass().getDeclaredConstructor().newInstance();
+            consideration.setName(considerationName.getText());
+            consideration.setParameters(((ParametersTableModel) parametersTable.getModel()).getParameters());
+            consideration.setCurve(((CurvePane) curveContainer).getCurve().copy());
+            return consideration;
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to instantiate " + selectedItem.getConsiderationClass().getSimpleName(), ex);
+        }
     }
 
     private void createUIComponents() {
-        parametersTable = new JTable(new ParametersTableModel());
+        parametersTable = new ConsiderationParametersTable(new ParametersTableModel());
         parametersTable.setModel(new ParametersTableModel());
 
-        considerationComboBox = new JComboBox<>(TWUtilityAIRepository.getInstance().getConsiderations().toArray(new TWConsideration[0]));
+        considerationComboBox = new JComboBox<>(TWConsiderationClass.values());
         considerationComboBox.setSelectedItem(null);
 
         curveContainer = new CurvePane();

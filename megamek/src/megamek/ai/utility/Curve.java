@@ -31,7 +31,9 @@ import java.awt.*;
     @JsonSubTypes.Type(value = LinearCurve.class, name = "LinearCurve"),
     @JsonSubTypes.Type(value = LogisticCurve.class, name = "LogisticCurve"),
     @JsonSubTypes.Type(value = LogitCurve.class, name = "LogitCurve"),
-    @JsonSubTypes.Type(value = ParabolicCurve.class, name = "ParabolicCurve")
+    @JsonSubTypes.Type(value = ParabolicCurve.class, name = "ParabolicCurve"),
+    @JsonSubTypes.Type(value = BandPassCurve.class, name = "BandPassCurve"),
+    @JsonSubTypes.Type(value = BandFilterCurve.class, name = "BandFilterCurve"),
 })
 public interface Curve {
     double evaluate(double x);
@@ -126,5 +128,21 @@ public interface Curve {
 
     default void setC(double c) {
         //
+    }
+
+    default double getM() {
+        return 0.0;
+    }
+
+    default double getB() {
+        return 0.0;
+    }
+
+    default double getK() {
+        return 0.0;
+    }
+
+    default double getC() {
+        return 0.0;
     }
 }

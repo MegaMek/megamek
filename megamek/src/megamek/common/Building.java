@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.Vector;
 
 import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.logging.MMLogger;
 
 /**
@@ -62,7 +63,7 @@ public class Building implements Serializable {
      * The Building Type of the building; equal to the terrain elevation of the
      * BUILDING terrain of a hex.
      */
-    private int type = Building.UNKNOWN;
+    private BuildingType type = BuildingType.UNKNOWN;
 
     // The Building Classes
     public static final int STANDARD = 0;
@@ -193,7 +194,7 @@ public class Building implements Serializable {
         if (structureType == Terrains.BUILDING) {
             // Error if the Building Type (Light, Medium...) or Building Class (Standard,
             // Hangar...) is off.
-            if (type != nextHex.terrainLevel(Terrains.BUILDING)) {
+            if (getType().getTypeValue() != nextHex.terrainLevel(Terrains.BUILDING)) {
                 throw new IllegalArgumentException("The coordinates, "
                         + coords.getBoardNum()
                         + ", should contain the same type of building as "
@@ -283,7 +284,7 @@ public class Building implements Serializable {
             throw new IllegalArgumentException("The coordinates, "
                     + coords.getBoardNum() + ", do not contain a building.");
         }
-        type = startHex.terrainLevel(structureType);
+        type = BuildingType.getType(startHex.terrainLevel(structureType));
         bldgClass = startHex.terrainLevel(Terrains.BLDG_CLASS);
 
         // Insure that we've got a good type (and initialize our CF).
@@ -332,7 +333,7 @@ public class Building implements Serializable {
         StringBuilder sb = new StringBuilder();
         if (structureType == Terrains.FUEL_TANK) {
             sb.append("Fuel Tank #");
-        } else if (getType() == Building.WALL) {
+        } else if (getType() == BuildingType.WALL) {
             sb.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
             sb.append("Building #");
@@ -396,11 +397,11 @@ public class Building implements Serializable {
 
     /**
      * Get the construction type of the building. This value will be one of the
-     * constants, LIGHT, MEDIUM, HEAVY, or HARDENED.
+     * values defined in megamek.common.enums.BuildingType
      *
      * @return the <code>int</code> code of the building's construction type.
      */
-    public int getType() {
+    public BuildingType getType() {
         return type;
     }
 
@@ -578,6 +579,15 @@ public class Building implements Serializable {
 
     /**
      * Get the default construction factor for the given type of building.
+     */
+    public static int getDefaultCF(BuildingType type) 
+    {
+        return getDefaultCF(type.getTypeValue());
+    }
+    
+    /**
+     * Get the default construction factor for the given type of building.
+     * Retained for backwards compatibility
      *
      * @param type
      *             - the <code>int</code> construction type of the building.
@@ -588,17 +598,17 @@ public class Building implements Serializable {
     public static int getDefaultCF(int type) {
         int retval = Building.UNKNOWN;
         switch (type) {
-            case Building.LIGHT:
+            case LIGHT:
                 retval = 15;
                 break;
-            case Building.MEDIUM:
+            case MEDIUM:
                 retval = 40;
                 break;
-            case Building.HEAVY:
+            case HEAVY:
                 retval = 90;
                 break;
-            case Building.HARDENED:
-            case Building.WALL:
+            case HARDENED:
+            case WALL:
                 retval = 120;
                 break;
         }
@@ -671,7 +681,7 @@ public class Building implements Serializable {
 
     @Override
     public String toString() {
-        return typeName(getType()) + " " + className(getBldgClass()) + " " + name;
+        return getType().toString() + " " + className(getBldgClass()) + " " + name;
     }
 
     /**
@@ -787,12 +797,12 @@ public class Building implements Serializable {
      */
     public double getInfDmgFromInside() {
         switch (getType()) {
-            case Building.LIGHT:
-            case Building.MEDIUM:
+            case LIGHT:
+            case MEDIUM:
                 return 0.0;
-            case Building.HEAVY:
+            case HEAVY:
                 return 0.5;
-            case Building.HARDENED:
+            case HARDENED:
                 return 0.75;
             default:
                 return 0;
@@ -807,11 +817,11 @@ public class Building implements Serializable {
      */
     public float getDamageReductionFromOutside() {
         switch (getType()) {
-            case Building.LIGHT:
+            case LIGHT:
                 return 0.75f;
-            case Building.MEDIUM:
+            case MEDIUM:
                 return 0.5f;
-            case Building.HEAVY:
+            case HEAVY:
                 return 0.25f;
             default:
                 return 0f;

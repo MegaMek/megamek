@@ -1,49 +1,49 @@
+generator:MegaMek Suite 0.50.02-SNAPSHOT on 2024-12-30
 chassis:Locust
 model:LCT-1L
 mul id:1898
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3030
-Source:TRO: 3039
-Rules Level:2
+techbase:Inner Sphere
+era:3030
+source:TRO: 3039
+rules level:2
 role:Scout
 
-
-
-quirk:compact_mech
-quirk:low_profile
 quirk:cramped_cockpit
+quirk:compact_mech
 quirk:no_arms
+quirk:low_profile
 quirk:weak_legs
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
 
+mass:20
+engine:160 Fusion Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
 
-Mass:20
-Engine:160 Fusion Engine
-Structure:Standard
-Myomer:Triple-Strength
+heat sinks:10 Single
+walk mp:8
+jump mp:0
 
-Heat Sinks:10 Single
-Walk MP:8
-Jump MP:0
-
-Armor:Standard(Inner Sphere)
-LA Armor:4
-RA Armor:4
-LT Armor:8
-RT Armor:8
-CT Armor:10
-HD Armor:8
-LL Armor:8
-RL Armor:8
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+armor:Standard(Inner Sphere)
+LA armor:4
+RA armor:4
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:8
+LL armor:8
+RL armor:8
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:3
-Medium Laser, Center Torso
 Machine Gun, Left Arm
 Machine Gun, Right Arm
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -74,9 +74,9 @@ Machine Gun
 -Empty-
 
 Left Torso:
-TSM
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -88,9 +88,9 @@ TSM
 -Empty-
 
 Right Torso:
-TSM
-TSM
-TSM
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -157,13 +157,9 @@ Heat Sink
 -Empty-
 -Empty-
 
-
-Overview: The Locust is undoubtedly one of the most popular and prevalent light BattleMechs ever made. First produced in 2499, the almost dozen distinct factories manufacturing the design quickly spread it to every power in human space. Its combination of tough armor (for its size), exceptional speed, and most importantly, low cost have all contributed to the Locust's success. It remains the benchmark for many scouting designs, and its continual upgrades have ensured that it remains just as effective with every new conflict that appears.
-
-Capabilities: As the Locust was first developed as a recon platform, speed is paramount to the design's philosophy. While many variants change the weaponry to fill specific tasks or purposes, Locusts are nearly always pressed into service in ways where they can best take advantage of their speed. When in line regiments, they can act as a deadly flankers or harassers, and are often used in reactionary roles to quickly plug holes in a fluid battle line. The structural form of Locusts themselves are their greatest weakness; with no hands, they are disadvantaged in physical combat and occasionally have difficulty righting themselves after a fall.
-
-Deployment: One of the most common designs even produced, even the smallest mercenary or pirate outfits will often field one or more of the design. Production for the Locust has continued uninterrupted for centuries, and it plays an important role in the militaries of many smaller nations. The -1L was a Liao testbed for Triple-Strength Myomer. Only appearing after the end of the Fourth Succession War, the -1L was one of a series of attempts to find a TSM compound that would not combust when exposed to the anti-myomer "green gas".
-
+overview: The Locust is undoubtedly one of the most popular and prevalent light BattleMechs ever made. First produced in 2499, the almost dozen distinct factories manufacturing the design quickly spread it to every power in human space. Its combination of tough armor (for its size), exceptional speed, and most importantly, low cost have all contributed to the Locust's success. It remains the benchmark for many scouting designs, and its continual upgrades have ensured that it remains just as effective with every new conflict that appears.
+capabilities: As the Locust was first developed as a recon platform, speed is paramount to the design's philosophy. While many variants change the weaponry to fill specific tasks or purposes, Locusts are nearly always pressed into service in ways where they can best take advantage of their speed. When in line regiments, they can act as a deadly flankers or harassers, and are often used in reactionary roles to quickly plug holes in a fluid battle line. The structural form of Locusts themselves are their greatest weakness; with no hands, they are disadvantaged in physical combat and occasionally have difficulty righting themselves after a fall.
+deployment: One of the most common designs even produced, even the smallest mercenary or pirate outfits will often field one or more of the design. Production for the Locust has continued uninterrupted for centuries, and it plays an important role in the militaries of many smaller nations. The -1L was a Liao testbed for Triple-Strength Myomer. Only appearing after the end of the Fourth Succession War, the -1L was one of a series of attempts to find a TSM compound that would not combust when exposed to the anti-myomer "green gas".
 systemmanufacturer:CHASSIS:Bergan
 systemmode:CHASSIS:VII
 systemmanufacturer:ENGINE:LTV
@@ -174,3 +170,4 @@ systemmanufacturer:COMMUNICATIONS:Garrett
 systemmode:COMMUNICATIONS:T10-B
 systemmanufacturer:TARGETING:O/P
 systemmode:TARGETING:911
+

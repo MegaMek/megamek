@@ -1,17 +1,12 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-30
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 XCT Marine
 </Name>
+
 <Model>
 Special Asteroid Support Forces
 </Model>
@@ -19,24 +14,15 @@ Special Asteroid Support Forces
 <mul id:>
 3607
 </mul id:>
-<squad_size>
-10
-</squad_size>
-<squadn>
-3
-</squadn>
-<Primary>
-InfantryMarxXXLaser
-</Primary>
-<Secondary>
-InfantryVibroBlade
-</Secondary>
-<secondn>
-1
-</secondn>
-<armorKit>
-ISEnvironmentSuitMarine
-</armorKit>
+
+<year>
+2500
+</year>
+
+<originalBuildYear>
+2500
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -44,12 +30,43 @@ IS Level 3
 <role>
 Ambusher
 </role>
-<year>
-2500
-</year>
-<era>
-TRO: 3085
-</era>
+
 <motion_type>
 Leg
 </motion_type>
+
+<Troopers Equipment>
+Environment Suit, Marine
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Laser Rifle (Marx XX)
+</Primary>
+
+<Secondary>
+Blade (Vibro-blade)
+</Secondary>
+
+<spacesuit>
+true
+</spacesuit>
+
+<specialization>
+2048
+</specialization>
+

@@ -733,7 +733,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             butStartPos.get(i).setActionCommand(((Integer) i).toString());
         }
 
-        var currentBoard = ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true);
+        var currentBoard =
+                clientgui.getClient().getGame().getPhase().isLounge() ?
+                ServerBoardHelper.getPossibleGameBoard(clientgui.getClient().getMapSettings(), true) :
+                clientgui.getClient().getGame().getBoard();
         var deploymentZones = currentBoard.getCustomDeploymentZones();
         int extraRowCount = (int) Math.ceil(deploymentZones.size() / 3.0);
 

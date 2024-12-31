@@ -16,7 +16,8 @@ quirk:low_profile
 quirk:cramped_cockpit
 quirk:no_arms
 quirk:weak_legs
-
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
 
 Mass:20
 Engine:240 XL Engine

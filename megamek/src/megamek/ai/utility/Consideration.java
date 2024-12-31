@@ -13,16 +13,15 @@
  */
 package megamek.ai.utility;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -46,7 +45,7 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     private Curve curve;
     @JsonProperty("parameters")
     protected Map<String, Object> parameters = Collections.emptyMap();
-
+    @JsonIgnore
     protected transient Map<String, Class<?>> parameterTypes = Collections.emptyMap();
 
     public Consideration() {
@@ -84,21 +83,23 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
         return Map.copyOf(parameterTypes);
     }
 
-    public Class<?> getParameterType(String key) {
-        return parameterTypes.get(key);
-    }
-
     public void setParameters(Map<String, Object> parameters) {
-        var params = new HashMap<String, Object>();
         for (var entry : parameters.entrySet()) {
             var clazz = parameterTypes.get(entry.getKey());
             if (clazz == null) {
                 throw new IllegalArgumentException("Unknown parameter: " + entry.getKey());
             }
-            if (clazz.isAssignableFrom(entry.getValue().getClass())) {
+            if (clazz.isEnum() && entry.getValue() instanceof String value) {
+                var enumValues = ((Class<? extends Enum>) clazz).getEnumConstants();
+                for (var anEnum : enumValues) {
+                    if (anEnum.toString().equalsIgnoreCase(value)) {
+                        parameters.put(entry.getKey(), anEnum);
+                        break;
+                    }
+                }
+            } else if (!clazz.isAssignableFrom(entry.getValue().getClass())) {
                 throw new IllegalArgumentException("Invalid parameter type for " + entry.getKey() + ": " + entry.getValue().getClass());
             }
-            params.put(entry.getKey(), entry.getValue());
         }
         this.parameters = Map.copyOf(parameters);
     }

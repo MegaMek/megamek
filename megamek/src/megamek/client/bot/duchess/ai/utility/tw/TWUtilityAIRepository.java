@@ -24,9 +24,13 @@ import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class TWUtilityAIRepository {
     private static final MMLogger logger = MMLogger.create(TWUtilityAIRepository.class);
@@ -91,20 +95,168 @@ public class TWUtilityAIRepository {
         persistToFile(new File(userDataAiTwDir, PROFILES + File.separator + "custom_profiles.yaml"), profiles.values());
     }
 
+    public void exportAiData(File zipOutput) throws IOException {
+        var tempFolder = Files.createTempDirectory("my-ai-export");
+        var tempFile = tempFolder.toFile();
+
+        createDirectoryStructureIfMissing(tempFile);
+        persistToFile(new File(tempFile, EVALUATORS + File.separator + "custom_decision_score_evaluators.yaml"), decisionScoreEvaluators.values());
+        persistToFile(new File(tempFile, CONSIDERATIONS + File.separator + "custom_considerations.yaml"), considerations.values());
+        persistToFile(new File(tempFile, DECISIONS + File.separator + "custom_decisions.yaml"), decisions.values());
+        persistToFile(new File(tempFile, PROFILES + File.separator + "custom_profiles.yaml"), profiles.values());
+
+        zipDirectory(tempFolder, zipOutput.toPath());
+        deleteRecursively(tempFolder);
+    }
+
+    public void importAiData(File zipInput) {
+        try {
+            unzipDirectory(zipInput.toPath());
+            loadUserDataRepository();
+            persistDataToUserData();
+            deleteUserTempFiles();
+        } catch (IOException e) {
+            logger.error(e, "Could not load data from file: {}", zipInput);
+        }
+    }
+
+    private void deleteUserTempFiles() throws IOException {
+        var userFolder = Configuration.userDataAiTwDir();
+
+        Files.walk(userFolder.toPath())
+            .sorted(Comparator.reverseOrder())
+            .filter(p -> p.toFile().getName().startsWith("temp_"))
+            .forEach(p -> {
+                try {
+                    Files.delete(p);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+    }
+
+    private void deleteRecursively(Path path) throws IOException {
+        // Walk the directory in reverse, so we delete children before parent
+        Files.walk(path)
+            .sorted(Comparator.reverseOrder())
+            .forEach(p -> {
+                try {
+                    Files.delete(p);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+    }
+
+    /**
+     * Create a new file, ensuring that it is within the destination directory.
+     * This covers against the vulnerability for zip slip attacks
+     * @param destinationDir
+     * @param zipEntry
+     * @return the new file
+     * @throws IOException
+     */
+    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+
+        return destFile;
+    }
+
+    private void unzipDirectory(Path zipFile) throws IOException {
+        var destDir = Configuration.userDataAiTwDir();
+
+        byte[] buffer = new byte[1024];
+        var zis = new ZipInputStream(new FileInputStream(zipFile.toFile()));
+        ZipEntry zipEntry = zis.getNextEntry();
+
+        while (zipEntry != null) {
+            File newFile = newFile(destDir, zipEntry);
+            if (zipEntry.isDirectory()) {
+                if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                    throw new IOException("Failed to create directory " + newFile);
+                }
+            } else {
+                // fix for Windows-created archives
+                File parent = newFile.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent);
+                }
+                if (newFile.exists()) {
+                    // rewrite the filename with current timestamp at the end before the extension
+                    var newName = newFile.getName();
+                    newName = "temp_" + newName;
+                    newFile = new File(parent, newName);
+                }
+
+                // write file content
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            zipEntry = zis.getNextEntry();
+        }
+
+        zis.closeEntry();
+        zis.close();
+    }
+
+    private void zipDirectory(Path sourceDir, Path zipFile) throws IOException {
+        // Try-with-resources to ensure ZipOutputStream is closed
+        try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            // Walk the directory tree
+            Files.walk(sourceDir)
+                // Only zip up files, not directories themselves
+                .filter(path -> !Files.isDirectory(path))
+                .forEach(path -> {
+                    // Create a zip entry with a relative path
+                    ZipEntry zipEntry = new ZipEntry(sourceDir.relativize(path).toString());
+                    try {
+                        zs.putNextEntry(zipEntry);
+                        Files.copy(path, zs);
+                        zs.closeEntry();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+        }
+    }
+
+
     public List<TWDecision> getDecisions() {
-        return List.copyOf(decisions.values());
+        var orderedList = new ArrayList<>(decisions.values());
+        orderedList.sort(Comparator.comparing(TWDecision::getName));
+
+        return List.copyOf(orderedList);
     }
 
     public List<TWConsideration> getConsiderations() {
-        return List.copyOf(considerations.values());
+        var orderedList = new ArrayList<>(considerations.values());
+        orderedList.sort(Comparator.comparing(TWConsideration::getName));
+
+        return List.copyOf(orderedList);
     }
 
     public List<TWDecisionScoreEvaluator> getDecisionScoreEvaluators() {
-        return List.copyOf(decisionScoreEvaluators.values());
+        var orderedList = new ArrayList<>(decisionScoreEvaluators.values());
+        orderedList.sort(Comparator.comparing(TWDecisionScoreEvaluator::getName));
+
+        return List.copyOf(orderedList);
     }
 
     public List<TWProfile> getProfiles() {
-        return List.copyOf(profiles.values());
+        var orderedList = new ArrayList<>(profiles.values());
+        orderedList.sort(Comparator.comparing(TWProfile::getName));
+        return List.copyOf(orderedList);
     }
 
     public boolean hasDecision(String name) {
@@ -177,7 +329,7 @@ public class TWUtilityAIRepository {
 
     private void loadData(File directory) {
         loadConsiderations(new File(directory, CONSIDERATIONS))
-            .forEach(twConsideration -> considerations.put(twConsideration.getClass().getSimpleName(), twConsideration));
+            .forEach(twConsideration -> considerations.put(twConsideration.getName(), twConsideration));
         loadDecisionScoreEvaluators(new File(directory, EVALUATORS)).forEach(
             twDecisionScoreEvaluator -> decisionScoreEvaluators.put(twDecisionScoreEvaluator.getName(), twDecisionScoreEvaluator));
         loadDecisions(new File(directory, DECISIONS)).forEach(

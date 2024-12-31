@@ -397,7 +397,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
 
         initMenuItem(aiEditorSave, menu, AI_EDITOR_SAVE);
-        initMenuItem(aiEditorSaveAs, menu, AI_EDITOR_SAVE_AS);
+//        initMenuItem(aiEditorSaveAs, menu, AI_EDITOR_SAVE_AS);
         initMenuItem(aiEditorReloadFromDisk, menu, AI_EDITOR_RELOAD_FROM_DISK);
         menu.addSeparator();
 

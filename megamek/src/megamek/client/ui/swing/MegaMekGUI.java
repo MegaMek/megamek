@@ -344,10 +344,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 //            c.gridy++;
 //            addBag(connectSBF, gridbag, c);
 
-            c.gridy++;
-            addBag(editAi, gridbag, c);
         }
 
+        c.gridy++;
+        addBag(editAi, gridbag, c);
         c.gridy++;
         c.insets = new Insets(4, 4, 15, 12);
         addBag(quitB, gridbag, c);

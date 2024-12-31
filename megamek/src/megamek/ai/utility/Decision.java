@@ -15,6 +15,7 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -37,7 +38,9 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
     private Action action;
     private double weight;
     private DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator;
+    @JsonIgnore
     private transient double score;
+    @JsonIgnore
     private transient DecisionContext<IN_GAME_OBJECT, TARGETABLE> decisionContext;
 
     public Decision() {

@@ -35,11 +35,13 @@ import megamek.common.Entity;
 import megamek.logging.MMLogger;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Random;
@@ -147,9 +149,22 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                     if (path != null) {
                         repositoryViewer.setSelectionPath(path);
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        JPopupMenu contextMenu = createContextMenu(node);
+                        contextMenu.show(repositoryViewer, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
+
+        repositoryViewer.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    TreePath path = repositoryViewer.getSelectionPath();
+                    if (path != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                         if (node.isLeaf()) {
-                            JPopupMenu contextMenu = createContextMenu(node);
-                            contextMenu.show(repositoryViewer, e.getX(), e.getY());
+                            handleOpenNodeAction(node);
                         }
                     }
                 }
@@ -233,6 +248,14 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         // Create a popup menu
         JPopupMenu contextMenu = new JPopupMenu();
         var obj = node.getUserObject();
+        if (obj instanceof String) {
+            JMenuItem menuItemAction = new JMenuItem("New " + obj);
+            menuItemAction.addActionListener(evt -> {
+                handleOpenNodeAction(node);
+            });
+            contextMenu.add(menuItemAction);
+        }
+
         // Example menu item #1
         JMenuItem menuItemAction = new JMenuItem("Open");
         menuItemAction.addActionListener(evt -> {
@@ -474,6 +497,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                 createNewProfile();
                 break;
             case AI_EDITOR_OPEN:
+                // not implemented???
                 break;
             case AI_EDITOR_RECENT_PROFILE:
                 break;
@@ -484,7 +508,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                 // not implemented
                 break;
             case AI_EDITOR_RELOAD_FROM_DISK:
-
+                loadDataRepoViewer();
                 break;
             case AI_EDITOR_UNDO:
                 break;
@@ -499,10 +523,42 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             case AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR:
                 createNewDecisionScoreEvaluator();
                 break;
-            case AI_EDITOR_EXPORT:
+            case AI_EDITOR_EXPORT: {
+                var fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle(Messages.getString("aiEditor.export.title"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter(Messages.getString("aiEditor.save.filenameExtension"), "uai"));
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                int userSelection = fileChooser.showSaveDialog(this);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    if (!fileToSave.getName().toLowerCase().endsWith(".uai")) {
+                        fileToSave = new File(fileToSave + ".uai");
+                    }
+                    try {
+                        sharedData.exportAiData(fileToSave);
+                    } catch (Exception ex) {
+                        logger.formattedErrorDialog(Messages.getString("aiEditor.export.error.title"),
+                            Messages.getString("aiEditor.export.error.message"));
+                    }
+                }
                 break;
-            case AI_EDITOR_IMPORT:
-                break;
+            }
+            case AI_EDITOR_IMPORT: {
+                var fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle(Messages.getString("aiEditor.import.title"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter(Messages.getString("aiEditor.save.filenameExtension"), "uai"));
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                int userSelection = fileChooser.showOpenDialog(this);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToLoad = fileChooser.getSelectedFile();
+                    try {
+                        sharedData.importAiData(fileToLoad);
+                    } catch (Exception ex) {
+                        logger.formattedErrorDialog(Messages.getString("aiEditor.import.error.title"),
+                            Messages.getString("aiEditor.import.error.message"));
+                    }
+                }
+            }
         }
     }
 
@@ -535,23 +591,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         ((DecisionTableModel<TWDecision>) model).addRow(dse);
     }
 
-    private enum TreeViewHelper {
-        PROFILES("Profiles"),
-        DECISIONS("Decisions"),
-        DSE("Decision Score Evaluators (DSE)"),
-        CONSIDERATIONS("Considerations");
-
-        private final String name;
-
-        TreeViewHelper(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
     private void createUIComponents() {
         weightSpinner = new JSpinner(new SpinnerNumberModel(1d, 0d, 4d, 0.01d));
 
@@ -569,10 +608,10 @@ public class AiProfileEditor extends JFrame implements ActionListener {
 
     private void loadDataRepoViewer() {
         var root = new DefaultMutableTreeNode(Messages.getString("aiEditor.tree.title"));
-        addToMutableTreeNode(root, TreeViewHelper.PROFILES.getName(), sharedData.getProfiles());
-        addToMutableTreeNode(root, TreeViewHelper.DECISIONS.getName(), sharedData.getDecisions());
-        addToMutableTreeNode(root, TreeViewHelper.DSE.getName(), sharedData.getDecisionScoreEvaluators());
-        addToMutableTreeNode(root, TreeViewHelper.CONSIDERATIONS.getName(), sharedData.getConsiderations());
+        addToMutableTreeNode(root, Messages.getString("aiEditor.Profiles"), sharedData.getProfiles());
+        addToMutableTreeNode(root, Messages.getString("aiEditor.Decisions"), sharedData.getDecisions());
+        addToMutableTreeNode(root, Messages.getString("aiEditor.DecisionScoreEvaluators"), sharedData.getDecisionScoreEvaluators());
+        addToMutableTreeNode(root, Messages.getString("aiEditor.Considerations"), sharedData.getConsiderations());
         DefaultTreeModel treeModel = new DefaultTreeModel(root);
 
         if (repositoryViewer == null) {

@@ -1,5 +1,4 @@
----
-!<TWDecision>
+--- !<TWDecision>
 action: AttackUnit
 weight: 1.0
 decisionScoreEvaluator: !<TWDecisionScoreEvaluator>

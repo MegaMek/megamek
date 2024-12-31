@@ -1,5 +1,4 @@
----
-!<TWDecisionScoreEvaluator>
+--- !<TWDecisionScoreEvaluator>
 name:  "AttackEnemyInRange"
 description: "Evaluate if the enemy is optimal for attack."
 notes: "File for testing the load of the evaluator system."
@@ -18,8 +17,7 @@ considerations:
       k: 10.0
       c: 0.0
     parameters: {}
----
-!<TWDecisionScoreEvaluator>
+--- !<TWDecisionScoreEvaluator>
 name:  "Foobar"
 description: "Spam Spam"
 notes: "File for testing the load of the evaluator system."

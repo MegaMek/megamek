@@ -2,6 +2,7 @@ MEGAMEK VERSION HISTORY:
 ----------------
 0.50.03-SNAPSHOT
 + PR #6335: default the directory filter to Select All in Advanced Board Search 
++ PR #6335 cleanup duplicate boards
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

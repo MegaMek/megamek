@@ -36,7 +36,7 @@ public class LogitCurve implements Curve {
         @JsonProperty("m") double m,
         @JsonProperty("b") double b,
         @JsonProperty("k") double k,
-        @JsonProperty("k") double c) {
+        @JsonProperty("c") double c) {
         this.m = m;
         this.b = b;
         this.k = k;

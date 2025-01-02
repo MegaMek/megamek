@@ -37,6 +37,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.AmmoMounted;
@@ -4095,7 +4096,7 @@ public class TWGameManager extends AbstractGameManager {
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(nextPos);
 
-                if (bldg.getType() == Building.WALL) {
+                if (bldg.getType() == BuildingType.WALL) {
                     crashedIntoTerrain = true;
                 }
 
@@ -4138,7 +4139,7 @@ public class TWGameManager extends AbstractGameManager {
                     // If you crash into a wall you want to stop in the hex
                     // before the wall not in the wall
                     // Like a building.
-                    if (bldg.getType() == Building.WALL) {
+                    if (bldg.getType() == BuildingType.WALL) {
                         r = new Report(2047);
                     } else if (bldg.getBldgClass() == Building.GUN_EMPLACEMENT) {
                         r = new Report(2049);
@@ -4193,7 +4194,7 @@ public class TWGameManager extends AbstractGameManager {
                         // If you crash into a wall you want to stop in the hex
                         // before the wall not in the wall
                         // Like a building.
-                        if (bldg.getType() == Building.WALL) {
+                        if (bldg.getType() == BuildingType.WALL) {
                             addReport(destroyEntity(entity, "crashed into a wall"));
                             break;
                         }
@@ -5176,7 +5177,7 @@ public class TWGameManager extends AbstractGameManager {
             int direction = entity.getFacing();
             // first check for buildings
             Building bldg = game.getBoard().getBuildingAt(hitCoords);
-            if ((null != bldg) && (bldg.getType() == Building.HARDENED)) {
+            if ((null != bldg) && (bldg.getType() == BuildingType.HARDENED)) {
                 crash_damage *= 2;
             }
             if (null != bldg) {
@@ -9319,7 +9320,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             Building bld = game.getBoard().getBuildingAt(entity.getPosition());
-            if ((bld != null) && (bld.getType() == Building.WALL)) {
+            if ((bld != null) && (bld.getType() == BuildingType.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
 
@@ -10810,30 +10811,30 @@ public class TWGameManager extends AbstractGameManager {
 
         // Is there the rubble of a medium, heavy,
         // or hardened building in the hex?
-        else if (Building.LIGHT < curHex.terrainLevel(Terrains.RUBBLE)) {
+        else if (BuildingType.LIGHT.getTypeValue() < curHex.terrainLevel(Terrains.RUBBLE)) {
 
             // Finding a club is not guaranteed. The chances are
             // based on the type of building that produced the
             // rubble.
             boolean found = false;
             int roll = Compute.d6(2);
-            switch (curHex.terrainLevel(Terrains.RUBBLE)) {
-                case Building.MEDIUM:
+            switch (BuildingType.getType(curHex.terrainLevel(Terrains.RUBBLE))) {
+                case MEDIUM:
                     if (roll >= 7) {
                         found = true;
                     }
                     break;
-                case Building.HEAVY:
+                case HEAVY:
                     if (roll >= 6) {
                         found = true;
                     }
                     break;
-                case Building.HARDENED:
+                case HARDENED:
                     if (roll >= 5) {
                         found = true;
                     }
                     break;
-                case Building.WALL:
+                case WALL:
                     if (roll >= 13) {
                         found = true;
                     }
@@ -10971,7 +10972,7 @@ public class TWGameManager extends AbstractGameManager {
         // building modifiers
         Building bldg = game.getBoard().getBuildingAt(c);
         if (null != bldg) {
-            nTargetRoll.addModifier(bldg.getType() - 3, "building");
+            nTargetRoll.addModifier(bldg.getType().getTypeValue() - 3, "building");
         }
 
         // add in any modifiers for planetary conditions
@@ -25686,8 +25687,8 @@ public class TWGameManager extends AbstractGameManager {
             // Have to check if it's inferno smoke or from a heavy/hardened
             // building
             // - heavy smoke from those
-            if (bInferno || (Building.MEDIUM < smokeHex.terrainLevel(Terrains.FUEL_TANK))
-                    || (Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING))) {
+            if (bInferno || (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.FUEL_TANK))
+                    || (BuildingType.MEDIUM.getTypeValue() < smokeHex.terrainLevel(Terrains.BUILDING))) {
                 if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY) {
                     // heavy smoke fills hex
                     r = new Report(5180, Report.PUBLIC);
@@ -27874,7 +27875,7 @@ public class TWGameManager extends AbstractGameManager {
                 // Infantry and Battle armor take different amounts of damage
                 // then Meks and vehicles.
                 if (entity instanceof Infantry) {
-                    damage = bldg.getType() + 1;
+                    damage = bldg.getType().getTypeValue() + 1;
                 }
                 // It is possible that the unit takes no damage.
                 if (damage == 0) {
@@ -28767,7 +28768,7 @@ public class TWGameManager extends AbstractGameManager {
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
                     }
-                    if (bldg.getType() == Building.WALL) {
+                    if (bldg.getType() == BuildingType.WALL) {
                         r = new Report(3442);
                         r.type = Report.PUBLIC;
                         r.indent(0);
@@ -28964,7 +28965,7 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addAll(vRep);
                     return vPhaseReport;
                 }
-                if (bldg.getType() == Building.WALL) {
+                if (bldg.getType() == BuildingType.WALL) {
                     r = new Report(3442);
                 } else {
                     r = new Report(3440);
@@ -31255,7 +31256,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (isFuelAirBomb) {
                     // light buildings take 1.5x damage from fuel-air bombs
-                    if (bldg.getType() == Building.LIGHT) {
+                    if (bldg.getType() == BuildingType.LIGHT) {
                         actualDamage = (int) Math.ceil(actualDamage * 1.5);
 
                         r = new Report(9991);

@@ -43,6 +43,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
@@ -77,6 +78,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private JButton saveDseButton;
     private JButton saveConsiderationButton;
     private JButton saveDecisionButton;
+    private JToolBar profileTools;
 
     private ConsiderationPane considerationPane;
 
@@ -116,6 +118,20 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         considerationPane = new ConsiderationPane();
         considerationPane.setMinimumSize(new Dimension(considerationEditorPanel.getWidth(), considerationEditorPanel.getHeight()));
         considerationEditorPanel.add(considerationPane, gbc);
+
+        // Profile toolbar
+
+        var newDecisionBtn = new JButton(Messages.getString("aiEditor.new.decision"));
+        var copyDecisionBtn = new JButton(Messages.getString("aiEditor.copy.decision"));
+        var editDecisionBtn = new JButton(Messages.getString("aiEditor.edit.decision"));
+        var deleteDecisionBtn = new JButton(Messages.getString("aiEditor.delete.decision"));
+
+        profileTools.add(newDecisionBtn);
+        profileTools.add(copyDecisionBtn);
+        profileTools.add(editDecisionBtn);
+        profileTools.add(deleteDecisionBtn);
+
+        // Setup window frame behaviors
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -573,7 +589,8 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void createNewProfile() {
         profileId = -1;
         profileNameTextField.setText(Messages.getString("aiEditor.new.profile"));
-        descriptionTextField.setText("");
+        descriptionTextField.setText(Messages.getString("aiEditor.new.profile.description", new Date()));
+        profileDecisionTable.setModel(new DecisionTableModel<>());
         initializeProfileUI();
         mainEditorTabbedPane.setSelectedComponent(profileTabPane);
         profileTabPane.updateUI();
@@ -674,12 +691,12 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         mainEditorTabbedPane = new JTabbedPane();
         panel2.add(mainEditorTabbedPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         profileTabPane = new JPanel();
-        profileTabPane.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        profileTabPane.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile"), profileTabPane);
         profileScrollPane = new JScrollPane();
         profileScrollPane.setDoubleBuffered(false);
         profileScrollPane.setWheelScrollingEnabled(true);
-        profileTabPane.add(profileScrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        profileTabPane.add(profileScrollPane, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         profileDecisionTable.setColumnSelectionAllowed(false);
         profileDecisionTable.setDragEnabled(true);
         profileDecisionTable.setFillsViewportHeight(true);
@@ -700,6 +717,8 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         final JLabel label2 = new JLabel();
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "AiEditor.description"));
         panel3.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        profileTools = new JToolBar();
+        profileTabPane.add(profileTools, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
         decisionTabPane = new JPanel();
         decisionTabPane.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.decision"), decisionTabPane);

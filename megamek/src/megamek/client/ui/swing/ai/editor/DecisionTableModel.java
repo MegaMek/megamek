@@ -31,6 +31,10 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
     private final String[] columnNames = { "ID", "Decision", "Weight", "Evaluator" };
     private final Set<Integer> editableColumns = Set.of(1, 2, 3);
 
+    public DecisionTableModel() {
+        this.rows = new ArrayList<>();
+    }
+
     public DecisionTableModel(List<DECISION> initialRows) {
         this.rows = new ArrayList<>(initialRows);
     }

@@ -291,7 +291,7 @@ public class TestAdvancedAerospace extends TestAero {
     /**
      * One gunner is required for each capital weapon and each six standard scale
      * weapons, rounding up
-     * 
+     *
      * @return The vessel's minimum gunner requirements.
      */
     public static int requiredGunners(Jumpship vessel) {
@@ -622,7 +622,7 @@ public class TestAdvancedAerospace extends TestAero {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
@@ -648,7 +648,7 @@ public class TestAdvancedAerospace extends TestAero {
         correct &= correctGravDecks(buff);
         correct &= correctBays(buff);
         correct &= correctCriticals(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -865,7 +865,7 @@ public class TestAdvancedAerospace extends TestAero {
 
     /**
      * Checks that the unit meets minimum crew and quarters requirements.
-     * 
+     *
      * @param buffer Where to write messages explaining failures.
      * @return true if the crew data is valid.
      */
@@ -901,7 +901,7 @@ public class TestAdvancedAerospace extends TestAero {
     /**
      * Checks that the unit does not exceed the maximum number or size of gravity
      * decks.
-     * 
+     *
      * @param buffer Where to write messages explaining failures.
      * @return true if the crew data is valid.
      */

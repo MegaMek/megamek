@@ -1146,7 +1146,7 @@ public class BLKFile {
         if (t.getFluff().hasEmbeddedFluffImage()) {
             blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
         }
-        if (!t.getInvalidSourceBuildReasons().isEmpty()) {
+        if (t.canonUnitWithInvalidBuild()) {
             blk.writeBlockData("invalidSourceBuildReasons", t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
         }
         return blk;

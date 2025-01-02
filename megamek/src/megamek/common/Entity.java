@@ -15839,7 +15839,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean canonUnitWithInvalidBuild() {
-        if (this.isCanon() || mulId > -1)
+        if (this.isCanon() && mulId > -1)
         {
             return !this.getInvalidSourceBuildReasons().isEmpty();
         }

@@ -1463,6 +1463,31 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
+
+        if (!clientgui.getClient().getGame().getPhase().isPhysical()) {
+            return;
+        }
+
+        String s = getRemainingPlayerWithTurns();
+
+        if (!clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())) {
+            if (clientgui.getClient().isMyTurn()) {
+                setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn") + s);
+            } else {
+                String playerName;
+
+                if (e.getPlayer() != null) {
+                    playerName = e.getPlayer().getName();
+                } else {
+                    playerName = "Unknown";
+                }
+
+                setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName) + s);
+            }
+        } else {
+            setStatusBarText(s);
+        }
+
         // On simultaneous phases, each player ending their turn will generate a turn
         // change
         // We want to ignore turns from other players and only listen to events we
@@ -1474,32 +1499,13 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        if (!clientgui.getClient().getGame().getPhase().isPhysical()) {
-            logger.error("Got TurnChange event during the "
-                    + clientgui.getClient().getGame().getPhase() + " phase");
-            return;
-        }
-
-        String s = getRemainingPlayerWithTurns();
-
         if (clientgui.getClient().isMyTurn()) {
             if (currentEntity == Entity.NONE) {
                 beginMyTurn();
+                clientgui.bingMyTurn();
             }
-
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn") + s);
-            clientgui.bingMyTurn();
         } else {
             endMyTurn();
-            String playerName;
-
-            if (e.getPlayer() != null) {
-                playerName = e.getPlayer().getName();
-            } else {
-                playerName = "Unknown";
-            }
-
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName) + s);
             clientgui.bingOthersTurn();
         }
     }

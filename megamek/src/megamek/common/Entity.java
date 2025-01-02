@@ -37,6 +37,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.enums.WeaponSortOrder;
@@ -7973,7 +7974,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (rv > 1) {
             Building bldgEntered;
             bldgEntered = game.getBoard().getBuildingAt(curPos);
-            if (bldgEntered.getType() == Building.WALL) {
+            if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
             }
         }
@@ -8020,10 +8021,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         switch (bldg.getType()) {
-            case Building.LIGHT:
+            case LIGHT:
                 desc = "Light";
                 break;
-            case Building.MEDIUM:
+            case MEDIUM:
                 if (bldg.getBldgClass() != Building.HANGAR) {
                     mod = 1;
                     desc = "Medium";
@@ -8034,7 +8035,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.HEAVY:
+            case HEAVY:
                 mod = 2;
                 desc = "Heavy";
                 if (bldg.getBldgClass() == Building.HANGAR) {
@@ -8047,7 +8048,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.HARDENED:
+            case HARDENED:
                 mod = 5;
                 desc = "Hardened";
                 if (bldg.getBldgClass() == Building.HANGAR) {
@@ -8059,7 +8060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.WALL:
+            case WALL:
                 mod = 12;
                 desc = "";
                 break;

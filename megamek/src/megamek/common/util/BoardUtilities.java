@@ -18,6 +18,7 @@ package megamek.common.util;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.enums.BuildingType;
 import megamek.common.planetaryconditions.Weather;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.util.generator.ElevationGenerator;
@@ -396,7 +397,7 @@ public class BoardUtilities {
     }
 
     private static void placeBuilding(Board board, BuildingTemplate building) {
-        int type = building.getType();
+        BuildingType type = building.getType();
         int cf = building.getCF();
         int height = building.getHeight();
         ArrayList<Hex> hexes = new ArrayList<>();
@@ -415,7 +416,7 @@ public class BoardUtilities {
             // remove everything
             hex.removeAllTerrains();
             hex.addTerrain(new Terrain(Terrains.PAVEMENT, 1));
-            hex.addTerrain(new Terrain(Terrains.BUILDING, type, true, exits));
+            hex.addTerrain(new Terrain(Terrains.BUILDING, type.getTypeValue(), true, exits));
             hex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
             hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
             hexes.add(hex);

@@ -160,13 +160,13 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
                 final Hex hex = board.getHex(coords);
                 final Building bldg = board.getBuildingAt(coords);
                 if (hex.containsTerrain(BUILDING)) {
-                    content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),
+                    content += Messages.getString("BotConfigDialog.hexListBldg", bldg.getType().toString(),
                             Building.className(bldg.getBldgClass()), hex.terrainLevel(BLDG_ELEV), hex.terrainLevel(BLDG_CF));
                 } else if (hex.containsTerrain(FUEL_TANK)) {
                     content += Messages.getString("BotConfigDialog.hexListFuel",
                             hex.terrainLevel(FUEL_TANK_CF), hex.terrainLevel(FUEL_TANK_MAGN));
                 } else {
-                    content += Messages.getString("BotConfigDialog.hexListBrdg", Building.typeName(bldg.getType()),
+                    content += Messages.getString("BotConfigDialog.hexListBrdg",bldg.getType().toString(),
                             hex.terrainLevel(BRIDGE_ELEV), hex.terrainLevel(BRIDGE_CF));
                 }
             }

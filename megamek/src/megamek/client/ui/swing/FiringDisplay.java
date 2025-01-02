@@ -384,10 +384,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 
-        if (clientgui.getClient().isMyTurn()) {
-            setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
-        }
-
         if (clientgui.getClient().getGame().getEntity(en) != null) {
             currentEntity = en;
             clientgui.setSelectedEntityNum(en);
@@ -1034,8 +1030,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         target(null);
         clearAttacks();
         isStrafing = true;
-        setStatusBarText(Messages
-                .getString("FiringDisplay.Strafing.StatusLabel"));
+        setStatusBarText(Messages.getString("FiringDisplay.Strafing.StatusLabel"));
         refreshAll();
     }
 
@@ -1825,6 +1820,31 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if (isIgnoringEvents()) {
             return;
         }
+
+        if (!clientgui.getClient().getGame().getPhase().isFiring()) {
+            return;
+        }
+
+        String s = getRemainingPlayerWithTurns();
+
+        if (!clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())) {
+            if (clientgui.getClient().isMyTurn()) {
+                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
+            } else {
+                String playerName;
+
+                if (e.getPlayer() != null) {
+                    playerName = e.getPlayer().getName();
+                } else {
+                    playerName = "Unknown";
+                }
+
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
+            }
+        } else {
+            setStatusBarText(s);
+        }
+
         // On simultaneous phases, each player ending their turn will generate a turn
         // change
         // We want to ignore turns from other players and only listen to events we
@@ -1836,28 +1856,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase().isFiring()) {
-            String s = getRemainingPlayerWithTurns();
-            if (clientgui.getClient().isMyTurn()) {
-                if (currentEntity == Entity.NONE) {
-                    beginMyTurn();
-                }
-
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
+        if (clientgui.getClient().isMyTurn()) {
+            if (currentEntity == Entity.NONE) {
+                beginMyTurn();
                 clientgui.bingMyTurn();
-            } else {
-                endMyTurn();
-                String playerName;
-
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
-                } else {
-                    playerName = "Unknown";
-                }
-
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
-                clientgui.bingOthersTurn();
             }
+        } else {
+            endMyTurn();
+            clientgui.bingOthersTurn();
         }
     }
 
@@ -2085,9 +2091,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
     @Override
     public void clear() {
-        if (clientgui.getClient().isMyTurn()) {
-            setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
-        }
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
             ((Entity) target).setPlayerPickedPassThrough(currentEntity, null);
         }

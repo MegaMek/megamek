@@ -14,16 +14,7 @@
  */
 package megamek.common;
 
-import java.awt.Image;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -32,26 +23,11 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
-import megamek.common.enums.MPBoosters;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.enums.*;
+import megamek.common.equipment.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
@@ -63,13 +39,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
-import megamek.common.weapons.AlamoMissileWeapon;
-import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -78,6 +48,15 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+
+import java.awt.*;
+import java.math.BigInteger;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -89,6 +68,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private static final MMLogger logger = MMLogger.create(Entity.class);
 
     private static final long serialVersionUID = 1430806396279853295L;
+
+    public enum InvalidSourceBuildReason {
+        UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR,
+        NOT_ENOUGH_SLOT_COUNT,
+        UNIT_OVERWEIGHT,
+        INVALID_OR_OUTDATED_BUILD,
+        INCOMPLETE_BUILD,
+        INVALID_ENGINE,
+        INVALID_CREW,
+    }
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
     public static final int UNLIMITED_JUMP_DOWN = 999;
@@ -396,6 +385,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private List<Integer> passedThroughFacing = new ArrayList<>();
 
+    private List<InvalidSourceBuildReason> invalidSourceBuildReasons = new ArrayList<>();
     /**
      * Stores the player selected hex ground to air targeting.
      * For ground to air, distance to target for the ground unit is determined
@@ -15839,4 +15829,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         fleeZone = HexArea.EMPTY_AREA;
         hasFleeZone = false;
     }
+
+    public void setInvalidSourceBuildReasons(List<InvalidSourceBuildReason> invalidSourceBuildReasons) {
+        this.invalidSourceBuildReasons = invalidSourceBuildReasons;
+    }
+
+    public List<InvalidSourceBuildReason> getInvalidSourceBuildReasons() {
+        return invalidSourceBuildReasons;
+    }
+
+    public boolean canonUnitWithInvalidBuild() {
+        if (this.isCanon() || mulId > -1)
+        {
+            return !this.getInvalidSourceBuildReasons().isEmpty();
+        }
+        return false;
+    }
+
 }

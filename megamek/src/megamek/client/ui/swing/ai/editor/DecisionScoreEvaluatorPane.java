@@ -19,6 +19,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.ui.Messages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,12 +36,25 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private JTextField notesField;
     private JPanel decisionScoreEvaluatorPane;
     private JPanel considerationsPane;
+    private JToolBar considerationsToolbar;
     private final HoverStateModel hoverStateModel;
     private final List<ConsiderationPane> considerationPaneList = new ArrayList<>();
+
     public DecisionScoreEvaluatorPane() {
         $$$setupUI$$$();
         add(decisionScoreEvaluatorPane, BorderLayout.WEST);
         hoverStateModel = new HoverStateModel();
+
+        // Considerations Toolbar
+        var newConsiderationBtn = new JButton(Messages.getString("aiEditor.new.consideration"));
+        var copyConsiderationBtn = new JButton(Messages.getString("aiEditor.copy.consideration"));
+        var editConsiderationBtn = new JButton(Messages.getString("aiEditor.edit.consideration"));
+        var deleteConsiderationBtn = new JButton(Messages.getString("aiEditor.delete.consideration"));
+
+        considerationsToolbar.add(newConsiderationBtn);
+        considerationsToolbar.add(copyConsiderationBtn);
+        considerationsToolbar.add(editConsiderationBtn);
+        considerationsToolbar.add(deleteConsiderationBtn);
 
         // Add a MouseWheelListener to forward the event to the parent JScrollPane
         this.addMouseWheelListener(new MouseWheelListener() {
@@ -68,7 +82,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
 
     public void addEmptyConsideration() {
         considerationsPane.removeAll();
-        considerationsPane.setLayout(new GridLayoutManager((considerationPaneList.size()+1) * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationsPane.setLayout(new GridLayoutManager((considerationPaneList.size() + 1) * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
         int row = 0;
         var emptyConsideration = new ConsiderationPane();
         emptyConsideration.setEmptyConsideration();
@@ -121,7 +135,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
      */
     private void $$$setupUI$$$() {
         decisionScoreEvaluatorPane = new JPanel();
-        decisionScoreEvaluatorPane.setLayout(new GridLayoutManager(9, 1, new Insets(0, 0, 0, 0), -1, -1));
+        decisionScoreEvaluatorPane.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
         nameField = new JTextField();
         decisionScoreEvaluatorPane.add(nameField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         descriptionField = new JTextField();
@@ -133,7 +147,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         scrollPane1.setMaximumSize(new Dimension(800, 32767));
         scrollPane1.setMinimumSize(new Dimension(800, 600));
         scrollPane1.setWheelScrollingEnabled(true);
-        decisionScoreEvaluatorPane.add(scrollPane1, new GridConstraints(7, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        decisionScoreEvaluatorPane.add(scrollPane1, new GridConstraints(8, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         considerationsPane = new JPanel();
         considerationsPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         considerationsPane.setMaximumSize(new Dimension(800, 2147483647));
@@ -151,6 +165,8 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         final JLabel label4 = new JLabel();
         this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.name"));
         decisionScoreEvaluatorPane.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        considerationsToolbar = new JToolBar();
+        decisionScoreEvaluatorPane.add(considerationsToolbar, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
         label1.setLabelFor(scrollPane1);
         label2.setLabelFor(notesField);
         label3.setLabelFor(descriptionField);

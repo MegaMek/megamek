@@ -1960,7 +1960,7 @@ public class Princess extends BotClient {
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.
      */
-    Entity getEntityToFire(FireControlState fireControlState) {
+    public Entity getEntityToFire(FireControlState fireControlState) {
         if (fireControlState.getOrderedFiringEntities().isEmpty()) {
             initFiringEntities(fireControlState);
         }

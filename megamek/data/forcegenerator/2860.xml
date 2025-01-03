@@ -1521,18 +1521,21 @@
 			</model>
 		</chassis>
         <chassis name='Crosscut' unitType='Mek'>
-            <availability>Periphery:2-,PIR:4,BAN:4-</availability>
-            <model name='ED-X4M-A LoggerMech MOD'>
-                <availability>General:8</availability>
+            <availability>CLAN:4,IS:5,Periphery:4,PIR:4,BAN:4</availability>
+            <model name='ED-X2 (Flamer)'>
+                <roles>engineer,support</roles>
+                <availability>IS:8,Periphery:8,PIR:8</availability>
             </model>
             <model name='ED-X2M LoggerMech MOD'>
-                <availability>PIR:8</availability>
+                <roles>engineer</roles>
+                <availability>Periphery:2-,PIR:5,BAN:5</availability>
             </model>
             <model name='ED-X2 LoggerMech (RL)'>
-                <availability>General:8</availability>
+                <availability>Periphery:3-,PIR:6,BAN:3</availability>
             </model>
-            <model name='ED-X5M LoggerMech MOD'>
-                <availability>General:8</availability>
+            <model name='ED-X4K LoggerMech'>
+                <roles>engineer</roles>
+                <availability>Periphery:4-,PIR:8,BAN:8</availability>
             </model>
         </chassis>
 		<chassis name='Crusader' unitType='Mek'>
@@ -1578,6 +1581,20 @@
 				<availability>CLAN:6-,BAN:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Daedalus' unitType='Mek'>
+            <availability>CLAN:6,IS:3,PIR:1,BAN:2</availability>
+            <model name='GTX2 (Militarized)'>
+                <availability>PIR:8,BAN:8</availability>
+            </model>
+            <model name='GTX2A &apos;Stevedore&apos;'>
+                <roles>cargo,support</roles>
+                <availability>CLAN:8,IS:8</availability>
+            </model>
+            <model name='GTX2B &apos;Navvy&apos;'>
+                <roles>cargo,engineer,support</roles>
+                <availability>CLAN:5,IS:5</availability>
+            </model>
+        </chassis>
 		<chassis name='Daimyo HQ' unitType='Tank'>
 			<availability>DC:3</availability>
 			<model name='67-K'>
@@ -3942,10 +3959,10 @@
 			</model>
 		</chassis>
 		<chassis name='Patron' unitType='Mek'>
-			<availability>FWL:7</availability>
+			<availability>FWL:3</availability>
 			<model name='LoaderMech'>
 				<roles>support</roles>
-				<availability>General:8</availability>
+				<availability>FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
@@ -4062,12 +4079,16 @@
 			</model>
 		</chassis>
         <chassis name='Powerman' unitType='Mek'>
-            <availability>Periphery:2-,PIR:4,BAN:4-</availability>
+            <availability>CLAN:5,IS:7,DC:6,Periphery:4,PIR:4,BAN:4</availability>
+            <model name='SC XI LoaderMech'>
+                <roles>cargo,support</roles>
+                <availability>CLAN:8,IS:8,Periphery:3+,PIR:0,BAN:3+</availability>
+            </model>
             <model name='SC XI-M LoaderMech MOD'>
-                <availability>General:5</availability>
+                <availability>Periphery:3-,PIR:4-,BAN:6-</availability>
             </model>
             <model name='SC XI-M-B LoaderMech MOD'>
-                <availability>General:8</availability>
+                <availability>Periphery:3-,PIR:6-,BAN:4-</availability>
             </model>
         </chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
@@ -4359,6 +4380,13 @@
                 <availability>CLAN:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>
+        <chassis name='Scavenger' unitType='Mek'>
+            <availability>CLAN:4,IS:4,Periphery:5,PIR:0,BAN:0</availability>
+            <model name='SC-V SalvageMech'>
+                <roles>support</roles>
+                <availability>CLAN:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Schrek PPC Carrier' unitType='Tank'>
 			<availability>CC:3,IS:5,Periphery.Deep:5,MERC:5,Periphery:5,CS:5,DC:3</availability>
 			<model name=''>
@@ -4516,6 +4544,13 @@
 			<model name='ST-8A'>
                 <roles>command</roles>
 				<availability>General:8</availability>
+			</model>
+		</chassis>
+        <chassis name='Shugosha' unitType='Mek'>
+            <availability>DC:4+</availability>
+            <model name='PTN-LAW LoaderMech'>
+                <roles>support</roles>
+                <availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Shuttle' unitType='Small Craft'>

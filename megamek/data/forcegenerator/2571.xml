@@ -1550,8 +1550,8 @@
 		<chassis name='Jabberwocky' unitType='Mek'>
 			<availability>FS:3-</availability>
 			<model name='JAW-65A EngineerMech'>
-				<roles>engineer,support</roles>
-				<availability>General:5</availability>
+				<roles>support</roles>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Jumbo' unitType='Dropship'>
@@ -2452,6 +2452,13 @@
                 <availability>SL:8,IS:8,Periphery:8</availability>
             </model>
         </chassis>
+        <chassis name='Scavenger' unitType='Mek'>
+            <availability>SL:8:2613,IS:6:2614,Periphery:6:2615,PIR:0</availability>
+            <model name='SC-V SalvageMech'>
+                <roles>support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Scorpion' unitType='Mek'>
 			<availability>CC:4-,LA:4-,FWL:4-,MERC:4-,DC:4-,Periphery:2-</availability>
 			<model name='SCP-1N'>
@@ -2499,6 +2506,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Shugosha' unitType='Mek'>
+            <availability>DC:8</availability>
+            <model name='PTN-LAW LoaderMech'>
+                <roles>support</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Shuttle' unitType='Small Craft'>
 			<availability>IS:10,Periphery:10</availability>
 			<model name='ST-46'>

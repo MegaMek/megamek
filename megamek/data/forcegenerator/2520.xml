@@ -1118,10 +1118,10 @@
 			</model>
 		</chassis>
 		<chassis name='Jabberwocky' unitType='Mek'>
-			<availability>FS:2-</availability>
+			<availability>FS:2-:2549</availability>
 			<model name='JAW-65A EngineerMech'>
-				<roles>engineer,support</roles>
-				<availability>General:5</availability>
+				<roles>support</roles>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Jumbo' unitType='Dropship'>

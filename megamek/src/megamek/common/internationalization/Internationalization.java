@@ -36,11 +36,7 @@ public class Internationalization {
     protected static Internationalization instance;
 
     static {
-<<<<<<< HEAD
-        instance = new Internationalization("megamek.client.messages");
-=======
         instance = new Internationalization("megamek.common.messages");
->>>>>>> b51f663697 (feat: move ACAR base code to MM, needs to implement GUI and force setup)
     }
 
     protected Internationalization(String defaultBundle) {

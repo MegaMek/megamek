@@ -1,20 +1,15 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- *  This file is part of MekHQ.
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
  *
- *  MekHQ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MekHQ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
  */
 package megamek.common.autoresolve.acar;
 
@@ -22,6 +17,13 @@ package megamek.common.autoresolve.acar;
 import megamek.common.*;
 import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.autoresolve.acar.action.Action;
+import megamek.common.autoresolve.acar.action.ActionHandler;
+import megamek.common.autoresolve.acar.report.PublicReportEntry;
+import megamek.common.autoresolve.component.AcTurn;
+import megamek.common.autoresolve.component.Formation;
+import megamek.common.autoresolve.component.FormationTurn;
+import megamek.common.autoresolve.converter.SetupForces;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 import megamek.common.event.GameEvent;
@@ -29,15 +31,6 @@ import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
-import mekhq.campaign.autoresolve.acar.SimulationOptions;
-import mekhq.campaign.autoresolve.acar.action.Action;
-import mekhq.campaign.autoresolve.acar.action.ActionHandler;
-import mekhq.campaign.autoresolve.acar.report.PublicReportEntry;
-import mekhq.campaign.autoresolve.component.AcTurn;
-import mekhq.campaign.autoresolve.component.Formation;
-import mekhq.campaign.autoresolve.component.FormationTurn;
-import mekhq.campaign.autoresolve.converter.SetupForces;
-import mekhq.campaign.mission.AtBScenario;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
@@ -52,7 +45,6 @@ public class SimulationContext implements IGame {
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
 
     private final SimulationOptions options;
-    private final AtBScenario scenario;
 
     /**
     * Objectives that must be considered during the game
@@ -91,15 +83,10 @@ public class SimulationContext implements IGame {
      */
     private final Vector<Entity> graveyard = new Vector<>();
 
-    public SimulationContext(AtBScenario scenario, SimulationOptions gameOptions, SetupForces setupForces) {
+    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces) {
         this.options = gameOptions;
-        this.scenario = scenario;
         setBoard(0, new Board());
-        setupForces.createForcesOnGame(this);
-    }
-
-    public AtBScenario getScenario() {
-        return scenario;
+        setupForces.createForcesOnSimulation(this);
     }
 
     public void addUnit(InGameObject unit) {

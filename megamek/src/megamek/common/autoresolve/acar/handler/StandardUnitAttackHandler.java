@@ -1,22 +1,16 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- *  This file is part of MekHQ.
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
  *
- *  MekHQ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MekHQ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
  */
-
 package megamek.common.autoresolve.acar.handler;
 
 import megamek.codeUtilities.ObjectUtility;
@@ -24,14 +18,13 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Roll;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.acar.action.AttackToHitData;
+import megamek.common.autoresolve.acar.action.StandardUnitAttack;
+import megamek.common.autoresolve.acar.report.AttackReporter;
+import megamek.common.autoresolve.component.EngagementControl;
+import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
-import mekhq.campaign.autoresolve.acar.SimulationManager;
-import mekhq.campaign.autoresolve.acar.action.AttackToHitData;
-import mekhq.campaign.autoresolve.acar.action.StandardUnitAttack;
-import mekhq.campaign.autoresolve.acar.handler.AbstractActionHandler;
-import mekhq.campaign.autoresolve.acar.report.AttackReporter;
-import mekhq.campaign.autoresolve.component.EngagementControl;
-import mekhq.campaign.autoresolve.component.Formation;
 
 import java.util.ArrayList;
 import java.util.Collections;

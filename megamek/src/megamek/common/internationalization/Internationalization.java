@@ -1,22 +1,16 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- *  This file is part of MekHQ.
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
  *
- *  MekHQ is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MekHQ is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
  */
-
 package megamek.common.internationalization;
 
 import megamek.MegaMek;
@@ -37,21 +31,20 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Internationalization {
 
-    private final String prefix;
-    protected static final String DEFAULT = "messages";
+    private final String defaultBundle;
     private final ConcurrentHashMap<String, ResourceBundle> resourceBundles = new ConcurrentHashMap<>();
-    private static Internationalization instance;
+    protected static Internationalization instance;
 
-    {
-        instance = new Internationalization();
+    static {
+<<<<<<< HEAD
+        instance = new Internationalization("megamek.client.messages");
+=======
+        instance = new Internationalization("megamek.common.messages");
+>>>>>>> b51f663697 (feat: move ACAR base code to MM, needs to implement GUI and force setup)
     }
 
-    protected Internationalization() {
-        prefix = "megamek.client.";
-    }
-
-    protected Internationalization(String prefix) {
-        this.prefix = prefix;
+    protected Internationalization(String defaultBundle) {
+        this.defaultBundle = defaultBundle;
     }
 
     public static Internationalization getInstance() {
@@ -73,7 +66,7 @@ public class Internationalization {
 
     ResourceBundle getResourceBundle(String bundleName) {
         return resourceBundles.computeIfAbsent(bundleName, k ->
-            ResourceBundle.getBundle(prefix + bundleName, MegaMek.getMMOptions().getLocale(), new UTF8Control()));
+            ResourceBundle.getBundle(bundleName, MegaMek.getMMOptions().getLocale(), new UTF8Control()));
     }
 
     /**
@@ -95,7 +88,7 @@ public class Internationalization {
      * @return the localized string
      */
     public static String getText(String key) {
-        return getTextAt(DEFAULT, key);
+        return getTextAt(getInstance().defaultBundle, key);
     }
 
     /**
@@ -105,7 +98,7 @@ public class Internationalization {
      * @return the localized string
      */
     public static String getFormattedText(String key, Object... args) {
-        return MessageFormat.format(getFormattedTextAt(DEFAULT, key), args);
+        return MessageFormat.format(getFormattedTextAt(getInstance().defaultBundle, key), args);
     }
 
     /**

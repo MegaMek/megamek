@@ -184,8 +184,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /* ACAR Settings Panel */
     private FixedYPanel panAutoResolveInfo;
     private final JButton butRunAutoResolve = new JButton(Messages.getString("ChatLounge.butRunAutoResolve"));
-    private final JSpinner spnSimulationRuns = new JSpinner(new SpinnerNumberModel(1000, 1, 100000, 1));
-    private final JSpinner spnThreadNumber = new JSpinner(new SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Math.max(2, Runtime.getRuntime().availableProcessors() * 2), 1));
+    private final JSpinner spnSimulationRuns = new JSpinner(new SpinnerNumberModel(1000, 1, 5000, 1));
+    private final JSpinner spnThreadNumber = new JSpinner(new SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Math.max(2, Runtime.getRuntime().availableProcessors() * 5), 1));
     private final JCheckBox chkAutoResolve = new JCheckBox();
 
     /* Map Settings Panel */

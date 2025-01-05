@@ -213,10 +213,10 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        int progress = Math.min(progressBar.getMaximum(), task.getProgress());
-        progressBar.setValue(progress);
-        var factor = clamp(numberOfSimulations / 25, 3, 99);
-        int i = (int) (factor * ((float) progress / progressBar.getMaximum()));
+        int progress = Math.min(getProgressBar().getMaximum(), task.getProgress());
+        getProgressBar().setValue(progress);
+        var factor = clamp(numberOfSimulations / 25, 3, 98);
+        int i = (int) (factor * ((float) progress / getProgressBar().getMaximum()));
         getProgressBar().setString(Internationalization.getText(progressText.get(i)));
     }
 

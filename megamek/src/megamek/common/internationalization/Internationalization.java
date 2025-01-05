@@ -108,5 +108,4 @@ public class Internationalization {
         return MessageFormat.format(getTextAt(bundleName, key), args);
     }
 
-
 }

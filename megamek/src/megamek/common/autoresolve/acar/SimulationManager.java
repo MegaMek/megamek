@@ -151,6 +151,11 @@ public class SimulationManager extends AbstractGameManager {
         return actionsProcessor;
     }
 
+    public void addMovement(MoveAction moveAction, Formation activeFormation) {
+        getGame().addAction(moveAction);
+        activeFormation.setDone(true);
+    }
+
     public void addMoraleCheck(MoraleCheckAction acsMoraleCheckAction, Formation formation) {
         getGame().addAction(acsMoraleCheckAction);
         formation.setDone(true);
@@ -258,4 +263,5 @@ public class SimulationManager extends AbstractGameManager {
     public void send(int connId, Packet p) {
         // DO NOTHING
     }
+
 }

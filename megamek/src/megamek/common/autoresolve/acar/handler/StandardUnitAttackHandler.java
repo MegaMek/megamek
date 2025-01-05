@@ -15,8 +15,8 @@ package megamek.common.autoresolve.acar.handler;
 
 import megamek.codeUtilities.ObjectUtility;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.Roll;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
@@ -25,7 +25,6 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.AttackToHitData;
 import megamek.common.autoresolve.acar.action.StandardUnitAttack;
 import megamek.common.autoresolve.acar.report.AttackReporter;
-import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
@@ -68,6 +67,11 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         var attackingUnit = attacker.getUnits().get(attack.getUnitNumber());
         var toHit = AttackToHitData.compileToHit(game(), attack);
 
+        if (attack.getRange().ordinal() > ASRange.LONG.ordinal()) {
+            // EXTREME ranged attacks are not accepted
+            return;
+        }
+
         // Start of attack report
         reporter.reportAttackStart(attacker, attack.getUnitNumber(), target);
 
@@ -82,9 +86,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
                 reporter.reportAttackMiss();
             } else {
                 reporter.reportAttackHit();
-                var damage = calculateDamage(attacker, attack, attackingUnit, target);
-
-
+                var damage = calculateDamage(attack, attackingUnit);
                 applyDamage(target, targetUnit, damage, attackingUnit);
             }
         }
@@ -164,15 +166,10 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         }
     }
 
-    private int[] calculateDamage(Formation attacker, StandardUnitAttack attack,
-                                SBFUnit attackingUnit, Formation target) {
-        int bonusDamage = 0;
-        if (attack.getManeuverResult().equals(StandardUnitAttack.ManeuverResult.SUCCESS)) {
-            bonusDamage += 1;
-        }
+    private int[] calculateDamage(StandardUnitAttack attack,
+                                SBFUnit attackingUnit) {
 
-        var damage = attackingUnit.getElements().stream().mapToInt(e -> getDamage(e, attack.getRange())).toArray();
-        return processDamageByEngagementControl(attacker, target, bonusDamage, damage);
+        return attackingUnit.getElements().stream().mapToInt(e -> getDamage(e, attack.getRange())).toArray();
     }
 
     private enum ArcSelection {
@@ -264,61 +261,5 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         for (var target : targets) {
             ObjectUtility.getRandomItemSafe(killers).ifPresent(e -> e.addKill(target));
         }
-    }
-
-    private int[] processDamageByEngagementControl(Formation attacker, Formation target, int bonusDamage, int[] damage) {
-        var engagementControlMemories = attacker.getMemory().getMemories("engagementControl");
-        var engagement = engagementControlMemories
-            .stream()
-            .filter(f -> f.getOrDefault("targetFormationId", Entity.NONE).equals(target.getId()))
-            .findFirst(); // there should be only one engagement control memory for this target
-
-        if (damage.length > 0) {
-            damage[0] += bonusDamage;
-        }
-
-        if (engagement.isEmpty()) {
-            return damage;
-        }
-
-        var isAttacker = (boolean) engagement.get().getOrDefault("attacker", false);
-
-        if (!isAttacker) {
-            return damage;
-        }
-
-        var wonEngagement = (boolean) engagement.get().getOrDefault("wonEngagementControl", false);
-        var engagementControl = (EngagementControl) engagement.get().getOrDefault("engagementControl", EngagementControl.NONE);
-        if (wonEngagement) {
-            return processDamageEngagementControlVictory(engagementControl, damage);
-        }
-        return processDamageEngagementControlDefeat(engagementControl, damage);
-    }
-
-    private int[] processDamageEngagementControlDefeat(EngagementControl engagementControl, int[] damage) {
-        if (engagementControl == EngagementControl.EVADE) {
-            for (int i = 0; i < damage.length; i++) {
-                damage[i] = (int) ((double) damage[i] * 0.5);
-            }
-        }
-        return damage;
-    }
-
-    private int[] processDamageEngagementControlVictory(EngagementControl engagementControl, int[] damage) {
-        return switch(engagementControl) {
-            case OVERRUN -> {
-                for (var i = 0; i < damage.length; i++) {
-                    damage[i] = (int) ((double) damage[i] * 0.25);
-                }
-                yield damage;
-            }
-            case FORCED_ENGAGEMENT -> {
-                for (var i = 0; i < damage.length; i++) {
-                    damage[i] = (int) ((double) damage[i] * 0.5);
-                }
-                yield damage;
-            }
-            default -> damage;
-        };
     }
 }

@@ -27,7 +27,6 @@ public class StandardUnitAttack extends AbstractAttackAction {
 
     private final int unitNumber;
     private final ASRange range;
-    private final ManeuverResult maneuverResult;
 
     public enum ManeuverResult {
         SUCCESS,
@@ -45,11 +44,10 @@ public class StandardUnitAttack extends AbstractAttackAction {
      * @param unitNumber  The number of the attacking SBF Unit inside the formation
      * @param targetId    The target's ID
      */
-    public StandardUnitAttack(int formationId, int unitNumber, int targetId, ASRange range, ManeuverResult maneuverResult) {
+    public StandardUnitAttack(int formationId, int unitNumber, int targetId, ASRange range) {
         super(formationId, targetId);
         this.unitNumber = unitNumber;
         this.range = range;
-        this.maneuverResult = maneuverResult;
     }
 
     /**
@@ -64,10 +62,6 @@ public class StandardUnitAttack extends AbstractAttackAction {
 
     public ASRange getRange() {
         return range;
-    }
-
-    public ManeuverResult getManeuverResult() {
-        return maneuverResult;
     }
 
     @Override

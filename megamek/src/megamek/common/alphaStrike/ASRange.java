@@ -19,5 +19,19 @@
 package megamek.common.alphaStrike;
 
 public enum ASRange {
-    SHORT, MEDIUM, LONG, EXTREME, HORIZON
+    SHORT, MEDIUM, LONG, EXTREME, HORIZON;
+
+    public static ASRange fromDistance(int distance) {
+        if (distance <= 6) {
+            return SHORT;
+        } else if (distance <= 24) {
+            return MEDIUM;
+        } else if (distance < 42) {
+            return LONG;
+        } else if (distance < 60) {
+            return EXTREME;
+        } else {
+            return HORIZON;
+        }
+    }
 }

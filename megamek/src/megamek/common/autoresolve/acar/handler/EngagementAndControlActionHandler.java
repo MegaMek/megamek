@@ -43,7 +43,6 @@ public class EngagementAndControlActionHandler extends AbstractActionHandler {
      */
     @Override
     public void execute() {
-        // WARNING: THIS IS NOT UP TO RULES AS WRITTEN
         EngagementControlAction engagementControl = (EngagementControlAction) getAction();
 
         var attackerOpt = game().getFormation(engagementControl.getEntityId());

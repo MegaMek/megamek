@@ -13,6 +13,7 @@
  */
 package megamek.common.autoresolve;
 
+import megamek.common.Board;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.SimulationOptions;
@@ -29,11 +30,13 @@ public class Resolver {
 
     private final SimulationOptions options;
     private final SetupForces setupForces;
+    private final Board board;
 
     public Resolver(SetupForces setupForces,
-                    AbstractOptions gameOptions) {
+                    AbstractOptions gameOptions, Board board) {
         this.options = new SimulationOptions(gameOptions);
         this.setupForces = setupForces;
+        this.board = board;
     }
 
     private void initializeGameManager(SimulationManager simulationManager) {
@@ -47,7 +50,7 @@ public class Resolver {
     }
 
     public AutoResolveConcludedEvent resolveSimulation() {
-        SimulationContext context = new SimulationContext(options, setupForces);
+        SimulationContext context = new SimulationContext(options, setupForces, board);
         SimulationManager simulationManager = new SimulationManager(context);
         initializeGameManager(simulationManager);
         simulationManager.execute();

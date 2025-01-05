@@ -37,11 +37,6 @@ public class WithdrawActionHandler extends AbstractActionHandler {
         return game().getPhase().isEnd();
     }
 
-    /**
-     * This is not up to rules as written, the intention was to create a play experience that is more challenging and engaging.
-     * The rules as written allow for a very simple withdraw mechanic that in this situation is very easy to exploit and would
-     * create too many games which result in no losses.
-     */
     @Override
     public void execute() {
         var withdraw = (WithdrawAction) getAction();
@@ -52,15 +47,14 @@ public class WithdrawActionHandler extends AbstractActionHandler {
         }
 
         var withdrawFormation = withdrawOpt.get();
-        var toHit = WithdrawToHitData.compileToHit(game(), withdrawFormation);
-        var withdrawRoll = Compute.rollD6(2);
+        if (!withdrawFormation.isWithdrawing()) {
+            withdrawFormation.setWithdrawing(true);
+        }
 
-        // Reporting the start of the withdrawal attempt
-        reporter.reportStartWithdraw(withdrawFormation, toHit);
-        // Reporting the roll
-        reporter.reportWithdrawRoll(withdrawFormation, withdrawRoll);
+        var canWithdraw = (withdrawFormation.getPosition().coords().getX() == 0)
+            || (withdrawFormation.getPosition().coords().getX() == game().getBoardSize());
 
-        if (withdrawRoll.isTargetRollSuccess(toHit)) {
+        if (canWithdraw) {
             // successful withdraw
             withdrawFormation.setDeployed(false);
             AtomicInteger unitWithdrawn = new AtomicInteger();
@@ -86,9 +80,7 @@ public class WithdrawActionHandler extends AbstractActionHandler {
             if (unitWithdrawn.get() > 0) {
                 reporter.reportSuccessfulWithdraw();
             }
-//            game().removeFormation(withdrawFormation);
-        } else {
-            reporter.reportFailedWithdraw();
+            game().removeFormation(withdrawFormation);
         }
     }
 }

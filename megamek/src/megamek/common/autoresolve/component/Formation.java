@@ -16,7 +16,6 @@ package megamek.common.autoresolve.component;
 import megamek.ai.utility.Memory;
 import megamek.common.Entity;
 import megamek.common.ToHitData;
-import megamek.common.UnitType;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.ASUnitType;
@@ -34,6 +33,8 @@ public class Formation extends SBFFormation {
     private boolean clanFormation = false;
     private ASDamageVector stdDamage;
     private boolean highStressEpisode = false;
+    private boolean withdrawing = false;
+
     public Memory getMemory() {
         return memory;
     }
@@ -48,6 +49,14 @@ public class Formation extends SBFFormation {
 
     public int getTargetFormationId() {
         return targetFormationId;
+    }
+
+    public boolean isUnitIsCrippledLatch() {
+        return unitIsCrippledLatch;
+    }
+
+    public void setUnitIsCrippledLatch(boolean unitIsCrippledLatch) {
+        this.unitIsCrippledLatch = unitIsCrippledLatch;
     }
 
     public void setTargetFormationId(int targetFormationId) {
@@ -202,6 +211,14 @@ public class Formation extends SBFFormation {
     @Override
     public int getPointValue() {
         return getUnits().stream().mapToInt(SBFUnit::getPointValue).sum();
+    }
+
+    public boolean isWithdrawing() {
+        return withdrawing;
+    }
+
+    public void setWithdrawing(boolean withdrawing) {
+        this.withdrawing = withdrawing;
     }
 
     @Override

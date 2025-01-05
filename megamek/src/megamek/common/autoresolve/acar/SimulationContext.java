@@ -72,7 +72,7 @@ public class SimulationContext implements IGame {
     private final Map<Integer, List<Deployable>> deploymentTable = new HashMap<>();
     protected int currentRound = -1;
     protected int turnIndex = AWAITING_FIRST_TURN;
-
+    private final Map<Integer, List<Formation>> board = new HashMap<>();
     /**
      * Tools for the game
      */
@@ -83,9 +83,9 @@ public class SimulationContext implements IGame {
      */
     private final Vector<Entity> graveyard = new Vector<>();
 
-    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces) {
+    public SimulationContext(SimulationOptions gameOptions, SetupForces setupForces, Board board) {
         this.options = gameOptions;
-        setBoard(0, new Board());
+        setBoard(0, board);
         setupForces.createForcesOnSimulation(this);
     }
 
@@ -529,11 +529,20 @@ public class SimulationContext implements IGame {
     public void receiveBoards(Map<Integer, Board> boards) {}
 
     @Override
-    public void setBoard(int boardId, Board board) {}
+    public void setBoard(int boardId, Board board) {
+        var linearSize = new Coords(0, 0).distance(board.getHeight(), board.getWidth());
+        for (var i = 0; i < linearSize; i++) {
+            this.board.put(i, new ArrayList<>());
+        }
+    }
 
     @Override
     public Map<Integer, Board> getBoards() {
         return Map.of();
+    }
+
+    public int getBoardSize () {
+        return board.size();
     }
 
     @Override
@@ -669,7 +678,7 @@ public class SimulationContext implements IGame {
     }
 
     public boolean hasBoardLocation(Coords coords, int boardId) {
-        return hasBoard(boardId) && getBoard(boardId).contains(coords);
+        return hasBoard(boardId) && coords.getX() < board.size();
     }
 
     public boolean hasBoard(@Nullable BoardLocation boardLocation) {
@@ -680,6 +689,11 @@ public class SimulationContext implements IGame {
         return true;
     }
 
+    public void setBoardLocation(BoardLocation boardLocation, Formation formation) {
+        board.get(formation.getPosition().coords().getX()).remove(formation);
+        formation.setPosition(boardLocation);
+        board.get(formation.getPosition().coords().getX()).add(formation);
+    }
 
     /**
      * Resets this game, i.e. prepares it for a return to the lobby.

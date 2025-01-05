@@ -509,7 +509,7 @@ super * "road:2:61" "" "saxarba/roads/road_trees61.png"
 super * "road:2:62" "" "saxarba/roads/road_trees62.png"
 super * "road:2:63" "" "saxarba/roads/road_trees63.png"
 
-super * "road:3:00" "" "saxarba/misc/legacy_road0.png"
+super * "road:3:00" "" "unpaved_roads/dirtroad/dirtroad_00.png"
 super * "road:3:01" "" "unpaved_roads/dirtroad/dirtroad_01.png"
 super * "road:3:02" "" "unpaved_roads/dirtroad/dirtroad_02.png"
 super * "road:3:03" "" "unpaved_roads/dirtroad/dirtroad_03.png"

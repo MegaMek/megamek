@@ -1358,7 +1358,7 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         for (Player player : game.getPlayersList()) {
-            player.setAdmitsDefeat(false);
+            player.setAdmitsDefeat(ignorePlayerVotes);
         }
     }
 

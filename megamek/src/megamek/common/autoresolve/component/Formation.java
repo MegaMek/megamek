@@ -16,8 +16,10 @@ package megamek.common.autoresolve.component;
 import megamek.ai.utility.Memory;
 import megamek.common.Entity;
 import megamek.common.ToHitData;
+import megamek.common.UnitType;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
@@ -106,29 +108,39 @@ public class Formation extends SBFFormation {
      */
     public boolean isCrippled() {
         if (!unitIsCrippledLatch) {
-            var halfOfUnitsDoZeroDamage = getUnits().stream()
-                .filter(u -> !u.getCurrentDamage().hasDamage())
-                .count() >= Math.ceil(getUnits().size() / 2.0);
-
-            var hasVeryDamagedMovement = (getCurrentMovement() <= 1) && (getMovement() >= 3);
-
-            var totalUnits = getUnits().size();
+            var halfOfUnitsDoZeroDamage = 0;
             var lessThan20PercentOfArmorOrLess = 0;
+            var totalUnitsWithArmor = 0;
+            var totalUnits = 0;
             for (var units : getUnits()) {
-                if (((double) units.getCurrentArmor() / units.getArmor()) <= 0.2) {
-                    lessThan20PercentOfArmorOrLess++;
+                for (var element : units.getElements()) {
+                    totalUnits++;
+
+                    if (element.getStdDamage().reducedBy(units.getDamageCrits()).hasDamage()) {
+                        halfOfUnitsDoZeroDamage++;
+                    }
+
+                    if (element.getCurrentArmor() == 0 &&
+                        ((element.getCurrentStructure() < (element.getFullStructure() / 2)) || (element.getFullStructure() == 1))) {
+                        if (!element.getASUnitType().equals(ASUnitType.CI)
+                            && !element.getASUnitType().equals(ASUnitType.BA)) {
+                            lessThan20PercentOfArmorOrLess++;
+                            totalUnitsWithArmor++;
+                        }
+                    } else {
+                        totalUnitsWithArmor++;
+                    }
                 }
             }
 
-            var halfOfUnitsHaveTwentyPercentOfArmorOrLess = lessThan20PercentOfArmorOrLess >= Math.ceil(totalUnits / 2.0);
-
+            var halOfUnitsDoZeroDamage = halfOfUnitsDoZeroDamage >= Math.ceil(totalUnits / 2.0);
+            var halfOfUnitsHaveTwentyPercentOfArmorOrLess = lessThan20PercentOfArmorOrLess >= Math.ceil(totalUnitsWithArmor / 2.0);
             var halfOfUnitsTookTwoTargetDamageOrMore = getUnits().stream()
                 .filter(u -> u.getTargetingCrits() >= 2)
                 .count() >= Math.ceil(getUnits().size() / 2.0);
 
             // Sets the latch for crippled variable so it is not recalculated
-            unitIsCrippledLatch = hasVeryDamagedMovement
-                || halfOfUnitsDoZeroDamage
+            unitIsCrippledLatch = halOfUnitsDoZeroDamage
                 || halfOfUnitsHaveTwentyPercentOfArmorOrLess
                 || halfOfUnitsTookTwoTargetDamageOrMore;
         }

@@ -33,25 +33,25 @@ public class RecoveringNerveActionReporter {
     }
 
     public void reportRecoveringNerveStart(Formation formation) {
-        reportConsumer.accept(new PublicReportEntry(4000)
+        reportConsumer.accept(new PublicReportEntry(4500)
             .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text()));
     }
 
     public void reportToHitValue(int toHitValue) {
-        reportConsumer.accept(new PublicReportEntry(4001).add(toHitValue).noNL());
+        reportConsumer.accept(new PublicReportEntry(4501).add(toHitValue).noNL());
     }
 
     public void reportSuccessRoll(Roll roll) {
-        var report = new PublicReportEntry(4002).indent().noNL();
+        var report = new PublicReportEntry(4502).indent().noNL();
         report.add(new RollReportEntry(roll).reportText());
         reportConsumer.accept(report);
     }
 
     public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus) {
-        reportConsumer.accept(new PublicReportEntry(4003).add(newMoraleStatus.name()));
+        reportConsumer.accept(new PublicReportEntry(4503).add(newMoraleStatus.name()));
     }
 
     public void reportFailureRoll(Roll roll) {
-        reportConsumer.accept(new PublicReportEntry(4004).add(roll.toString()));
+        reportConsumer.accept(new PublicReportEntry(4504).add(roll.toString()));
     }
 }

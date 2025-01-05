@@ -35,7 +35,7 @@ public class ConsolidateForces {
      * It will balance the forces by team, ensuring that each force has a maximum of 20 entities and 4 sub forces.
      * @param game The game to consolidate forces for
      */
-    public static void consolidateForces(IGame game) {
+    public static void consolidateForces(IGame game, ForceConsolidation forceConsolidation) {
         Forces forces = game.getForces();
         var teamByPlayer = game.getTeamByPlayer();
         var forceNameByPlayer = new HashMap<Integer, String>();
@@ -50,7 +50,7 @@ public class ConsolidateForces {
         }
 
         List<BalancedConsolidateForces.ForceRepresentation> forceRepresentation = getForceRepresentations(forces, teamByPlayer);
-        var balancedConsolidateForces = BalancedConsolidateForces.balancedLists(forceRepresentation);
+        var balancedConsolidateForces = forceConsolidation.balanceForces(forceRepresentation);
 
         clearAllForces(forces);
 

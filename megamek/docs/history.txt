@@ -7,6 +7,13 @@ MEGAMEK VERSION HISTORY:
 + PR #6340: MML tabbed UI docs update
 + PR #6341: update status display for sim fire, sim physicial to show remaining players
 + Fix MML #1674: Fix Tank armor and invalid builds
++ PR #6348: RFE Add Ability to Link Units in MekHQ (Fix MekHQ #3650)
++ PR #6349: MekHQ MegaMek options search bar resets all changes (fix MekHQ #5621)
++ PR #6350: Updating gravel road hexes to improve visuals
++ Fix #6345: Updated more pavement checks to consider dirt & gravel roads not paved
++ Fix #6339: 16x17 Battle of Stanrey -3- Up-Right.board does not match the complete version
++ PR #6356: Revised dirt road art
+
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

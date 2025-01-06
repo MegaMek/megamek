@@ -181,8 +181,13 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
 
     private int getDamage(AlphaStrikeElement element, ASRange range) {
         var stdDamage = element.getStdDamage();
+        var specialDmgVectors = element.getSpecialAbilities().getInternalRepr().values().stream()
+            .filter(o -> o instanceof ASDamageVector).map(o -> (ASDamageVector) o).toList();
+
         if (stdDamage.hasDamage()) {
             return stdDamage.getDamage(range).damage;
+        } else if (!specialDmgVectors.isEmpty()) {
+            return specialDmgVectors.stream().mapToInt(d -> d.getDamage(range).damage).sum();
         }
 
         var frontArcDamages = element.getFrontArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)

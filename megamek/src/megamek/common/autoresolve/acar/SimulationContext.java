@@ -455,7 +455,7 @@ public class SimulationContext implements IGame {
     }
 
     @Override
-    public Forces getForces() {
+    public synchronized Forces getForces() {
         return forces;
     }
 

@@ -148,6 +148,8 @@ public class FiringPhase extends PhaseHandler {
     @Nullable
     private static ASRange selectBestRange(AlphaStrikeElement element) {
         var stdDamage = element.getStdDamage();
+        var specialDmgVectors = element.getSpecialAbilities().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+            .map(o -> (ASDamageVector) o).toList();
 
         if (stdDamage.hasDamage()) {
             var rangeMap = WeightedDoubleMap.of(
@@ -158,8 +160,16 @@ public class FiringPhase extends PhaseHandler {
             if (!rangeMap.isEmpty()) {
                 return rangeMap.randomItem();
             }
+        } else if (!specialDmgVectors.isEmpty()) {
+            var rangeMap = WeightedDoubleMap.of(
+                ASRange.LONG, specialDmgVectors.stream().mapToDouble(d -> d.L.damage).sum(),
+                ASRange.MEDIUM, specialDmgVectors.stream().mapToDouble(d -> d.M.damage).sum(),
+                ASRange.SHORT, specialDmgVectors.stream().mapToDouble(d -> d.S.damage).sum()
+            );
+            if (!rangeMap.isEmpty()) {
+                return rangeMap.randomItem();
+            }
         } else {
-
             var damages = element.getFrontArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
                 .map(o -> (ASDamageVector) o).collect(Collectors.toList());
             damages.addAll(element.getLeftArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
@@ -168,11 +178,6 @@ public class FiringPhase extends PhaseHandler {
                 .map(o -> (ASDamageVector) o).toList());
             damages.addAll(element.getRearArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
                 .map(o -> (ASDamageVector) o).toList());
-
-            damages.add(element.getFrontArc().getStdDamage());
-            damages.add(element.getLeftArc().getStdDamage());
-            damages.add(element.getRightArc().getStdDamage());
-            damages.add(element.getRearArc().getStdDamage());
 
             var longRangeDamage = damages.stream().mapToDouble(d -> d.L.damage).sum();
             var mediumRangeDamage = damages.stream().mapToDouble(d -> d.M.damage).sum();

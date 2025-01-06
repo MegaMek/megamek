@@ -180,7 +180,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
     }
 
     private int getDamage(AlphaStrikeElement element, ASRange range) {
-        var stdDamage = element.getStdDamage();
+        var stdDamage = element.getStandardDamage();
         var specialDmgVectors = element.getSpecialAbilities().getInternalRepr().values().stream()
             .filter(o -> o instanceof ASDamageVector).map(o -> (ASDamageVector) o).toList();
 

@@ -4,7 +4,7 @@
 
 <P>Generally, all content from the user directory is added to the pre-defined content. In some cases, added content may replace pre-defined content when it has the same name or file path.</P>
 
-<P>How to place files within the user data directory:
+<P>How to place files within the user data directory:</P>
 <UL>
     <LI><B>Fonts</B> can be placed anywhere in the user data directory (i.e., in the directory itself or in any subfolder)
 
@@ -22,6 +22,13 @@
 
     <LI><B>Award</B> definition files (.xml) can be placed in &lt;user data directory&gt;/data/universe/awards
 </UL>
+
+<P>
+    Additionally, the user directory is used to restore your most recent session in MegaMekLab.
+    If you set the startup mode of MML to "Restore Tabs", a hidden folder called ".mml_tmp" will be created in your user directory.
+    You should not touch this folder. Changing the contents of this folder may cause MML to fail to start.
+    If you have "Restore Tabs" set and MML is failing to start, try deleting the ".mml_tmp" folder, in case it was corrupted somehow.
+</P>
 
 <P>This is an example of a suitable directory structure with a few example files:
 <BR><BR>
@@ -51,3 +58,7 @@ D:/myBTStuff<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;awards/<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MyAwards.xml<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AuriganAwards.xml<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;.mml_tmp/<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here be dragons!<BR>
+</P>
+</HTML>

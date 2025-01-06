@@ -14,16 +14,6 @@
  */
 package megamek.common.loaders;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
-import java.util.stream.Collectors;
-
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
 import megamek.common.equipment.AmmoMounted;
@@ -36,8 +26,14 @@ import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.logging.MMLogger;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BLKFile {
+    private static final MMLogger logger = MMLogger.create(BLKFile.class);
 
     BuildingBlock dataFile;
 
@@ -122,9 +118,28 @@ public class BLKFile {
             entity.setIcon(dataFile.getDataAsString("icon")[0]);
         }
 
+        if (dataFile.exists("invalidSourceBuildReasons")) {
+            loadInvalidSourceBuildReasons(entity);
+        }
+
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);
+    }
+
+    protected void loadInvalidSourceBuildReasons(Entity entity) {
+        String[] reasons = dataFile.getDataAsString("invalidSourceBuildReasons");
+        var invalidSourceBuildReasons = new ArrayList<Entity.InvalidSourceBuildReason>();
+        if (reasons != null) {
+            for (var reason : reasons) {
+                try {
+                    invalidSourceBuildReasons.add(Entity.InvalidSourceBuildReason.valueOf(reason));
+                } catch (Exception e) {
+                    logger.warn("Unable to load reason {}", reason);
+                }
+            }
+        }
+        entity.setInvalidSourceBuildReasons(invalidSourceBuildReasons);
     }
 
     protected void loadQuirks(Entity entity) throws EntityLoadingException {
@@ -291,21 +306,35 @@ public class BLKFile {
                                 TechConstants.isClan(dataFile.getDataAsInt(sv.getLocationName(i) + "_armor_tech")[0]));
                 sv.setArmorType(armor.getArmorType(), i);
                 sv.setBARRating(armor.getBAR(), i);
-                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false), i);
+                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()), i);
             }
         } else {
             if (dataFile.exists("barrating")) {
                 megamek.common.equipment.ArmorType armor = ArmorType.svArmor(dataFile.getDataAsInt("barrating")[0]);
-                sv.setArmorType(armor.getArmorType());
+                if (dataFile.exists("armor_type")) {
+                    sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+                } else {
+                    sv.setArmorType(armor.getArmorType());
+                }
+                if (dataFile.exists("armor_tech_level")) {
+                    sv.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+                } else {
+                    sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(sv.isClan()));
+                }
                 sv.setBARRating(armor.getBAR());
-                sv.setArmorTechLevel(armor.getStaticTechLevel().getCompoundTechLevel(false));
             } else {
                 if (dataFile.exists("armor_type")) {
                     sv.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
                 } else {
                     throw new EntityLoadingException("could not find armor_type block.");
                 }
+                if (dataFile.exists("armor_tech_level")) {
+                    sv.setArmorTechLevel(dataFile.getDataAsInt("armor_tech_level")[0]);
+                } else {
+                    sv.setArmorTechLevel(sv.getStaticTechLevel().getCompoundTechLevel(sv.isClan()));
+                }
             }
+
             if (dataFile.exists("armor_tech")) {
                 sv.setArmorTechRating(dataFile.getDataAsInt("armor_tech")[0]);
             } else if (dataFile.exists("armor_tech_rating")) {
@@ -754,14 +783,15 @@ public class BLKFile {
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != ArmorType.T_ARMOR_UNKNOWN)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
                 blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
+                blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(1));
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 1; i < t.locations(); i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
-                            TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating", armor.getTechRating());
                     if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
                         blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
                     }
@@ -1115,6 +1145,9 @@ public class BLKFile {
 
         if (t.getFluff().hasEmbeddedFluffImage()) {
             blk.writeBlockData("fluffimage", t.getFluff().getBase64FluffImage().getBase64String());
+        }
+        if (t.canonUnitWithInvalidBuild()) {
+            blk.writeBlockData("invalidSourceBuildReasons", t.getInvalidSourceBuildReasons().stream().map(Enum::name).toList());
         }
         return blk;
     }

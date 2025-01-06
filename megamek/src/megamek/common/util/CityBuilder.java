@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BuildingType;
 
 /**
  * @author Torren + Coelocanth
@@ -147,7 +148,7 @@ public class CityBuilder {
                     totalCF = Compute.randomInt(totalCF + 1) + mapSettings.getCityMinCF();
                 }
 
-                int type = getBuildingTypeByCF(totalCF);
+                BuildingType type = getBuildingTypeByCF(totalCF);
 
                 buildingList.add(new BuildingTemplate(type, coordList, totalCF, floors, -1));
             }
@@ -360,7 +361,7 @@ public class CityBuilder {
     private void addBridge(Hex hex, int exits, int altitude, int cf) {
         int bridgeElevation = altitude - hex.getLevel();
 
-        hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf), true, (exits & 63)));
+        hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf).getTypeValue(), true, (exits & 63)));
         hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, bridgeElevation));
         hex.addTerrain(new Terrain(Terrains.BRIDGE_CF, cf));
     }
@@ -493,15 +494,15 @@ public class CityBuilder {
      * @param cf
      * @return building type
      */
-    public static int getBuildingTypeByCF(int cf) {
+    public static BuildingType getBuildingTypeByCF(int cf) {
         if (cf <= 15) {
-            return Building.LIGHT;
+            return BuildingType.LIGHT;
         } else if (cf <= 40) {
-            return Building.MEDIUM;
+            return BuildingType.MEDIUM;
         } else if (cf <= 90) {
-            return Building.HEAVY;
+            return BuildingType.HEAVY;
         } else {
-            return Building.HARDENED;
+            return BuildingType.HARDENED;
         }
     }
 

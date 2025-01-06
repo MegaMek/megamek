@@ -6228,9 +6228,7 @@ public class Compute {
 
         // We may be moving in the same hex.
         if (src.equals(dest)
-                && (srcHex.containsTerrain(Terrains.PAVEMENT)
-                        || srcHex.containsTerrain(Terrains.ROAD) || srcHex
-                                .containsTerrain(Terrains.BRIDGE))) {
+                && (srcHex.hasPavement())) {
             result = true;
         }
         // If the source is a pavement hex, then see if the destination
@@ -6238,8 +6236,9 @@ public class Compute {
         // into the source hex and the entity is climbing onto the bridge.
         else if (srcHex.containsTerrain(Terrains.PAVEMENT)
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
-                        || destHex.containsTerrainExit(Terrains.ROAD,
+                        || (destHex.containsTerrainExit(Terrains.ROAD,
                                 dest2srcDir)
+                            && destHex.hasPavedRoad())
                         || (destHex.containsTerrainExit(
                                 Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
             result = true;
@@ -6247,11 +6246,11 @@ public class Compute {
         // See if the source hex has a road or bridge (and the entity is on the
         // bridge) that exits into the destination hex, and the dest hex has
         // pavement or a corresponding exit to the src hex
-        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || (srcHex
-                .containsTerrainExit(Terrains.BRIDGE, src2destDir)
+        else if (((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) && srcHex.hasPavedRoad())
+            || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
                 && (moveStep.getElevation() == srcHex
                         .terrainLevel(Terrains.BRIDGE_ELEV))))
-                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
                         || (destHex.containsTerrainExit(Terrains.BRIDGE,
                                 dest2srcDir) && moveStep.climbMode())
                         || destHex

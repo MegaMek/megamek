@@ -13,13 +13,27 @@
  */
 package megamek.common.autoresolve.acar.phase;
 
+import megamek.common.BoardLocation;
+import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.component.Formation;
 import megamek.common.enums.GamePhase;
 
+import static megamek.common.Board.*;
+
 public class DeploymentPhase extends PhaseHandler {
+    private final int boardNorthSide;
+    private final int boardOneThird;
+    private final int boardTwoThirds;
+    private final int deployZone = 3;
+    private final int boardSouthSide = 0;
 
     public DeploymentPhase(SimulationManager simulationManager) {
         super(simulationManager, GamePhase.DEPLOYMENT);
+        this.boardNorthSide = getContext().getBoardSize() - 1;
+        this.boardOneThird = boardNorthSide / 3;
+        this.boardTwoThirds = boardOneThird * 2;
     }
 
     @Override
@@ -28,6 +42,59 @@ public class DeploymentPhase extends PhaseHandler {
         getSimulationManager().getGame().getActiveFormations().stream()
             .filter( f-> !f.isDeployed())
             .filter( f-> f.getDeployRound() == getSimulationManager().getGame().getCurrentRound())
-            .forEach( f-> f.setDeployed(true));
+            .forEach( this::deployUnit);
+    }
+
+    private void deployUnit(Formation formation) {
+
+        var player = getContext().getPlayer(formation.getOwnerId());
+
+        int startingPos;
+
+        switch (player.getStartingPos()) {
+            case START_NE:
+            case START_NW:
+                startingPos = boardNorthSide - deployZone - Compute.randomInt(deployZone);
+                break;
+            case START_N:
+                startingPos = boardNorthSide - Compute.randomInt(deployZone);
+                break;
+
+            case START_SE:
+            case START_SW:
+                startingPos = boardSouthSide + deployZone + Compute.randomInt(deployZone);
+                break;
+            case START_S:
+                startingPos = boardSouthSide + Compute.randomInt(deployZone);
+                break;
+
+            case START_E:
+                startingPos = boardOneThird - Compute.randomInt(boardOneThird);
+                break;
+            case START_W:
+                startingPos = boardTwoThirds - Compute.randomInt(boardOneThird);
+                break;
+            case START_ANY:
+                startingPos = Compute.randomIntInclusive(boardNorthSide);
+                break;
+            case START_EDGE:
+                startingPos = Compute.randomIntInclusive(boardNorthSide);
+                if (startingPos < boardOneThird) {
+                    startingPos = Compute.randomInt(boardOneThird);
+                } else if (startingPos > boardTwoThirds) {
+                    startingPos = boardTwoThirds + Compute.randomInt(boardOneThird);
+                }
+                break;
+            case START_CENTER:
+                startingPos = boardOneThird + Compute.randomInt(boardOneThird);
+                break;
+                case START_NONE:
+                default:
+                    startingPos = -1;
+                    break;
+        }
+
+        getSimulationManager().setFormationAt(formation, new BoardLocation(new Coords(startingPos, 0), 0));
+        formation.setDeployed(true);
     }
 }

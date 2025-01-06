@@ -39,11 +39,11 @@ public class MoveActionHandler extends AbstractActionHandler {
         var movingFormation = formationOpt.orElseThrow();
 
         if (game().getBoardSize() < moveAction.getDestination().getX()) {
-            game().setBoardLocation(new BoardLocation(new Coords(game().getBoardSize()-1, 0), 0), movingFormation);
+            simulationManager().setFormationAt(movingFormation, new BoardLocation(new Coords(game().getBoardSize()-1, 0), 0));
         } else if (moveAction.getDestination().getX() < 0) {
-            game().setBoardLocation(new BoardLocation(new Coords(0,0), 0), movingFormation);
+            simulationManager().setFormationAt(movingFormation, new BoardLocation(new Coords(0,0), 0));
         } else {
-            game().setBoardLocation(new BoardLocation(moveAction.getDestination(), 0), movingFormation);
+            simulationManager().setFormationAt(movingFormation, new BoardLocation(moveAction.getDestination(), 0));
         }
     }
 }

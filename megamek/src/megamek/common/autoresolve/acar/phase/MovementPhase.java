@@ -124,7 +124,7 @@ public class MovementPhase extends PhaseHandler {
             direction = 1;
         }
 
-        var destination = new Coords((activeFormation.getPosition().coords().getX() + totalMP) * direction, 0);
+        var destination = new Coords(activeFormation.getPosition().coords().getX() + (totalMP * direction), 0);
         getSimulationManager().addMovement(
             new MoveAction(
                 activeFormation.getId(),
@@ -180,7 +180,7 @@ public class MovementPhase extends PhaseHandler {
             }
         }
 
-        var destination = new Coords((activeFormation.getPosition().coords().getX() + distToTarget) * direction, 0);
+        var destination = new Coords((activeFormation.getPosition().coords().getX() + (distToTarget * direction)), 0);
 
         getSimulationManager().addMovement(
             new MoveAction(

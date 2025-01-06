@@ -689,8 +689,14 @@ public class SimulationContext implements IGame {
         return true;
     }
 
+    public void setFormationAt(Formation formation, BoardLocation position) {
+        setBoardLocation(position, formation);
+    }
+
     public void setBoardLocation(BoardLocation boardLocation, Formation formation) {
-        board.get(formation.getPosition().coords().getX()).remove(formation);
+        if (formation.getPosition() != null) {
+            board.get(formation.getPosition().coords().getX()).remove(formation);
+        }
         formation.setPosition(boardLocation);
         board.get(formation.getPosition().coords().getX()).add(formation);
     }
@@ -705,4 +711,5 @@ public class SimulationContext implements IGame {
         currentRound = -1;
         forces = new Forces(this);
     }
+
 }

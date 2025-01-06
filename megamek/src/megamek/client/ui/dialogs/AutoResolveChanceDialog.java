@@ -21,6 +21,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
@@ -58,6 +59,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
     private final SetupForces setupForces;
     private final int numberOfThreads;
     private final int currentTeam;
+    private final Board board;
 
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
     {
@@ -122,16 +124,16 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
     }
 
-    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int currentTeam, SetupForces setupForces) {
-        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, Runtime.getRuntime().availableProcessors(), currentTeam, setupForces);
+    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int currentTeam, SetupForces setupForces, Board board) {
+        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, Runtime.getRuntime().availableProcessors(), currentTeam, setupForces, board);
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
         return dialog.getReturnCode();
     }
 
-    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces) {
-        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, numberOfThreads, currentTeam, setupForces);
+    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
+        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, numberOfThreads, currentTeam, setupForces, board);
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
@@ -139,12 +141,13 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         return dialog.getReturnCode();
     }
 
-    private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces) {
+    private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
         super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
         this.numberOfSimulations = numberOfSimulations;
         this.setupForces = setupForces;
         this.numberOfThreads = numberOfThreads;
         this.currentTeam = currentTeam;
+        this.board = board;
         this.task = new Task(this);
         getTask().addPropertyChangeListener(this);
         progressText = new ArrayList<>();
@@ -294,7 +297,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 for (int i = 0; i < numberOfSimulations; i++) {
                     futures.add(executor.submit(() -> {
                         var autoResolveConcludedEvent = new Resolver(
-                            setupForces, SimulationOptions.empty())
+                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
                             .resolveSimulation();
                         setProgress(Math.min(100 * runCounter.incrementAndGet() / numberOfSimulations, 100));
                         return autoResolveConcludedEvent;

@@ -55,6 +55,7 @@ import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.MMSetupForces;
 import megamek.common.autoresolve.converter.SingleElementConsolidateForces;
+import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -1905,15 +1906,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 var threadNumbers = (int) spnThreadNumber.getValue();
                 var forcesSetups = new MMSetupForces(game(), new SingleElementConsolidateForces());
                 var currentTeam = client().getLocalPlayer().getTeam();
+
+                var board = TWBoardTransformer.instantiateBoard(client().getMapSettings(), client().getGame().getPlanetaryConditions(), client().getGame().getOptions());
+
                 if (chkAutoResolve.isSelected()) {
                     var proceed = AutoResolveChanceDialog.showSimulationProgressDialog(
-                        clientgui.getFrame(), simulationRuns, threadNumbers, currentTeam, forcesSetups) == JOptionPane.YES_OPTION;
+                        clientgui.getFrame(), simulationRuns, threadNumbers, currentTeam, forcesSetups, board
+                    ) == JOptionPane.YES_OPTION;
+
                     if (!proceed) {
                         return;
                     }
                 }
 
-                var event = new Resolver(forcesSetups,new SimulationOptions(client().getGame().getOptions()))
+                var event = new Resolver(forcesSetups,new SimulationOptions(client().getGame().getOptions()), board)
                     .resolveSimulation();
 
                 var autoResolveBattleReport = new AutoResolveSimulationLogDialog(getClientgui().getFrame(), event.getLogFile());

@@ -13,10 +13,7 @@
  */
 package megamek.common.autoresolve.acar;
 
-import megamek.common.IGame;
-import megamek.common.Player;
-import megamek.common.ReportEntry;
-import megamek.common.TurnOrdered;
+import megamek.common.*;
 import megamek.common.autoresolve.acar.action.*;
 import megamek.common.autoresolve.acar.manager.*;
 import megamek.common.autoresolve.acar.phase.*;
@@ -73,6 +70,10 @@ public class SimulationManager extends AbstractGameManager {
             getCurrentVictoryResult(),
             gameLogger.getLogFile()
         );
+    }
+
+    public void setFormationAt(Formation formation, BoardLocation position) {
+        getGame().setFormationAt(formation, position);
     }
 
     @Override

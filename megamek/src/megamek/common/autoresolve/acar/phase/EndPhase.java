@@ -111,8 +111,8 @@ public class EndPhase extends PhaseHandler {
     );
 
     private static final WeightedDoubleMap<Integer> REMOVAL_CONDITIONS_TABLE_NO_EJECTION = WeightedDoubleMap.of(
-        IEntityRemovalConditions.REMOVE_SALVAGEABLE, 3,
-        IEntityRemovalConditions.REMOVE_DEVASTATED, 7
+        IEntityRemovalConditions.REMOVE_SALVAGEABLE, 4,
+        IEntityRemovalConditions.REMOVE_DEVASTATED, 6
     );
 
     public void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {

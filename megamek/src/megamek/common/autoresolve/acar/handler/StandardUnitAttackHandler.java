@@ -127,11 +127,11 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
             }
         }
 
-        targetUnit.setCurrentArmor(targetUnit.getCurrentArmor() - totalDamageApplied);
+        targetUnit.setCurrentArmor(Math.max(0, targetUnit.getCurrentArmor() - totalDamageApplied));
 
         reporter.reportDamageDealt(targetUnit, totalDamageApplied, targetUnit.getCurrentArmor());
 
-        if (targetUnit.getCurrentArmor() * 2 <= targetUnit.getCurrentArmor()) {
+        if (totalDamageApplied * 2 >= targetUnit.getCurrentArmor()) {
             target.setHighStressEpisode();
             reporter.reportStressEpisode();
         }
@@ -142,7 +142,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
             reporter.reportUnitCrippled();
         }
 
-        if (targetUnit.getCurrentArmor() == 0) {
+        if (targetUnit.getCurrentArmor() <= 0) {
             // Destroyed
             reporter.reportUnitDestroyed();
             target.setHighStressEpisode();

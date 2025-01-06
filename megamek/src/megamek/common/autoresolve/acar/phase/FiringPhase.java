@@ -15,7 +15,10 @@ package megamek.common.autoresolve.acar.phase;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.Action;
 import megamek.common.autoresolve.acar.action.ManeuverToHitData;
@@ -85,27 +88,13 @@ public class FiringPhase extends PhaseHandler {
                     && !actingFormation.isEngagementControlFailed()) {
                     range = ASRange.SHORT;
                 } else {
-                    var rangeMap = WeightedDoubleMap.of(
-                        ASRange.LONG, actingFormation.getStdDamage().L.damage,
-                        ASRange.MEDIUM, actingFormation.getStdDamage().M.damage,
-                        ASRange.SHORT, actingFormation.getStdDamage().S.damage
-                    );
-                    if (!rangeMap.isEmpty()) {
-                        range = rangeMap.randomItem();
-                    }
+                    range = selectBestRange(actingFormation, range);
 
                 }
                 manueverModifier = StandardUnitAttack.ManeuverResult.SUCCESS;
                 target.setRange(actingFormation.getId(), range);
             } else if (actingFormationMos < targetFormationMos) {
-                var rangeMap = WeightedDoubleMap.of(
-                    ASRange.LONG, target.getStdDamage().L.damage,
-                    ASRange.MEDIUM, target.getStdDamage().M.damage,
-                    ASRange.SHORT, target.getStdDamage().S.damage
-                );
-                if (!rangeMap.isEmpty()) {
-                    range = rangeMap.randomItem();
-                }
+                range = selectBestRange(target, range);
                 manueverModifier = StandardUnitAttack.ManeuverResult.FAILURE;
                 target.setRange(actingFormation.getId(), range);
             }
@@ -129,6 +118,77 @@ public class FiringPhase extends PhaseHandler {
         }
 
         getSimulationManager().addAttack(attacks, actingFormation);
+    }
+
+    private static ASRange selectBestRange(Formation actingFormation, ASRange range) {
+        var stdDamage = actingFormation.getStdDamage();
+        if (stdDamage.hasDamage()) {
+            var rangeMap = WeightedDoubleMap.of(
+                ASRange.LONG, actingFormation.getStdDamage().L.damage,
+                ASRange.MEDIUM, actingFormation.getStdDamage().M.damage,
+                ASRange.SHORT, actingFormation.getStdDamage().S.damage
+            );
+            if (!rangeMap.isEmpty()) {
+                range = rangeMap.randomItem();
+            }
+            return range;
+        }
+        for (var unit : actingFormation.getUnits()) {
+            for (var element : unit.getElements()) {
+                var elementRange = selectBestRange(element);
+                if (elementRange != null) {
+                    return elementRange;
+                }
+            }
+        }
+
+        return ASRange.LONG;
+    }
+
+    @Nullable
+    private static ASRange selectBestRange(AlphaStrikeElement element) {
+        var stdDamage = element.getStdDamage();
+
+        if (stdDamage.hasDamage()) {
+            var rangeMap = WeightedDoubleMap.of(
+                ASRange.LONG, element.getStdDamage().L.damage,
+                ASRange.MEDIUM, element.getStdDamage().M.damage,
+                ASRange.SHORT, element.getStdDamage().S.damage
+            );
+            if (!rangeMap.isEmpty()) {
+                return rangeMap.randomItem();
+            }
+        } else {
+
+            var damages = element.getFrontArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+                .map(o -> (ASDamageVector) o).collect(Collectors.toList());
+            damages.addAll(element.getLeftArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+                .map(o -> (ASDamageVector) o).toList());
+            damages.addAll(element.getRightArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+                .map(o -> (ASDamageVector) o).toList());
+            damages.addAll(element.getRearArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+                .map(o -> (ASDamageVector) o).toList());
+
+            damages.add(element.getFrontArc().getStdDamage());
+            damages.add(element.getLeftArc().getStdDamage());
+            damages.add(element.getRightArc().getStdDamage());
+            damages.add(element.getRearArc().getStdDamage());
+
+            var longRangeDamage = damages.stream().mapToDouble(d -> d.L.damage).sum();
+            var mediumRangeDamage = damages.stream().mapToDouble(d -> d.M.damage).sum();
+            var shortRangeDamage = damages.stream().mapToDouble(d -> d.S.damage).sum();
+
+            var ranges = WeightedDoubleMap.of(
+                ASRange.LONG, longRangeDamage,
+                ASRange.MEDIUM, mediumRangeDamage,
+                ASRange.SHORT, shortRangeDamage);
+
+            if (!ranges.isEmpty()) {
+                return ranges.randomItem();
+            }
+        }
+
+        return null;
     }
 
     private record AttackRecord(Formation actingFormation, Formation target, List<Integer> attackingUnits) { }

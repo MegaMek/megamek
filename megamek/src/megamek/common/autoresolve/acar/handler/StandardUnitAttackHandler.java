@@ -17,6 +17,9 @@ import megamek.codeUtilities.ObjectUtility;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.Roll;
+import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.AttackToHitData;
@@ -25,10 +28,13 @@ import megamek.common.autoresolve.acar.report.AttackReporter;
 import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
+import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class StandardUnitAttackHandler extends AbstractActionHandler {
 
@@ -131,7 +137,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
 
         reporter.reportDamageDealt(targetUnit, totalDamageApplied, targetUnit.getCurrentArmor());
 
-        if (totalDamageApplied * 2 >= targetUnit.getCurrentArmor()) {
+        if (targetUnit.getCurrentArmor() * 2 < totalDamageApplied) {
             target.setHighStressEpisode();
             reporter.reportStressEpisode();
         }
@@ -165,8 +171,58 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
             bonusDamage += 1;
         }
 
-        var damage = attackingUnit.getElements().stream().mapToInt(e -> e.getStandardDamage().getDamage(attack.getRange()).damage).toArray();
+        var damage = attackingUnit.getElements().stream().mapToInt(e -> getDamage(e, attack.getRange())).toArray();
         return processDamageByEngagementControl(attacker, target, bonusDamage, damage);
+    }
+
+    private enum ArcSelection {
+        FRONT, LEFT, RIGHT, REAR
+    }
+
+    private int getDamage(AlphaStrikeElement element, ASRange range) {
+        var stdDamage = element.getStdDamage();
+        if (stdDamage.hasDamage()) {
+            return stdDamage.getDamage(range).damage;
+        }
+
+        var frontArcDamages = element.getFrontArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+            .map(o -> (ASDamageVector) o).toList();
+        var leftArcDamages = element.getLeftArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+            .map(o -> (ASDamageVector) o).toList();
+        var rightArcDamages = element.getRightArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+            .map(o -> (ASDamageVector) o).toList();
+        var rearArcDamages = element.getRearArc().getInternalRepr().values().stream().filter(o -> o instanceof ASDamageVector)
+            .map(o -> (ASDamageVector) o).toList();
+
+        var frontArcDmgTotal = frontArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
+        var leftArcDmgTotal = leftArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
+        var rightArcDmgTotal = rightArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
+        var rearArcDmgTotal = rearArcDamages.stream().mapToInt(d -> d.getDamage(range).damage).sum();
+
+        var arcSelectionWeightedDoubleMap = WeightedDoubleMap.of(
+            ArcSelection.FRONT, frontArcDmgTotal,
+            ArcSelection.LEFT, leftArcDmgTotal,
+            ArcSelection.RIGHT, rightArcDmgTotal,
+            ArcSelection.REAR, rearArcDmgTotal);
+
+        if (!arcSelectionWeightedDoubleMap.isEmpty()) {
+            switch (arcSelectionWeightedDoubleMap.randomItem()) {
+                case FRONT -> {
+                    return frontArcDmgTotal;
+                }
+                case LEFT -> {
+                    return leftArcDmgTotal;
+                }
+                case RIGHT -> {
+                    return rightArcDmgTotal;
+                }
+                case REAR -> {
+                    return rearArcDmgTotal;
+                }
+            }
+        }
+
+        return 0;
     }
 
     private void handleCrits(Formation target, SBFUnit targetUnit, int criticalRollResult, SBFUnit attackingUnit) {

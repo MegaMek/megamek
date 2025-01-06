@@ -14,6 +14,7 @@
 package megamek.common.autoresolve.acar.phase;
 
 import megamek.common.Entity;
+import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.VictoryPhaseReporter;
@@ -48,6 +49,10 @@ public class VictoryPhase extends PhaseHandler {
             if (inGameObject instanceof Entity entity) {
                 DamageApplierChooser.damageRemovedEntity(entity, entity.getRemovalCondition());
             }
+        }
+
+        for (var entity : context.getRetreatingUnits()) {
+            DamageApplierChooser.damageRemovedEntity(entity, IEntityRemovalConditions.REMOVE_IN_RETREAT);
         }
     }
 

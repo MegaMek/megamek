@@ -149,7 +149,7 @@ public class MovementPhase extends PhaseHandler {
     private Optional<Formation> selectTarget(Formation actingFormation) {
         var game = getSimulationManager().getGame();
         var player = game.getPlayer(actingFormation.getOwnerId());
-        var canBeTargets = getSimulationManager().getGame().getActiveFormations().stream()
+        var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(f -> actingFormation.getTargetFormationId() == Entity.NONE || f.getId() == actingFormation.getTargetFormationId())
             .filter(SBFFormation::isDeployed)
             .filter(f -> f.isGround() == actingFormation.isGround())

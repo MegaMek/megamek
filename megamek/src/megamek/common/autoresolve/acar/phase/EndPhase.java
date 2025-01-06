@@ -49,7 +49,7 @@ public class EndPhase extends PhaseHandler {
 
     private void checkUnitDestruction() {
         var printLatch = false;
-        var allFormations = getContext().getActiveFormations();
+        var allFormations = getContext().getActiveDeployedFormations();
         for (var formation : allFormations) {
             var destroyedUnits = formation.getUnits().stream()
                 .filter(u -> u.getCurrentArmor() <= 0)
@@ -69,7 +69,7 @@ public class EndPhase extends PhaseHandler {
             // If the game is over, no need to withdraw
             return;
         }
-        var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveFormations().stream()
+        var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
             .toList();
 
@@ -79,7 +79,7 @@ public class EndPhase extends PhaseHandler {
     }
 
     private void checkMorale() {
-        var formationNeedsMoraleCheck = getSimulationManager().getGame().getActiveFormations().stream()
+        var formationNeedsMoraleCheck = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(Formation::hadHighStressEpisode)
             .toList();
 
@@ -89,7 +89,7 @@ public class EndPhase extends PhaseHandler {
     }
 
     private void checkRecoveringNerves() {
-        var recoveringNerves = getSimulationManager().getGame().getActiveFormations().stream()
+        var recoveringNerves = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(SBFFormation::isDeployed)
             .filter(f -> f.moraleStatus().ordinal() > Formation.MoraleStatus.NORMAL.ordinal())
             .toList();

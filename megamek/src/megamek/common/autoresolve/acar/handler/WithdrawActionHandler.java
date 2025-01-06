@@ -86,7 +86,7 @@ public class WithdrawActionHandler extends AbstractActionHandler {
             if (unitWithdrawn.get() > 0) {
                 reporter.reportSuccessfulWithdraw();
             }
-            game().removeFormation(withdrawFormation);
+//            game().removeFormation(withdrawFormation);
         } else {
             reporter.reportFailedWithdraw();
         }

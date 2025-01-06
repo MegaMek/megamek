@@ -424,7 +424,7 @@ public class SimulationContext implements IGame {
             .map(u -> (Formation) u)
             .toList();
     }
-    
+
     public List<Formation> getActiveDeployedFormations() {
         return getActiveFormations().stream()
             .filter(Formation::isDeployed)

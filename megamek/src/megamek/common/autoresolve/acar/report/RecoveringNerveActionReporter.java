@@ -17,6 +17,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Roll;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.util.function.Consumer;
 
@@ -32,26 +33,18 @@ public class RecoveringNerveActionReporter {
         this.game = game;
     }
 
-    public void reportRecoveringNerveStart(Formation formation) {
-        reportConsumer.accept(new PublicReportEntry(4500)
-            .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text()));
+    public void reportRecoveringNerveStart(Formation formation, int toHitValue) {
+        reportConsumer.accept(new PublicReportEntry(4000)
+            .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text())
+            .add(toHitValue).noNL()
+        );
     }
 
-    public void reportToHitValue(int toHitValue) {
-        reportConsumer.accept(new PublicReportEntry(4501).add(toHitValue).noNL());
+    public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus, Roll roll) {
+        reportConsumer.accept(new PublicReportEntry(4001).indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
     }
 
-    public void reportSuccessRoll(Roll roll) {
-        var report = new PublicReportEntry(4502).indent().noNL();
-        report.add(new RollReportEntry(roll).reportText());
-        reportConsumer.accept(report);
-    }
-
-    public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus) {
-        reportConsumer.accept(new PublicReportEntry(4503).add(newMoraleStatus.name()));
-    }
-
-    public void reportFailureRoll(Roll roll) {
-        reportConsumer.accept(new PublicReportEntry(4504).add(roll.toString()));
+    public void reportFailureRoll(Roll roll, SBFFormation.MoraleStatus moraleStatus) {
+        reportConsumer.accept(new PublicReportEntry(4002).add(roll.toString()).add(moraleStatus.name().toLowerCase()));
     }
 }

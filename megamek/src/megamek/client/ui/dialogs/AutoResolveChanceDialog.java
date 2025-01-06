@@ -288,7 +288,8 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
             }
             AtomicInteger runCounter = new AtomicInteger(0);
 
-            try (var executor = Executors.newFixedThreadPool(numberOfThreads)) {
+            var executor = Executors.newFixedThreadPool(numberOfThreads);
+            try {
                 List<Future<AutoResolveConcludedEvent>> futures = new ArrayList<>();
                 for (int i = 0; i < numberOfSimulations; i++) {
                     futures.add(executor.submit(() -> {
@@ -310,7 +311,12 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                         logger.error("While processing simulation", e);
                     }
                 }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                executor.shutdown();
             }
+
 
             return simulationScore;
         }

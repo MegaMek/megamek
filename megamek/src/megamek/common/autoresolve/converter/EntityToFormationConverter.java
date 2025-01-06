@@ -60,8 +60,10 @@ public class EntityToFormationConverter extends BaseFormationConverter<Formation
         formation.setStdDamage(setStdDamageForFormation(formation));
         for (var unit : formation.getUnits()) {
             var health = 0;
+//            health += entity.getTotalOArmor();
+//            health += entity.getTotalInternal();
             for (var el : unit.getElements()) {
-                health += el.getCurrentArmor() + el.getCurrentStructure();
+                health += el.getFullArmor() + el.getFullStructure();
             }
             unit.setArmor(health);
             unit.setCurrentArmor(health);

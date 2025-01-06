@@ -22,6 +22,7 @@ import megamek.common.autoresolve.acar.action.WithdrawAction;
 import megamek.common.autoresolve.acar.report.EndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.enums.GamePhase;
+import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
@@ -47,17 +48,17 @@ public class EndPhase extends PhaseHandler {
     }
 
     private void checkUnitDestruction() {
-        var areThereUnitsToDestroy = getContext().getActiveFormations().stream()
-            .flatMap(f -> f.getUnits().stream()).anyMatch(u -> u.getCurrentArmor() <= 0);
-        if (areThereUnitsToDestroy) {
-            reporter.destroyedUnitsHeader();
-        }
+        var printLatch = false;
         var allFormations = getContext().getActiveFormations();
         for (var formation : allFormations) {
             var destroyedUnits = formation.getUnits().stream()
                 .filter(u -> u.getCurrentArmor() <= 0)
                 .toList();
             if (!destroyedUnits.isEmpty()) {
+                if (!printLatch) {
+                    reporter.destroyedUnitsHeader();
+                    printLatch = true;
+                }
                 destroyUnits(formation, destroyedUnits);
             }
         }
@@ -89,6 +90,7 @@ public class EndPhase extends PhaseHandler {
 
     private void checkRecoveringNerves() {
         var recoveringNerves = getSimulationManager().getGame().getActiveFormations().stream()
+            .filter(SBFFormation::isDeployed)
             .filter(f -> f.moraleStatus().ordinal() > Formation.MoraleStatus.NORMAL.ordinal())
             .toList();
 
@@ -99,7 +101,6 @@ public class EndPhase extends PhaseHandler {
 
     private void forgetEverything() {
         var formations = getSimulationManager().getGame().getActiveFormations();
-        formations.stream().map(Formation::getMemory).forEach(Memory::clear);
         formations.forEach(Formation::reset);
     }
 

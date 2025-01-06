@@ -46,19 +46,15 @@ public class RecoveringNerveActionHandler extends AbstractActionHandler {
             return;
         }
 
-        report.reportRecoveringNerveStart(formation);
         var toHit = RecoveringNerveActionToHitData.compileToHit(game(), recoveringNerveAction);
-        report.reportToHitValue(toHit.getValue());
+        report.reportRecoveringNerveStart(formation, toHit.getValue());
         var roll = Compute.rollD6(2);
         if (!roll.isTargetRollSuccess(toHit)) {
-            report.reportSuccessRoll(roll);
             var newMoraleStatus = Formation.MoraleStatus.values()[formation.moraleStatus().ordinal() -1];
             formation.setMoraleStatus(newMoraleStatus);
-            report.reportMoraleStatusChange(newMoraleStatus);
+            report.reportMoraleStatusChange(newMoraleStatus, roll);
         } else {
-            report.reportFailureRoll(roll);
+            report.reportFailureRoll(roll, formation.moraleStatus());
         }
-
-
     }
 }

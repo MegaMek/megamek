@@ -40,11 +40,13 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
 
     @Override
     public Formation convert() {
+        var forceName = "";
         Forces forces = game.getForces();
         for (Force subforce : forces.getFullSubForces(force)) {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity entityCast) {
+                    forceName = entityCast.getDisplayName();
                     var element = ASConverter.convertAndKeepRefs(entityCast);
                     if (element != null) {
                         thisUnit.add(element);
@@ -57,7 +59,7 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
             SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), report).createSbfUnit();
             formation.addUnit(convertedUnit);
         }
-        formation.setName(force.getName());
+        formation.setName(forceName);
         formation.setStdDamage(setStdDamageForFormation(formation));
         for (var unit : formation.getUnits()) {
             var health = 0;

@@ -85,21 +85,27 @@ public class FiringPhase extends PhaseHandler {
                     && !actingFormation.isEngagementControlFailed()) {
                     range = ASRange.SHORT;
                 } else {
-                    range = WeightedDoubleMap.of(
+                    var rangeMap = WeightedDoubleMap.of(
                         ASRange.LONG, actingFormation.getStdDamage().L.damage,
                         ASRange.MEDIUM, actingFormation.getStdDamage().M.damage,
                         ASRange.SHORT, actingFormation.getStdDamage().S.damage
-                    ).randomItem();
+                    );
+                    if (!rangeMap.isEmpty()) {
+                        range = rangeMap.randomItem();
+                    }
 
                 }
                 manueverModifier = StandardUnitAttack.ManeuverResult.SUCCESS;
                 target.setRange(actingFormation.getId(), range);
             } else if (actingFormationMos < targetFormationMos) {
-                range = WeightedDoubleMap.of(
+                var rangeMap = WeightedDoubleMap.of(
                     ASRange.LONG, target.getStdDamage().L.damage,
                     ASRange.MEDIUM, target.getStdDamage().M.damage,
                     ASRange.SHORT, target.getStdDamage().S.damage
-                ).randomItem();
+                );
+                if (!rangeMap.isEmpty()) {
+                    range = rangeMap.randomItem();
+                }
                 manueverModifier = StandardUnitAttack.ManeuverResult.FAILURE;
                 target.setRange(actingFormation.getId(), range);
             }

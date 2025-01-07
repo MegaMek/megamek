@@ -585,7 +585,7 @@ public class SimulationContext implements IGame {
      * said: I will be
      * angry. &gt;:[
      */
-    public List<EntityAction> getActionsVector() {
+    public List<Action> getActionsVector() {
         return Collections.unmodifiableList(pendingActions);
     }
 

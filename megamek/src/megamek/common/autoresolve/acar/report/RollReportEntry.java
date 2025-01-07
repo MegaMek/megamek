@@ -20,14 +20,42 @@ import java.util.List;
 
 public class RollReportEntry extends PublicReportEntry {
 
-    private static final String ONE = "⚀";
-    private static final String TWO = "⚁";
-    private static final String THREE = "⚂";
-    private static final String FOUR = "⚃";
-    private static final String FIVE = "⚄";
-    private static final String SIX = "⚅";
+    private enum Die {
+        ONE(1, "\u2680"),
+        TWO(2, "\u2681"),
+        THREE(3, "\u2682"),
+        FOUR(4, "\u2683"),
+        FIVE(5, "\u2684"),
+        SIX(6, "\u2685");
 
-    private static final List<String> DICE = List.of(ONE, TWO, THREE, FOUR, FIVE, SIX);
+        private final int value;
+        private final String symbol;
+
+        Die(int value, String symbol) {
+            this.value = value;
+            this.symbol = symbol;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
+
+        public static Die getDie(int value) {
+            if (!validDie(value)) {
+                throw new IllegalArgumentException("Invalid die value: " + value + ", value must be between 1 and 6");
+            }
+            return Die.values()[value-1];
+        }
+
+        public static boolean validDie(int value) {
+            return value >= 1 && value <= 6;
+        }
+    }
+
 
     private final String rollText;
     private final int[] dices;
@@ -37,7 +65,6 @@ public class RollReportEntry extends PublicReportEntry {
         rollText = roll.toString();
         var size = roll.getIntValues().length;
         dices = new int[size];
-
         System.arraycopy(roll.getIntValues(), 0, dices, 0, size);
     }
 
@@ -46,15 +73,16 @@ public class RollReportEntry extends PublicReportEntry {
         var dicesText = new StringBuilder();
         for (int i = 0; i < dices.length; i++) {
             var dv = dices[i] - 1;
-            if (dv < 0 || dv >= DICE.size()) {
-                dicesText.append(dv);
+            if (Die.validDie(dv)) {
+                dicesText.append(Die.getDie(dv).getSymbol());
             } else {
-                dicesText.append(DICE.get(dv));
+                dicesText.append(dv);
             }
             if (i < dices.length - 1) {
                 dicesText.append(" + ");
             }
         }
+
         return UIUtil.spanCSS("dice", dicesText.toString()) + " " + UIUtil.spanCSS("roll", rollText);
     }
 }

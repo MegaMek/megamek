@@ -15,6 +15,7 @@ public class AutoResolveSimulationLogDialog extends AbstractHelpDialog {
 
         setMinimumSize(new Dimension(800, 400));
         setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
+
     }
 
 }

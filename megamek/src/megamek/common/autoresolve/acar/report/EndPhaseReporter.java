@@ -16,13 +16,15 @@ package megamek.common.autoresolve.acar.report;
 import megamek.common.Entity;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
+import megamek.common.autoresolve.acar.SimulationManager;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class EndPhaseReporter {
+public class EndPhaseReporter implements IEndPhaseReporter {
 
     private final Consumer<PublicReportEntry> reportConsumer;
+    private final IGame game;
     private static final Map<Integer, Integer> reportIdForEachRemovalCondition = Map.of(
         IEntityRemovalConditions.REMOVE_DEVASTATED, 3337,
         IEntityRemovalConditions.REMOVE_EJECTED, 3338,
@@ -34,14 +36,26 @@ public class EndPhaseReporter {
 
     private static final int MSG_ID_UNIT_DESTROYED_UNKNOWINGLY = 3344;
 
-    public EndPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
+    private EndPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.reportConsumer = reportConsumer;
+        this.game = game;
     }
 
+    public static IEndPhaseReporter create(SimulationManager manager) {
+        if (manager.isLogSuppressed()) {
+            return DummyEndPhaseReporter.instance();
+        }
+        return new EndPhaseReporter(manager.getGame(), manager::addReport);
+    }
+
+
+    @Override
     public void endPhaseHeader() {
-        reportConsumer.accept(new PublicReportEntry(3299));
+        reportConsumer.accept(new ReportEntryWithAnchor(3299, "round-" + game.getCurrentRound() + "-end").noNL());
+        reportConsumer.accept(new LinkEntry(301, "summary-round-" + game.getCurrentRound() + "-end"));
     }
 
+    @Override
     public void reportUnitDestroyed(Entity entity) {
         var removalCondition = entity.getRemovalCondition();
         var reportId = reportIdForEachRemovalCondition.getOrDefault(removalCondition, MSG_ID_UNIT_DESTROYED_UNKNOWINGLY);

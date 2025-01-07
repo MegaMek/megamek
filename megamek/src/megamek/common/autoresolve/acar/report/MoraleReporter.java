@@ -15,20 +15,29 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.common.IGame;
 import megamek.common.Roll;
+import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 
 import java.util.function.Consumer;
 
-public class MoraleReporter {
+public class MoraleReporter implements IMoraleReporter {
 
     private final IGame game;
     private final Consumer<PublicReportEntry> reportConsumer;
 
-    public MoraleReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
+    private MoraleReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.game = game;
         this.reportConsumer = reportConsumer;
     }
 
+    public static IMoraleReporter create(SimulationManager manager) {
+        if (manager.isLogSuppressed()) {
+            return DummyMoraleReporter.instance();
+        }
+        return new MoraleReporter(manager.getGame(), manager::addReport);
+    }
+
+    @Override
     public void reportMoraleCheckStart(Formation formation, int toHitValue) {
         // 4500: Start of morale check
         var startReport = new PublicReportEntry(4500)
@@ -37,6 +46,7 @@ public class MoraleReporter {
         reportConsumer.accept(startReport);
     }
 
+    @Override
     public void reportMoraleCheckRoll(Formation formation, Roll roll) {
         // 4501: Roll result
         var rollReport = new PublicReportEntry(4501)
@@ -45,6 +55,7 @@ public class MoraleReporter {
         reportConsumer.accept(rollReport);
     }
 
+    @Override
     public void reportMoraleCheckSuccess(Formation formation) {
         // 4502: Success - morale does not worsen
         var successReport = new PublicReportEntry(4502)
@@ -52,6 +63,7 @@ public class MoraleReporter {
         reportConsumer.accept(successReport);
     }
 
+    @Override
     public void reportMoraleCheckFailure(Formation formation, Formation.MoraleStatus oldStatus, Formation.MoraleStatus newStatus) {
         // 4503: Failure - morale worsens
         var failReport = new PublicReportEntry(4503)

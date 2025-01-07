@@ -17,16 +17,17 @@ import megamek.common.Compute;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveActionToHitData;
+import megamek.common.autoresolve.acar.report.IRecoveringNerveActionReporter;
 import megamek.common.autoresolve.acar.report.RecoveringNerveActionReporter;
 import megamek.common.autoresolve.component.Formation;
 
 public class RecoveringNerveActionHandler extends AbstractActionHandler {
 
-    private final RecoveringNerveActionReporter report;
+    private final IRecoveringNerveActionReporter report;
 
     public RecoveringNerveActionHandler(RecoveringNerveAction action, SimulationManager gameManager) {
         super(action, gameManager);
-        this.report = new RecoveringNerveActionReporter(game(), this::addReport);
+        this.report = RecoveringNerveActionReporter.create(gameManager);
     }
 
     @Override

@@ -23,21 +23,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class StartingScenarioPhaseReporter {
+public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseReporter {
 
     private final IGame game;
     private final Consumer<PublicReportEntry> reportConsumer;
 
-    public StartingScenarioPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
+    private StartingScenarioPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.reportConsumer = reportConsumer;
         this.game = game;
     }
 
-    public void startingScenarioHeader() {
+    public static IStartingScenarioPhaseReporter create(SimulationManager manager) {
+        if (manager.isLogSuppressed()) {
+            return DummyStartingScenarioPhaseReporter.instance();
+        }
+        return new StartingScenarioPhaseReporter(manager.getGame(), manager::addReport);
+    }
+
+    @Override
+    public void header() {
         reportConsumer.accept(new PublicReportEntry(100));
+        reportConsumer.accept(new SummaryPlaceholderEntry());
         reportConsumer.accept(new PublicReportEntry(101));
     }
 
+
+    @Override
     public void formationsSetup(SimulationManager gameManager) {
         var players = gameManager.getGame().getPlayersList();
         var teamMap = new HashMap<Integer, List<Player>>();
@@ -71,13 +82,18 @@ public class StartingScenarioPhaseReporter {
             .add(playerEntities.size()).indent());
 
         for (var entity : playerEntities) {
+            var armor = entity.getArmorRemainingPercent();
+            if (armor < 0d) {
+                armor = 0d;
+            }
             reportConsumer.accept(new PublicReportEntry(104)
                 .add(new EntityNameReportEntry(entity).reportText())
-                .add(String.format("%.2f%%", (entity).getArmorRemainingPercent() * 100))
-                .add(String.format("%.2f%%", (entity).getInternalRemainingPercent() * 100))
+                .add(String.format("%.2f%%", armor * 100))
+                .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
                 .add(entity.getCrew().getName())
                 .add(entity.getCrew().getHits())
                 .indent(2));
         }
     }
+
 }

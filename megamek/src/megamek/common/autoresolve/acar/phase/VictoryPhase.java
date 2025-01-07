@@ -17,6 +17,7 @@ import megamek.common.Entity;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.acar.report.IVictoryPhaseReporter;
 import megamek.common.autoresolve.acar.report.VictoryPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.damage.DamageApplierChooser;
@@ -26,11 +27,11 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 
 public class VictoryPhase extends PhaseHandler {
 
-    private final VictoryPhaseReporter victoryPhaseReporter;
+    private final IVictoryPhaseReporter victoryPhaseReporter;
 
     public VictoryPhase(SimulationManager gameManager) {
         super(gameManager, GamePhase.VICTORY);
-        victoryPhaseReporter = new VictoryPhaseReporter(gameManager.getGame(), gameManager::addReport);
+        victoryPhaseReporter = VictoryPhaseReporter.create(gameManager);
     }
 
     @Override

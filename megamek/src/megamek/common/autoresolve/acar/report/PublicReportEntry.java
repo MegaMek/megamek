@@ -31,6 +31,7 @@ public class PublicReportEntry implements ReportEntry {
     private boolean endLine = true;
     private boolean endSpace = false;
     private int indentation = 0;
+    protected static final String EMPTY = "";
 
     public PublicReportEntry(int messageId) {
         this.messageId = messageId;
@@ -138,7 +139,7 @@ public class PublicReportEntry implements ReportEntry {
     }
 
     private String lineEnd() {
-        return (endSpace ? " " : "") + (endLine ? "<BR>" : "");
+        return (endSpace ? " " : "") + (endLine ? "<br>" : "");
     }
 
     protected String reportText() {

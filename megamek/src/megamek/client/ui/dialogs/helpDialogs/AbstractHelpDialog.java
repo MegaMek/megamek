@@ -18,12 +18,12 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
-import java.awt.Container;
+import java.awt.*;
 import java.io.File;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
@@ -61,9 +61,22 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        JEditorPane pane = new JEditorPane();
+        var pane = new JEditorPane();
+        var scrollPane = new JScrollPane(pane);
+
+        pane.setContentType("text/html");
         pane.setName("helpPane");
         pane.setEditable(false);
+        pane.addHyperlinkListener(pe -> {
+            if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
+                String reference = pe.getDescription();
+                if (reference != null && reference.startsWith("#")) {
+                    reference = reference.substring(1);
+                    String finalReference = reference;
+                    SwingUtilities.invokeLater(() -> pane.scrollToReference(finalReference));
+                }
+            }
+        });
 
         final File helpFile = new File(getHelpFilePath());
 
@@ -77,6 +90,6 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             logger.error(e, "createCenterPane");
         }
 
-        return new JScrollPane(pane);
+        return scrollPane;
     }
 }

@@ -16,15 +16,16 @@ package megamek.common.autoresolve.acar.handler;
 import megamek.common.BoardLocation;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoveAction;
+import megamek.common.autoresolve.acar.report.IMovementReport;
 import megamek.common.autoresolve.acar.report.MovementReport;
 
 public class MoveActionHandler extends AbstractActionHandler {
 
-    private final MovementReport reporter;
+    private final IMovementReport reporter;
 
     public MoveActionHandler(MoveAction action, SimulationManager gameManager) {
         super(action, gameManager);
-        this.reporter = new MovementReport(gameManager.getGame(), this::addReport);
+        this.reporter = MovementReport.create(gameManager);
     }
 
     @Override

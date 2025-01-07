@@ -19,16 +19,17 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveActionToHitData;
+import megamek.common.autoresolve.acar.report.IMoraleReporter;
 import megamek.common.autoresolve.acar.report.MoraleReporter;
 import megamek.common.autoresolve.component.Formation;
 
 public class MoraleCheckActionHandler extends AbstractActionHandler {
 
-    private final MoraleReporter reporter;
+    private final IMoraleReporter reporter;
 
     public MoraleCheckActionHandler(MoraleCheckAction action, SimulationManager gameManager) {
         super(action, gameManager);
-        this.reporter = new MoraleReporter(gameManager.getGame(), this::addReport);
+        this.reporter = MoraleReporter.create(gameManager);
     }
 
     @Override

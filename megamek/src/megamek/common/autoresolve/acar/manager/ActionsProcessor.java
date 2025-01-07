@@ -13,11 +13,13 @@
  */
 package megamek.common.autoresolve.acar.manager;
 
-import megamek.common.actions.EntityAction;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.acar.action.*;
+import megamek.common.autoresolve.acar.action.Action;
+import megamek.common.autoresolve.acar.action.ActionHandler;
+import megamek.logging.MMLogger;
 
 public record ActionsProcessor(SimulationManager simulationManager) implements SimulationManagerHelper {
+    private static final MMLogger logger = MMLogger.create(ActionsProcessor.class);
 
     public void handleActions() {
         addNewHandlers();
@@ -27,22 +29,14 @@ public record ActionsProcessor(SimulationManager simulationManager) implements S
 
     /**
      * Add new handlers to the game
-     * Every new type of action has to have its handler registered here, otherwise it won't be processed
      */
     private void addNewHandlers() {
-        for (EntityAction action : game().getActionsVector()) {
-            if (action instanceof AttackAction attack && attack.getHandler(simulationManager) != null) {
-                game().addActionHandler(attack.getHandler(simulationManager));
-//            } else if (action instanceof EngagementControlAction engagementControl && engagementControl.getHandler(simulationManager) != null) {
-//                game().addActionHandler(engagementControl.getHandler(simulationManager));
-            } else if (action instanceof WithdrawAction withdraw && withdraw.getHandler(simulationManager) != null) {
-                game().addActionHandler(withdraw.getHandler(simulationManager));
-            } else if (action instanceof RecoveringNerveAction recoveringNerve && recoveringNerve.getHandler(simulationManager) != null) {
-                game().addActionHandler(recoveringNerve.getHandler(simulationManager));
-            } else if (action instanceof MoraleCheckAction moraleCheck && moraleCheck.getHandler(simulationManager) != null) {
-                game().addActionHandler(moraleCheck.getHandler(simulationManager));
-            } else if (action instanceof MoveAction moveAction && moveAction.getHandler(simulationManager) != null) {
-                game().addActionHandler(moveAction.getHandler(simulationManager));
+        for (Action action : game().getActionsVector()) {
+            var actionHandler = action.getHandler(simulationManager);
+            if (actionHandler != null) {
+                game().addActionHandler(actionHandler);
+            } else {
+                logger.error("Action " + action + " has no handler");
             }
         }
     }

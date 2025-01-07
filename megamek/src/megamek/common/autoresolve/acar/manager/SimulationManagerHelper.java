@@ -29,7 +29,4 @@ public interface SimulationManagerHelper {
         return simulationManager().getGame();
     }
 
-    default void addReport(PublicReportEntry reportEntry) {
-        simulationManager().addReport(reportEntry);
-    }
 }

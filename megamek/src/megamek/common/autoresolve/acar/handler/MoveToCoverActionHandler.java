@@ -14,18 +14,19 @@
 package megamek.common.autoresolve.acar.handler;
 
 import megamek.common.BoardLocation;
+import megamek.common.Compute;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.acar.action.MoveAction;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
+import megamek.common.autoresolve.acar.report.IMovementReport;
 import megamek.common.autoresolve.acar.report.MovementReport;
 
 public class MoveToCoverActionHandler extends AbstractActionHandler {
 
-    private final MovementReport reporter;
+    private final IMovementReport reporter;
 
     public MoveToCoverActionHandler(MoveToCoverAction action, SimulationManager gameManager) {
         super(action, gameManager);
-        this.reporter = new MovementReport(gameManager.getGame(), this::addReport);
+        this.reporter = MovementReport.create(gameManager);
     }
 
     @Override
@@ -59,7 +60,9 @@ public class MoveToCoverActionHandler extends AbstractActionHandler {
                 reporter.reportMovement(movingFormation);
             }
         }
-        movingFormation.getMemory().put("cover", true);
+
+        // 70% chance of finding cover while walking
+        movingFormation.getMemory().put("cover", Compute.randomFloat() < 0.7);
         simulationManager().setFormationAt(movingFormation, boardLocation);
     }
 }

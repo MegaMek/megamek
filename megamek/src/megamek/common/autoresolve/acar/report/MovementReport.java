@@ -15,12 +15,13 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.common.IGame;
 import megamek.common.alphaStrike.ASRange;
+import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MovementReport {
+public class MovementReport implements IMovementReport {
 
     private final IGame game;
     private final Consumer<PublicReportEntry> reportConsumer;
@@ -41,11 +42,19 @@ public class MovementReport {
         ASRange.HORIZON, 2305
     );
 
-    public MovementReport(IGame game, Consumer<PublicReportEntry> reportConsumer) {
+    private MovementReport(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.reportConsumer = reportConsumer;
         this.game = game;
     }
 
+    public static IMovementReport create(SimulationManager manager) {
+        if (manager.isLogSuppressed()) {
+            return DummyMovementReport.instance();
+        }
+        return new MovementReport(manager.getGame(), manager::addReport);
+    }
+
+    @Override
     public void reportMovement(Formation mover, Formation target, int direction) {
         int reportId;
         var distance = mover.getPosition().coords().distance(target.getPosition().coords());
@@ -58,7 +67,7 @@ public class MovementReport {
 
         var rangeName = distance < 3 ? 2300 : rangeNames.get(range);
 
-        var report = new PublicReportEntry(reportId).noNL();
+        var report = new PublicReportEntry(reportId);
         report.add(new FormationReportEntry(mover, game).text());
         report.add(new FormationReportEntry(target, game).text());
         report.add(new PublicReportEntry(rangeName).reportText());
@@ -66,14 +75,16 @@ public class MovementReport {
         reportConsumer.accept(report);
     }
 
+    @Override
     public void reportRetreatMovement(Formation mover) {
-        var report = new PublicReportEntry(2206).noNL();
+        var report = new PublicReportEntry(2206);
         report.add(new FormationReportEntry(mover, game).text());
         reportConsumer.accept(report);
     }
 
+    @Override
     public void reportMovement(Formation mover) {
-        var report = new PublicReportEntry(2200).noNL();
+        var report = new PublicReportEntry(2200);
         report.add(new FormationReportEntry(mover, game).text());
         reportConsumer.accept(report);
     }

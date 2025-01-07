@@ -13,11 +13,10 @@
  */
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;

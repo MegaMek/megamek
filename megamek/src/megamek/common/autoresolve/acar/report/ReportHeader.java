@@ -15,7 +15,7 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.client.ui.swing.util.UIUtil;
 
-public class ReportHeader extends PublicReportEntry{
+public class ReportHeader extends PublicReportEntry {
 
     public ReportHeader(int messageId) {
         super(messageId);

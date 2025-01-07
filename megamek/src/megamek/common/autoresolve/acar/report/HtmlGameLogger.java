@@ -42,7 +42,7 @@ public class HtmlGameLogger {
         protected void initialize() {
             appendRaw("""
             <!DOCTYPE html>
-            <html>
+            <html lang="en">
             <head>
                 <title>Simulation Game Log</title>
                 <meta charset="UTF-8">
@@ -89,6 +89,7 @@ public class HtmlGameLogger {
 
     public HtmlGameLogger addRaw(String message) {
         gameLog.appendRaw(message);
+        gameLog.appendRaw("\n");
         return this;
     }
 
@@ -97,12 +98,12 @@ public class HtmlGameLogger {
         return this;
     }
 
-    public void close() {
-        addRaw("</body></html>");
-    }
-
     public File getLogFile() {
         return gameLog.getLogFile();
+    }
+
+    public void close() throws Exception {
+        gameLog.close();
     }
 
 }

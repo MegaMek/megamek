@@ -31,12 +31,22 @@ public class Resolver {
     private final SimulationOptions options;
     private final SetupForces setupForces;
     private final Board board;
+    private final boolean suppressLog;
 
     public Resolver(SetupForces setupForces,
-                    AbstractOptions gameOptions, Board board) {
+                    AbstractOptions gameOptions, Board board, boolean suppressLog) {
         this.options = new SimulationOptions(gameOptions);
         this.setupForces = setupForces;
         this.board = board;
+        this.suppressLog = suppressLog;
+    }
+
+    public static Resolver simulationRun(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
+        return new Resolver(setupForces, gameOptions, board, false);
+    }
+
+    public static Resolver simulationRunWithoutLog(SetupForces setupForces, AbstractOptions gameOptions, Board board) {
+        return new Resolver(setupForces, gameOptions, board, true);
     }
 
     private void initializeGameManager(SimulationManager simulationManager) {
@@ -51,7 +61,7 @@ public class Resolver {
 
     public AutoResolveConcludedEvent resolveSimulation() {
         SimulationContext context = new SimulationContext(options, setupForces, board);
-        SimulationManager simulationManager = new SimulationManager(context);
+        SimulationManager simulationManager = new SimulationManager(context, suppressLog);
         initializeGameManager(simulationManager);
         simulationManager.execute();
         return simulationManager.getConclusionEvent();

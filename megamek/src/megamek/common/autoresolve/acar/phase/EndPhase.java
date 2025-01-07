@@ -19,6 +19,7 @@ import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
 import megamek.common.autoresolve.acar.report.EndPhaseReporter;
+import megamek.common.autoresolve.acar.report.IEndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.enums.GamePhase;
 import megamek.common.strategicBattleSystems.SBFFormation;
@@ -29,11 +30,11 @@ import java.util.List;
 
 public class EndPhase extends PhaseHandler {
 
-    private final EndPhaseReporter reporter;
+    private final IEndPhaseReporter reporter;
 
     public EndPhase(SimulationManager simulationManager) {
         super(simulationManager, GamePhase.END);
-        reporter = new EndPhaseReporter(simulationManager.getGame(), simulationManager::addReport);
+        reporter = EndPhaseReporter.create(simulationManager);
     }
 
     @Override

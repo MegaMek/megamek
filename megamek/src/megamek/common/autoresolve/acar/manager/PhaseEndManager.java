@@ -13,14 +13,25 @@
  */
 package megamek.common.autoresolve.acar.manager;
 
+import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.acar.report.PublicReportEntry;
+import megamek.common.autoresolve.acar.report.IPhaseEndReporter;
+import megamek.common.autoresolve.acar.report.PhaseEndReporter;
 import megamek.common.enums.GamePhase;
 
-public record PhaseEndManager(SimulationManager simulationManager) implements SimulationManagerHelper {
+public class PhaseEndManager implements SimulationManagerHelper {
+    private final SimulationManager simulationManager;
+    private final IPhaseEndReporter reporter;
+
+    public PhaseEndManager(SimulationManager simulationManager) {
+        this.simulationManager = simulationManager;
+        this.reporter = PhaseEndReporter.create(simulationManager);
+    }
 
     public void managePhase() {
         switch (simulationManager.getGame().getPhase()) {
+            case STARTING_SCENARIO:
+                break;
             case INITIATIVE:
                 simulationManager.getGame().setupDeployment();
                 simulationManager.resetFormations();
@@ -40,7 +51,8 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
                 // Print the movement phase header before entering in it
-                simulationManager.addReport(new PublicReportEntry(2201));
+                reporter.movementPhaseHeader();
+
                 simulationManager.changePhase(GamePhase.MOVEMENT);
                 break;
             case MOVEMENT:
@@ -49,7 +61,7 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
                 simulationManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                simulationManager.addReport(new PublicReportEntry(2002));
+                reporter.firingPhaseHeader();
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
                 simulationManager.changePhase(GamePhase.END);
@@ -64,7 +76,9 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
                 break;
             case VICTORY:
                 endPhaseCleanup();
-            case STARTING_SCENARIO:
+                reporter.closeTheFile();
+                reporter.addSummary();
+                break;
             default:
                 break;
         }
@@ -81,4 +95,13 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
         simulationManager.flushPendingReports();
     }
 
+    @Override
+    public SimulationManager simulationManager() {
+        return simulationManager;
+    }
+
+    @Override
+    public SimulationContext game() {
+        return simulationManager.getGame();
+    }
 }

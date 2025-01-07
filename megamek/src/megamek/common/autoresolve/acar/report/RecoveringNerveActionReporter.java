@@ -16,6 +16,7 @@ package megamek.common.autoresolve.acar.report;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Roll;
+import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
@@ -23,16 +24,24 @@ import java.util.function.Consumer;
 
 import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
 
-public class RecoveringNerveActionReporter {
+public class RecoveringNerveActionReporter implements IRecoveringNerveActionReporter {
 
     private final IGame game;
     private final Consumer<PublicReportEntry> reportConsumer;
 
-    public RecoveringNerveActionReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
+    private RecoveringNerveActionReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.reportConsumer = reportConsumer;
         this.game = game;
     }
 
+    public static IRecoveringNerveActionReporter create(SimulationManager manager) {
+        if (manager.isLogSuppressed()) {
+            return DummyRecoveringNerveActionReporter.instance();
+        }
+        return new RecoveringNerveActionReporter(manager.getGame(), manager::addReport);
+    }
+
+    @Override
     public void reportRecoveringNerveStart(Formation formation, int toHitValue) {
         reportConsumer.accept(new PublicReportEntry(4000)
             .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text())
@@ -40,10 +49,12 @@ public class RecoveringNerveActionReporter {
         );
     }
 
+    @Override
     public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus, Roll roll) {
         reportConsumer.accept(new PublicReportEntry(4001).indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
     }
 
+    @Override
     public void reportFailureRoll(Roll roll, SBFFormation.MoraleStatus moraleStatus) {
         reportConsumer.accept(new PublicReportEntry(4002).add(roll.toString()).add(moraleStatus.name().toLowerCase()));
     }

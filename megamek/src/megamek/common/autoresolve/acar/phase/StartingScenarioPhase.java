@@ -14,13 +14,16 @@
 package megamek.common.autoresolve.acar.phase;
 
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.acar.report.IStartingScenarioPhaseReporter;
 import megamek.common.autoresolve.acar.report.StartingScenarioPhaseReporter;
 import megamek.common.enums.GamePhase;
 
 public class StartingScenarioPhase extends PhaseHandler {
+    private final IStartingScenarioPhaseReporter reporter;
 
     public StartingScenarioPhase(SimulationManager gameManager) {
         super(gameManager, GamePhase.STARTING_SCENARIO);
+        reporter = StartingScenarioPhaseReporter.create(gameManager);
     }
 
     @Override
@@ -30,9 +33,7 @@ public class StartingScenarioPhase extends PhaseHandler {
         getSimulationManager().calculatePlayerInitialCounts();
         getSimulationManager().getGame().setupTeams();
         getSimulationManager().getGame().setupDeployment();
-
-        var reporter = new StartingScenarioPhaseReporter(getSimulationManager().getGame(), getSimulationManager()::addReport);
-        reporter.startingScenarioHeader();
+        reporter.header();
         reporter.formationsSetup(getSimulationManager());
     }
 }

@@ -18,6 +18,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.DeploymentReport;
+import megamek.common.autoresolve.acar.report.IDeploymentReport;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.enums.GamePhase;
 
@@ -29,14 +30,15 @@ public class DeploymentPhase extends PhaseHandler {
     private final int boardTwoThirds;
     private final int deployZone = 3;
     private final int boardSouthSide = 0;
-    private final DeploymentReport deploymentReporter;
+    private final IDeploymentReport deploymentReporter;
 
     public DeploymentPhase(SimulationManager simulationManager) {
         super(simulationManager, GamePhase.DEPLOYMENT);
+        this.deploymentReporter = DeploymentReport.create(simulationManager);
+
         this.boardNorthSide = getContext().getBoardSize() - 1;
         this.boardOneThird = boardNorthSide / 3;
         this.boardTwoThirds = boardOneThird * 2;
-        this.deploymentReporter = new DeploymentReport(getContext(), simulationManager::addReport);
     }
 
     @Override

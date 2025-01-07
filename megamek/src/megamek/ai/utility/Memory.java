@@ -14,7 +14,6 @@
 package megamek.ai.utility;
 
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Memory class to store data for state processing and decision-making.
@@ -46,10 +45,6 @@ public class Memory {
         memory.remove(key);
     }
 
-    public Object computeIfAbsent(String key, Function<String, Object> mappingFunction) {
-        return memory.computeIfAbsent(key, mappingFunction);
-    }
-
     public void clear(String prefix) {
         memory.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
     }
@@ -64,19 +59,6 @@ public class Memory {
 
     public Optional<Object> get(String key) {
         return Optional.ofNullable(memory.getOrDefault(key, null));
-    }
-
-    /**
-     * Memories is a specific type of memory that stores a list of maps, which is useful for storing a list of events that happened withing
-     * the same type of event, such as a list of attacks, or a list of movements, or a list of targets. With the list of maps you can store
-     * arbitrary information as if it were a "json-like" structure, with keys and values, and nested objects in it, just try to keep it
-     * simple, nobody deserves to have to deal with complex arbitrary structures in memory during runtime.
-     * @param key The key to the memory
-     * @return The list of maps stored in the memory
-     */
-    @SuppressWarnings("unchecked")  // used in MekHQ
-    public List<Map<String, Object>> getMemories(String key) {
-        return (List<Map<String, Object>>) memory.computeIfAbsent(key, k -> new ArrayList<Map<String, Object>>());
     }
 
     public boolean containsKey(String key) {

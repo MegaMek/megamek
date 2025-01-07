@@ -44,15 +44,22 @@ public class SimulationManager extends AbstractGameManager {
 
     private final List<ReportEntry> pendingReports = new ArrayList<>();
     private final List<PhaseHandler> phaseHandlers = new ArrayList<>();
-    private final PhaseEndManager phaseEndManager = new PhaseEndManager(this);
-    private final PhasePreparationManager phasePreparationManager = new PhasePreparationManager(this);
-    private  final ActionsProcessor actionsProcessor = new ActionsProcessor(this);
-    private  final InitiativeHelper initiativeHelper = new InitiativeHelper(this);
-    private final VictoryHelper victoryHelper = new VictoryHelper(this);
+    private final PhaseEndManager phaseEndManager;
+    private final PhasePreparationManager phasePreparationManager;
+    private  final ActionsProcessor actionsProcessor;
+    private  final InitiativeHelper initiativeHelper;
+    private final VictoryHelper victoryHelper;
     private final SimulationContext simulationContext;
+    private final boolean suppressLog;
 
-    public SimulationManager(SimulationContext simulationContext) {
+    public SimulationManager(SimulationContext simulationContext, boolean suppressLog) {
         this.simulationContext = simulationContext;
+        this.suppressLog = suppressLog;
+        this.phaseEndManager = new PhaseEndManager(this);
+        this.phasePreparationManager = new PhasePreparationManager(this);
+        this.actionsProcessor = new ActionsProcessor(this);
+        this.initiativeHelper = new InitiativeHelper(this);
+        this.victoryHelper = new VictoryHelper(this);
     }
 
     public void execute() {
@@ -60,10 +67,15 @@ public class SimulationManager extends AbstractGameManager {
         while (!simulationContext.getPhase().equals(GamePhase.VICTORY)) {
             changePhase(GamePhase.INITIATIVE);
         }
+
     }
 
     public void addPhaseHandler(PhaseHandler phaseHandler) {
         phaseHandlers.add(phaseHandler);
+    }
+
+    public HtmlGameLogger getGameLogger() {
+        return gameLogger;
     }
 
     public AutoResolveConcludedEvent getConclusionEvent() {
@@ -159,6 +171,7 @@ public class SimulationManager extends AbstractGameManager {
         return actionsProcessor;
     }
 
+    @SuppressWarnings("unused")
     public void addMovement(MoveAction moveAction, Formation activeFormation) {
         getGame().addAction(moveAction);
         activeFormation.setDone(true);
@@ -182,13 +195,10 @@ public class SimulationManager extends AbstractGameManager {
         getGame().addAction(acsWithdrawAction);
     }
 
-    public void addEngagementControl(EngagementControlAction action, Formation formation) {
-        getGame().addAction(action);
-        formation.setDone(true);
-    }
-
     public void flushPendingReports() {
-        pendingReports.forEach(r -> gameLogger.add(r.text()));
+        if (!isLogSuppressed()) {
+            pendingReports.forEach(r -> gameLogger.addRaw(r.text()));
+        }
         pendingReports.clear();
     }
 
@@ -204,6 +214,9 @@ public class SimulationManager extends AbstractGameManager {
 
     @Override
     public void addReport(ReportEntry r) {
+        if (isLogSuppressed()) {
+            return;
+        }
         if (r instanceof PublicReportEntry publicReportEntry) {
             pendingReports.add(publicReportEntry);
         } else {
@@ -219,6 +232,10 @@ public class SimulationManager extends AbstractGameManager {
             getGame().getActiveFormations(player).stream().map(Formation::getPointValue).reduce(Integer::sum)
                 .ifPresent(player::setInitialBV);
         }
+    }
+
+    public boolean isLogSuppressed() {
+        return suppressLog;
     }
 
     @Override

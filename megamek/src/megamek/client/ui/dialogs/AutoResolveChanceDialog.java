@@ -141,6 +141,19 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         return dialog.getReturnCode();
     }
 
+    public static void showSingleSimulationProgressDialog(JFrame frame, SetupForces setupForces, Board board) {
+        var dialog = new AutoResolveChanceDialog(frame, 1, 1, 0, setupForces, board);
+        dialog.setModal(true);
+        dialog.setIndeterminateProgress(true);
+        dialog.getTask().execute();
+        dialog.setVisible(true);
+        var event = dialog.getEvent();
+
+        var autoResolveBattleReport = new AutoResolveSimulationLogDialog(frame, event.getLogFile());
+        autoResolveBattleReport.setModal(true);
+        autoResolveBattleReport.setVisible(true);
+    }
+
     private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
         super(frame, true, "AutoResolveMethod.dialog.name","AutoResolveMethod.dialog.title");
         this.numberOfSimulations = numberOfSimulations;
@@ -156,6 +169,14 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
         Collections.shuffle(progressText);
         initialize();
+    }
+
+    private void setIndeterminateProgress(boolean indeterminateProgress) {
+        this.getProgressBar().setIndeterminate(indeterminateProgress);
+    }
+
+    private AutoResolveConcludedEvent getEvent() {
+        return null;
     }
 
     @Override
@@ -296,7 +317,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 List<Future<AutoResolveConcludedEvent>> futures = new ArrayList<>();
                 for (int i = 0; i < numberOfSimulations; i++) {
                     futures.add(executor.submit(() -> {
-                        var autoResolveConcludedEvent = new Resolver(
+                        var autoResolveConcludedEvent = Resolver.simulationRunWithoutLog(
                             setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
                             .resolveSimulation();
                         setProgress(Math.min(100 * runCounter.incrementAndGet() / numberOfSimulations, 100));

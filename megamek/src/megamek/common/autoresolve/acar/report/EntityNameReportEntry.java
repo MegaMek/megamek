@@ -25,7 +25,6 @@ public class EntityNameReportEntry extends PublicReportEntry {
 
     public EntityNameReportEntry(Entity entity) {
         this(entity.getDisplayName(), entity.getOwner().getColour(), entity.getOwner().getTeam());
-
     }
 
     public EntityNameReportEntry(String name, PlayerColour color, int playerTeam) {

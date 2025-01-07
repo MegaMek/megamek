@@ -1919,7 +1919,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     }
                 }
 
-                var event = new Resolver(forcesSetups,new SimulationOptions(client().getGame().getOptions()), board)
+                var event = Resolver.simulationRun(forcesSetups,new SimulationOptions(client().getGame().getOptions()), board)
                     .resolveSimulation();
 
                 var autoResolveBattleReport = new AutoResolveSimulationLogDialog(getClientgui().getFrame(), event.getLogFile());

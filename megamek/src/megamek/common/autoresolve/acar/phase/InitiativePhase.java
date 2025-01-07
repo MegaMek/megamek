@@ -14,12 +14,22 @@
 package megamek.common.autoresolve.acar.phase;
 
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.acar.report.IInitiativePhaseHelperReporter;
+import megamek.common.autoresolve.acar.report.InitiativePhaseHelperReporter;
 import megamek.common.enums.GamePhase;
 
 public class InitiativePhase  extends PhaseHandler {
+    private final IInitiativePhaseHelperReporter reporter;
 
     public InitiativePhase(SimulationManager gameManager) {
         super(gameManager, GamePhase.INITIATIVE);
+        reporter = InitiativePhaseHelperReporter.create(gameManager);
+    }
+
+    private void writeInitiativeReport() {
+        reporter.writeInitiativeHeader();
+        reporter.writeInitiativeRolls();
+        reporter.writeFutureDeployment();
     }
 
     @Override
@@ -28,6 +38,6 @@ public class InitiativePhase  extends PhaseHandler {
         getSimulationManager().resetPlayersDone();
         getSimulationManager().rollInitiative();
         getSimulationManager().incrementAndSendGameRound();
-        getSimulationManager().getInitiativeHelper().writeInitiativeReport();
+        writeInitiativeReport();
     }
 }

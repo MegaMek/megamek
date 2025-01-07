@@ -23,6 +23,7 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.AttackToHitData;
 import megamek.common.autoresolve.acar.action.StandardUnitAttack;
 import megamek.common.autoresolve.acar.report.AttackReporter;
+import megamek.common.autoresolve.acar.report.IAttackReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
@@ -33,11 +34,11 @@ import java.util.Optional;
 
 public class StandardUnitAttackHandler extends AbstractActionHandler {
 
-    private final AttackReporter reporter;
+    private final IAttackReporter reporter;
 
     public StandardUnitAttackHandler(StandardUnitAttack action, SimulationManager gameManager) {
         super(action, gameManager);
-        this.reporter = new AttackReporter(game(), this::addReport);
+        this.reporter = AttackReporter.create(gameManager);
     }
 
     @Override

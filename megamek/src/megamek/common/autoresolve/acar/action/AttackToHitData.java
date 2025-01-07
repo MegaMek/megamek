@@ -34,17 +34,25 @@ public class AttackToHitData extends TargetRoll {
         }
 
         var attackingFormation = game.getFormation(attack.getEntityId()).orElseThrow();
-        var unit = attackingFormation.getUnits().get(attack.getUnitNumber());
+        // var unit = attackingFormation.getUnits().get(attack.getUnitNumber());
         var toHit = new AttackToHitData(attackingFormation.getSkill(), Internationalization.getText("acar.skill"));
 
         processCriticalDamage(toHit, attackingFormation, attack);
         processRange(toHit, attack);
-        processCombatUnit(toHit, unit);
+        // processCombatUnit(toHit, unit);
         processTMM(toHit, game, attack);
         processJUMP(toHit, game, attack);
         processMorale(toHit, game, attack);
         processSecondaryTarget(toHit, game, attack);
+        processCover(toHit, game, attack);
         return toHit;
+    }
+
+    private static void processCover(AttackToHitData toHit, SimulationContext game, StandardUnitAttack attack) {
+        var target = game.getFormation(attack.getTargetId()).orElseThrow();
+        if (target.getMemory().getBoolean("cover").orElse(false)) {
+            toHit.addModifier(+1, Internationalization.getText("acar.cover"));
+        }
     }
 
     private static void processCriticalDamage(AttackToHitData toHit, Formation formation, StandardUnitAttack attack) {

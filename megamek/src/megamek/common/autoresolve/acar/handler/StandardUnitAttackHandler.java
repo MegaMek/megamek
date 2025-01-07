@@ -45,6 +45,10 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         return game().getPhase().isFiring();
     }
 
+    private int getFormationId() {
+        return ((StandardUnitAttack) getAction()).getEntityId();
+    }
+
     @Override
     public void execute() {
         var attack = (StandardUnitAttack) getAction();
@@ -134,7 +138,8 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         targetUnit.setCurrentArmor(Math.max(0, targetUnit.getCurrentArmor() - totalDamageApplied));
 
         reporter.reportDamageDealt(targetUnit, totalDamageApplied, targetUnit.getCurrentArmor());
-
+        target.getMemory().put("lastAttackerId", getFormationId());
+        target.getMemory().put("wasDamagedAtRound", game().getCurrentRound());
         if (targetUnit.getCurrentArmor() * 2 < totalDamageApplied) {
             target.setHighStressEpisode();
             reporter.reportStressEpisode();

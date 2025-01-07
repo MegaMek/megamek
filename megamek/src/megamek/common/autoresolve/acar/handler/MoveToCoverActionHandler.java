@@ -16,13 +16,14 @@ package megamek.common.autoresolve.acar.handler;
 import megamek.common.BoardLocation;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoveAction;
+import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.report.MovementReport;
 
-public class MoveActionHandler extends AbstractActionHandler {
+public class MoveToCoverActionHandler extends AbstractActionHandler {
 
     private final MovementReport reporter;
 
-    public MoveActionHandler(MoveAction action, SimulationManager gameManager) {
+    public MoveToCoverActionHandler(MoveToCoverAction action, SimulationManager gameManager) {
         super(action, gameManager);
         this.reporter = new MovementReport(gameManager.getGame(), this::addReport);
     }
@@ -34,7 +35,7 @@ public class MoveActionHandler extends AbstractActionHandler {
 
     @Override
     public void execute() {
-        MoveAction moveAction = (MoveAction) getAction();
+        MoveToCoverAction moveAction = (MoveToCoverAction) getAction();
 
         var formationOpt = game().getFormation(moveAction.getEntityId());
         var movingFormation = formationOpt.orElseThrow();
@@ -58,7 +59,7 @@ public class MoveActionHandler extends AbstractActionHandler {
                 reporter.reportMovement(movingFormation);
             }
         }
-        movingFormation.getMemory().put("cover", false);
+        movingFormation.getMemory().put("cover", true);
         simulationManager().setFormationAt(movingFormation, boardLocation);
     }
 }

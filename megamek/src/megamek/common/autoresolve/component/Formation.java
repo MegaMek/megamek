@@ -20,6 +20,7 @@ import megamek.common.ToHitData;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
@@ -36,6 +37,24 @@ public class Formation extends SBFFormation {
     private boolean highStressEpisode = false;
     private boolean withdrawing = false;
     private InitiativeRoll initiativeRoll = new InitiativeRoll();
+    private Role role;
+    private Entity entity;
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public Memory getMemory() {
         return memory;

@@ -22,6 +22,7 @@ import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.autoresolve.acar.SimulationContext;
+import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -55,13 +56,14 @@ public class EntityToFormationConverter extends BaseFormationConverter<Formation
 
         SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, entity.getDisplayName(), report).createSbfUnit();
         formation.addUnit(convertedUnit);
+        formation.setEntity(entity);
+        formation.setRole(Role.getRole(entity.getRole()));
         formation.setOwnerId(entity.getOwnerId());
         formation.setName(entity.getDisplayName());
         formation.setStdDamage(setStdDamageForFormation(formation));
+
         for (var unit : formation.getUnits()) {
             var health = 0;
-//            health += entity.getTotalOArmor();
-//            health += entity.getTotalInternal();
             for (var el : unit.getElements()) {
                 health += el.getFullArmor() + el.getFullStructure();
             }

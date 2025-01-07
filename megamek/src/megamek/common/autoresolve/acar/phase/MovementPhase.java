@@ -177,21 +177,15 @@ public class MovementPhase extends PhaseHandler {
             int direction = (targetFormation.getPosition().coords().getX()
                 < activeFormation.getPosition().coords().getX()) ? 1 : -1;
 
-            int moveDistance = Math.min(totalMP, distToTarget);
-            // If distToTarget is 0, handle edge case – maybe just use totalMP
-            if (distToTarget == 0) {
-                moveDistance = totalMP;
-            }
-
             var destination = new Coords(
-                activeFormation.getPosition().coords().getX() + (moveDistance * direction),
+                activeFormation.getPosition().coords().getX() + (totalMP * direction),
                 0
             );
             return new MoveAction(activeFormation.getId(), targetId, destination);
         }
 
             // 6. Check if formation is damaged and role wants to drop to cover
-        if (activeFormation.getMemory().getBoolean("wasDamagedLastTurn").orElse(false) && role.dropToCoverIfDamaged()) {
+        if (activeFormation.getMemory().getBoolean("wasDamagedAtRound").orElse(false) && role.dropToCoverIfDamaged()) {
             // Attempt to find a tile that provides cover within movement range
 
             var coverCoords = findCoverTile(activeFormation, totalMP);

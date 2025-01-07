@@ -50,6 +50,10 @@ public class Memory {
         return memory.computeIfAbsent(key, mappingFunction);
     }
 
+    public void clear(String prefix) {
+        memory.entrySet().removeIf(entry -> entry.getKey().startsWith(prefix));
+    }
+
     public void clear() {
         memory.clear();
     }

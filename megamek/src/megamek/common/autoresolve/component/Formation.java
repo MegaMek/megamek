@@ -120,7 +120,7 @@ public class Formation extends SBFFormation {
         targetFormationId = Entity.NONE;
         engagementControl = null;
         highStressEpisode = false;
-        getMemory().clear();
+        getMemory().clear("range.");
         setDone(false);
     }
 

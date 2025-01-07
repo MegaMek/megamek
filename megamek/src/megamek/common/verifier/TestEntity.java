@@ -247,7 +247,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public boolean showIncorrectIntroYear() {
-        return options.showIncorrectIntroYear();
+        return !ignoreEquipmentIntroYear() && options.showIncorrectIntroYear();
     }
 
     @Override
@@ -257,7 +257,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public boolean skip() {
-        return options.skip();
+        return !skipBuildValidation() && options.skip();
     }
 
     @Override
@@ -1808,4 +1808,25 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return slotCount;
     }
+
+    boolean ignoreSlotCount() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.NOT_ENOUGH_SLOT_COUNT);
+    }
+
+    boolean ignoreEquipmentIntroYear() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR);
+    }
+
+    boolean allowOverweightConstruction() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.UNIT_OVERWEIGHT);
+    }
+
+    boolean skipBuildValidation() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.INVALID_OR_OUTDATED_BUILD);
+    }
+
 } // End class TestEntity

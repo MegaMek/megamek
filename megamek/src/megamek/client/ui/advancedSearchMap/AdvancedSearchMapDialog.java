@@ -125,7 +125,7 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
         JPanel pathsTitlePanel = createTitle(Messages.getString("AdvancedSearchMapDialog.filterBoardPaths"));
         List<String> paths = bc.getBoardPaths().values().stream().toList();
         paths = paths.stream().map(p -> p.substring(0, p.lastIndexOf("\\") + 1 )).distinct().sorted().toList();
-        filterPanel.add(createFilterList(listBoardPaths, paths, pathsTitlePanel, false));
+        filterPanel.add(createFilterList(listBoardPaths, paths, pathsTitlePanel, true));
 
         return filterPanel;
     }

@@ -21,6 +21,7 @@ import megamek.common.Hex;
 import megamek.common.Mek;
 import megamek.common.Terrains;
 import megamek.common.TripodMek;
+import megamek.common.enums.BuildingType;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -71,7 +72,7 @@ public class FindClubAction extends AbstractEntityAction {
         // or a blown off limb
         if ((hex.terrainLevel(Terrains.WOODS) < 1)
             && (hex.terrainLevel(Terrains.JUNGLE) < 1)
-            && (hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM)
+            && (hex.terrainLevel(Terrains.RUBBLE) < BuildingType.MEDIUM.getTypeValue())
             && (hex.terrainLevel(Terrains.ARMS) < 1)
             && (hex.terrainLevel(Terrains.LEGS) < 1)) {
             return false;

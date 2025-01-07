@@ -420,7 +420,17 @@ public class Hex implements Serializable {
         if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)){
             return true;
         }
-        else if (containsTerrain(Terrains.ROAD)){
+        else {
+            return hasPavedRoad();
+        }
+    }
+
+    /**
+     * If there's a road on this tile and it's paved, return true
+     * @return
+     */
+    public boolean hasPavedRoad() {
+        if (containsTerrain(Terrains.ROAD)){
             return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD)); //Return false if the road is dirt or gravel
         }
         return false;

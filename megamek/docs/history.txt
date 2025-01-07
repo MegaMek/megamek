@@ -1,6 +1,21 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.02-SNAPSHOT
+0.50.03-SNAPSHOT
++ PR #6335: default the directory filter to Select All in Advanced Board Search 
++ PR #6335: cleanup duplicate boards
++ PR #6328: Building type enum
++ PR #6340: MML tabbed UI docs update
++ PR #6341: update status display for sim fire, sim physicial to show remaining players
++ Fix MML #1674: Fix Tank armor and invalid builds
++ PR #6348: RFE Add Ability to Link Units in MekHQ (Fix MekHQ #3650)
++ PR #6349: MekHQ MegaMek options search bar resets all changes (fix MekHQ #5621)
++ PR #6350: Updating gravel road hexes to improve visuals
++ Fix #6345: Updated more pavement checks to consider dirt & gravel roads not paved
++ Fix #6339: 16x17 Battle of Stanrey -3- Up-Right.board does not match the complete version
++ PR #6356: Revised dirt road art
+
+
+0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions
 + PR #6186: Allow pausing a Princess-only game
 + PR #6190: Allow printing unit list from MM
@@ -57,6 +72,17 @@ MEGAMEK VERSION HISTORY:
 + PR #6295: Princess improvement to consider leap damage along with path optimization
 + Fix #6297: Fixes movement path sprite rendering under unit sprites in non-isometric mode
 + Fix #6277: Fixes /kick command for players and bots
++ Fix #6032: Filter out Aakar font from Java font family names
++ Fix #6309: Fix typo and log errors
++ Fix #6293: Prevent NPE when using non-scheduled Nuke
++ Fix MML #1667: incorrect cargo bay minimum doors
++ PR #6321: add indicators heat in the weapon display
++ Fix #6324: Prevent NPE when laser bays get mode count
++ PR #6326 Log jvm parameter
++ Fix #6313: Prevent NPE when opening player settings dialog in-game
++ PR #6330: Prevent annoying NPEs for players clicking around the board while waiting for turn interrupts to be resolved (point blank shots etc)
++ Fix #6368: Allow fleeing when sprinting and when starting movement
+
 
 0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),

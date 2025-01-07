@@ -975,19 +975,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateFleeButton() {
-        boolean fleeStart = (cmd.getLastStep() == null)
-            && ce().canFlee(ce().getPosition());
-        boolean jumpMoveRemaining = (cmd.getLastStep() != null)
+        int maxMP = maxMP(ce(), gear);
+
+        boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
+        boolean fleeStart = ce().canFlee(ce().getPosition());
+        boolean jumpMoveRemaining = hasLastStep
             && cmd.getLastStep().isJumping()
             && (cmd.getMpUsed() < ce().getJumpMP());
-        boolean runMoveRemaining = (cmd.getLastStep() != null)
+        boolean runMoveRemaining = hasLastStep
             && !cmd.getLastStep().isJumping()
-            && (cmd.getMpUsed() < ce().getRunMP());
+            && (cmd.getMpUsed() < maxMP);
         boolean moveRemaining = jumpMoveRemaining || runMoveRemaining;
-        boolean fleeEnd = (cmd.getLastStep() != null)
+        boolean fleeEnd = hasLastStep
             && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
             && moveRemaining
             && clientgui.getClient().getGame().canFleeFrom(ce(), cmd.getLastStep().getPosition());
+
         setFleeEnabled(fleeStart || fleeEnd);
     }
 
@@ -4459,6 +4462,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
+    private int maxMP(Entity en, int mvMode) {
+        int maxMP;
+        if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
+            maxMP = en.getJumpMP();
+        } else if (mvMode == GEAR_BACKUP) {
+            maxMP = en.getWalkMP();
+        } else if ((ce() instanceof Mek) && !(ce() instanceof QuadVee)
+            && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
+            // A non-QuadVee 'Mek that is using tracked movement is limited to walking
+            maxMP = en.getWalkMP();
+        } else {
+            if (clientgui.getClient().getGame().getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+                maxMP = en.getSprintMP();
+            } else {
+                maxMP = en.getRunMP();
+            }
+        }
+
+        return maxMP;
+    }
+
     /**
      * Computes all of the possible moves for an Entity in a particular gear. The
      * Entity can either
@@ -4495,6 +4520,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             en = suggestion;
         }
+
         if (en.isDone()) {
             return;
         }
@@ -4502,28 +4528,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Map<Coords, MovePath> mvEnvData = new HashMap<>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
-        int maxMP;
-        if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
-            maxMP = en.getJumpMP();
-        } else if (mvMode == GEAR_BACKUP) {
-            maxMP = en.getWalkMP();
-        } else if ((ce() instanceof Mek) && !(ce() instanceof QuadVee)
-                && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
-            // A non-QuadVee 'Mek that is using tracked movement is limited to walking
-            maxMP = en.getWalkMP();
-        } else {
-            if (clientgui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
-                maxMP = en.getSprintMP();
-            } else {
-                maxMP = en.getRunMP();
-            }
-        }
         MoveStepType stepType = (mvMode == GEAR_BACKUP) ? MoveStepType.BACKWARDS
                 : MoveStepType.FORWARDS;
         if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
             mp.addStep(MoveStepType.START_JUMP);
         }
+
+        int maxMP = maxMP(en, mvMode);
 
         // Create a path finder to find possible moves; if aerodyne, use a custom Aero
         // path finder.

@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-27
 <UnitType>
 SupportTank
 </UnitType>
@@ -41,8 +32,8 @@ Wheeled
 </motion_type>
 
 <transporters>
+cargobay:2.5:1:1::-1:0:omni
 BattleArmorHandles - troopers:-1
-cargobay:2.5:1:1:omni
 </transporters>
 
 <cruiseMP>
@@ -52,6 +43,14 @@ cargobay:2.5:1:1:omni
 <engine_type>
 6
 </engine_type>
+
+<armor_type>
+48
+</armor_type>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
 
 <omni>
 1
@@ -66,13 +65,8 @@ cargobay:2.5:1:1:omni
 
 <Body Equipment>
 SV Chassis Mod [Tractor]
-MASH Core Component:OMNI
-MASH Operation Theater:OMNI
-MASH Operation Theater:OMNI
-MASH Operation Theater:OMNI
-MASH Operation Theater:OMNI
-MASH Operation Theater:OMNI
 OmniChassisMod
+MASH Equipment:OMNI:SIZE:6.0
 </Body Equipment>
 
 <Front Equipment>
@@ -95,6 +89,10 @@ OmniChassisMod
 4
 </structural_tech_rating>
 
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
 <source>
 Handbook: House Davion
 </source>
@@ -110,3 +108,4 @@ Handbook: House Davion
 <fuel>
 3.5
 </fuel>
+

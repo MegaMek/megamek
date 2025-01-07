@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
@@ -671,7 +672,7 @@ public class MoveStep implements Serializable {
                     maxElevation++;
                 }
 
-                if (bld.getType() == Building.WALL) {
+                if (bld.getType() == BuildingType.WALL) {
                     if (maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         setElevation(Math.max(getElevation(),
                                 hex.terrainLevel(Terrains.BLDG_ELEV)));
@@ -3291,7 +3292,7 @@ public class MoveStep implements Serializable {
             } else if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-protos pay extra according to the building type
-                    mp += bldg.getType();
+                    mp += bldg.getType().getTypeValue();
                     if (bldg.getBldgClass() == Building.HANGAR) {
                         mp--;
                     }
@@ -3427,7 +3428,7 @@ public class MoveStep implements Serializable {
             int maxElevation = (2 + entity.getElevation() + game.getBoard()
                     .getHex(entity.getPosition()).getLevel()) - hex.getLevel();
 
-            if ((bld.getType() == Building.WALL)
+            if ((bld.getType() == BuildingType.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }

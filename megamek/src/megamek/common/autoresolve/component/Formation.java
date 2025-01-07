@@ -15,6 +15,7 @@ package megamek.common.autoresolve.component;
 
 import megamek.ai.utility.Memory;
 import megamek.common.Entity;
+import megamek.common.InitiativeRoll;
 import megamek.common.ToHitData;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
@@ -34,6 +35,7 @@ public class Formation extends SBFFormation {
     private ASDamageVector stdDamage;
     private boolean highStressEpisode = false;
     private boolean withdrawing = false;
+    private InitiativeRoll initiativeRoll = new InitiativeRoll();
 
     public Memory getMemory() {
         return memory;
@@ -219,6 +221,14 @@ public class Formation extends SBFFormation {
 
     public void setWithdrawing(boolean withdrawing) {
         this.withdrawing = withdrawing;
+    }
+
+    public InitiativeRoll getInitiativeRoll() {
+        return initiativeRoll;
+    }
+
+    public void setInitiativeRoll(InitiativeRoll initiativeRoll) {
+        this.initiativeRoll = initiativeRoll;
     }
 
     @Override

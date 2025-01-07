@@ -55,7 +55,7 @@ public class WithdrawReporter {
         reportConsumer.accept(report);
     }
 
-    public void reportSuccessfulWithdraw() {
+    public void reportSuccessfulWithdraw(Formation withdrawingFormation) {
         reportConsumer.accept(new PublicReportEntry(3333).indent(3));
     }
 

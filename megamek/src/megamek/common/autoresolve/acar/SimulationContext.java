@@ -694,11 +694,22 @@ public class SimulationContext implements IGame {
     }
 
     public void setBoardLocation(BoardLocation boardLocation, Formation formation) {
+        boardLocation = clamp(boardLocation);
         if (formation.getPosition() != null) {
             board.get(formation.getPosition().coords().getX()).remove(formation);
         }
         formation.setPosition(boardLocation);
         board.get(formation.getPosition().coords().getX()).add(formation);
+    }
+
+    public BoardLocation clamp(BoardLocation location) {
+        var x = location.coords().getX();
+        if (x >= board.size()) {
+            x = board.size() - 1;
+        } else if (x < 0) {
+            x = 0;
+        }
+        return new BoardLocation(new Coords(x, 0), location.boardId());
     }
 
     /**

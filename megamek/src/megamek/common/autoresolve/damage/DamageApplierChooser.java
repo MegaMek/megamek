@@ -110,12 +110,13 @@ public class DamageApplierChooser {
     }
 
     private static int getNumberOfDices(Entity entity, int removalCondition) {
+        var totalHealth = entity.getTotalOArmor() + entity.getTotalOInternal();
         double targetDamage = switch (removalCondition) {
-            case IEntityRemovalConditions.REMOVE_CAPTURED, IEntityRemovalConditions.REMOVE_EJECTED -> entity.getTotalOArmor() * 1.2;
-            case IEntityRemovalConditions.REMOVE_DEVASTATED -> entity.getTotalOArmor() * 5; // no damage is actually applied
-            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> entity.getTotalOArmor() * 0.8;
-            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> entity.getTotalOArmor() * 0.75;
-            default -> entity.getTotalOArmor() * 0.33;
+            case IEntityRemovalConditions.REMOVE_CAPTURED, IEntityRemovalConditions.REMOVE_EJECTED -> totalHealth * 0.8;
+            case IEntityRemovalConditions.REMOVE_DEVASTATED -> totalHealth * 3;
+            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> totalHealth * 0.6;
+            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> totalHealth * 0.75 ;
+            default -> totalHealth * 0.33;
         };
 
         return Math.max(1, (int) (targetDamage / 6 / 0.6));

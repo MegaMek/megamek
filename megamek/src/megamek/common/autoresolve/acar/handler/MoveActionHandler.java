@@ -14,17 +14,17 @@
 package megamek.common.autoresolve.acar.handler;
 
 import megamek.common.BoardLocation;
-import megamek.common.Coords;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoveAction;
+import megamek.common.autoresolve.acar.report.MovementReport;
 
 public class MoveActionHandler extends AbstractActionHandler {
 
-//    private final MoveReporter reporter;
+    private final MovementReport reporter;
 
     public MoveActionHandler(MoveAction action, SimulationManager gameManager) {
         super(action, gameManager);
-//        this.reporter = new MoveReporter(gameManager.getGame(), this::addReport);
+        this.reporter = new MovementReport(gameManager.getGame(), this::addReport);
     }
 
     @Override
@@ -35,15 +35,30 @@ public class MoveActionHandler extends AbstractActionHandler {
     @Override
     public void execute() {
         MoveAction moveAction = (MoveAction) getAction();
+
         var formationOpt = game().getFormation(moveAction.getEntityId());
         var movingFormation = formationOpt.orElseThrow();
+        var x = movingFormation.getPosition().coords().getX();
+        var moveX = moveAction.getDestination().getX();
 
-        if (game().getBoardSize() < moveAction.getDestination().getX()) {
-            simulationManager().setFormationAt(movingFormation, new BoardLocation(new Coords(game().getBoardSize()-1, 0), 0));
-        } else if (moveAction.getDestination().getX() < 0) {
-            simulationManager().setFormationAt(movingFormation, new BoardLocation(new Coords(0,0), 0));
+        var targetFormationOpt = game().getFormation(moveAction.getTargetFormationId());
+        var boardLocation = game().clamp(new BoardLocation(moveAction.getDestination(), 0));
+
+        if (targetFormationOpt.isPresent()) {
+            var targetX = targetFormationOpt.get().getPosition().coords().getX();
+            var moveDir = x < moveX ? 1 : -1;
+            var targetDir = x < targetX ? 1 : -1;
+            var relativeDir = moveDir * targetDir;
+
+            reporter.reportMovement(movingFormation, targetFormationOpt.get(), relativeDir);
         } else {
-            simulationManager().setFormationAt(movingFormation, new BoardLocation(moveAction.getDestination(), 0));
+            if (movingFormation.isWithdrawing()) {
+                reporter.reportRetreatMovement(movingFormation);
+            } else {
+                reporter.reportMovement(movingFormation);
+            }
         }
+
+        simulationManager().setFormationAt(movingFormation, boardLocation);
     }
 }

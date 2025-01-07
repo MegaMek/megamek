@@ -13,11 +13,9 @@
  */
 package megamek.common.autoresolve.acar.handler;
 
-import megamek.common.Compute;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
-import megamek.common.autoresolve.acar.action.WithdrawToHitData;
 import megamek.common.autoresolve.acar.report.WithdrawReporter;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -52,7 +50,7 @@ public class WithdrawActionHandler extends AbstractActionHandler {
         }
 
         var canWithdraw = (withdrawFormation.getPosition().coords().getX() == 0)
-            || (withdrawFormation.getPosition().coords().getX() == game().getBoardSize());
+            || (withdrawFormation.getPosition().coords().getX() == (game().getBoardSize() - 1));
 
         if (canWithdraw) {
             // successful withdraw
@@ -78,7 +76,7 @@ public class WithdrawActionHandler extends AbstractActionHandler {
                 }
             }
             if (unitWithdrawn.get() > 0) {
-                reporter.reportSuccessfulWithdraw();
+                reporter.reportSuccessfulWithdraw(withdrawFormation);
             }
             game().removeFormation(withdrawFormation);
         }

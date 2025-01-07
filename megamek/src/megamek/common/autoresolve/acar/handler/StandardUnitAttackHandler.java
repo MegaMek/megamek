@@ -16,8 +16,6 @@ package megamek.common.autoresolve.acar.handler;
 import megamek.codeUtilities.ObjectUtility;
 import megamek.common.Compute;
 import megamek.common.Roll;
-import megamek.common.alphaStrike.ASRange;
-import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -31,9 +29,7 @@ import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class StandardUnitAttackHandler extends AbstractActionHandler {
 

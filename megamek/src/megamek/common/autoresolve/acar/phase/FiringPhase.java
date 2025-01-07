@@ -142,9 +142,7 @@ public class FiringPhase extends PhaseHandler {
 
             var wasPreviousTarget = f.getId() == previousTargetId;
 
-            if (distance >= 42) {
-                // No extreme range on ACAR
-            } else if (dmg.L.hasDamage() && distance >= 24) {
+            if (distance < 42 && dmg.L.hasDamage() && distance >= 24) {
                 if (wasPreviousTarget) {
                     priorityTarget = Optional.of(f);
                 }

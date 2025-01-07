@@ -22,7 +22,6 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
     public void managePhase() {
         switch (simulationManager.getGame().getPhase()) {
             case INITIATIVE:
-                simulationManager.addReport(new PublicReportEntry(999));
                 simulationManager.getGame().setupDeployment();
                 simulationManager.resetFormations();
                 simulationManager.flushPendingReports();
@@ -33,25 +32,23 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
                 }
                 break;
             case DEPLOYMENT:
-                simulationManager.addReport(new PublicReportEntry(999));
                 simulationManager.getGame().clearDeploymentThisRound();
                 phaseCleanup();
                 simulationManager.changePhase(GamePhase.SBF_DETECTION);
                 break;
-            case SBF_DETECTION:
+            case SBF_DETECTION: // this is being used just as a "pre movement phase", we dont actually handle sbf detection
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
+                // Print the movement phase header before entering in it
+                simulationManager.addReport(new PublicReportEntry(2201));
                 simulationManager.changePhase(GamePhase.MOVEMENT);
                 break;
             case MOVEMENT:
-                simulationManager.addReport(new PublicReportEntry(999));
-                simulationManager.addReport(new PublicReportEntry(2201));
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
                 simulationManager.changePhase(GamePhase.FIRING);
                 break;
             case FIRING:
-                simulationManager.addReport(new PublicReportEntry(999));
                 simulationManager.addReport(new PublicReportEntry(2002));
                 simulationManager.getActionsProcessor().handleActions();
                 phaseCleanup();
@@ -59,6 +56,7 @@ public record PhaseEndManager(SimulationManager simulationManager) implements Si
                 break;
             case END:
                 simulationManager.getActionsProcessor().handleActions();
+                simulationManager.resetInitiative();
                 endPhaseCleanup();
                 if (simulationManager.isVictory()) {
                     simulationManager.changePhase(GamePhase.VICTORY);

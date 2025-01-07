@@ -39,7 +39,6 @@ public class EndPhaseReporter {
     }
 
     public void endPhaseHeader() {
-        reportConsumer.accept(new PublicReportEntry(999));
         reportConsumer.accept(new PublicReportEntry(3299));
     }
 
@@ -50,9 +49,5 @@ public class EndPhaseReporter {
         var r = new PublicReportEntry(reportId)
             .add(new EntityNameReportEntry(entity).reportText());
         reportConsumer.accept(r);
-    }
-
-    public void destroyedUnitsHeader() {
-        reportConsumer.accept(new PublicReportEntry(3298).indent());
     }
 }

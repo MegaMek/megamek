@@ -21,16 +21,22 @@ import megamek.common.autoresolve.acar.handler.MoveActionHandler;
 public class MoveAction implements Action {
 
     private final int formationId;
+    private final int targetFormationId;
     private final Coords destination;
 
-    public MoveAction(int formationId, Coords destination) {
+    public MoveAction(int formationId, int targetFormationId, Coords destination) {
         this.formationId = formationId;
+        this.targetFormationId = targetFormationId;
         this.destination = destination;
     }
 
     @Override
     public int getEntityId() {
         return formationId;
+    }
+
+    public int getTargetFormationId() {
+        return targetFormationId;
     }
 
     @Override

@@ -16,22 +16,40 @@ package megamek.common.autoresolve.acar.manager;
 import megamek.common.*;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.report.FormationReportEntry;
-import megamek.common.autoresolve.acar.report.PlayerNameReportEntry;
 import megamek.common.autoresolve.acar.report.PublicReportEntry;
 import megamek.common.autoresolve.acar.report.ReportHeader;
 import megamek.common.autoresolve.component.AcTurn;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-import megamek.common.strategicBattleSystems.SBFFormation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * @author Luana Coppio
  */
 public record InitiativeHelper(SimulationManager simulationManager) implements SimulationManagerHelper {
+
+    public void resetInitiative() {
+        for (var player : game().getPlayersList()) {
+            player.getInitiative().clear();
+        }
+    }
+
+    private record InitiativeFormationTurn(int initiativeValue, AcTurn acTurn)  implements Comparable<InitiativeFormationTurn> {
+        @Override
+        public int compareTo(InitiativeFormationTurn o) {
+            if (initiativeValue > o.initiativeValue) {
+                return -1;
+            } else if (initiativeValue < o.initiativeValue) {
+                return 1;
+            }
+            return 0;
+        }
+    };
 
     /**
      * Determines the turn order for a given phase, setting the game's turn list and sending it to the
@@ -41,78 +59,49 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
      * @see AbstractGame#resetTurnIndex()
      */
     void determineTurnOrder(GamePhase phase) {
-        final List<AcTurn> turns;
+        List<InitiativeFormationTurn> formationTurns = new ArrayList<>();
         if (phase.isFiring() || phase.isMovement()) {
-            turns = game().getInGameObjects().stream()
-                .filter(Formation.class::isInstance)
-                .map(Formation.class::cast)
-                .filter(Formation::isDeployed)
-                .filter(unit -> unit.isEligibleForPhase(phase))
-                .map(InGameObject::getOwnerId)
-                .map(FormationTurn::new)
-                .sorted(Comparator.comparing(t -> game().getPlayer(t.playerId()).getInitiative()))
-                .collect(Collectors.toList());
+            for (var player : game().getPlayersList()) {
+                var actionsForThisTurn = game().getActiveFormations(player).stream()
+                    .filter(Formation::isDeployed)
+                    .filter(unit -> unit.isEligibleForPhase(phase))
+                    .count();
+                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                for (int i = 0; i < turnsForPlayer; i++) {
+                    var initiative = player.getInitiative().getRoll(i);
+                    formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));
+                }
+            }
         } else if (phase.isDeployment()) {
-            // Deployment phase: sort by initiative
-            turns = game().getInGameObjects().stream()
-                .filter(Formation.class::isInstance)
-                .map(Formation.class::cast)
-                .filter(unit -> !unit.isDeployed())
-                .map(InGameObject::getOwnerId)
-                .map(FormationTurn::new)
-                .sorted(Comparator.comparing(t -> game().getPlayer(t.playerId()).getInitiative()))
-                .collect(Collectors.toList());
-
+            for (var player : game().getPlayersList()) {
+                var actionsForThisTurn = game().getActiveFormations(player).stream()
+                    .filter(Formation::isDeployed)
+                    .filter(unit -> !unit.isDeployed())
+                    .count();
+                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                for (int i = 0; i < turnsForPlayer; i++) {
+                    var initiative = player.getInitiative().getRoll(i);
+                    formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));
+                }
+            }
         } else {
-            // As a fallback, provide unsorted turns
-            turns = game().getInGameObjects().stream()
-                .filter(Formation.class::isInstance)
-                .map(Formation.class::cast)
-                .filter(SBFFormation::isDeployed)
-                .filter(unit -> unit.isEligibleForPhase(phase))
-                .map(InGameObject::getOwnerId)
-                .map(FormationTurn::new)
-                .collect(Collectors.toList());
-
-            // Now, assemble formations and sort by initiative and relative formation count
-            Map<Integer, Long> unitCountsByPlayer = game().getInGameObjects().stream()
-                .filter(Formation.class::isInstance)
-                .map(Formation.class::cast)
-                .filter(SBFFormation::isDeployed)
-                .filter(unit -> unit.isEligibleForPhase(phase))
-                .collect(Collectors.groupingBy(InGameObject::getOwnerId, Collectors.counting()));
-
-            if (!unitCountsByPlayer.isEmpty()) {
-                final long lowestUnitCount = Collections.min(unitCountsByPlayer.values());
-
-                int playerWithLowestUnitCount = unitCountsByPlayer.entrySet().stream()
-                    .filter(e -> e.getValue() == lowestUnitCount)
-                    .map(Map.Entry::getKey)
-                    .findAny().orElse(Player.PLAYER_NONE);
-
-                List<Integer> playersByInitiative = new ArrayList<>(unitCountsByPlayer.keySet());
-                playersByInitiative.sort(Comparator.comparing(id -> game().getPlayer(id).getInitiative()));
-
-                if ((playerWithLowestUnitCount != Player.PLAYER_NONE) && (lowestUnitCount > 0)) {
-                    List<AcTurn> sortedTurns = new ArrayList<>();
-                    for (int initCycle = 0; initCycle < lowestUnitCount; initCycle++) {
-                        long currentLowestUnitCount = Collections.min(unitCountsByPlayer.values());
-                        for (int playerId : playersByInitiative) {
-                            long unitsToMove = unitCountsByPlayer.get(playerId) / currentLowestUnitCount;
-                            long remainingUnits = unitCountsByPlayer.get(playerId);
-                            unitsToMove = Math.min(unitsToMove, remainingUnits);
-                            for (int i = 0; i < unitsToMove; i++) {
-                                sortedTurns.add(new FormationTurn(playerId));
-                            }
-                            unitCountsByPlayer.put(playerId, remainingUnits - unitsToMove);
-                        }
-                    }
-                    // When here, sorting has been successful; replace the unsorted turns
-                    turns.clear();
-                    turns.addAll(sortedTurns);
+            for (var player : game().getPlayersList()) {
+                var actionsForThisTurn = game().getActiveFormations(player).stream()
+                    .filter(unit -> unit.isEligibleForPhase(phase))
+                    .filter(Formation::isDeployed)
+                    .count();
+                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                for (int i = 0; i < turnsForPlayer; i++) {
+                    var initiative = player.getInitiative().getRoll(i);
+                    formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));
                 }
             }
         }
+
+        final List<AcTurn> turns = formationTurns.stream()
+            .sorted()
+            .map(InitiativeFormationTurn::acTurn)
+            .collect(Collectors.toList());
 
         game().setTurns(turns);
         game().resetTurnIndex();
@@ -121,18 +110,7 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
     public void writeInitiativeReport() {
         writeHeader();
         writeInitiativeRolls();
-        writeTurnOrder();
         writeFutureDeployment();
-    }
-
-    private void writeTurnOrder() {
-        addReport(new PublicReportEntry(1020));
-
-        for (var turn : game().getTurnsList()) {
-            Player player = game().getPlayer(turn.playerId());
-            addReport(new PlayerNameReportEntry(player).indent().addNL());
-        }
-
     }
 
     private void writeFutureDeployment() {
@@ -146,7 +124,6 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
             .toList();
 
         if (!futureDeployments.isEmpty()) {
-            addReport(new PublicReportEntry(1060));
             int round = -1;
             for (Deployable deployable : futureDeployments) {
                 if (round != deployable.getDeployRound()) {
@@ -158,7 +135,7 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                     .add(new FormationReportEntry((Formation) deployable, game()).text())
                     .add(((InGameObject) deployable).getId())
                     .add(deployable.getDeployRound())
-                    .indent();
+                    .indent(2);
                 addReport(r);
             }
         }
@@ -181,6 +158,29 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                     .add(player.getInitiative().toString())
                 );
             }
+        }
+    }
+
+    private Team getTeamForPlayerId(int id) {
+        return game().getTeams().stream()
+            .filter(t -> t.players().stream().anyMatch(p -> p.getId() == id))
+            .findFirst()
+            .orElse(null);
+    }
+
+    private Player getPlayerForFormation(Formation formation) {
+        return game().getPlayer(formation.getOwnerId());
+    }
+
+    public void rollInitiativeForFormations(List<Formation> formations) {
+        for (var formation : formations) {
+            int bonus = 0;
+            final Team team = getTeamForPlayerId(formation.getOwnerId());
+            if (team != null) {
+                bonus = team.getTotalInitBonus(false);
+            }
+            var player = this.getPlayerForFormation(formation);
+            player.getInitiative().addRoll(bonus);
         }
     }
 

@@ -17,8 +17,8 @@ import megamek.common.InGameObject;
 import megamek.common.TargetRoll;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.component.Formation;
-import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.internationalization.Internationalization;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.List;
 

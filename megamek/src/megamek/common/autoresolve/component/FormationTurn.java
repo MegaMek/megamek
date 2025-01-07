@@ -20,7 +20,7 @@ import megamek.common.autoresolve.acar.SimulationContext;
 public class FormationTurn extends AcTurn {
 
     /**
-     * Creates a new player turn for an SBF Game.
+     * Creates a new formation turn for an ACAR Game.
      *
      * @param playerId The player who has to take action
      */

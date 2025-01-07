@@ -13,14 +13,16 @@
  */
 package megamek.common.autoresolve.acar;
 
-import megamek.common.*;
+import megamek.common.BoardLocation;
+import megamek.common.IGame;
+import megamek.common.Player;
+import megamek.common.ReportEntry;
 import megamek.common.autoresolve.acar.action.*;
 import megamek.common.autoresolve.acar.manager.*;
-import megamek.common.autoresolve.acar.phase.*;
+import megamek.common.autoresolve.acar.phase.PhaseHandler;
 import megamek.common.autoresolve.acar.report.HtmlGameLogger;
 import megamek.common.autoresolve.acar.report.PublicReportEntry;
 import megamek.common.autoresolve.component.Formation;
-
 import megamek.common.autoresolve.event.AutoResolveConcludedEvent;
 import megamek.common.enums.GamePhase;
 import megamek.common.net.packets.Packet;
@@ -120,7 +122,12 @@ public class SimulationManager extends AbstractGameManager {
      * Rolls initiative for all teams.
      */
     public void rollInitiative() {
-        TurnOrdered.rollInitiative(getGame().getTeams(), false);
+        initiativeHelper.rollInitiativeForFormations(getGame().getActiveFormations());
+    }
+
+
+    public void resetInitiative() {
+        initiativeHelper.resetInitiative();
     }
 
     /**

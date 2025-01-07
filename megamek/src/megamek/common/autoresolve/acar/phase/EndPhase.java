@@ -13,7 +13,6 @@
  */
 package megamek.common.autoresolve.acar.phase;
 
-import megamek.ai.utility.Memory;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
@@ -48,17 +47,12 @@ public class EndPhase extends PhaseHandler {
     }
 
     private void checkUnitDestruction() {
-        var printLatch = false;
         var allFormations = getContext().getActiveDeployedFormations();
         for (var formation : allFormations) {
             var destroyedUnits = formation.getUnits().stream()
                 .filter(u -> u.getCurrentArmor() <= 0)
                 .toList();
             if (!destroyedUnits.isEmpty()) {
-                if (!printLatch) {
-                    reporter.destroyedUnitsHeader();
-                    printLatch = true;
-                }
                 destroyUnits(formation, destroyedUnits);
             }
         }

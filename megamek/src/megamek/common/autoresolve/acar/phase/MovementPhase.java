@@ -17,13 +17,12 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.acar.action.EngagementControlAction;
 import megamek.common.autoresolve.acar.action.MoveAction;
+import megamek.common.autoresolve.acar.handler.MoveActionHandler;
 import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-import megamek.common.options.Option;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
@@ -103,37 +102,60 @@ public class MovementPhase extends PhaseHandler {
     }
 
     private void engage(Formation activeFormation) {
-        var target = this.selectTarget(activeFormation);
-        var currentMovementBiggerThanZero = activeFormation.getCurrentMovement() > 0;
-
-        if (currentMovementBiggerThanZero) {
-            var totalMP = activeFormation.getCurrentMovement();
-            var isWithdrawing = activeFormation.isWithdrawing();
-            if (isWithdrawing) {
-                withdrawingMovement(activeFormation, totalMP);
-            } else {
-                normalMovement(activeFormation, totalMP, target);
-            }
+        activeFormation.setDone(true);
+        var noMP = activeFormation.getCurrentMovement() <= 0;
+        if (noMP) {
+            return;
         }
 
+        moveUnit(activeFormation);
     }
 
-    private void withdrawingMovement(Formation activeFormation, int totalMP) {
+    private void moveUnit(Formation activeFormation) {
+        var totalMP = activeFormation.getCurrentMovement();
+        var moveAction = makeMoveAction(activeFormation, totalMP);
+        new MoveActionHandler(moveAction, getSimulationManager()).handle();
+    }
+
+    private MoveAction makeMoveAction(Formation activeFormation, int totalMP) {
+        if (activeFormation.isWithdrawing()) {
+            return withdrawingMovement(activeFormation, totalMP);
+        } else {
+            return normalMovement(activeFormation, totalMP);
+        }
+    }
+
+    private MoveAction withdrawingMovement(Formation activeFormation, int totalMP) {
         var direction = -1;
         if (activeFormation.getPosition().coords().getX() > getContext().getBoardSize() / 2) {
             direction = 1;
         }
 
         var destination = new Coords(activeFormation.getPosition().coords().getX() + (totalMP * direction), 0);
-        getSimulationManager().addMovement(
-            new MoveAction(
-                activeFormation.getId(),
-                destination),
-            activeFormation);
+        return new MoveAction(
+            activeFormation.getId(),
+            -1,
+            destination);
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private void normalMovement(Formation activeFormation, int totalMP, Optional<Formation> target) {
+    private MoveAction normalMovement(Formation activeFormation, int totalMP) {
+        /**
+         * Scout
+         * Ambusher
+         * Cavalry
+         * Hybrid
+         * Linebreaker
+         * Battleline
+         * - 4/6 - high defense - brawlers usually / long or medium range
+         * - most damage is in the brawl range, 6 or less (short)
+         * - take and receive damage
+         * Bodyguard
+         * Ranged
+         * - 4/6 3/5 -
+         */
+
+
+        var target = this.selectTarget(activeFormation);
         int distToTarget = target.map(f -> activeFormation.getPosition().coords().distance(f.getPosition().coords())).orElse(0);
 
         if (distToTarget > totalMP) {
@@ -141,12 +163,13 @@ public class MovementPhase extends PhaseHandler {
         } else if (distToTarget == 0) {
             distToTarget = totalMP;
         }
-
+        var targetId = -1;
         var direction = 1;
         if (target.isPresent()) {
             direction = target.map(f -> f.getPosition().coords().getX() - activeFormation.getPosition().coords().getX()).orElse(0) > 0 ? 1 : -1;
             // how much the target can move?
             var targetTotalMP = target.get().getCurrentMovement();
+            targetId = target.get().getId();
             // I want to keep the enemy in a distance bracket that allows me to dish max amount of damage while minimizing the damage I take
             // and according to my role, the distance I want to keep changes
             var distance = ASRange.fromDistance(distToTarget);
@@ -172,8 +195,6 @@ public class MovementPhase extends PhaseHandler {
                     }
                 }
             }
-
-
         } else {
             if (activeFormation.getPosition().coords().getX() > getContext().getBoardSize() / 2) {
                 direction = -1;
@@ -181,12 +202,7 @@ public class MovementPhase extends PhaseHandler {
         }
 
         var destination = new Coords((activeFormation.getPosition().coords().getX() + (distToTarget * direction)), 0);
-
-        getSimulationManager().addMovement(
-            new MoveAction(
-                activeFormation.getId(),
-                destination),
-            activeFormation);
+        return new MoveAction(activeFormation.getId(), targetId, destination);
     }
 
     private Optional<Formation> selectTarget(Formation actingFormation) {
@@ -219,9 +235,7 @@ public class MovementPhase extends PhaseHandler {
 
             var wasPreviousTarget = f.getId() == previousTargetId;
 
-            if (distance >= 42) {
-                // No extreme range on ACAR
-            } else if (dmg.L.hasDamage() && distance >= 24) {
+            if (dmg.L.hasDamage() && distance >= 24 && distance < 42) {
                 if (wasPreviousTarget) {
                     previousTarget = Optional.of(f);
                 }
@@ -242,8 +256,7 @@ public class MovementPhase extends PhaseHandler {
         Collections.shuffle(pickTarget);
 
         List<Formation> finalCanBeTargets = canBeTargets;
-        var target = previousTarget.or(() -> pickTarget.stream().findAny()).or(() -> finalCanBeTargets.stream().findAny());
 
-        return target;
+        return previousTarget.or(() -> pickTarget.stream().findAny()).or(() -> finalCanBeTargets.stream().findAny());
     }
 }

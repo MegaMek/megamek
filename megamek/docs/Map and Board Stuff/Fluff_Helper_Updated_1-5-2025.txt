@@ -24,6 +24,11 @@ Roads ---------------
 
 road:1;road_fluff:1 - Rounded road corners
 road:1;road_fluff:2 - Horizontal roads
+road:3;road_fluff:1 - Rounded dirt road corners
+road:3;road_fluff:2 - Horizontal dirt roads
+road:4;road_fluff:1 - Rounded gravel road corners
+road:4;road_fluff:2 - Horizontal gravel roads
+road:3,road_fluff:100- Old style dirt road
 
 Buildings ---------------
 

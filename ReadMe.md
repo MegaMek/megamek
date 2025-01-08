@@ -50,14 +50,14 @@ The first ensures compliance with with the EditorConfig file, the other works wi
 
 ## 4. Support
 
-For bugs, crashes, or other issues you can fill out a [GitHub issue request](https://github.com/MegaMek/mekhq/issues).
+For bugs, crashes, or other issues you can fill out a [GitHub issue request](https://github.com/MegaMek/MegaMek/issues).
 
 ## 5. License
 
 ```shell
-MekHQ is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-MekHQ is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with MekHQ. If not, see <http://www.gnu.org/licenses/>.
+MegaMek is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+MegaMek is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
 ```
 
 Please see `license.txt` for more information.

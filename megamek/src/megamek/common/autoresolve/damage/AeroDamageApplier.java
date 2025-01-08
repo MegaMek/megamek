@@ -29,7 +29,7 @@ import static megamek.common.Compute.randomInt;
  * @param entityMustSurvive Whether the entity must survive
  * @author Luana Coppio
  */
-public record AeroDamageApplier(Aero entity, boolean crewMustSurvive, boolean entityMustSurvive) implements DamageApplier<Aero> {
+public record AeroDamageApplier(Aero entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage) implements DamageApplier<Aero> {
 
     @Override
     public int getRandomHitLocation() {

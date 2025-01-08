@@ -43,7 +43,7 @@ public class DamageApplierChooser {
      */
     public static DamageApplier<?> choose(
         Entity entity, EntityFinalState entityFinalState) {
-        return choose(entity, entityFinalState.crewMustSurvive, entityFinalState.entityMustSurvive);
+        return choose(entity, entityFinalState.crewMustSurvive, entityFinalState.entityMustSurvive, entityFinalState.crewMustSurvive);
     }
 
     /**
@@ -58,17 +58,31 @@ public class DamageApplierChooser {
      */
     public static DamageApplier<?> choose(
         Entity entity, boolean crewMustSurvive, boolean entityMustSurvive) {
+        return choose(entity, crewMustSurvive, entityMustSurvive, false);
+    }
+
+    /**
+     * Choose the correct DamageHandler for the given entity.
+     * A damage handler is a class that handles applying damage on an entity, be it a Mek, Infantry, etc.
+     * It can damage internal, armor, cause critical, kill crew, set limbs as blown-off, can even destroy the entity,
+     * This one also accepts parameters to indicate if the crew must survive and if the entity must survive.
+     * @param entity the entity to choose the handler for
+     * @param entityMustSurvive if the entity must survive
+     * @return the correct DamageHandler for the given entity
+     */
+    public static DamageApplier<?> choose(
+        Entity entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage) {
 
         if (entity instanceof Infantry) {
             return new InfantryDamageApplier((Infantry) entity);
         } else if (entity instanceof Mek) {
-            return new MekDamageApplier((Mek) entity, crewMustSurvive, entityMustSurvive);
+            return new MekDamageApplier((Mek) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
         } else if (entity instanceof GunEmplacement) {
-            return new GunEmplacementDamageApplier((GunEmplacement) entity, crewMustSurvive, entityMustSurvive);
+            return new GunEmplacementDamageApplier((GunEmplacement) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
         } else if (entity instanceof Aero) {
-            return new AeroDamageApplier((Aero) entity, crewMustSurvive, entityMustSurvive);
+            return new AeroDamageApplier((Aero) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
         }
-        return new SimpleDamageApplier(entity, crewMustSurvive, entityMustSurvive);
+        return new SimpleDamageApplier(entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
     }
 
     /**
@@ -96,16 +110,21 @@ public class DamageApplierChooser {
         var damage = Compute.d6(numberOfDices);
         var clusterSize = 5;
 
+        EntityFinalState finalState = EntityFinalState.ANY;
+
         var retreating = removalCondition == IEntityRemovalConditions.REMOVE_IN_RETREAT;
         var captured = removalCondition == IEntityRemovalConditions.REMOVE_CAPTURED;
         var ejected = removalCondition == IEntityRemovalConditions.REMOVE_EJECTED;
         var devastated = removalCondition == IEntityRemovalConditions.REMOVE_DEVASTATED;
         var salvageable = removalCondition == IEntityRemovalConditions.REMOVE_SALVAGEABLE;
 
-        var crewMustSurvive = retreating || captured || ejected;
-        var entityMustSurvive = !devastated && !salvageable && !ejected;
+        if (retreating || captured || ejected) {
+            finalState = EntityFinalState.CREW_MUST_SURVIVE;
+        } else if (!devastated && !salvageable) {
+            finalState = EntityFinalState.ENTITY_MUST_SURVIVE;
+        }
 
-        DamageApplierChooser.choose(entity, crewMustSurvive, entityMustSurvive)
+        DamageApplierChooser.choose(entity, finalState)
             .applyDamageInClusters(damage, clusterSize);
     }
 

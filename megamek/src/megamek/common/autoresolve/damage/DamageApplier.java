@@ -41,6 +41,8 @@ public interface DamageApplier<E extends Entity> {
 
     boolean entityMustSurvive();
 
+    boolean noCrewDamage();
+
     /**
      * Applies damage to the entity in clusters of a given size.
      * This is USUALLY the function you will want to use.
@@ -172,7 +174,7 @@ public interface DamageApplier<E extends Entity> {
      * @param hitCrew the amount of hits to apply to ALL crew
      */
     default void tryToDamageCrew(int hitCrew) {
-        if (hitCrew == 0) {
+        if (hitCrew == 0 || noCrewDamage()) {
             return;
         }
 
@@ -201,6 +203,9 @@ public interface DamageApplier<E extends Entity> {
      * @return the amount of hits to apply to the crew
      */
     private Integer tryToNotKillTheCrew(int hitCrew, Crew crew) {
+        if (noCrewDamage()) {
+            return 0;
+        }
         var hits = Math.min(crew.getHits() + hitCrew, Crew.DEATH);
 
         if (hits == Crew.DEATH) {

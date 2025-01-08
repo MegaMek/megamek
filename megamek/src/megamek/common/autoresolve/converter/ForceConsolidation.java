@@ -35,6 +35,7 @@ public abstract class ForceConsolidation {
             return subs.length > 0 && entities.length == 0;
         }
 
+        @Override
         public String toString() {
             return "Container(uid=" + uid + ", team=" + teamId + ", ent=" + Arrays.toString(entities) + ", subs=" + Arrays.toString(subs) + ")";
         }

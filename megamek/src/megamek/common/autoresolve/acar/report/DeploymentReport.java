@@ -38,6 +38,11 @@ public class DeploymentReport implements IDeploymentReport {
     }
 
     @Override
+    public void deploymentRoundHeader(int currentRound) {
+        reportConsumer.accept(new PublicReportEntry(1065).add(currentRound));
+    }
+
+    @Override
     public void reportDeployment(Formation deployed, Coords position) {
         var report = new PublicReportEntry(2202);
         report.add(new FormationReportEntry(deployed, game).text());

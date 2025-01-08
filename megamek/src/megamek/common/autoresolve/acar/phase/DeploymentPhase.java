@@ -22,6 +22,8 @@ import megamek.common.autoresolve.acar.report.IDeploymentReport;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.enums.GamePhase;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static megamek.common.Board.*;
 
 public class DeploymentPhase extends PhaseHandler {
@@ -31,7 +33,7 @@ public class DeploymentPhase extends PhaseHandler {
     private final int deployZone = 3;
     private final int boardSouthSide = 0;
     private final IDeploymentReport deploymentReporter;
-
+    private final AtomicBoolean headerLatch = new AtomicBoolean(false);
     public DeploymentPhase(SimulationManager simulationManager) {
         super(simulationManager, GamePhase.DEPLOYMENT);
         this.deploymentReporter = DeploymentReport.create(simulationManager);
@@ -43,6 +45,7 @@ public class DeploymentPhase extends PhaseHandler {
 
     @Override
     protected void executePhase() {
+        headerLatch.set(false);
         // Automatically deploy all formations that are set to deploy this round
         getSimulationManager().getGame().getActiveFormations().stream()
             .filter( f-> !f.isDeployed())
@@ -51,6 +54,10 @@ public class DeploymentPhase extends PhaseHandler {
     }
 
     private void deployUnit(Formation formation) {
+
+        if (!headerLatch.getAndSet(true)) {
+            deploymentReporter.deploymentRoundHeader(getSimulationManager().getGame().getCurrentRound());
+        }
 
         var player = getContext().getPlayer(formation.getOwnerId());
 

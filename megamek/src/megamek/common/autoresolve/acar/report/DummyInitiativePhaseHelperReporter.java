@@ -15,8 +15,6 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.autoresolve.component.Formation;
-
 public class DummyInitiativePhaseHelperReporter implements IInitiativePhaseHelperReporter {
 
     private final static DummyInitiativePhaseHelperReporter INSTANCE = new DummyInitiativePhaseHelperReporter();
@@ -29,27 +27,12 @@ public class DummyInitiativePhaseHelperReporter implements IInitiativePhaseHelpe
     }
 
     @Override
-    public void deploymentRoundHeader(int round) {
-
-    }
-
-    @Override
-    public void addCurrentDeployment(Formation deployable) {
-
-    }
-
-    @Override
     public void writeInitiativeRolls() {
 
     }
 
     @Override
     public void writeInitiativeHeader() {
-
-    }
-
-    @Override
-    public void writeFutureDeployment() {
 
     }
 }

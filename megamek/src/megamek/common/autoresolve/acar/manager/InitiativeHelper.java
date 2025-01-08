@@ -64,7 +64,7 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                     .filter(Formation::isDeployed)
                     .filter(unit -> unit.isEligibleForPhase(phase))
                     .count();
-                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
                     formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));
@@ -76,7 +76,7 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                     .filter(Formation::isDeployed)
                     .filter(unit -> !unit.isDeployed())
                     .count();
-                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
                     formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));
@@ -88,7 +88,7 @@ public record InitiativeHelper(SimulationManager simulationManager) implements S
                     .filter(unit -> unit.isEligibleForPhase(phase))
                     .filter(Formation::isDeployed)
                     .count();
-                var turnsForPlayer = Math.min(actionsForThisTurn, player.getInitiative().size());
+                var turnsForPlayer = (int) Math.min(actionsForThisTurn, player.getInitiative().size());
                 for (int i = 0; i < turnsForPlayer; i++) {
                     var initiative = player.getInitiative().getRoll(i);
                     formationTurns.add(new InitiativeFormationTurn(initiative, new FormationTurn(player.getId())));

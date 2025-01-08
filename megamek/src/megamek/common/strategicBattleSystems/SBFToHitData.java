@@ -103,6 +103,7 @@ public class SBFToHitData extends TargetRoll {
             case SHAKEN -> toHit.addModifier(-1, "shaken");
             case BROKEN -> toHit.addModifier(-2, "broken");
             case ROUTED -> toHit.addModifier(-3, "routed");
+            default -> toHit.doNothing();
         }
     }
 

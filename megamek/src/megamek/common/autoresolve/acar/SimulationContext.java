@@ -685,6 +685,7 @@ public class SimulationContext implements IGame {
         return (boardLocation != null) && hasBoard(boardLocation.boardId());
     }
 
+    @SuppressWarnings("unused")
     public boolean hasBoard(int boardId) {
         return true;
     }

@@ -29,7 +29,6 @@ public class InitiativePhase  extends PhaseHandler {
     private void writeInitiativeReport() {
         reporter.writeInitiativeHeader();
         reporter.writeInitiativeRolls();
-        reporter.writeFutureDeployment();
     }
 
     @Override

@@ -72,7 +72,7 @@ public class RollReportEntry extends PublicReportEntry {
     protected String reportText() {
         var dicesText = new StringBuilder();
         for (int i = 0; i < dices.length; i++) {
-            var dv = dices[i] - 1;
+            var dv = dices[i];
             if (Die.validDie(dv)) {
                 dicesText.append(Die.getDie(dv).getSymbol());
             } else {

@@ -52,6 +52,9 @@ public class HtmlGameLogger {
                     font-size: 0.6em;
                     color: #666;
                 }
+                body {
+                    padding: 10px;
+                }
                 </style>
             </head>
             <body>

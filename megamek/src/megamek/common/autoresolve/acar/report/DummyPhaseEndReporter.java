@@ -26,9 +26,11 @@ public class DummyPhaseEndReporter implements IPhaseEndReporter {
         return INSTANCE;
     }
 
+    @Override
     public void movementPhaseHeader() {
     }
 
+    @Override
     public void firingPhaseHeader() {
     }
 

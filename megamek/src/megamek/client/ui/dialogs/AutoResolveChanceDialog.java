@@ -50,17 +50,16 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
     private JProgressBar progressBar;
     private final int numberOfSimulations;
-    private int returnCode = JOptionPane.CLOSED_OPTION;
     private JLabel splash;
     private final Task task;
 
     private final List<String> progressText;
-
+    private SimulationScore finalScore;
     private final SetupForces setupForces;
     private final int numberOfThreads;
     private final int currentTeam;
     private final Board board;
-
+    private int returnCode = JOptionPane.CLOSED_OPTION;
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
     {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
@@ -130,7 +129,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         dialog.getTask().execute();
         dialog.setVisible(true);
 
-        return dialog.getReturnCode();
+        return dialog.returnCode;
     }
 
     private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
@@ -148,10 +147,6 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
         Collections.shuffle(progressText);
         initialize();
-    }
-
-    private AutoResolveConcludedEvent getEvent() {
-        return null;
     }
 
     @Override
@@ -207,10 +202,6 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         this.progressBar = progressBar;
     }
 
-    private int getReturnCode() {
-        return returnCode;
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         int progress = Math.min(getProgressBar().getMaximum(), task.getProgress());
@@ -248,16 +239,22 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
 
         @Override
         public Integer doInBackground() {
-            String message;
-            String title = Internationalization.getText("AutoResolveDialog.title");
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             var simulatedVictories = calculateNumberOfVictories();
             stopWatch.stop();
+            dialog.finalScore = simulatedVictories;
+
+
+            var numberOfSimulations = dialog.numberOfSimulations;
+
+            String messageKey = "AutoResolveDialog.messageSimulated";
+            String title = Internationalization.getText("AutoResolveDialog.title");
+            String message;
 
             if (simulatedVictories.getRuns() == 0 && simulatedVictories.getRuns() < numberOfSimulations) {
-                message = Internationalization.getText("AutoResolveDialog.messageFailedCalc");
-                logger.debug("No combat scenarios were simulated, possible error!");
+                messageKey = "AutoResolveDialog.messageFailedCalc";
+                logger.warn("No combat scenarios were simulated, possible error!");
             } else {
                 var timePerRun = stopWatch.getDuration().getSeconds() / (numberOfSimulations / Runtime.getRuntime().availableProcessors());
                 logger.debug("Simulated victories: {} runs, {} victories, {} losses, {} draws, {} failed - processed in {} seconds per CPU core - total of {}",
@@ -268,21 +265,23 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                     simulatedVictories.noResults(),
                     timePerRun,
                     stopWatch.toString());
-
-                message = Internationalization.getFormattedText("AutoResolveDialog.messageSimulated",
-                    simulatedVictories.getRuns(),
-                    simulatedVictories.getVictories(),
-                    simulatedVictories.getLosses(),
-                    simulatedVictories.getDraws(),
-                    simulatedVictories.getVictories() * 100 / simulatedVictories.getRuns());
             }
 
-            returnCode = JOptionPane.showConfirmDialog(
+            message = Internationalization.getFormattedText(messageKey,
+                simulatedVictories.getRuns(),
+                simulatedVictories.getVictories(),
+                simulatedVictories.getLosses(),
+                simulatedVictories.getDraws(),
+                simulatedVictories.getRuns() != 0 ? simulatedVictories.getVictories() * 100 / simulatedVictories.getRuns() : 0);
+
+            var code = JOptionPane.showConfirmDialog(
                 getFrame(),
                 message, title,
                 JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            return returnCode;
+                JOptionPane.INFORMATION_MESSAGE);
+
+            dialog.returnCode = code;
+            return code;
         }
 
         /**

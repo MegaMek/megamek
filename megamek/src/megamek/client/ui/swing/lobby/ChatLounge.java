@@ -49,7 +49,6 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.converter.MMSetupForces;
-import megamek.common.autoresolve.converter.SingleElementConsolidateForces;
 import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;

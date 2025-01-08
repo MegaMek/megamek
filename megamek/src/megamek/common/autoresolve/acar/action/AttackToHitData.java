@@ -82,7 +82,7 @@ public class AttackToHitData extends TargetRoll {
             case SHORT -> toHit.addModifier(-1, Internationalization.getText( "acar.short_range"));
             case MEDIUM -> toHit.addModifier(+2, Internationalization.getText("acar.medium_range"));
             case LONG -> toHit.addModifier(+4, Internationalization.getText("acar.long_range"));
-            case EXTREME -> toHit.addModifier(TargetRoll.IMPOSSIBLE, Internationalization.getText( "acar.extreme_range"));
+            default -> toHit.addModifier(TargetRoll.IMPOSSIBLE, Internationalization.getText( "acar.extreme_range"));
         }
     }
 
@@ -111,6 +111,7 @@ public class AttackToHitData extends TargetRoll {
             case UNSTEADY -> toHit.addModifier(2, Internationalization.getText("acar.unsteady"));
             case BROKEN -> toHit.addModifier(3, Internationalization.getText("acar.broken"));
             case ROUTED -> toHit.addModifier(4, Internationalization.getText("acar.routed"));
+            default -> toHit.doNothing();
         }
     }
 

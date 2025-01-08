@@ -94,7 +94,7 @@ public class PublicReportEntry implements ReportEntry {
 
     @Override
     public final String text() {
-        return " ".repeat(indentation) + reportText() + lineEnd();
+        return "&ensp;".repeat(indentation) + reportText() + lineEnd();
     }
 
     @Override

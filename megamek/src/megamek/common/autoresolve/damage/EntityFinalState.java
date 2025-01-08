@@ -15,16 +15,19 @@ package megamek.common.autoresolve.damage;
 
 
 public enum EntityFinalState {
-    ANY(false, false),
-    CREW_MUST_SURVIVE(true, false),
-    ENTITY_MUST_SURVIVE(false, true),
-    CREW_AND_ENTITY_MUST_SURVIVE(true, true);
+    ANY(false, false, false),
+    CREW_MUST_SURVIVE(true, false, false),
+    ENTITY_MUST_SURVIVE(false, true, false),
+    CREW_AND_ENTITY_MUST_SURVIVE(true, true, false),
+    DAMAGE_ONLY_THE_ENTITY(true, false, true);
 
     final boolean crewMustSurvive;
     final boolean entityMustSurvive;
+    final boolean noCrewDamage;
 
-    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive) {
+    EntityFinalState(boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage) {
         this.crewMustSurvive = crewMustSurvive;
         this.entityMustSurvive = entityMustSurvive;
+        this.noCrewDamage = noCrewDamage;
     }
 }

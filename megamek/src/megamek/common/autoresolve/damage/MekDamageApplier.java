@@ -27,7 +27,8 @@ import static megamek.common.CriticalSlot.TYPE_SYSTEM;
 /**
  * @author Luana Coppio
  */
-public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean entityMustSurvive) implements DamageApplier<Mek> {
+public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage)
+    implements DamageApplier<Mek> {
 
     // Target roll to hit the rear arc of the mek randomly
     private static final int REAR_ARC_HIT_CHANCE = 11;
@@ -60,7 +61,7 @@ public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean enti
         int setArmorValueTo = currentArmorValue - dmg;
         boolean hitInternal = setArmorValueTo < 0;
         boolean isHeadHit = (entity.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) && (hit.getLocation() == Mek.LOC_HEAD);
-        int hitCrew = isHeadHit || hitInternal ? 1 : 0;
+        int hitCrew = isHeadHit ? 1 : 0;
 
         return new HitDetails(hit, dmg, setArmorValueTo, hitInternal, hitCrew);
     }
@@ -117,7 +118,13 @@ public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean enti
         }
         if (hit.getLocation() == Mek.LOC_RLEG || hit.getLocation() == Mek.LOC_LLEG) {
             // leg destroyed causes a fall which damages the pilot
-            hitDetails.withCrewDamage(1);
+            if (entity().getCrew() != null) {
+                TargetRoll targetRoll = new TargetRoll(entity().getCrew().getPiloting() + 1, "Avoid damage when falling");
+
+                if (Compute.d6(2) < targetRoll.getValue()) {
+                    hitDetails.withCrewDamage(1);
+                }
+            }
         }
         return hitDetails;
     }

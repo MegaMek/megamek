@@ -15,17 +15,9 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.autoresolve.component.Formation;
-
 public interface IInitiativePhaseHelperReporter {
-
-    void deploymentRoundHeader(int round);
-
-    void addCurrentDeployment(Formation deployable);
 
     void writeInitiativeRolls();
 
     void writeInitiativeHeader();
-
-    void writeFutureDeployment();
 }

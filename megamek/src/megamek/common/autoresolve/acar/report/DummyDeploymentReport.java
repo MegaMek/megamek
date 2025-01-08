@@ -28,6 +28,11 @@ public class DummyDeploymentReport implements IDeploymentReport {
     }
 
     @Override
+    public void deploymentRoundHeader(int currentRound) {
+
+    }
+
+    @Override
     public void reportDeployment(Formation deployed, Coords position) {
 
     }

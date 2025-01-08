@@ -83,7 +83,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "remaining-" + player.getId()));
+        reportConsumer.accept(new LinkEntry(301, "remaining-" + player.getId()).indent().indent());
         reportConsumer.accept(new ReportEntryWithAnchor(5003, "end-player-" + player.getId() + "-remaining").noNL()
             .add(new PlayerNameReportEntry(player).reportText())
             .add(playerEntities.size()).indent());
@@ -109,10 +109,11 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "destroyed-" + player.getId()).noNL());
+        reportConsumer.accept(new LinkEntry(301, "destroyed-" + player.getId()).noNL().indent());
         reportConsumer.accept(new ReportEntryWithAnchor(5006, "end-player-" + player.getId() + "-destroyed")
             .add(new PlayerNameReportEntry(player).reportText())
-            .add(deadEntities.size()).indent());
+            .add(deadEntities.size())
+            .indent(1));
 
         for (var entity : deadEntities) {
             var armor = entity.getArmorRemainingPercent();
@@ -133,10 +134,11 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .filter(e -> e.getOwnerId() == player.getId())
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "retreating-" + player.getId()));
+        reportConsumer.accept(new LinkEntry(301, "retreating-" + player.getId()).indent());
         reportConsumer.accept(new ReportEntryWithAnchor(5007, "end-player-" + player.getId() + "-retreating")
             .add(new PlayerNameReportEntry(player).reportText())
-            .add(retreatingEntities.size()));
+            .add(retreatingEntities.size())
+            .indent());
 
 
         for (var entity : retreatingEntities) {
@@ -150,6 +152,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
                 .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
                 .add(entity.getCrew().getName())
                 .add(entity.getCrew().getHits())
+                .indent(2)
             );
         }
     }

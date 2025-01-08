@@ -18,5 +18,5 @@ import megamek.common.Entity;
 /**
  * @author Luana Coppio
  */
-public record SimpleDamageApplier(Entity entity, boolean crewMustSurvive, boolean entityMustSurvive)
+public record SimpleDamageApplier(Entity entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage)
     implements DamageApplier<Entity> {}

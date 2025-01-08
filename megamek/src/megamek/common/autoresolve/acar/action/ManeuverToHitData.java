@@ -17,6 +17,9 @@ import megamek.common.TargetRoll;
 import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.internationalization.Internationalization;
+import megamek.common.strategicBattleSystems.SBFFormation;
+
+import static megamek.common.strategicBattleSystems.SBFFormation.MoraleStatus.NORMAL;
 
 public class ManeuverToHitData extends TargetRoll {
 
@@ -58,6 +61,7 @@ public class ManeuverToHitData extends TargetRoll {
             case UNSTEADY -> toHit.addModifier(+1, Internationalization.getText("acar.unsteady_morale"));
             case BROKEN -> toHit.addModifier(+2, Internationalization.getText("acar.broken_morale"));
             case ROUTED -> toHit.addModifier(+2, Internationalization.getText("acar.routed_morale"));
+            default -> toHit.doNothing();
         }
     }
 }

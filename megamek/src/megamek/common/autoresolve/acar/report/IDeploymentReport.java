@@ -19,5 +19,6 @@ import megamek.common.Coords;
 import megamek.common.autoresolve.component.Formation;
 
 public interface IDeploymentReport {
+    void deploymentRoundHeader(int currentRound);
     void reportDeployment(Formation deployed, Coords position);
 }

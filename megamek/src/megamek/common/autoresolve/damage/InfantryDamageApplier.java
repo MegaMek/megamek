@@ -32,6 +32,11 @@ public record InfantryDamageApplier(Infantry entity) implements DamageApplier<In
     }
 
     @Override
+    public boolean noCrewDamage() {
+        return false;
+    }
+
+    @Override
     public HitDetails damageArmor(HitDetails hitDetails) {
         if (entity() instanceof BattleArmor te) {
             for (int i = 0; i < te.getTroopers(); i++) {

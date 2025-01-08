@@ -15,15 +15,11 @@
 
 package megamek.common.autoresolve.acar.report;
 
-import megamek.common.Deployable;
 import megamek.common.Player;
 import megamek.common.Team;
 import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
-import megamek.common.autoresolve.component.Formation;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperReporter {
@@ -41,20 +37,6 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
             return DummyInitiativePhaseHelperReporter.instance();
         }
         return new InitiativePhaseHelperReporter(manager.getGame(), manager::addReport);
-    }
-
-    @Override
-    public void deploymentRoundHeader(int round) {
-        reportConsumer.accept(new PublicReportEntry(1065).add(round));
-    }
-
-    @Override
-    public void addCurrentDeployment(Formation deployable) {
-        reportConsumer.accept(new PublicReportEntry(1066)
-            .add(new FormationReportEntry(deployable, context).text())
-            .add(deployable.getId())
-            .add(deployable.getDeployRound())
-            .indent(2));
     }
 
     @Override
@@ -93,29 +75,6 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
             } else {
                 reportConsumer.accept(new ReportEntryWithAnchor(1000, "round-" + currentRound).add(currentRound));
                 reportConsumer.accept(new LinkEntry(301, "summary-round-" + currentRound));
-            }
-        }
-    }
-
-    @Override
-    public void writeFutureDeployment() {
-        // remaining deployments
-        Comparator<Deployable> comp = Comparator.comparingInt(Deployable::getDeployRound);
-        List<Deployable> futureDeployments = context.getInGameObjects().stream()
-            .filter(Formation.class::isInstance)
-            .map(Deployable.class::cast)
-            .filter(unit -> !unit.isDeployed())
-            .sorted(comp)
-            .toList();
-
-        if (!futureDeployments.isEmpty()) {
-            int round = -1;
-            for (Deployable deployable : futureDeployments) {
-                if (round != deployable.getDeployRound()) {
-                    round = deployable.getDeployRound();
-                    deploymentRoundHeader(round);
-                }
-                addCurrentDeployment((Formation) deployable);
             }
         }
     }

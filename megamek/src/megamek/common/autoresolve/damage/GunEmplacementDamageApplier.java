@@ -16,7 +16,7 @@ package megamek.common.autoresolve.damage;
 
 import megamek.common.GunEmplacement;
 
-public record GunEmplacementDamageApplier(GunEmplacement entity, boolean crewMustSurvive, boolean entityMustSurvive)
+public record GunEmplacementDamageApplier(GunEmplacement entity, boolean crewMustSurvive, boolean entityMustSurvive,  boolean noCrewDamage)
     implements DamageApplier<GunEmplacement> {
 
     @Override

@@ -42,11 +42,13 @@ public class PhaseEndReporter implements IPhaseEndReporter {
         return new PhaseEndReporter(manager.getGame(), manager::addReport, manager.getGameLogger());
     }
 
+    @Override
     public void movementPhaseHeader() {
         reportConsumer.accept(new ReportEntryWithAnchor(2201, "round-" + context.getCurrentRound() + "-movement").noNL());
         reportConsumer.accept(new LinkEntry(301, "summary-round-" + context.getCurrentRound() + "-movement"));
     }
 
+    @Override
     public void firingPhaseHeader() {
         reportConsumer.accept(new ReportEntryWithAnchor(2002, "round-" + context.getCurrentRound() + "-firing").noNL());
         reportConsumer.accept(new LinkEntry(301, "summary-round-" + context.getCurrentRound() + "-firing"));
@@ -77,7 +79,8 @@ public class PhaseEndReporter implements IPhaseEndReporter {
         var rounds = context.getCurrentRound();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<a name='summary'>").append(new PublicReportEntry(300).text()).append("</a>")
+        stringBuilder.append("<p>").append(new PublicReportEntry(110).text()).append("</p><br/>");
+        stringBuilder.append("<a name='summary'>").append(new PublicReportEntry(300).text()).append("</a></p>")
             .append("<ul>");
         for (int i = 0; i <= rounds; i++) {
             stringBuilder.append("<li><a href='#round-").append(i).append("' name='summary-round-").append(i).append("'>")

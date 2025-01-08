@@ -71,12 +71,12 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportAttackMiss() {
-        reportConsumer.accept(new PublicReportEntry(2012).indent(2));
+        reportConsumer.accept(new PublicReportEntry(2012).indent(1));
     }
 
     @Override
     public void reportAttackHit() {
-        reportConsumer.accept(new PublicReportEntry(2013).indent(2));
+        reportConsumer.accept(new PublicReportEntry(2013).indent(1));
     }
 
     @Override

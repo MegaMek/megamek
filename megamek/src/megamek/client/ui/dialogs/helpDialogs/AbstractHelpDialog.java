@@ -77,7 +77,8 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
                 }
             }
         });
-        scrollPane.getVerticalScrollBar().setUnitIncrement(100);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         final File helpFile = new File(getHelpFilePath());
 
         // Get the help content file if possible

@@ -57,7 +57,6 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
     private final Board board;
 
     private static final TreeMap<Integer, String> splashImages = new TreeMap<>();
-
     static {
         splashImages.put(0, Configuration.miscImagesDir() + "/acar_splash_hd.png");
     }

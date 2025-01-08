@@ -46,8 +46,15 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
             if (team.isObserverTeam()) {
                 continue;
             }
-            reportConsumer.accept(new PublicReportEntry(1015).add(Player.TEAM_NAMES[team.getId()])
-                .add(team.getInitiative().toString()));
+
+            var teamInitBonus = team.getTotalInitBonus(false);
+            var reportKey = 1015;
+            if (teamInitBonus > 0) {
+                reportKey = 1016;
+            }
+
+            reportConsumer.accept(new PublicReportEntry(reportKey).add(Player.TEAM_NAMES[team.getId()])
+                .add(teamInitBonus));
 
             // Multiple players. List the team, then break it down.
             for (Player player : team.nonObserverPlayers()) {

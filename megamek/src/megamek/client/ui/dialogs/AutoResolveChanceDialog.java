@@ -36,6 +36,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AutoResolveChanceDialog extends AbstractDialog implements PropertyChangeListener {
@@ -256,7 +258,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
                 messageKey = "AutoResolveDialog.messageFailedCalc";
                 logger.warn("No combat scenarios were simulated, possible error!");
             } else {
-                var timePerRun = stopWatch.getDuration().getSeconds() / (numberOfSimulations / Runtime.getRuntime().availableProcessors());
+                var timePerRun = (stopWatch.getTime(TimeUnit.MILLISECONDS) / (double) numberOfSimulations) / (double) numberOfThreads;
                 logger.debug("Simulated victories: {} runs, {} victories, {} losses, {} draws, {} failed - processed in {} seconds per CPU core - total of {}",
                     simulatedVictories.getRuns(),
                     simulatedVictories.getVictories(),

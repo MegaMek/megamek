@@ -622,10 +622,10 @@
 			</model>
 		</chassis>
 		<chassis name='Lumberjack' unitType='Mek'>
-			<availability>Periphery.R:3,LA:4,General:2</availability>
+			<availability>IS:4+,TH:8,Periphery:1+</availability>
 			<model name='LM1/A'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:8,TH:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>

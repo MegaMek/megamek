@@ -500,14 +500,14 @@
 			</model>
 		</chassis>
 		<chassis name='DemolitionMech' unitType='Mek'>
-			<availability>CC:6</availability>
+			<availability>CC:3+:2513</availability>
 			<model name='WI-DM'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian,engineer</roles>
+				<availability>CC:8</availability>
 			</model>
 			<model name='WI-DM2'>
-				<roles>support</roles>
-				<availability>General:4</availability>
+				<roles>civilian,engineer</roles>
+				<availability>CC:4:2514</availability>
 			</model>
 		</chassis>
 		<chassis name='Dreadnought Battleship' unitType='Warship'>
@@ -1072,14 +1072,14 @@
 			</model>
 		</chassis>
 		<chassis name='Lumberjack' unitType='Mek'>
-			<availability>Periphery.R:3,LA:4,General:2</availability>
+			<availability>IS:8,TH:8,Periphery:3+,TC:4+</availability>
 			<model name='LM1/A'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:8,TH:5-,Periphery:8</availability>
 			</model>
 			<model name='LM4/C'>
-				<roles>support</roles>
-				<availability>LA:5</availability>
+				<roles>civilian</roles>
+				<availability>IS:5,TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Lyonesse Escort' unitType='Small Craft'>

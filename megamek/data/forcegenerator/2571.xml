@@ -540,6 +540,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Buster' unitType='Mek'>
+            <availability>SL:8:2615,IS:6:2616,TH:8:2615,Periphery:3+:2617,PIR:0</availability>
+            <model name='BC XV HaulerMech'>
+                <roles>cargo,civilian</roles>
+                <availability>SL:8,IS:8,TH:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 			<availability>SL:5,IS:5,Periphery:4,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
@@ -781,6 +788,13 @@
 				<availability>SL:6,IS:6,Periphery:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Copper' unitType='Mek'>
+            <availability>SL:3:2619,IS:3:2619</availability>
+            <model name='CPK-19 SecurityMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8</availability>
+            </model>
+        </chassis>
         <chassis name='Corx Mobile Tunnel Miner' unitType='Tank'>
             <availability>IS:1,Periphery:2,PIR:0</availability>
             <model name=''>
@@ -857,14 +871,14 @@
 			</model>
 		</chassis>
 		<chassis name='DemolitionMech' unitType='Mek'>
-			<availability>CC:6</availability>
+			<availability>CC:4+,FWL:3+,FS:3+,TH:3</availability>
 			<model name='WI-DM'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian,engineer</roles>
+				<availability>CC:8,FWL:8,FS:8,TH:8</availability>
 			</model>
 			<model name='WI-DM2'>
-				<roles>support</roles>
-				<availability>General:4</availability>
+                <roles>civilian,engineer</roles>
+                <availability>CC:4,FWL:4,FS:4,TH:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Dervish' unitType='Mek'>
@@ -884,6 +898,13 @@
 				<availability>General:2:2620</availability>
 			</model>
 		</chassis>
+        <chassis name='Dig King' unitType='Mek'>
+            <availability>SL:5:2573,IS:4+:2574,TH:5:2573,Periphery:2+:2575</availability>
+            <model name='RCL-1 MiningMech'>
+                <roles>civilian,engineer</roles>
+                <availability>SL:8,IS:8,TH:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Dragonstar Passenger Transport' unitType='Small Craft'>
 			<availability>DC:3</availability>
 			<model name=''>
@@ -1808,14 +1829,14 @@
 			</model>
 		</chassis>
 		<chassis name='Lumberjack' unitType='Mek'>
-			<availability>Periphery.R:3,LA:4,General:2</availability>
+			<availability>SL:6,IS:6,TH:6,Periphery:4+,TC:8</availability>
 			<model name='LM1/A'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:3-,TH:0,Periphery:8,TC:5-</availability>
 			</model>
 			<model name='LM4/C'>
-				<roles>support</roles>
-				<availability>LA:8</availability>
+				<roles>civilian</roles>
+				<availability>SL:8,IS:8,TH:8,Periphery:5+,TC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Lyonesse Escort' unitType='Small Craft'>
@@ -2199,6 +2220,13 @@
 				<availability>FWL:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Peacekeeper' unitType='Mek'>
+            <availability>SL:3,IS:3,Periphery:2+</availability>
+            <model name='PK-6 SecurityMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pentagon' unitType='Dropship'>
 			<availability>TH:6,SL:6</availability>
             <model name=''>

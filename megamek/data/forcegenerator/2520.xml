@@ -602,14 +602,14 @@
 			</model>
 		</chassis>
 		<chassis name='DemolitionMech' unitType='Mek'>
-			<availability>CC:6</availability>
+			<availability>CC:4+,FWL:3+,FS:3+,TH:3</availability>
 			<model name='WI-DM'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian,engineer</roles>
+				<availability>CC:8,FWL:8,FS:8,TH:8</availability>
 			</model>
 			<model name='WI-DM2'>
-				<roles>support</roles>
-				<availability>General:4</availability>
+                <roles>civilian,engineer</roles>
+                <availability>CC:4,FWL:4,FS:4,TH:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Dervish' unitType='Mek'>
@@ -1280,14 +1280,14 @@
 			</model>
 		</chassis>
 		<chassis name='Lumberjack' unitType='Mek'>
-			<availability>Periphery.R:3,LA:4,General:2</availability>
+			<availability>IS:8,TH:8,Periphery:4+,TC:8</availability>
 			<model name='LM1/A'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:5-,Periphery:8</availability>
 			</model>
 			<model name='LM4/C'>
-				<roles>support</roles>
-				<availability>LA:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:8,TH:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Lyonesse Escort' unitType='Small Craft'>
@@ -1548,6 +1548,13 @@
 				<availability>FWL:6-</availability>
 			</model>
 		</chassis>
+        <chassis name='Peacekeeper' unitType='Mek'>
+            <availability>IS:3:2522</availability>
+            <model name='PK-6 SecurityMech'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pentagon' unitType='Dropship'>
 			<availability>TH:4:2540</availability>
 			<model name='Mk I'>

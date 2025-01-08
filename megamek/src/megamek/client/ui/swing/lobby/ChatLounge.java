@@ -617,19 +617,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             spnThreadNumber.setEnabled(enabled);
         });
 
-        JPanel panAcarLabels = new JPanel(new GridLayout(4, 2, 2, 2));
-        panAcarLabels.add(new JLabel(Messages.getString("ChatLounge.autoresolve.numOfSimulations")));
-        panAcarLabels.add(spnSimulationRuns);
-        panAcarLabels.add(new JLabel(Messages.getString("ChatLounge.autoresolve.parallelism")));
-        panAcarLabels.add(spnThreadNumber);
-        panAcarLabels.add(new JLabel(Messages.getString("ChatLounge.chkAutoResolve")));
-        panAcarLabels.add(chkAutoResolve);
-        panAcarLabels.add(butRunAutoResolve);
+        JPanel row1 = new JPanel(new GridLayout(1, 1, 2, 2));
+        row1.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row1.add(new JLabel(Messages.getString("ChatLounge.name.autoResolveSetup.blurb")));
 
-        panAutoResolveInfo = new FixedYPanel(new GridLayout(1, 1, 2, 2));
+        JPanel row2 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row2.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row2.add(new JLabel(Messages.getString("ChatLounge.autoresolve.numOfSimulations")));
+        row2.add(spnSimulationRuns);
+
+        JPanel row3 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row3.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row3.add(new JLabel(Messages.getString("ChatLounge.autoresolve.parallelism")));
+        row3.add(spnThreadNumber);
+
+        JPanel row4 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row4.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row4.add(new JLabel(Messages.getString("ChatLounge.chkAutoResolve")));
+        row4.add(chkAutoResolve);
+
+        JPanel row5 = new JPanel(new GridLayout(1, 1, 2, 2));
+        row5.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row5.add(butRunAutoResolve);
+
+        panAutoResolveInfo = new FixedYPanel(new GridLayout(5, 1, 2, 2));
         panAutoResolveInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.autoResolveSetup")));
-
-        panAutoResolveInfo.add(panAcarLabels);
+        panAutoResolveInfo.setToolTipText(Messages.getString("ChatLounge.name.autoResolveSetup.tooltip"));
+        panAutoResolveInfo.add(row1);
+        panAutoResolveInfo.add(row2);
+        panAutoResolveInfo.add(row3);
+        panAutoResolveInfo.add(row4);
+        panAutoResolveInfo.add(row5);
 
         refreshPlayerTable();
     }

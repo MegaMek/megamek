@@ -498,7 +498,7 @@ public class TestSmallCraft extends TestAero {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
@@ -522,7 +522,7 @@ public class TestSmallCraft extends TestAero {
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
         correct &= correctCriticals(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -684,7 +684,7 @@ public class TestSmallCraft extends TestAero {
 
     /**
      * Checks that the unit meets minimum crew and quarters requirements.
-     * 
+     *
      * @param buffer Where to write messages explaining failures.
      * @return true if the crew data is valid.
      */

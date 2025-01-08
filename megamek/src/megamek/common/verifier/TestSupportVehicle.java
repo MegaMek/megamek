@@ -992,7 +992,7 @@ public class TestSupportVehicle extends TestEntity {
             return true;
         }
 
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
             correct = false;
@@ -1015,7 +1015,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (occupiedSlotCount() > totalSlotCount()) {
+        if (!ignoreSlotCount() && (occupiedSlotCount() > totalSlotCount())) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(occupiedSlotCount() - totalSlotCount()));
             buff.append(" slot(s) too many.\n");
@@ -1210,7 +1210,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
 

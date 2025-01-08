@@ -1,97 +1,74 @@
-name: Request for Enhancement
-description: Use this to submit a Request for Enhancement (RFE)—asking for a new feature, extending an existing feature, or implementing missing rules or errata.
-title: "[RFE] Brief Description"
-labels: [(RFE) Enhancement]
+name: "Request for Enhancement"
+description: >
+  Request an enhancement for MegaMek. Be sure you've confirmed it's not a duplicate 
+  and that you've checked on the Discord if your request is already known.
+title: "[RFE]"
+labels:
+  - (RFE) Enhancement
+  
 body:
-  - type: markdown
-    attributes:
-      value: |
-        **This form is to submit a Request for Enhancement (RFE)—asking for a new feature, extending an existing feature, or implementing missing rules or errata. Submitting an RFE is no guarantee of its prioritization by the development team.**
-
-        **Fields marked with a red asterisk (*) are mandatory to complete.**       
-
-        Before submitting an RFE, please review our [Content Policy](https://github.com/MegaMek/megamek/wiki/Unofficial-or-Non%E2%80%90Canon-Content-Policy).
-
-  - type: checkboxes
-    id: prerequisites-and-pre-issue-checks
-    attributes:
-      label: Prerequisites and Pre-Issue Checklist
-      description: Please confirm you have completed the following steps before submitting an RFE.
-      options:
-        - label: |
-            I'm reporting the RFE to the correct repository:
-            - [MegaMek](https://github.com/MegaMek/megamek/issues)
-            - [MegaMekLab](https://github.com/MegaMek/megameklab/issues)
-            - [MekHQ](https://github.com/MegaMek/mekhq/issues)
-          required: true
-        - label: "Does this conform with our Content Policy linked above?"
-          required: true
-        - label: "I've searched the GitHub tracker and haven't found a similar feature request listed"
-          required: true
-
-  - type: markdown
-    attributes:
-      value: "![How to Search the GitHub Tracker](https://i.imgur.com/QMJY7pll.png)"
-
   - type: dropdown
-    id: rfe
+    id: enhancement-type
     attributes:
-      label: RFE Details *
-      description: Please select the type of RFE you're submitting.
+      label: "Enhancement Type *"
+      description: "Select the category of enhancement you are requesting."
       options:
-        - "This is a new feature"
-        - "This is an improvement to an existing feature"
-        - "This is an implementation of a missing official rule"
-        - "This is a request to implement Errata"
+        - "New Feature"
+        - "Improvement to Existing Feature"
+        - "Implementation of Missing Official Rule"
+        - "Implementation of Errata"
     validations:
       required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        For new features or improvements to existing features, please describe them in detail.
-        For rule implementations, provide the book, page, and edition.
-        For errata, reference the official documents: [Errata](https://bg.battletech.com/errata/)
 
   - type: textarea
     id: brief-description
     attributes:
-      label: Brief Description *
+      label: "Brief Description of Enhancement *"
       description: |
-        ## Brief Description of the Feature *
-      placeholder: |
-        Provide a detailed description of the requested feature, including why it's needed, any relevant use cases, and screenshots/mock-ups if applicable.
-    validations:
-      required: true
-
-  - type: input
-    id: megamek-version
-    attributes:
-      label: MegaMekLab Suite Version *
-      description: Which version of MegaMek are you using? All RFEs must be checked against the most current development release.
-      placeholder: "e.g., v0.50.0, v0.49.19.1, or development version"
+        Please describe the feature or improvement you’d like to see. 
+        If it's based on any official rules or errata, mention that here.
+      placeholder: "Describe your enhancement here..."
     validations:
       required: true
 
   - type: textarea
+    id: proposed-use-cases
+    attributes:
+      label: "Use Cases or Rationale"
+      description: |
+        Elaborate on why this enhancement is needed or valuable:
+        - What problem does it solve?
+        - How does it improve gameplay or user experience?
+        - Are there any related rulebook references or official errata?
+      placeholder: "1. ...\n2. ...\n3. ..."
+
+  - type: textarea
     id: attached-files
     attributes:
-      label: Attach Files
-      description: Provide any relevant files by attaching them to the request here.
+      label: "Attach Files"
+      description: |
+        Provide any relevant files, images, or logs that illustrate your idea or 
+        help explain how it should work.
       placeholder: "Drag and drop or click to upload relevant files."
+
+  - type: input
+    id: custom-megamek-version
+    attributes:
+      label: "MegaMek Suite Version *"
+      description: "Which version of MegaMek (or related tool) are you currently using?"
+      placeholder: "Example 0.50.02"
+    validations:
+      required: true
 
   - type: checkboxes
     id: final-checks
     attributes:
-      label: Final Checklist
-      description: Before submitting, confirm the following steps-
+      label: "Final Verification"
+      description: "Before submitting, please confirm the following:"
       options:
-        - label: "I've checked to make sure that this RFE has not already been filed"
+        - label: "I confirm this request hasn't already been submitted (checked the tracker)"
           required: true
-        - label: "I am requesting implementation of only one relevant set of features in this ticket for clarity and focus "
+        - label: "I've discussed or asked about this enhancement on MegaMek Discord"
           required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        **You will not be able to submit this report unless all fields marked with a red asterisk (*) are complete and filled out before submitting your report.**
+        - label: "I’m opening this on the correct repo (MegaMek, MegaMekLab, or MekHQ)"
+          required: true

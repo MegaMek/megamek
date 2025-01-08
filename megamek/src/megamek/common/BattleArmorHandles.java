@@ -25,7 +25,7 @@ import megamek.common.annotations.Nullable;
  *
  * @see MekFileParser#postLoadInit
  */
-class BattleArmorHandles implements Transporter {
+public class BattleArmorHandles implements Transporter {
     private static final long serialVersionUID = -7149931565043762975L;
 
     /** The troopers being carried. */

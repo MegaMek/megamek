@@ -31,11 +31,9 @@ public class MMSetupForces extends SetupForces {
     private static final MMLogger logger = MMLogger.create(MMSetupForces.class);
 
     private final Game game;
-    private final ForceConsolidation forceConsolidation;
 
-    public MMSetupForces(Game game, ForceConsolidation forceConsolidation) {
+    public MMSetupForces(Game game) {
         this.game = game;
-        this.forceConsolidation = forceConsolidation;
     }
 
     /**
@@ -47,6 +45,7 @@ public class MMSetupForces extends SetupForces {
         for (var player : game.getPlayersList()) {
             setupPlayer(player, game.getInGameObjects(), simulation);
         }
+
         convertForcesIntoFormations(simulation);
     }
 

@@ -15,12 +15,14 @@ package megamek.common.autoresolve.converter;
 
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
+import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.autoresolve.acar.SimulationContext;
+import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -42,6 +44,10 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
     public Formation convert() {
         var forceName = "";
         Forces forces = game.getForces();
+
+        // default role
+        Role role = Role.getRole(UnitRole.SKIRMISHER);
+
         for (Force subforce : forces.getFullSubForces(force)) {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
@@ -50,6 +56,7 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
                     var element = ASConverter.convertAndKeepRefs(entityCast);
                     if (element != null) {
                         thisUnit.add(element);
+                        role = Role.getRole(entityCast.getRole());
                     } else {
                         var msg = String.format("Could not convert entity %s to AS element", entityCast);
                         logger.error(msg);
@@ -60,6 +67,7 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
             formation.addUnit(convertedUnit);
         }
         formation.setName(forceName);
+        formation.setRole(role);
         formation.setStdDamage(setStdDamageForFormation(formation));
         for (var unit : formation.getUnits()) {
             var health = 0;

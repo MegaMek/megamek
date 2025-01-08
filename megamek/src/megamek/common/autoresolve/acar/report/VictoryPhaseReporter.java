@@ -83,10 +83,11 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "remaining-" + player.getId()).noNL());
+        reportConsumer.accept(new LinkEntry(301, "remaining-" + player.getId()));
         reportConsumer.accept(new ReportEntryWithAnchor(5003, "end-player-" + player.getId() + "-remaining").noNL()
             .add(new PlayerNameReportEntry(player).reportText())
             .add(playerEntities.size()).indent());
+
 
         for (var entity : playerEntities) {
             var armor = entity.getArmorRemainingPercent();
@@ -111,7 +112,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
         reportConsumer.accept(new LinkEntry(301, "destroyed-" + player.getId()).noNL());
         reportConsumer.accept(new ReportEntryWithAnchor(5006, "end-player-" + player.getId() + "-destroyed")
             .add(new PlayerNameReportEntry(player).reportText())
-            .add(deadEntities.size()).indent().noNL());
+            .add(deadEntities.size()).indent());
 
         for (var entity : deadEntities) {
             var armor = entity.getArmorRemainingPercent();
@@ -132,10 +133,11 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .filter(e -> e.getOwnerId() == player.getId())
             .toList();
 
+        reportConsumer.accept(new LinkEntry(301, "retreating-" + player.getId()));
         reportConsumer.accept(new ReportEntryWithAnchor(5007, "end-player-" + player.getId() + "-retreating")
             .add(new PlayerNameReportEntry(player).reportText())
-            .add(retreatingEntities.size()).noNL());
-        reportConsumer.accept(new LinkEntry(301, "retreating-" + player.getId()).noNL());
+            .add(retreatingEntities.size()));
+
 
         for (var entity : retreatingEntities) {
             var armor = entity.getArmorRemainingPercent();

@@ -32,10 +32,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.advancedSearchMap.AdvancedSearchMapDialog;
-import megamek.client.ui.dialogs.AutoResolveChanceDialog;
-import megamek.client.ui.dialogs.AutoResolveSimulationLogDialog;
-import megamek.client.ui.dialogs.BotConfigDialog;
-import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.*;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -51,8 +48,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.autoresolve.Resolver;
-import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.MMSetupForces;
 import megamek.common.autoresolve.converter.SingleElementConsolidateForces;
 import megamek.common.board.postprocess.TWBoardTransformer;
@@ -185,8 +180,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /* ACAR Settings Panel */
     private FixedYPanel panAutoResolveInfo;
     private final JButton butRunAutoResolve = new JButton(Messages.getString("ChatLounge.butRunAutoResolve"));
-    private final JSpinner spnSimulationRuns = new JSpinner(new SpinnerNumberModel(100, 1, 1000, 1));
-    private final JSpinner spnThreadNumber = new JSpinner(new SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Math.max(2, Runtime.getRuntime().availableProcessors() * 5), 1));
+    private final JSpinner spnSimulationRuns = new JSpinner(new SpinnerNumberModel(10, 1, 1000, 1));
+    private final JSpinner spnThreadNumber = new JSpinner(new SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Math.max(2, Runtime.getRuntime().availableProcessors() * 2), 1));
     private final JCheckBox chkAutoResolve = new JCheckBox();
 
     /* Map Settings Panel */
@@ -1904,25 +1899,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource() == butRunAutoResolve) {
                 var simulationRuns = (int) spnSimulationRuns.getValue();
                 var threadNumbers = (int) spnThreadNumber.getValue();
-                var forcesSetups = new MMSetupForces(game(), new SingleElementConsolidateForces());
+                var forcesSetups = new MMSetupForces(game());
                 var currentTeam = client().getLocalPlayer().getTeam();
 
                 var board = TWBoardTransformer.instantiateBoard(client().getMapSettings(), client().getGame().getPlanetaryConditions(), client().getGame().getOptions());
 
                 if (chkAutoResolve.isSelected()) {
-                    var proceed = AutoResolveChanceDialog.showSimulationProgressDialog(
-                        clientgui.getFrame(), simulationRuns, threadNumbers, currentTeam, forcesSetups, board
-                    ) == JOptionPane.YES_OPTION;
+                    var proceed = AutoResolveChanceDialog.showDialog(
+                        clientgui.getFrame(), simulationRuns, threadNumbers, currentTeam, forcesSetups, board) == JOptionPane.YES_OPTION;
 
                     if (!proceed) {
                         return;
                     }
                 }
 
-                var event = Resolver.simulationRun(forcesSetups,new SimulationOptions(client().getGame().getOptions()), board)
-                    .resolveSimulation();
+                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board);
 
-                var autoResolveBattleReport = new AutoResolveSimulationLogDialog(getClientgui().getFrame(), event.getLogFile());
+                var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(), event.getLogFile());
                 autoResolveBattleReport.setModal(true);
                 autoResolveBattleReport.setVisible(true);
 

@@ -124,34 +124,13 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
     }
 
-    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int currentTeam, SetupForces setupForces, Board board) {
-        var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, Runtime.getRuntime().availableProcessors(), currentTeam, setupForces, board);
-        dialog.setModal(true);
-        dialog.getTask().execute();
-        dialog.setVisible(true);
-        return dialog.getReturnCode();
-    }
-
-    public static int showSimulationProgressDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
+    public static int showDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
         var dialog = new AutoResolveChanceDialog(frame, numberOfSimulations, numberOfThreads, currentTeam, setupForces, board);
         dialog.setModal(true);
         dialog.getTask().execute();
         dialog.setVisible(true);
 
         return dialog.getReturnCode();
-    }
-
-    public static void showSingleSimulationProgressDialog(JFrame frame, SetupForces setupForces, Board board) {
-        var dialog = new AutoResolveChanceDialog(frame, 1, 1, 0, setupForces, board);
-        dialog.setModal(true);
-        dialog.setIndeterminateProgress(true);
-        dialog.getTask().execute();
-        dialog.setVisible(true);
-        var event = dialog.getEvent();
-
-        var autoResolveBattleReport = new AutoResolveSimulationLogDialog(frame, event.getLogFile());
-        autoResolveBattleReport.setModal(true);
-        autoResolveBattleReport.setVisible(true);
     }
 
     private AutoResolveChanceDialog(JFrame frame, int numberOfSimulations, int numberOfThreads, int currentTeam, SetupForces setupForces, Board board) {
@@ -169,10 +148,6 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         }
         Collections.shuffle(progressText);
         initialize();
-    }
-
-    private void setIndeterminateProgress(boolean indeterminateProgress) {
-        this.getProgressBar().setIndeterminate(indeterminateProgress);
     }
 
     private AutoResolveConcludedEvent getEvent() {
@@ -201,6 +176,7 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
         getProgressBar().setValue(0);
         getProgressBar().setStringPainted(true);
         getProgressBar().setVisible(true);
+        getProgressBar().setIndeterminate(true);
         return getProgressBar();
     }
 
@@ -238,10 +214,19 @@ public class AutoResolveChanceDialog extends AbstractDialog implements PropertyC
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         int progress = Math.min(getProgressBar().getMaximum(), task.getProgress());
-        getProgressBar().setValue(progress);
-        var factor = clamp(numberOfSimulations / 25, 3, 98);
-        int i = (int) (factor * ((float) progress / getProgressBar().getMaximum()));
-        getProgressBar().setString(Internationalization.getText(progressText.get(i)));
+        if (progress > 0) {
+            getProgressBar().setIndeterminate(false);
+            getProgressBar().setValue(progress);
+        }
+
+        var maxProgress = getProgressBar().getMaximum();
+        var numberOfGags = 25;
+
+        var factor = numberOfGags / (double) maxProgress;
+
+        var index = clamp((long) (factor * progress) % 98, 3, 98);
+
+        getProgressBar().setString(Internationalization.getText(progressText.get(index)));
     }
 
     public static int clamp(long value, int min, int max) {

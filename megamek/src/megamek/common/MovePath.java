@@ -2003,4 +2003,28 @@ public class MovePath implements Cloneable, Serializable {
 
         return finPath;
     }
+
+    /**
+     *
+     * @return maximum movement based on the current movement type
+     *   include sprint if available
+     */
+    public int getMaxMP() {
+        int maxMP;
+
+        if (contains(MoveStepType.START_JUMP) || contains(MoveStepType.DFA)) {
+            maxMP = getEntity().getJumpMP();
+        } else if (contains(MoveStepType.BACKWARDS)) {
+            maxMP = getEntity().getWalkMP();
+        } else {
+            if ((getLastStep() != null) &&
+                getLastStep().canUseSprint(game)) {
+                maxMP = getEntity().getSprintMP();
+            } else {
+                maxMP = getEntity().getRunMP();
+            }
+        }
+
+        return maxMP;
+    }
 }

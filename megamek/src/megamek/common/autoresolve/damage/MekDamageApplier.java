@@ -23,18 +23,27 @@ import java.util.Set;
 
 import static megamek.common.Compute.rollD6;
 import static megamek.common.CriticalSlot.TYPE_SYSTEM;
+import static megamek.common.autoresolve.damage.EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE;
+import static megamek.common.autoresolve.damage.EntityFinalState.ENTITY_MUST_SURVIVE;
 
 /**
  * @author Luana Coppio
  */
-public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage)
-    implements DamageApplier<Mek> {
+public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) implements DamageApplier<Mek> {
 
     // Target roll to hit the rear arc of the mek randomly
     private static final int REAR_ARC_HIT_CHANCE = 11;
     private static final Set<Integer> criticalSystems = Set.of(Mek.SYSTEM_ENGINE, Mek.SYSTEM_GYRO, Mek.SYSTEM_LIFE_SUPPORT,
         Mek.SYSTEM_SENSORS, Mek.SYSTEM_COCKPIT);
     private static final Set<Integer> criticalLocations = Set.of(Mek.LOC_CT, Mek.LOC_HEAD, Mek.LOC_LT, Mek.LOC_RT);
+
+    @Override
+    public int devastateUnit() {
+        var totalDamage = entity().getArmor(Mek.LOC_CT) + entity().getInternal(Mek.LOC_CT);
+        entity().setArmor(0, Mek.LOC_CT, Compute.randomFloat() > 0.9);
+        entity().setInternal(0, Mek.LOC_CT);
+        return totalDamage;
+    }
 
     @Override
     public int getRandomHitLocation() {
@@ -178,6 +187,13 @@ public record MekDamageApplier(Mek entity, boolean crewMustSurvive, boolean enti
 
     private boolean canLoseLocation(HitData hitData) {
         var location = hitData.getLocation();
+        // CT is only
+
+        if (location == Mek.LOC_CT
+            && (entityFinalState().equals(CREW_AND_ENTITY_MUST_SURVIVE) || entityFinalState().equals(ENTITY_MUST_SURVIVE))) {
+            return false;
+        }
+
         if (!entityMustSurvive()) {
             return true;
         }

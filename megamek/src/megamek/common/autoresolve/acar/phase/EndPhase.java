@@ -21,6 +21,7 @@ import megamek.common.autoresolve.acar.action.WithdrawAction;
 import megamek.common.autoresolve.acar.report.EndPhaseReporter;
 import megamek.common.autoresolve.acar.report.IEndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -110,7 +111,7 @@ public class EndPhase extends PhaseHandler {
         IEntityRemovalConditions.REMOVE_DEVASTATED, 6
     );
 
-    public void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
+    private void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
         for (var unit : destroyedUnits) {
             for (var element : unit.getElements()) {
                 var entityOpt = getContext().getEntity(element.getId());
@@ -122,6 +123,8 @@ public class EndPhase extends PhaseHandler {
 
                     reporter.reportUnitDestroyed(entity);
                     getContext().addUnitToGraveyard(entity);
+                    getContext().applyDamageToEntityFromUnit(
+                        unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));
                 }
             }
 

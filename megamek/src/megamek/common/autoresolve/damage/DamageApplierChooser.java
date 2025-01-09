@@ -43,46 +43,16 @@ public class DamageApplierChooser {
      */
     public static DamageApplier<?> choose(
         Entity entity, EntityFinalState entityFinalState) {
-        return choose(entity, entityFinalState.crewMustSurvive, entityFinalState.entityMustSurvive, entityFinalState.crewMustSurvive);
-    }
-
-    /**
-     * Choose the correct DamageHandler for the given entity.
-     * A damage handler is a class that handles applying damage on an entity, be it a Mek, Infantry, etc.
-     * It can damage internal, armor, cause critical, kill crew, set limbs as blown-off, can even destroy the entity,
-     * This one also accepts parameters to indicate if the crew must survive and if the entity must survive.
-     * @param entity the entity to choose the handler for
-     * @param crewMustSurvive if the crew must survive
-     * @param entityMustSurvive if the entity must survive
-     * @return the correct DamageHandler for the given entity
-     */
-    public static DamageApplier<?> choose(
-        Entity entity, boolean crewMustSurvive, boolean entityMustSurvive) {
-        return choose(entity, crewMustSurvive, entityMustSurvive, false);
-    }
-
-    /**
-     * Choose the correct DamageHandler for the given entity.
-     * A damage handler is a class that handles applying damage on an entity, be it a Mek, Infantry, etc.
-     * It can damage internal, armor, cause critical, kill crew, set limbs as blown-off, can even destroy the entity,
-     * This one also accepts parameters to indicate if the crew must survive and if the entity must survive.
-     * @param entity the entity to choose the handler for
-     * @param entityMustSurvive if the entity must survive
-     * @return the correct DamageHandler for the given entity
-     */
-    public static DamageApplier<?> choose(
-        Entity entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage) {
-
         if (entity instanceof Infantry) {
-            return new InfantryDamageApplier((Infantry) entity);
+            return new InfantryDamageApplier((Infantry) entity, entityFinalState);
         } else if (entity instanceof Mek) {
-            return new MekDamageApplier((Mek) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
+            return new MekDamageApplier((Mek) entity, entityFinalState);
         } else if (entity instanceof GunEmplacement) {
-            return new GunEmplacementDamageApplier((GunEmplacement) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
+            return new GunEmplacementDamageApplier((GunEmplacement) entity, entityFinalState);
         } else if (entity instanceof Aero) {
-            return new AeroDamageApplier((Aero) entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
+            return new AeroDamageApplier((Aero) entity, entityFinalState);
         }
-        return new SimpleDamageApplier(entity, crewMustSurvive, entityMustSurvive, noCrewDamage);
+        return new SimpleDamageApplier(entity, entityFinalState);
     }
 
     /**
@@ -106,36 +76,20 @@ public class DamageApplierChooser {
      * @param removalCondition the reason why the entity is being removed
      */
     public static void damageRemovedEntity(Entity entity, int removalCondition) {
-        var numberOfDices = getNumberOfDices(entity, removalCondition);
+        EntityFinalState finalState = EntityFinalState.fromEntityRemovalState(removalCondition);
+        var numberOfDices = getNumberOfDices(entity, finalState);
         var damage = Compute.d6(numberOfDices);
         var clusterSize = 5;
-
-        EntityFinalState finalState = EntityFinalState.ANY;
-
-        var retreating = removalCondition == IEntityRemovalConditions.REMOVE_IN_RETREAT;
-        var captured = removalCondition == IEntityRemovalConditions.REMOVE_CAPTURED;
-        var ejected = removalCondition == IEntityRemovalConditions.REMOVE_EJECTED;
-        var devastated = removalCondition == IEntityRemovalConditions.REMOVE_DEVASTATED;
-        var salvageable = removalCondition == IEntityRemovalConditions.REMOVE_SALVAGEABLE;
-
-        if (retreating || captured || ejected) {
-            finalState = EntityFinalState.CREW_MUST_SURVIVE;
-        } else if (!devastated && !salvageable) {
-            finalState = EntityFinalState.ENTITY_MUST_SURVIVE;
-        }
-
         DamageApplierChooser.choose(entity, finalState)
             .applyDamageInClusters(damage, clusterSize);
     }
 
-    private static int getNumberOfDices(Entity entity, int removalCondition) {
+    private static int getNumberOfDices(Entity entity, EntityFinalState finalState) {
         var totalHealth = entity.getTotalOArmor() + entity.getTotalOInternal();
-        double targetDamage = switch (removalCondition) {
-            case IEntityRemovalConditions.REMOVE_CAPTURED, IEntityRemovalConditions.REMOVE_EJECTED -> totalHealth * 0.8;
-            case IEntityRemovalConditions.REMOVE_DEVASTATED -> totalHealth * 3;
-            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> totalHealth * 0.6;
-            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> totalHealth * 0.75 ;
-            default -> totalHealth * 0.33;
+        double targetDamage = switch (finalState) {
+            case ANY, CREW_MUST_SURVIVE, CREW_AND_ENTITY_MUST_SURVIVE -> totalHealth * (0.1 + Compute.randomFloat() * 0.5);
+            case ENTITY_MUST_SURVIVE, DAMAGE_ONLY_THE_ENTITY -> totalHealth * (0.3 + Compute.randomFloat() * 0.45);
+            case ENTITY_MUST_BE_DEVASTATED -> totalHealth * 3;
         };
 
         return Math.max(1, (int) (targetDamage / 6 / 0.6));

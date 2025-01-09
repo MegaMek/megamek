@@ -37,11 +37,27 @@ public interface DamageApplier<E extends Entity> {
 
     E entity();
 
-    boolean crewMustSurvive();
+    EntityFinalState entityFinalState();
 
-    boolean entityMustSurvive();
+    default boolean crewMayDie() {
+        return !crewMustSurvive() && !noCrewDamage();
+    }
 
-    boolean noCrewDamage();
+    default boolean entityMustSurvive() {
+        return entityFinalState().entityMustSurvive;
+    }
+
+    default boolean noCrewDamage() {
+        return entityFinalState().noCrewDamage;
+    }
+
+    default boolean crewMustSurvive() {
+        return entityFinalState().crewMustSurvive;
+    }
+
+    default boolean entityMystBeDevastated() {
+        return entityFinalState().entityMystBeDevastated;
+    }
 
     /**
      * Applies damage to the entity in clusters of a given size.
@@ -63,8 +79,13 @@ public interface DamageApplier<E extends Entity> {
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
         }
+        if (entityMystBeDevastated()) {
+            damageApplied += devastateUnit();
+        }
         return damageApplied;
     }
+
+    int devastateUnit();
 
     /**
      * Applies damage to the entity.

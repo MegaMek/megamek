@@ -13,10 +13,28 @@
  */
 package megamek.common.autoresolve.damage;
 
+import megamek.common.Compute;
+import megamek.common.Crew;
 import megamek.common.Entity;
 
 /**
  * @author Luana Coppio
  */
-public record SimpleDamageApplier(Entity entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage)
-    implements DamageApplier<Entity> {}
+public record SimpleDamageApplier(Entity entity, EntityFinalState entityFinalState) implements DamageApplier<Entity> {
+    @Override
+    public int devastateUnit() {
+        var loc = Compute.randomInt(entity().locations());
+        var totalDamage = entity().getArmor(loc) + entity().getInternal(loc);
+        entity().setArmor(0, loc);
+        entity().setInternal(0, loc);
+        if (crewMayDie()) {
+            var crew = entity().getCrew();
+            for (int i = 0; i < crew.getSlotCount(); i++) {
+                var hits = Compute.d6(2) >= 7 ? 5 : Crew.DEATH;
+                entity().getCrew().setHits(hits, i);
+            }
+        }
+
+        return totalDamage;
+    }
+}

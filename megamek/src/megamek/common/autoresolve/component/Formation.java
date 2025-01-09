@@ -101,7 +101,7 @@ public class Formation extends SBFFormation {
     }
 
     public boolean isRangeSet(int formationId) {
-        return getMemory().get("range." + formationId).isPresent();
+        return getMemory().containsKey("range." + formationId);
     }
 
     public ASRange getRange(int formationId) {

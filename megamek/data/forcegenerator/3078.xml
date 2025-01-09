@@ -3657,22 +3657,22 @@
 		<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
 			<availability>LA:5</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 			<availability>CLAN:3,BAN:0,IS:5,LA:2-,Periphery:4,HL:2+,Periphery.Deep:0,CEI:2,PIR:2</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>CLAN:6,IS:8,Periphery:8,CEI:6,PIR:3</availability>
 			</model>
 			<model name='(Cargo)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>CLAN:8,IS:4,Periphery:4,CEI:8,PIR:8</availability>
 			</model>
 			<model name='(Reverse)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>IS:2,Periphery:2,CEI:2,PIR:2</availability>
 			</model>
 		</chassis>
@@ -4128,7 +4128,7 @@
 		</chassis>
         <chassis name='Chaffee' unitType='Mek'>
             <availability>IS:2:3081</availability>
-            <model name='BT1 ServiceMech'>
+            <model name='BT1 Servicemech'>
                 <roles>civilian</roles>
                 <availability>IS:8</availability>
             </model>
@@ -8079,7 +8079,7 @@
                 <roles>anti_infantry,civilian</roles>
                 <availability>IS:1-,Periphery:2-,TC:1-,MOC:1-,HL:3-,PIR:8</availability>
             </model>
-            <model name='GS-107X'>
+            <model name='GS-107X SecurityMech'>
                 <availability>IS:3-,Periphery:4-,TC:3-,MOC:3-,HL:0,PIR:4+</availability>
             </model>
         </chassis>
@@ -15911,7 +15911,7 @@
 			</model>
 		</chassis>
 		<chassis name='Sarissa' unitType='Mek'>
-			<availability>FWL2-,PR:3-</availability>
+			<availability>FWL:2-,PR:3-</availability>
 			<model name='MN1-D'>
 				<availability>FWL:8,PR:8</availability>
 			</model>

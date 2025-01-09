@@ -223,7 +223,7 @@
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 			<availability>LA:5:2407,IS:4:2408,Periphery:4:2410,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>

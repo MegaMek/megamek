@@ -918,15 +918,15 @@
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 			<availability>CLAN:3,CGS:4,PP:3,IS:4,LA:5,Periphery:4,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>CLAN:6,PP:8,IS:8,Periphery:8,PIR:3</availability>
 			</model>
 			<model name='(Cargo)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>CLAN:8,PP:6,IS:4,Periphery:4,PIR:8</availability>
 			</model>
 			<model name='(Reverse)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>PP:2,IS:2,Periphery:2,PIR:2</availability>
 			</model>
 		</chassis>
@@ -1416,7 +1416,7 @@
             </model>
             <model name='ED-X4K LoggerMech'>
                 <roles>engineer</roles>
-                <availability>PP:5-.Periphery:4-,PIR:8</availability>
+                <availability>PP:5-,Periphery:4-,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Cruiser' unitType='Warship'>
@@ -3061,7 +3061,7 @@
 		</chassis>
         <chassis name='Mao-Heng Charioteer' unitType='Tank'>
             <availability>CC:2</availability>
-            <model name=''>
+            <model name='(Original)'>
                 <roles>civilian</roles>
                 <availability>CC:8</availability>
             </model>

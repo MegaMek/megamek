@@ -3640,7 +3640,7 @@
                 <roles>civilian</roles>
                 <availability>CLAN.IS:8,IS:8,Periphery:8</availability>
             </model>
-            <model name='CTM-1M MiningMech MOD'>
+            <model name='DTM-1M MiningMech MOD'>
                 <availability>IS:2-,Periphery:3-,TC:2-,MOC:2-</availability>
             </model>
         </chassis>
@@ -3738,22 +3738,22 @@
 		<chassis name='Büffel Engineering Support Vehicle VIII' unitType='Tank'>
 			<availability>LA:5</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>LA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
 			<availability>SL3:3,CLAN.IS:3,BAN:0,IS:5,LA:2-,Periphery:4,Periphery.Deep:0,SE:2,PIR:2</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>SL3:6,CLAN.IS:6,IS:8,Periphery:8,SE:6,PIR:3</availability>
 			</model>
 			<model name='(Cargo)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>SL3:8,CLAN.IS:8,IS:4,Periphery:4,SE:8,PIR:8</availability>
 			</model>
 			<model name='(Reverse)'>
-				<roles>support,engineer</roles>
+				<roles>support,engineer,minesweeper</roles>
 				<availability>IS:2,Periphery:2,SE:2,PIR:2</availability>
 			</model>
 		</chassis>
@@ -4310,7 +4310,7 @@
         </chassis>
         <chassis name='Chaffee' unitType='Mek'>
             <availability>SL3:2,CLAN.IS:2,IS:2,Periphery:2,Periphery.Deep:0,PIR:0</availability>
-            <model name='BT1 ServiceMech'>
+            <model name='BT1 Servicemech'>
                 <roles>civilian</roles>
                 <availability>SL3:8,CLAN.IS:0,IS:8,Periphery:8</availability>
 			</model>
@@ -8595,7 +8595,7 @@
 		</chassis>
         <chassis name='Ground Pounder' unitType='Mek'>
             <availability>SL3:2,CLAN.IS:2,IS:2,Periphery:2,Periphery.Deep:0,SE:0</availability>
-            <model name='DVM-2 MinimingMech'>
+            <model name='DVM-2 MiningMech'>
                 <roles>civilian</roles>
                 <availability>SL3:8,CLAN.IS:8,IS:8,Periphery:8</availability>
             </model>
@@ -8641,7 +8641,7 @@
                 <roles>anti_infantry,civilian</roles>
                 <availability>MERC:2-,Periphery:2-,TC:1-,MOC:1-,PIR:8</availability>
             </model>
-            <model name='GS-107X'>
+            <model name='GS-107X SecurityMech'>
                 <availability>IS:1-,MERC:2-,Periphery:4-,TC:3-,MOC:3-,PIR:4+</availability>
             </model>
 		</chassis>
@@ -22334,7 +22334,7 @@
 			</model>
 			<model name='E'>
 				<roles>apc,support</roles>
-				<availability>,RD:6,IS:5,Periphery:4+</availability>
+				<availability>RD:6,IS:5,Periphery:4+</availability>
 			</model>
 			<model name='F'>
 				<availability>RD:7,IS:5+,Periphery:0,MOC:2+</availability>

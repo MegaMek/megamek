@@ -2263,18 +2263,18 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
-        if (!game.isIgnorePlayerDefeatVotes()) {
-            for (Player player : game.getPlayersList()) {
-                if ((player.getId() == game.getVictoryPlayerId()) || ((player.getTeam() == game.getVictoryTeam())
-                    && (game.getVictoryTeam() != Player.TEAM_NONE))) {
-                    continue;
-                }
 
-                if (!player.admitsDefeat()) {
-                    return false;
-                }
+        for (Player player : game.getPlayersList()) {
+            if ((player.getId() == game.getVictoryPlayerId()) || ((player.getTeam() == game.getVictoryTeam())
+                && (game.getVictoryTeam() != Player.TEAM_NONE))) {
+                continue;
+            }
+
+            if (!player.admitsDefeat()) {
+                return false;
             }
         }
+
 
         return true;
     }

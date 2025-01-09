@@ -661,7 +661,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     * @noinspection ALL
      */
     private void $$$setupUI$$$() {
         createUIComponents();
@@ -777,9 +776,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         return bundle.getString(key);
     }
 
-    /**
-     * @noinspection ALL
-     */
     private void $$$loadLabelText$$$(JLabel component, String text) {
         StringBuffer result = new StringBuffer();
         boolean haveMnemonic = false;
@@ -804,9 +800,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         }
     }
 
-    /**
-     * @noinspection ALL
-     */
     public JComponent $$$getRootComponent$$$() {
         return uAiEditorPanel;
     }

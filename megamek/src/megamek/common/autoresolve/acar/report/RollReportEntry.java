@@ -61,7 +61,6 @@ public class RollReportEntry extends PublicReportEntry {
     private final int[] dices;
 
     public RollReportEntry(Roll roll) {
-        super(0);
         rollText = roll.toString();
         var size = roll.getIntValues().length;
         dices = new int[size];

@@ -48,9 +48,9 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
             }
 
             var teamInitBonus = team.getTotalInitBonus(false);
-            var reportKey = 1015;
+            var reportKey = "acar.initiative.rollAnnouncement";
             if (teamInitBonus > 0) {
-                reportKey = 1016;
+                reportKey = "acar.initiative.rollAnnouncementWithBonus";
             }
 
             reportConsumer.accept(new PublicReportEntry(reportKey).add(Player.TEAM_NAMES[team.getId()])
@@ -58,7 +58,7 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
 
             // Multiple players. List the team, then break it down.
             for (Player player : team.nonObserverPlayers()) {
-                reportConsumer.accept(new PublicReportEntry(2020)
+                reportConsumer.accept(new PublicReportEntry("acar.initiative.rollAnnouncementCustom")
                     .indent()
                     .add(player.getName())
                     .add(player.getInitiative().toString())
@@ -73,15 +73,15 @@ public class InitiativePhaseHelperReporter implements IInitiativePhaseHelperRepo
         reportConsumer.accept(new DividerEntry());
         if (context.getLastPhase().isDeployment() || context.isDeploymentComplete()
             || !context.shouldDeployThisRound()) {
-            reportConsumer.accept(new ReportEntryWithAnchor(1000, "round-" + currentRound).add(currentRound));
-            reportConsumer.accept(new LinkEntry(301, "summary-round-" + currentRound));
+            reportConsumer.accept(new ReportEntryWithAnchor("acar.initiative.roundHeader", "round-" + currentRound).add(currentRound));
+            reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + currentRound));
         } else {
             if (currentRound == 0) {
-                reportConsumer.accept(new ReportEntryWithAnchor(1005, "round-" + currentRound));
-                reportConsumer.accept(new LinkEntry(301, "summary-round-" + currentRound));
+                reportConsumer.accept(new ReportEntryWithAnchor("acar.initiative.startOfGameHeader", "round-" + currentRound));
+                reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + currentRound));
             } else {
-                reportConsumer.accept(new ReportEntryWithAnchor(1000, "round-" + currentRound).add(currentRound));
-                reportConsumer.accept(new LinkEntry(301, "summary-round-" + currentRound));
+                reportConsumer.accept(new ReportEntryWithAnchor("acar.initiative.roundHeader", "round-" + currentRound).add(currentRound));
+                reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + currentRound));
             }
         }
     }

@@ -39,12 +39,12 @@ public class DeploymentReport implements IDeploymentReport {
 
     @Override
     public void deploymentRoundHeader(int currentRound) {
-        reportConsumer.accept(new PublicReportEntry(1065).add(currentRound));
+        reportConsumer.accept(new PublicReportEntry("acar.initiative.deploymentHeader").add(currentRound));
     }
 
     @Override
     public void reportDeployment(Formation deployed, Coords position) {
-        var report = new PublicReportEntry(2202);
+        var report = new PublicReportEntry("acar.movementPhase.deployed");
         report.add(new FormationReportEntry(deployed, game).text());
         report.add(position.getX() + 1);
         reportConsumer.accept(report);

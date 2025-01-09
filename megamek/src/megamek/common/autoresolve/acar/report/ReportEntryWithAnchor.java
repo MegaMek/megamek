@@ -19,7 +19,7 @@ public class ReportEntryWithAnchor extends PublicReportEntry {
 
     private final String anchor;
 
-    public ReportEntryWithAnchor(int messageId, String anchor) {
+    public ReportEntryWithAnchor(String messageId, String anchor) {
         super(messageId);
         this.anchor = anchor;
     }

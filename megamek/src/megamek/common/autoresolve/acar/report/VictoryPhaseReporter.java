@@ -44,8 +44,8 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
     @Override
     public void victoryHeader() {
-        reportConsumer.accept(new ReportEntryWithAnchor(5000, "end-of-combat").noNL());
-        reportConsumer.accept(new LinkEntry(301, "summary-end-of-combat"));
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.header", "end-of-combat").noNL());
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-end-of-combat"));
     }
 
     @Override
@@ -63,11 +63,11 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
         var victoryResult = gameManager.getCurrentVictoryResult();
 
-        reportConsumer.accept(new ReportEntryWithAnchor(6000, "victory").add(victoryResult.getWinningTeam()));
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.victory.teamVictorious", "victory").add(victoryResult.getWinningTeam()));
 
         for (var team : teamMap.keySet()) {
             var teamPlayers = teamMap.get(team);
-            reportConsumer.accept(new ReportEntryWithAnchor(5002, "end-team-" + team).add(team).noNL());
+            reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.teamReportHeader", "end-team-" + team).add(team).noNL());
             for (var player : teamPlayers) {
                 playerFinalReport(player);
             }
@@ -83,8 +83,8 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "remaining-" + player.getId()).noNL());
-        reportConsumer.accept(new ReportEntryWithAnchor(5003, "end-player-" + player.getId() + "-remaining").noNL()
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "remaining-" + player.getId()).noNL());
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.teamRemainingUnits", "end-player-" + player.getId() + "-remaining").noNL()
             .add(new PlayerNameReportEntry(player).reportText())
             .add(playerEntities.size()).indent());
 
@@ -94,7 +94,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             if (armor < 0d) {
                 armor = 0d;
             }
-            reportConsumer.accept(new PublicReportEntry(5004)
+            reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
                 .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
@@ -109,8 +109,8 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "destroyed-" + player.getId()).noNL());
-        reportConsumer.accept(new ReportEntryWithAnchor(5006, "end-player-" + player.getId() + "-destroyed")
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "destroyed-" + player.getId()).noNL());
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.teamDestroyedUnits", "end-player-" + player.getId() + "-destroyed")
             .add(new PlayerNameReportEntry(player).reportText())
             .add(deadEntities.size())
             .indent(1));
@@ -121,7 +121,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
                 armor = 0d;
             }
 
-            reportConsumer.accept(new PublicReportEntry(5004)
+            reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
                 .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
@@ -134,8 +134,8 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .filter(e -> e.getOwnerId() == player.getId())
             .toList();
 
-        reportConsumer.accept(new LinkEntry(301, "retreating-" + player.getId()).noNL());
-        reportConsumer.accept(new ReportEntryWithAnchor(5007, "end-player-" + player.getId() + "-retreating")
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "retreating-" + player.getId()).noNL());
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.teamRetreatingUnits", "end-player-" + player.getId() + "-retreating")
             .add(new PlayerNameReportEntry(player).reportText())
             .add(retreatingEntities.size())
             .indent());
@@ -146,7 +146,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             if (armor < 0d) {
                 armor = 0d;
             }
-            reportConsumer.accept(new PublicReportEntry(5004)
+            reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
                 .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))

@@ -24,7 +24,7 @@ public class FormationReportEntry extends PublicReportEntry {
     private final String playerColorHex;
 
     public FormationReportEntry(String formationName, String playerColorHex) {
-        super(0);
+        super(null);
         this.formationName = formationName;
         this.playerColorHex = playerColorHex;
         noNL();

@@ -18,7 +18,7 @@ import megamek.client.ui.swing.util.UIUtil;
 public class DividerEntry extends PublicReportEntry {
 
     public DividerEntry() {
-        super(0);
+        super(null);
     }
 
     @Override

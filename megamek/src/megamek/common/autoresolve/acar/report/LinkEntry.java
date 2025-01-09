@@ -19,7 +19,7 @@ public class LinkEntry extends PublicReportEntry {
 
     private final String anchor;
 
-    public LinkEntry(int messageId, String anchor) {
+    public LinkEntry(String messageId, String anchor) {
         super(messageId);
         this.anchor = anchor;
     }

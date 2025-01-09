@@ -220,7 +220,7 @@ public class SimulationManager extends AbstractGameManager {
         if (r instanceof PublicReportEntry publicReportEntry) {
             pendingReports.add(publicReportEntry);
         } else {
-            pendingReports.add(new PublicReportEntry(999).add(r.text()));
+            pendingReports.add(new PublicReportEntry("acar.initiative.freePlaceholder").add(r.text()));
         }
     }
 

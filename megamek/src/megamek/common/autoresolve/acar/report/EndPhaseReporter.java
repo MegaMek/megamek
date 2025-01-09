@@ -25,16 +25,16 @@ public class EndPhaseReporter implements IEndPhaseReporter {
 
     private final Consumer<PublicReportEntry> reportConsumer;
     private final IGame game;
-    private static final Map<Integer, Integer> reportIdForEachRemovalCondition = Map.of(
-        IEntityRemovalConditions.REMOVE_DEVASTATED, 3337,
-        IEntityRemovalConditions.REMOVE_EJECTED, 3338,
-        IEntityRemovalConditions.REMOVE_PUSHED, 3339,
-        IEntityRemovalConditions.REMOVE_CAPTURED, 3340,
-        IEntityRemovalConditions.REMOVE_IN_RETREAT, 3341,
-        IEntityRemovalConditions.REMOVE_NEVER_JOINED, 3342,
-        IEntityRemovalConditions.REMOVE_SALVAGEABLE, 3343);
+    private static final Map<Integer, String> reportIdForEachRemovalCondition = Map.of(
+        IEntityRemovalConditions.REMOVE_DEVASTATED, "acar.endPhase.devastated",
+        IEntityRemovalConditions.REMOVE_EJECTED, "acar.endPhase.destroyedPilot",
+        IEntityRemovalConditions.REMOVE_PUSHED, "acar.endPhase.destroyedOffBoard",
+        IEntityRemovalConditions.REMOVE_CAPTURED, "acar.endPhase.captured",
+        IEntityRemovalConditions.REMOVE_IN_RETREAT, "acar.endPhase.retreat",
+        IEntityRemovalConditions.REMOVE_NEVER_JOINED, "acar.endPhase.missing",
+        IEntityRemovalConditions.REMOVE_SALVAGEABLE, "acar.endPhase.destroyedSalvage");
 
-    private static final int MSG_ID_UNIT_DESTROYED_UNKNOWINGLY = 3344;
+    private static final String MSG_ID_UNIT_DESTROYED_UNKNOWINGLY = "acar.endPhase.destroyedSurprise";
 
     private EndPhaseReporter(IGame game, Consumer<PublicReportEntry> reportConsumer) {
         this.reportConsumer = reportConsumer;
@@ -51,8 +51,8 @@ public class EndPhaseReporter implements IEndPhaseReporter {
 
     @Override
     public void endPhaseHeader() {
-        reportConsumer.accept(new ReportEntryWithAnchor(3299, "round-" + game.getCurrentRound() + "-end").noNL());
-        reportConsumer.accept(new LinkEntry(301, "summary-round-" + game.getCurrentRound() + "-end"));
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.endPhase.header", "round-" + game.getCurrentRound() + "-end").noNL());
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + game.getCurrentRound() + "-end"));
     }
 
     @Override

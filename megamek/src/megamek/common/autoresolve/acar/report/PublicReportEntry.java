@@ -26,15 +26,19 @@ public class PublicReportEntry implements ReportEntry {
 
     record DataEntry(String data, boolean isObscured) implements Serializable { }
 
-    private final int messageId;
+    private final String messageId;
     private final List<DataEntry> data = new ArrayList<>();
     private boolean endLine = true;
     private boolean endSpace = false;
     private int indentation = 0;
     protected static final String EMPTY = "";
 
-    public PublicReportEntry(int messageId) {
+    public PublicReportEntry(String messageId) {
         this.messageId = messageId;
+    }
+
+    protected PublicReportEntry() {
+        this(null);
     }
 
     /**
@@ -139,10 +143,10 @@ public class PublicReportEntry implements ReportEntry {
     }
 
     private String lineEnd() {
-        return (endSpace ? " " : "") + (endLine ? "<br>" : "");
+        return (endSpace ? "&nbsp;" : EMPTY) + (endLine ? "<br>" : EMPTY);
     }
 
     protected String reportText() {
-        return ReportMessages.getString(String.valueOf(messageId), data.stream().map(d -> (Object) d.data).toList());
+        return ReportMessages.getString(messageId, data.stream().map(DataEntry::data).toArray());
     }
 }

@@ -43,7 +43,7 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportAttackStart(Formation attacker, int unitNumber, Formation target) {
-        var report = new PublicReportEntry(2001);
+        var report = new PublicReportEntry("acar.firingPhase.attackAnnouncement");
         report.add(new UnitReportEntry(attacker, unitNumber, ownerColor(attacker, game)).text());
         report.add(new FormationReportEntry(target, game).text());
         reportConsumer.accept(report);
@@ -51,19 +51,19 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportCannotSucceed(String toHitDesc) {
-        reportConsumer.accept(new PublicReportEntry(2010).add(toHitDesc));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.attackCannotSucceed").add(toHitDesc));
     }
 
     @Override
     public void reportToHitValue(TargetRoll toHitValue) {
         // e.g. "Needed X to hit"
-        reportConsumer.accept(new PublicReportEntry(2003).indent().add(toHitValue.getValue())
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.hitThreshold").indent().add(toHitValue.getValue())
             .add(toHitValue.toString()));
     }
 
     @Override
     public void reportAttackRoll(Roll roll, Formation attacker) {
-        var report = new PublicReportEntry(2020).indent().noNL();
+        var report = new PublicReportEntry("acar.initiative.rollAnnouncementCustom").indent().noNL();
         report.add(new PlayerNameReportEntry(game.getPlayer(attacker.getOwnerId())).text());
         report.add(new RollReportEntry(roll).reportText());
         reportConsumer.accept(report);
@@ -71,17 +71,17 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportAttackMiss() {
-        reportConsumer.accept(new PublicReportEntry(2012).indent(1));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.attackMisses").indent(1));
     }
 
     @Override
     public void reportAttackHit() {
-        reportConsumer.accept(new PublicReportEntry(2013).indent(1));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.attackHits").indent(1));
     }
 
     @Override
     public void reportDamageDealt(SBFUnit targetUnit, int damage, int newArmor) {
-        reportConsumer.accept(new PublicReportEntry(3100)
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.receivedDamage")
             .add(targetUnit.getName())
             .add(damage)
             .add(newArmor)
@@ -90,28 +90,28 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportStressEpisode() {
-        reportConsumer.accept(new PublicReportEntry(3090).indent(3));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.highStress").indent(3));
     }
 
     @Override
     public void reportUnitDestroyed() {
-        reportConsumer.accept(new PublicReportEntry(3092).indent(3));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.destroyed").indent(3));
     }
 
     @Override
     public void reportCriticalCheck() {
         // Called before rolling criticals
-        reportConsumer.accept(new PublicReportEntry(3095).indent(3));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.internalDamageRoll").indent(3));
     }
 
     @Override
     public void reportNoCrit() {
-        reportConsumer.accept(new PublicReportEntry(3097).indent(3));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.noInternalDamage").indent(3));
     }
 
     @Override
     public void reportTargetingCrit(SBFUnit targetUnit) {
-        reportConsumer.accept(new PublicReportEntry(3094)
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.targetingDamage")
             .add(targetUnit.getName())
             .add(targetUnit.getTargetingCrits())
             .indent(3));
@@ -119,7 +119,7 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportDamageCrit(SBFUnit targetUnit) {
-        reportConsumer.accept(new PublicReportEntry(3096)
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.weaponDamage")
             .add(targetUnit.getName())
             .add(targetUnit.getDamageCrits())
             .indent(3));
@@ -127,6 +127,6 @@ public class AttackReporter implements IAttackReporter {
 
     @Override
     public void reportUnitCrippled() {
-        reportConsumer.accept(new PublicReportEntry(3091).indent(3));
+        reportConsumer.accept(new PublicReportEntry("acar.firingPhase.crippled").indent(3));
     }
 }

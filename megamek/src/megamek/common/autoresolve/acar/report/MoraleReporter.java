@@ -39,8 +39,7 @@ public class MoraleReporter implements IMoraleReporter {
 
     @Override
     public void reportMoraleCheckStart(Formation formation, int toHitValue) {
-        // 4500: Start of morale check
-        var startReport = new PublicReportEntry(4500)
+        var startReport = new PublicReportEntry("acar.morale.checkAttempt")
             .add(new FormationReportEntry(formation, game).reportText())
             .add(toHitValue);
         reportConsumer.accept(startReport);
@@ -48,8 +47,7 @@ public class MoraleReporter implements IMoraleReporter {
 
     @Override
     public void reportMoraleCheckRoll(Formation formation, Roll roll) {
-        // 4501: Roll result
-        var rollReport = new PublicReportEntry(4501)
+        var rollReport = new PublicReportEntry("acar.morale.checkRolled")
             .add(new FormationReportEntry(formation, game).reportText())
             .add(new RollReportEntry(roll).reportText());
         reportConsumer.accept(rollReport);
@@ -57,16 +55,14 @@ public class MoraleReporter implements IMoraleReporter {
 
     @Override
     public void reportMoraleCheckSuccess(Formation formation) {
-        // 4502: Success - morale does not worsen
-        var successReport = new PublicReportEntry(4502)
+        var successReport = new PublicReportEntry("acar.morale.checkSuccess")
             .add(new FormationReportEntry(formation, game).text());
         reportConsumer.accept(successReport);
     }
 
     @Override
     public void reportMoraleCheckFailure(Formation formation, Formation.MoraleStatus oldStatus, Formation.MoraleStatus newStatus) {
-        // 4503: Failure - morale worsens
-        var failReport = new PublicReportEntry(4503)
+        var failReport = new PublicReportEntry("acar.morale.checkFail")
             .add(new FormationReportEntry(formation, game).text())
             .add(oldStatus.name())
             .add(newStatus.name());

@@ -18,7 +18,7 @@ public class SummaryPlaceholderEntry extends PublicReportEntry {
     public static final String PLACEHOLDER = "@@@@@@@@@@";
 
     public SummaryPlaceholderEntry() {
-        super(0);
+        super(null);
     }
 
     @Override

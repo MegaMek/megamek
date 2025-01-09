@@ -25,7 +25,7 @@ public class UnitReportEntry extends PublicReportEntry {
     private final String playerColorHex;
 
     public UnitReportEntry(String formationName, String unitName, String playerColorHex) {
-        super(0);
+        super(null);
         this.formationName = formationName;
         this.unitName = unitName;
         this.playerColorHex = playerColorHex;

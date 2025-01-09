@@ -357,7 +357,7 @@ public class SimulationContext implements IGame {
 
     @Override
     public ReportEntry getNewReport(int messageId) {
-        return new PublicReportEntry(messageId);
+        throw new RuntimeException("Not implemented and not to be used in this context.");
     }
 
     @Override

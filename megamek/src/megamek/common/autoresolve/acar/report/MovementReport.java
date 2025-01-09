@@ -26,20 +26,20 @@ public class MovementReport implements IMovementReport {
     private final IGame game;
     private final Consumer<PublicReportEntry> reportConsumer;
 
-    private static final Map<ASRange, Integer> reportRangeClosingIn = Map.of(
-        ASRange.SHORT, 2204,
-        ASRange.MEDIUM, 2204,
-        ASRange.LONG, 2204,
-        ASRange.EXTREME, 2203,
-        ASRange.HORIZON, 2203
+    private static final Map<ASRange, String> reportRangeClosingIn = Map.of(
+        ASRange.SHORT, "acar.movementPhase.advancingDetailed",
+        ASRange.MEDIUM, "acar.movementPhase.advancingDetailed",
+        ASRange.LONG, "acar.movementPhase.advancingDetailed",
+        ASRange.EXTREME, "acar.movementPhase.advancingTarget",
+        ASRange.HORIZON, "acar.movementPhase.advancingTarget"
     );
 
-    private static final Map<ASRange, Integer> rangeNames = Map.of(
-        ASRange.SHORT, 2301,
-        ASRange.MEDIUM, 2302,
-        ASRange.LONG, 2303,
-        ASRange.EXTREME, 2304,
-        ASRange.HORIZON, 2305
+    private static final Map<ASRange, String> rangeNames = Map.of(
+        ASRange.SHORT, "acar.range.close",
+        ASRange.MEDIUM, "acar.range.skirmish",
+        ASRange.LONG, "acar.range.bombardment",
+        ASRange.EXTREME, "acar.range.extreme",
+        ASRange.HORIZON, "acar.range.beyondVisual"
     );
 
     private MovementReport(IGame game, Consumer<PublicReportEntry> reportConsumer) {
@@ -56,16 +56,10 @@ public class MovementReport implements IMovementReport {
 
     @Override
     public void reportMovement(Formation mover, Formation target, int direction) {
-        int reportId;
         var distance = mover.getPosition().coords().distance(target.getPosition().coords());
         var range = ASRange.fromDistance(distance);
-        if (direction > 0) {
-            reportId = reportRangeClosingIn.get(range);
-        } else {
-            reportId = 2205;
-        }
-
-        var rangeName = distance < 3 ? 2300 : rangeNames.get(range);
+        String reportId = direction > 0 ? reportRangeClosingIn.get(range) : "acar.movementPhase.movingAway";
+        var rangeName = distance >= 3 ? rangeNames.get(range) :  "acar.range.pointBlank";
 
         var report = new PublicReportEntry(reportId);
         report.add(new FormationReportEntry(mover, game).text());
@@ -77,14 +71,14 @@ public class MovementReport implements IMovementReport {
 
     @Override
     public void reportRetreatMovement(Formation mover) {
-        var report = new PublicReportEntry(2206);
+        var report = new PublicReportEntry("acar.movementPhase.disengaging");
         report.add(new FormationReportEntry(mover, game).text());
         reportConsumer.accept(report);
     }
 
     @Override
     public void reportMovement(Formation mover) {
-        var report = new PublicReportEntry(2200);
+        var report = new PublicReportEntry("acar.movementPhase.advancing");
         report.add(new FormationReportEntry(mover, game).text());
         reportConsumer.accept(report);
     }

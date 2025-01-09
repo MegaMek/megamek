@@ -44,14 +44,14 @@ public class PhaseEndReporter implements IPhaseEndReporter {
 
     @Override
     public void movementPhaseHeader() {
-        reportConsumer.accept(new ReportEntryWithAnchor(2201, "round-" + context.getCurrentRound() + "-movement").noNL());
-        reportConsumer.accept(new LinkEntry(301, "summary-round-" + context.getCurrentRound() + "-movement"));
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.movementPhase.header", "round-" + context.getCurrentRound() + "-movement").noNL());
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + context.getCurrentRound() + "-movement"));
     }
 
     @Override
     public void firingPhaseHeader() {
-        reportConsumer.accept(new ReportEntryWithAnchor(2002, "round-" + context.getCurrentRound() + "-firing").noNL());
-        reportConsumer.accept(new LinkEntry(301, "summary-round-" + context.getCurrentRound() + "-firing"));
+        reportConsumer.accept(new ReportEntryWithAnchor("acar.firingPhase.header", "round-" + context.getCurrentRound() + "-firing").noNL());
+        reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-round-" + context.getCurrentRound() + "-firing"));
     }
 
     private void modifyFile(File file, Consumer<StringBuilder> modifier) throws IOException {
@@ -79,42 +79,42 @@ public class PhaseEndReporter implements IPhaseEndReporter {
         var rounds = context.getCurrentRound();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<p>").append(new PublicReportEntry(110).text()).append("</p><br/>");
-        stringBuilder.append("<a name='summary'>").append(new PublicReportEntry(300).text()).append("</a></p>")
+        stringBuilder.append("<p>").append(new PublicReportEntry("acar.shortBlurb").text()).append("</p><br/>");
+        stringBuilder.append("<a name='summary'>").append(new PublicReportEntry("acar.header.summary").text()).append("</a></p>")
             .append("<ul>");
         for (int i = 0; i <= rounds; i++) {
             stringBuilder.append("<li><a href='#round-").append(i).append("' name='summary-round-").append(i).append("'>")
-                    .append(new PublicReportEntry(302).add(i).text()).append("</a>\n")
+                    .append(new PublicReportEntry("acar.summary.roundCount").add(i).text()).append("</a>\n")
                 .append("<ul>")
                 .append("<li><a href='#round-").append(i).append("-movement' name='summary-round-").append(i).append("-movement'>")
-                    .append(new PublicReportEntry(303).add(i).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.movementPhase").add(i).text()).append("</a></li>\n")
                 .append("<li><a href='#round-").append(i).append("-firing' name='summary-round-").append(i).append("-firing'>")
-                    .append(new PublicReportEntry(304).add(i).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.firingPhase").add(i).text()).append("</a></li>\n")
                 .append("<li><a href='#round-").append(i).append("-end' name='summary-round-").append(i).append("-end'>")
-                    .append(new PublicReportEntry(305).add(i).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.endPhase").add(i).text()).append("</a></li>\n")
                 .append("</ul>\n")
                 .append("</li>\n");
         }
 
-        stringBuilder.append("<li><a name='summary-end-of-combat' href='#end-of-combat'>").append(new PublicReportEntry(306).text()).append("</a></li>\n");
-        stringBuilder.append("<li><a name='summary-end-of-combat' href='#victory'>").append(new PublicReportEntry(312).text()).append("</a></li>\n");
+        stringBuilder.append("<li><a name='summary-end-of-combat' href='#end-of-combat'>").append(new PublicReportEntry("acar.summary.endOfCombat").text()).append("</a></li>\n");
+        stringBuilder.append("<li><a name='summary-end-of-combat' href='#victory'>").append(new PublicReportEntry("acar.summary.scenarioResult").text()).append("</a></li>\n");
 
         for (var team : context.getTeams()) {
             stringBuilder.append("<li><a href='#end-team-").append(team.getId()).append("' id=>")
-                .append(new PublicReportEntry(307).add(team.toString()).text()).append("</a>\n")
+                .append(new PublicReportEntry("acar.summary.teamReport").add(team.toString()).text()).append("</a>\n")
                 .append("<ul>\n");
 
             for (var player : team.players()) {
                 stringBuilder
                     .append("<li>")
-                    .append(new PublicReportEntry(308).add(new PlayerNameReportEntry(player).reportText()).text()).append("\n")
+                    .append(new PublicReportEntry("acar.summary.playerReport").add(new PlayerNameReportEntry(player).reportText()).text()).append("\n")
                     .append("<ul>")
                     .append("<li><a name='remaining-").append(player.getId()).append("' href='#end-player-").append(player.getId()).append("-remaining'>")
-                    .append(new PublicReportEntry(309).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.player.remainingUnits").text()).append("</a></li>\n")
                     .append("<li><a name='destroyed-").append(player.getId()).append("' href='#end-player-").append(player.getId()).append("-destroyed'>")
-                    .append(new PublicReportEntry(310).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.player.destroyedUnits").text()).append("</a></li>\n")
                     .append("<li><a name='retreating-").append(player.getId()).append("' href='#end-player-").append(player.getId()).append("-retreating'>")
-                    .append(new PublicReportEntry(311).text()).append("</a></li>\n")
+                    .append(new PublicReportEntry("acar.summary.player.retreatingUnits").text()).append("</a></li>\n")
                     .append("</ul>\n")
                     .append("</li>\n");
             }

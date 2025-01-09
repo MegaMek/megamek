@@ -42,9 +42,9 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
 
     @Override
     public void header() {
-        reportConsumer.accept(new PublicReportEntry(100));
+        reportConsumer.accept(new PublicReportEntry("acar.header"));
         reportConsumer.accept(new SummaryPlaceholderEntry());
-        reportConsumer.accept(new PublicReportEntry(101));
+        reportConsumer.accept(new PublicReportEntry("acar.header.startingScenario"));
     }
 
 
@@ -63,7 +63,7 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
 
         for (var team : teamMap.keySet()) {
             var teamPlayers = teamMap.get(team);
-            var teamReport = new PublicReportEntry(102).add(team);
+            var teamReport = new PublicReportEntry("acar.header.teamFormations").add(team);
             reportConsumer.accept(teamReport);
             for (var player : teamPlayers) {
                 playerFinalReport(player);
@@ -78,7 +78,7 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
             .map(Entity.class::cast)
             .toList();
 
-        reportConsumer.accept(new PublicReportEntry(103).add(new PlayerNameReportEntry(player).reportText())
+        reportConsumer.accept(new PublicReportEntry("acar.startingScenario.numberOfUnits").add(new PlayerNameReportEntry(player).reportText())
             .add(playerEntities.size()).indent());
 
         for (var entity : playerEntities) {
@@ -86,7 +86,7 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
             if (armor < 0d) {
                 armor = 0d;
             }
-            reportConsumer.accept(new PublicReportEntry(104)
+            reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
                 .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))

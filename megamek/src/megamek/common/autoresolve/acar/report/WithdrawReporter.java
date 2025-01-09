@@ -39,7 +39,7 @@ public class WithdrawReporter implements IWithdrawReporter {
     @Override
     public void reportSuccessfulWithdraw(Formation withdrawingFormation) {
         reportConsumer.accept(
-            new PublicReportEntry(3333)
+            new PublicReportEntry("acar.endPhase.withdrawSuccess")
             .add(new FormationReportEntry(withdrawingFormation, game).reportText())
             .indent(2));
     }

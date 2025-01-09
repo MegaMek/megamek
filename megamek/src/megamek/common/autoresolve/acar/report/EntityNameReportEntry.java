@@ -28,7 +28,7 @@ public class EntityNameReportEntry extends PublicReportEntry {
     }
 
     public EntityNameReportEntry(String name, PlayerColour color, int playerTeam) {
-        super(0);
+        super(null);
         this.name = name;
         this.playerColorHex = UIUtil.hexColor(color.getColour());
         this.playerTeam = playerTeam + "";

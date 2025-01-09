@@ -43,7 +43,7 @@ public class RecoveringNerveActionReporter implements IRecoveringNerveActionRepo
 
     @Override
     public void reportRecoveringNerveStart(Formation formation, int toHitValue) {
-        reportConsumer.accept(new PublicReportEntry(4000)
+        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryAttempt")
             .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text())
             .add(toHitValue).noNL()
         );
@@ -51,11 +51,11 @@ public class RecoveringNerveActionReporter implements IRecoveringNerveActionRepo
 
     @Override
     public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus, Roll roll) {
-        reportConsumer.accept(new PublicReportEntry(4001).indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
+        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryRoll").indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
     }
 
     @Override
     public void reportFailureRoll(Roll roll, SBFFormation.MoraleStatus moraleStatus) {
-        reportConsumer.accept(new PublicReportEntry(4002).add(roll.toString()).add(moraleStatus.name().toLowerCase()));
+        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryFail").add(roll.toString()).add(moraleStatus.name().toLowerCase()));
     }
 }

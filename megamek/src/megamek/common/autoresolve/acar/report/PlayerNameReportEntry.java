@@ -28,7 +28,7 @@ public class PlayerNameReportEntry extends PublicReportEntry {
     }
 
     public PlayerNameReportEntry(String playerName, String playerColorHex) {
-        super(0);
+        super(null);
         this.playerName = playerName;
         this.playerColorHex = playerColorHex;
     }

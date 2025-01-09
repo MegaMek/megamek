@@ -975,20 +975,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateFleeButton() {
-        int maxMP = maxMP(ce(), gear);
-
         boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
-        boolean fleeStart = ce().canFlee(ce().getPosition());
-        boolean jumpMoveRemaining = hasLastStep
-            && cmd.getLastStep().isJumping()
-            && (cmd.getMpUsed() < ce().getJumpMP());
-        boolean runMoveRemaining = hasLastStep
-            && !cmd.getLastStep().isJumping()
-            && (cmd.getMpUsed() < maxMP);
-        boolean moveRemaining = jumpMoveRemaining || runMoveRemaining;
+        boolean fleeStart = !hasLastStep &&
+            ce().canFlee(ce().getPosition());
         boolean fleeEnd = hasLastStep
+            && (cmd.getMpUsed() < cmd.getMaxMP())
             && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_ILLEGAL)
-            && moveRemaining
             && clientgui.getClient().getGame().canFleeFrom(ce(), cmd.getLastStep().getPosition());
 
         setFleeEnabled(fleeStart || fleeEnd);

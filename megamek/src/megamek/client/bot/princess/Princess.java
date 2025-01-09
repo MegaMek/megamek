@@ -3028,6 +3028,14 @@ public class Princess extends BotClient {
             retVal = SharedUtility.moveAero(retVal, null);
         }
 
+        // allow fleeing at end of movement if is falling back and can flee from position
+        if ((isFallingBack(path.getEntity()))
+            && (path.getLastStep() != null)
+            && (getGame().canFleeFrom(path.getEntity(), path.getLastStep().getPosition()))
+            && (path.getMpUsed() < path.getMaxMP())) {
+            path.addStep(MoveStepType.FLEE);
+        }
+
         return retVal;
     }
 

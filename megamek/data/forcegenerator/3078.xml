@@ -1663,7 +1663,7 @@
 		<chassis name='Arbiter' unitType='Mek'>
 			<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,CIR:4-,MERC:2-</availability>
 			<model name='ARB-001 SecurityMech'>
-				<availability>General:8</availability>
+				<availability>IS:8,Periphery.R:8,CIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Arcadia' unitType='Dropship'>
@@ -8080,7 +8080,6 @@
                 <availability>IS:1-,Periphery:2-,TC:1-,MOC:1-,HL:3-,PIR:8</availability>
             </model>
             <model name='GS-107X'>
-                <roles>civilian</roles>
                 <availability>IS:3-,Periphery:4-,TC:3-,MOC:3-,HL:0,PIR:4+</availability>
             </model>
         </chassis>
@@ -15912,9 +15911,9 @@
 			</model>
 		</chassis>
 		<chassis name='Sarissa' unitType='Mek'>
-			<availability>FWL.pm:2,PR:3-</availability>
+			<availability>FWL2-,PR:3-</availability>
 			<model name='MN1-D'>
-				<availability>General:8</availability>
+				<availability>FWL:8,PR:8</availability>
 			</model>
 		</chassis>
         <chassis name='Sasayaku Control Transport' unitType='Tank'>

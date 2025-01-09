@@ -3405,6 +3405,15 @@
 				<availability>CS:4-,IS:8,TC:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Marco' unitType='Mek'>
+            <availability>PIR:2,BAN:3</availability>
+            <model name='MR-8D'>
+                <availability>PIR:8,BAN:8</availability>
+            </model>
+            <model name='MR-8E'>
+                <availability>BAN:1+</availability>
+            </model>
+        </chassis>
 		<chassis name='Marksman Artillery Vehicle' unitType='Tank'>
 			<availability>MOC:3,CHH:2,OA:2,LA:2,CLAN:2,IS:2,CIR:1,BAN:4,TC:2</availability>
 			<model name=''>

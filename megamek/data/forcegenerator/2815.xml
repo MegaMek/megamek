@@ -3066,21 +3066,6 @@
                 <availability>CC:8</availability>
             </model>
         </chassis>
-        <chassis name='Marco' unitType='Mek'>
-            <availability>PP:1,MERC:3</availability>
-            <model name='MR-6 ExplorerMech'>
-                <roles>civilian</roles>
-                <availability>PP:6,MERC:8</availability>
-            </model>
-            <model name='MR-7 ExplorerMech'>
-                <roles>civilian,recon</roles>
-                <availability>PP:5+,MERC:6</availability>
-            </model>
-            <model name='MR-8C ExplorerMech'>
-                <roles>civilian</roles>
-                <availability>PP:6,MERC:8</availability>
-            </model>
-        </chassis>
 		<chassis name='Marauder' unitType='Mek'>
 			<availability>PP:8,CC:5,MOC:2+,CLAN:8,IS:3,FS:6,TC:2+,CS:8,LA:6,FWL:6,NIOPS:8,DC:6</availability>
 			<model name='MAD-1R'>
@@ -3096,15 +3081,27 @@
 				<availability>CS:4-:2819,IS:6:2819,TC:4:2819</availability>
 			</model>
 		</chassis>
-		<chassis name='Marco' unitType='Mek'>
-			<availability>PP:4</availability>
-			<model name='MR-8D'>
-				<availability>PP:8</availability>
-			</model>
-			<model name='MR-8E'>
-				<availability>PP:7</availability>
-			</model>
-		</chassis>
+        <chassis name='Marco' unitType='Mek'>
+            <availability>PP:1,MERC:3</availability>
+            <model name='MR-6 ExplorerMech'>
+                <roles>civilian</roles>
+                <availability>PP:6,MERC:8</availability>
+            </model>
+            <model name='MR-7 ExplorerMech'>
+                <roles>civilian,recon</roles>
+                <availability>PP:5+,MERC:6</availability>
+            </model>
+            <model name='MR-8C ExplorerMech'>
+                <roles>civilian</roles>
+                <availability>PP:6,MERC:8</availability>
+            </model>
+            <model name='MR-8D'>
+                <availability>PP:8,MERC:2-</availability>
+            </model>
+            <model name='MR-8E'>
+                <availability>PP:2+</availability>
+            </model>
+        </chassis>
 		<chassis name='Marksman Artillery Vehicle' unitType='Tank'>
 			<availability>PP:5,MOC:4,CHH:3,OA:4,LA:5,CLAN:3,IS:4,CIR:3,TC:4</availability>
 			<model name=''>

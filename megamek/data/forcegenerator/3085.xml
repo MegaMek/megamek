@@ -1472,6 +1472,12 @@
 				<availability>DTA:6,OP:6,RF:6,FWL:6,MSC:6,DA:6,RCM:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Araña' unitType='Mek'>
+            <availability>CEI:3-:3087</availability>
+            <model name='ARA-S-1 MilitiaMech'>
+                <availability>CEI:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Arbalest' unitType='Mek'>
 			<availability>CDS:2,ROS:4,CNC:5,MERC:3,FS:3,DC:3</availability>
 			<model name=''>
@@ -1487,7 +1493,7 @@
 		<chassis name='Arbiter' unitType='Mek'>
 			<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,MERC:2-</availability>
 			<model name='ARB-001 SecurityMech'>
-				<availability>General:8</availability>
+				<availability>IS:8,Periphery.R:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Arcadia' unitType='Dropship'>
@@ -7859,7 +7865,6 @@
                 <availability>IS:1-,MERC:3-,Periphery:2-,TC:1-,MOC:1-,HL:2-,PIR:8</availability>
             </model>
             <model name='GS-107X'>
-                <roles>civilian</roles>
                 <availability>IS:2-,MERC:3-,Periphery:4-,TC:3-,MOC:3-,HL:1,PIR:4+</availability>
             </model>
         </chassis>
@@ -14904,6 +14909,12 @@
 				<availability>CC:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Reptar' unitType='Mek'>
+            <availability>CEI:4-:3086</availability>
+            <model name='EPT-C-1 MilitiaMech'>
+                <availability>CEI:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Rhino Fire Support Tank' unitType='Tank'>
 			<availability>MOC:7,HL:9,CLAN:4,Periphery.Deep:9,IS:5,FS:6,MERC:7,Periphery:10,TC:7,RA.OA:7,LA:7,CGB.FRR:5,ROS:7,NIOPS:7,DC:6</availability>
 			<model name=''>
@@ -15515,17 +15526,14 @@
 				<availability>DC:8</availability>
 			</model>
 		</chassis>
-		<chassis name='Sarissa SecurityMech' unitType='Mek'>
-			<availability>RF.pm:5</availability>
-			<model name='MN2-A'>
-				<availability>General:8</availability>
-			</model>
-		</chassis>
 		<chassis name='Sarissa' unitType='Mek'>
-			<availability>PR:2-</availability>
+			<availability>PR:3,RF:3</availability>
 			<model name='MN1-D'>
-				<availability>General:8</availability>
+				<availability>PR:3-,RF:3-</availability>
 			</model>
+            <model name='MN2-A SecurityMech'>
+                <availability>PR:4-,RF:4-</availability>
+            </model>
 		</chassis>
 		<chassis name='Saroyan Jump Bomber' unitType='Conventional Fighter'>
 			<availability>CC:2-,MOC:2-,FR:1,DA:1-</availability>
@@ -16486,18 +16494,14 @@
 			</model>
 		</chassis>
 		<chassis name='Sokuryou' unitType='Mek'>
-			<availability>DC:2</availability>
-			<model name='SKU-181 SurveyMech'>
-				<roles>support,spotter</roles>
-				<availability>General:4</availability>
-			</model>
-			<model name='SKU-197 SurveyMech'>
-				<roles>spotter</roles>
-				<availability>General:4</availability>
-			</model>
+			<availability>DC:4-</availability>
+            <model name='SKU-197 SurveyMech'>
+                <roles>recon,spotter</roles>
+                <availability>DC:8</availability>
+            </model>
 			<model name='SKU-198 SurveyMech'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+                <roles>recon</roles>
+				<availability>DC:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Solitaire' unitType='Mek'>

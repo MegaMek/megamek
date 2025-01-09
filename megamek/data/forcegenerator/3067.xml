@@ -7074,7 +7074,6 @@
                 <availability>IS:1-,Periphery:2-,TC:1-,MOC:1-,HL:3-,PIR:8</availability>
             </model>
             <model name='GS-107X'>
-                <roles>civilian</roles>
                 <availability>IS:2-:3068,Periphery:4-:3069,TC:3-:3069,MOC:3-:3069,HL:0,PIR:4+:3069</availability>
             </model>
         </chassis>

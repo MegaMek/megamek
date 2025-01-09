@@ -3896,6 +3896,12 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Grommet' unitType='Mek'>
+            <availability>FS:1,FC:0</availability>
+            <model name='D90 MilitiaMech'>
+                <availability>FS:1-</availability>
+			</model>
+		</chassis>
         <chassis name='Guard' unitType='Mek'>
             <availability>CC:4-,SIC:3-,DC:2-</availability>
             <model name='GS-54 SecurityMech'>

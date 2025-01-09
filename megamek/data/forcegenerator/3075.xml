@@ -1510,7 +1510,7 @@
 		<chassis name='Arbiter' unitType='Mek'>
 			<availability>Periphery.R:2-,CIR:2-</availability>
 			<model name='ARB-001 SecurityMech'>
-				<availability>General:8</availability>
+				<availability>Periphery.R:8,CIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Arcadia' unitType='Dropship'>
@@ -7706,7 +7706,6 @@
                 <availability>IS:1-,Periphery:2-,TC:1-,MOC:1-,HL:3-,PIR:8</availability>
             </model>
             <model name='GS-107X'>
-                <roles>civilian</roles>
                 <availability>IS:3-,Periphery:4-,TC:3-,MOC:3-,HL:0,PIR:4+</availability>
             </model>
         </chassis>

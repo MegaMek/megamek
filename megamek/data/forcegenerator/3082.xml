@@ -1475,7 +1475,7 @@
 		<chassis name='Arbiter' unitType='Mek'>
 			<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,MERC:2-</availability>
 			<model name='ARB-001 SecurityMech'>
-				<availability>General:8</availability>
+				<availability>IS:8,Periphery.R:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Arcadia' unitType='Dropship'>
@@ -7525,7 +7525,6 @@
                 <availability>IS:1-,MERC:3-,Periphery:2-,TC:1-,MOC:1-,HL:2-,PIR:8</availability>
             </model>
             <model name='GS-107X'>
-                <roles>civilian</roles>
                 <availability>IS:2-,MERC:3-,Periphery:4-,TC:3-,MOC:3-,HL:1,PIR:4+</availability>
             </model>
         </chassis>
@@ -14776,17 +14775,14 @@
 				<availability>DC:8</availability>
 			</model>
 		</chassis>
-		<chassis name='Sarissa SecurityMech' unitType='Mek'>
-			<availability>PR:4-</availability>
-			<model name='MN2-A'>
-				<availability>General:8</availability>
-			</model>
-		</chassis>
 		<chassis name='Sarissa' unitType='Mek'>
-			<availability>PR:3-</availability>
+			<availability>PR:3</availability>
 			<model name='MN1-D'>
-				<availability>General:8</availability>
+				<availability>PR:3-</availability>
 			</model>
+            <model name='MN2-A SecurityMech'>
+                <availability>PR:4-</availability>
+            </model>
 		</chassis>
         <chassis name='Sasayaku Control Transport' unitType='Tank'>
             <availability>CNC:2-,DC:2</availability>
@@ -15623,18 +15619,14 @@
 			</model>
 		</chassis>
 		<chassis name='Sokuryou' unitType='Mek'>
-			<availability>DC:1</availability>
+			<availability>DC:4-:3084</availability>
 			<model name='SKU-181 SurveyMech'>
-				<roles>support,spotter</roles>
-				<availability>General:4</availability>
+				<roles>spotter</roles>
+				<availability>DC:1</availability>
 			</model>
 			<model name='SKU-197 SurveyMech'>
-				<roles>spotter</roles>
-				<availability>General:4</availability>
-			</model>
-			<model name='SKU-198 SurveyMech'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>recon,spotter</roles>
+				<availability>DC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Solitaire' unitType='Mek'>

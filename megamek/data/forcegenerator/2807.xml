@@ -2702,6 +2702,17 @@
                 <availability>CC:8</availability>
             </model>
         </chassis>
+		<chassis name='Marauder' unitType='Mek'>
+			<availability>PP:8,CC:5,CS:8,MOC:2+,LA:6,FWL:6,IS:3,NIOPS:8,FS:6,DC:6,TC:2+</availability>
+			<model name='MAD-1R'>
+                <roles>command</roles>
+				<availability>PP:8,CS:8,MOC:8,IS:7+,NIOPS:8,MERC:0,TC:8+</availability>
+			</model>
+			<model name='MAD-2R'>
+                <roles>command</roles>
+				<availability>PP:4,FS:4+</availability>
+			</model>
+		</chassis>
         <chassis name='Marco' unitType='Mek'>
             <availability>PP:1,MERC:3</availability>
             <model name='MR-6 ExplorerMech'>
@@ -2716,27 +2727,13 @@
                 <roles>civilian</roles>
                 <availability>PP:6,MERC:8</availability>
             </model>
+            <model name='MR-8D'>
+                <availability>PP:6,MERC:2-</availability>
+            </model>
+            <model name='MR-8E'>
+                <availability>PP:2+</availability>
+            </model>
         </chassis>
-		<chassis name='Marauder' unitType='Mek'>
-			<availability>PP:8,CC:5,CS:8,MOC:2+,LA:6,FWL:6,IS:3,NIOPS:8,FS:6,DC:6,TC:2+</availability>
-			<model name='MAD-1R'>
-                <roles>command</roles>
-				<availability>PP:8,CS:8,MOC:8,IS:7+,NIOPS:8,MERC:0,TC:8+</availability>
-			</model>
-			<model name='MAD-2R'>
-                <roles>command</roles>
-				<availability>PP:4,FS:4+</availability>
-			</model>
-		</chassis>
-		<chassis name='Marco' unitType='Mek'>
-			<availability>PP:4</availability>
-			<model name='MR-8D'>
-				<availability>PP:8</availability>
-			</model>
-			<model name='MR-8E'>
-				<availability>PP:7</availability>
-			</model>
-		</chassis>
 		<chassis name='Marksman Artillery Vehicle' unitType='Tank'>
 			<availability>PP:5,MOC:4,OA:4,LA:5,IS:4,CIR:3,TC:4</availability>
 			<model name=''>

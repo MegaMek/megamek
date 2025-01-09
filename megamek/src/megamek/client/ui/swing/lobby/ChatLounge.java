@@ -20,55 +20,6 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-import static megamek.client.ui.swing.lobby.LobbyUtility.containsTransportedUnit;
-import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
-import static megamek.client.ui.swing.lobby.LobbyUtility.extractSurpriseMaps;
-import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
-import static megamek.client.ui.swing.lobby.LobbyUtility.invalidBoardTip;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isBoardFile;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
-import static megamek.client.ui.swing.lobby.LobbyUtility.mekReadoutAction;
-import static megamek.client.ui.swing.util.UIUtil.*;
-import static megamek.common.util.CollectionUtil.theElement;
-import static megamek.common.util.CollectionUtil.union;
-
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageProducer;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import megamek.MMConstants;
 import megamek.SuiteConstants;
 import megamek.client.AbstractClient;
@@ -81,8 +32,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.advancedSearchMap.AdvancedSearchMapDialog;
-import megamek.client.ui.dialogs.BotConfigDialog;
-import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.*;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -95,17 +45,13 @@ import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
-import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.autoresolve.converter.MMSetupForces;
+import megamek.common.board.postprocess.TWBoardTransformer;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameCFREvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
@@ -123,6 +69,42 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.io.*;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
+import static megamek.client.ui.swing.util.UIUtil.*;
+import static megamek.common.util.CollectionUtil.theElement;
+import static megamek.common.util.CollectionUtil.union;
+
 public class ChatLounge extends AbstractPhaseDisplay implements
         ListSelectionListener, IMapSettingsObserver, IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(ChatLounge.class);
@@ -135,43 +117,43 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private static final int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
 
-    private JTabbedPane panTabs = new JTabbedPane();
-    private JPanel panUnits = new JPanel();
-    private JPanel panMap = new JPanel();
-    private JPanel panTeam = new JPanel();
+    private final JTabbedPane panTabs = new JTabbedPane();
+    private final JPanel panUnits = new JPanel();
+    private final JPanel panMap = new JPanel();
+    private final JPanel panTeam = new JPanel();
 
     // Labels
-    private JLabel lblMapSummary = new JLabel("");
-    private JLabel lblGameYear = new JLabel("");
-    private JLabel lblTechLevel = new JLabel("");
+    private final JLabel lblMapSummary = new JLabel("");
+    private final JLabel lblGameYear = new JLabel("");
+    private final JLabel lblTechLevel = new JLabel("");
 
     // Game Setup
-    private JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
-    private JToggleButton butGroundMap = new JToggleButton(Messages.getString("ChatLounge.butGroundMap"));
-    private JToggleButton butLowAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.lowAltitudeMap"));
-    private JToggleButton butHighAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.HighAltitudeMap"));
-    private JToggleButton butSpaceMap = new JToggleButton(Messages.getString("ChatLounge.name.spaceMap"));
-    private ButtonGroup grpMap = new ButtonGroup();
+    private final JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
+    private final JToggleButton butGroundMap = new JToggleButton(Messages.getString("ChatLounge.butGroundMap"));
+    private final JToggleButton butLowAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.lowAltitudeMap"));
+    private final JToggleButton butHighAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.HighAltitudeMap"));
+    private final JToggleButton butSpaceMap = new JToggleButton(Messages.getString("ChatLounge.name.spaceMap"));
+    private final ButtonGroup grpMap = new ButtonGroup();
 
     /* Unit Configuration Panel */
-    private FixedYPanel panUnitInfo = new FixedYPanel();
-    private JButton butAdd = new JButton(Messages.getString("ChatLounge.butLoad"));
-    private JButton butArmy = new JButton(Messages.getString("ChatLounge.butArmy"));
-    private JButton butSkills = new JButton(Messages.getString("ChatLounge.butSkills"));
-    private JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
-    private JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
-    private JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
-    private JButton butPrintList = new JButton(Messages.getString("ChatLounge.butPrintList"));
+    private final FixedYPanel panUnitInfo = new FixedYPanel();
+    private final JButton butAdd = new JButton(Messages.getString("ChatLounge.butLoad"));
+    private final JButton butArmy = new JButton(Messages.getString("ChatLounge.butArmy"));
+    private final JButton butSkills = new JButton(Messages.getString("ChatLounge.butSkills"));
+    private final JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
+    private final JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
+    private final JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
+    private final JButton butPrintList = new JButton(Messages.getString("ChatLounge.butPrintList"));
 
     /* Unit Table */
     private MekTable mekTable;
     public JScrollPane scrMekTable;
-    private MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
-    private MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
-    private JToggleButton butListView = new JToggleButton(Messages.getString("ChatLounge.butSortableView"));
-    private JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
-    private JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
-    private JButton butExpand = new JButton(Messages.getString("ChatLounge.butExpand"));
+    private final MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
+    private final MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    private final JToggleButton butListView = new JToggleButton(Messages.getString("ChatLounge.butSortableView"));
+    private final JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
+    private final JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
+    private final JButton butExpand = new JButton(Messages.getString("ChatLounge.butExpand"));
     private MekTableModel mekModel;
 
     /* Force Tree */
@@ -181,84 +163,91 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /* Player Configuration Panel */
     private FixedYPanel panPlayerInfo;
-    private JComboBox<String> comboTeam = new JComboBox<>();
-    private JButton butCamo = new JButton();
-    private JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
-    private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
-    private JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
-    private JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    private final JComboBox<String> comboTeam = new JComboBox<>();
+    private final JButton butCamo = new JButton();
+    private final JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
+    private final JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
+    private final JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
+    private final JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
     PlayerSettingsDialog psd;
 
     private transient MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
-    private PlayerTableModel playerModel = new PlayerTableModel();
-    private PlayerTable tablePlayers = new PlayerTable(playerModel, this);
-    private JScrollPane scrPlayers = new JScrollPane(tablePlayers);
+    private final PlayerTableModel playerModel = new PlayerTableModel();
+    private final PlayerTable tablePlayers = new PlayerTable(playerModel, this);
+    private final JScrollPane scrPlayers = new JScrollPane(tablePlayers);
+
+    /* ACAR Settings Panel */
+    private FixedYPanel panAutoResolveInfo;
+    private final JButton butRunAutoResolve = new JButton(Messages.getString("ChatLounge.butRunAutoResolve"));
+    private final JSpinner spnSimulationRuns = new JSpinner(new SpinnerNumberModel(10, 1, 1000, 1));
+    private final JSpinner spnThreadNumber = new JSpinner(new SpinnerNumberModel(Runtime.getRuntime().availableProcessors(), 1, Math.max(2, Runtime.getRuntime().availableProcessors() * 2), 1));
+    private final JCheckBox chkAutoResolve = new JCheckBox();
 
     /* Map Settings Panel */
-    private JLabel lblMapWidth = new JLabel(Messages.getString("ChatLounge.labMapWidth"));
-    private JButton butMapGrowW = new JButton(Messages.getString("ChatLounge.butGrow"));
-    private JButton butMapShrinkW = new JButton(Messages.getString("ChatLounge.butShrink"));
-    private JTextField fldMapWidth = new JTextField(3);
-    private JLabel lblMapHeight = new JLabel(Messages.getString("ChatLounge.labMapHeight"));
-    private JButton butMapGrowH = new JButton(Messages.getString("ChatLounge.butGrow"));
-    private JButton butMapShrinkH = new JButton(Messages.getString("ChatLounge.butShrink"));
-    private JTextField fldMapHeight = new JTextField(3);
-    private FixedYPanel panMapHeight = new FixedYPanel();
-    private FixedYPanel panMapWidth = new FixedYPanel();
+    private final JLabel lblMapWidth = new JLabel(Messages.getString("ChatLounge.labMapWidth"));
+    private final JButton butMapGrowW = new JButton(Messages.getString("ChatLounge.butGrow"));
+    private final JButton butMapShrinkW = new JButton(Messages.getString("ChatLounge.butShrink"));
+    private final JTextField fldMapWidth = new JTextField(3);
+    private final JLabel lblMapHeight = new JLabel(Messages.getString("ChatLounge.labMapHeight"));
+    private final JButton butMapGrowH = new JButton(Messages.getString("ChatLounge.butGrow"));
+    private final JButton butMapShrinkH = new JButton(Messages.getString("ChatLounge.butShrink"));
+    private final JTextField fldMapHeight = new JTextField(3);
+    private final FixedYPanel panMapHeight = new FixedYPanel();
+    private final FixedYPanel panMapWidth = new FixedYPanel();
 
-    private JLabel lblSpaceBoardWidth = new JLabel(Messages.getString("ChatLounge.labBoardWidth"));
-    private JTextField fldSpaceBoardWidth = new JTextField(3);
-    private JLabel lblSpaceBoardHeight = new JLabel(Messages.getString("ChatLounge.labBoardHeight"));
-    private JTextField fldSpaceBoardHeight = new JTextField(3);
-    private FixedYPanel panSpaceBoardHeight = new FixedYPanel();
-    private FixedYPanel panSpaceBoardWidth = new FixedYPanel();
+    private final JLabel lblSpaceBoardWidth = new JLabel(Messages.getString("ChatLounge.labBoardWidth"));
+    private final JTextField fldSpaceBoardWidth = new JTextField(3);
+    private final JLabel lblSpaceBoardHeight = new JLabel(Messages.getString("ChatLounge.labBoardHeight"));
+    private final JTextField fldSpaceBoardHeight = new JTextField(3);
+    private final FixedYPanel panSpaceBoardHeight = new FixedYPanel();
+    private final FixedYPanel panSpaceBoardWidth = new FixedYPanel();
 
-    private JLabel lblBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"));
-    private JButton butHelp = new JButton(" " + Messages.getString("ChatLounge.butHelp") + " ");
-    private JButton butAdvancedSearchMap = new JButton(Messages.getString("AdvancedSearchMapDialog.title"));
+    private final JLabel lblBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"));
+    private final JButton butHelp = new JButton(" " + Messages.getString("ChatLounge.butHelp") + " ");
+    private final JButton butAdvancedSearchMap = new JButton(Messages.getString("AdvancedSearchMapDialog.title"));
 
-    private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
-    private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));
+    private final JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
+    private final JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));
     ArrayList<MapPreviewButton> mapButtons = new ArrayList<>(20);
     MapSettings mapSettings;
     private JPanel panGroundMap;
 
     @SuppressWarnings("rawtypes")
     private JComboBox<Comparable> comMapSizes;
-    private JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
-    private JPanel panMapButtons = new JPanel();
-    private JLabel lblBoardsAvailable = new JLabel();
+    private final JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
+    private final JPanel panMapButtons = new JPanel();
+    private final JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
-    private JButton butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
+    private final JButton butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
     private ClientDialog boardPreviewW;
-    private Game boardPreviewGame = new Game();
+    private final Game boardPreviewGame = new Game();
     private transient BoardView previewBV;
     Dimension currentMapButtonSize = new Dimension(0, 0);
     private final JCheckBox showPlayerDeployment = new JCheckBox(Messages.getString("ChatLounge.showPlayerDeployment"));
 
-    private ArrayList<String> invalidBoards = new ArrayList<>();
-    private ArrayList<String> serverBoards = new ArrayList<>();
+    private final ArrayList<String> invalidBoards = new ArrayList<>();
+    private final ArrayList<String> serverBoards = new ArrayList<>();
 
     private JSplitPane splGroundMap;
-    private JLabel lblSearch = new JLabel(Messages.getString("ChatLounge.labSearch"));
-    private JTextField fldSearch = new JTextField(10);
-    private JButton butCancelSearch = new JButton(Messages.getString("ChatLounge.butCancelSearch"));
+    private final JLabel lblSearch = new JLabel(Messages.getString("ChatLounge.labSearch"));
+    private final JTextField fldSearch = new JTextField(10);
+    private final JButton butCancelSearch = new JButton(Messages.getString("ChatLounge.butCancelSearch"));
 
     private transient MekTableSorter activeSorter;
     private transient ArrayList<MekTableSorter> unitSorters = new ArrayList<>();
     private transient ArrayList<MekTableSorter> bvSorters = new ArrayList<>();
 
-    private JButton butAddY = new JButton(Messages.getString("ChatLounge.butAdd"));
-    private JButton butAddX = new JButton(Messages.getString("ChatLounge.butAdd"));
-    private JButton butSaveMapSetup = new JButton(Messages.getString("ChatLounge.map.saveMapSetup") + " *");
-    private JButton butLoadMapSetup = new JButton(Messages.getString("ChatLounge.map.loadMapSetup"));
+    private final JButton butAddY = new JButton(Messages.getString("ChatLounge.butAdd"));
+    private final JButton butAddX = new JButton(Messages.getString("ChatLounge.butAdd"));
+    private final JButton butSaveMapSetup = new JButton(Messages.getString("ChatLounge.map.saveMapSetup") + " *");
+    private final JButton butLoadMapSetup = new JButton(Messages.getString("ChatLounge.map.loadMapSetup"));
 
     /* Team Overview Panel */
     private TeamOverviewPanel panTeamOverview;
     JButton butDetach = new JButton(Messages.getString("ChatLounge.butDetach"));
-    private JSplitPane splitPaneMain;
+    private final JSplitPane splitPaneMain;
     ClientDialog teamOverviewWindow;
 
     private transient ImageLoader loader;
@@ -268,7 +257,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     transient LobbyActions lobbyActions = new LobbyActions(this);
 
-    private Map<String, String> boardTags = new HashMap<>();
+    private final Map<String, String> boardTags = new HashMap<>();
 
     transient LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
@@ -285,6 +274,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String CL_ACTIONCOMMAND_REMOVEBOT = "remove_bot";
     private static final String CL_ACTIONCOMMAND_BOTCONFIG = "BOTCONFIG";
     private static final String CL_ACTIONCOMMAND_CONFIGURE = "CONFIGURE";
+    private static final String CL_ACTIONCOMMAND_AUTORESOLVE = "AUTORESOLVE";
     private static final String CL_ACTIONCOMMAND_CAMO = "camo";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -311,6 +301,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         setupSorters();
         setupTeamOverview();
         setupPlayerConfig();
+        setupAutoResolveConfig();
         refreshGameSettings();
         setupEntities();
         setupUnitConfig();
@@ -394,6 +385,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butForceView.addActionListener(lobbyListener);
         butCollapse.addActionListener(lobbyListener);
         butExpand.addActionListener(lobbyListener);
+        butRunAutoResolve.addActionListener(lobbyListener);
 
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
@@ -607,6 +599,59 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshPlayerTable();
     }
 
+    /** Sets up the player configuration (team, camo) panel with the player list. */
+    private void setupAutoResolveConfig() {
+        scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        butRunAutoResolve.setActionCommand(CL_ACTIONCOMMAND_AUTORESOLVE);
+        butRunAutoResolve.setEnabled(true);
+        butRunAutoResolve.setToolTipText(Messages.getString("ChatLounge.autoresolve.tooltip"));
+        spnSimulationRuns.setEnabled(false);
+        spnSimulationRuns.setToolTipText(Messages.getString("ChatLounge.autoresolve.numOfSimulations.tooltip"));
+        spnThreadNumber.setEnabled(false);
+        chkAutoResolve.setEnabled(true);
+
+        chkAutoResolve.addActionListener(e -> {
+            boolean enabled = chkAutoResolve.isSelected();
+            spnSimulationRuns.setEnabled(enabled);
+            spnThreadNumber.setEnabled(enabled);
+        });
+
+        JPanel row1 = new JPanel(new GridLayout(1, 1, 2, 2));
+        row1.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row1.add(new JLabel(Messages.getString("ChatLounge.name.autoResolveSetup.blurb")));
+
+        JPanel row2 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row2.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row2.add(new JLabel(Messages.getString("ChatLounge.autoresolve.numOfSimulations")));
+        row2.add(spnSimulationRuns);
+
+        JPanel row3 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row3.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row3.add(new JLabel(Messages.getString("ChatLounge.autoresolve.parallelism")));
+        row3.add(spnThreadNumber);
+
+        JPanel row4 = new JPanel(new GridLayout(1, 2, 2, 2));
+        row4.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row4.add(new JLabel(Messages.getString("ChatLounge.chkAutoResolve")));
+        row4.add(chkAutoResolve);
+
+        JPanel row5 = new JPanel(new GridLayout(1, 1, 2, 2));
+        row5.setBorder(new EmptyBorder(0, 2, 0, 1));
+        row5.add(butRunAutoResolve);
+
+        panAutoResolveInfo = new FixedYPanel(new GridLayout(5, 1, 2, 2));
+        panAutoResolveInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.autoResolveSetup")));
+        panAutoResolveInfo.setToolTipText(Messages.getString("ChatLounge.name.autoResolveSetup.tooltip"));
+        panAutoResolveInfo.add(row1);
+        panAutoResolveInfo.add(row2);
+        panAutoResolveInfo.add(row3);
+        panAutoResolveInfo.add(row4);
+        panAutoResolveInfo.add(row5);
+
+        refreshPlayerTable();
+    }
+
     /** Sets up the lobby main panel (units/players). */
     private void setupUnitsPanel() {
         ButtonGroup viewGroup = new ButtonGroup();
@@ -631,6 +676,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         leftSide.add(panUnitInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(panPlayerInfo);
+        leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
+        leftSide.add(panAutoResolveInfo);
         leftSide.add(Box.createVerticalStrut(scaleForGUI(5)));
         leftSide.add(scrPlayers);
 
@@ -1866,6 +1913,29 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     clientgui.getClient().sendMapDimensions(mapSettings);
                 }
 
+            } else if (ev.getSource() == butRunAutoResolve) {
+                var simulationRuns = (int) spnSimulationRuns.getValue();
+                var threadNumbers = (int) spnThreadNumber.getValue();
+                var forcesSetups = new MMSetupForces(game());
+                var currentTeam = client().getLocalPlayer().getTeam();
+
+                var board = TWBoardTransformer.instantiateBoard(client().getMapSettings(), client().getGame().getPlanetaryConditions(), client().getGame().getOptions());
+
+                if (chkAutoResolve.isSelected()) {
+                    var proceed = AutoResolveChanceDialog.showDialog(
+                        clientgui.getFrame(), simulationRuns, threadNumbers, currentTeam, forcesSetups, board) == JOptionPane.YES_OPTION;
+
+                    if (!proceed) {
+                        return;
+                    }
+                }
+
+                var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board);
+
+                var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(), event.getLogFile());
+                autoResolveBattleReport.setModal(true);
+                autoResolveBattleReport.setVisible(true);
+
             } else if (ev.getSource() == butDetach) {
                 butDetach.setEnabled(false);
                 panTeam.remove(panTeamOverview);
@@ -2355,6 +2425,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butForceView.removeActionListener(lobbyListener);
         butCollapse.removeActionListener(lobbyListener);
         butExpand.removeActionListener(lobbyListener);
+        butRunAutoResolve.removeActionListener(lobbyListener);
 
         fldMapWidth.removeActionListener(lobbyListener);
         fldMapHeight.removeActionListener(lobbyListener);

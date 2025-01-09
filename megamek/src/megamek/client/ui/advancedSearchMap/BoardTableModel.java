@@ -113,7 +113,7 @@ class BoardTableModel extends AbstractTableModel {
     }
 
     public void setData(BoardClassifier bc) {
-        data = bc.getBoardPaths().values().stream().toList();;
+        data = bc.getBoardPaths().values().stream().toList();
         tags = new ArrayList<>();
         width = new ArrayList<>();
         height = new ArrayList<>();

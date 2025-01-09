@@ -296,7 +296,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapsheetColor;
-    private JSpinner attackArrowTransparency;;
+    private JSpinner attackArrowTransparency;
     private JSpinner ecmTransparency;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
@@ -2513,10 +2513,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             }
             CLIENT_PREFERENCES.setMapTileset(tileSetFileName);
         }
-
         ToolTipManager.sharedInstance().setInitialDelay(GUIP.getTooltipDelay());
         if (GUIP.getTooltipDismissDelay() > 0) {
             ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
+        } else {
+            ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
         }
 
         // Check if any keybinds have changed and, if so, save them

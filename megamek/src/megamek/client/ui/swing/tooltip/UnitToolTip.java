@@ -1888,7 +1888,7 @@ public final class UnitToolTip {
 
         // Seen by
         if (showSeenBy) {
-            String seenByInfo = getSeenByInfo(game, gameOptions, entity);;
+            String seenByInfo = getSeenByInfo(game, gameOptions, entity);
             if (!seenByInfo.isEmpty()) {
                 attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getUnitToolTipHighlightColor())));
                 seenByInfo = UIUtil.tag("FONT", attr, seenByInfo);

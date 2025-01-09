@@ -180,6 +180,11 @@ public class TargetRoll implements Serializable {
     }
 
     /**
+     * Does not do anything, necessary because Java does not have a "noop" function.
+     */
+    public void doNothing() {}
+
+    /**
      * Adds a new modifier of the given value and description, which is or is not cumulative.
      *
      * @param value The modifier value, e.g. +2 or -1

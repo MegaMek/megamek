@@ -89,6 +89,9 @@ public class WeightedDoubleMap<T> extends AbstractWeightedMap<Double, T> {
             @SuppressWarnings("unchecked")
             T t = Objects.requireNonNull((T) input[i]);
             double weight = (double) input[i+1];
+            if (weight == 0.0d) {
+                continue;
+            }
             var alreadyPresent = this.entrySet().stream().anyMatch(entry -> entry.getValue().equals(t));
             if (alreadyPresent) {
                 throw new IllegalArgumentException("duplicate value: " + t);

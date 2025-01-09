@@ -49,6 +49,10 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
         return specialAbilities.isEmpty();
     }
 
+    public EnumMap<BattleForceSUA, Object> getInternalRepr() {
+        return specialAbilities;
+    }
+
     @Override
     public String toString() {
         return specialAbilities.keySet().stream()

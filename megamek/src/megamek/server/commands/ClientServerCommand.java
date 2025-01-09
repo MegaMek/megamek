@@ -85,9 +85,9 @@ public abstract class ClientServerCommand extends ServerCommand {
         return server.getGameManager().getGame().getPlayer(connId).getGameMaster();
     }
 
-    private void safeParseArgumentsAndRun(int connId, String[] args) {
+    protected void safeParseArgumentsAndRun(int connId, String[] args) {
         try {
-            var parsedArguments = new Arguments(parseArguments(args));
+            var parsedArguments = new Arguments(parseArguments(args, defineArguments()));
             runCommand(connId, parsedArguments);
         } catch (IllegalArgumentException e) {
             server.sendServerChat(connId, "Invalid arguments: " + e.getMessage() + "\nUsage: " + this.getHelp());
@@ -118,9 +118,7 @@ public abstract class ClientServerCommand extends ServerCommand {
 
 
     // Parses the arguments using the definition
-    private Map<String, Argument<?>> parseArguments(String[] args) {
-
-        List<Argument<?>> argumentDefinitions = defineArguments();
+    protected Map<String, Argument<?>> parseArguments(String[] args, List<Argument<?>> argumentDefinitions) {
         Map<String, Argument<?>> parsedArguments = new HashMap<>();
         List<String> positionalArguments = new ArrayList<>();
 

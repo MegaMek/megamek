@@ -2258,7 +2258,7 @@
 		</chassis>
 		<chassis name='Awesome' unitType='Mek'>
 			<availability>MOC:6,CC:5,RA.OA:6,ROS:5,IS:4,FWL:8,CP:8,Periphery:8,TC:5,DC:6</availability>
-            <model name="C">
+            <model name='C'>
                 <availability>SE:6+</availability>
             </model>
 			<model name='AWS-10KM'>
@@ -7966,7 +7966,7 @@
 				<availability>LA:8,ROS:6,General:4,FS:8</availability>
 			</model>
 		</chassis>
-        <chassis name="Generic Expandable Services Vehicle" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle' unitType='Tank'>
             <availability>CLAN.IS:3,IS:5+,FS:6,ROS:6</availability>
             <model name='(Command Post)'>
                 <roles>command,support</roles>
@@ -7981,7 +7981,7 @@
                 <availability>CLAN.IS:6,IS:6,FS:6,ROS:6</availability>
             </model>
         </chassis>
-        <chassis name="Generic Expandable Services Vehicle Trailer" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle Trailer' unitType='Tank'>
             <availability>CLAN.IS:3,FS:6,IS:5+,ROS:6</availability>
             <model name='(Bunk)'>
                 <roles>support</roles>

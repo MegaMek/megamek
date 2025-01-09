@@ -771,7 +771,7 @@
 		</chassis>
         <chassis name='Ballista Self-Propelled Artillery Tank' unitType='Tank'>
             <availability>IS:3,Periphery:6</availability>
-            <model name="">
+            <model name=''>
                 <roles>artillery</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
@@ -4837,7 +4837,7 @@
 				<roles>mek_carrier</roles>
 				<availability>CLAN:8</availability>
 			</model>
-            <model name="(2829) (Tank)">
+            <model name='(2829) (Tank)'>
                 <roles>vee_carrier,infantry_carrier</roles>
                 <availability>CLAN:6-,CHH:6</availability>
             </model>

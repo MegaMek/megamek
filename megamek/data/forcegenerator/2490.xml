@@ -281,7 +281,7 @@
 		</chassis>
         <chassis name='Ballista Self-Propelled Artillery Tank' unitType='Tank'>
             <availability>TH:6,IS:5+</availability>
-            <model name="">
+            <model name=''>
                 <roles>artillery</roles>
                 <availability>IS:8</availability>
             </model>

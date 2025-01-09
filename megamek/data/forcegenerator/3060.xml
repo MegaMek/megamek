@@ -1763,7 +1763,7 @@
 		</chassis>
         <chassis name='Ballista Self-Propelled Artillery Tank' unitType='Tank'>
             <availability>IS:2-,Periphery:3</availability>
-            <model name="">
+            <model name=''>
                 <roles>artillery</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
@@ -5242,7 +5242,7 @@
 				<availability>LA:7,FS:7</availability>
 			</model>
 		</chassis>
-        <chassis name="Generic Expandable Services Vehicle" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle' unitType='Tank'>
             <availability>FS:4+:3066</availability>
             <model name='(Command Post)'>
                 <roles>command,support</roles>
@@ -5257,7 +5257,7 @@
                 <availability>FS:6</availability>
             </model>
         </chassis>
-        <chassis name="Generic Expandable Services Vehicle Trailer" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle Trailer' unitType='Tank'>
             <availability>FS:4+:3066</availability>
             <model name='(Bunk)'>
                 <roles>support</roles>

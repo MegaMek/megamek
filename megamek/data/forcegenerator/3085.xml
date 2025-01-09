@@ -7162,7 +7162,7 @@
 				<availability>LA:8,ROS:5,General:2,FS:8</availability>
 			</model>
 		</chassis>
-        <chassis name="Generic Expandable Services Vehicle" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle' unitType='Tank'>
             <availability>CLAN.IS:3,IS:5+,FS:6,ROS:6</availability>
             <model name='(Command Post)'>
                 <roles>command,support</roles>
@@ -7177,7 +7177,7 @@
                 <availability>CLAN.IS:6,IS:6,FS:6,ROS:6</availability>
             </model>
         </chassis>
-        <chassis name="Generic Expandable Services Vehicle Trailer" unitType="Tank">
+        <chassis name='Generic Expandable Services Vehicle Trailer' unitType='Tank'>
             <availability>CLAN.IS:3,FS:6,IS:5+,ROS:6</availability>
             <model name='(Bunk)'>
                 <roles>support</roles>

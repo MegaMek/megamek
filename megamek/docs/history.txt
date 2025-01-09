@@ -18,6 +18,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6376: Makes the end command work
 + Fix #6368: Allow princess to flee at end of movement
 + PR #6381: Added Static Access to Resource Bundle
++ PR #6382: Rolled Back #6381
 
 
 0.50.02 (2024-12-30 2130 UTC)

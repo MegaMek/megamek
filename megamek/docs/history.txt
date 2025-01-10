@@ -13,6 +13,12 @@ MEGAMEK VERSION HISTORY:
 + Fix #6345: Updated more pavement checks to consider dirt & gravel roads not paved
 + Fix #6339: 16x17 Battle of Stanrey -3- Up-Right.board does not match the complete version
 + PR #6356: Revised dirt road art
++ PR #6372: Abstract Combat Auto Resolution Beta 2025.1
++ Fix #6374: Fixes a class cast bug and an error in the argument parsing algorithm
++ PR #6376: Makes the end command work
++ Fix #6368: Allow princess to flee at end of movement
++ PR #6381: Added Static Access to Resource Bundle
++ PR #6382: Rolled Back #6381
 
 
 0.50.02 (2024-12-30 2130 UTC)

@@ -38,8 +38,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
@@ -87,6 +86,8 @@ public class MegaMek {
             options.setServerName("MegaMekClient");
             options.setRelease(SuiteConstants.VERSION.toString());
         });
+
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {

@@ -52,6 +52,13 @@ public abstract class BaseFormationConverter <T extends SBFFormation> {
         this.report = new FlexibleCalculationReport();
     }
 
+    public BaseFormationConverter(Force force, IGame game, T formation, CalculationReport report) {
+        this.force = force;
+        this.game = game;
+        this.formation = formation;
+        this.report = report;
+    }
+
     /**
      * Returns true if the given force can be converted to an SBF Formation.
      */

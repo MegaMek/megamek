@@ -208,6 +208,24 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return currentArmor;
     }
 
+    public double getArmorPercentage() {
+        if (fullArmor == 0) {
+            return 0d;
+        }
+        return (double) currentArmor / fullArmor;
+    }
+
+    public double getStructurePercentage() {
+        if (fullStructure == 0) {
+            return 0d;
+        }
+        return (double) currentStructure / fullStructure;
+    }
+
+    public double getHealthPercentage() {
+        return (getArmorPercentage() + getStructurePercentage()) / 2;
+    }
+
     @Override
     public int getThreshold() {
         return threshold;

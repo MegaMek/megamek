@@ -33,6 +33,12 @@ public interface DamageApplier<E extends Entity> {
         public HitDetails killsCrew() {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Crew.DEATH);
         }
+        public HitDetails withIncreasedCrewDamage() {
+            return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
+        }
+        public HitDetails withDamage(int damage) {
+            return new HitDetails(hit, damage, setArmorValueTo, hitInternal, Math.min(hitCrew + 1, Crew.DEATH));
+        }
     }
 
     E entity();
@@ -70,10 +76,6 @@ public interface DamageApplier<E extends Entity> {
         int totalDamage = dmg;
         int damageApplied = 0;
         while (totalDamage > 0) {
-            if (entity().isCrippled() && entity().getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
-                // devastated units don't need to take any damage anymore
-                break;
-            }
             var clusterDamage = Math.min(totalDamage, clusterSize);
             applyDamage(clusterDamage);
             totalDamage -= clusterDamage;
@@ -84,6 +86,30 @@ public interface DamageApplier<E extends Entity> {
         }
         return damageApplied;
     }
+
+
+    /**
+     * Applies damage to the entity in clusters of a given size.
+     * This is USUALLY the function you will want to use.
+     *
+     * @param hitDetails the details of the hit
+     * @param clusterSize the size of the clusters
+     */
+    default int applyDamageInClusters(HitDetails hitDetails, int clusterSize) {
+        int totalDamage = hitDetails.damageToApply();
+        int damageApplied = 0;
+        while (totalDamage > 0) {
+            var clusterDamage = Math.min(totalDamage, clusterSize);
+            applyDamage(hitDetails.withDamage(clusterDamage));
+            totalDamage -= clusterDamage;
+            damageApplied += clusterDamage;
+        }
+        if (entityMystBeDevastated()) {
+            damageApplied += devastateUnit();
+        }
+        return damageApplied;
+    }
+
 
     int devastateUnit();
 
@@ -158,7 +184,7 @@ public interface DamageApplier<E extends Entity> {
         entity.setArmor(0, hit);
         logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
         entity.setInternal(newInternalValue, hit);
-        applyDamageToEquipments(hit);
+        applyDamageToEquipments(hitDetails);
         if (newInternalValue == 0) {
             hitDetails = destroyLocation(hitDetails);
         }
@@ -195,13 +221,24 @@ public interface DamageApplier<E extends Entity> {
      * @param hitCrew the amount of hits to apply to ALL crew
      */
     default void tryToDamageCrew(int hitCrew) {
+        tryToDamageCrew(hitCrew, false);
+    }
+
+    /**
+     * Tries to damage the crew of the entity. If the crew is dead, the entity is marked as destroyed.
+     * The crew won't be damaged if they are already ejected or already dead.
+     * This function also does try to not outright kill the crew, as it has proven to be a bit too deadly.
+     * @param hitCrew the amount of hits to apply to ALL crew
+     * @param applyDamagePostEjection if the damage should be applied after the crew is ejected
+     */
+    default void tryToDamageCrew(int hitCrew, boolean applyDamagePostEjection) {
         if (hitCrew == 0 || noCrewDamage()) {
             return;
         }
 
         var entity = entity();
         Crew crew = entity.getCrew();
-        if (crew == null || crew.isEjected() || crew.isDead()) {
+        if (crew == null || (crew.isEjected() && !applyDamagePostEjection) || crew.isDead()) {
             return;
         }
         var hits = tryToNotKillTheCrew(hitCrew, crew);
@@ -229,13 +266,8 @@ public interface DamageApplier<E extends Entity> {
         }
         var hits = Math.min(crew.getHits() + hitCrew, Crew.DEATH);
 
-        if (hits == Crew.DEATH) {
-            if (crewMustSurvive()) {
-                hits = Compute.randomIntInclusive(4) + 1;
-            }
-            if (tryToEjectCrew()) {
-                destroyLocationAfterEjection();
-            }
+        if (hits == Crew.DEATH && crewMustSurvive()) {
+            hits = Compute.randomIntInclusive(4) + 1;
         }
         return hits;
     }
@@ -254,43 +286,25 @@ public interface DamageApplier<E extends Entity> {
     }
 
     /**
-     * Sets the entity as destroyed by ejection if possible.
+     * Sets the entity as devastated.
      * @param entity entity to be set as destroyed
      * @param <E> the type of the entity
      */
-    static <E extends Entity> void setEntityDestroyedByEjection(E entity) {
-        if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_DEVASTATED) {
-            entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_EJECTED);
-            entity.setSalvage(true);
-            logger.trace("[{}] Entity destroyed by ejection", entity.getDisplayName());
-        }
-    }
-
-    /**
-     * Tries to eject the crew of the entity if possible.
-     *
-     * @return true if the crew was ejected
-     */
-    default boolean tryToEjectCrew() {
-        var entity = entity();
-        var crew = entity.getCrew();
-        if (crew == null || crew.isEjected() || !entity().isEjectionPossible() || entityMustSurvive()) {
-            return false;
-        }
-        crew.setEjected(true);
+    static <E extends Entity> void setEntityDevastated(E entity) {
+        entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
+        entity.setSalvage(false);
         entity.setDestroyed(true);
-        setEntityDestroyedByEjection(entity);
-        logger.trace("[{}] Crew ejected", entity().getDisplayName());
-        return true;
+        logger.trace("[{}] Entity devastated", entity.getDisplayName());
     }
 
     /**
      * Applies damage to the equipments of the entity.
      *
-     * @param hit the hit data with information about the location
+     * @param hitDetails the hit data with information about the location
      */
-    default void applyDamageToEquipments(HitData hit) {
+    default void applyDamageToEquipments(HitDetails hitDetails) {
         var entity = entity();
+        var hit = hitDetails.hit();
         var criticalSlots = entity.getCriticalSlots(hit.getLocation());
         Collections.shuffle(criticalSlots);
         for (CriticalSlot slot : criticalSlots) {

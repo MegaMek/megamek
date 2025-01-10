@@ -86,7 +86,7 @@ public record AeroDamageApplier(Aero entity, EntityFinalState entityFinalState) 
         int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), 0);
         entity.setArmor(0, hit);
         entity.setSI(newInternalValue);
-        applyDamageToEquipments(hit);
+        applyDamageToEquipments(hitDetails);
         if (newInternalValue == 0) {
             hitDetails = destroyLocation(hitDetails);
         }

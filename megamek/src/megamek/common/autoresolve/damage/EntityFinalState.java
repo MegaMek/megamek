@@ -21,7 +21,7 @@ public enum EntityFinalState {
     CREW_MUST_SURVIVE(true, false, false, false),
     ENTITY_MUST_SURVIVE(false, true, false, false),
     CREW_AND_ENTITY_MUST_SURVIVE(true, true, false, false),
-    DAMAGE_ONLY_THE_ENTITY(true, false, true, false),
+    DAMAGE_ONLY_THE_ENTITY(false, false, true, false),
     ENTITY_MUST_BE_DEVASTATED(false, false, false, true);
 
     final boolean crewMustSurvive;

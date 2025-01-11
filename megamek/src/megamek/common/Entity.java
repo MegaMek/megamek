@@ -15,6 +15,9 @@
 package megamek.common;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -453,7 +456,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
-    protected List<Mounted<?>> equipmentList = new ArrayList<>();
+    protected ObservableList<Mounted<?>> equipmentList = FXCollections.observableArrayList();
 
     /**
      * A list of all mounted weapons. This only includes regular weapons, not
@@ -15846,4 +15849,42 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    private final List<ListChangeListener<Mounted<?>>> equipmentListeners = new ArrayList<>();
+
+    /**
+     * Adds a listener to this entity's equipment list
+     * @param listener an object which will be informed when the entity's equipment changes
+     */
+    public void addEquipmentChangedListener(ListChangeListener<Mounted<?>> listener) {
+        equipmentList.addListener(listener);
+        equipmentListeners.add(listener);
+    }
+
+    /**
+     * Removes a listener from this entity's equipment list
+     * @param listener the listener to rmove
+     */
+    public void removeEquipmentChangedListener(ListChangeListener<Mounted<?>> listener) {
+        equipmentList.removeListener(listener);
+        equipmentListeners.remove(listener);
+    }
+
+    /**
+     * Replaces any existing equipment listeners with a new one.
+     * Only listeners of the exact same class of the listener are replaced.
+     * This can help prevent memory leaks, if a listening object is no longer needed it will be removed from the list of listeners by the replacing object.
+     * @param listener The new listener to add.
+     */
+    public void replaceEquipmentChangedListener(ListChangeListener<Mounted<?>> listener) {
+        for (Iterator<ListChangeListener<Mounted<?>>> iterator = equipmentListeners.iterator(); iterator.hasNext(); ) {
+            var existing = iterator.next();
+            if (listener.getClass().equals(existing.getClass())) {
+                equipmentList.removeListener(existing);
+                iterator.remove();
+            }
+        }
+
+        equipmentList.addListener(listener);
+        equipmentListeners.add(listener);
+    }
 }

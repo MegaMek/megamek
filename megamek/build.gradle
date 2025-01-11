@@ -9,12 +9,18 @@ plugins {
     id 'jacoco'
     id 'java'
     id 'org.ec4j.editorconfig' version '0.1.0'
-
+    id 'org.openjfx.javafxplugin' version '0.1.0'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+javafx {
+    // Version 23 requires JDK 21
+    version = "22.0.2"
+    modules = [ 'javafx.base' ]
 }
 
 sourceSets {

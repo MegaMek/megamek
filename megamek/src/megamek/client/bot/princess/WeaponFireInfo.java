@@ -21,10 +21,7 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -418,6 +415,12 @@ public class WeaponFireInfo {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
         }
 
+        // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
+        EnumSet<AmmoType.Munitions> smokeMunitionTypes = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
+        if (preferredAmmo != null && smokeMunitionTypes.containsAll(preferredAmmo.getType().getMunitionType())){
+            return 0D;
+        }
+
         // bay weapons require special consideration, by looping through all weapons and
         // adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays,
@@ -504,12 +507,6 @@ public class WeaponFireInfo {
                 return computeExpectedTAGDamage(false);
             }
 
-        }
-
-        // XXX: replace this and other utility munition handling with smarter deployment, a la TAG above
-        var munitionType = (preferredAmmo != null) ? preferredAmmo.getType().getMunitionType() : AmmoType.Munitions.M_STANDARD;
-        if (munitionType.equals(AmmoType.Munitions.M_SMOKE) || munitionType.equals(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
-            return 0D;
         }
 
         if (getTarget() instanceof Entity) {

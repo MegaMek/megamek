@@ -506,6 +506,12 @@ public class WeaponFireInfo {
 
         }
 
+        // XXX: replace this and other utility munition handling with smarter deployment, a la TAG above
+        var munitionType = (preferredAmmo != null) ? preferredAmmo.getType().getMunitionType() : AmmoType.Munitions.M_STANDARD;
+        if (munitionType.equals(AmmoType.Munitions.M_SMOKE) || munitionType.equals(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+            return 0D;
+        }
+
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());

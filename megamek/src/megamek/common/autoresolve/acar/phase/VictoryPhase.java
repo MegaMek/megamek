@@ -64,9 +64,18 @@ public class VictoryPhase extends PhaseHandler {
             var entityOpt = context.getEntity(element.getId());
             if (entityOpt.isPresent()) {
                 var entity = entityOpt.get();
-                context.applyDamageToEntityFromUnit(unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));
+                applyDamageToEntityFromUnit(unit, entity);
             }
         }
     }
 
+    private static void applyDamageToEntityFromUnit(SBFUnit unit, Entity entity) {
+        var percent = (double) unit.getCurrentArmor() / unit.getArmor();
+        var crits = Math.min(9, unit.getTargetingCrits() + unit.getMpCrits() + unit.getDamageCrits());
+        percent -= percent * (crits / 11.0);
+        percent = Math.min(0.95, percent);
+        var totalDamage = (int) ((entity.getTotalArmor() + entity.getTotalInternal()) * (1 - percent));
+        DamageApplierChooser.choose(entity, EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE)
+            .applyDamageInClusters(totalDamage, 5);
+    }
 }

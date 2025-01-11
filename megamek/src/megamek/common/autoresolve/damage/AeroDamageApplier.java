@@ -73,17 +73,11 @@ public record AeroDamageApplier(Aero entity, EntityFinalState entityFinalState) 
     }
 
     @Override
-    public void destroyLocationAfterEjection() {
-        entity().setDestroyed(true);
-        entity().setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
-    }
-
-    @Override
     public HitDetails damageInternals(HitDetails hitDetails) {
         HitData hit = hitDetails.hit();
         var entity = entity();
         int currentInternalValue = entity.getSI();
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), 0);
+        int newInternalValue = Math.max(currentInternalValue - hitDetails.setArmorValueTo(), 0);
         entity.setArmor(0, hit);
         entity.setSI(newInternalValue);
         applyDamageToEquipments(hitDetails);

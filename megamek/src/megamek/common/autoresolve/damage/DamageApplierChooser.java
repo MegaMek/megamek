@@ -49,6 +49,8 @@ public class DamageApplierChooser {
             return new MekDamageApplier((Mek) entity, entityFinalState);
         } else if (entity instanceof GunEmplacement) {
             return new GunEmplacementDamageApplier((GunEmplacement) entity, entityFinalState);
+        } else if (entity instanceof Tank) {
+            return new TankDamageApplier((Tank) entity, entityFinalState);
         } else if (entity instanceof Aero) {
             return new AeroDamageApplier((Aero) entity, entityFinalState);
         }
@@ -79,7 +81,7 @@ public class DamageApplierChooser {
         EntityFinalState finalState = EntityFinalState.fromEntityRemovalState(removalCondition);
         var numberOfDices = getNumberOfDices(entity, finalState);
         var damage = Compute.d6(numberOfDices);
-        var clusterSize = 5;
+        var clusterSize = -1;
         DamageApplierChooser.choose(entity, finalState)
             .applyDamageInClusters(damage, clusterSize);
     }

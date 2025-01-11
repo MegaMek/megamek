@@ -18,10 +18,23 @@ import megamek.common.Compute;
 import megamek.common.Crew;
 import megamek.common.Infantry;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Luana Coppio
  */
 public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFinalState) implements DamageApplier<Infantry> {
+
+    @Override
+    public int getRandomHitLocation() {
+        var entity = entity();
+        if (entity instanceof BattleArmor ba) {
+            return BattleArmor.LOC_SQUAD;
+        }
+        return Infantry.LOC_INFANTRY;
+    }
 
     @Override
     public int devastateUnit() {
@@ -31,7 +44,6 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
                 dmg += te.getArmor(BattleArmor.LOC_SQUAD);
                 dmg += te.getInternal(BattleArmor.LOC_SQUAD);
                 te.setInternal(0, BattleArmor.LOC_TROOPER_1 + i);
-
             }
         } else {
             dmg += entity().getInternal(Infantry.LOC_INFANTRY);
@@ -41,7 +53,7 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
         if (crewMayDie()) {
             var crew = entity().getCrew();
             for (int i = 0; i < crew.getSlotCount(); i++) {
-                var hits = Compute.d6(2) >= 7 ? 5 : Crew.DEATH;
+                var hits = Compute.d6(2) >= 7 ? Compute.randomRealIntInclusive(4) + 1 : Crew.DEATH;
                 entity().getCrew().setHits(hits, i);
             }
         }
@@ -59,39 +71,47 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
             if (te.getArmor(trooperId) > 0) {
                 te.setArmor(newArmorValue, trooperId);
             }
+        } else {
+            hitDetails = hitDetails.withInternalDamage(1);
         }
         if (entity().isCrippled()) {
-            entity().setDestroyed(true);
+            hitDetails = hitDetails.killsCrew();
         }
         return hitDetails;
     }
 
     @Override
-    public HitDetails damageInternals(HitDetails hitDetails) {
-        if (noCrewDamage()) {
-            return hitDetails;
+    public void tryToDamageCrew(int hitCrew) {
+        var crew = entity().getCrew();
+        List<Integer> crewSlots = new ArrayList<>();
+
+        for (int i = 0; i < crew.getSlotCount(); i++) {
+            var hits = crew.getHits(i);
+            if (hits > -1 && hits < 6) {
+                crewSlots.add(i);
+            }
         }
+        if (crewSlots.isEmpty()) {
+            DamageApplier.setEntityDestroyed(entity);
+        } else {
+            var idx = Compute.randomListElement(crewSlots);
+            crew.setHits(hitCrew, idx);
+        }
+    }
+
+    @Override
+    public HitDetails damageInternals(HitDetails hitDetails) {
         if (entity() instanceof BattleArmor te) {
-            var trooperId = te.getRandomTrooper();
             var currentValueArmor = te.getInternal(BattleArmor.LOC_SQUAD);
             var newArmorValue = Math.max(currentValueArmor - hitDetails.damageToApply(), 0);
             if (crewMustSurvive() || entityMustSurvive()) {
                 newArmorValue = Math.max(newArmorValue, 1);
             }
-            if (te.getInternal(trooperId) > 0) {
-                te.setInternal(newArmorValue, trooperId);
-            }
+            te.setInternal(newArmorValue);
         } else {
             var currentValue = entity().getInternal(Infantry.LOC_INFANTRY);
             var newValue = Math.max(currentValue - 1, 0);
-            if (crewMustSurvive() || entityMustSurvive()) {
-                newValue = Math.max(newValue, 1);
-            }
             entity().setInternal(newValue, Infantry.LOC_INFANTRY);
-        }
-
-        if (entity().isCrippled()) {
-            entity().setDestroyed(true);
         }
         return hitDetails;
     }

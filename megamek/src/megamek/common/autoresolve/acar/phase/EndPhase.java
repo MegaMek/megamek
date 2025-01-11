@@ -23,6 +23,7 @@ import megamek.common.autoresolve.acar.report.IEndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
+import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
@@ -67,6 +68,7 @@ public class EndPhase extends PhaseHandler {
         }
         var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
+            .filter(f -> !(f.isType(SBFElementType.BA) || f.isType(SBFElementType.CI)))
             .toList();
 
         for (var formation : forcedWithdrawingUnits) {

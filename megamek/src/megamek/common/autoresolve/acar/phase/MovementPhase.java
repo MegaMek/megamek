@@ -171,8 +171,10 @@ public class MovementPhase extends PhaseHandler {
             .distance(targetFormation.getPosition().coords());
         var pastRound = getContext().getCurrentRound() - 1;
 
+        var lastTurnItTookDamage = activeFormation.getMemory().getInt("wasDamagedAtRound").orElse(-1);
+        var lastTurnItTookDamageTarget = activeFormation.getMemory().getInt("lastAttackerId").orElse(-1);
         // 5. If the formation is damaged and the role wants to disengage, consider running away
-        if (activeFormation.getMemory().getInt("wasDamagedAtRound").orElse(-100) == pastRound && role.disengageIfDamaged()) {
+        if (lastTurnItTookDamage == pastRound && role.disengageIfDamaged() && lastTurnItTookDamageTarget == targetFormation.getId()) {
             // Move away from target
             int direction = (targetFormation.getPosition().coords().getX()
                 < activeFormation.getPosition().coords().getX()) ? 1 : -1;
@@ -235,7 +237,6 @@ public class MovementPhase extends PhaseHandler {
             }
         }
 
-        // 9. Final fallback: move straight line
         int finalX = activeFormation.getPosition().coords().getX() + (moveDistance * directionToTarget);
         var destination = new Coords(finalX, 0);
 
@@ -254,7 +255,7 @@ public class MovementPhase extends PhaseHandler {
         var coord = activeFormation.getEntity().getPosition();
         var direction = Compute.randomInt(2) == 0 ? -1 : 1;
         if (totalMP > 0) {
-            return new Coords(coord.getX() + (totalMP/2)*direction, 0);
+            return new Coords(coord.getX() + ((int) (totalMP/3.0 * 2.0)) * direction, 0);
         }
         return null;
     }

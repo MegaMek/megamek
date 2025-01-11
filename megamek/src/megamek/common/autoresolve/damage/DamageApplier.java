@@ -26,9 +26,12 @@ import java.util.List;
 public interface DamageApplier<E extends Entity> {
     MMLogger logger = MMLogger.create(DamageApplier.class);
 
-    record HitDetails(HitData hit, int damageToApply, int setArmorValueTo, boolean hitInternal, int hitCrew) {
+    record HitDetails(HitData hit, int damageToApply, int setArmorValueTo, int hitInternal, int hitCrew) {
         public HitDetails withCrewDamage(int crewDamage) {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, crewDamage);
+        }
+        public HitDetails withInternalDamage(int internalDamage) {
+            return new HitDetails(hit, damageToApply, setArmorValueTo, internalDamage, hitCrew);
         }
         public HitDetails killsCrew() {
             return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, Crew.DEATH);
@@ -76,7 +79,11 @@ public interface DamageApplier<E extends Entity> {
         int totalDamage = dmg;
         int damageApplied = 0;
         while (totalDamage > 0) {
-            var clusterDamage = Math.min(totalDamage, clusterSize);
+            var clusterDamage = clusterSize;
+            if (clusterSize == -1) {
+                clusterDamage = Compute.randomInt(16) + 5;
+            }
+            clusterDamage = Math.min(totalDamage, clusterDamage);
             applyDamage(clusterDamage);
             totalDamage -= clusterDamage;
             damageApplied += clusterDamage;
@@ -158,17 +165,9 @@ public interface DamageApplier<E extends Entity> {
      */
     default void applyDamage(HitDetails hitDetails) {
         hitDetails = damageArmor(hitDetails);
-        if (hitDetails.hitInternal()) {
-            hitDetails = damageInternals(hitDetails);
-        }
+        hitDetails = damageInternals(hitDetails);
         tryToDamageCrew(hitDetails.hitCrew());
-    }
-
-    /**
-     * Destroys the location after the crew has been ejected.
-     */
-    default void destroyLocationAfterEjection() {
-        // default implementation does nothing
+        entity().applyDamage();
     }
 
     /**
@@ -179,13 +178,20 @@ public interface DamageApplier<E extends Entity> {
     default HitDetails damageInternals(HitDetails hitDetails) {
         HitData hit = hitDetails.hit();
         var entity = entity();
+
         int currentInternalValue = entity.getInternal(hit);
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), entityMustSurvive() ? 1 : 0);
+        if (hitDetails.setArmorValueTo() > 0) {
+            return hitDetails;
+        }
+
         entity.setArmor(0, hit);
+        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), entityMustSurvive() ? 1 : 0);
+
         logger.trace("[{}] Damage: {} - Internal at: {}", entity.getDisplayName(), hitDetails.damageToApply(), newInternalValue);
         entity.setInternal(newInternalValue, hit);
-        applyDamageToEquipments(hitDetails);
-        if (newInternalValue == 0) {
+        if (newInternalValue > 0) {
+            hitDetails = applyDamageToEquipments(hitDetails);
+        } else {
             hitDetails = destroyLocation(hitDetails);
         }
         return hitDetails;
@@ -302,7 +308,7 @@ public interface DamageApplier<E extends Entity> {
      *
      * @param hitDetails the hit data with information about the location
      */
-    default void applyDamageToEquipments(HitDetails hitDetails) {
+    default HitDetails applyDamageToEquipments(HitDetails hitDetails) {
         var entity = entity();
         var hit = hitDetails.hit();
         var criticalSlots = entity.getCriticalSlots(hit.getLocation());
@@ -310,11 +316,11 @@ public interface DamageApplier<E extends Entity> {
         for (CriticalSlot slot : criticalSlots) {
             if (slot != null && slot.isHittable() && !slot.isHit() && !slot.isDestroyed()) {
                 slot.setHit(true);
-                slot.setDestroyed(true);
                 logger.trace("[{}] Equipment destroyed: {}", entity.getDisplayName(), slot);
                 break;
             }
         }
+        return hitDetails;
     }
 
     /**
@@ -349,8 +355,14 @@ public interface DamageApplier<E extends Entity> {
     default HitDetails setupHitDetails(HitData hit, int damageToApply) {
         int currentArmorValue = entity().getArmor(hit);
         int setArmorValueTo = currentArmorValue - damageToApply;
-        boolean hitInternal = setArmorValueTo < 0;
-        int hitCrew = hitInternal ? 1 : 0;
+        int hitInternal = setArmorValueTo < 0 ?
+            switch (Compute.d6(2)) {
+                case 12 -> 3;
+                case 10, 11 -> 2;
+                case 8, 9 -> 1;
+                default -> 0;
+            } : 0 ;
+        int hitCrew = hitInternal > 1 ? 1 : 0;
 
         return new HitDetails(hit, damageToApply, setArmorValueTo, hitInternal, hitCrew);
     }

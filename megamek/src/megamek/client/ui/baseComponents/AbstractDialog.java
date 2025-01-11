@@ -50,7 +50,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
 
     protected static final String CLOSE_ACTION = "closeAction";
 
-    protected static ResourceBundle resources;
+    protected ResourceBundle resources;
     // endregion Variable Declarations
 
     // region Constructors

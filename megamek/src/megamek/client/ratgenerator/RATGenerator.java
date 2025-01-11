@@ -812,16 +812,13 @@ public class RATGenerator {
         // Only do this for Omni-capable unit types, which also covers those which are
         // commonly fitted with Clan or Star League/advanced technology.
         // Do not re-balance conventional infantry, battle armor, large craft, or other
-        // unit types. Also skip combat support and civilian specialist roles.
+        // unit types. Also skip when generating tables for specific role.
         if (ratingLevel >= 0 &&
             (unitType == UnitType.MEK ||
                 unitType == UnitType.AEROSPACEFIGHTER ||
                 unitType == UnitType.TANK ||
                 unitType == UnitType.VTOL) &&
-            (roles == null ||
-                (!roles.contains(MissionRole.SUPPORT) ||
-                    !roles.contains(MissionRole.CIVILIAN) ||
-                    !roles.contains(MissionRole.ENGINEER)))){
+            (roles == null)){
             adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 

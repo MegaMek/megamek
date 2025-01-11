@@ -30,7 +30,7 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
     @Override
     public int getRandomHitLocation() {
         var entity = entity();
-        if (entity instanceof BattleArmor ba) {
+        if (entity instanceof BattleArmor) {
             return BattleArmor.LOC_SQUAD;
         }
         return Infantry.LOC_INFANTRY;
@@ -39,11 +39,11 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
     @Override
     public int devastateUnit() {
         int dmg = 0;
-        if (entity() instanceof BattleArmor te) {
-            for (int i = 0; i < te.getTroopers(); i++) {
-                dmg += te.getArmor(BattleArmor.LOC_SQUAD);
-                dmg += te.getInternal(BattleArmor.LOC_SQUAD);
-                te.setInternal(0, BattleArmor.LOC_TROOPER_1 + i);
+        if (entity() instanceof BattleArmor battleArmor) {
+            for (int i = 0; i < battleArmor.getTroopers(); i++) {
+                dmg += battleArmor.getArmor(BattleArmor.LOC_SQUAD);
+                dmg += battleArmor.getInternal(BattleArmor.LOC_SQUAD);
+                battleArmor.setInternal(0, BattleArmor.LOC_TROOPER_1 + i);
             }
         } else {
             dmg += entity().getInternal(Infantry.LOC_INFANTRY);

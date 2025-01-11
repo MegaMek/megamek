@@ -697,10 +697,16 @@ public class RATGenerator {
             unitWeights.merge(curModel, chassisWeightTotal, (a, b) -> 100.0 * a / b);
         }
 
-        // If there is more than one weight class being generated and the faction record
-        // (or parent) indicates a certain distribution of weight classes, adjust the
-        // generated unit weights conform to the given ratio.
-        if (weightClasses != null && weightClasses.size() > 1) {
+        // Adjust random weights based on faction weight class proportions if multiple
+        // weight classes are specified.
+        // Do not re-balance conventional infantry, battle armor, VTOLs, large craft,
+        // or other unit types. Also skip when generating tables for specific roles.
+        if ((weightClasses != null &&
+            weightClasses.size() > 1) &&
+            (unitType == UnitType.MEK ||
+                unitType == UnitType.TANK ||
+                unitType == UnitType.AEROSPACEFIGHTER) &&
+            (roles == null || roles.isEmpty())) {
 
             // Get standard weight class distribution for faction
             ArrayList<Integer> weightClassDistribution = fRec.getWeightDistribution(currentEra,
@@ -812,13 +818,13 @@ public class RATGenerator {
         // Only do this for Omni-capable unit types, which also covers those which are
         // commonly fitted with Clan or Star League/advanced technology.
         // Do not re-balance conventional infantry, battle armor, large craft, or other
-        // unit types. Also skip when generating tables for specific role.
+        // unit types. Also skip when generating tables for specific roles.
         if (ratingLevel >= 0 &&
             (unitType == UnitType.MEK ||
                 unitType == UnitType.AEROSPACEFIGHTER ||
                 unitType == UnitType.TANK ||
                 unitType == UnitType.VTOL) &&
-            (roles == null)){
+            ((roles == null) || roles.isEmpty())) {
             adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 

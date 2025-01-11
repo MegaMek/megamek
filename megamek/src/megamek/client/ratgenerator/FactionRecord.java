@@ -351,27 +351,43 @@ public class FactionRecord {
         return pctTech.get(category).get(era).get(rating);
     }
 
+    /**
+     * Get the desired percentage of Clan, Star League/advanced IS tech, or Omni-units
+     * that should be present as part of the overall random generation table.
+     * @param category  controls which of the three categories and unit types to lookup
+     * @param era       current year
+     * @param rating    equipment rating based on available range, typically F (0)/D/C/B/A (4)
+     * @return   integer with the percentage (0 - 100) of units that should meet these
+     *           criteria. Returns null if the era data contains no C/SL/O data for that
+     *           unit type.
+     */
     public Integer findPctTech(TechCategory category, int era, int rating) {
+        // Return the value if present
         Integer retVal = getPctTech(category, era, rating);
         if (retVal != null) {
             return retVal;
         }
-        retVal = getPctTech(category.fallthrough(), era, rating);
-        if (retVal != null) {
-            return retVal;
-        }
+
+        // If the value isn't present, check parent factions and averaging if multiple
+        // parent factions are present
         int total = 0;
         int count = 0;
-        for (String parent : parentFactions) {
-            FactionRecord pfr = RATGenerator.getInstance().getFaction(parent);
-            if (pfr != null) {
-                Integer pct = pfr.findPctTech(category, era, rating);
-                if (pct != null) {
-                    total += pct;
-                    count++;
+        if (parentFactions != null && !parentFactions.isEmpty()) {
+            RATGenerator ratGen = RATGenerator.getInstance();
+
+            for (String parent : parentFactions) {
+                FactionRecord parentRecord = ratGen.getFaction(parent);
+                if (parentRecord != null) {
+                    Integer pct = parentRecord.findPctTech(category, era, rating);
+                    if (pct != null) {
+                        total += pct;
+                        count++;
+                    }
                 }
             }
+
         }
+
         if (count > 0) {
             return (int) ((total / count + 0.5));
         } else {

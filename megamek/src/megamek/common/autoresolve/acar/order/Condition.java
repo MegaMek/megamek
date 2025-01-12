@@ -19,6 +19,14 @@ import megamek.common.autoresolve.acar.SimulationContext;
 
 public interface Condition {
 
-    boolean isConditionMet(SimulationContext context);
+    static Condition alwaysTrue() {
+        return context -> true;
+    }
+
+    static Condition alwaysFalse() {
+        return context -> false;
+    }
+
+    boolean isMet(SimulationContext context);
 
 }

@@ -16,10 +16,10 @@
 package megamek.common.autoresolve.acar.order;
 
 public enum OrderType {
-    DEFEND_TARGET,
     ATTACK_TARGET,
-    STAY_OUT_OF_DANGER,
+    ATTACK_TARGET_NOT_WITHDRAWING,
+    ATTACK_TARGET_WITHDRAWING,
     FLEE_NORTH,
     FLEE_SOUTH,
-    RETREAT_IF_CONDITION_IS_MET,
+    WITHDRAW_IF_CONDITION_IS_MET,
 }

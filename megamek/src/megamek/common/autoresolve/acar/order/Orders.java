@@ -30,6 +30,10 @@ public class Orders implements Collection<Order> {
         return ordersPerPlayer.get(playerId);
     }
 
+    public void resetOrders() {
+        ordersPerPlayer.values().forEach(Order::reset);
+    }
+
     @Override
     public int size() {
         return ordersPerPlayer.size();

@@ -15,12 +15,11 @@
 
 package megamek.common.autoresolve.acar.order;
 
+import megamek.common.autoresolve.acar.SimulationContext;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Order {
-
-    private final int id;
     private final int ownerId;
     private final int priority;
     private final OrderType orderType;
@@ -28,9 +27,12 @@ public class Order {
     private final int formationId;
     private final int orderDelay;
     private final Condition condition;
+    private boolean concluded = false;
 
-    public Order(int id, int ownerId, int priority, OrderType orderType, int targetId, int formationId, int orderDelay, Condition condition) {
-        this.id = id;
+    private transient boolean eligible;
+    private transient int lastRoundEligible;
+
+    private Order(int ownerId, int priority, OrderType orderType, int targetId, int formationId, int orderDelay, Condition condition) {
         this.ownerId = ownerId;
         this.priority = priority;
         this.orderType = orderType;
@@ -38,32 +40,31 @@ public class Order {
         this.formationId = formationId;
         this.orderDelay = orderDelay;
         this.condition = condition;
+        this.eligible = false;
+        this.lastRoundEligible = -1;
     }
 
-    public Order(int id, int ownerId, int priority, OrderType orderType, Condition condition) {
-        this.id = id;
-        this.ownerId = ownerId;
-        this.priority = priority;
-        this.orderType = orderType;
-        this.condition = condition;
-        this.targetId = -1;
-        this.formationId = -1;
-        this.orderDelay = -1;
+    public void reset() {
+        this.eligible = false;
+        this.lastRoundEligible = -1;
+        this.concluded = false;
     }
 
-    public Order(int id, int ownerId, int priority, OrderType orderType) {
-        this.id = id;
-        this.ownerId = ownerId;
-        this.priority = priority;
-        this.orderType = orderType;
-        this.condition = null;
-        this.targetId = -1;
-        this.formationId = -1;
-        this.orderDelay = -1;
+    public boolean isEligible(SimulationContext context) {
+        if (context.getCurrentRound() != lastRoundEligible) {
+            eligible = getCondition().isMet(context);
+            lastRoundEligible = context.getCurrentRound();
+        }
+
+        return !isConcluded() && (context.getCurrentRound() - getOrderDelay() >= 0) && eligible;
     }
 
-    public int getId() {
-        return id;
+    public boolean isConcluded() {
+        return concluded;
+    }
+
+    public void setConcluded(boolean concluded) {
+        this.concluded = concluded;
     }
 
     public int getOwnerId() {
@@ -101,7 +102,6 @@ public class Order {
         if (!(o instanceof Order order)) return false;
 
         return new EqualsBuilder()
-            .append(getId(), order.getId())
             .append(getOwnerId(), order.getOwnerId())
             .append(getPriority(), order.getPriority())
             .append(getTargetId(), order.getTargetId())
@@ -115,7 +115,75 @@ public class Order {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-            .append(getId()).append(getOwnerId()).append(getPriority()).append(getOrderType()).append(getTargetId())
+            .append(getOwnerId()).append(getPriority()).append(getOrderType()).append(getTargetId())
             .append(getFormationId()).append(getOrderDelay()).append(getCondition()).toHashCode();
+    }
+
+
+    public static final class OrderBuilder {
+        private final int ownerId;
+        private int priority = 0;
+        private final OrderType orderType;
+        private int targetId = -1;
+        private int formationId = -1;
+        private int orderDelay = -1;
+        private Condition condition = Condition.alwaysTrue();
+
+        public OrderBuilder(int ownerId, OrderType orderType) {
+            this.orderType = orderType;
+            this.ownerId = ownerId;
+        }
+
+        public OrderBuilder(Order other) {
+            this.ownerId = other.ownerId;
+            this.priority = other.priority;
+            this.orderType = other.orderType;
+            this.targetId = other.targetId;
+            this.formationId = other.formationId;
+            this.orderDelay = other.orderDelay;
+            this.condition = other.condition;
+        }
+
+        public static OrderBuilder anOrder(int ownerId, OrderType orderType) {
+            return new OrderBuilder(ownerId, orderType);
+        }
+
+        public OrderBuilder withPriority(int priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public OrderBuilder withTargetId(int targetId) {
+            this.targetId = targetId;
+            return this;
+        }
+
+        public OrderBuilder withFormationId(int formationId) {
+            this.formationId = formationId;
+            return this;
+        }
+
+        public OrderBuilder withOrderDelay(int orderDelay) {
+            this.orderDelay = orderDelay;
+            return this;
+        }
+
+        public OrderBuilder withCondition(Condition condition) {
+            this.condition = condition;
+            return this;
+        }
+
+        public OrderBuilder but() {
+            return anOrder(ownerId, orderType)
+                    .withPriority(priority)
+                    .withTargetId(targetId)
+                    .withFormationId(formationId)
+                    .withOrderDelay(orderDelay)
+                    .withCondition(condition);
+        }
+
+        public Order build() {
+            return new Order(ownerId, priority, orderType, targetId, formationId, orderDelay, condition);
+        }
     }
 }

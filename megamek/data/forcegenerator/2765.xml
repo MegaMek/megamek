@@ -2870,13 +2870,14 @@
 			</model>
 		</chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
-			<availability>SL:9,IS:9,Periphery.Deep:9,Periphery:9</availability>
+			<availability>SL:9,IS:9,Periphery:9,TC:3-,Periphery.Deep:9</availability>
 			<model name='(Fieldworks)'>
 				<roles>engineer</roles>
-				<availability>IS:4,Periphery:2</availability>
+				<availability>SL:2,IS:4,Periphery:2</availability>
 			</model>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>SL:6,IS:8,Periphery:8,TC:5-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
@@ -2886,22 +2887,45 @@
 				<availability>SL:4,IS:2</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7,IS:6,Periphery:5,TC:4+,Periphery.Deep:5</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Nonlethal)'>
 				<roles>urban,anti_infantry</roles>
 				<availability>General:3</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:7,IS:8,Periphery:8,TC:7,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Motorized Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:9</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:4-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>TC:5+</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(SRM)'>
+                <roles>anti_mek</roles>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Motorized Sub Platoon' unitType='Infantry'>
 			<availability>IS:1,FS:3,Periphery:1</availability>
 			<model name='(Laser SCUBA)'>

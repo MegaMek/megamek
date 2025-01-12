@@ -804,6 +804,7 @@
                 <availability>TC:4+</availability>
             </model>
             <model name='(MG)'>
+                <roles>anti_infantry</roles>
                 <availability>TC:5</availability>
             </model>
             <model name='(Rifle)'>

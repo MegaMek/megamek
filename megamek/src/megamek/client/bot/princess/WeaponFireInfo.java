@@ -50,6 +50,16 @@ public class WeaponFireInfo {
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
     private static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
+    private static final EnumSet<AmmoType.Munitions> FLARE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_FLARE);
+    private static final EnumSet<AmmoType.Munitions> MINE_MUNITIONS = EnumSet.of(
+        AmmoType.Munitions.M_THUNDER,
+        AmmoType.Munitions.M_THUNDER_ACTIVE,
+        AmmoType.Munitions.M_THUNDER_AUGMENTED,
+        AmmoType.Munitions.M_THUNDER_INFERNO,
+        AmmoType.Munitions.M_THUNDER_VIBRABOMB,
+        AmmoType.Munitions.M_FASCAM
+    );
+
     private WeaponAttackAction action;
     private Entity shooter;
     private Targetable target;
@@ -417,8 +427,16 @@ public class WeaponFireInfo {
         }
 
         // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
-        if (preferredAmmo != null && SMOKE_MUNITIONS.containsAll(preferredAmmo.getType().getMunitionType())){
-            return 0D;
+        if (preferredAmmo != null) {
+            var munitionType = preferredAmmo.getType().getMunitionType();
+            // Handle all 0-damage munitions here
+            if (
+                SMOKE_MUNITIONS.containsAll(munitionType) ||
+                FLARE_MUNITIONS.containsAll(munitionType) ||
+                MINE_MUNITIONS.containsAll(munitionType)
+            ) {
+                return 0D;
+            }
         }
 
         // bay weapons require special consideration, by looping through all weapons and

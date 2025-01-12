@@ -53,6 +53,10 @@ import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.*;
@@ -456,7 +460,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A list of all mounted equipment. (Weapons, ammo, and misc)
      */
-    protected ObservableList<Mounted<?>> equipmentList = FXCollections.observableArrayList();
+    protected transient ObservableList<Mounted<?>> equipmentList = FXCollections.observableArrayList();
 
     /**
      * A list of all mounted weapons. This only includes regular weapons, not
@@ -15886,5 +15890,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         equipmentList.addListener(listener);
         equipmentListeners.add(listener);
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(new ArrayList<>(equipmentList));
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        equipmentList = FXCollections.observableArrayList((ArrayList<Mounted<?>>) in.readObject());
     }
 }

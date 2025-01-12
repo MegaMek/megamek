@@ -145,9 +145,10 @@ public class Formation extends SBFFormation {
             for (var units : getUnits()) {
                 for (var element : units.getElements()) {
                     totalUnits++;
-
-                    if (element.getStdDamage().reducedBy(units.getDamageCrits()).hasDamage()) {
-                        halfOfUnitsDoZeroDamage++;
+                    if (element.getStdDamage().hasDamage()) {
+                        if (!element.getStdDamage().reducedBy(units.getDamageCrits()).hasDamage()) {
+                            halfOfUnitsDoZeroDamage++;
+                        }
                     }
 
                     if (element.getCurrentArmor() == 0 &&

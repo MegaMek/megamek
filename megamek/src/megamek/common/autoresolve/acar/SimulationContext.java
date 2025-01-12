@@ -24,11 +24,14 @@ import megamek.common.autoresolve.component.AcTurn;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.autoresolve.converter.SetupForces;
+import megamek.common.autoresolve.damage.DamageApplierChooser;
+import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 import org.apache.commons.lang3.NotImplementedException;
@@ -331,14 +334,7 @@ public class SimulationContext implements IGame {
 
     @Override
     public List<InGameObject> getGraveyard() {
-        List<InGameObject> destroyed = new ArrayList<>();
-        for (Entity entity : this.graveyard) {
-            if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_IN_RETREAT) {
-                destroyed.add(entity);
-            }
-        }
-
-        return destroyed;
+        return new ArrayList<InGameObject>(graveyard);
     }
 
     public List<Entity> getRetreatingUnits() {
@@ -502,6 +498,20 @@ public class SimulationContext implements IGame {
 
     public void removeFormation(Formation formation) {
         inGameObjects.remove(formation.getId());
+    }
+
+    public void applyDamageToEntityFromUnit(SBFUnit unit, Entity entity, EntityFinalState entityFinalState) {
+        var percent = (double) unit.getCurrentArmor() / unit.getArmor();
+        var crits = Math.min(9, unit.getTargetingCrits() + unit.getMpCrits() + unit.getDamageCrits());
+        percent -= percent * (crits / 15.0);
+        percent = Math.min(0.85, percent);
+        var totalDamage = (int) ((entity.getTotalArmor() + entity.getTotalInternal()) * (1 - percent));
+        var clusterSize = -1;
+        if (entity instanceof Infantry) {
+            clusterSize = 1;
+        }
+        DamageApplierChooser.choose(entity, entityFinalState)
+            .applyDamageInClusters(totalDamage, clusterSize);
     }
 
     public void removeEntity(Entity entity) {

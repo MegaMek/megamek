@@ -49,6 +49,7 @@ public class WeaponFireInfo {
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
 
+    private static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
     private WeaponAttackAction action;
     private Entity shooter;
     private Targetable target;
@@ -416,8 +417,7 @@ public class WeaponFireInfo {
         }
 
         // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
-        EnumSet<AmmoType.Munitions> smokeMunitionTypes = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
-        if (preferredAmmo != null && smokeMunitionTypes.containsAll(preferredAmmo.getType().getMunitionType())){
+        if (preferredAmmo != null && SMOKE_MUNITIONS.containsAll(preferredAmmo.getType().getMunitionType())){
             return 0D;
         }
 

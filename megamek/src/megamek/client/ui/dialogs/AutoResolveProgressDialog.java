@@ -181,6 +181,7 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             stopWatch.stop();
 
             var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ? "AutoResolveDialog.messageScenarioTeam" : "AutoResolveDialog.messageScenarioPlayer";
+            messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == 0) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
             var message = Internationalization.getFormattedText(messageKey,
                 result.getVictoryResult().getWinningTeam(),
                 result.getVictoryResult().getWinningPlayer());

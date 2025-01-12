@@ -25,8 +25,7 @@ import megamek.server.victory.VictoryResult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.File;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Luana Coppio
@@ -35,11 +34,12 @@ public class AutoResolveConcludedEvent implements PostGameResolution {
 
     private final IGame game;
     private final boolean controlledScenario;
-    private final Vector<Entity> survived = new Vector<>();
-    private final Vector<Entity> retreated = new Vector<>();
-    private final Vector<Entity> graveyard = new Vector<>();
-    private final Vector<Entity> devastated = new Vector<>();
-    private final Vector<Entity> wrecked = new Vector<>();
+    private final List<Entity> survived = new ArrayList<>();
+    private final List<Entity> retreated = new ArrayList<>();
+    private final List<Entity> graveyard = new ArrayList<>();
+    private final List<Entity> devastated = new ArrayList<>();
+    private final List<Entity> wrecked = new ArrayList<>();
+    private final Map<Integer, Entity> entityById = new HashMap<>();
     private final VictoryResult victoryResult;
     private final File logFile;
 
@@ -48,51 +48,42 @@ public class AutoResolveConcludedEvent implements PostGameResolution {
         this.victoryResult = victoryResult;
         this.game = game;
         this.logFile = logFile;
+        var inGameObjects = game.getInGameObjects();
+        var graveyardObjects = game.getGraveyard();
 
-        game.getInGameObjects().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .forEach(e -> e.setOwner(game.getPlayer(e.getOwnerId())));
+        for (var inGameObject : inGameObjects) {
+            if (inGameObject instanceof Entity entity) {
+                entity.setOwner(game.getPlayer(entity.getOwnerId()));
+                entityById.put(entity.getId(), entity);
+                survived.add(entity);
+            }
+        }
 
-        game.getGraveyard().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .forEach(e -> e.setOwner(game.getPlayer(e.getOwnerId())));
+        var salvageableConditions = Set.of(IEntityRemovalConditions.REMOVE_SALVAGEABLE, IEntityRemovalConditions.REMOVE_EJECTED);
+        var retreatedConditions = Set.of(IEntityRemovalConditions.REMOVE_NEVER_JOINED, IEntityRemovalConditions.REMOVE_IN_RETREAT,
+            IEntityRemovalConditions.REMOVE_PUSHED);
+        var lostUnitConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED, IEntityRemovalConditions.REMOVE_CAPTURED);
+        var wreckedConditions = Set.of(IEntityRemovalConditions.REMOVE_DEVASTATED, IEntityRemovalConditions.REMOVE_EJECTED,
+            IEntityRemovalConditions.REMOVE_SALVAGEABLE);
 
-        game.getInGameObjects().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .forEach(survived::addElement);
-
-        game.getGraveyard().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
-            .forEach(graveyard::addElement);
-
-        game.getGraveyard().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_NEVER_JOINED ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED)
-            .forEach(retreated::addElement);
-
-        game.getGraveyard().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED)
-            .forEach(devastated::addElement);
-
-        game.getGraveyard().stream()
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .filter(entity -> entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED ||
-                entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
-            .forEach(wrecked::addElement);
+        for (var graveyardEntity : graveyardObjects) {
+            if (graveyardEntity instanceof Entity entity) {
+                entity.setOwner(game.getPlayer(entity.getOwnerId()));
+                entityById.put(entity.getId(), entity);
+                if (salvageableConditions.contains(entity.getRemovalCondition())) {
+                    graveyard.add(entity);
+                }
+                if (retreatedConditions.contains(entity.getRemovalCondition())) {
+                    retreated.add(entity);
+                }
+                if (lostUnitConditions.contains(entity.getRemovalCondition())) {
+                    devastated.add(entity);
+                }
+                if (wreckedConditions.contains(entity.getRemovalCondition())) {
+                    wrecked.add(entity);
+                }
+            }
+        }
     }
 
     public VictoryResult getVictoryResult() {
@@ -109,32 +100,32 @@ public class AutoResolveConcludedEvent implements PostGameResolution {
 
     @Override
     public Enumeration<Entity> getEntities() {
-        return survived.elements();
+        return Collections.enumeration(survived);
     }
 
     @Override
     public Entity getEntity(int id) {
-        return (Entity) game.getEntityFromAllSources(id);
+        return entityById.get(id);
     }
 
     @Override
     public Enumeration<Entity> getGraveyardEntities() {
-        return graveyard.elements();
+        return Collections.enumeration(graveyard);
     }
 
     @Override
     public Enumeration<Entity> getWreckedEntities() {
-        return wrecked.elements();
+        return Collections.enumeration(wrecked);
     }
 
     @Override
     public Enumeration<Entity> getRetreatedEntities() {
-        return retreated.elements();
+        return Collections.enumeration(retreated);
     }
 
     @Override
     public Enumeration<Entity> getDevastatedEntities() {
-        return devastated.elements();
+        return Collections.enumeration(devastated);
     }
 
     @Nullable

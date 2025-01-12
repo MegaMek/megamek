@@ -19,6 +19,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6368: Allow princess to flee at end of movement
 + PR #6381: Added Static Access to Resource Bundle
 + PR #6382: Rolled Back #6381
++ Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
 
 
 0.50.02 (2024-12-30 2130 UTC)

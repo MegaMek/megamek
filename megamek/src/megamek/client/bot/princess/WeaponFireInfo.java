@@ -26,6 +26,7 @@ import java.util.*;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.AmmoType.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -35,6 +36,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;
+
+import static megamek.common.AmmoType.*;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -48,17 +51,6 @@ public class WeaponFireInfo {
 
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
-
-    private static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
-    private static final EnumSet<AmmoType.Munitions> FLARE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_FLARE);
-    private static final EnumSet<AmmoType.Munitions> MINE_MUNITIONS = EnumSet.of(
-        AmmoType.Munitions.M_THUNDER,
-        AmmoType.Munitions.M_THUNDER_ACTIVE,
-        AmmoType.Munitions.M_THUNDER_AUGMENTED,
-        AmmoType.Munitions.M_THUNDER_INFERNO,
-        AmmoType.Munitions.M_THUNDER_VIBRABOMB,
-        AmmoType.Munitions.M_FASCAM
-    );
 
     private WeaponAttackAction action;
     private Entity shooter;

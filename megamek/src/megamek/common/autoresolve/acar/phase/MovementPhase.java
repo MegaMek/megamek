@@ -204,7 +204,7 @@ public class MovementPhase extends PhaseHandler {
         int directionToTarget = (targetFormation.getPosition().coords().getX()
             - activeFormation.getPosition().coords().getX()) > 0 ? 1 : -1;
 
-        // Basic example logic: try to “fix” distance to stay in the preferred bracket
+        // Basic example logic: try to "fix" distance to stay in the preferred bracket
         int moveDistance = 0;
         if (currentRange != preferredRange) {
             // Decide to move closer or further to match the bracket
@@ -318,7 +318,7 @@ public class MovementPhase extends PhaseHandler {
         Collections.shuffle(preferred);
         Collections.shuffle(normal);
 
-        // 5. Possibly factor in “previous target” from your existing logic
+        // 5. Possibly factor in "previous target" from your existing logic
         var previousTargetId = actingFormation.getTargetFormationId();
         Optional<Formation> previousTarget = preferred.stream()
             .filter(f -> f.getId() == previousTargetId)

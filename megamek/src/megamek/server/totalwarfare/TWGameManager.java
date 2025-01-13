@@ -7125,7 +7125,7 @@ public class TWGameManager extends AbstractGameManager {
             try {
                 // if we are in the water, then the sea mine will only blow up if at
                 // the right depth
-                if (game.getBoard().contains(mf.getCoords()) &&
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
                     game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
                 ) {
                     if ((Math.abs(curElev) != mf.getDepth())
@@ -7604,15 +7604,9 @@ public class TWGameManager extends AbstractGameManager {
             Minefield mf = e.nextElement();
 
             try {
-                // Safety check; can't operate on minefields that don't officially exist
-                if (game.getBoard().getHex(mf.getCoords()) == null) {
-                    logger.warn("Minefield not found on board: " + mf.toString());
-                    continue;
-                }
-
                 // Bug 954272: Mines shouldn't work underwater, and BMRr says
                 // Vibrabombs are mines
-                if (game.getBoard().contains(mf.getCoords()) &&
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
                     game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
                     && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)
                     && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {

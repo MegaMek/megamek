@@ -2809,7 +2809,7 @@ public class Compute {
             }
         }
 
-        // TW p. 117 Jumped/Airborne (non-aerospace units) get +1 MP,
+        // TW p. 117 Jumped/Airborne (non-aerospace units) get +1 to hit modifier,
         // calculate that info outside of this method
         if (airborneNonAerospace) {
             toHit.addModifier(1, "target was airborne");

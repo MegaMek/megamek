@@ -34,7 +34,7 @@ import megamek.logging.MMLogger;
 /**
  * Stores data about factions used for building RATs, including
  * parent factions, factions to salvage from, and percentages of
- * Omni/SL/Clan tech. Keys are compatible with those used by MekHQ,
+ * Clan/SL/Omni tech. Keys are compatible with those used by MekHQ,
  * with various subcommands indicated by a period and an additional
  * key (e.g. DC.SL for Draconis Combine/Sword of Light).
  *
@@ -44,38 +44,14 @@ public class FactionRecord {
     private final static MMLogger logger = MMLogger.create(FactionRecord.class);
 
     /**
-     * Proportions of omni/Clan/upgraded tech are given for each faction
-     * by the field manual series.
+     * Proportions of Clan/SL/Omni tech are given for major commands in the various
+     * sourcebooks such as the Field Manual series.
+     * Canon OmniVehicles are uncommon so no separate category is provided for them.
      */
     public enum TechCategory {
-        OMNI, CLAN, IS_ADVANCED, // Used for Meks, and also used for ASFs or vees if no other value is present.
+        OMNI, CLAN, IS_ADVANCED,
         OMNI_AERO, CLAN_AERO, IS_ADVANCED_AERO,
-        CLAN_VEE, IS_ADVANCED_VEE;
-        /*
-         * omni vees do not see the widespread use of Meks and ASFs and do not get
-         * a separate percentage value
-         */
-
-        /**
-         * If no value is provided for ASFs or Vees, use the base value.
-         *
-         * @return The base category if the desired one has no value, or null if this is
-         *         the base.
-         */
-        TechCategory fallthrough() {
-            switch (this) {
-                case OMNI_AERO:
-                    return OMNI;
-                case CLAN_AERO:
-                case CLAN_VEE:
-                    return CLAN;
-                case IS_ADVANCED_AERO:
-                case IS_ADVANCED_VEE:
-                    return IS_ADVANCED;
-                default:
-                    return null;
-            }
-        }
+        CLAN_VEE, IS_ADVANCED_VEE
     }
 
     private String key;
@@ -91,22 +67,24 @@ public class FactionRecord {
     private HashMap<Integer, HashMap<String, Integer>> salvage;
     /*
      * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals
-     * are
-     * less precise, giving omni percentages for Clans and (in FM:3085) upgrade
-     * percentage
-     * for IS and Periphery factions. In order to use the values that are available
-     * without
-     * either forcing conformity to guesses for later eras or suddenly removing
-     * constraints,
-     * we extrapolate some values but provide a margin of conformity that grows as
-     * we
-     * get farther from known values. upgradeMargin applies the percentage of units
-     * that
-     * are late-SW IS tech. techMargin applies to both Clan and advanced (SL and
-     * post-Clan) tech.
+     * are less precise, giving omni percentages for Clans and (in FM:3085) upgrade
+     * percentage for IS and Periphery factions. In order to use the values that are
+     * available without either forcing conformity to guesses for later eras or suddenly
+     * removing constraints, we extrapolate some values but provide a margin of
+     * conformity that grows as we get farther from known values.
+     */
+    /**
+     * Margin of uncertainty for Omni-unit percentages
      */
     private HashMap<Integer, Integer> omniMargin;
+    /**
+     * Margin of uncertainty for Clan/Star League tech percentages
+     */
     private HashMap<Integer, Integer> techMargin;
+    /**
+     * Margin of uncertainty for basic IS tech percentages which may be applied to Star League
+     * or advanced IS tech
+     */
     private HashMap<Integer, Integer> upgradeMargin;
 
     private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
@@ -182,8 +160,7 @@ public class FactionRecord {
     }
 
     /**
-     *
-     * @return value of ratingLevels
+     * Get the tech levels appropriate for this faction
      */
     public ArrayList<String> getRatingLevels() {
         return ratingLevels;
@@ -191,12 +168,10 @@ public class FactionRecord {
 
     /**
      * Checks the faction parent hierarchy as necessary to find a set of ratings
-     * with at
-     * least two values. If ratingLevels is empty, this faction inherits the
-     * parent's system.
+     * with at least two values. If ratingLevels is empty, this faction inherits
+     * the parent's system.
      * If ratingLevels has one member, it indicates a set value for this faction
-     * within
-     * the parent faction's system.
+     * within the parent faction's system.
      *
      * @return The list of available equipment ratings for the faction.
      */
@@ -270,17 +245,15 @@ public class FactionRecord {
     /**
      * Sets one or more ranges of years the faction is active.
      *
-     * @param str The range of years the faction is active. The format is YYYY-YYYY.
-     *            Either the start
-     *            or end year (or both) can be omitted to make the range open at
-     *            that end. Factions that
-     *            vanish and reappear can provide multiple ranges separated by a
-     *            comma.
+     * @param formattedRange The range of years the faction is active, as YYYY-YYYY.
+     *            The start or end year can be omitted to make the range open at that end.
+     *            Factions that vanish and reappear can provide multiple ranges separated
+     *            by a comma.
      * @throws ParseException If the date range format is invalid
      */
-    public void setYears(String str) throws ParseException {
+    public void setYears(String formattedRange) throws ParseException {
         yearsActive.clear();
-        String[] ranges = str.split(",");
+        String[] ranges = formattedRange.split(",");
         int offset = 0;
         try {
             for (String range : ranges) {
@@ -325,8 +298,7 @@ public class FactionRecord {
                         retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
                     }
                 } else {
-                    logger.debug("RATGenerator: could not locate salvage faction " + pKey
-                            + " for " + key);
+                    logger.debug("RATGenerator: could not locate salvage faction {} for {}", pKey, key);
                 }
             }
         }
@@ -351,27 +323,43 @@ public class FactionRecord {
         return pctTech.get(category).get(era).get(rating);
     }
 
+    /**
+     * Get the desired percentage of Clan, Star League/advanced IS tech, or Omni-units
+     * that should be present as part of the overall random generation table.
+     * @param category  controls which of the three categories, and unit types to lookup
+     * @param era       current year
+     * @param rating    equipment rating based on available range, typically F (0)/D/C/B/A (4)
+     * @return   integer with the percentage (0 - 100) of units that should meet these
+     *           criteria. Returns null if the era data contains no C/SL/O data for that
+     *           unit type.
+     */
     public Integer findPctTech(TechCategory category, int era, int rating) {
+        // Return the value if present
         Integer retVal = getPctTech(category, era, rating);
         if (retVal != null) {
             return retVal;
         }
-        retVal = getPctTech(category.fallthrough(), era, rating);
-        if (retVal != null) {
-            return retVal;
-        }
+
+        // If the value isn't present, check parent factions and averaging if multiple
+        // parent factions are present
         int total = 0;
         int count = 0;
-        for (String parent : parentFactions) {
-            FactionRecord pfr = RATGenerator.getInstance().getFaction(parent);
-            if (pfr != null) {
-                Integer pct = pfr.findPctTech(category, era, rating);
-                if (pct != null) {
-                    total += pct;
-                    count++;
+        if (parentFactions != null && !parentFactions.isEmpty()) {
+            RATGenerator ratGen = RATGenerator.getInstance();
+
+            for (String parent : parentFactions) {
+                FactionRecord parentRecord = ratGen.getFaction(parent);
+                if (parentRecord != null) {
+                    Integer pct = parentRecord.findPctTech(category, era, rating);
+                    if (pct != null) {
+                        total += pct;
+                        count++;
+                    }
                 }
             }
+
         }
+
         if (count > 0) {
             return (int) ((total / count + 0.5));
         } else {
@@ -390,18 +378,18 @@ public class FactionRecord {
     /**
      * Sets the target percentage for a tech category.
      *
-     * @param category The category (omni, clan, SL/upgraded)
-     * @param era      The year for which to set the tech percentage
-     * @param str      A comma-separated list of percentages from the highest unit
+     * @param category    The category (Clan, SL/advanced IS, Omni)
+     * @param era         The year for which to set the tech percentage
+     * @param percentages A comma-separated list of percentages from the highest unit
      *                 rating to the lowest.
      */
-    public void setPctTech(TechCategory category, int era, String str) {
+    public void setPctTech(TechCategory category, int era, String percentages) {
         if (!pctTech.containsKey(category)) {
             pctTech.put(category, new HashMap<>());
         }
         ArrayList<Integer> list = new ArrayList<>();
-        if ((str != null) && !str.isBlank()) {
-            for (String pct : str.split(",")) {
+        if ((percentages != null) && !percentages.isBlank()) {
+            for (String pct : percentages.split(",")) {
                 try {
                     list.add(Integer.parseInt(pct));
                 } catch (NumberFormatException ex) {
@@ -808,8 +796,7 @@ public class FactionRecord {
 
     /**
      * @return CSV of all names of the faction, with the original name given first
-     *         followed by name
-     *         changes in the format year:name
+     *         followed by name changes in the format year:name
      */
     public Object getNamesAsString() {
         StringBuilder retVal = new StringBuilder(name);

@@ -1608,26 +1608,50 @@
 			</model>
 		</chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>SL:8,IS:8,Periphery.Deep:7,Periphery:7</availability>
+			<availability>SL:8,IS:8,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>SL:6,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7,SL.R:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:6+</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:5,Periphery.Deep:4</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:6-,SL.R:4-,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
+        <chassis name='Jump Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:7+</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:3-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>anti_mek</roles>
+                <availability>TC:4-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Karnov UR Transport' unitType='VTOL'>
 			<availability>TH:3+:2600,SL:3+:2600,IS:2+:2600,MERC:2+:2600</availability>
 			<model name=''>

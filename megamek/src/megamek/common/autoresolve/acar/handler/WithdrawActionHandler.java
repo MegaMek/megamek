@@ -18,6 +18,7 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
 import megamek.common.autoresolve.acar.report.IWithdrawReporter;
 import megamek.common.autoresolve.acar.report.WithdrawReporter;
+import megamek.common.autoresolve.damage.EntityFinalState;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,29 +56,29 @@ public class WithdrawActionHandler extends AbstractActionHandler {
         if (canWithdraw) {
             // successful withdraw
             withdrawFormation.setDeployed(false);
-            AtomicInteger unitWithdrawn = new AtomicInteger();
-            for (var unit : withdrawFormation.getUnits()) {
-                for (var element : unit.getElements()) {
-                    game().getEntity(element.getId()).ifPresent(entity -> {
-                        // only withdraw live units
-                        if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_IN_RETREAT &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_DEVASTATED &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_SALVAGEABLE &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_PUSHED &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_CAPTURED &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_EJECTED &&
-                            entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_NEVER_JOINED)
-                        {
+            var formationEntity = withdrawFormation.getEntity();
+            if (formationEntity != null) {
+                formationEntity.setRemovalCondition(IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                formationEntity.setDeployed(false);
+                game().applyDamageToEntityFromUnit(withdrawFormation.getUnits().get(0), formationEntity, EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE);
+                game().addUnitToGraveyard(formationEntity);
+            } else {
+                for (var unit : withdrawFormation.getUnits()) {
+                    for (var element : unit.getElements()) {
+                        var optEntity = game().getEntity(element.getId());
+                        if (optEntity.isPresent()) {
+                            var entity = optEntity.get();
                             entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_IN_RETREAT);
-                            unitWithdrawn.getAndIncrement();
+                            entity.setDeployed(false);
+                            entity.setSalvage(true);
+                            entity.setDestroyed(false);
+                            game().applyDamageToEntityFromUnit(unit, entity, EntityFinalState.CREW_AND_ENTITY_MUST_SURVIVE);
+                            game().addUnitToGraveyard(entity);
                         }
-                        game().addUnitToGraveyard(entity);
-                    });
+                    }
                 }
             }
-            if (unitWithdrawn.get() > 0) {
-                reporter.reportSuccessfulWithdraw(withdrawFormation);
-            }
+            reporter.reportSuccessfulWithdraw(withdrawFormation);
             game().removeFormation(withdrawFormation);
         }
     }

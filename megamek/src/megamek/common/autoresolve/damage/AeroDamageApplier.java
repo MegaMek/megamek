@@ -14,6 +14,7 @@
 package megamek.common.autoresolve.damage;
 
 import megamek.common.Aero;
+import megamek.common.Compute;
 import megamek.common.HitData;
 import megamek.common.IEntityRemovalConditions;
 
@@ -25,11 +26,35 @@ import static megamek.common.Compute.randomInt;
 /**
  * Applies damage to an Aero entity.
  * @param entity Aero entity
- * @param crewMustSurvive Whether the crew must survive
- * @param entityMustSurvive Whether the entity must survive
+ * @param entityFinalState The final state of the entity
  * @author Luana Coppio
  */
-public record AeroDamageApplier(Aero entity, boolean crewMustSurvive, boolean entityMustSurvive, boolean noCrewDamage) implements DamageApplier<Aero> {
+public record AeroDamageApplier(Aero entity, EntityFinalState entityFinalState) implements DamageApplier<Aero> {
+
+    @Override
+    public int devastateUnit() {
+        int totalDamageToApply = entity().getSI();
+        int res = Integer.MAX_VALUE;
+        int loc = -1;
+        for (int i = 0; i < entity().locations(); i++) {
+            if (entity().getArmor(i) < res && entity().getArmor(i) != entity().getOArmor(i)) {
+                res = entity().getArmor(i);
+                loc = i;
+            }
+        }
+        if (loc > -1) {
+            entity().setArmor(0, loc);
+            totalDamageToApply += res;
+        } else {
+            var newLoc = Compute.randomIntInclusive(entity().locations());
+            totalDamageToApply += entity().getArmor(newLoc);
+            entity().setArmor(0, newLoc);
+        }
+
+        entity().setSI(0);
+        entity().setDestroyed(true);
+        return totalDamageToApply;
+    }
 
     @Override
     public int getRandomHitLocation() {
@@ -48,20 +73,14 @@ public record AeroDamageApplier(Aero entity, boolean crewMustSurvive, boolean en
     }
 
     @Override
-    public void destroyLocationAfterEjection() {
-        entity().setDestroyed(true);
-        entity().setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
-    }
-
-    @Override
     public HitDetails damageInternals(HitDetails hitDetails) {
         HitData hit = hitDetails.hit();
         var entity = entity();
         int currentInternalValue = entity.getSI();
-        int newInternalValue = Math.max(currentInternalValue + hitDetails.setArmorValueTo(), 0);
+        int newInternalValue = Math.max(currentInternalValue - hitDetails.setArmorValueTo(), 0);
         entity.setArmor(0, hit);
         entity.setSI(newInternalValue);
-        applyDamageToEquipments(hit);
+        applyDamageToEquipments(hitDetails);
         if (newInternalValue == 0) {
             hitDetails = destroyLocation(hitDetails);
         }

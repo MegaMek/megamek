@@ -20,7 +20,6 @@ import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
-
 import megamek.logging.MMLogger;
 
 import java.util.*;
@@ -37,57 +36,6 @@ public abstract class ForceConsolidation {
     protected abstract int getMaxEntitiesInTopLevelForce();
 
     public record Container(int uid, String name, String breadcrumb, int teamId, int playerId, List<Integer> entities, List<Container> subs) {
-        List<BalancedConsolidateForces.ForceRepresentation> forceRepresentation = getForceRepresentations(forces, teamByPlayer);
-        var balancedConsolidateForces = balanceForces(forceRepresentation);
-
-        clearAllForces(forces);
-
-        for (var forceRep : balancedConsolidateForces) {
-            var player = representativeOwnerForForce.get(forceRep.teamId()).get(0);
-            var parentForceId = forces.addTopLevelForce(
-                new Force(
-                    "[Team " + forceRep.teamId()  + "] "+ forceNameByPlayer.get(player.getId()) + " Formation",
-                    -1,
-                    new Camouflage(),
-                    player),
-                player);
-            for (var subForce : forceRep.subs()) {
-                var subForceId = forces.addSubForce(
-                    new Force(
-                        "[Team " + forceRep.teamId()  + "] " + subForce.uid() + " Unit",
-                        -1,
-                        new Camouflage(),
-                        player),
-                    forces.getForce(parentForceId));
-                for (var entityId : subForce.entities()) {
-                    forces.addEntity((Entity) game.getEntityFromAllSources(entityId), subForceId);
-                }
-            }
-        }
-    }
-
-    private void clearAllForces(Forces forces) {
-        // Remove all empty forces and sub forces after consolidation
-        forces.deleteForces(forces.getAllForces());
-    }
-
-    /**
-     * Converts the forces into a list of ForceRepresentations. It is an intermediary representation of a force, in a way that makes it very
-     * lightweight to manipulate and balance. It only contains the representation of the force top-level, and the list of entities in it.
-     * @param forces The forces to convert
-     * @param teamByPlayer A map of player IDs to team IDs
-     * @return A list of ForceRepresentations
-     */
-    private List<BalancedConsolidateForces.ForceRepresentation> getForceRepresentations(Forces forces, Map<Integer, Integer> teamByPlayer) {
-        List<BalancedConsolidateForces.ForceRepresentation> forceRepresentations = new ArrayList<>();
-        for (Force force : forces.getTopLevelForces()) {
-            int[] entityIds = forces.getFullEntities(force).stream().mapToInt(ForceAssignable::getId).toArray();
-            forceRepresentations.add(new BalancedConsolidateForces.ForceRepresentation(force.getId(), teamByPlayer.get(force.getOwnerId()), entityIds, new int[0]));
-        }
-        return forceRepresentations;
-    }
-
-    public record Container(int uid, int teamId, int[] entities, Container[] subs) {
         public boolean isLeaf() {
             return subs.isEmpty() && !entities.isEmpty();
         }

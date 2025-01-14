@@ -15,11 +15,10 @@ package megamek.common.autoresolve.acar;
 
 
 import megamek.common.*;
-import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.acar.action.Action;
 import megamek.common.autoresolve.acar.action.ActionHandler;
-import megamek.common.autoresolve.acar.report.PublicReportEntry;
+import megamek.common.autoresolve.acar.order.Orders;
 import megamek.common.autoresolve.component.AcTurn;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
@@ -62,6 +61,7 @@ public class SimulationContext implements IGame {
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     private final Map<Integer, SkillLevel> playerSkillLevels = new HashMap<>();
+    private final Map<Integer, Integer> unitsPerPlayerAtStart = new HashMap<>();
     private int lastEntityId;
     /**
      * Report and turnlist
@@ -81,6 +81,8 @@ public class SimulationContext implements IGame {
      */
     private final List<ActionHandler> actionHandlers = new ArrayList<>();
 
+    private final Orders orders = new Orders();
+
     /**
      * Contains all units that have left the game by any means.
      */
@@ -90,6 +92,11 @@ public class SimulationContext implements IGame {
         this.options = gameOptions;
         setBoard(0, board);
         setupForces.createForcesOnSimulation(this);
+        setupForces.addOrdersToForces(this);
+    }
+
+    public Orders getOrders() {
+        return orders;
     }
 
     public void addUnit(InGameObject unit) {
@@ -98,6 +105,7 @@ public class SimulationContext implements IGame {
             id = getNextEntityId();
             unit.setId(id);
         }
+        unitsPerPlayerAtStart.put(unit.getOwnerId(), unitsPerPlayerAtStart.getOrDefault(unit.getOwnerId(), 0) + 1);
         inGameObjects.put(id, unit);
     }
 
@@ -120,6 +128,11 @@ public class SimulationContext implements IGame {
     public int getNoOfEntities() {
         return inGameTWEntities().size();
     }
+
+    public int getStartingNumberOfUnits(int playerId) {
+        return unitsPerPlayerAtStart.getOrDefault(playerId, 0);
+    }
+
 
     public int getSelectedEntityCount(EntitySelector selector) {
         int retVal = 0;
@@ -428,8 +441,13 @@ public class SimulationContext implements IGame {
     }
 
     public List<Formation> getActiveFormations(Player player) {
+        return this.getActiveFormations(player.getId());
+    }
+
+
+    public List<Formation> getActiveFormations(int playerId) {
         return getActiveFormations().stream()
-            .filter(f -> f.getOwnerId() == player.getId())
+            .filter(f -> f.getOwnerId() == playerId)
             .toList();
     }
 

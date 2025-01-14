@@ -18,6 +18,7 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
+import megamek.common.autoresolve.acar.order.OrderType;
 import megamek.common.autoresolve.acar.report.EndPhaseReporter;
 import megamek.common.autoresolve.acar.report.IEndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
@@ -29,6 +30,7 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EndPhase extends PhaseHandler {
 
@@ -66,10 +68,29 @@ public class EndPhase extends PhaseHandler {
             // If the game is over, no need to withdraw
             return;
         }
+
         var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
             .filter(f -> !(f.isType(SBFElementType.BA) || f.isType(SBFElementType.CI)))
-            .toList();
+            .collect(Collectors.toSet());
+
+        for (var order : getContext().getOrders()) {
+            if (order.isEligible(getContext())) {
+                if (order.getOrderType().equals(OrderType.WITHDRAW_IF_CONDITION_IS_MET)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                } else if (order.getOrderType().equals(OrderType.FLEE_NORTH)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                } else if (order.getOrderType().equals(OrderType.FLEE_SOUTH)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                }
+            }
+        }
 
         for (var formation : forcedWithdrawingUnits) {
             getSimulationManager().addWithdraw(new WithdrawAction(formation.getId()));

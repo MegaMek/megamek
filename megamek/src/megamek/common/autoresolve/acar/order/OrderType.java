@@ -13,14 +13,13 @@
  *
  */
 
-package megamek.common.autoresolve.converter;
+package megamek.common.autoresolve.acar.order;
 
-import megamek.common.autoresolve.acar.SimulationContext;
-
-public abstract class SetupForces {
-
-    public abstract void createForcesOnSimulation(SimulationContext context);
-
-    public abstract void addOrdersToForces(SimulationContext context);
-
+public enum OrderType {
+    ATTACK_TARGET,
+    ATTACK_TARGET_NOT_WITHDRAWING,
+    ATTACK_TARGET_WITHDRAWING,
+    FLEE_NORTH,
+    FLEE_SOUTH,
+    WITHDRAW_IF_CONDITION_IS_MET,
 }

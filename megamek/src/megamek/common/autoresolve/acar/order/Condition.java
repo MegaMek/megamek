@@ -13,14 +13,20 @@
  *
  */
 
-package megamek.common.autoresolve.converter;
+package megamek.common.autoresolve.acar.order;
 
 import megamek.common.autoresolve.acar.SimulationContext;
 
-public abstract class SetupForces {
+public interface Condition {
 
-    public abstract void createForcesOnSimulation(SimulationContext context);
+    static Condition alwaysTrue() {
+        return context -> true;
+    }
 
-    public abstract void addOrdersToForces(SimulationContext context);
+    static Condition alwaysFalse() {
+        return context -> false;
+    }
+
+    boolean isMet(SimulationContext context);
 
 }

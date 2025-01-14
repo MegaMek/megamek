@@ -49,6 +49,11 @@ public class MMSetupForces extends SetupForces {
         convertForcesIntoFormations(simulation);
     }
 
+    @Override
+    public void addOrdersToForces(SimulationContext context) {
+        // do nothing
+    }
+
     private static class FailedToConvertForceToFormationException extends RuntimeException {
         public FailedToConvertForceToFormationException(Throwable cause) {
             super(cause);

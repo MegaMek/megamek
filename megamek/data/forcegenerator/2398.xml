@@ -418,7 +418,7 @@
 				<availability>General:1</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6:2405,Periphery:5:2406,TC:3+:2405,Periphery.Deep:5:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:3+,Periphery.Deep:5:2406</availability>
 			</model>
 			<model name='(MG)'>
 				<availability>IS:7,TC:5,Periphery:7,Periphery.Deep:5</availability>
@@ -445,7 +445,7 @@
                 <availability>TC:5-</availability>
             </model>
             <model name="(Laser)">
-                <availability>TC:3+:2405</availability>
+                <availability>TC:3+</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -502,7 +502,7 @@
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6:2405,Periphery:5:2406,TC:5+:2405,Periphery.Deep:6+:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:5+,Periphery.Deep:6+:2406</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -523,7 +523,7 @@
             </model>
             <model name='(Laser)'>
                 <roles>anti_mek</roles>
-                <availability>TC:5:2405</availability>
+                <availability>TC:5</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -589,7 +589,7 @@
 			</model>
 			<model name='(Laser)'>
                 <roles>recon</roles>
-				<availability>IS:6:2405,Periphery:5:2406,TC:5+:2405,Periphery.Deep:5+:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:5+,Periphery.Deep:5+:2406</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -610,7 +610,7 @@
             </model>
             <model name='(Laser)'>
                 <roles>recon</roles>
-                <availability>TC:6:2405</availability>
+                <availability>TC:6</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -634,7 +634,7 @@
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6:2405,Periphery:5:2406,TC:5+:2405,Periphery.Deep:5+:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:5+,Periphery.Deep:5+:2406</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -654,7 +654,7 @@
                 <availability>TC:2-</availability>
             </model>
             <model name='(Laser)'>
-                <availability>TC:6:2405</availability>
+                <availability>TC:6</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -679,7 +679,7 @@
 			</model>
 			<model name='(Laser)'>
                 <roles>urban</roles>
-				<availability>IS:6:2405,Periphery:5:2406,TC:5+:2405,Periphery.Deep:5+:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:5+,Periphery.Deep:5+:2406</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry,urban</roles>
@@ -702,7 +702,7 @@
             </model>
             <model name='(Laser)'>
                 <roles>urban</roles>
-                <availability>TC:5:2405</availability>
+                <availability>TC:5</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry,urban</roles>
@@ -753,7 +753,7 @@
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6:2405,Periphery:5:2406,TC:4+:2405,Periphery.Deep:5:2406</availability>
+				<availability>IS:6,Periphery:5:2406,TC:4+,Periphery.Deep:5:2406</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
@@ -777,7 +777,7 @@
                 <availability>TC:4-</availability>
             </model>
             <model name='(Laser)'>
-                <availability>TC:4+:2405</availability>
+                <availability>TC:4+</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry</roles>

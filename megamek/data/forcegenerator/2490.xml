@@ -682,7 +682,7 @@
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>IS:8:2500,Periphery:8:2500,TC:8-:2500</availability>
+				<availability>IS:5-,Periphery:8-,TC:8-</availability>
 			</model>
 			<model name='(MG)'>
 				<availability>IS:7,TC:5,Periphery:7,Periphery.Deep:5</availability>
@@ -692,18 +692,18 @@
 				<availability>IS:6,TC:3+</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>IS:7:2500,Periphery:7:2500,TC:8:2500,Periphery.Deep:7:2500</availability>
+				<availability>IS:7,Periphery:7,TC:8,Periphery.Deep:7</availability>
 			</model>
             <model name='(Rifle Mountain)'>
                 <roles>mountaineer</roles>
-                <availability>IS:3:2500,Periphery:3:2500</availability>
+                <availability>IS:3,Periphery:3</availability>
             </model>
 			<model name='(Rifle Paratrooper)'>
 				<roles>paratrooper</roles>
 				<availability>IS:3,Periphery:2,TC:0</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,Periphery:8</availability>
+				<availability>IS:8,Periphery:8,TC:6,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
 				<availability>IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>

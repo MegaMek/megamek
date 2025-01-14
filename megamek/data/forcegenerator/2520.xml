@@ -836,7 +836,7 @@
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>IS:8,Periphery:8,TC:8-</availability>
+				<availability>IS:5-,Periphery:8-,TC:8-</availability>
 			</model>
 			<model name='(MG)'>
 				<availability>IS:7,TC:5,Periphery:7,Periphery.Deep:5</availability>
@@ -857,7 +857,7 @@
 				<availability>IS:3,Periphery:2,TC:0</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,Periphery:8,TC:7</availability>
+				<availability>IS:8,Periphery:8,TC:6,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
 				<availability>IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>

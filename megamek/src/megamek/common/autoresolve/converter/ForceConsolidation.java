@@ -35,7 +35,7 @@ public abstract class ForceConsolidation {
     protected abstract int getMaxEntitiesInSubForce();
     protected abstract int getMaxEntitiesInTopLevelForce();
 
-    public record Container(int uid, String name, int teamId, int playerId, List<Integer> entities, List<Container> subs) {
+    public record Container(int uid, String name, String breadcrumb, int teamId, int playerId, List<Integer> entities, List<Container> subs) {
         public boolean isLeaf() {
             return subs.isEmpty() && !entities.isEmpty();
         }
@@ -48,6 +48,7 @@ public abstract class ForceConsolidation {
         public String toString() {
             return new StringJoiner(", ", Container.class.getSimpleName() + "[", "]")
                 .add("uid=" + uid)
+                .add("breadcrumb='" + breadcrumb + "'")
                 .add("name='" + name + "'")
                 .add("teamId=" + teamId)
                 .add("playerId=" + playerId)
@@ -221,6 +222,7 @@ public abstract class ForceConsolidation {
                 Container leaf = new Container(
                     maxId++,
                     null,
+                    null,
                     team,
                     -1,
                     subListOfEntityIds.subList(start, subForceSize).stream().toList(),
@@ -233,7 +235,7 @@ public abstract class ForceConsolidation {
                 break;
             }
 
-            Container top = new Container(maxId++, null, team, -1, new ArrayList<>(), subForces);
+            Container top = new Container(maxId++, null, null, team, -1, new ArrayList<>(), subForces);
             balancedForces.put(top.uid(), top);
         }
     }

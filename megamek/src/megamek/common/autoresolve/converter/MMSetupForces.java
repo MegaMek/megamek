@@ -69,11 +69,11 @@ public class MMSetupForces extends SetupForces {
      */
     private void convertForcesIntoFormations(SimulationContext simulationContext) {
         if (!simulationContext.getForces().getAllForces().isEmpty()) {
-            new UseCurrentForces().consolidateForces(simulationContext);
+            new KeepCurrentForces().consolidateForces(simulationContext);
             // Check the depth of the force, according to the depth of the force, it will either be
             for (var force : simulationContext.getForces().getTopLevelForces()) {
                 try {
-                    var formation = new ForceToFormationConverter(force, simulationContext).convert();
+                    var formation = new LowestForceAsUnit(force, simulationContext).convert();
                     formation.setTargetFormationId(Entity.NONE);
                     simulationContext.addUnit(formation);
                 } catch (Exception e) {
@@ -87,7 +87,7 @@ public class MMSetupForces extends SetupForces {
         for (var inGameObject : simulationContext.getInGameObjects()) {
             try {
                 if (inGameObject instanceof Entity entity) {
-                    var formation = new EntityToFormationConverter(entity, simulationContext).convert();
+                    var formation = new EntityAsFormation(entity, simulationContext).convert();
                     formation.setTargetFormationId(Entity.NONE);
                     simulationContext.addUnit(formation);
                 }

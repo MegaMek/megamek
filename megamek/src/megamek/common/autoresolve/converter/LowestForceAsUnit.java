@@ -13,7 +13,6 @@
  */
 package megamek.common.autoresolve.converter;
 
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
@@ -37,26 +36,26 @@ import java.util.ArrayList;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-public class ForceToFormationConverter extends BaseFormationConverter<Formation> {
-    private static final MMLogger logger = MMLogger.create(ForceToFormationConverter.class);
+public class LowestForceAsUnit extends BaseFormationConverter<Formation> {
+    private static final MMLogger logger = MMLogger.create(LowestForceAsUnit.class);
 
-    public ForceToFormationConverter(Force force, SimulationContext game) {
+    public LowestForceAsUnit(Force force, SimulationContext game) {
         super(force, game, new Formation());
     }
 
     @Override
     public Formation convert() {
-        Counter<Role> counter = new Counter<>();
-
         Forces forces = game.getForces();
+        var player = game.getPlayer(force.getOwnerId());
+        Counter<Role> counter = new Counter<>();
         for (Force subforce : forces.getFullSubForces(force)) {
             if (!subforce.getSubForces().isEmpty() || subforce.getEntities().isEmpty()) {
                 continue;
             }
-
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity entityCast) {
+                    entityCast.setOwner(player);
                     if (entityCast.getOwnerId() != force.getOwnerId()) {
                         logger.error("Entity " + entityCast + " does not belong to force " + force);
                         continue;

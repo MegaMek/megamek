@@ -21,7 +21,7 @@ import megamek.common.force.Forces;
 
 import java.util.*;
 
-public class UseCurrentForces extends ForceConsolidation {
+public class KeepCurrentForces extends ForceConsolidation {
     @Override
     protected int getMaxEntitiesInSubForce() {
         return -1;
@@ -49,9 +49,17 @@ public class UseCurrentForces extends ForceConsolidation {
             if (force == null) {
                 continue;
             }
+            var parentId = parents.getOrDefault(force.getId(), -1);
+            var parentNode = newForceMap.get(parentId);
+            var breadcrumb = "";
+            var breadCrumbMaker = parentNode;
+            while (breadCrumbMaker != null) {
+                breadcrumb = parentNode.breadcrumb() + " > ";
+                breadCrumbMaker = newForceMap.get(parents.getOrDefault(breadCrumbMaker.uid(), -1));
+            }
             var player = game.getPlayer(force.getOwnerId());
             var team = player.getTeam();
-            var container = new Container(forceId++, force.getName(), team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
+            var container = new Container(forceId++, force.getName(), breadcrumb, team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
             newForceMap.put(force.getId(), container);
 
             for (var entityId : force.getEntities()) {
@@ -61,9 +69,7 @@ public class UseCurrentForces extends ForceConsolidation {
                 container.entities().add(entityId);
                 entityDuplicationChecker.add(entityId);
             }
-            var parentId = parents.get(force.getId());
-            if (parentId != null) {
-                var parentNode = newForceMap.get(parentId);
+            if (parentNode != null) {
                 parentNode.subs().add(container);
             } else {
                 newTopLevelForces.add(container);

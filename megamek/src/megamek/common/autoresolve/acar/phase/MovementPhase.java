@@ -23,6 +23,7 @@ import megamek.common.autoresolve.acar.action.MoveAction;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.handler.MoveActionHandler;
 import megamek.common.autoresolve.acar.handler.MoveToCoverActionHandler;
+import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
@@ -224,9 +225,9 @@ public class MovementPhase extends PhaseHandler {
 
         // Gather possible targets
         var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> actingFormation.getTargetFormationId() == Entity.NONE
-                || f.getId() == actingFormation.getTargetFormationId())
-            .filter(SBFFormation::isDeployed)
+            .filter(f -> (actingFormation.getTargetFormationId() == Entity.NONE)
+                || (role.tailTargets() && f.getId() == actingFormation.getTargetFormationId())
+                || !role.tailTargets())
             .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
             .collect(Collectors.toList());
 
@@ -234,17 +235,9 @@ public class MovementPhase extends PhaseHandler {
             return Optional.empty();
         }
 
-        if (role.targetsLastAttacker() && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
-            var lastAttackerId = actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE);
-            var lastAttacker = canBeTargets.stream()
-                .filter(f -> f.getId() == lastAttackerId)
-                .findFirst();
-            if (lastAttacker.isPresent()) {
-                var distance = actingFormation.getPosition().coords().distance(lastAttacker.get().getPosition().coords());
-                if (actingFormation.getRole().preferredRange().insideRange(distance)) {
-                    return lastAttacker;
-                }
-            }
+        Optional<Formation> lastAttacker = getLastAttacker(actingFormation, role, canBeTargets);
+        if (lastAttacker.isPresent()) {
+            return lastAttacker;
         }
 
         // 2. Sort the candidates by distance (closest first, or some logic you already have)
@@ -299,6 +292,33 @@ public class MovementPhase extends PhaseHandler {
             return Optional.of(normal.get(0));
         }
 
+        return Optional.empty();
+    }
+
+    private static Optional<Formation> getLastAttacker(Formation actingFormation, Role role, List<Formation> canBeTargets) {
+        if (role.targetsLastAttacker() && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
+            var lastAttackerId = actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE);
+            var lastAttacker = canBeTargets.stream()
+                .filter(f -> f.getId() == lastAttackerId)
+                .findFirst();
+
+            if (lastAttacker.isPresent()) {
+                var distance = actingFormation.getPosition().coords().distance(lastAttacker.get().getPosition().coords());
+                var myMove = actingFormation.getCurrentMovement();
+                var targetMove = lastAttacker.get().getCurrentMovement();
+                var maxDistance = distance - myMove + targetMove;
+                var minDistance = distance - myMove - targetMove;
+
+                var canDamageTargetAtCurrent = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(distance)).hasDamage();
+                var canDamageTargetAtMin = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(minDistance)).hasDamage();
+                var canDamageTargetAtMax = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(maxDistance)).hasDamage();
+                if (canDamageTargetAtMax || canDamageTargetAtMin || canDamageTargetAtCurrent) {
+                    // also set the unit as target
+                    actingFormation.setTargetFormationId(lastAttackerId);
+                    return lastAttacker;
+                }
+            }
+        }
         return Optional.empty();
     }
 

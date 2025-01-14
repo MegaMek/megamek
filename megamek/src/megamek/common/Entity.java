@@ -2661,7 +2661,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         StringBuilder builder = new StringBuilder();
         builder.append(createShortName(duplicateMarker));
 
-        if (getOwner() != null && !getOwner().getName().isBlank()) {
+        if (getOwner() != null && getOwner().getName() != null && !getOwner().getName().isBlank()) {
             builder.append(" (").append(getOwner().getName()).append(")");
         }
 

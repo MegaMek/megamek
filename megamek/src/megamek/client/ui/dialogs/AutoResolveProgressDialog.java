@@ -177,17 +177,19 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             var result = simulateScenario();
-            dialog.setEvent(result);
-            stopWatch.stop();
             if (result == null) {
                 JOptionPane.showMessageDialog(
                     getFrame(),
-                    "FAIL", "error",
-                    JOptionPane.ERROR_MESSAGE);
-                return 0;
+                    Internationalization.getText("AutoResolveDialog.messageScenarioError.text"),
+                    Internationalization.getText("AutoResolveDialog.messageScenarioError.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+                return -1;
             }
+            dialog.setEvent(result);
+            stopWatch.stop();
+
             var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ? "AutoResolveDialog.messageScenarioTeam" : "AutoResolveDialog.messageScenarioPlayer";
-            messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == 0) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
+            messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == -1) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
             var message = Internationalization.getFormattedText(messageKey,
                 result.getVictoryResult().getWinningTeam(),
                 result.getVictoryResult().getWinningPlayer());
@@ -238,10 +240,9 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                 }));
                 futures.add(executor.submit(() -> {
                     try {
-                        var result = Resolver.simulationRun(
+                        return Resolver.simulationRun(
                                 setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
                             .resolveSimulation();
-                        return result;
                     } catch (Exception e) {
                         logger.error(e, e);
                     } finally {

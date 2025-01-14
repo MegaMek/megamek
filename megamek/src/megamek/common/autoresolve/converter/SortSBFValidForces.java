@@ -18,7 +18,7 @@ package megamek.common.autoresolve.converter;
  * in a way to consolidate then into valid forces to build Formations out of them.
  * @author Luana Coppio
  */
-public class BalancedConsolidateForces extends ForceConsolidation {
+public class SortSBFValidForces extends ForceConsolidation {
 
     public static final int MAX_ENTITIES_IN_SUB_FORCE = 6;
     public static final int MAX_ENTITIES_IN_TOP_LEVEL_FORCE = 20;

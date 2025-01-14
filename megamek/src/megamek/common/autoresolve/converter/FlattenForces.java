@@ -20,9 +20,8 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class UseLancesAsFormations extends ForceConsolidation {
+public class FlattenForces extends ForceConsolidation {
 
     @Override
     protected int getMaxEntitiesInSubForce() {
@@ -60,14 +59,10 @@ public class UseLancesAsFormations extends ForceConsolidation {
         var hasNoSubForce = subForce.subForceCount() == 0;
         var hasEntities = subForce.entityCount() > 0;
         if (hasNoSubForce && hasEntities) {
-            var name = force.getName() + " " + subForce.getName();
-            if (force.getName().equals(subForce.getName())) {
-                name = subForce.getName();
-            }
 
-            var topLevel = new Container(forceId++, name, team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
+            var topLevel = new Container(forceId++, subForce.getName(), force.getName(),  team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
             topLevel.subs().add(
-                new Container(forceId++, name, team, force.getOwnerId(),  new ArrayList<>(subForce.getEntities()), new ArrayList<>())
+                new Container(forceId++, subForce.getName(), force.getName(), team, force.getOwnerId(),  new ArrayList<>(subForce.getEntities()), new ArrayList<>())
             );
             newTopLevelForces.add(topLevel);
         }

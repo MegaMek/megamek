@@ -4160,7 +4160,7 @@
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>IS:8</availability>
+				<availability>IS:8,Periphery:8,TC:8-</availability>
 			</model>
 			<model name='(MG)'>
 				<availability>IS:7,Periphery:7,TC:5,HL:7,Periphery.Deep:5</availability>
@@ -7274,10 +7274,10 @@
 			<availability>IS:7,Periphery:7,TC:2-,HL:6,Periphery.Deep:8+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>IS:8,Periphery:8</availability>
+				<availability>IS:8,Periphery:8,TC:4-,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
-                <roles>urban</roles>
+                <roles>fire_support,urban</roles>
 				<availability>IS:5,Periphery:4,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 			<model name='(Laser)'>
@@ -7308,7 +7308,7 @@
                 <availability>TC:5</availability>
             </model>
             <model name='(LRM)'>
-                <roles>urban,fire_support</roles>
+                <roles>fire_support,urban</roles>
                 <availability>TC:4</availability>
             </model>
             <model name='(MG)'>

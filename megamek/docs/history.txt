@@ -20,6 +20,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6381: Added Static Access to Resource Bundle
 + PR #6382: Rolled Back #6381
 + Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
++ PR #6402: Feature: ACAR strategic objectives 
 
 
 0.50.02 (2024-12-30 2130 UTC)

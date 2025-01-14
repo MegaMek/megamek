@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3039-->
-<ratgen>
+<ratgen
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -2936,7 +2939,7 @@
             </model>
         </chassis>
         <chassis name='Foot Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:10:3047</availability>
+            <availability>TC:6+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:5-</availability>
@@ -4120,7 +4123,7 @@
             </model>
         </chassis>
         <chassis name='Jump Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:8+:3047</availability>
+            <availability>TC:4+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:3-</availability>
@@ -4996,7 +4999,7 @@
             </model>
         </chassis>
         <chassis name='Mechanized Hover Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:5:3047</availability>
+            <availability>TC:3+</availability>
             <model name='(Flamer)'>
                 <availability>TC:2-</availability>
             </model>
@@ -5064,7 +5067,7 @@
             </model>
         </chassis>
         <chassis name='Mechanized Tracked Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:7:3047</availability>
+            <availability>TC:5+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:2-</availability>
@@ -5134,7 +5137,7 @@
             </model>
         </chassis>
         <chassis name='Mechanized Wheeled Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:6:3047</availability>
+            <availability>TC:4+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:5-</availability>
@@ -5407,7 +5410,7 @@
             </model>
         </chassis>
         <chassis name='Motorized Platoon (Taurian 3047+)' unitType='Infantry'>
-            <availability>TC:9:3047</availability>
+            <availability>TC:7+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:4-</availability>

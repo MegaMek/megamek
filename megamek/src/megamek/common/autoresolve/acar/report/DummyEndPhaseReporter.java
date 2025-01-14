@@ -14,6 +14,8 @@
 package megamek.common.autoresolve.acar.report;
 
 import megamek.common.Entity;
+import megamek.common.autoresolve.component.Formation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 public class DummyEndPhaseReporter implements IEndPhaseReporter {
 
@@ -31,6 +33,11 @@ public class DummyEndPhaseReporter implements IEndPhaseReporter {
     }
 
     @Override
-    public void reportUnitDestroyed(Entity entity) {
+    public void reportUnitDestroyed(Formation formation, SBFUnit unit) {
+    }
+
+    @Override
+    public void reportElementDestroyed(Formation formation, SBFUnit unit, Entity entity) {
+
     }
 }

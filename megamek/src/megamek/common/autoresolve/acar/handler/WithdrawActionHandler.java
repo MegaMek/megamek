@@ -47,6 +47,11 @@ public class WithdrawActionHandler extends AbstractActionHandler {
 
         var withdrawFormation = withdrawOpt.get();
         if (!withdrawFormation.isWithdrawing()) {
+            if (withdrawFormation.isCrippled()) {
+                reporter.reportStartingWithdrawForCrippled(withdrawFormation);
+            } else {
+                reporter.reportStartingWithdrawForOrder(withdrawFormation);
+            }
             withdrawFormation.setWithdrawing(true);
         }
 

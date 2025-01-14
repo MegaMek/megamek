@@ -45,7 +45,8 @@ public class MMSetupForces extends SetupForces {
         for (var player : game.getPlayersList()) {
             setupPlayer(player, game.getInGameObjects(), simulation);
         }
-
+        // the forces are present in "game" and should be applied to simulation
+        simulation.setForces(game.getForces());
         convertForcesIntoFormations(simulation);
     }
 
@@ -64,21 +65,38 @@ public class MMSetupForces extends SetupForces {
      * Convert the forces in the game to formations, this is the most important step in the setup of the game,
      * it converts every top level force into a single formation, and those formations are then added to the game
      * and used in the auto resolve in place of the original entities
-     * @param game The game object to convert the forces in
+     * @param simulationContext The simulationContext which contains the forces to be converted
      */
-    private static void convertForcesIntoFormations(SimulationContext game) {
-        for(var inGameObject : game.getInGameObjects()) {
+    private void convertForcesIntoFormations(SimulationContext simulationContext) {
+        if (!simulationContext.getForces().getAllForces().isEmpty()) {
+            new UseCurrentForces().consolidateForces(simulationContext);
+            // Check the depth of the force, according to the depth of the force, it will either be
+            for (var force : simulationContext.getForces().getTopLevelForces()) {
+                try {
+                    var formation = new ForceToFormationConverter(force, simulationContext).convert();
+                    formation.setTargetFormationId(Entity.NONE);
+                    simulationContext.addUnit(formation);
+                } catch (Exception e) {
+                    Sentry.captureException(e);
+                    throw new FailedToConvertForceToFormationException(e);
+                }
+            }
+            return;
+        }
+
+        for (var inGameObject : simulationContext.getInGameObjects()) {
             try {
                 if (inGameObject instanceof Entity entity) {
-                    var formation = new EntityToFormationConverter(entity, game).convert();
+                    var formation = new EntityToFormationConverter(entity, simulationContext).convert();
                     formation.setTargetFormationId(Entity.NONE);
-                    game.addUnit(formation);
+                    simulationContext.addUnit(formation);
                 }
             } catch (Exception e) {
                 Sentry.captureException(e);
                 throw new FailedToConvertForceToFormationException(e);
             }
         }
+
     }
 
     /**
@@ -134,15 +152,11 @@ public class MMSetupForces extends SetupForces {
             if (Objects.isNull(entity)) {
                 continue;
             }
-
+            entity.setId(unit.getId());
             entity.setExternalIdAsString(unit.getExternalIdAsString());
             entity.setOwner(player);
-
-            // If this unit is a spacecraft, set the crew size and marine size values
-            if (entity.isLargeCraft() || (entity.getUnitType() == UnitType.SMALL_CRAFT)) {
-                entity.setNCrew(unit.getNCrew());
-                entity.setNMarines(unit.getNMarines());
-            }
+            entity.setNCrew(unit.getNCrew());
+            entity.setNMarines(unit.getNMarines());
             // Calculate deployment round
             int deploymentRound = entity.getDeployRound();
             entity.setDeployRound(deploymentRound);

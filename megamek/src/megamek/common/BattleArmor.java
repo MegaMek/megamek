@@ -1250,8 +1250,12 @@ public class BattleArmor extends Infantry {
                 activeTroops.add(loop);
             }
         }
-        int locInt = Compute.randomInt(activeTroops.size());
-        return activeTroops.elementAt(locInt);
+        if (!activeTroops.isEmpty()) {
+            int locInt = Compute.randomInt(activeTroops.size());
+            return activeTroops.elementAt(locInt);
+        } else {
+            return -1;
+        }
     }
 
     @Override

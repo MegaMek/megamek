@@ -74,7 +74,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         }
 
         // Start of attack report
-        reporter.reportAttackStart(attacker, attack.getUnitNumber(), target);
+        reporter.reportAttackStart(attacker, attack.getUnitNumber(), target, targetUnit);
 
         if (toHit.cannotSucceed()) {
             reporter.reportCannotSucceed(toHit.getDesc());

@@ -24,6 +24,9 @@ import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Formation extends SBFFormation {
 
@@ -39,6 +42,36 @@ public class Formation extends SBFFormation {
     private InitiativeRoll initiativeRoll = new InitiativeRoll();
     private Role role;
     private Entity entity;
+    private List<Integer> beingTargetedBy = new ArrayList<>();
+    private int startingSize;
+
+    public void addBeingTargetedBy(Formation formation) {
+        beingTargetedBy.add(formation.getId());
+    }
+
+    public int beingTargetByHowMany() {
+        return beingTargetedBy.size();
+    }
+
+    public int getStartingSize() {
+        return startingSize;
+    }
+
+    public void setStartingSize(int startingSize) {
+        this.startingSize = startingSize;
+    }
+
+    public int currentSize() {
+        int total = 0;
+        for (var unit : getUnits()) {
+            total += unit.getElements().size();
+        }
+        return total;
+    }
+
+    public boolean isSingleEntity() {
+        return entity != null;
+    }
 
     public Entity getEntity() {
         return entity;
@@ -120,9 +153,35 @@ public class Formation extends SBFFormation {
         targetFormationId = Entity.NONE;
         engagementControl = null;
         highStressEpisode = false;
+        beingTargetedBy.clear();
         getMemory().clear("range.");
         setDone(false);
     }
+
+    public String getDisplayName() {
+        if (getEntity() != null) {
+            return entity.getDisplayName() + " ID:" + entity.getId();
+        }
+
+        return getName()+ " ID:" + getId();
+    }
+
+    public List<String> getElementNames() {
+        var entityNames = new ArrayList<String>(6);
+
+        if (getEntity() != null) {
+            entityNames.add(entity.getDisplayName());
+            return entityNames;
+        }
+        entityNames.add(getName());
+        for (var unit : getUnits()) {
+            for (var element : unit.getElements()) {
+                entityNames.add(element.getName() + " ID:" + element.getId());
+            }
+        }
+        return entityNames;
+    }
+
 
     public int getCurrentMovement() {
         return getUnits().stream().mapToInt(u -> Math.max(0, u.getMovement() - u.getMpCrits())).min().orElse(0);

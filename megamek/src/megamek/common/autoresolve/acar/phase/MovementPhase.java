@@ -23,61 +23,18 @@ import megamek.common.autoresolve.acar.action.MoveAction;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.handler.MoveActionHandler;
 import megamek.common.autoresolve.acar.handler.MoveToCoverActionHandler;
-import megamek.common.autoresolve.component.EngagementControl;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
 import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MovementPhase extends PhaseHandler {
-
-    private static final WeightedDoubleMap<EngagementControl> normal = WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 1.0,
-        EngagementControl.EVADE, 0.0,
-        EngagementControl.STANDARD, 1.0,
-        EngagementControl.OVERRUN, 0.5,
-        EngagementControl.NONE, 0.0
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> unsteady =  WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.5,
-        EngagementControl.EVADE, 0.02,
-        EngagementControl.STANDARD, 1.0,
-        EngagementControl.OVERRUN, 0.1,
-        EngagementControl.NONE, 0.01
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> shaken =  WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.2,
-        EngagementControl.EVADE, 0.1,
-        EngagementControl.STANDARD, 0.8,
-        EngagementControl.OVERRUN, 0.05,
-        EngagementControl.NONE, 0.01
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> broken = WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.05,
-        EngagementControl.EVADE, 1.0,
-        EngagementControl.STANDARD, 0.5,
-        EngagementControl.OVERRUN, 0.05,
-        EngagementControl.NONE, 0.3
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> routed = WeightedDoubleMap.of(
-        EngagementControl.NONE, 1.0
-    );
-
-    private static final Map<Formation.MoraleStatus, WeightedDoubleMap<EngagementControl>> engagementControlOptions = Map.of(
-        Formation.MoraleStatus.NORMAL, normal,
-        Formation.MoraleStatus.UNSTEADY, unsteady,
-        Formation.MoraleStatus.SHAKEN, shaken,
-        Formation.MoraleStatus.BROKEN, broken,
-        Formation.MoraleStatus.ROUTED, routed
-    );
 
     public MovementPhase(SimulationManager gameManager) {
         super(gameManager, GamePhase.MOVEMENT);

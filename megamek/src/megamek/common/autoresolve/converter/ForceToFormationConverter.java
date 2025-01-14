@@ -13,6 +13,7 @@
  */
 package megamek.common.autoresolve.converter;
 
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
@@ -29,9 +30,12 @@ import megamek.common.force.Forces;
 import megamek.common.strategicBattleSystems.BaseFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
+import megamek.common.util.Counter;
 import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
+
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class ForceToFormationConverter extends BaseFormationConverter<Formation> {
     private static final MMLogger logger = MMLogger.create(ForceToFormationConverter.class);
@@ -42,41 +46,50 @@ public class ForceToFormationConverter extends BaseFormationConverter<Formation>
 
     @Override
     public Formation convert() {
-        var forceName = "";
+        Counter<Role> counter = new Counter<>();
+
         Forces forces = game.getForces();
-
-        // default role
-        Role role = Role.getRole(UnitRole.SKIRMISHER);
-
         for (Force subforce : forces.getFullSubForces(force)) {
+            if (!subforce.getSubForces().isEmpty() || subforce.getEntities().isEmpty()) {
+                continue;
+            }
+
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity entityCast) {
-                    forceName = entityCast.getDisplayName();
+                    if (entityCast.getOwnerId() != force.getOwnerId()) {
+                        logger.error("Entity " + entityCast + " does not belong to force " + force);
+                        continue;
+                    }
                     var element = ASConverter.convertAndKeepRefs(entityCast);
                     if (element != null) {
                         thisUnit.add(element);
-                        role = Role.getRole(entityCast.getRole());
+                        counter.add(Role.getRole(entityCast.getRole()));
                     } else {
                         var msg = String.format("Could not convert entity %s to AS element", entityCast);
                         logger.error(msg);
                     }
                 }
             }
-            SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), report).createSbfUnit();
-            formation.addUnit(convertedUnit);
-        }
-        formation.setName(forceName);
-        formation.setRole(role);
-        formation.setStdDamage(setStdDamageForFormation(formation));
-        for (var unit : formation.getUnits()) {
-            var health = 0;
-            for (var element : unit.getElements()) {
-                health += element.getCurrentArmor() + element.getCurrentStructure();
+            if (!thisUnit.isEmpty()) {
+                SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), report).createSbfUnit();
+                formation.addUnit(convertedUnit);
             }
-            unit.setArmor(health);
-            unit.setCurrentArmor(health);
         }
+        formation.setOwnerId(force.getOwnerId());
+        formation.setName(force.getName());
+        calcSbfFormationStats();
+        formation.setRole(firstNonNull(counter.top(), Role.getRole(UnitRole.SKIRMISHER)));
+        formation.setStdDamage(setStdDamageForFormation(formation));
+//        for (var unit : formation.getUnits()) {
+//            var health = 0;
+//            for (var element : unit.getElements()) {
+//                health += element.getCurrentArmor() + element.getCurrentStructure();
+//            }
+//            unit.setArmor(health);
+//            unit.setCurrentArmor(health);
+//        }
+        formation.setStartingSize(formation.currentSize());
         return formation;
     }
 

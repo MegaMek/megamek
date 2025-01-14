@@ -32,5 +32,6 @@ public class BalancedConsolidateForces extends ForceConsolidation {
     protected int getMaxEntitiesInTopLevelForce() {
         return MAX_ENTITIES_IN_TOP_LEVEL_FORCE;
     }
+
 }
 

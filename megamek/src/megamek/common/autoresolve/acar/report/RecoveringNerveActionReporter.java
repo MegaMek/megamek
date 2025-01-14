@@ -44,7 +44,7 @@ public class RecoveringNerveActionReporter implements IRecoveringNerveActionRepo
     @Override
     public void reportRecoveringNerveStart(Formation formation, int toHitValue) {
         reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryAttempt")
-            .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text())
+            .add(new FormationReportEntry(formation, game).reportText())
             .add(toHitValue).noNL()
         );
     }

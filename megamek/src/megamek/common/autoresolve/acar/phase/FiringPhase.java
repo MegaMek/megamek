@@ -13,6 +13,7 @@
  */
 package megamek.common.autoresolve.acar.phase;
 
+import megamek.common.Compute;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.Action;
@@ -78,6 +79,7 @@ public class FiringPhase extends PhaseHandler {
                 var attack = new StandardUnitAttack(actingFormation.getId(), unitIndex, target.getId(), range);
                 attacks.add(attack);
             }
+            target.addBeingTargetedBy(actingFormation);
             getSimulationManager().addAttack(attacks, actingFormation);
         }
     }
@@ -97,6 +99,7 @@ public class FiringPhase extends PhaseHandler {
         }
 
         var ret = new ArrayList<AttackRecord>();
+
         ret.add(new AttackRecord(actingFormation, target.get(0), unitIds));
         return ret;
     }
@@ -183,9 +186,13 @@ public class FiringPhase extends PhaseHandler {
 
         Collections.shuffle(pickTarget);
         priorityTarget.ifPresent(formation -> pickTarget.add(0, formation));
-        var iterator = targets.iterator();
-        if (iterator.hasNext()) {
+
+        var iterator = pickTarget.iterator();
+        while (iterator.hasNext()) {
             var target = iterator.next();
+            if (target.beingTargetByHowMany() > 2 && iterator.hasNext()) {
+                continue;
+            }
             return List.of(target);
         }
         return Collections.emptyList();

@@ -19,5 +19,7 @@ import megamek.common.autoresolve.component.Formation;
 
 public interface IWithdrawReporter {
 
+    void reportStartingWithdrawForCrippled(Formation withdrawingFormation);
+    void reportStartingWithdrawForOrder(Formation withdrawingFormation);
     void reportSuccessfulWithdraw(Formation withdrawingFormation);
 }

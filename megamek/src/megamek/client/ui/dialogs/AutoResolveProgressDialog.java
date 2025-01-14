@@ -179,7 +179,13 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             var result = simulateScenario();
             dialog.setEvent(result);
             stopWatch.stop();
-
+            if (result == null) {
+                JOptionPane.showMessageDialog(
+                    getFrame(),
+                    "FAIL", "error",
+                    JOptionPane.ERROR_MESSAGE);
+                return 0;
+            }
             var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ? "AutoResolveDialog.messageScenarioTeam" : "AutoResolveDialog.messageScenarioPlayer";
             messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == 0) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
             var message = Internationalization.getFormattedText(messageKey,
@@ -231,11 +237,18 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                     return null;
                 }));
                 futures.add(executor.submit(() -> {
-                    var result = Resolver.simulationRun(
-                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
-                        .resolveSimulation();
-                    countDownLatch.countDown();
-                    return result;
+                    try {
+                        var result = Resolver.simulationRun(
+                                setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
+                            .resolveSimulation();
+                        return result;
+                    } catch (Exception e) {
+                        logger.error(e, e);
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+
+                    return null;
                 }));
 
                 // Wait for all tasks to complete

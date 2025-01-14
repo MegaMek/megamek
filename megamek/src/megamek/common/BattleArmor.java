@@ -13,10 +13,6 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Vector;
-
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.cost.BattleArmorCostCalculator;
@@ -31,6 +27,10 @@ import megamek.common.planetaryconditions.Wind;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
+
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equipped infantry,
@@ -1251,8 +1251,7 @@ public class BattleArmor extends Infantry {
             }
         }
         if (!activeTroops.isEmpty()) {
-            int locInt = Compute.randomInt(activeTroops.size());
-            return activeTroops.elementAt(locInt);
+            return activeTroops.elementAt(Compute.randomInt(activeTroops.size()));
         } else {
             return -1;
         }

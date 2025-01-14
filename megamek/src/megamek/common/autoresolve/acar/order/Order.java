@@ -19,6 +19,11 @@ import megamek.common.autoresolve.acar.SimulationContext;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+/**
+ * An Order is a
+ *
+ * @author Luana Coppio
+ */
 public class Order {
     private final int ownerId;
     private final int priority;

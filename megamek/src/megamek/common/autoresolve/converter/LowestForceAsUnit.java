@@ -79,42 +79,8 @@ public class LowestForceAsUnit extends BaseFormationConverter<Formation> {
         formation.setName(force.getName());
         calcSbfFormationStats();
         formation.setRole(firstNonNull(counter.top(), Role.getRole(UnitRole.SKIRMISHER)));
-        formation.setStdDamage(setStdDamageForFormation(formation));
-//        for (var unit : formation.getUnits()) {
-//            var health = 0;
-//            for (var element : unit.getElements()) {
-//                health += element.getCurrentArmor() + element.getCurrentStructure();
-//            }
-//            unit.setArmor(health);
-//            unit.setCurrentArmor(health);
-//        }
         formation.setStartingSize(formation.currentSize());
         return formation;
-    }
-
-    private ASDamageVector setStdDamageForFormation(Formation formation) {
-        // Get the list of damage objects from the units in the formation
-        var damages = formation.getUnits().stream().map(SBFUnit::getDamage).toList();
-        var size = damages.size();
-
-        // Initialize accumulators for the different damage types
-        var l = 0;
-        var m = 0;
-        var s = 0;
-
-        // Sum up the damage values for each type
-        for (var damage : damages) {
-            l += damage.getDamage(ASRange.LONG).damage;
-            m += damage.getDamage(ASRange.MEDIUM).damage;
-            s += damage.getDamage(ASRange.SHORT).damage;
-        }
-        return new ASDamageVector(
-            new ASDamage(Math.ceil((double) s / size)),
-            new ASDamage(Math.ceil((double) m / size)),
-            new ASDamage(Math.ceil((double) l / size)),
-            null,
-            size,
-            true);
     }
 
 }

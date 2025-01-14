@@ -36,10 +36,8 @@ public class KeepCurrentForces extends ForceConsolidation {
 
     @Override
     public void consolidateForces(IGame game) {
-
         var newTopLevelForces = new ArrayList<Container>();
         var forcesInternalRepresentation = game.getForces().getForcesInternalRepresentation();
-        var parents = new HashMap<Integer, Integer>();
         Deque<Force> queue = new ArrayDeque<>(game.getForces().getTopLevelForces());
         int forceId = 0;
         var newForceMap = new HashMap<Integer, Container>();
@@ -49,13 +47,12 @@ public class KeepCurrentForces extends ForceConsolidation {
             if (force == null) {
                 continue;
             }
-            var parentId = parents.getOrDefault(force.getId(), -1);
-            var parentNode = newForceMap.get(parentId);
+            var parentForce = forcesInternalRepresentation.get(force.getParentId());
+            var parentNode = parentForce == null ? null : newForceMap.get(parentForce.getId());
             var breadcrumb = "";
-            var breadCrumbMaker = parentNode;
-            while (breadCrumbMaker != null) {
-                breadcrumb = parentNode.breadcrumb() + " > ";
-                breadCrumbMaker = newForceMap.get(parents.getOrDefault(breadCrumbMaker.uid(), -1));
+            while (parentForce != null) {
+                breadcrumb = parentForce.getName() + " > ";
+                parentForce = forcesInternalRepresentation.get(parentForce.getParentId());
             }
             var player = game.getPlayer(force.getOwnerId());
             var team = player.getTeam();
@@ -77,7 +74,6 @@ public class KeepCurrentForces extends ForceConsolidation {
 
             for (var subForceId : force.getSubForces()) {
                 var subForce = forcesInternalRepresentation.get(subForceId);
-                parents.put(subForceId, force.getId());
                 queue.add(subForce);
             }
         }

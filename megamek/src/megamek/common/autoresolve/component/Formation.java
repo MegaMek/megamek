@@ -238,6 +238,11 @@ public class Formation extends SBFFormation {
         return unitIsCrippledLatch;
     }
 
+    public boolean hasDamageAtRange(ASRange range) {
+        return getUnits().stream()
+            .anyMatch(u -> u.getCurrentDamage().getDamage(range).hasDamage());
+    }
+
     public void setStdDamage(ASDamageVector stdDamage) {
         this.stdDamage = stdDamage;
     }

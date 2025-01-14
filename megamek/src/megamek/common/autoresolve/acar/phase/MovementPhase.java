@@ -27,7 +27,6 @@ import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -308,10 +307,10 @@ public class MovementPhase extends PhaseHandler {
                 var targetMove = lastAttacker.get().getCurrentMovement();
                 var maxDistance = distance - myMove + targetMove;
                 var minDistance = distance - myMove - targetMove;
-
-                var canDamageTargetAtCurrent = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(distance)).hasDamage();
-                var canDamageTargetAtMin = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(minDistance)).hasDamage();
-                var canDamageTargetAtMax = actingFormation.getStdDamage().getDamage(ASRange.fromDistance(maxDistance)).hasDamage();
+                var range = ASRange.fromDistance(distance);
+                var canDamageTargetAtCurrent = actingFormation.hasDamageAtRange(range);
+                var canDamageTargetAtMin = actingFormation.hasDamageAtRange(ASRange.fromDistance(minDistance));
+                var canDamageTargetAtMax = actingFormation.hasDamageAtRange(ASRange.fromDistance(maxDistance));
                 if (canDamageTargetAtMax || canDamageTargetAtMin || canDamageTargetAtCurrent) {
                     // also set the unit as target
                     actingFormation.setTargetFormationId(lastAttackerId);
@@ -320,61 +319,5 @@ public class MovementPhase extends PhaseHandler {
             }
         }
         return Optional.empty();
-    }
-
-
-    private Optional<Formation> selectTargetOld(Formation actingFormation) {
-        var game = getSimulationManager().getGame();
-        var player = game.getPlayer(actingFormation.getOwnerId());
-        var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> actingFormation.getTargetFormationId() == Entity.NONE || f.getId() == actingFormation.getTargetFormationId())
-            .filter(SBFFormation::isDeployed)
-            .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-            .collect(Collectors.toList());
-
-        if (canBeTargets.isEmpty()) {
-            return Optional.empty();
-        }
-
-        canBeTargets.sort((f1, f2) -> {
-            var d1 = actingFormation.getPosition().coords().distance(f1.getPosition().coords());
-            var d2 = actingFormation.getPosition().coords().distance(f2.getPosition().coords());
-            return Double.compare(d1, d2);
-        });
-
-        canBeTargets = canBeTargets.subList(0, Math.min(3, canBeTargets.size()));
-        var previousTargetId = actingFormation.getTargetFormationId();
-        var pickTarget = new ArrayList<Formation>();
-        Optional<Formation> previousTarget = Optional.empty();
-
-        for (var f : canBeTargets) {
-            var distance = actingFormation.getPosition().coords().distance(f.getPosition().coords());
-            var dmg = actingFormation.getStdDamage();
-
-            var wasPreviousTarget = f.getId() == previousTargetId;
-
-            if (dmg.L.hasDamage() && distance >= 24 && distance < 42) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
-                }
-                pickTarget.add(f);
-            } else if (dmg.M.hasDamage() && distance >= 6) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
-                }
-                pickTarget.add(f);
-            } else if (dmg.S.hasDamage() && distance >= 0) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
-                }
-                pickTarget.add(f);
-            }
-        }
-
-        Collections.shuffle(pickTarget);
-
-        List<Formation> finalCanBeTargets = canBeTargets;
-
-        return previousTarget.or(() -> pickTarget.stream().findAny()).or(() -> finalCanBeTargets.stream().findAny());
     }
 }

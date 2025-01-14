@@ -21,10 +21,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.*;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
@@ -188,8 +185,13 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             dialog.setEvent(result);
             stopWatch.stop();
 
-            var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ? "AutoResolveDialog.messageScenarioTeam" : "AutoResolveDialog.messageScenarioPlayer";
-            messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == -1) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
+            var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ?
+                "AutoResolveDialog.messageScenarioTeam" :
+                "AutoResolveDialog.messageScenarioPlayer";
+            messageKey = ((result.getVictoryResult().getWinningTeam() == Player.TEAM_NONE)
+                && (result.getVictoryResult().getWinningPlayer() == Player.PLAYER_NONE)) ?
+                "AutoResolveDialog.messageScenarioDraw" :
+                messageKey;
             var message = Internationalization.getFormattedText(messageKey,
                 result.getVictoryResult().getWinningTeam(),
                 result.getVictoryResult().getWinningPlayer());

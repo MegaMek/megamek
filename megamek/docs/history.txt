@@ -22,6 +22,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
 + PR #6402: Feature: ACAR strategic objectives
 + PR #6407: Feature: ACAR formations reintroduced
++ PR #6409: Campaign Options IIC - MegaMek Portion
 
 
 0.50.02 (2024-12-30 2130 UTC)

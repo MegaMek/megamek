@@ -26,6 +26,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6385: Incorrect TMM bonus for WiGE
 + Fix #6395:
 + PR #6409: Campaign Options IIC - MegaMek Portion
++ PR #6415: fixes an error where force consolidation would not set the correct owner of the force
 
 
 0.50.02 (2024-12-30 2130 UTC)

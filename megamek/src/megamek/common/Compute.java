@@ -2674,8 +2674,13 @@ public class Compute {
         }
     }
 
+
     /**
      * Modifier to attacks due to target movement
+     * @param game current game
+     * @param entityId targetId
+     * @return toHitData for the target's movement modifiers
+     * @see ToHitData
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
@@ -2716,16 +2721,17 @@ public class Compute {
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT));
 
-        boolean validFlying = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+        boolean airborneNonAerospace = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                 || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                || ((entity.getMovementMode() == EntityMovementMode.VTOL)
+                    && ( (entity.moved != EntityMovementType.MOVE_NONE)  ||  entity.isAirborneVTOLorWIGE()))
                 || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT);
 
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
                         jumped,
-                        validFlying,
+                        airborneNonAerospace,
                         game);
 
         if (entity.moved != EntityMovementType.MOVE_JUMP
@@ -2743,10 +2749,6 @@ public class Compute {
         if (entity.moved == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "target skidded");
         }
-        if ((entity.getElevation() > 0)
-                && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-            toHit.addModifier(1, "target is airborne");
-        }
 
         // did the target sprint?
         if (entity.moved == EntityMovementType.MOVE_SPRINT
@@ -2757,13 +2759,20 @@ public class Compute {
         return toHit;
     }
 
+
     /**
-     * Target movement modifer for the specified delta_distance
+     * Target movement modifier for the specified distance
+     * @param distance how many hexes did the target unit move?
+     * @param jumped did the target unit jump?
+     * @param airborneNonAerospace was the target an airborne, non-aerospace unit?
+     * @param game current game
+     * @return toHitData for the target's movement modifiers
+     * @see ToHitData
      */
     public static ToHitData getTargetMovementModifier(int distance,
-            boolean jumped, boolean isVTOL, Game game) {
+            boolean jumped, boolean airborneNonAerospace, Game game) {
         ToHitData toHit = new ToHitData();
-        if (distance == 0 && !jumped) {
+        if (distance == 0 && !jumped && !airborneNonAerospace) {
             return toHit;
         }
 
@@ -2800,8 +2809,10 @@ public class Compute {
             }
         }
 
-        if (isVTOL && (distance > 0)) {
-            toHit.addModifier(1, "target VTOL used MPs");
+        // TW p. 117 Jumped/Airborne (non-aerospace units) get +1 to hit modifier,
+        // calculate that info outside of this method
+        if (airborneNonAerospace) {
+            toHit.addModifier(1, "target was airborne");
         } else if (jumped) {
             toHit.addModifier(1, "target jumped");
         }

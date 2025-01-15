@@ -509,8 +509,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             mp = ((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION);
             if (mp == 0) {
                 return 0;
-            } else {
-                return 1 + Compute.getTargetMovementModifier(mp, false, false, entity.getGame()).getValue();
+            } else { // IO p. 192 - When determining TMM for a LAM, include the +1 "airborne modifier".
+                return Compute.getTargetMovementModifier(mp, false, true, entity.getGame()).getValue();
             }
         } else {
             if (mp == 0) {

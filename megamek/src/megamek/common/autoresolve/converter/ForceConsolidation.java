@@ -69,6 +69,31 @@ public abstract class ForceConsolidation {
     }
 
     /**
+     * Finds a cycle in the forces, if any.
+     * @param forces The forces to check for cycles
+     * @return The force that is the root of a cycle, or null if no cycle is found
+     */
+    public static Force cycleFinder(Forces forces) {
+        var forcesInternalRepresentation = forces.getForcesInternalRepresentation();
+        var visited = new HashSet<Integer>();
+        var stack = new ArrayDeque<>(forces.getTopLevelForces());
+
+        while (!stack.isEmpty()) {
+            var force = stack.pop();
+            if (!visited.add(force.getId())) {
+                return force;
+            }
+            for (var subForceId : force.getSubForces()) {
+                var subForce = forcesInternalRepresentation.get(subForceId);
+                if (subForce != null) {
+                    stack.push(subForce);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Consolidates forces by redistributing entities and sub forces as needed.
      * It will balance the forces by team, ensuring that each force has a maximum of 20 entities and 4 sub forces.
      * @param game The game to consolidate forces for

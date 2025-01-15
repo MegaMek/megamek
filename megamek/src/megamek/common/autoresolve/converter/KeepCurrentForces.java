@@ -32,12 +32,15 @@ public class KeepCurrentForces extends ForceConsolidation {
         return -1;
     }
 
-    private record Node(int parent, Force force) {}
-
     @Override
     public void consolidateForces(IGame game) {
         var newTopLevelForces = new ArrayList<Container>();
+        var cycleFound = KeepCurrentForces.cycleFinder(game.getForces());
+        if (cycleFound != null) {
+            throw new IllegalStateException("Cycle detected in forces " + cycleFound.getName() + " " + cycleFound.getId());
+        }
         var forcesInternalRepresentation = game.getForces().getForcesInternalRepresentation();
+
         Deque<Force> queue = new ArrayDeque<>(game.getForces().getTopLevelForces());
         int forceId = 0;
         var newForceMap = new HashMap<Integer, Container>();

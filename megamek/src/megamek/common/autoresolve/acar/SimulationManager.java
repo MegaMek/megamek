@@ -46,8 +46,8 @@ public class SimulationManager extends AbstractGameManager {
     private final List<PhaseHandler> phaseHandlers = new ArrayList<>();
     private final PhaseEndManager phaseEndManager;
     private final PhasePreparationManager phasePreparationManager;
-    private  final ActionsProcessor actionsProcessor;
-    private  final InitiativeHelper initiativeHelper;
+    private final ActionsProcessor actionsProcessor;
+    private final InitiativeHelper initiativeHelper;
     private final VictoryHelper victoryHelper;
     private final SimulationContext simulationContext;
     private final boolean suppressLog;
@@ -62,12 +62,12 @@ public class SimulationManager extends AbstractGameManager {
         this.victoryHelper = new VictoryHelper(this);
     }
 
-    public void execute() {
+    public AutoResolveConcludedEvent execute() {
         changePhase(GamePhase.STARTING_SCENARIO);
         while (!simulationContext.getPhase().equals(GamePhase.VICTORY)) {
             changePhase(GamePhase.INITIATIVE);
         }
-
+        return getConclusionEvent();
     }
 
     public void addPhaseHandler(PhaseHandler phaseHandler) {

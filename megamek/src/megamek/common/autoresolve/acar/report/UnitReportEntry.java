@@ -15,8 +15,10 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class UnitReportEntry extends PublicReportEntry {
 
@@ -33,12 +35,24 @@ public class UnitReportEntry extends PublicReportEntry {
     }
 
     public UnitReportEntry(Formation formation, int unitIndex, Color color) {
-        this(formation.generalName(), unitName(formation, unitIndex), UIUtil.hexColor(color));
+        this((formation.getEntity() == null) ? formation.getName() : null, unitName(formation, unitIndex), UIUtil.hexColor(color));
     }
+
+    public UnitReportEntry(Formation formation, SBFUnit unit, Color color) {
+        this((formation.getEntity() == null) ? formation.getName() : null, unit.getName(), UIUtil.hexColor(color));
+    }
+
+    public UnitReportEntry(SBFUnit unit, Color color) {
+        this(null, unit.getName(), UIUtil.hexColor(color));
+    }
+
 
     @Override
     protected String reportText() {
-        return "<span style='color:" + playerColorHex + "; font-weight: bold;'>" + formationName + "</span>" + ", "
+        if (formationName == null) {
+            return "<span style='color:" + playerColorHex + "; font-weight: bold;'>" + unitName + "</span>";
+        }
+        return "[<span style='color:" + playerColorHex + "; font-weight: bold;'>" + formationName + "</span>]" + " "
             + "<span style='color:" + playerColorHex + "; font-weight: bold;'>" + unitName + "</span>";
     }
 
@@ -46,7 +60,9 @@ public class UnitReportEntry extends PublicReportEntry {
         if ((unitIndex < 0) || (unitIndex > formation.getUnits().size())) {
             throw new IllegalArgumentException("Invalid unit index");
         } else {
-            return formation.getUnits().get(unitIndex).getName();
+            var unit = formation.getUnits().get(unitIndex);
+
+            return unit.getName();
         }
     }
 }

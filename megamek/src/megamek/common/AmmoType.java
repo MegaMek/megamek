@@ -339,6 +339,17 @@ public class AmmoType extends EquipmentType {
         M_FAE
     }
 
+    public static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
+    public static final EnumSet<AmmoType.Munitions> FLARE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_FLARE);
+    public static final EnumSet<AmmoType.Munitions> MINE_MUNITIONS = EnumSet.of(
+        AmmoType.Munitions.M_THUNDER,
+        AmmoType.Munitions.M_THUNDER_ACTIVE,
+        AmmoType.Munitions.M_THUNDER_AUGMENTED,
+        AmmoType.Munitions.M_THUNDER_INFERNO,
+        AmmoType.Munitions.M_THUNDER_VIBRABOMB,
+        AmmoType.Munitions.M_FASCAM
+    );
+
     private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<>(NUM_TYPES);
 
     public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {

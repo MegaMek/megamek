@@ -42,10 +42,10 @@ public class AttackReporter implements IAttackReporter {
     }
 
     @Override
-    public void reportAttackStart(Formation attacker, int unitNumber, Formation target) {
+    public void reportAttackStart(Formation attacker, int unitNumber, Formation target, SBFUnit targetUnit) {
         var report = new PublicReportEntry("acar.firingPhase.attackAnnouncement");
         report.add(new UnitReportEntry(attacker, unitNumber, ownerColor(attacker, game)).text());
-        report.add(new FormationReportEntry(target, game).text());
+        report.add(new UnitReportEntry(target, targetUnit, ownerColor(target, game)).text());
         reportConsumer.accept(report);
     }
 

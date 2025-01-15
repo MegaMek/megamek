@@ -21,4 +21,6 @@ public abstract class SetupForces {
 
     public abstract void createForcesOnSimulation(SimulationContext context);
 
+    public abstract void addOrdersToForces(SimulationContext context);
+
 }

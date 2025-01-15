@@ -13,6 +13,15 @@
  */
 package megamek.common.autoresolve.converter;
 
+import megamek.common.Entity;
+import megamek.common.ForceAssignable;
+import megamek.common.IGame;
+import megamek.common.Player;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
+import megamek.common.icons.Camouflage;
+import megamek.logging.MMLogger;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,26 +31,34 @@ import java.util.stream.Collectors;
  * @author Luana Coppio
  */
 public abstract class ForceConsolidation {
-
+    private static final MMLogger logger = MMLogger.create(ForceConsolidation.class);
     protected abstract int getMaxEntitiesInSubForce();
     protected abstract int getMaxEntitiesInTopLevelForce();
 
-    public record Container(int uid, int teamId, int[] entities, Container[] subs) {
+    public record Container(int uid, String name, String breadcrumb, int teamId, int playerId, List<Integer> entities, List<Container> subs) {
         public boolean isLeaf() {
-            return subs.length == 0 && entities.length > 0;
+            return subs.isEmpty() && !entities.isEmpty();
         }
 
         public boolean isTop() {
-            return subs.length > 0 && entities.length == 0;
+            return !subs.isEmpty() && entities.isEmpty();
         }
 
         @Override
         public String toString() {
-            return "Container(uid=" + uid + ", team=" + teamId + ", ent=" + Arrays.toString(entities) + ", subs=" + Arrays.toString(subs) + ")";
+            return new StringJoiner(", ", Container.class.getSimpleName() + "[", "]")
+                .add("uid=" + uid)
+                .add("breadcrumb='" + breadcrumb + "'")
+                .add("name='" + name + "'")
+                .add("teamId=" + teamId)
+                .add("playerId=" + playerId)
+                .add("entities=" + entities)
+                .add("subs=" + subs)
+                .toString();
         }
     }
 
-    public record ForceRepresentation(int uid, int teamId, int[] entities, int[] subForces) {
+    public record ForceRepresentation(int uid, int teamId, int playerId, int[] entities, int[] subForces) {
         public boolean isLeaf() {
             return subForces.length == 0 && entities.length > 0;
         }
@@ -52,13 +69,144 @@ public abstract class ForceConsolidation {
     }
 
     /**
+     * Finds a cycle in the forces, if any.
+     * @param forces The forces to check for cycles
+     * @return The force that is the root of a cycle, or null if no cycle is found
+     */
+    public static Force cycleFinder(Forces forces) {
+        var forcesInternalRepresentation = forces.getForcesInternalRepresentation();
+        var visited = new HashSet<Integer>();
+        var stack = new ArrayDeque<>(forces.getTopLevelForces());
+
+        while (!stack.isEmpty()) {
+            var force = stack.pop();
+            if (!visited.add(force.getId())) {
+                return force;
+            }
+            for (var subForceId : force.getSubForces()) {
+                var subForce = forcesInternalRepresentation.get(subForceId);
+                if (subForce != null) {
+                    stack.push(subForce);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Consolidates forces by redistributing entities and sub forces as needed.
+     * It will balance the forces by team, ensuring that each force has a maximum of 20 entities and 4 sub forces.
+     * @param game The game to consolidate forces for
+     */
+    public void consolidateForces(IGame game) {
+        Forces forces = game.getForces();
+        var teamByPlayer = game.getTeamByPlayer();
+        var forceNameByPlayer = new HashMap<Integer, String>();
+        for (var force : forces.getAllForces()) {
+            if (!forceNameByPlayer.containsKey(force.getOwnerId())) {
+                forceNameByPlayer.put(force.getOwnerId(), force.getName());
+            }
+        }
+        var representativeOwnerForForce = new HashMap<Integer, List<Player>>();
+        for (var force : forces.getAllForces()) {
+            representativeOwnerForForce.computeIfAbsent(teamByPlayer.get(force.getOwnerId()),
+                k -> new ArrayList<>()).add(game.getPlayer(force.getOwnerId()));
+        }
+
+        var forcesRepresentation = translateForcesToForceRepresentation(forces, teamByPlayer);
+        var consolidatedForces = balanceForces(forcesRepresentation);
+        clearAllForces(forces);
+        createForcesOnGame(game, consolidatedForces, forces);
+    }
+
+    protected static void createForcesOnGame(
+        IGame game,
+        List<Container> consolidatedForces,
+        Forces forces
+    )
+    {
+        for (var forceRep : consolidatedForces) {
+            var player = game.getPlayer(forceRep.playerId());
+            var camouflage = player.getCamouflage().clone();
+
+            depthFirstSearch(
+                game,
+                forceRep,
+                forces,
+                player,
+                camouflage,
+                -1);
+        }
+    }
+
+    protected static void depthFirstSearch(
+        IGame game,
+        Container forceRep,
+        Forces forces,
+        Player player,
+        Camouflage camouflage,
+        int parentForceId
+    ) {
+        var node = new Force(
+            forceRep.name(),
+            -1,
+            camouflage,
+            player);
+        int newForceId;
+        if (parentForceId == -1) {
+            newForceId = forces.addTopLevelForce(node, player);
+        } else {
+            newForceId = forces.addSubForce(node, forces.getForce(parentForceId));
+        }
+        for (var entityId : forceRep.entities()) {
+            var entity = (Entity) game.getEntityFromAllSources(entityId);
+            if (entity == null) {
+                logger.error("Entity id " + entityId + " not found in game, could not load at " + forceRep);
+                continue;
+            }
+            forces.addEntity(entity, newForceId);
+        }
+        for (var subForce : forceRep.subs()) {
+            depthFirstSearch(
+                game,
+                subForce,
+                forces,
+                player,
+                camouflage,
+                newForceId);
+        }
+
+    }
+
+    protected static void clearAllForces(Forces forces) {
+        // Remove all empty forces and sub forces after consolidation
+        forces.deleteForces(forces.getAllForces());
+    }
+
+    /**
+     * Converts the forces into a list of ForceRepresentations. It is an intermediary representation of a force, in a way that makes it very
+     * lightweight to manipulate and balance. It only contains the representation of the force top-level, and the list of entities in it.
+     * @param forces The forces to convert
+     * @param teamByPlayer A map of player IDs to team IDs
+     * @return A list of ForceRepresentations
+     */
+    protected List<ForceRepresentation> translateForcesToForceRepresentation(Forces forces, Map<Integer, Integer> teamByPlayer) {
+        List<ForceRepresentation> forceRepresentations = new ArrayList<>();
+        for (Force force : forces.getTopLevelForces()) {
+            int[] entityIds = forces.getFullEntities(force).stream().mapToInt(ForceAssignable::getId).toArray();
+            forceRepresentations.add(new ForceRepresentation(force.getId(), teamByPlayer.get(force.getOwnerId()), force.getOwnerId(), entityIds, new int[0]));
+        }
+        return forceRepresentations;
+    }
+
+    /**
      * Balances the forces by team, tries to ensure that every team has the same number of top level forces, each within the ACS parameters
      * of a maximum of 20 entities and 4 sub forces. It also aggregates the entities by team instead of keeping segregated by player.
      * See the test cases for examples on how it works.
      * @param forces List of Forces to balance
      * @return List of Trees representing the balanced forces
      */
-    public List<Container> balanceForces(List<ForceRepresentation> forces) {
+    protected List<Container> balanceForces(List<ForceRepresentation> forces) {
 
         Map<Integer, Set<Integer>> entitiesByTeam = new HashMap<>();
         for (ForceRepresentation c : forces) {
@@ -80,7 +228,7 @@ public abstract class ForceConsolidation {
         return new ArrayList<>(balancedForces.values());
     }
 
-    private void createTopLevelForTeam(Map<Integer, Container> balancedForces, int team, List<Integer> allEntityIds, int topCount) {
+    protected void createTopLevelForTeam(Map<Integer, Container> balancedForces, int team, List<Integer> allEntityIds, int topCount) {
         int maxId = balancedForces.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
 
         int maxEntitiesPerTopLevelForce = (int) Math.min(Math.ceil((double) allEntityIds.size() / topCount), getMaxEntitiesInTopLevelForce());
@@ -98,9 +246,12 @@ public abstract class ForceConsolidation {
                 var subForceSize = Math.min(subListOfEntityIds.size(), start + step);
                 Container leaf = new Container(
                     maxId++,
+                    null,
+                    null,
                     team,
-                    subListOfEntityIds.subList(start, subForceSize).stream().mapToInt(Integer::intValue).toArray(),
-                    new Container[0]);
+                    -1,
+                    subListOfEntityIds.subList(start, subForceSize).stream().toList(),
+                    new ArrayList<>());
                 subForces.add(leaf);
             }
 
@@ -109,12 +260,7 @@ public abstract class ForceConsolidation {
                 break;
             }
 
-            var subForcesArray = new Container[subForces.size()];
-            for (int k = 0; k < subForcesArray.length; k++) {
-                subForcesArray[k] = subForces.get(k);
-            }
-
-            Container top = new Container(maxId++, team, new int[0], subForcesArray);
+            Container top = new Container(maxId++, null, null, team, -1, new ArrayList<>(), subForces);
             balancedForces.put(top.uid(), top);
         }
     }

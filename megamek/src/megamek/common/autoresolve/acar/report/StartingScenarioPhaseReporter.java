@@ -13,15 +13,19 @@
  */
 package megamek.common.autoresolve.acar.report;
 
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.common.autoresolve.acar.SimulationContext;
 import megamek.common.autoresolve.acar.SimulationManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseReporter {
 
@@ -63,7 +67,7 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
 
         for (var team : teamMap.keySet()) {
             var teamPlayers = teamMap.get(team);
-            var teamReport = new PublicReportEntry("acar.header.teamFormations").add(team);
+            var teamReport = new PublicReportEntry("acar.header.teamFormationsHeader").add(team);
             reportConsumer.accept(teamReport);
             for (var player : teamPlayers) {
                 playerFinalReport(player);
@@ -72,27 +76,43 @@ public class StartingScenarioPhaseReporter implements IStartingScenarioPhaseRepo
     }
 
     private void playerFinalReport(Player player) {
-        var playerEntities = game.getInGameObjects().stream()
-            .filter(e -> e.getOwnerId() == player.getId())
-            .filter(Entity.class::isInstance)
-            .map(Entity.class::cast)
-            .toList();
+        var formations = ((SimulationContext) game).getActiveFormations(player);
 
-        reportConsumer.accept(new PublicReportEntry("acar.startingScenario.numberOfUnits").add(new PlayerNameReportEntry(player).reportText())
-            .add(playerEntities.size()).indent());
+        reportConsumer.accept(new PublicReportEntry("acar.header.teamFormations")
+            .add(new PlayerNameReportEntry(player).reportText())
+            .add(formations.size()).indent());
 
-        for (var entity : playerEntities) {
-            var armor = entity.getArmorRemainingPercent();
-            if (armor < 0d) {
-                armor = 0d;
+        for (var formation : formations) {
+            var color = ownerColor(formation, game);
+            if (!formation.isSingleEntity()) {
+                reportConsumer.accept(new PublicReportEntry("acar.startingScenario.formation.numberOfUnits")
+                    .add(new FormationReportEntry(
+                        formation.getName(), "", UIUtil.hexColor(color)).reportText())
+                    .add(formation.getUnits().size())
+                    .indent(1));
             }
-            reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
-                .add(new EntityNameReportEntry(entity).reportText())
-                .add(String.format("%.2f%%", armor * 100))
-                .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
-                .add(entity.getCrew().getName())
-                .add(entity.getCrew().getHits())
-                .indent(2));
+
+            for (var unit : formation.getUnits()) {
+                if (!formation.isSingleEntity()) {
+                    reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unit.numberOfElements")
+                        .add(new UnitReportEntry(unit, ownerColor(formation, game)).reportText())
+                        .add(unit.getElements().size())
+                        .indent(2));
+                }
+                for (var element : unit.getElements()) {
+                    var entity = (Entity) game.getInGameObject(element.getId()).orElseThrow();
+                    var armor = entity.getArmorRemainingPercent();
+                    var internal = entity.getInternalRemainingPercent();
+                    var crew = entity.getCrew();
+                    reportConsumer.accept(new PublicReportEntry("acar.startingScenario.unitStats")
+                        .add(new EntityNameReportEntry(entity).reportText())
+                        .add(String.format("%.2f%%", armor * 100))
+                        .add(String.format("%.2f%%", internal * 100))
+                        .add(crew.getName())
+                        .add(crew.getHits())
+                        .indent(3));
+                }
+            }
         }
     }
 

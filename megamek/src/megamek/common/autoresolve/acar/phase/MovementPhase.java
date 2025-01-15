@@ -23,61 +23,18 @@ import megamek.common.autoresolve.acar.action.MoveAction;
 import megamek.common.autoresolve.acar.action.MoveToCoverAction;
 import megamek.common.autoresolve.acar.handler.MoveActionHandler;
 import megamek.common.autoresolve.acar.handler.MoveToCoverActionHandler;
-import megamek.common.autoresolve.component.EngagementControl;
+import megamek.common.autoresolve.acar.role.Role;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
-import megamek.common.strategicBattleSystems.SBFFormation;
-import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MovementPhase extends PhaseHandler {
-
-    private static final WeightedDoubleMap<EngagementControl> normal = WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 1.0,
-        EngagementControl.EVADE, 0.0,
-        EngagementControl.STANDARD, 1.0,
-        EngagementControl.OVERRUN, 0.5,
-        EngagementControl.NONE, 0.0
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> unsteady =  WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.5,
-        EngagementControl.EVADE, 0.02,
-        EngagementControl.STANDARD, 1.0,
-        EngagementControl.OVERRUN, 0.1,
-        EngagementControl.NONE, 0.01
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> shaken =  WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.2,
-        EngagementControl.EVADE, 0.1,
-        EngagementControl.STANDARD, 0.8,
-        EngagementControl.OVERRUN, 0.05,
-        EngagementControl.NONE, 0.01
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> broken = WeightedDoubleMap.of(
-        EngagementControl.FORCED_ENGAGEMENT, 0.05,
-        EngagementControl.EVADE, 1.0,
-        EngagementControl.STANDARD, 0.5,
-        EngagementControl.OVERRUN, 0.05,
-        EngagementControl.NONE, 0.3
-    );
-
-    private static final WeightedDoubleMap<EngagementControl> routed = WeightedDoubleMap.of(
-        EngagementControl.NONE, 1.0
-    );
-
-    private static final Map<Formation.MoraleStatus, WeightedDoubleMap<EngagementControl>> engagementControlOptions = Map.of(
-        Formation.MoraleStatus.NORMAL, normal,
-        Formation.MoraleStatus.UNSTEADY, unsteady,
-        Formation.MoraleStatus.SHAKEN, shaken,
-        Formation.MoraleStatus.BROKEN, broken,
-        Formation.MoraleStatus.ROUTED, routed
-    );
 
     public MovementPhase(SimulationManager gameManager) {
         super(gameManager, GamePhase.MOVEMENT);
@@ -204,7 +161,7 @@ public class MovementPhase extends PhaseHandler {
         int directionToTarget = (targetFormation.getPosition().coords().getX()
             - activeFormation.getPosition().coords().getX()) > 0 ? 1 : -1;
 
-        // Basic example logic: try to “fix” distance to stay in the preferred bracket
+        // Basic example logic: try to "fix" distance to stay in the preferred bracket
         int moveDistance = 0;
         if (currentRange != preferredRange) {
             // Decide to move closer or further to match the bracket
@@ -267,9 +224,9 @@ public class MovementPhase extends PhaseHandler {
 
         // Gather possible targets
         var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> actingFormation.getTargetFormationId() == Entity.NONE
-                || f.getId() == actingFormation.getTargetFormationId())
-            .filter(SBFFormation::isDeployed)
+            .filter(f -> (actingFormation.getTargetFormationId() == Entity.NONE)
+                || (role.tailTargets() && f.getId() == actingFormation.getTargetFormationId())
+                || !role.tailTargets())
             .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
             .collect(Collectors.toList());
 
@@ -277,17 +234,9 @@ public class MovementPhase extends PhaseHandler {
             return Optional.empty();
         }
 
-        if (role.targetsLastAttacker() && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
-            var lastAttackerId = actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE);
-            var lastAttacker = canBeTargets.stream()
-                .filter(f -> f.getId() == lastAttackerId)
-                .findFirst();
-            if (lastAttacker.isPresent()) {
-                var distance = actingFormation.getPosition().coords().distance(lastAttacker.get().getPosition().coords());
-                if (actingFormation.getRole().preferredRange().insideRange(distance)) {
-                    return lastAttacker;
-                }
-            }
+        Optional<Formation> lastAttacker = getLastAttacker(actingFormation, role, canBeTargets);
+        if (lastAttacker.isPresent()) {
+            return lastAttacker;
         }
 
         // 2. Sort the candidates by distance (closest first, or some logic you already have)
@@ -318,7 +267,7 @@ public class MovementPhase extends PhaseHandler {
         Collections.shuffle(preferred);
         Collections.shuffle(normal);
 
-        // 5. Possibly factor in “previous target” from your existing logic
+        // 5. Possibly factor in "previous target" from your existing logic
         var previousTargetId = actingFormation.getTargetFormationId();
         Optional<Formation> previousTarget = preferred.stream()
             .filter(f -> f.getId() == previousTargetId)
@@ -345,59 +294,30 @@ public class MovementPhase extends PhaseHandler {
         return Optional.empty();
     }
 
+    private static Optional<Formation> getLastAttacker(Formation actingFormation, Role role, List<Formation> canBeTargets) {
+        if (role.targetsLastAttacker() && actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE) != Entity.NONE) {
+            var lastAttackerId = actingFormation.getMemory().getInt("lastAttackerId").orElse(Entity.NONE);
+            var lastAttacker = canBeTargets.stream()
+                .filter(f -> f.getId() == lastAttackerId)
+                .findFirst();
 
-    private Optional<Formation> selectTargetOld(Formation actingFormation) {
-        var game = getSimulationManager().getGame();
-        var player = game.getPlayer(actingFormation.getOwnerId());
-        var canBeTargets = getSimulationManager().getGame().getActiveDeployedFormations().stream()
-            .filter(f -> actingFormation.getTargetFormationId() == Entity.NONE || f.getId() == actingFormation.getTargetFormationId())
-            .filter(SBFFormation::isDeployed)
-            .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-            .collect(Collectors.toList());
-
-        if (canBeTargets.isEmpty()) {
-            return Optional.empty();
-        }
-
-        canBeTargets.sort((f1, f2) -> {
-            var d1 = actingFormation.getPosition().coords().distance(f1.getPosition().coords());
-            var d2 = actingFormation.getPosition().coords().distance(f2.getPosition().coords());
-            return Double.compare(d1, d2);
-        });
-
-        canBeTargets = canBeTargets.subList(0, Math.min(3, canBeTargets.size()));
-        var previousTargetId = actingFormation.getTargetFormationId();
-        var pickTarget = new ArrayList<Formation>();
-        Optional<Formation> previousTarget = Optional.empty();
-
-        for (var f : canBeTargets) {
-            var distance = actingFormation.getPosition().coords().distance(f.getPosition().coords());
-            var dmg = actingFormation.getStdDamage();
-
-            var wasPreviousTarget = f.getId() == previousTargetId;
-
-            if (dmg.L.hasDamage() && distance >= 24 && distance < 42) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
+            if (lastAttacker.isPresent()) {
+                var distance = actingFormation.getPosition().coords().distance(lastAttacker.get().getPosition().coords());
+                var myMove = actingFormation.getCurrentMovement();
+                var targetMove = lastAttacker.get().getCurrentMovement();
+                var maxDistance = distance - myMove + targetMove;
+                var minDistance = distance - myMove - targetMove;
+                var range = ASRange.fromDistance(distance);
+                var canDamageTargetAtCurrent = actingFormation.hasDamageAtRange(range);
+                var canDamageTargetAtMin = actingFormation.hasDamageAtRange(ASRange.fromDistance(minDistance));
+                var canDamageTargetAtMax = actingFormation.hasDamageAtRange(ASRange.fromDistance(maxDistance));
+                if (canDamageTargetAtMax || canDamageTargetAtMin || canDamageTargetAtCurrent) {
+                    // also set the unit as target
+                    actingFormation.setTargetFormationId(lastAttackerId);
+                    return lastAttacker;
                 }
-                pickTarget.add(f);
-            } else if (dmg.M.hasDamage() && distance >= 6) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
-                }
-                pickTarget.add(f);
-            } else if (dmg.S.hasDamage() && distance >= 0) {
-                if (wasPreviousTarget) {
-                    previousTarget = Optional.of(f);
-                }
-                pickTarget.add(f);
             }
         }
-
-        Collections.shuffle(pickTarget);
-
-        List<Formation> finalCanBeTargets = canBeTargets;
-
-        return previousTarget.or(() -> pickTarget.stream().findAny()).or(() -> finalCanBeTargets.stream().findAny());
+        return Optional.empty();
     }
 }

@@ -253,9 +253,9 @@ public class SBFStepSprite extends Sprite {
         StringBuilder subscriptStringBuf = new StringBuilder();
 
         int distance = step.getDistance();
-        boolean isVTOL = false; //step.getEntity().;
+        boolean airborneNonAerospace = false; //step.getEntity().;
 
-        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
+        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, airborneNonAerospace, game);
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
         subscriptStringBuf.append(toHitData.getValue());
 

@@ -136,6 +136,9 @@ public class EndPhase extends PhaseHandler {
 
     private void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
         for (var unit : destroyedUnits) {
+            if (!formation.isSingleEntity()) {
+                reporter.reportUnitDestroyed(formation, unit);
+            }
             for (var element : unit.getElements()) {
                 var entityOpt = getContext().getEntity(element.getId());
                 if (entityOpt.isPresent()) {
@@ -143,8 +146,9 @@ public class EndPhase extends PhaseHandler {
                     var removalConditionTable = entity.isEjectionPossible() ?
                         REMOVAL_CONDITIONS_TABLE : REMOVAL_CONDITIONS_TABLE_NO_EJECTION;
                     entity.setRemovalCondition(removalConditionTable.randomItem());
-
-                    reporter.reportUnitDestroyed(entity);
+                    if (formation.isSingleEntity()) {
+                        reporter.reportElementDestroyed(formation, unit, entity);
+                    }
                     getContext().addUnitToGraveyard(entity);
                     getContext().applyDamageToEntityFromUnit(
                         unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));

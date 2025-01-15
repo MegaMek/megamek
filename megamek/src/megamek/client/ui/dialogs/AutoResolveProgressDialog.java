@@ -21,10 +21,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Board;
-import megamek.common.Compute;
-import megamek.common.Configuration;
-import megamek.common.Entity;
+import megamek.common.*;
 import megamek.common.autoresolve.Resolver;
 import megamek.common.autoresolve.acar.SimulationOptions;
 import megamek.common.autoresolve.converter.SetupForces;
@@ -177,11 +174,24 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
             var result = simulateScenario();
+            if (result == null) {
+                JOptionPane.showMessageDialog(
+                    getFrame(),
+                    Internationalization.getText("AutoResolveDialog.messageScenarioError.text"),
+                    Internationalization.getText("AutoResolveDialog.messageScenarioError.title"),
+                    JOptionPane.INFORMATION_MESSAGE);
+                return -1;
+            }
             dialog.setEvent(result);
             stopWatch.stop();
 
-            var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ? "AutoResolveDialog.messageScenarioTeam" : "AutoResolveDialog.messageScenarioPlayer";
-            messageKey = (result.getVictoryResult().getWinningTeam() == 0 && result.getVictoryResult().getWinningPlayer() == 0) ? "AutoResolveDialog.messageScenarioDraw" : messageKey;
+            var messageKey = (result.getVictoryResult().getWinningTeam() != Entity.NONE) ?
+                "AutoResolveDialog.messageScenarioTeam" :
+                "AutoResolveDialog.messageScenarioPlayer";
+            messageKey = ((result.getVictoryResult().getWinningTeam() == Player.TEAM_NONE)
+                && (result.getVictoryResult().getWinningPlayer() == Player.PLAYER_NONE)) ?
+                "AutoResolveDialog.messageScenarioDraw" :
+                messageKey;
             var message = Internationalization.getFormattedText(messageKey,
                 result.getVictoryResult().getWinningTeam(),
                 result.getVictoryResult().getWinningPlayer());
@@ -231,11 +241,17 @@ public class AutoResolveProgressDialog extends AbstractDialog implements Propert
                     return null;
                 }));
                 futures.add(executor.submit(() -> {
-                    var result = Resolver.simulationRun(
-                            setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
-                        .resolveSimulation();
-                    countDownLatch.countDown();
-                    return result;
+                    try {
+                        return Resolver.simulationRun(
+                                setupForces, SimulationOptions.empty(), new Board(board.getWidth(), board.getHeight()))
+                            .resolveSimulation();
+                    } catch (Exception e) {
+                        logger.error(e, e);
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+
+                    return null;
                 }));
 
                 // Wait for all tasks to complete

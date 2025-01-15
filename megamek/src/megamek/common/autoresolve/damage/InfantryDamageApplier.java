@@ -19,7 +19,6 @@ import megamek.common.Crew;
 import megamek.common.Infantry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,6 +65,9 @@ public record InfantryDamageApplier(Infantry entity, EntityFinalState entityFina
     public HitDetails damageArmor(HitDetails hitDetails) {
         if (entity() instanceof BattleArmor te) {
             var trooperId = te.getRandomTrooper();
+            if (trooperId == -1) {
+                return hitDetails.killsCrew();
+            }
             var currentValueArmor = te.getArmor(BattleArmor.LOC_SQUAD);
             var newArmorValue = Math.max(currentValueArmor - hitDetails.damageToApply(), 0);
             if (te.getArmor(trooperId) > 0) {

@@ -22,20 +22,22 @@ public class FormationReportEntry extends PublicReportEntry {
 
     private final String formationName;
     private final String playerColorHex;
+    private final String unitNames;
 
-    public FormationReportEntry(String formationName, String playerColorHex) {
+    public FormationReportEntry(String formationName, String unitNames, String playerColorHex) {
         super(null);
         this.formationName = formationName;
+        this.unitNames = unitNames;
         this.playerColorHex = playerColorHex;
         noNL();
     }
 
     public FormationReportEntry(Formation formation, IGame game) {
-        this(formation.getName(), UIUtil.hexColor(SBFInGameObjectTooltip.ownerColor(formation, game)));
+        this(formation.getDisplayName(), String.join(", ", formation.getElementNames()), UIUtil.hexColor(SBFInGameObjectTooltip.ownerColor(formation, game)));
     }
 
     @Override
     protected String reportText() {
-        return "<span style='color:" + playerColorHex + "; font-weight: bold;'>" + formationName + "</span>";
+        return "<a data-value='"+ unitNames +"'><span style='color:" + playerColorHex + "; font-weight: bold;'>" + formationName + "</span></a>";
     }
 }

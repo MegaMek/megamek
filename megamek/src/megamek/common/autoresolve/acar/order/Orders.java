@@ -22,6 +22,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 
+/**
+ * Orders is a collection of orders that are loaded into a game.
+ * This is used to give AI players access to strategic objectives for the game being played and be able to
+ * change its behavior based on the orders given.
+ *
+ * @author Luana Coppio
+ */
 public class Orders implements Collection<Order> {
 
     private final MultiValuedMap<Integer, Order> ordersPerPlayer = new HashSetValuedHashMap<>();

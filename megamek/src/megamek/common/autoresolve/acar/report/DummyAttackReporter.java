@@ -30,7 +30,7 @@ public class DummyAttackReporter implements IAttackReporter {
     }
 
     @Override
-    public void reportAttackStart(Formation attacker, int unitNumber, Formation target) {
+    public void reportAttackStart(Formation attacker, int unitNumber, Formation target, SBFUnit targetUnit) {
 
     }
 

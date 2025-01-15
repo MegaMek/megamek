@@ -44,6 +44,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
     @Override
     public void victoryHeader() {
+        reportConsumer.accept(new DividerEntry());
         reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.header", "end-of-combat").noNL());
         reportConsumer.accept(new LinkEntry("acar.link.backRef", "summary-end-of-combat"));
     }
@@ -64,7 +65,7 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
         var victoryResult = gameManager.getCurrentVictoryResult();
 
         reportConsumer.accept(new ReportEntryWithAnchor("acar.victory.teamVictorious", "victory").add(victoryResult.getWinningTeam()));
-
+        reportConsumer.accept(new DividerEntry());
         for (var team : teamMap.keySet()) {
             var teamPlayers = teamMap.get(team);
             reportConsumer.accept(new ReportEntryWithAnchor("acar.endOfCombat.teamReportHeader", "end-team-" + team).add(team).noNL());

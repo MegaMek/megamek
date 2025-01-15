@@ -1,15 +1,16 @@
 /*
  * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
  */
 package megamek.common.autoresolve.acar;
 
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 public class SimulationContext implements IGame {
 
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
+    private static final int MAX_ROUND_LIMIT = 20;
 
     private final SimulationOptions options;
 
@@ -375,7 +377,7 @@ public class SimulationContext implements IGame {
     }
 
     public boolean gameTimerIsExpired() {
-        return getRoundCount() >= 1000;
+        return getRoundCount() >= MAX_ROUND_LIMIT;
     }
 
     private int getRoundCount() {

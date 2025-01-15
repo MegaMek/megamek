@@ -13,6 +13,9 @@
  */
 package megamek.common.autoresolve.converter;
 
+import megamek.common.IGame;
+import org.apache.commons.lang3.NotImplementedException;
+
 /**
  * BalancedConsolidateForces is a helper class that redistribute entities and forces
  * in a way to consolidate then into valid forces to build Formations out of them.
@@ -20,18 +23,9 @@ package megamek.common.autoresolve.converter;
  */
 public class SortSBFValidForces extends ForceConsolidation {
 
-    public static final int MAX_ENTITIES_IN_SUB_FORCE = 6;
-    public static final int MAX_ENTITIES_IN_TOP_LEVEL_FORCE = 20;
-
-    @Override
-    protected int getMaxEntitiesInSubForce() {
-        return MAX_ENTITIES_IN_SUB_FORCE;
-    }
-
-    @Override
-    protected int getMaxEntitiesInTopLevelForce() {
-        return MAX_ENTITIES_IN_TOP_LEVEL_FORCE;
-    }
-
+        @Override
+        public void consolidateForces(IGame game) {
+            throw new NotImplementedException("Not implemented yet");
+        }
 }
 

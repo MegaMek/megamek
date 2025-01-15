@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
  */
 public abstract class ForceConsolidation {
     private static final MMLogger logger = MMLogger.create(ForceConsolidation.class);
-    protected abstract int getMaxEntitiesInSubForce();
-    protected abstract int getMaxEntitiesInTopLevelForce();
 
     public record Container(int uid, String name, String breadcrumb, int teamId, int playerId, List<Integer> entities, List<Container> subs) {
         public boolean isLeaf() {
@@ -98,26 +96,7 @@ public abstract class ForceConsolidation {
      * It will balance the forces by team, ensuring that each force has a maximum of 20 entities and 4 sub forces.
      * @param game The game to consolidate forces for
      */
-    public void consolidateForces(IGame game) {
-        Forces forces = game.getForces();
-        var teamByPlayer = game.getTeamByPlayer();
-        var forceNameByPlayer = new HashMap<Integer, String>();
-        for (var force : forces.getAllForces()) {
-            if (!forceNameByPlayer.containsKey(force.getOwnerId())) {
-                forceNameByPlayer.put(force.getOwnerId(), force.getName());
-            }
-        }
-        var representativeOwnerForForce = new HashMap<Integer, List<Player>>();
-        for (var force : forces.getAllForces()) {
-            representativeOwnerForForce.computeIfAbsent(teamByPlayer.get(force.getOwnerId()),
-                k -> new ArrayList<>()).add(game.getPlayer(force.getOwnerId()));
-        }
-
-        var forcesRepresentation = translateForcesToForceRepresentation(forces, teamByPlayer);
-        var consolidatedForces = balanceForces(forcesRepresentation);
-        clearAllForces(forces);
-        createForcesOnGame(game, consolidatedForces, forces);
-    }
+    public abstract void consolidateForces(IGame game);
 
     protected static void createForcesOnGame(
         IGame game,
@@ -199,70 +178,5 @@ public abstract class ForceConsolidation {
         return forceRepresentations;
     }
 
-    /**
-     * Balances the forces by team, tries to ensure that every team has the same number of top level forces, each within the ACS parameters
-     * of a maximum of 20 entities and 4 sub forces. It also aggregates the entities by team instead of keeping segregated by player.
-     * See the test cases for examples on how it works.
-     * @param forces List of Forces to balance
-     * @return List of Trees representing the balanced forces
-     */
-    protected List<Container> balanceForces(List<ForceRepresentation> forces) {
-
-        Map<Integer, Set<Integer>> entitiesByTeam = new HashMap<>();
-        for (ForceRepresentation c : forces) {
-            entitiesByTeam.computeIfAbsent(c.teamId(), k -> new HashSet<>()).addAll(Arrays.stream(c.entities()).boxed().toList());
-        }
-
-        // Find the number of top-level containers for each team
-        Map<Integer, Integer> numOfEntitiesByTeam = entitiesByTeam.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().size()));
-
-        int maxEntities = numOfEntitiesByTeam.values().stream().max(Integer::compareTo).orElse(0);
-        int topCount = (int) Math.ceil((double) maxEntities / getMaxEntitiesInTopLevelForce());
-
-        Map<Integer, Container> balancedForces = new HashMap<>();
-
-        for (int team : entitiesByTeam.keySet()) {
-            createTopLevelForTeam(balancedForces, team, new ArrayList<>(entitiesByTeam.get(team)), topCount);
-        }
-
-        return new ArrayList<>(balancedForces.values());
-    }
-
-    protected void createTopLevelForTeam(Map<Integer, Container> balancedForces, int team, List<Integer> allEntityIds, int topCount) {
-        int maxId = balancedForces.keySet().stream().max(Integer::compareTo).orElse(0) + 1;
-
-        int maxEntitiesPerTopLevelForce = (int) Math.min(Math.ceil((double) allEntityIds.size() / topCount), getMaxEntitiesInTopLevelForce());
-
-        int idx = 0;
-
-        for (int i = 0; i < topCount; i++) {
-            int end = Math.min(idx + maxEntitiesPerTopLevelForce, allEntityIds.size());
-            List<Integer> subListOfEntityIds = allEntityIds.subList(idx, end);
-            idx = end;
-
-            List<Container> subForces = new ArrayList<>();
-            int step = Math.min(subListOfEntityIds.size(), getMaxEntitiesInSubForce());
-            for (int start = 0; start < subListOfEntityIds.size(); start += step) {
-                var subForceSize = Math.min(subListOfEntityIds.size(), start + step);
-                Container leaf = new Container(
-                    maxId++,
-                    null,
-                    null,
-                    team,
-                    -1,
-                    subListOfEntityIds.subList(start, subForceSize).stream().toList(),
-                    new ArrayList<>());
-                subForces.add(leaf);
-            }
-
-            if (subForces.isEmpty()) {
-                // no entities? skip creating top-level
-                break;
-            }
-
-            Container top = new Container(maxId++, null, null, team, -1, new ArrayList<>(), subForces);
-            balancedForces.put(top.uid(), top);
-        }
-    }
 }
 

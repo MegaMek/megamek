@@ -20,18 +20,9 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlattenForces extends ForceConsolidation {
-
-    @Override
-    protected int getMaxEntitiesInSubForce() {
-        return -1;
-    }
-
-    @Override
-    protected int getMaxEntitiesInTopLevelForce() {
-        return -1;
-    }
 
     @Override
     public void consolidateForces(IGame game) {

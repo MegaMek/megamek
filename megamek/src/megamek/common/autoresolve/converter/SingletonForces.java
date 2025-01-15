@@ -13,6 +13,14 @@
  */
 package megamek.common.autoresolve.converter;
 
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.force.Force;
+import megamek.common.force.Forces;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BalancedConsolidateForces is a helper class that redistribute entities and forces
  * in a way to consolidate then into valid forces to build Formations out of them.
@@ -20,17 +28,45 @@ package megamek.common.autoresolve.converter;
  */
 public class SingletonForces extends ForceConsolidation {
 
-    public static final int MAX_ENTITIES_IN_SUB_FORCE = 1;
-    public static final int MAX_ENTITIES_IN_TOP_LEVEL_FORCE = 1;
 
     @Override
-    protected int getMaxEntitiesInSubForce() {
-        return MAX_ENTITIES_IN_SUB_FORCE;
+    public void consolidateForces(IGame game) {
+
+        var newTopLevelForces = new ArrayList<Container>();
+        int forceId = 0;
+        for (var force : game.getForces().getTopLevelForces()) {
+            var player = game.getPlayer(force.getOwnerId());
+            var team = player.getTeam();
+            var hasNoSubForce = force.subForceCount() == 0;
+            var hasEntities = force.entityCount() > 0;
+            if (hasNoSubForce && hasEntities) {
+                forceId = transformIntoTopLevelForce(game, force, force, newTopLevelForces, forceId, team);
+            } else {
+                for (var subForce : game.getForces().getFullSubForces(force)) {
+                    forceId = transformIntoTopLevelForce(game, force, subForce, newTopLevelForces, forceId, team);
+                }
+            }
+        }
+        game.setForces(new Forces(game));
+        createForcesOnGame(game, newTopLevelForces, game.getForces());
     }
 
-    @Override
-    protected int getMaxEntitiesInTopLevelForce() {
-        return MAX_ENTITIES_IN_TOP_LEVEL_FORCE;
+    private static int transformIntoTopLevelForce(IGame game, Force force, Force subForce, ArrayList<Container> newTopLevelForces, int forceId, int team) {
+        var hasNoSubForce = subForce.subForceCount() == 0;
+        var hasEntities = subForce.entityCount() > 0;
+        if (hasNoSubForce && hasEntities) {
+            for (var entityId : subForce.getEntities()) {
+                var optionalEntity = game.getInGameObject(entityId);
+                if (optionalEntity.isPresent() && optionalEntity.get() instanceof Entity entity) {
+                    var topLevel = new Container(forceId++, subForce.getName(), force.getName(), team, force.getOwnerId(), new ArrayList<>(), new ArrayList<>());
+                    topLevel.subs().add(
+                        new Container(forceId++, entity.getDisplayName(), force.getName() + ">" + subForce.getName(), team, force.getOwnerId(), List.of(entityId), new ArrayList<>())
+                    );
+                    newTopLevelForces.add(topLevel);
+                }
+            }
+        }
+        return forceId;
     }
 
 }

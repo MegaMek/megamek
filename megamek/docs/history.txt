@@ -22,6 +22,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
 + PR #6402: Feature: ACAR strategic objectives
 + PR #6407: Feature: ACAR formations reintroduced
++ Data #6408: Grabbing the Bull by the horns adding Taurian infantry
++ Fix #6385: Incorrect TMM bonus for WiGE
++ Fix #6395:
 + PR #6409: Campaign Options IIC - MegaMek Portion
 
 

@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public class SimulationContext implements IGame {
 
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
-    private static final int MAX_ROUND_LIMIT = 20;
+    private static final int MAX_ROUND_LIMIT = 1000;
 
     private final SimulationOptions options;
 

@@ -55,6 +55,11 @@ public class MMSetupForces extends SetupForces {
         // do nothing
     }
 
+    @Override
+    public boolean isTeamPresent(int teamId) {
+        return game.getTeams().stream().anyMatch(team -> team.getId() == teamId);
+    }
+
     private static class FailedToConvertForceToFormationException extends RuntimeException {
         public FailedToConvertForceToFormationException(Throwable cause) {
             super(cause);

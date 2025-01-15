@@ -23,4 +23,6 @@ public abstract class SetupForces {
 
     public abstract void addOrdersToForces(SimulationContext context);
 
+    public abstract boolean isTeamPresent(int teamId);
+
 }

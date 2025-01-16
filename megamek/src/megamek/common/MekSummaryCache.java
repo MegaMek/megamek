@@ -758,9 +758,12 @@ public class MekSummaryCache {
                     continue;
                 }
                 if (f.isDirectory()) {
-                    if (f.getName().equalsIgnoreCase("unsupported")) {
-                        // Meks in this directory are ignored because
+                    if (f.getName().equalsIgnoreCase("unsupported") || f.getName().equalsIgnoreCase(".mml_tmp")) {
+                        // Meks in "unsupported" are ignored because
                         // they have features not implemented in MM yet.
+                        //
+                        // Meks in ".mml_tmp" are created by MML to back up unsaved work,
+                        // and should only be loaded by the MML unit recovery process.
                         continue;
                     } else if (f.getName().equalsIgnoreCase("unofficial") && ignoreUnofficial) {
                         // Meks in this directory are ignored because

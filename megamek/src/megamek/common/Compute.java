@@ -2699,7 +2699,7 @@ public class Compute {
                 && !entity.isImmobile()
                 && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
             ToHitData toHit = new ToHitData();
-            toHit.addModifier(-1, "target didn't move");
+            toHit.addModifier(-1, "target did not move");
             return toHit;
         }
 

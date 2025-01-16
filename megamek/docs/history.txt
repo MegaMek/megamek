@@ -29,6 +29,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6415: fixes an error where force consolidation would not set the correct owner of the force
 + PR #6411: Don't load mml scratch files into unit cache
 + PR #6414: Warnings on Campaign Load - MegaMek Portion 
++ Fix #6412: Fix TacOps "Standing Still" modifier description
 
 
 0.50.02 (2024-12-30 2130 UTC)

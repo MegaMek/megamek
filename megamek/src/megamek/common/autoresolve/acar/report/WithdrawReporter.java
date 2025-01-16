@@ -37,10 +37,25 @@ public class WithdrawReporter implements IWithdrawReporter {
     }
 
     @Override
+    public void reportStartingWithdrawForCrippled(Formation withdrawingFormation) {
+        reportConsumer.accept(
+            new PublicReportEntry("acar.endPhase.withdrawAnnouncement")
+                .add(new FormationReportEntry(withdrawingFormation, game).reportText())
+                .add(new PublicReportEntry("acar.endPhase.withdrawMotive.crippled").reportText()));
+    }
+
+    @Override
+    public void reportStartingWithdrawForOrder(Formation withdrawingFormation) {
+        reportConsumer.accept(
+            new PublicReportEntry("acar.endPhase.withdrawAnnouncement")
+                .add(new FormationReportEntry(withdrawingFormation, game).reportText())
+                .add(new PublicReportEntry("acar.endPhase.withdrawMotive.metOrderCondition").reportText()));
+    }
+
+    @Override
     public void reportSuccessfulWithdraw(Formation withdrawingFormation) {
         reportConsumer.accept(
             new PublicReportEntry("acar.endPhase.withdrawSuccess")
-            .add(new FormationReportEntry(withdrawingFormation, game).reportText())
-            .indent(2));
+            .add(new FormationReportEntry(withdrawingFormation, game).reportText()));
     }
 }

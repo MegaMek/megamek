@@ -15,8 +15,15 @@ package megamek.common.autoresolve.acar.report;
 
 import megamek.common.GameLog;
 import megamek.common.Report;
+import megamek.logging.MMLogger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +32,7 @@ import java.util.List;
  */
 public class HtmlGameLogger {
 
+    private static final MMLogger logger = MMLogger.create(HtmlGameLogger.class);
     private final GameLog gameLog;
 
     private static class LocalGameLog extends GameLog {
@@ -40,21 +48,18 @@ public class HtmlGameLogger {
 
         @Override
         protected void initialize() {
+            String cssContent = loadCssFromResources();
+
             appendRaw("""
             <!DOCTYPE html>
             <html lang="en">
             <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta name="description" content="A layout example that shows off a blog page with a list of posts.">
                 <title>Simulation Game Log</title>
-                <meta charset="UTF-8">
-                <!-- CSS -->
                 <style>
-                .datetimelog {
-                    font-size: 0.6em;
-                    color: #666;
-                }
-                body {
-                    padding: 10px;
-                }
+            """ + cssContent + """
                 </style>
             </head>
             <body>
@@ -65,6 +70,20 @@ public class HtmlGameLogger {
 
     }
 
+    private static String loadCssFromResources() {
+        var cssFile = new File("data/css/acarCssFile.css");
+        if (cssFile.exists()) {
+            try (InputStream inputStream = Files.newInputStream(Paths.get(cssFile.toURI()))) {
+                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+            } catch (IOException e) {
+                logger.error("Error reading CSS file", e);
+            }
+        } else {
+            logger.error("CSS file not found " + cssFile);
+        }
+        return "";
+    }
     /**
      * Creates GameLog named
      *

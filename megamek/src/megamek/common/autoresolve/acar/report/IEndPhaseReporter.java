@@ -16,10 +16,14 @@
 package megamek.common.autoresolve.acar.report;
 
 import megamek.common.Entity;
+import megamek.common.autoresolve.component.Formation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 public interface IEndPhaseReporter {
 
     void endPhaseHeader();
 
-    void reportUnitDestroyed(Entity entity);
+    void reportUnitDestroyed(Formation formation, SBFUnit unit);
+
+    void reportElementDestroyed(Formation formation, SBFUnit unit, Entity entity);
 }

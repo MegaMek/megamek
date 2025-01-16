@@ -18,15 +18,19 @@ import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.MoraleCheckAction;
 import megamek.common.autoresolve.acar.action.RecoveringNerveAction;
 import megamek.common.autoresolve.acar.action.WithdrawAction;
+import megamek.common.autoresolve.acar.order.OrderType;
 import megamek.common.autoresolve.acar.report.EndPhaseReporter;
 import megamek.common.autoresolve.acar.report.IEndPhaseReporter;
 import megamek.common.autoresolve.component.Formation;
+import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
+import megamek.common.strategicBattleSystems.SBFElementType;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.util.weightedMaps.WeightedDoubleMap;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EndPhase extends PhaseHandler {
 
@@ -64,9 +68,29 @@ public class EndPhase extends PhaseHandler {
             // If the game is over, no need to withdraw
             return;
         }
+
         var forcedWithdrawingUnits = getSimulationManager().getGame().getActiveDeployedFormations().stream()
             .filter(f -> f.moraleStatus() == Formation.MoraleStatus.ROUTED || f.isCrippled())
-            .toList();
+            .filter(f -> !(f.isType(SBFElementType.BA) || f.isType(SBFElementType.CI)))
+            .collect(Collectors.toSet());
+
+        for (var order : getContext().getOrders()) {
+            if (order.isEligible(getContext())) {
+                if (order.getOrderType().equals(OrderType.WITHDRAW_IF_CONDITION_IS_MET)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                } else if (order.getOrderType().equals(OrderType.FLEE_NORTH)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                } else if (order.getOrderType().equals(OrderType.FLEE_SOUTH)) {
+                    var formations = getContext().getActiveFormations(order.getOwnerId());
+                    forcedWithdrawingUnits.addAll(formations);
+                    order.setConcluded(true);
+                }
+            }
+        }
 
         for (var formation : forcedWithdrawingUnits) {
             getSimulationManager().addWithdraw(new WithdrawAction(formation.getId()));
@@ -110,8 +134,11 @@ public class EndPhase extends PhaseHandler {
         IEntityRemovalConditions.REMOVE_DEVASTATED, 6
     );
 
-    public void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
+    private void destroyUnits(Formation formation, List<SBFUnit> destroyedUnits) {
         for (var unit : destroyedUnits) {
+            if (!formation.isSingleEntity()) {
+                reporter.reportUnitDestroyed(formation, unit);
+            }
             for (var element : unit.getElements()) {
                 var entityOpt = getContext().getEntity(element.getId());
                 if (entityOpt.isPresent()) {
@@ -119,9 +146,12 @@ public class EndPhase extends PhaseHandler {
                     var removalConditionTable = entity.isEjectionPossible() ?
                         REMOVAL_CONDITIONS_TABLE : REMOVAL_CONDITIONS_TABLE_NO_EJECTION;
                     entity.setRemovalCondition(removalConditionTable.randomItem());
-
-                    reporter.reportUnitDestroyed(entity);
+                    if (formation.isSingleEntity()) {
+                        reporter.reportElementDestroyed(formation, unit, entity);
+                    }
                     getContext().addUnitToGraveyard(entity);
+                    getContext().applyDamageToEntityFromUnit(
+                        unit, entity, EntityFinalState.fromEntityRemovalState(entity.getRemovalCondition()));
                 }
             }
 

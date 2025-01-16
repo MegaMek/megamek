@@ -479,7 +479,7 @@
 		</chassis>
         <chassis name='Ballista Self-Propelled Artillery Tank' unitType='Tank'>
             <availability>SL:4,SL.R:3-,IS:4,Periphery:8</availability>
-            <model name="">
+            <model name=''>
                 <roles>artillery</roles>
                 <availability>IS:8,Periphery:8</availability>
             </model>
@@ -546,10 +546,10 @@
 			</model>
 		</chassis>
 		<chassis name='BattleMech Recovery Vehicle' unitType='Tank'>
-			<availability>General:6</availability>
+            <availability>SL:8,IS:6,Periphery:6,Periphery.Deep:0</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Beagle Hover Scout' unitType='Tank'>
@@ -584,6 +584,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Bombduster' unitType='Tank'>
+            <availability>IS:2,Periphery:2</availability>
+            <model name=''>
+                <roles>cargo,engineer,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Black Lion II Battlecruiser' unitType='Warship'>
 			<availability>SL:4</availability>
 			<model name='(2691)'>
@@ -611,6 +618,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Brunel Dump Truck' unitType='Tank'>
+            <availability>SL:5,IS:5,Periphery:4,PIR:2</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Buccaneer' unitType='Dropship'>
 			<availability>IS:5,Periphery.Deep:5,MERC:4,Periphery:5</availability>
 			<model name='(2708)'>
@@ -618,6 +632,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Buffalo' unitType='Tank'>
+            <availability>SL:6+,IS:5+,Periphery:3+,Periphery.Deep:0,PIR:2</availability>
+            <model name='BFFL Hovertruck'>
+                <roles>cargo,civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Bulldog Medium Tank' unitType='Tank'>
 			<availability>CC:9,MOC:8,IS:7,Periphery.Deep:7,RWR:9,FS:6,MERC:7,TC:8,Periphery:7,LA:8,FWL:8,SL.R:0,TH.HM:6,DC:9</availability>
 			<model name=''>
@@ -635,6 +656,13 @@
                 <availability>SL.R:8:2713</availability>
             </model>
 		</chassis>
+        <chassis name='Burro Heavy Support Truck' unitType='Tank'>
+            <availability>SL:6,IS:8,Periphery:7,Periphery.Deep:0</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Bus' unitType='Small Craft'>
 			<availability>SL:6,IS:4,MERC:4,Periphery:4</availability>
 			<model name='S-7A'>
@@ -642,19 +670,26 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Buster' unitType='Mek'>
+            <availability>SL:8,IS:7,TH:8,Periphery:5+,TC:6+,PIR:3+</availability>
+            <model name='BC XV HaulerMech'>
+                <roles>cargo,civilian</roles>
+                <availability>SL:8,IS:8,TH:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Büffel Engineering Support Vehicle VII' unitType='Tank'>
-			<availability>CC:2,LA:4,SL:2,FWL:2,RWR:2,FS:2,MERC:2,DC:2</availability>
+			<availability>SL:5,IS:5,Periphery:4,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
-				<roles>support,engineer</roles>
-				<availability>General:8</availability>
+				<roles>support,engineer,minesweeper</roles>
+				<availability>SL:8,IS:8,Periphery:8,PIR:3</availability>
 			</model>
 			<model name='(Cargo)'>
-				<roles>support,engineer</roles>
-				<availability>General:4</availability>
+				<roles>support,engineer,minesweeper</roles>
+				<availability>SL:4,IS:4,Periphery:4,PIR:8</availability>
 			</model>
 			<model name='(Reverse)'>
-				<roles>support,engineer</roles>
-				<availability>General:2</availability>
+				<roles>support,engineer,minesweeper</roles>
+				<availability>SL:2,IS:2,Periphery:2,PIR:2</availability>
 			</model>
 		</chassis>
 		<chassis name='Cameron Battlecruiser' unitType='Warship'>
@@ -664,12 +699,26 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
-		<chassis name='Carson Destroyer' unitType='Warship'>
-			<availability>SL:3</availability>
-			<model name='(2632)'>
-				<availability>General:8</availability>
-			</model>
-		</chassis>
+        <chassis name='Caravan Heavy Transport' unitType='Conventional Fighter'>
+            <availability>Periphery.Deep:5</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>Periphery.Deep:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Carbine' unitType='Mek'>
+            <availability>SL:6,IS:5,Periphery:3+,PIR:0</availability>
+            <model name='CON-1 ConstructionMech'>
+                <roles>civilian,engineer</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Carson Destroyer' unitType='Warship'>
+            <availability>SL:3</availability>
+            <model name='(2632)'>
+                <availability>General:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Catapult' unitType='Mek'>
 			<availability>IS:4,RWR:3,MERC:3,Periphery:2,TH:6,SL:6</availability>
 			<model name='CPLT-A1'>
@@ -781,22 +830,22 @@
 			</model>
 		</chassis>
 		<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-			<availability>SL:5,RWR:4</availability>
+			<availability>SL:8,RWR:8</availability>
 			<model name=''>
-				<roles>cargo</roles>
-				<availability>SL:8,RWR:6</availability>
+                <roles>cargo,support</roles>
+				<availability>SL:7,RWR:4+</availability>
 			</model>
 			<model name='(Command)'>
 				<roles>command,support</roles>
-				<availability>SL:4,RWR:3</availability>
+				<availability>SL:3+</availability>
 			</model>
 			<model name='(MASH)'>
 				<roles>support</roles>
-				<availability>SL:6,RWR:4</availability>
+				<availability>SL:3,RWR:2</availability>
 			</model>
 			<model name='(Original)'>
-                <roles>cargo</roles>
-				<availability>SL:5,RWR:6</availability>
+                <roles>cargo,support</roles>
+				<availability>SL:4,RWR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Colossus' unitType='Dropship'>
@@ -810,6 +859,13 @@
 				<availability>General:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Command Van' unitType='Tank'>
+            <availability>IS:2,Periphery:2+,PIR:0</availability>
+            <model name=''>
+                <roles>command,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Commando' unitType='Mek'>
 			<availability>LA:9,RWR:4,MERC:5</availability>
 			<model name='COM-1A'>
@@ -873,20 +929,27 @@
 			</model>
 		</chassis>
 		<chassis name='Coolant Truck' unitType='Tank'>
-			<availability>General:4</availability>
+			<availability>SL:4,IS:4,Periphery:3,Periphery.Deep:0,PIR:0</availability>
 			<model name='(Hover)'>
 				<roles>support</roles>
-				<availability>General:2</availability>
+				<availability>SL:2,IS:2</availability>
 			</model>
 			<model name='(Tracked)'>
 				<roles>support</roles>
-				<availability>General:4</availability>
+				<availability>SL:4,IS:4,Periphery:4</availability>
 			</model>
 			<model name='135-K'>
 				<roles>support</roles>
-				<availability>General:6</availability>
+				<availability>SL:6,IS:6,Periphery:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Copper' unitType='Mek'>
+            <availability>SL:3,IS:3,Periphery:4+,PIR:0</availability>
+            <model name='CPK-19 SecurityMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Cormorant Medium Cargo Craft' unitType='Tank'>
 			<availability>SL:4-,IS:6-,Periphery:3-</availability>
 			<model name=''>
@@ -894,6 +957,13 @@
 				<availability>General:8-</availability>
 			</model>
 		</chassis>
+        <chassis name='Corx Mobile Tunnel Miner' unitType='Tank'>
+            <availability>IS:1,Periphery:2,PIR:0</availability>
+            <model name=''>
+                <roles>civilian,engineer</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Crab' unitType='Mek'>
 			<availability>SL:5:2719,IS:2:2719,MERC:2:2719,RWR:2:2719</availability>
 			<model name='CRB-27'>
@@ -927,6 +997,24 @@
 				<availability>General:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Crosscut' unitType='Mek'>
+            <availability>SL:3,IS:3,Periphery:2+,TC:3</availability>
+            <model name='ED-X1 LoggerMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:2+,TC:4+</availability>
+			</model>
+            <model name='ED-X2 LoggerMech'>
+                <roles>civilian</roles>
+                <availability>IS:2-,Periphery:8,TC:3-</availability>
+            </model>
+		</chassis>
+        <chassis name='Croyle Systems Cortez Series N' unitType='Tank'>
+            <availability>IS:2,Periphery:3</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Cruiser' unitType='Warship'>
 			<availability>DC:2</availability>
 			<model name=''>
@@ -982,6 +1070,17 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Daedalus' unitType='Mek'>
+            <availability>SL:7</availability>
+            <model name='GTX2A &apos;Stevedore&apos;'>
+                <roles>cargo,support</roles>
+                <availability>SL:8</availability>
+            </model>
+            <model name='GTX2B &apos;Navvy&apos;'>
+                <roles>cargo,engineer,support</roles>
+                <availability>SL:5</availability>
+            </model>
+        </chassis>
 		<chassis name='Danais' unitType='Dropship'>
 			<availability>TC:2</availability>
 			<model name=''>
@@ -1017,14 +1116,14 @@
 			</model>
 		</chassis>
 		<chassis name='DemolitionMech' unitType='Mek'>
-			<availability>CC:6</availability>
+			<availability>CC:4+,FWL:3+,FS:3+,TH:3</availability>
 			<model name='WI-DM'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian,engineer</roles>
+				<availability>CC:8,FWL:8,FS:8,TH:8</availability>
 			</model>
 			<model name='WI-DM2'>
-				<roles>support</roles>
-				<availability>General:4</availability>
+                <roles>civilian,engineer</roles>
+                <availability>CC:4,FWL:4,FS:4,TH:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Demon Tank' unitType='Tank'>
@@ -1062,6 +1161,13 @@
 				<availability>General:2</availability>
 			</model>
 		</chassis>
+        <chassis name='Dig King' unitType='Mek'>
+            <availability>SL:5,IS:4,TH:5,Periphery:4+,PIR:2+</availability>
+            <model name='RCL-1 MiningMech'>
+                <roles>civilian,engineer</roles>
+                <availability>SL:8,IS:8,TH:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Dragon' unitType='Mek'>
 			<availability>DC:8:2752</availability>
             <model name='DRG-1C'>
@@ -1079,10 +1185,10 @@
 			</model>
 		</chassis>
 		<chassis name='Dromedary Water Transport' unitType='Tank'>
-			<availability>TC:3,Periphery:2</availability>
+			<availability>SL:1,IS:1,TC:3,Periphery:2,Periphery.Deep:5</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
 		<chassis name='DropShuttle' unitType='Small Craft'>
@@ -1115,6 +1221,13 @@
 				<availability>LA:4,General:4,FS:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Eagre Firefighting ATV' unitType='Tank'>
+            <availability>SL:3,IS:3,Periphery:4</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Emperor' unitType='Mek'>
 			<availability>CC:5,MOC:4,OA:4,TH:5,SL:7,FWL:5,RWR:4,FS:5,MERC:5,TC:4</availability>
 			<model name='EMP-1A'>
@@ -1131,18 +1244,18 @@
 			</model>
 		</chassis>
 		<chassis name='Engineering Vehicle' unitType='Tank'>
-			<availability>General:3</availability>
+			<availability>SL:4,IS:4,Periphery:4,Periphery.Deep:2,PIR:2-</availability>
 			<model name=''>
 				<roles>support,engineer</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8,PIR:0</availability>
 			</model>
 			<model name='(AC)'>
 				<roles>support,engineer</roles>
-				<availability>General:4</availability>
+				<availability>SL:4,IS:4,Periphery:4,PIR:6</availability>
 			</model>
 			<model name='(Flamer)'>
 				<roles>support,engineer</roles>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Escape Pod' unitType='Small Craft'>
@@ -1308,26 +1421,26 @@
 			</model>
 		</chassis>
 		<chassis name='Flatbed Truck' unitType='Tank'>
-			<availability>IS:10,Periphery.Deep:10,Periphery:10</availability>
+			<availability>SL:4,IS:5,Periphery:5</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8</availability>
 			</model>
 			<model name='(AC)'>
 				<roles>support,fire_support</roles>
-				<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
+				<availability>SL:3,IS:3,Periphery:3,PIR:5</availability>
 			</model>
 			<model name='(Armor)'>
 				<roles>cargo,support</roles>
-				<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
+				<availability>SL:6,IS:6,Periphery:7</availability>
 			</model>
 			<model name='(Mortar)'>
 				<roles>support,fire_support</roles>
-				<availability>IS:4,Periphery.Deep:4,Periphery:4</availability>
+				<availability>SL:4,IS:4,Periphery:4,PIR:5</availability>
 			</model>
 			<model name='(SRM)'>
 				<roles>cargo,support</roles>
-				<availability>IS:5,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:5,IS:5,Periphery:5</availability>
 			</model>
 		</chassis>
 		<chassis name='Flea' unitType='Mek'>
@@ -1343,9 +1456,10 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Platoon' unitType='Infantry'>
-			<availability>SL:10,IS:10,Periphery.Deep:10,Periphery:10</availability>
+			<availability>SL:10,IS:10,Periphery:10,TC:3-,Periphery.Deep:10</availability>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+                <availability>SL:7,IS:8,Periphery:8,TC:6-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM Heavy)'>
 				<availability>IS:2,MERC:3</availability>
@@ -1362,21 +1476,21 @@
 				<availability>General:2,SL:3,TC:3</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7,IS:6,Periphery:5,TC:3+,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>IS:8</availability>
+				<availability>SL:4-,SL.R:0,IS:5-,Periphery:7-,TC:7-</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+				<availability>SL:7,IS:7,TC:5,Periphery:7,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft</roles>
-				<availability>General:6</availability>
+				<availability>SL:6,IS:6,TC:3+</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>IS:5</availability>
+				<availability>SL:5,IS:5,Periphery:7-,TC:8,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>
@@ -1384,15 +1498,35 @@
 			</model>
 			<model name='(Rifle Paratrooper)'>
 				<roles>paratrooper</roles>
-				<availability>IS:3,Periphery:2</availability>
+				<availability>SL:4,IS:3,Periphery:2,TC:0</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8,TC:6,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Foot Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:10</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:5-</availability>
+            </model>
+            <model name="(Laser)">
+                <availability>TC:5+</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>TC:7</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>TC:6+</availability>
+            </model>
+        </chassis>
 		<chassis name='Foot Stealth Platoon' unitType='Infantry'>
 			<availability>IS:2+,SL.R:4,Periphery:1+</availability>
 			<model name='(Rifle Paratrooper)'>
@@ -1444,6 +1578,21 @@
 				<availability>SL:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Galaport Ground Trailer' unitType='Tank'>
+            <availability>SL:4,IS:4</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Galaport Ground Tug</deployedWith>
+                <availability>SL:8,IS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Galaport Ground Tug' unitType='Tank'>
+            <availability>SL:4,IS:4</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Galleon Light Tank' unitType='Tank'>
 			<availability>SL:7</availability>
 			<model name='GAL-100'>
@@ -1565,6 +1714,13 @@
 				<availability>General:6,SL.R:5</availability>
 			</model>
 		</chassis>
+        <chassis name='Harvester Ant' unitType='Mek'>
+            <availability>SL:3,IS:3,Periphery:1+,TC:3+,PIR:0</availability>
+            <model name='KIC-3 AgroMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8,TC:8</availability>
+            </model>
+        </chassis>
         <chassis name='Hawk Hover Tank' unitType='Tank'>
             <availability>TH:7,SL:6,IS:6,Periphery.Deep:5,Periphery:5</availability>
             <model name='(LTV-4)'>
@@ -1572,12 +1728,19 @@
             </model>
         </chassis>
 		<chassis name='Heavy BattleMech Recovery Vehicle' unitType='Tank'>
-			<availability>General:4</availability>
+			<availability>SL:5,IS:4,Periphery:3,Periphery.Deep:0,PIR:2</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Heavy Forester' unitType='Mek'>
+            <availability>IS:2,Periphery:2+:2701,PIR:0</availability>
+            <model name='HFL-1 LoggerMech'>
+                <roles>civilian</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Heavy Hover APC' unitType='Tank'>
 			<availability>IS:6,Periphery.Deep:5,TC:6,Periphery:5</availability>
 			<model name=''>
@@ -1650,6 +1813,41 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Hector Road Train Tractor' unitType='Tank'>
+            <availability>SL:5,IS:5,FWL:6</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <availability>SL:8,IS:8,FWL:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Hector Road Train Trailer Module' unitType='Tank'>
+            <availability>SL:4,IS:4,FWL:5</availability>
+            <model name=''>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL:8,IS:8,FWL:8</availability>
+            </model>
+            <model name='(Liquid)'>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL:6,IS:6,FWL:6</availability>
+            </model>
+            <model name='(Livestock)'>
+                <roles>civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL:2,IS:2,FWL:2</availability>
+            </model>
+            <model name='(Passenger)'>
+                <roles>apc,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL:6,IS:6,FWL:6</availability>
+            </model>
+            <model name='(Refrigerated)'>
+                <roles>cargo,civilian</roles>
+                <deployedWith>req:Hector Road Train Tractor</deployedWith>
+                <availability>SL:3,IS:3,FWL:3</availability>
+            </model>
+        </chassis>
 		<chassis name='Helepolis' unitType='Mek'>
 			<availability>TH:3,SL:6,SL.R:5</availability>
 			<model name='HEP-3H'>
@@ -1802,16 +2000,19 @@
 			</model>
 		</chassis>
 		<chassis name='J-27 Ordnance Transport' unitType='Tank'>
-			<availability>MOC:4,OA:4,SL:6,IS:6,RWR:4,Periphery:2,TC:4</availability>
-			<model name=''>
-				<roles>cargo,support</roles>
-				<deployedWith>req:J-27 Ordnance Transport (Trailer)</deployedWith>
-				<availability>General:8</availability>
-			</model>
+			<availability>SL:6,IS:6,Periphery:5,Periphery.Deep:3</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>SL:4-,IS:8,Periphery:8</availability>
+            </model>
 			<model name='(Fusion)'>
 				<roles>cargo,support</roles>
-				<deployedWith>req:J-27 Ordnance Transport (Trailer)</deployedWith>
-				<availability>SL:6,IS:4</availability>
+				<availability>SL:8,IS:4+</availability>
+			</model>
+            <model name='(Trailer)'>
+				<roles>cargo,support</roles>
+                <deployedWith>req:J-27 Ordnance Transport</deployedWith>
+                <availability>SL:3,IS:5,Periphery:5</availability>
 			</model>
 		</chassis>
 		<chassis name='J. Edgar Light Hover Tank' unitType='Tank'>
@@ -1824,8 +2025,8 @@
 		<chassis name='Jabberwocky' unitType='Mek'>
 			<availability>FS:6-</availability>
 			<model name='JAW-65A EngineerMech'>
-				<roles>engineer,support</roles>
-				<availability>General:7</availability>
+				<roles>support</roles>
+				<availability>FS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Javelin' unitType='Mek'>
@@ -1850,26 +2051,50 @@
 			</model>
 		</chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>SL:8,IS:8,Periphery.Deep:7,Periphery:7</availability>
+			<availability>SL:8,IS:8,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>SL:6,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7,SL.R:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:6+</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:5,Periphery.Deep:4</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:6-,SL.R:4-,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
+        <chassis name='Jump Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:8+</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:3-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>anti_mek</roles>
+                <availability>TC:4-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Jump Stealth Platoon' unitType='Infantry'>
 			<availability>IS:2</availability>
 			<model name='(Laser)'>
@@ -1924,12 +2149,12 @@
 		<chassis name='Kiso' unitType='Mek'>
 			<availability>DC:3:2703</availability>
 			<model name='K-3N-KR4 ConstructionMech'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>DC:8</availability>
 			</model>
 			<model name='K-3N-KR5 ConstructionMech'>
-				<roles>support</roles>
-				<availability>General:2</availability>
+				<roles>civilian</roles>
+				<availability>DC:2</availability>
 		    </model>
 		</chassis>
 		<chassis name='Korvin Tank' unitType='Tank'>
@@ -2013,10 +2238,24 @@
 				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Lesseps Dump Truck' unitType='Tank'>
+            <availability>SL:7,IS:7,Periphery:7</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Leviathan Jumpship' unitType='Jumpship'>
 			<availability>IS:2,Periphery:2</availability>
 			<model name=''>
 				<availability>General:6</availability>
+			</model>
+		</chassis>
+        <chassis name='Lexan Oceanic Personal VTOL' unitType='VTOL'>
+            <availability>IS:8</availability>
+            <model name='Series II'>
+                <roles>civilian</roles>
+                <availability>IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Liberty Jumpship' unitType='Jumpship'>
@@ -2070,6 +2309,13 @@
 				<availability>SL.R:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Limpet Half-Track' unitType='Tank'>
+            <availability>DC:2</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Lion' unitType='Dropship'>
 			<availability>MOC:2,OA:2,SL:7,IS:5,RWR:5,MERC:5,TC:2</availability>
 			<model name='(2595)'>
@@ -2147,6 +2393,13 @@
 				<availability>MOC:4,OA:4,TH:8,LA:6,SL:8,FWL:6,RWR:3,FS:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Luciano White Wolverine' unitType='Tank'>
+            <availability>IS:1,Periphery:1,PIR:0</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Lucifer' unitType='AeroSpaceFighter'>
 			<availability>Periphery.R:4,LA:10,Periphery.MW:3,RWR:3,MERC:5,Periphery:2</availability>
 			<model name='LCF-R15'>
@@ -2157,14 +2410,14 @@
 			</model>
 		</chassis>
 		<chassis name='Lumberjack' unitType='Mek'>
-			<availability>Periphery.R:3,LA:4,General:2</availability>
+			<availability>SL:3,IS:3,TH:3,Periphery:4+,TC:4</availability>
 			<model name='LM1/A'>
-				<roles>support</roles>
-				<availability>General:8</availability>
+				<roles>civilian</roles>
+				<availability>IS:2-,TH:0,Periphery:6-,TC:4-</availability>
 			</model>
 			<model name='LM4/C'>
-				<roles>support</roles>
-				<availability>LA:8</availability>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,TH:8,Periphery:6,TC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Luxor Heavy Cruiser' unitType='Warship'>
@@ -2189,26 +2442,20 @@
 			</model>
 		</chassis>
 		<chassis name='M-9 SDS Battle Station' unitType='Space Station'>
-			<availability>TH:1</availability>
+			<availability>TH:1:2720</availability>
 			<model name='&apos;Pavise&apos;'>
 				<availability>General:2</availability>
 			</model>
 		</chassis>
 		<chassis name='MASH Truck' unitType='Tank'>
-            <availability>IS:10,MERC:9,Periphery:8,PIR:3</availability>
+            <availability>SL:7,IS:6,Periphery:5,Periphery.Deep:0,PIR:3</availability>
             <model name=''>
                 <roles>support</roles>
-                <availability>General:8,MERC:6,Periphery:6</availability>
+                <availability>SL:6,IS:6,Periphery:6,PIR:0</availability>
             </model>
             <model name='(Small)'>
                 <roles>support</roles>
-                <availability>General:8</availability>
-            </model>
-		</chassis>
-		<chassis name='M-9 SDS Battle Station' unitType='Space Station'>
-			<availability>TH:2:2720</availability>
-            <model name="&apos;Pavise&apos;">
-                <availability>TH:8</availability>
+                <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
             </model>
 		</chassis>
 		<chassis name='Mackie' unitType='Mek'>
@@ -2260,6 +2507,21 @@
 				<availability>IS:8,Periphery:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Marco' unitType='Mek'>
+            <availability>SL:2:2712,MERC:3:2713</availability>
+            <model name='MR-6 ExplorerMech'>
+                <roles>civilian</roles>
+                <availability>SL:6,MERC:8</availability>
+            </model>
+            <model name='MR-7 ExplorerMech'>
+                <roles>civilian,recon</roles>
+                <availability>SL:8:2715,MERC:6:2716</availability>
+            </model>
+            <model name='MR-8C ExplorerMech'>
+                <roles>civilian</roles>
+                <availability>SL:6:2719,MERC:8:2720</availability>
+            </model>
+        </chassis>
 		<chassis name='Marauder' unitType='Mek'>
 			<availability>CC:3,LA:4,SL:8,FWL:4,IS:2,RWR:2+,FS:4,DC:4</availability>
 			<model name='MAD-1R'>
@@ -2324,56 +2586,102 @@
 			</model>
 		</chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
-			<availability>SL:5,IS:5,Periphery.Deep:5,Periphery:5</availability>
+			<availability>SL:5,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
 			<model name='(Demolition)'>
 				<roles>recon,engineer</roles>
 				<availability>General:2,SL:5</availability>
 			</model>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+				<availability>SL:5,IS:8,Periphery:8,TC:2-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+                <roles>recon</roles>
+				<availability>SL:7+,SL.R:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:4,Periphery.Deep:6</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+                <roles>recon</roles>
+				<availability>SL:6,SL.R:4-,IS:8,Periphery:8,TC:3,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Mechanized Hover Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:5</availability>
+            <model name='(Flamer)'>
+                <availability>TC:2-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>recon</roles>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>recon</roles>
+                <availability>TC:8-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>TC:5</availability>
+            </model>
+        </chassis>
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-			<availability>SL:7,IS:7,Periphery.Deep:7,Periphery:7</availability>
+			<availability>SL:7,IS:7,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>SL:6,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7+,SL.R:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:5,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:6,SL.R:4-,IS:8,Periphery:8,TC:3,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
+        <chassis name='Mechanized Tracked Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:7</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:2-</availability>
+            </model>
+            <model name='(Laser)'>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>TC:7-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
-			<availability>SL:7,IS:7,Periphery.Deep:7,Periphery:7</availability>
+			<availability>SL:7,IS:7,Periphery:7,TC:2-,Periphery.Deep:8+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>SL:6,IS:8,Periphery:8</availability>
+				<availability>SL:6,IS:8,Periphery:8,TC:4-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
                 <roles>urban</roles>
@@ -2381,21 +2689,44 @@
 			</model>
 			<model name='(Laser)'>
                 <roles>urban</roles>
-				<availability>SL:8+,SL.R:8,IS:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:8+,SL.R:8,IS:6,Periphery:5,TC:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
-                <roles>urban</roles>
-				<availability>SL:7,IS:7,Periphery:7</availability>
+                <roles>anti_infantry,urban</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:6,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle)'>
                 <roles>urban</roles>
-				<availability>SL:6,SL.R:4-,IS:8,Periphery:8</availability>
+				<availability>SL:6,SL.R:4-,IS:8,Periphery:8,TC:4,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
                 <roles>urban</roles>
-				<availability>SL:5,IS:5,Periphery:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
+        <chassis name='Mechanized Wheeled Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:6</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:5-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>urban</roles>
+                <availability>TC:5</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry,urban</roles>
+                <availability>TC:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>urban</roles>
+                <availability>TC:7-</availability>
+            </model>
+            <model name='(SRM)'>
+                <roles>urban</roles>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Medium Strike Fighter' unitType='Conventional Fighter'>
 			<availability>TH:5,LA:5-,IS:5,MERC:4,Periphery:4</availability>
 			<model name='Defender'>
@@ -2434,18 +2765,18 @@
 			</model>
 		</chassis>
 		<chassis name='Mobile Headquarters' unitType='Tank'>
-			<availability>SL:4,IS:2,MERC:2,DC:2</availability>
+			<availability>SL:4+,SL.R:5+,IS:2+,TC:1+</availability>
 			<model name=''>
                 <roles>command,support</roles>
-				<availability>CC:6,General:8,MERC:4,DC:6</availability>
+				<availability>SL:8,IS:8,CC:6,DC:6,TC:5+</availability>
 			</model>
 			<model name='(LL)'>
                 <roles>command,support</roles>
-				<availability>CC:6,General:4,MERC:2,DC:6</availability>
+				<availability>SL:4,IS:4,DC:8,CC:8,TC:8</availability>
 			</model>
 			<model name='(LRM)'>
                 <roles>command,support</roles>
-				<availability>CC:6,General:4,MERC:2,DC:6</availability>
+				<availability>SL:3,IS:4,CC:6,DC:6,TC:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Mobile Long Tom Artillery' unitType='Tank'>
@@ -2540,13 +2871,14 @@
 			</model>
 		</chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
-			<availability>SL:9,IS:9,Periphery.Deep:9,Periphery:9</availability>
+			<availability>SL:9,IS:9,Periphery:9,TC:3-,Periphery.Deep:9</availability>
 			<model name='(Fieldworks)'>
 				<roles>engineer</roles>
-				<availability>IS:4,Periphery:2</availability>
+				<availability>SL:2,IS:4,Periphery:2</availability>
 			</model>
 			<model name='(Flamer)'>
-				<availability>General:8</availability>
+                <roles>urban</roles>
+				<availability>SL:6,IS:8,Periphery:8,TC:5-,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
@@ -2556,22 +2888,45 @@
 				<availability>SL:4,IS:2</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+				<availability>SL:7,IS:6,Periphery:5,TC:4+,Periphery.Deep:5</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>General:7</availability>
+                <roles>anti_infantry</roles>
+				<availability>SL:7,IS:7,Periphery:7,TC:5,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Nonlethal)'>
 				<roles>urban,anti_infantry</roles>
 				<availability>General:3</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>General:8</availability>
+				<availability>SL:7,IS:8,Periphery:8,TC:7,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>General:5</availability>
+				<availability>SL:5,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Motorized Platoon (Taurian)' unitType='Infantry'>
+            <availability>TC:9</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>TC:4-</availability>
+            </model>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>TC:5+</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>TC:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>TC:6</availability>
+            </model>
+            <model name='(SRM)'>
+                <roles>anti_mek</roles>
+                <availability>TC:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Motorized Sub Platoon' unitType='Infantry'>
 			<availability>IS:1,FS:3,Periphery:1</availability>
 			<model name='(Laser SCUBA)'>
@@ -2579,6 +2934,20 @@
 				<availability>IS:9</availability>
 			</model>
 		</chassis>
+        <chassis name='Mótuö Chë Shang No.2' unitType='Tank'>
+            <availability>CC:1</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>CC:8</availability>
+            </model>
+        </chassis>
+        <chassis name='MuckRaker' unitType='Mek'>
+            <availability>FS:3</availability>
+            <model name='GMMM-2 MiningMech'>
+                <roles>civilian</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Mule' unitType='Dropship'>
 			<availability>SL:5:2737,IS:5:2737,Periphery.Deep:4:2737,Periphery:4:2737</availability>
 			<model name='(2737)'>
@@ -2749,10 +3118,10 @@
 			</model>
 		</chassis>
 		<chassis name='Paramour Mobile Repair Vehicle' unitType='Tank'>
-			<availability>FWL:5</availability>
+			<availability>FWL:5+</availability>
 			<model name=''>
-                <roles>support</roles>
-				<availability>General:8</availability>
+                <roles>cargo,support</roles>
+				<availability>FWL:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Patron' unitType='Mek'>
@@ -2762,6 +3131,13 @@
 				<availability>FWL:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Peacekeeper' unitType='Mek'>
+            <availability>SL:3,IS:3,Periphery:2+,PIR:0</availability>
+            <model name='PK-6 SecurityMech'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pentagon' unitType='Dropship'>
 			<availability>TH:6,SL:5</availability>
 			<model name=''>
@@ -2845,14 +3221,14 @@
 			</model>
 		</chassis>
 		<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-			<availability>FWL:8,FS:4</availability>
+			<availability>SL:8,IS:8,Periphery:4+,Periphery.Deep:1+,PIR:3+</availability>
 			<model name=''>
 				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
 			</model>
 			<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-				<roles>cargo</roles>
-				<availability>FS:3</availability>
+                <roles>ground_support</roles>
+				<availability>FS:2-</availability>
 			</model>
 		</chassis>
 		<chassis name='Potemkin Troop Cruiser' unitType='Warship'>
@@ -2862,6 +3238,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Powerman' unitType='Mek'>
+            <availability>SL:5:2564,IS:5:2764,Periphery:4+:2765,PIR:0</availability>
+            <model name='SC XI LoaderMech'>
+                <roles>cargo,support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Pressurized Yard' unitType='Space Station'>
 			<availability>TH:10,IS:8,Periphery:7</availability>
 			<model name='Huge (2450)'>
@@ -2885,11 +3268,18 @@
 				<availability>General:7</availability>
 			</model>
 		</chassis>
+        <chassis name='Prime Mover' unitType='Tank'>
+            <availability>SL:6-,IS:8,Periphery:8,Periphery.Deep:0</availability>
+            <model name='(Original)'>
+                <roles>cargo,support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Prometheus Combat Support Bridgelayer' unitType='Tank'>
-			<availability>FS:5</availability>
+			<availability>SL:3,FS:4,IS:3</availability>
 			<model name=''>
                 <roles>support,engineer</roles>
-				<availability>General:8</availability>
+				<availability>SL:8,IS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
@@ -3004,6 +3394,17 @@
 				<availability>General:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Rock Rover Half-Track' unitType='Tank'>
+            <availability>IS:2,DC:1,Periphery:2,Periphery.Deep:6</availability>
+            <model name='RRV'>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+            <model name='RRV (Speed)'>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Rogue' unitType='AeroSpaceFighter'>
 			<availability>CC:5,MOC:3,OA:3,LA:5,SL:5,FWL:5,IS:4,RWR:3,FS:4,DC:4,TC:3</availability>
 			<model name='RGU-133E'>
@@ -3028,11 +3429,11 @@
 			</model>
 		</chassis>
 		<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-			<availability>FS:5-</availability>
-			<model name=''>
-				<roles>civilian</roles>
-				<availability>General:6</availability>
-			</model>
+            <availability>FS:4+,IS:3+</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>IS:8,FS:8</availability>
+            </model>
 		</chassis>
 		<chassis name='SRM Carrier' unitType='Tank'>
 			<availability>General:8,SL.R:7</availability>
@@ -3087,6 +3488,27 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Saturn Harvester' unitType='Tank'>
+            <availability>SL:3,IS:3,FWL:4</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,FWL:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Saurer-Bucher Fire Engine' unitType='Tank'>
+            <availability>SL:6,IS:6,Periphery:6,PIR:0</availability>
+            <model name='TLF-LL6500'>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Scavenger' unitType='Mek'>
+            <availability>SL:6,IS:6,Periphery:6,PIR:0</availability>
+            <model name='SC-V SalvageMech'>
+                <roles>support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Scorpion' unitType='Mek'>
 			<availability>CC:5-,LA:5-,FWL:5-,Periphery.Deep:4-,MERC:5-,DC:5-,Periphery:4-</availability>
 			<model name='SCP-1N'>
@@ -3137,6 +3559,17 @@
 				<availability>SL.R:4</availability>
 			</model>
 		</chassis>
+        <chassis name='Sherpa Armored Truck' unitType='Tank'>
+            <availability>IS:7,Periphery:8</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+            <model name='(MASH)'>
+                <roles>support</roles>
+                <availability>IS:2,Periphery:3,PIR:1</availability>
+            </model>
+        </chassis>
 		<chassis name='Shootist' unitType='Mek'>
 			<availability>LA:3+,SL:4,SL.R:6</availability>
 			<model name='ST-8A'>
@@ -3144,6 +3577,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Shugosha' unitType='Mek'>
+            <availability>DC:8</availability>
+            <model name='PTN-LAW LoaderMech'>
+                <roles>support</roles>
+                <availability>DC:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Shuttle' unitType='Small Craft'>
 			<availability>IS:10,Periphery:10</availability>
 			<model name='ST-46'>
@@ -3157,6 +3597,20 @@
 				<availability>LA:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Simca Ambulance' unitType='Tank'>
+            <availability>SL:2,IS:3,Periphery:3</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>SL:8,IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Skoda &apos;Growler&apos; Service Utility Truck' unitType='Tank'>
+            <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
+            <model name=''>
+                <roles>civilian</roles>
+                <availability>SL:8,IS:8,Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Skulker Wheeled Scout Tank' unitType='Tank'>
 			<availability>DC:8,SL:3-,SL.R:0</availability>
 			<model name=''>
@@ -3292,12 +3746,12 @@
 		<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 			<availability>CC:4</availability>
 			<model name=''>
-				<roles>cargo,support</roles>
-				<availability>General:3</availability>
+				<roles>support</roles>
+				<availability>CC:8</availability>
 			</model>
 			<model name='(Original)'>
-				<roles>cargo,support</roles>
-				<availability>General:6</availability>
+				<roles>support</roles>
+				<availability>CC:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Striker' unitType='Mek'>
@@ -3477,6 +3931,20 @@
 				<availability>General:5</availability>
 			</model>
 		</chassis>
+        <chassis name='TrackBike' unitType='Tank'>
+            <availability>Periphery:2-,Periphery.Deep:4-,PIR:3</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>Periphery:8,PIR:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Tracked Quad' unitType='Tank'>
+            <availability>IS:2,Periphery:2,Periphery.Deep:4</availability>
+            <model name=''>
+                <roles>cargo,support</roles>
+                <availability>IS:8,Periphery:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Tracker Surveillance' unitType='Warship'>
 			<availability>RWR:1</availability>
 			<model name='(2407)'>
@@ -3731,6 +4199,13 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Wayland Mobile Base' unitType='Tank'>
+            <availability>SL:4+,SL.R:6,TH:4+,IS:3+:2715</availability>
+            <model name=''>
+                <roles>support</roles>
+                <availability>SL:8,TH:8,IS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Whirlwind Destroyer' unitType='Warship'>
 			<availability>SL:2</availability>
 			<model name='(2606)'>

@@ -28,6 +28,16 @@ public class DummyWithdrawReporter implements IWithdrawReporter {
 
 
     @Override
+    public void reportStartingWithdrawForCrippled(Formation withdrawingFormation) {
+
+    }
+
+    @Override
+    public void reportStartingWithdrawForOrder(Formation withdrawingFormation) {
+
+    }
+
+    @Override
     public void reportSuccessfulWithdraw(Formation withdrawingFormation) {
 
     }

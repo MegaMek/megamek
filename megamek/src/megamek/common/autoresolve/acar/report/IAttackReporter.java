@@ -21,7 +21,7 @@ import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 public interface IAttackReporter {
-    void reportAttackStart(Formation attacker, int unitNumber, Formation target);
+    void reportAttackStart(Formation attacker, int unitNumber, Formation target, SBFUnit targetUnit);
 
     void reportCannotSucceed(String toHitDesc);
 

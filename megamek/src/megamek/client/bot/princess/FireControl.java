@@ -256,16 +256,16 @@ public class FireControl {
      *
      * @param hexesMoved The number of hexes the target unit moved.
      * @param jumping    Set TRUE if the target jumped.
-     * @param vtol       Set TRUE if the target is a {@link VTOL}.
+     * @param airborneNonAerospace       Set TRUE if the target is a {@link VTOL} or other airborne, non-aerospace unit.
      * @param game       The current {@link Game}
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
     protected ToHitData getTargetMovementModifier(final int hexesMoved,
             final boolean jumping,
-            final boolean vtol,
+            final boolean airborneNonAerospace,
             final Game game) {
-        return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
+        return Compute.getTargetMovementModifier(hexesMoved, jumping, airborneNonAerospace, game);
     }
 
     /**

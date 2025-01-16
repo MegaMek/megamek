@@ -21,14 +21,12 @@ package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.AmmoType.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
@@ -38,6 +36,8 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
 import megamek.logging.MMLogger;
+
+import static megamek.common.AmmoType.*;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -416,6 +416,19 @@ public class WeaponFireInfo {
         // bombs require some special consideration
         if (weapon.isGroundBomb()) {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
+        }
+
+        // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
+        if (preferredAmmo != null) {
+            var munitionType = preferredAmmo.getType().getMunitionType();
+            // Handle all 0-damage munitions here
+            if (
+                SMOKE_MUNITIONS.containsAll(munitionType) ||
+                FLARE_MUNITIONS.containsAll(munitionType) ||
+                MINE_MUNITIONS.containsAll(munitionType)
+            ) {
+                return 0D;
+            }
         }
 
         // bay weapons require special consideration, by looping through all weapons and

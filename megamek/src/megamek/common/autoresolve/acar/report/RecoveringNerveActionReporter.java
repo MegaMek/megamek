@@ -13,7 +13,6 @@
  */
 package megamek.common.autoresolve.acar.report;
 
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Roll;
 import megamek.common.autoresolve.acar.SimulationManager;
@@ -21,8 +20,6 @@ import megamek.common.autoresolve.component.Formation;
 import megamek.common.strategicBattleSystems.SBFFormation;
 
 import java.util.function.Consumer;
-
-import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class RecoveringNerveActionReporter implements IRecoveringNerveActionReporter {
 
@@ -44,18 +41,20 @@ public class RecoveringNerveActionReporter implements IRecoveringNerveActionRepo
     @Override
     public void reportRecoveringNerveStart(Formation formation, int toHitValue) {
         reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryAttempt")
-            .add(new FormationReportEntry(formation.generalName(), UIUtil.hexColor(ownerColor(formation, game))).text())
-            .add(toHitValue).noNL()
+            .add(new FormationReportEntry(formation, game).reportText())
+            .add(toHitValue)
         );
     }
 
     @Override
     public void reportMoraleStatusChange(Formation.MoraleStatus newMoraleStatus, Roll roll) {
-        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryRoll").indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
+        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryRoll")
+            .indent().add(new RollReportEntry(roll).reportText()).add(newMoraleStatus.name().toLowerCase()));
     }
 
     @Override
     public void reportFailureRoll(Roll roll, SBFFormation.MoraleStatus moraleStatus) {
-        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryFail").add(roll.toString()).add(moraleStatus.name().toLowerCase()));
+        reportConsumer.accept(new PublicReportEntry("acar.morale.recoveryFail")
+            .add(roll.toString()).add(moraleStatus.name().toLowerCase()));
     }
 }

@@ -260,7 +260,7 @@
 	<faction key='FOR' name='Fiefdom of Randis' minor='true' clan='false' periphery='true'>
 		<years>2988-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>MERC,Periphery.OS</parentFaction>
+		<parentFaction>MERC,Periphery.HR</parentFaction>
 	</faction>
 	<faction key='FVC' name='Filtvelt Coalition' minor='false' clan='false' periphery='true'>
 		<years>3072-</years>

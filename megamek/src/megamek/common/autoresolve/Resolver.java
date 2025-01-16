@@ -63,8 +63,7 @@ public class Resolver {
         SimulationContext context = new SimulationContext(options, setupForces, board);
         SimulationManager simulationManager = new SimulationManager(context, suppressLog);
         initializeGameManager(simulationManager);
-        simulationManager.execute();
-        return simulationManager.getConclusionEvent();
+        return simulationManager.execute();
     }
 
 }

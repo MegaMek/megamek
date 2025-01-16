@@ -16,8 +16,17 @@ package megamek.common.autoresolve.damage;
 
 import megamek.common.GunEmplacement;
 
-public record GunEmplacementDamageApplier(GunEmplacement entity, boolean crewMustSurvive, boolean entityMustSurvive,  boolean noCrewDamage)
+public record GunEmplacementDamageApplier(GunEmplacement entity, EntityFinalState entityFinalState)
     implements DamageApplier<GunEmplacement> {
+
+    @Override
+    public int devastateUnit() {
+        int totalDamage = entity().getArmor(0) + entity().getInternal(0);
+        entity().setArmor(0, 0);
+        entity().setInternal(0, 0);
+        entity().setDestroyed(true);
+        return totalDamage;
+    }
 
     @Override
     public int getRandomHitLocation() {

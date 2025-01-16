@@ -13,6 +13,7 @@
  */
 package megamek.common.autoresolve.acar.phase;
 
+import megamek.common.Compute;
 import megamek.common.alphaStrike.ASRange;
 import megamek.common.autoresolve.acar.SimulationManager;
 import megamek.common.autoresolve.acar.action.Action;
@@ -22,7 +23,6 @@ import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.enums.GamePhase;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class FiringPhase extends PhaseHandler {
 
@@ -43,16 +43,15 @@ public class FiringPhase extends PhaseHandler {
 
 
             if (turn instanceof FormationTurn formationTurn) {
-                var player = getSimulationManager().getGame().getPlayer(formationTurn.playerId());
+                for (var formation : getContext().getActiveFormations(formationTurn.playerId())) {
+                    if (!formation.isEligibleForPhase(getContext().getPhase())) {
+                        continue;
+                    }
 
-                getSimulationManager().getGame().getActiveFormations(player)
-                    .stream()
-                    .filter(f -> f.isEligibleForPhase(getSimulationManager().getGame().getPhase())) // only eligible formations
-                    .findAny()
-                    .map(this::attack)
-                    .stream()
-                    .flatMap(Collection::stream)
-                    .forEach(this::standardUnitAttacks); // add engage and control action
+                    for (var atk : attack(formation)) {
+                        standardUnitAttacks(atk);
+                    }
+                }
             }
         }
     }
@@ -80,6 +79,7 @@ public class FiringPhase extends PhaseHandler {
                 var attack = new StandardUnitAttack(actingFormation.getId(), unitIndex, target.getId(), range);
                 attacks.add(attack);
             }
+            target.addBeingTargetedBy(actingFormation);
             getSimulationManager().addAttack(attacks, actingFormation);
         }
     }
@@ -89,12 +89,17 @@ public class FiringPhase extends PhaseHandler {
     private List<AttackRecord> attack(Formation actingFormation) {
         var target = this.selectTarget(actingFormation);
 
+        if (target.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<Integer> unitIds = new ArrayList<>();
         for (int i = 0; i < actingFormation.getUnits().size(); i++) {
             unitIds.add(i);
         }
 
         var ret = new ArrayList<AttackRecord>();
+
         ret.add(new AttackRecord(actingFormation, target.get(0), unitIds));
         return ret;
     }
@@ -102,39 +107,58 @@ public class FiringPhase extends PhaseHandler {
     private List<Formation> selectTarget(Formation actingFormation) {
         var game = getSimulationManager().getGame();
         var player = game.getPlayer(actingFormation.getOwnerId());
-        var canBeTargets = getSimulationManager().getGame().getActiveFormations().stream()
-            .filter(Formation::isDeployed)
-            .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
-            .filter(f -> f.getId() != actingFormation.getTargetFormationId())
-            .collect(Collectors.toList());
-        Collections.shuffle(canBeTargets);
+        var canBeTargets = new HashSet<Formation>();
+        var orders = getContext().getOrders().getOrders(actingFormation.getOwnerId());
 
-        var mandatoryTarget = game.getFormation(actingFormation.getTargetFormationId());
-        mandatoryTarget.ifPresent(formation -> canBeTargets.add(0, formation));
+        for (var order : orders) {
+            if (order.isEligible(getContext())) {
+                switch (order.getOrderType()) {
+                    case ATTACK_TARGET -> {
+                        if (order.getTargetId() != -1) {
+                            var target = game.getFormation(order.getTargetId());
+                            target.ifPresent(canBeTargets::add);
+                        }
+                    }
+                    case ATTACK_TARGET_NOT_WITHDRAWING -> getSimulationManager().getGame().getActiveDeployedFormations().stream()
+                        .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                        .filter(f -> !f.isWithdrawing())
+                        .forEach(canBeTargets::add);
+
+                    case ATTACK_TARGET_WITHDRAWING -> getSimulationManager().getGame().getActiveDeployedFormations().stream()
+                        .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                        .filter(Formation::isWithdrawing)
+                        .forEach(canBeTargets::add);
+                }
+            }
+        }
+
+        // sticky target
+        game.getFormation(actingFormation.getTargetFormationId())
+            .ifPresent(canBeTargets::add);
+
+        if (canBeTargets.size() < 4) {
+            getSimulationManager().getGame().getActiveDeployedFormations().stream()
+                .filter(f -> game.getPlayer(f.getOwnerId()).isEnemyOf(player))
+                .forEach(canBeTargets::add);
+        }
 
         if (canBeTargets.isEmpty()) {
-            return List.of();
+            return Collections.emptyList();
         }
 
         if (canBeTargets.size() == 1) {
-            return canBeTargets;
+            return new ArrayList<>(canBeTargets);
         }
 
         return bestTargetOrPreviousTarget(actingFormation, canBeTargets);
+
     }
 
-    private List<Formation> bestTargetOrPreviousTarget(Formation actingFormation, List<Formation> targets) {
-        var game = getSimulationManager().getGame();
-        var previousTarget = game.getFormation(actingFormation.getTargetFormationId());
+    private List<Formation> bestTargetOrPreviousTarget(Formation actingFormation, Set<Formation> targets) {
+        var previousTargetId = actingFormation.getTargetFormationId();
 
-        if (previousTarget.isEmpty()) {
-            return List.of(targets.get(0));
-        }
+        var pickTarget = new LinkedList<Formation>();
 
-        var previousTargetFormation = previousTarget.get();
-
-        var pickTarget = new ArrayList<Formation>();
-        var previousTargetId = previousTargetFormation.getId();
         Optional<Formation> priorityTarget = Optional.empty();
         for (var f : targets) {
             var distance = actingFormation.getPosition().coords().distance(f.getPosition().coords());
@@ -163,6 +187,14 @@ public class FiringPhase extends PhaseHandler {
         Collections.shuffle(pickTarget);
         priorityTarget.ifPresent(formation -> pickTarget.add(0, formation));
 
-        return List.of(targets.get(0));
+        var iterator = pickTarget.iterator();
+        while (iterator.hasNext()) {
+            var target = iterator.next();
+            if (target.beingTargetByHowMany() > 2 && iterator.hasNext()) {
+                continue;
+            }
+            return List.of(target);
+        }
+        return Collections.emptyList();
     }
 }

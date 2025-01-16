@@ -299,6 +299,10 @@ public final class Forces implements Serializable {
         return forces.get(getForceId(entity.getId()));
     }
 
+    public HashMap<Integer, Force> getForcesInternalRepresentation() {
+        return forces;
+    }
+
     /**
      * Returns the id of the force that the provided entity is a direct part of.
      * E.g., If it is part of a lance in a company, the lance id will be returned.

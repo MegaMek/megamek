@@ -1,15 +1,15 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
+/*
+* MegaMek - Copyright (C) 2020 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
 */
 package megamek.client.ui.swing.boardview;
 
@@ -31,8 +31,8 @@ import java.awt.image.BufferedImage;
  * entering, exiting or turning.
  */
 class StepSprite extends Sprite {
-    
-    private final static GUIPreferences GUIP = GUIPreferences.getInstance(); 
+
+    private final static GUIPreferences GUIP = GUIPreferences.getInstance();
     private static AffineTransform shadowOffset = new AffineTransform();
     private static AffineTransform upDownOffset = new AffineTransform();
     private static AffineTransform stepOffset = new AffineTransform();
@@ -297,7 +297,7 @@ class StepSprite extends Sprite {
         tempImage.flush();
     }
 
-    /** Draws the given form in the given Color col with a shadow. */ 
+    /** Draws the given form in the given Color col with a shadow. */
     private void drawArrowShape(Graphics2D graph, Shape form, Color col) {
         graph.setColor(Color.darkGray);
         Shape currentArrow = stepOffset.createTransformedShape(form);
@@ -307,7 +307,7 @@ class StepSprite extends Sprite {
         currentArrow = shadowOffset.createTransformedShape(currentArrow);
         graph.fill(currentArrow);
     }
-    
+
     private void drawAnnouncement(Graphics2D graph, String text, MoveStep step, Color col) {
         if (step.isPastDanger()) {
             text = "(" + text + ")";
@@ -449,9 +449,13 @@ class StepSprite extends Sprite {
         StringBuilder subscriptStringBuf = new StringBuilder();
 
         int distance = step.getDistance();
-        boolean isVTOL = false; //step.getEntity().;
+        boolean airborneNonAerospace = (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_RUN)
+            || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_WALK)
+            || ((step.getMovementMode() == EntityMovementMode.VTOL)
+                && ( ((step.getMovementType(isLastStep) != EntityMovementType.MOVE_NONE)  ||  step.getEntity().isAirborneVTOLorWIGE()))
+            || (step.getMovementType(isLastStep) == EntityMovementType.MOVE_VTOL_SPRINT));
 
-        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
+        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, airborneNonAerospace, game);
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
         subscriptStringBuf.append(toHitData.getValue());
 

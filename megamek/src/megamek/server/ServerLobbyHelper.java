@@ -18,14 +18,6 @@
  */
 package megamek.server;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
 import megamek.common.Game;
@@ -37,6 +29,10 @@ import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 public class ServerLobbyHelper {
     private static final MMLogger logger = MMLogger.create(ServerLobbyHelper.class);
@@ -50,11 +46,8 @@ public class ServerLobbyHelper {
      * if the client sending it is the owner
      */
     static boolean isNewForceValid(Game game, Force force) {
-        if ((!force.isTopLevel() && !game.getForces().contains(force.getParentId()))
-                || (force.getChildCount() != 0)) {
-            return false;
-        }
-        return true;
+        return (force.isTopLevel() || game.getForces().contains(force.getParentId()))
+            && (force.getChildCount() == 0);
     }
 
     /**
@@ -144,7 +137,8 @@ public class ServerLobbyHelper {
      */
     private static HashSet<Entity> lobbyDisembarkOthers(Game game, Entity entity, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
-        if (entity.getTransportId() != Entity.NONE) {
+
+        if (entity != null && entity.getTransportId() != Entity.NONE) {
             Entity carrier = game.getEntity(entity.getTransportId());
             if (carrier != null && !entities.contains(carrier)) {
                 carrier.unload(entity);
@@ -230,15 +224,14 @@ public class ServerLobbyHelper {
         var changedForces = new HashSet<Force>();
 
         if (newParentId == Force.NO_FORCE) {
-            forceList.stream().forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
+            forceList.forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
         } else {
             if (!forces.contains(newParentId)) {
                 logger.warn("Tried to attach forces to non-existing parent force ID " + newParentId);
                 return;
             }
             Force newParent = forces.getForce(newParentId);
-            forceList.stream()
-                    .forEach(f -> changedForces.addAll(forces.attachForce(forces.getForce(f.getId()), newParent)));
+            forceList.forEach(f -> changedForces.addAll(forces.attachForce(forces.getForce(f.getId()), newParent)));
         }
 
         if (!changedForces.isEmpty()) {
@@ -395,10 +388,10 @@ public class ServerLobbyHelper {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.hasNhC3()) {
                 String net = entity.getC3NetId();
-                int id = Entity.NONE;
                 try {
-                    id = Integer.parseInt(net.substring(net.indexOf(".") + 1));
-                    if (game.getEntity(id).getOwner().isEnemyOf(entity.getOwner())) {
+                    var id = Integer.parseInt(net.substring(net.indexOf(".") + 1));
+                    var netUnit = game.getEntity(id);
+                    if (netUnit != null && netUnit.getOwner().isEnemyOf(entity.getOwner())) {
                         entity.setC3NetIdSelf();
                     }
                 } catch (Exception ignored) {

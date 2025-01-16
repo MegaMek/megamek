@@ -7122,13 +7122,20 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
-            // if we are in the water, then the sea mine will only blow up if at
-            // the right depth
-            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)) {
-                if ((Math.abs(curElev) != mf.getDepth())
+            try {
+                // if we are in the water, then the sea mine will only blow up if at
+                // the right depth
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
+                    game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
+                ) {
+                    if ((Math.abs(curElev) != mf.getDepth())
                         && (Math.abs(curElev + entity.getHeight()) != mf.getDepth())) {
-                    continue;
+                        continue;
+                    }
                 }
+            } catch (NullPointerException _ignored) {
+                logger.warn("Minefield not found on board: " + mf.toString());
+                continue;
             }
 
             // Check for mine-sweeping. Vibramines handled elsewhere
@@ -7596,16 +7603,23 @@ public class TWGameManager extends AbstractGameManager {
         while (e.hasMoreElements()) {
             Minefield mf = e.nextElement();
 
-            // Bug 954272: Mines shouldn't work underwater, and BMRr says
-            // Vibrabombs are mines
-            if (game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
+            try {
+                // Bug 954272: Mines shouldn't work underwater, and BMRr says
+                // Vibrabombs are mines
+                if (game.getBoard().getHex(mf.getCoords()) != null &&
+                    game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.WATER)
                     && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.PAVEMENT)
                     && !game.getBoard().getHex(mf.getCoords()).containsTerrain(Terrains.ICE)) {
-                continue;
-            }
+                    continue;
+                }
 
-            // Mek weighing 10 tons or less can't set off the bomb
-            if (mass <= (mf.getSetting() - 10)) {
+                // Mek weighing 10 tons or less can't set off the bomb
+                if (mass <= (mf.getSetting() - 10)) {
+                    continue;
+                }
+
+            } catch (NullPointerException _ignored) {
+                logger.warn("Minefield not found on board: " + mf.toString());
                 continue;
             }
 

@@ -1,34 +1,37 @@
 /*
  * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
  */
 package megamek.common.autoresolve.acar;
 
 
 import megamek.common.*;
-import megamek.common.actions.EntityAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.autoresolve.acar.action.Action;
 import megamek.common.autoresolve.acar.action.ActionHandler;
-import megamek.common.autoresolve.acar.report.PublicReportEntry;
+import megamek.common.autoresolve.acar.order.Orders;
 import megamek.common.autoresolve.component.AcTurn;
 import megamek.common.autoresolve.component.Formation;
 import megamek.common.autoresolve.component.FormationTurn;
 import megamek.common.autoresolve.converter.SetupForces;
+import megamek.common.autoresolve.damage.DamageApplierChooser;
+import megamek.common.autoresolve.damage.EntityFinalState;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
+import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedevent.TriggeredEvent;
 import org.apache.commons.lang3.NotImplementedException;
@@ -43,6 +46,7 @@ import java.util.stream.Collectors;
 public class SimulationContext implements IGame {
 
     private static final MMLogger logger = MMLogger.create(SimulationContext.class);
+    private static final int MAX_ROUND_LIMIT = 1000;
 
     private final SimulationOptions options;
 
@@ -59,6 +63,7 @@ public class SimulationContext implements IGame {
     private GamePhase lastPhase = GamePhase.UNKNOWN;
 
     private final Map<Integer, SkillLevel> playerSkillLevels = new HashMap<>();
+    private final Map<Integer, Integer> unitsPerPlayerAtStart = new HashMap<>();
     private int lastEntityId;
     /**
      * Report and turnlist
@@ -78,6 +83,8 @@ public class SimulationContext implements IGame {
      */
     private final List<ActionHandler> actionHandlers = new ArrayList<>();
 
+    private final Orders orders = new Orders();
+
     /**
      * Contains all units that have left the game by any means.
      */
@@ -87,6 +94,11 @@ public class SimulationContext implements IGame {
         this.options = gameOptions;
         setBoard(0, board);
         setupForces.createForcesOnSimulation(this);
+        setupForces.addOrdersToForces(this);
+    }
+
+    public Orders getOrders() {
+        return orders;
     }
 
     public void addUnit(InGameObject unit) {
@@ -95,6 +107,7 @@ public class SimulationContext implements IGame {
             id = getNextEntityId();
             unit.setId(id);
         }
+        unitsPerPlayerAtStart.put(unit.getOwnerId(), unitsPerPlayerAtStart.getOrDefault(unit.getOwnerId(), 0) + 1);
         inGameObjects.put(id, unit);
     }
 
@@ -117,6 +130,11 @@ public class SimulationContext implements IGame {
     public int getNoOfEntities() {
         return inGameTWEntities().size();
     }
+
+    public int getStartingNumberOfUnits(int playerId) {
+        return unitsPerPlayerAtStart.getOrDefault(playerId, 0);
+    }
+
 
     public int getSelectedEntityCount(EntitySelector selector) {
         int retVal = 0;
@@ -331,14 +349,7 @@ public class SimulationContext implements IGame {
 
     @Override
     public List<InGameObject> getGraveyard() {
-        List<InGameObject> destroyed = new ArrayList<>();
-        for (Entity entity : this.graveyard) {
-            if (entity.getRemovalCondition() != IEntityRemovalConditions.REMOVE_IN_RETREAT) {
-                destroyed.add(entity);
-            }
-        }
-
-        return destroyed;
+        return new ArrayList<InGameObject>(graveyard);
     }
 
     public List<Entity> getRetreatingUnits() {
@@ -366,7 +377,7 @@ public class SimulationContext implements IGame {
     }
 
     public boolean gameTimerIsExpired() {
-        return getRoundCount() >= 1000;
+        return getRoundCount() >= MAX_ROUND_LIMIT;
     }
 
     private int getRoundCount() {
@@ -432,8 +443,13 @@ public class SimulationContext implements IGame {
     }
 
     public List<Formation> getActiveFormations(Player player) {
+        return this.getActiveFormations(player.getId());
+    }
+
+
+    public List<Formation> getActiveFormations(int playerId) {
         return getActiveFormations().stream()
-            .filter(f -> f.getOwnerId() == player.getId())
+            .filter(f -> f.getOwnerId() == playerId)
             .toList();
     }
 
@@ -502,6 +518,20 @@ public class SimulationContext implements IGame {
 
     public void removeFormation(Formation formation) {
         inGameObjects.remove(formation.getId());
+    }
+
+    public void applyDamageToEntityFromUnit(SBFUnit unit, Entity entity, EntityFinalState entityFinalState) {
+        var percent = (double) unit.getCurrentArmor() / unit.getArmor();
+        var crits = Math.min(9, unit.getTargetingCrits() + unit.getMpCrits() + unit.getDamageCrits());
+        percent -= percent * (crits / 15.0);
+        percent = Math.min(0.85, percent);
+        var totalDamage = (int) ((entity.getTotalArmor() + entity.getTotalInternal()) * (1 - percent));
+        var clusterSize = -1;
+        if (entity instanceof Infantry) {
+            clusterSize = 1;
+        }
+        DamageApplierChooser.choose(entity, entityFinalState)
+            .applyDamageInClusters(totalDamage, clusterSize);
     }
 
     public void removeEntity(Entity entity) {

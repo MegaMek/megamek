@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,6 +30,7 @@ public abstract class SuiteConstants {
     // region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
     public static final Version VERSION = new Version("0.50.03-SNAPSHOT");
+    public static final Version LAST_MILESTONE = new Version("0.49.19.1");
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

@@ -13,9 +13,9 @@
  */
 package megamek.common.autoresolve.converter;
 
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
+import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASRange;
@@ -29,47 +29,61 @@ import megamek.common.force.Forces;
 import megamek.common.strategicBattleSystems.BaseFormationConverter;
 import megamek.common.strategicBattleSystems.SBFUnit;
 import megamek.common.strategicBattleSystems.SBFUnitConverter;
+import megamek.common.util.Counter;
 import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
 
-public class EntityToFormationConverter extends BaseFormationConverter<Formation> {
-    private static final MMLogger logger = MMLogger.create(EntityToFormationConverter.class);
-    private final Entity entity;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
-    public EntityToFormationConverter(Entity entity, SimulationContext game) {
-        super(null, game, new Formation(), new DummyCalculationReport());
-        this.entity = entity;
+public class EntityAsUnit extends BaseFormationConverter<Formation> {
+    private static final MMLogger logger = MMLogger.create(EntityAsUnit.class);
+
+    public EntityAsUnit(Force force, SimulationContext game) {
+        super(force, game, new Formation());
     }
 
     @Override
     public Formation convert() {
-        var thisUnit = new ArrayList<AlphaStrikeElement>();
-        var element = ASConverter.convertAndKeepRefs(entity);
-        if (element != null) {
-            thisUnit.add(element);
-        } else {
-            var msg = String.format("Could not convert entity %s to AS element", entity);
-            logger.error(msg);
-            return null;
+        Forces forces = game.getForces();
+        var player = game.getPlayer(force.getOwnerId());
+        Counter<Role> counter = new Counter<>();
+        for (Force subforce : forces.getFullSubForces(force)) {
+            if (!subforce.getSubForces().isEmpty() || subforce.getEntities().isEmpty()) {
+                continue;
+            }
+            for (ForceAssignable entity : forces.getFullEntities(subforce)) {
+                var thisUnit = new ArrayList<AlphaStrikeElement>();
+                var unitName = "UNKNOWN";
+                if (entity instanceof Entity entityCast) {
+                    entityCast.setOwner(player);
+                    unitName = entityCast.getDisplayName() + " ID:" + entityCast.getId();
+                    var element = ASConverter.convertAndKeepRefs(entityCast);
+                    if (element != null) {
+                        thisUnit.add(element);
+                        counter.add(Role.getRole(entityCast.getRole()));
+                    } else {
+                        var msg = String.format("Could not convert entity %s to AS element", entityCast);
+                        logger.error(msg);
+                    }
+                }
+                SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, unitName, report).createSbfUnit();
+                formation.addUnit(convertedUnit);
+            }
         }
-
-        SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, entity.getDisplayName(), report).createSbfUnit();
-        formation.addUnit(convertedUnit);
-        formation.setEntity(entity);
-        formation.setRole(Role.getRole(entity.getRole()));
-        formation.setOwnerId(entity.getOwnerId());
-        formation.setName(entity.getDisplayName());
+        formation.setOwnerId(force.getOwnerId());
+        formation.setName(force.getName());
+        formation.setRole(firstNonNull(counter.top(), Role.getRole(UnitRole.SKIRMISHER)));
         formation.setStdDamage(setStdDamageForFormation(formation));
-
         for (var unit : formation.getUnits()) {
             var health = 0;
-            for (var el : unit.getElements()) {
-                health += el.getFullArmor() + el.getFullStructure();
+            for (var element : unit.getElements()) {
+                health += element.getCurrentArmor() + element.getCurrentStructure();
             }
             unit.setArmor(health);
             unit.setCurrentArmor(health);
         }
+        formation.setStartingSize(formation.currentSize());
         return formation;
     }
 

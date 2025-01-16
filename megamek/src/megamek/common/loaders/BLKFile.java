@@ -635,7 +635,6 @@ public class BLKFile {
                 case TechConstants.T_IS_EXPERIMENTAL:
                     type = "IS Level 4";
                     break;
-                case TechConstants.T_IS_UNOFFICIAL:
                 case TechConstants.T_CLAN_TW:
                     type = "Clan Level 2";
                     break;
@@ -648,6 +647,7 @@ public class BLKFile {
                 case TechConstants.T_CLAN_UNOFFICIAL:
                     type = "Clan Level 5";
                     break;
+                case TechConstants.T_IS_UNOFFICIAL:
                 default:
                     type = "IS Level 5";
                     break;

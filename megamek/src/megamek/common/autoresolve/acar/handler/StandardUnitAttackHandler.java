@@ -74,7 +74,7 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
         }
 
         // Start of attack report
-        reporter.reportAttackStart(attacker, attack.getUnitNumber(), target);
+        reporter.reportAttackStart(attacker, attack.getUnitNumber(), target, targetUnit);
 
         if (toHit.cannotSucceed()) {
             reporter.reportCannotSucceed(toHit.getDesc());
@@ -87,7 +87,12 @@ public class StandardUnitAttackHandler extends AbstractActionHandler {
                 reporter.reportAttackMiss();
             } else {
                 reporter.reportAttackHit();
-                var damage = calculateDamage(attack, attackingUnit);
+                int[] damage;
+                if (attacker.isSingleEntity()) {
+                    damage = calculateDamage(attack, attackingUnit);
+                } else {
+                    damage = new int[]{ attackingUnit.getCurrentDamage().getDamage(attack.getRange()).damage };
+                }
                 applyDamage(target, targetUnit, damage, attackingUnit);
             }
         }

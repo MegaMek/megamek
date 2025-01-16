@@ -17,9 +17,13 @@ import megamek.common.Entity;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
 import megamek.common.autoresolve.acar.SimulationManager;
+import megamek.common.autoresolve.component.Formation;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static megamek.client.ui.swing.tooltip.SBFInGameObjectTooltip.ownerColor;
 
 public class EndPhaseReporter implements IEndPhaseReporter {
 
@@ -56,12 +60,21 @@ public class EndPhaseReporter implements IEndPhaseReporter {
     }
 
     @Override
-    public void reportUnitDestroyed(Entity entity) {
+    public void reportUnitDestroyed(Formation formation, SBFUnit unit) {
+        var names = unit.getElements().stream().map(e -> e.getName() + " ID:" + e.getId()).toList();
+        var r = new PublicReportEntry("acar.endPhase.unitDestroyed")
+            .add(new UnitReportEntry(formation, unit, ownerColor(formation, game)).reportText())
+            .add(String.join(", ", names));
+        reportConsumer.accept(r);
+    }
+
+    @Override
+    public void reportElementDestroyed(Formation formation, SBFUnit unit, Entity entity) {
         var removalCondition = entity.getRemovalCondition();
         var reportId = reportIdForEachRemovalCondition.getOrDefault(removalCondition, MSG_ID_UNIT_DESTROYED_UNKNOWINGLY);
 
         var r = new PublicReportEntry(reportId)
-            .add(new EntityNameReportEntry(entity).reportText());
+            .add(new UnitReportEntry(formation, unit, ownerColor(formation, game)).reportText());
         reportConsumer.accept(r);
     }
 }

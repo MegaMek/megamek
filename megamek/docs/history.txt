@@ -17,6 +17,19 @@ MEGAMEK VERSION HISTORY:
 + Fix #6374: Fixes a class cast bug and an error in the argument parsing algorithm
 + PR #6376: Makes the end command work
 + Fix #6368: Allow princess to flee at end of movement
++ PR #6381: Added Static Access to Resource Bundle
++ PR #6382: Rolled Back #6381
++ Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
++ PR #6402: Feature: ACAR strategic objectives
++ PR #6407: Feature: ACAR formations reintroduced
++ Data #6408: Grabbing the Bull by the horns adding Taurian infantry
++ Fix #6385: Incorrect TMM bonus for WiGE
++ Fix #6395:
++ PR #6409: Campaign Options IIC - MegaMek Portion
++ PR #6415: fixes an error where force consolidation would not set the correct owner of the force
++ PR #6411: Don't load mml scratch files into unit cache
++ PR #6414: Warnings on Campaign Load - MegaMek Portion 
++ Fix #6412: Fix TacOps "Standing Still" modifier description
 
 
 0.50.02 (2024-12-30 2130 UTC)

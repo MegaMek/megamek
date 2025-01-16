@@ -46,12 +46,6 @@ public class VictoryPhase extends PhaseHandler {
             applyDamageToEntitiesFromFormation(context, formation);
         }
 
-        for (var inGameObject : context.getGraveyard()) {
-            if (inGameObject instanceof Entity entity) {
-                DamageApplierChooser.damageRemovedEntity(entity, entity.getRemovalCondition());
-            }
-        }
-
         for (var entity : context.getRetreatingUnits()) {
             DamageApplierChooser.damageRemovedEntity(entity, IEntityRemovalConditions.REMOVE_IN_RETREAT);
         }

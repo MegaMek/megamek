@@ -71,7 +71,14 @@ public class DeploymentPhase extends PhaseHandler {
             case START_N:
                 startingPos = boardNorthSide - Compute.randomInt(deployZone);
                 break;
+            case START_E:
+                startingPos = boardTwoThirds + Compute.randomInt((boardOneThird / 2)) - (boardOneThird / 2);
+                break;
 
+
+            case START_W:
+                startingPos = boardOneThird + Compute.randomInt((boardOneThird / 2)) - (boardOneThird / 2);
+                break;
             case START_SE:
             case START_SW:
                 startingPos = boardSouthSide + deployZone + Compute.randomInt(deployZone);
@@ -80,12 +87,6 @@ public class DeploymentPhase extends PhaseHandler {
                 startingPos = boardSouthSide + Compute.randomInt(deployZone);
                 break;
 
-            case START_E:
-                startingPos = boardOneThird - Compute.randomInt(boardOneThird);
-                break;
-            case START_W:
-                startingPos = boardTwoThirds - Compute.randomInt(boardOneThird);
-                break;
             case START_ANY:
                 startingPos = Compute.randomIntInclusive(boardNorthSide);
                 break;

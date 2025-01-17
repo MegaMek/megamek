@@ -420,6 +420,11 @@ public class BattleArmor extends Infantry {
         return TA_BATTLEARMOR[index];
     }
 
+    @Override
+    public String getBlipID() {
+        return "BA:" + getId();
+    }
+
     /**
      * Returns this entity's original jumping mp.
      */

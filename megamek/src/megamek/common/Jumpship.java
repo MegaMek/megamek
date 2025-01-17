@@ -147,9 +147,9 @@ public class Jumpship extends Aero {
     /*
      * Sets the number of rounds a specified firing arc is affected by an ASEW
      * missile
-     * 
+     *
      * @param arc - integer representing the desired firing arc
-     * 
+     *
      * @param turns - integer specifying the number of end phases that the effects
      * last through
      * Technically, about 1.5 turns elapse per the rules for ASEW missiles in TO
@@ -163,7 +163,7 @@ public class Jumpship extends Aero {
     /*
      * Returns the number of rounds a specified firing arc is affected by an ASEW
      * missile
-     * 
+     *
      * @param arc - integer representing the desired firing arc
      */
     public int getASEWAffected(int arc) {
@@ -388,7 +388,7 @@ public class Jumpship extends Aero {
 
     /**
      * Get the number of standard grav decks
-     * 
+     *
      * @return the number of 0-99 meter grav decks installed
      */
     public int getGravDeck() {
@@ -1219,5 +1219,10 @@ public class Jumpship extends Aero {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
+    }
+
+    @Override
+    public String getBlipID() {
+        return "JS";
     }
 }

@@ -144,4 +144,9 @@ public class MekWarrior extends EjectedCrew {
     public boolean canSpot() {
         return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
     }
+
+    @Override
+    public String getBlipID() {
+        return "mW";
+    }
 }

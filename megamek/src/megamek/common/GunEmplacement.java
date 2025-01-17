@@ -409,4 +409,9 @@ public class GunEmplacement extends Tank {
         // they have no weight so we use the mean across all GEs
         return 205;
     }
+
+    @Override
+    public String getBlipID() {
+        return "GE:" + getId();
+    }
 }

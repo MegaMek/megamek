@@ -341,4 +341,9 @@ public class FixedWingSupport extends ConvFighter {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(1.250 + 0.886 * Math.log(getWeight())));
     }
+
+    @Override
+    public String getBlipID() {
+        return "^SV";
+    }
 }

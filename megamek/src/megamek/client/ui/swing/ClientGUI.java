@@ -95,7 +95,7 @@ import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, IPreferenceChangeListener, MekDisplayListener {
+        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
     private final static MMLogger logger = MMLogger.create(ClientGUI.class);
 
     // region Variable Declarations
@@ -401,10 +401,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         registerCommand(new BotHelpCommand(this));
     }
 
+    @Override
     public BoardView getBoardView() {
         return bv;
     }
 
+    @Override
     public UnitDisplay getUnitDisplay() {
         return unitDisplay;
     }
@@ -465,11 +467,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         this.playerListDialog = playerListDialog;
     }
 
-    /**
-     * Set to true to make the client disconnect without a warning popup.
-     *
-     * @param quietly When true, the client will disconnect without visible warning
-     */
+    @Override
     public void setDisconnectQuietly(boolean quietly) {
         disconnectQuietly = quietly;
     }
@@ -619,11 +617,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         GUIP.addPreferenceChangeListener(this);
     }
 
-    /**
-     * Get the menu bar for this client.
-     *
-     * @return the <code>CommonMenuBar</code> of this client.
-     */
+    @Override
     public CommonMenuBar getMenuBar() {
         return menuBar;
     }
@@ -2689,6 +2683,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return bv.getChatterBoxActive();
     }
 
+    @Override
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }
@@ -2918,14 +2913,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
-    /**
-     * The ClientGUI is split into the main panel (view) at the top, which takes up
-     * the majority of
-     * the view and the "current panel" which has different controls based on the
-     * phase.
-     *
-     * @return the panel for the current phase
-     */
+    @Override
     public JComponent getCurrentPanel() {
         return curPanel;
     }

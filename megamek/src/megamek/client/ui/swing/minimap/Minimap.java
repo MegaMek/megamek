@@ -59,6 +59,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IClientGUI;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
@@ -140,7 +141,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private Board board;
     private final JDialog dialog;
     private Client client;
-    private final ClientGUI clientGui;
+    private final IClientGUI clientGui;
 
     private int margin = MARGIN;
     private int topMargin;
@@ -185,7 +186,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      *               anything else
      * @param cg     Optional: A ClientGUI object housing this minimap
      */
-    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
+    public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable IClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
 
         result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
@@ -245,14 +246,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * used to create a snapshot image. When a boardview is given, the visible area
      * is shown.
      */
-    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
+    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
         dialog = dlg;
         clientGui = cg;
         if (clientGui != null) {
-            client = clientGui.getClient();
+            if (clientGui instanceof Client) {
+                client = (Client) clientGui.getClient();
+            }
         }
         initializeColors();
         if (dialog != null) {
@@ -1116,7 +1119,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         g2.setTransform(saveTransform);
 
         // Create a colored circle if this is the selected unit
-        Entity se = (clientGui == null) ? null : clientGui.getDisplayedUnit();
+        Entity se = (clientGui == null) ? null : clientGui instanceof ClientGUI ? ((ClientGUI) clientGui).getDisplayedUnit() : null;
 
         if (entity == se) {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;

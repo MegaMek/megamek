@@ -1374,4 +1374,9 @@ public class ProtoMek extends Entity {
     public boolean hasPatchworkArmor() {
         return false;
     }
+
+    @Override
+    public String getBlipID() {
+        return "PM";
+    }
 }

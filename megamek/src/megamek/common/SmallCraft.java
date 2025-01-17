@@ -173,7 +173,7 @@ public class SmallCraft extends Aero {
     /**
      * Convenience method to return all crew from other craft aboard from the above
      * Map
-     * 
+     *
      * @return
      */
     public int getTotalOtherCrew() {
@@ -187,7 +187,7 @@ public class SmallCraft extends Aero {
     /**
      * Adds a number of crewmembers from another ship keyed by that ship's external
      * ID
-     * 
+     *
      * @param id The external ID of the ship these crew came from
      * @param n  The number to add
      */
@@ -210,7 +210,7 @@ public class SmallCraft extends Aero {
 
     /**
      * Convenience method to return all passengers aboard from the above Map
-     * 
+     *
      * @return
      */
     public int getTotalPassengers() {
@@ -224,7 +224,7 @@ public class SmallCraft extends Aero {
     /**
      * Adds a number of passengers from another ship keyed by that ship's external
      * ID
-     * 
+     *
      * @param id The external ID of the ship these passengers came from
      * @param n  The number to add
      */
@@ -255,7 +255,7 @@ public class SmallCraft extends Aero {
 
     /**
      * Updates the total number of escape pods launched so far
-     * 
+     *
      * @param n The number to change
      */
     @Override
@@ -282,7 +282,7 @@ public class SmallCraft extends Aero {
 
     /**
      * Updates the total number of lifeboats launched so far
-     * 
+     *
      * @param n The number to change
      */
     @Override
@@ -790,7 +790,7 @@ public class SmallCraft extends Aero {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -879,7 +879,7 @@ public class SmallCraft extends Aero {
      * Fighters may carry external ordnance;
      * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may
      * carry bombs internally.
-     * 
+     *
      * @return boolean
      */
     @Override
@@ -925,5 +925,10 @@ public class SmallCraft extends Aero {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
+    }
+
+    @Override
+    public String getBlipID() {
+        return "SC";
     }
 }

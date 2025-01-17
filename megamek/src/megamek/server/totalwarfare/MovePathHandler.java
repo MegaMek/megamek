@@ -345,6 +345,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
         processSteps();
 
+        // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
+        if (prevHex.terrainLevel(Terrains.MAGMA) == 2
+                && firstHex.terrainLevel(Terrains.MAGMA) == 2
+                && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
+            r = new Report(2404);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            addReport(r);
+            gameManager.doMagmaDamage(entity, false);
+        }
+
         // set entity parameters
         entity.setPosition(curPos);
         entity.setFacing(curFacing);
@@ -2529,19 +2540,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for last move ending in magma TODO: build report for end of move
+            // check if we jumped into magma
             boolean jumpedIntoMagma = false;
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
-                if (firstHex.terrainLevel(Terrains.MAGMA) == 2) {
-                    r = new Report(2404);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    gameManager.doMagmaDamage(entity, false);
-                }
             }
-
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
                 // check if we've moved into a swamp
                 rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,

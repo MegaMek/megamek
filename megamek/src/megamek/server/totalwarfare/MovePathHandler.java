@@ -51,7 +51,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean sideslipped = false;
     private Coords lastPos;
     private Coords curPos;
-    private Hex firstHex; // Used to check for start/end magma damage
     private int curFacing;
     private int curVTOLElevation;
     private int curElevation;
@@ -242,7 +241,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
-        firstHex = getGame().getBoard().getHex(curPos); // Used to check for start/end magma damage
+        boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
         lastElevation = entity.getElevation();
@@ -290,6 +289,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 .terrainLevel(Terrains.MAGMA) == 2)
                 && (entity.getElevation() == 0)) {
             gameManager.doMagmaDamage(entity, false);
+            tookMagmaDamageAtStart = true;
         }
 
         // set acceleration used to default
@@ -346,8 +346,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         processSteps();
 
         // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
-        if (prevHex.terrainLevel(Terrains.MAGMA) == 2
-                && firstHex.terrainLevel(Terrains.MAGMA) == 2
+        if (tookMagmaDamageAtStart && prevHex.terrainLevel(Terrains.MAGMA) == 2
                 && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
             r = new Report(2404);
             r.addDesc(entity);
@@ -1310,10 +1309,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 break;
             }
 
-            // Extra damage if first and last hex are magma
-            if (firstStep) {
-                firstHex = getGame().getBoard().getHex(curPos);
-            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;

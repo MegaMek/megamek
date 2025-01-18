@@ -455,5 +455,31 @@ public class ChatProcessor {
             princess.sendChat(msg);
             logger.info(msg);
         }
+
+        if (command.toLowerCase().startsWith(ChatCommands.BLOOD_FEUD.getAbbreviation())) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid syntax.  Should be 'princessName : bf : playerId'.";
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            String id = arguments[0];
+            if (!StringUtil.isPositiveInteger(id)) {
+                msg = "Invalid player id number: " + id;
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            var player = princess.getGame().getPlayer(Integer.parseInt(id));
+            if (player != null) {
+                princess.getHonorUtil().setEnemyDishonored(Integer.parseInt(id));
+                msg = "Unit " + id + " added to priority unit targets list.";
+                princess.sendChat(msg);
+            } else {
+                msg = "Player with id " + id + " not found.";
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+            }
+        }
     }
 }

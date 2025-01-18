@@ -88,7 +88,7 @@ public class HeadlessClient extends Client {
         @Override
         public void gameNewAction(GameNewActionEvent e) {
             EntityAction entityAction = e.getAction();
-            if (entityAction instanceof AttackAction attackAction) {
+            if (entityAction instanceof AttackAction) {
                 idleCounter=0;
             }
         }

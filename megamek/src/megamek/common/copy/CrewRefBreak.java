@@ -20,7 +20,7 @@ import megamek.common.Crew;
 /**
  * @author Luana Coppio
  */
-public class CrewRefBreak implements RefBreak<Crew>, Cloneable {
+public class CrewRefBreak implements RefBreak<Crew> {
 
     private final Crew originalCrew;
 

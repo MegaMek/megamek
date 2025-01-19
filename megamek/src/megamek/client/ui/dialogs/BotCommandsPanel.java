@@ -20,6 +20,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -27,12 +28,16 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.common.InGameObject;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -46,20 +51,43 @@ public class BotCommandsPanel extends JPanel {
     private final AudioService audioService;
     private final MegaMekController controller;
     private final JButton miscButton = new JButton();
+    // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
     private JButton pauseContinue;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     /**
      * Bot Commands Panel constructor.
      *
      * @param client       reference to the client instance
      * @param audioService reference to the instance of the AudioService
      */
-    public BotCommandsPanel(AbstractClient client, AudioService audioService, MegaMekController controller) {
+    public BotCommandsPanel(AbstractClient client, @Nullable AudioService audioService, @Nullable MegaMekController controller) {
         this.client = client;
         this.audioService = audioService;
         this.controller = controller;
 
         this.initialize();
+    }
+
+    /**
+     * Returns a non-modal dialog with a minimap for the given game.
+     */
+    public static JDialog createBotCommandDialog(JFrame parent, AbstractClient client, AudioService audioService, MegaMekController controller) {
+        var result = new JDialog(parent, Messages.getString("ClientGUI.BotCommand"), false);
+
+        result.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
+        result.setSize(new Dimension(600, 120));
+        result.setMinimumSize(new Dimension(600, 120));
+        result.setResizable(true);
+        result.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                GUIP.setBotCommandsEnabled(false);
+            }
+        });
+
+        result.add(new BotCommandsPanel(client, audioService, controller));
+        return result;
     }
 
     private void initialize() {
@@ -106,9 +134,10 @@ public class BotCommandsPanel extends JPanel {
         this.add(miscButton);
         this.add(new JLabel());
         miscButton.setEnabled(false);
-
-        controller.registerCommandAction(KeyCommandBind.UNPAUSE.cmd, this::pauseUnpause);
-        controller.registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseUnpause);
+        if (controller != null) {
+            controller.registerCommandAction(KeyCommandBind.UNPAUSE.cmd, this::pauseUnpause);
+            controller.registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseUnpause);
+        }
     }
 
     /**
@@ -432,15 +461,26 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void pauseUnpause() {
-        audioService.playSound(SoundType.BING_OTHERS_TURN);
+        if (audioService != null) {
+            audioService.playSound(SoundType.BING_OTHERS_TURN);
+        }
         if (pauseLatch) {
             client.sendUnpause();
             pauseContinue.setText(Messages.getString("BotCommandPanel.PauseGame.title"));
-        } else {
+        } else if (canBePaused()) {
             client.sendPause();
             pauseContinue.setText(Messages.getString("BotCommandPanel.ContinueGame.title"));
+        } else {
+            return;
         }
         pauseLatch = !pauseLatch;
+    }
+
+    private boolean canBePaused() {
+        var game = client.getGame();
+        List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
+        boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
+        return  !liveUnitsRemaining;
     }
 
     @SuppressWarnings("SameParameterValue")

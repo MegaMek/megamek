@@ -58,6 +58,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotCommandsPanel;
 import megamek.client.ui.dialogs.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
@@ -184,6 +185,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
+    public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
     // endregion view menu
 
     // region fire menu
@@ -260,6 +262,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
     private final UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
+
+    private JDialog botCommandsDialog;
 
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
@@ -443,6 +447,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         minimapW = miniMapDialog;
     }
 
+    public JDialog getBotCommandsDialog() {
+        return botCommandsDialog;
+    }
+
+    public void setBotCommandsDialog(JDialog botCommandsDialog) {
+        this.botCommandsDialog = botCommandsDialog;
+    }
+
     public MiniReportDisplay getMiniReportDisplay() {
         return miniReportDisplay;
     }
@@ -601,6 +613,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
 
+        setBotCommandsDialog(BotCommandsPanel.createBotCommandDialog(frame, this.getClient(), this.audioService, null));
         setMiniMapDialog(Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this));
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
@@ -764,6 +777,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (setdlg != null) {
             setdlg.setBounds(0, 0, setdlg.getWidth(), setdlg.getHeight());
         }
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().setBounds(0, 0, getBotCommandsDialog().getWidth(), getBotCommandsDialog().getHeight());
+        }
     }
 
     /**
@@ -872,6 +888,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
+                break;
+            case VIEW_BOT_COMMANDS:
+                GUIP.toggleBotCommandsEnabled();
                 break;
             case VIEW_TOGGLE_HEXCOORDS:
                 GUIP.toggleCoords();
@@ -1065,6 +1084,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             GUIP.setRulerSizeWidth(ruler.getSize().width);
             GUIP.setRulerSizeHeight(ruler.getSize().height);
         }
+
+        // BotCommands Dialog
+        if ((getBotCommandsDialog() != null)
+            && ((getBotCommandsDialog().getSize().width * getBotCommandsDialog().getSize().height) > 0)) {
+            GUIP.setBotCommandsPosX(getBotCommandsDialog().getLocation().x);
+            GUIP.setBotCommandsPosY(getBotCommandsDialog().getLocation().y);
+        }
+
     }
 
     @Override
@@ -1184,6 +1211,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
 
         maybeShowMinimap();
+        maybeShowBotCommands();
         maybeShowUnitDisplay();
         maybeShowForceDisplay();
         maybeShowMiniReport();
@@ -1443,6 +1471,27 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    private void maybeShowBotCommands() {
+        GamePhase phase = getClient().getGame().getPhase();
+        if (phase.isReport()) {
+            int action = GUIP.getBotCommandsAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
+        } else if (phase.isOnMap()) {
+            int action = GUIP.getBotCommandsAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
+        } else {
+            GUIP.setBotCommandsEnabled(false);
+        }
+    }
+
     /** Shows or hides the minimap based on the current menu setting. */
     private void maybeShowMinimap() {
         GamePhase phase = getClient().getGame().getPhase();
@@ -1609,6 +1658,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         if (getUnitDisplayDialog() != null) {
             setUnitDisplayLocation(visible);
+        }
+    }
+
+    void setBotCommandsDialogVisible(boolean visible) {
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().setVisible(visible);
         }
     }
 
@@ -2961,6 +3016,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             audioService.loadSoundFiles();
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
+        } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
+            setBotCommandsDialogVisible(GUIP.getBotCommandsEnabled());
         }
     }
 

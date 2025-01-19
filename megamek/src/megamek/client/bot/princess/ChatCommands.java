@@ -44,6 +44,7 @@ public enum ChatCommands {
     LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
     IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID."),
     SHOW_DISHONORED("di", "princessName: dishonored", "Show the players on the dishonored enemies list."),
+    CLEAR_IGNORED_TARGETS("cl", "princessName: clearIgnoredTargets", "Clears the list of ignored targets."),
     BLOOD_FEUD("bf", "princessName: bloodFeud: playerId", "Adds player to the dishonored enemies list.");
     private final String abbreviation;
     private final String syntax;

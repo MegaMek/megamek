@@ -481,5 +481,11 @@ public class ChatProcessor {
                 princess.sendChat(msg);
             }
         }
+
+        if (command.toLowerCase().startsWith(ChatCommands.CLEAR_IGNORED_TARGETS.getAbbreviation())) {
+            princess.getBehaviorSettings().clearIgnoredUnitTargets();
+            msg = "Cleared ignored targets list.";
+            princess.sendChat(msg);
+        }
     }
 }

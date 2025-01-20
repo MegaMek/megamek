@@ -19,6 +19,16 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.client.ui.Messages;
+import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
+import org.apache.logging.log4j.Level;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -27,17 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import megamek.client.ui.Messages;
-import org.apache.logging.log4j.Level;
-
-import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.logging.MMLogger;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
 import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
@@ -63,7 +62,7 @@ public abstract class PathRanker implements IPathRanker {
         NewtonianAerospace
     }
 
-    private Princess owner;
+    private final Princess owner;
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -275,31 +274,32 @@ public abstract class PathRanker implements IPathRanker {
     @Override
     public Targetable findClosestEnemy(Entity me, Coords position, Game game,
             boolean includeStrategicTargets) {
-        int range = 9999;
+        int range = Integer.MAX_VALUE;
         Targetable closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
-        for (Entity e : enemies) {
+        var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
+        var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
+        for (Entity enemy : enemies) {
             // Skip airborne aero units as they're further away than they seem and hard to
             // catch.
-            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and
-            // ejected
-            // MekWarriors
-            if (e.isAirborneAeroOnGroundMap() ||
-                    getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(),
-                            getOwner().getForcedWithdrawal())) {
+            // Also, skip withdrawing enemy bot units that are not priority targets
+            // skip ignored units
+            if (enemy.isAirborneAeroOnGroundMap()
+                || (!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
+                || ignoredTargets.contains(enemy.getId())) {
                 continue;
             }
 
             // If a unit has not moved, assume it will move away from me.
             int unmovedDistMod = 0;
-            if (e.isSelectableThisTurn() && !e.isImmobile()) {
-                unmovedDistMod = e.getWalkMP();
+            if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
+                unmovedDistMod = enemy.getWalkMP();
             }
 
-            int distance = position.distance(e.getPosition());
+            int distance = position.distance(enemy.getPosition());
             if ((distance + unmovedDistMod) < range) {
                 range = distance;
-                closest = e;
+                closest = enemy;
             }
         }
 
@@ -570,8 +570,8 @@ public abstract class PathRanker implements IPathRanker {
             return null;
         }
 
-        int xCenter = Math.round(xTotal / friendOnBoardCount);
-        int yCenter = Math.round(yTotal / friendOnBoardCount);
+        int xCenter = Math.round((float) xTotal / friendOnBoardCount);
+        int yCenter = Math.round((float) yTotal / friendOnBoardCount);
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {

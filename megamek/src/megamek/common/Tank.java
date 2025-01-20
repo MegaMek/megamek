@@ -3130,9 +3130,4 @@ public class Tank extends Entity {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(2.866 + 0.987 * Math.log(getWeight())));
     }
-
-    @Override
-    public String getBlipID() {
-        return isSupportVehicle() ? "SV" : "CV";
-    }
 }

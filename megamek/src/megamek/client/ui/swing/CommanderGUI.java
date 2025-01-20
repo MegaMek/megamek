@@ -222,7 +222,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                 game.getInGameObjects().stream().filter(entity -> entity instanceof Entity).forEach(ent -> {
                     var entity = (Entity) ent;
                     var isCrippled = entity.isCrippled(true);
-                    var entityLabelText = entity.getBlipID() + ":" + entity.getId() + " - " + entity.getDisplayName() + (isCrippled ? " (Crippled)" : "");
+                    var entityLabelText = entity.getId() + " - " + entity.getDisplayName() + (isCrippled ? " (Crippled)" : "");
                     JLabel entityLabel = new JLabel(entityLabelText);
                     entityLabel.setForeground(entity.getOwner().getColour().getColour());
                     entityListEntries.add(entityLabel);

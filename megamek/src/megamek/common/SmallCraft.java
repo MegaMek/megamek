@@ -926,9 +926,4 @@ public class SmallCraft extends Aero {
     public boolean hasPatchworkArmor() {
         return false;
     }
-
-    @Override
-    public String getBlipID() {
-        return "SC";
-    }
 }

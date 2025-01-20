@@ -97,7 +97,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 if (coords == null) {
                     return;
                 }
-                var code = e.getEntity().getBlipID() + ":" + e.getEntity().getId();
+                var code = e.getEntity().getId();
                 removedUnits.add(
                     new Blip(coords.getX(),
                         coords.getY(),

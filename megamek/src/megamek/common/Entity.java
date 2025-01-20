@@ -62,7 +62,7 @@ import java.util.stream.IntStream;
  * Entity is a master class for basically anything on the board except terrain.
  */
 @JsonDeserialize(using = EntityDeserializer.class)
-public abstract class Entity extends TurnOrdered implements Transporter, Blip, RoundUpdated,
+public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
         PhaseUpdated, ITechnology, ForceAssignable, CombatRole, Deployable {
 
     private static final MMLogger logger = MMLogger.create(Entity.class);
@@ -15844,10 +15844,5 @@ public abstract class Entity extends TurnOrdered implements Transporter, Blip, R
             return !this.getInvalidSourceBuildReasons().isEmpty();
         }
         return false;
-    }
-
-    @Override
-    public String getBlipID() {
-        return "X";
     }
 }

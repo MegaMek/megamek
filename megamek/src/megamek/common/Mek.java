@@ -6566,9 +6566,4 @@ public abstract class Mek extends Entity {
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
         return BLOCKED_FIRING_LOCATIONS;
     }
-
-    @Override
-    public String getBlipID() {
-        return isIndustrialMek() ? "IM" : "BM";
-    }
 }

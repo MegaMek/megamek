@@ -410,8 +410,4 @@ public class GunEmplacement extends Tank {
         return 205;
     }
 
-    @Override
-    public String getBlipID() {
-        return "GE:" + getId();
-    }
 }

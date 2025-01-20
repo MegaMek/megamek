@@ -331,8 +331,4 @@ public class EjectedCrew extends Infantry {
         return !hasSpaceSuit();
     }
 
-    @Override
-    public String getBlipID() {
-        return "ic_" + getId();
-    }
 }

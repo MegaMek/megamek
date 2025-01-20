@@ -1957,9 +1957,4 @@ public class Infantry extends Entity {
                                       boolean isInfantry, int distance) {
         return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "Infantry can't skid");
     }
-
-    @Override
-    public String getBlipID() {
-        return "CI";
-    }
 }

@@ -105,8 +105,4 @@ public class AeroSpaceFighter extends Aero {
         return (int) Math.round(Math.exp(3.729 + 0.898 * Math.log(getWeight())));
     }
 
-    @Override
-    public String getBlipID() {
-        return "ASF";
-    }
 }

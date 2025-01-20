@@ -3279,9 +3279,4 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     public void setEjecting(boolean ejecting) {
         this.ejecting = ejecting;
     }
-
-    @Override
-    public String getBlipID() {
-        return "AE";
-    }
 }

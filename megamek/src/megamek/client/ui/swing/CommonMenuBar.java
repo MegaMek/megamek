@@ -618,7 +618,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
         } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
-
+            viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
         }
     }
 

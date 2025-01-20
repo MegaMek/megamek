@@ -47,7 +47,7 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     public static final float MAX_GUISCALE = 2.4f;
 
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    public static final ClientPreferences CP = PreferenceManager.getClientPreferences();
+    protected static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
     protected static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     protected static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";

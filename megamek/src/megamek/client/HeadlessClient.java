@@ -1,8 +1,5 @@
 /*
- * MegaMek -
- * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,6 +10,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
+ *
  */
 package megamek.client;
 
@@ -42,6 +40,7 @@ import static megamek.client.ui.swing.ClientGUI.CG_FILENAMESALVAGE;
 
 /**
  * This class is instantiated for the player. It allows to communicate with the server with no GUI attached.
+ * @author Luana Coppio
  */
 public class HeadlessClient extends Client {
     private final static MMLogger logger = MMLogger.create(HeadlessClient.class);

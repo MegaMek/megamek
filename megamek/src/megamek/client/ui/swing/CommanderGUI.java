@@ -25,7 +25,6 @@ import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.minimap.BoardviewlessMinimap;
 import megamek.client.ui.swing.overlay.ChatOverlay;
-import megamek.client.ui.swing.util.KeyBindReceiver;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
@@ -44,6 +43,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * @author Luana Coppio
+ */
 public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     private static final MMLogger logger = MMLogger.create(CommanderGUI.class);
     private final Client client;

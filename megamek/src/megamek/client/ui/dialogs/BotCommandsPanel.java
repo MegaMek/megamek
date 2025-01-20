@@ -188,8 +188,10 @@ public class BotCommandsPanel extends JPanel {
         this.miscButton.setEnabled(false);
     }
 
-
     private Collection<Player> getBotPlayersUnderYourCommand() {
+        if (client.getLocalPlayer().isGameMaster()) {
+            return client.getGame().getPlayersList().stream().filter(Player::isBot).toList();
+        }
         return client.getGame().getPlayersList().stream().filter(p -> p.isBot() && !p.isEnemyOf(client.getLocalPlayer())).toList();
     }
 

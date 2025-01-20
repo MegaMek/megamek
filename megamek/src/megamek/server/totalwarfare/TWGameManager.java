@@ -546,6 +546,7 @@ public class TWGameManager extends AbstractGameManager {
         game.getEntitiesVector().stream()
                 .filter(e -> e.getOwnerId() != pid)
                 .filter(Entity::partOfForce)
+                .filter(e -> forces.getForce(e.getForceId()) != null)
                 .filter(e -> forces.getForce(e.getForceId()).getOwnerId() == pid)
                 .forEach(forces::removeEntityFromForces);
 

@@ -1931,10 +1931,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
 
                 var event = AutoResolveProgressDialog.showDialog(clientgui.getFrame(), forcesSetups, board);
-
-                var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(), event.getLogFile());
-                autoResolveBattleReport.setModal(true);
-                autoResolveBattleReport.setVisible(true);
+                if (event != null) {
+                    var autoResolveBattleReport = new AutoResolveSimulationLogDialog(clientgui.getFrame(), event.getLogFile());
+                    autoResolveBattleReport.setModal(true);
+                    autoResolveBattleReport.setVisible(true);
+                } else {
+                    clientgui.doAlertDialog(Messages.getString("AutoResolveSimulationLogDialog.title"),
+                            Messages.getString("AutoResolveSimulationLogDialog.noReport"));
+                }
 
             } else if (ev.getSource() == butDetach) {
                 butDetach.setEnabled(false);

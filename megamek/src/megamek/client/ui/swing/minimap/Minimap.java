@@ -252,10 +252,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         bv = bview;
         dialog = dlg;
         clientGui = cg;
-        if (clientGui != null) {
-            if (clientGui instanceof Client) {
-                client = (Client) clientGui.getClient();
-            }
+        if (clientGui != null && clientGui.getClient() instanceof Client castClient) {
+            client = castClient;
         }
         initializeColors();
         if (dialog != null) {
@@ -616,8 +614,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
-        if ((null != client) && (null != game) && game.getPhase().isDeployment() && (dialog != null)
-                && (bv.getDeployingEntity() != null)) {
+        if ((null != client) && (null != game) && game.getPhase().isDeployment() && (bv != null)
+                && (bv.getDeployingEntity() != null) && (dialog != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.playerId() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
@@ -991,7 +989,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
         int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
 
-        if (EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity)) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
             // This unit is visible only as a sensor Return
             String sensorReturn = "?";
             Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]);
@@ -1001,7 +999,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (!EntityVisibilityUtils.detectedOrHasVisual(bv.getLocalPlayer(), game, entity)) {
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), game, entity)) {
             // This unit is not visible, don't draw it
             return;
         }

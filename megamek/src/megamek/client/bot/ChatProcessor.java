@@ -473,7 +473,7 @@ public class ChatProcessor {
             var player = princess.getGame().getPlayer(Integer.parseInt(id));
             if (player != null) {
                 princess.getHonorUtil().setEnemyDishonored(Integer.parseInt(id));
-                msg = "Unit " + id + " added to priority unit targets list.";
+                msg = "Player " + id + " added to the dishonored list.";
                 princess.sendChat(msg);
             } else {
                 msg = "Player with id " + id + " not found.";

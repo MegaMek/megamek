@@ -190,9 +190,9 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     }
 
     private static final Color BG_COLOR = new Color(0x151a15);
-    private static final Color DESTROYED_YELLOW = new Color(0x7f7f00);
-    private static final Color DESTROYED_RED = new Color(0x7f0000);
-    private static final Color DESTROYED_GREEN = new Color(0x007f00);
+    private static final Color DESTROYED_YELLOW = new Color(0x5f5f00);
+    private static final Color DESTROYED_RED = new Color(0x5f0000);
+    private static final Color DESTROYED_GREEN = new Color(0x005f00);
 
     private static final Color[] MapLevelColors = new Color[] {
         new Color(0x235524),
@@ -208,12 +208,17 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         new Color(0x191f1a),
     };
 
+    private static final Color DEPTH_0_WATER = new Color(0x1c5666);
+
     private static final Color[] MapDepthColors = new Color[] {
-        new Color(0x1a6699),
-        new Color(0x1a4455),
-        new Color(0x1a3344),
-        new Color(0x1a1144),
-        new Color(0x1a0533)
+        new Color(0x1c5555),
+        new Color(0x155050),
+        new Color(0x1c4444),
+        new Color(0x154040),
+        new Color(0x1c3333),
+        new Color(0x153030),
+        new Color(0x1c2222),
+        new Color(0x152020),
     };
 
 
@@ -272,7 +277,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             // Fill the background
             bg.setColor(BG_COLOR);
             bg.fillRect(0, 0, width, height);
-
+            int oneThird = (int) Math.round(size / 3.0);
             // 2) Draw each hex cell as a filled polygon
 
             for (int hx = 0; hx <= boardWidth; hx++) {
@@ -282,10 +287,13 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                         continue;
                     }
                     Color fillColor;
-                    if (hex.hasDepth1WaterOrDeeper()) {
-                        int levelIndex = MathUtility.clamp(hex.depth() - minDepth,
-                            0, MapDepthColors.length - 1);
-                        fillColor = MapDepthColors[levelIndex];
+                    if (hex.containsTerrain(Terrains.WATER)) {
+                        if (hex.hasDepth1WaterOrDeeper()) {
+                            int levelIndex = MathUtility.clamp(hex.depth() - minDepth, 0, MapDepthColors.length - 1);
+                            fillColor = MapDepthColors[levelIndex];
+                        } else {
+                            fillColor = DEPTH_0_WATER;
+                        }
                     } else {
                         // Determine color from the hex "level"
                         int levelIndex = MathUtility.clamp(hex.getLevel() - lowerHeight,
@@ -298,34 +306,69 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                     bg.setColor(fillColor);
                     bg.fillPolygon(poly);
                     var pos = projectToView(hx, hy, size);
-                    if (hex.hasDepth1WaterOrDeeper()) {
+                    if (hex.containsTerrain(Terrains.WATER)) {
                         bg.setColor(new Color(0x3a86a9));
-                        bg.drawString("~", pos[0] + startingOffset - (size / 3), pos[1] + startingOffset + (size / 3));
-                        bg.drawString("~", pos[0] + startingOffset, pos[1] + startingOffset - (size / 3));
+                        bg.drawString("~", pos[0] + startingOffset - oneThird, pos[1] + startingOffset - oneThird);
+                        bg.drawString("~", pos[0] + startingOffset, pos[1] + startingOffset + oneThird);
+                        bg.drawString("~", pos[0] + startingOffset + oneThird, pos[1] + startingOffset - oneThird);
                     }
-                    if (hex.hasPavementOrRoad()) {
+                    if (hex.containsTerrain(Terrains.ROAD)) {
                         bg.setColor(Color.BLACK);
-                        bg.drawLine(pos[0] + startingOffset - 5, pos[1] + startingOffset, pos[0] + startingOffset + 11, pos[1] + startingOffset);
+                        bg.drawLine(pos[0] + startingOffset - oneThird, pos[1] + startingOffset, pos[0] + startingOffset + oneThird, pos[1] + startingOffset);
                     }
                     if (hex.hasVegetation()) {
                         bg.setColor(new Color(0x337755));
-                        bg.drawString("',',", pos[0] + startingOffset - 10, pos[1] + startingOffset + 10);
+                        bg.drawString("',',", pos[0] + startingOffset - (oneThird / 2), pos[1] + startingOffset - (oneThird /2));
                     }
                     if (hex.containsAnyTerrainOf(Terrains.BLDG_CF, Terrains.BLDG_ELEV, Terrains.BLDG_ARMOR, Terrains.BLDG_BASEMENT_TYPE,
                         Terrains.BLDG_FLUFF, Terrains.BLDG_CLASS)) {
                         bg.setColor(Color.BLACK);
-                        bg.drawRect(pos[0] + startingOffset - 5, pos[1] + startingOffset - 5, 11, 11);
+                        bg.drawRect(pos[0] + startingOffset - oneThird, pos[1] + startingOffset - 5, oneThird * 2, oneThird * 2);
+                        bg.drawRect(pos[0] + startingOffset - (oneThird / 2), pos[1] + startingOffset - (oneThird / 2), oneThird, oneThird);
                     }
                     if (hex.containsAnyTerrainOf(Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN)) {
-                        bg.setColor(Color.ORANGE);
-                        bg.drawRect(pos[0] + startingOffset - 5, pos[1] + startingOffset - 5, 11, 11);
-                        bg.drawLine(pos[0] + startingOffset - 5, pos[1] + startingOffset - 5, pos[0] + startingOffset + 11, pos[1] + startingOffset + 11);
-                        bg.drawLine(pos[0] + startingOffset - 5, pos[1] + startingOffset + 5, pos[0] + startingOffset + 11, pos[1] + startingOffset - 11);
-                    }
-                    if (hex.containsTerrain(Terrains.BLDG_BASE_COLLAPSED)) {
                         bg.setColor(Color.BLACK);
-                        bg.drawLine(pos[0] + startingOffset - 5, pos[1] + startingOffset - 5, pos[0] + startingOffset + 11, pos[1] + startingOffset + 11);
-                        bg.drawLine(pos[0] + startingOffset - 5, pos[1] + startingOffset + 5, pos[0] + startingOffset + 11, pos[1] + startingOffset - 11);
+                        bg.drawRect(pos[0] + startingOffset - oneThird, pos[1] + startingOffset - oneThird, oneThird * 2, oneThird * 2);
+                        bg.setColor(Color.ORANGE);
+                        bg.drawOval(pos[0] + startingOffset - oneThird, pos[1] + startingOffset - oneThird, oneThird * 2, oneThird * 2);
+                        bg.drawLine(pos[0] + startingOffset - oneThird, pos[1] + startingOffset - oneThird, pos[0] + startingOffset + oneThird*2, pos[1] + startingOffset + oneThird * 2);
+                        bg.drawLine(pos[0] + startingOffset - oneThird, pos[1] + startingOffset + oneThird, pos[0] + startingOffset + oneThird*2, pos[1] + startingOffset - oneThird * 2);
+                    }
+                    if (hex.containsAnyTerrainOf(Terrains.BLDG_BASE_COLLAPSED, Terrains.RUBBLE, Terrains.ROUGH)) {
+                        bg.setColor(Color.BLACK);
+                        int hashWidth = (int) Math.round(size / 3.0);
+                        int hashHeight = (int) Math.round(size / 3.0);
+                        var xOrigin = pos[0] + startingOffset - hashWidth;
+                        var yOrigin = pos[1] + startingOffset - hashHeight;
+                        int xEnd = pos[0] + startingOffset + hashWidth;
+                        int yEnd = pos[1] + startingOffset + hashHeight;
+
+                        for (int i = 0; i < hashWidth * 2 + 1; i+=3) {
+                            bg.drawLine(xOrigin, yOrigin + i, xOrigin + i, yOrigin);
+                            bg.drawLine(xEnd - i, yEnd, xEnd,  yEnd - i);
+                        }
+                    }
+                    if (hex.containsTerrain(Terrains.MAGMA)) {
+                        bg.setColor(Color.RED);
+                        int hashWidth = (int) Math.round(size / 3.0);
+                        int hashHeight = (int) Math.round(size / 3.0);
+                        var xOrigin = pos[0] + startingOffset - hashWidth;
+                        var yOrigin = pos[1] + startingOffset - hashHeight;
+                        int xEnd = pos[0] + startingOffset + hashWidth;
+                        int yEnd = pos[1] + startingOffset + hashHeight;
+
+                        for (int i = 0; i < hashWidth * 2 + 1; i+=3) {
+                            bg.drawLine(xOrigin, yOrigin + i, xOrigin + i, yOrigin);
+                            bg.drawLine(xEnd - i, yEnd, xEnd,  yEnd - i);
+                        }
+                    }
+                    if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+                        bg.setColor(Color.BLACK);
+                        int hashWidth = (int) Math.round(size / 3.0);
+                        int hashHeight = (int) Math.round(size / 3.0);
+                        var xOrigin = pos[0] + startingOffset - hashWidth;
+                        var yOrigin = pos[1] + startingOffset - hashHeight;
+                        bg.fillRect(xOrigin, yOrigin, hashWidth * 2 + 1, hashHeight * 2 + 1);
                     }
                 }
             }

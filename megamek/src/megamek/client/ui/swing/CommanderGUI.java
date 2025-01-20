@@ -57,6 +57,8 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     private JProgressBar progressBar;
     private boolean alive = true;
     private final AudioService audioService;
+    private BotCommandsPanel buttonPanel;
+    private JPanel centerPanel;
 
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
     {
@@ -114,7 +116,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         JPanel mainPanel = new JPanel(new BorderLayout());
 
         // Center: Splash image with progress bar
-        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel = new JPanel(new BorderLayout());
         JLabel splashImage = UIUtil.createSplashComponent(splashImages, getFrame());
         MiniReportDisplay miniReportDisplay = new MiniReportDisplay(this);
         miniReportDisplay.setMinimumSize(new Dimension(600, 600));
@@ -138,15 +140,8 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         JLabel entitiesHeader = new JLabel("Entities in game");
         entityListEntries.add(entitiesHeader);
         entityListEntries.setLayout(new BoxLayout(entityListEntries, BoxLayout.Y_AXIS));
-        BotCommandsPanel buttonPanel = new BotCommandsPanel(this.client, audioService, controller);
+        buttonPanel = new BotCommandsPanel(this.client, audioService, controller);
         buttonPanel.useSpaceForPauseUnpause();
-        buttonPanel.setMiscButton(
-            Messages.getString("BotCommandPanel.Ready.title"),
-            Messages.getString("BotCommandPanel.Ready.tooltip"),
-            e -> {
-                getLocalBots().values().forEach(bot -> bot.sendDone(true));
-                client.sendDone(true);
-            });
 
         var jScroll = new JScrollPane(entityListEntries);
         jScroll.setMinimumSize(new Dimension(-1, 20));
@@ -196,6 +191,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                 var round = game.getCurrentRound();
                 if (e.getOldPhase() == GamePhase.LOUNGE) {
                     buttonPanel.setMiscButtonAsRequestVictory();
+                    progressBar.setIndeterminate(true);
                 }
                 if (e.getNewPhase() == GamePhase.VICTORY) {
                     audioService.playSound(SoundType.BING_MY_TURN);
@@ -210,12 +206,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                     if (round < 1) {
                         progressBar.setString("Preparing...");
                     } else {
-                        if (isLoading) {
-                            isLoading = false;
-                            centerPanel.remove(0);
-                            centerPanel.add(minimap, BorderLayout.CENTER, 0);
-                            audioService.playSound(SoundType.BING_MY_TURN);
-                        }
+                        setupMinimap();
                         progressBar.setString("Round #" + game.getCurrentRound() + ": " + e.getNewPhase().localizedName());
                     }
                 }
@@ -234,6 +225,16 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             }
         });
         frame.setVisible(true);
+    }
+
+    private void setupMinimap() {
+        if (isLoading) {
+            isLoading = false;
+            centerPanel.remove(0);
+            centerPanel.add(minimap, BorderLayout.CENTER, 0);
+            audioService.playSound(SoundType.BING_MY_TURN);
+            progressBar.setIndeterminate(false);
+        }
     }
 
     @Override
@@ -276,4 +277,16 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         return localBots;
     }
 
+    public void enableReady() {
+        if (this.buttonPanel != null) {
+            buttonPanel.setMiscButton(
+                Messages.getString("BotCommandPanel.Ready.title"),
+                Messages.getString("BotCommandPanel.Ready.tooltip"),
+                e -> {
+                    getLocalBots().values().forEach(bot -> bot.sendDone(true));
+                    client.sendDone(true);
+                });
+            setupMinimap();
+        }
+    }
 }

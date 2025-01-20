@@ -29,6 +29,9 @@ import megamek.client.ui.swing.util.MenuScroller;
 import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -138,6 +141,26 @@ public class BotCommandsPanel extends JPanel {
             controller.registerCommandAction(KeyCommandBind.UNPAUSE.cmd, this::pauseUnpause);
             controller.registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseUnpause);
         }
+        client.getGame().addGameListener(new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                if (e.getOldPhase() == GamePhase.LOUNGE) {
+                    retreat.setEnabled(true);
+                    pauseContinue.setEnabled(true);
+                    maneuver.setEnabled(true);
+                    priorityTarget.setEnabled(true);
+                    ignoreTarget.setEnabled(true);
+                    setBehavior.setEnabled(true);
+                } else if (client.getGame().getPhase() == GamePhase.LOUNGE) {
+                    retreat.setEnabled(false);
+                    pauseContinue.setEnabled(false);
+                    maneuver.setEnabled(false);
+                    priorityTarget.setEnabled(false);
+                    ignoreTarget.setEnabled(false);
+                    setBehavior.setEnabled(false);
+                }
+            }
+        });
     }
 
     /**

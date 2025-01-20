@@ -51,7 +51,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean sideslipped = false;
     private Coords lastPos;
     private Coords curPos;
-    private Hex firstHex; // Used to check for start/end magma damage
     private int curFacing;
     private int curVTOLElevation;
     private int curElevation;
@@ -242,7 +241,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
-        firstHex = getGame().getBoard().getHex(curPos); // Used to check for start/end magma damage
+        boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
         lastElevation = entity.getElevation();
@@ -290,6 +289,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 .terrainLevel(Terrains.MAGMA) == 2)
                 && (entity.getElevation() == 0)) {
             gameManager.doMagmaDamage(entity, false);
+            tookMagmaDamageAtStart = true;
         }
 
         // set acceleration used to default
@@ -344,6 +344,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
         lastStepMoveType = md.getLastStepMovementType();
 
         processSteps();
+
+        // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
+        if (tookMagmaDamageAtStart && prevHex.terrainLevel(Terrains.MAGMA) == 2
+                && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
+            r = new Report(2404);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            addReport(r);
+            gameManager.doMagmaDamage(entity, false);
+        }
 
         // set entity parameters
         entity.setPosition(curPos);
@@ -1299,10 +1309,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 break;
             }
 
-            // Extra damage if first and last hex are magma
-            if (firstStep) {
-                firstHex = getGame().getBoard().getHex(curPos);
-            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
@@ -2529,19 +2535,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for last move ending in magma TODO: build report for end of move
+            // check if we jumped into magma
             boolean jumpedIntoMagma = false;
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
-                if (firstHex.terrainLevel(Terrains.MAGMA) == 2) {
-                    r = new Report(2404);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    gameManager.doMagmaDamage(entity, false);
-                }
             }
-
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
                 // check if we've moved into a swamp
                 rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,

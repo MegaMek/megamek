@@ -30,6 +30,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6411: Don't load mml scratch files into unit cache
 + PR #6414: Warnings on Campaign Load - MegaMek Portion 
 + Fix #6412: Fix TacOps "Standing Still" modifier description
++ Fix 6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
 
 
 0.50.02 (2024-12-30 2130 UTC)

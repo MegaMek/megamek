@@ -42,7 +42,7 @@ public class ChatOverlay implements OverlayPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paint(Graphics g, int width, int height) {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setColor(new Color(255, 255, 255, 100));
         for (int i = 0; i < messages.size(); i++) {

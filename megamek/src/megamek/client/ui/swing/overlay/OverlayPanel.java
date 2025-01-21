@@ -18,5 +18,5 @@ package megamek.client.ui.swing.overlay;
 import java.awt.*;
 
 public interface OverlayPanel {
-        void paint(Graphics g);
+        void paint(Graphics g, int width, int height);
 }

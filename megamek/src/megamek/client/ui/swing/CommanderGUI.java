@@ -233,7 +233,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             centerPanel.remove(0);
             centerPanel.add(minimap, BorderLayout.CENTER, 0);
             audioService.playSound(SoundType.BING_MY_TURN);
-            progressBar.setIndeterminate(false);
+            SwingUtilities.invokeLater(() -> progressBar.setIndeterminate(false));
         }
     }
 
@@ -278,7 +278,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     }
 
     public void enableReady() {
-        if (this.buttonPanel != null) {
+        if (buttonPanel != null) {
             buttonPanel.setMiscButton(
                 Messages.getString("BotCommandPanel.Ready.title"),
                 Messages.getString("BotCommandPanel.Ready.tooltip"),

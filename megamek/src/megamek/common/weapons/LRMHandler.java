@@ -229,9 +229,7 @@ public class LRMHandler extends MissileWeaponHandler {
                     || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (atype.getAmmoType() == AmmoType.T_MML)
                     || (atype.getAmmoType() == AmmoType.T_NLRM))
-                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
-                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
-                    "Indirect"))) {
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                     if (bTargetECMAffected) {
                         // ECM prevents bonus
                         Report r = new Report(3330);

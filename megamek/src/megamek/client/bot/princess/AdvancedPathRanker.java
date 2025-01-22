@@ -19,17 +19,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
@@ -39,11 +28,16 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
+
 /**
  * A very "basic" path ranker
  */
-public class BasicPathRanker extends PathRanker {
-    private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
+public class AdvancedPathRanker extends PathRanker {
+    private final static MMLogger logger = MMLogger.create(AdvancedPathRanker.class);
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -66,9 +60,10 @@ public class BasicPathRanker extends PathRanker {
 
     protected int blackIce = -1;
 
-    public BasicPathRanker(Princess owningPrincess) {
+    public AdvancedPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
+        this.pathEnumerator = pathEnumerator;
         logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
@@ -1519,7 +1514,7 @@ public class BasicPathRanker extends PathRanker {
      * number.
      *
      */
-    public static class FiringPhysicalDamage {
+    protected class FiringPhysicalDamage {
         public double firingDamage;
         public double physicalDamage;
     }

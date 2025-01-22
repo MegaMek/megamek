@@ -52,7 +52,6 @@ public interface DecisionMaker<IN_GAME_OBJECT, TARGETABLE> {
     };
 
     default void scoreAllDecisions(List<Decision<IN_GAME_OBJECT, TARGETABLE>> decisions, DecisionContext<IN_GAME_OBJECT, TARGETABLE> lastContext) {
-
         double cutoff = 0.0d;
         for (var decision : decisions) {
             double bonus = decision.getDecisionContext().getBonusFactor(lastContext);

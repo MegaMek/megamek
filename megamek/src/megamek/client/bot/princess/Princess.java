@@ -2720,6 +2720,9 @@ public class Princess extends BotClient {
         basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
 
+        PathRanker advanced = new AdvancedPathRanker(this, precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.Advanced, advanced);
+
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
         infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);

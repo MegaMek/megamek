@@ -286,8 +286,14 @@ public interface IAero {
         return roll;
     }
 
+
     default PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        return checkThrustSITotal(roll, thrust);
+    }
+
+    default PilotingRollData checkThrustSITotal(PilotingRollData basePilotingRoll, int thrust) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if (thrust > getSI()) {
             // append the reason modifier
@@ -300,6 +306,11 @@ public interface IAero {
 
     default PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        return checkVelocityDouble(roll, velocity);
+    }
+
+    default PilotingRollData checkVelocityDouble(PilotingRollData basePilotingRoll, int velocity) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if ((velocity > (2 * ((Entity) this).getWalkMP())) && !((Entity) this).getGame().getBoard().inSpace()) {
             // append the reason modifier
@@ -312,6 +323,11 @@ public interface IAero {
 
     default PilotingRollData checkDown(int drop, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        return checkDown(roll, drop);
+    }
+
+    default PilotingRollData checkDown(PilotingRollData basePilotingRoll, int drop) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if (drop > 2) {
             // append the reason modifier
@@ -324,6 +340,11 @@ public interface IAero {
 
     default PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(md.getLastStepMovementType());
+        return checkHover(roll, md);
+    }
+
+    default PilotingRollData checkHover(PilotingRollData basePilotingRoll, MovePath md) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if (md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
@@ -336,6 +357,11 @@ public interface IAero {
 
     default PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(md.getLastStepMovementType());
+        return checkStall(roll, md);
+    }
+
+    default PilotingRollData checkStall(PilotingRollData basePilotingRoll, MovePath md) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         // if the entity has already moved, its movement got interrupted (probably by a
         // hidden unit, not much else can interrupt an aero unit)
@@ -358,8 +384,12 @@ public interface IAero {
     }
 
     default PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
-        PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        var roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        return checkRolls(roll, step);
+    }
 
+    default PilotingRollData checkRolls(PilotingRollData basePilotingRoll, MoveStep step) {
+        var roll = basePilotingRoll.copy();
         if (((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW)) && (step.getNRolls() > 1)) {
             // append the reason modifier
             roll.append(new PilotingRollData(((Entity) this).getId(), 0, "More than one roll in the same turn"));
@@ -577,11 +607,19 @@ public interface IAero {
         return landingPositions;
     }
 
+
     /**
      * Checks if a maneuver requires a control roll
      */
     default PilotingRollData checkManeuver(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = ((Entity) this).getBasePilotingRoll(overallMoveType);
+        return checkManeuver(roll, step);
+    }
+    /**
+     * Checks if a maneuver requires a control roll
+     */
+    default PilotingRollData checkManeuver(PilotingRollData basePilotingRoll, MoveStep step) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to get up.");
@@ -593,7 +631,6 @@ public interface IAero {
                         ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
 
         return roll;
-
     }
 
     /**

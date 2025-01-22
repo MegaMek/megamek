@@ -18,6 +18,7 @@ import megamek.ai.utility.Agent;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.World;
 import megamek.common.Entity;
+import megamek.common.MovePath;
 import megamek.common.options.OptionsConstants;
 
 import java.util.*;
@@ -27,16 +28,11 @@ import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 
 public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
-    public TWDecisionContext(Agent<Entity, Entity> agent, World<Entity, Entity> world) {
-        super(agent, world);
-    }
+    private final MovePath movePath;
 
-    public TWDecisionContext(Agent<Entity, Entity> agent, World<Entity, Entity> world, Entity currentUnit) {
-        super(agent, world, currentUnit);
-    }
-
-    public TWDecisionContext(Agent<Entity, Entity> agent, World<Entity, Entity> world, Entity currentUnit, List<Entity> targetUnits) {
+    public TWDecisionContext(Agent<Entity, Entity> agent, World<Entity, Entity> world, Entity currentUnit, List<Entity> targetUnits, MovePath movePath) {
         super(agent, world, currentUnit, targetUnits);
+        this.movePath = movePath.clone();
     }
 
     @Override
@@ -49,5 +45,9 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     @Override
     public double getBonusFactor(DecisionContext<Entity, Entity> lastContext) {
         return 0;
+    }
+
+    public MovePath getMovePath() {
+        return movePath;
     }
 }

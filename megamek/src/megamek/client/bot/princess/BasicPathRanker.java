@@ -49,8 +49,6 @@ public class BasicPathRanker extends PathRanker {
     // what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
-    private final static int MOVEMENT_FACTOR = 5;
-
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
@@ -387,22 +385,17 @@ public class BasicPathRanker extends PathRanker {
     // Lower this path ranking if I am moving away from my friends (weighted by Herd Mentality).
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path, StringBuilder formula) {
         if (friendsCoords == null) {
-            formula.append(" + herdingMod [0 no friends]");
+            formula.append(" - herdingMod [0 no friends]");
             return 0;
         }
 
-        double startingDistance = friendsCoords.distance(path.getStartCoords());
         double finalDistance = friendsCoords.distance(path.getFinalCoords());
-        // If difference is positive => we moved closer => reward
-        // If difference is negative => we moved farther => penalize
-        double difference = (startingDistance - finalDistance);
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
-        double herdingMod = difference * herding;
+        double herdingMod = finalDistance * herding;
 
-        formula.append(" + herdingMod [")
-            .append(LOG_DECIMAL.format(herdingMod)).append(" = (")
-            .append(LOG_DECIMAL.format(startingDistance)).append(" - ")
-            .append(LOG_DECIMAL.format(finalDistance)).append(") * ")
+        formula.append(" - herdingMod [")
+            .append(LOG_DECIMAL.format(herdingMod)).append(" = ")
+            .append(LOG_DECIMAL.format(finalDistance)).append(" * ")
             .append(LOG_DECIMAL.format(herding))
             .append("]");
         return herdingMod;
@@ -599,8 +592,8 @@ public class BasicPathRanker extends PathRanker {
             // ranks (weighted by Herd Mentality).
             utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
         }
-
-        utility += calculateMovementMod(movingUnit, pathCopy, game, formula);
+        // Movement is good, it gives defense and extends a player power in the game.
+        utility += calculateMovementMod(pathCopy, game, formula);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);
@@ -639,8 +632,7 @@ public class BasicPathRanker extends PathRanker {
         return braveryMod;
     }
 
-
-    private double calculateMovementMod(Entity movingUnit, MovePath pathCopy, Game game, StringBuilder formula) {
+    private double calculateMovementMod(MovePath pathCopy, Game game, StringBuilder formula) {
         var hexMoved = (double) pathCopy.getHexesMoved();
         var distanceMoved = pathCopy.getDistanceTravelled();
         var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);

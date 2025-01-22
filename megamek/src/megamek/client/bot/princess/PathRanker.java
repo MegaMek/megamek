@@ -535,11 +535,8 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
-        if ((friends == null) || friends.isEmpty()) {
+        if ((friends == null) || friends.size() <= 1) {
             return null;
-        } else if (friends.size() == 1) {
-            // Nobody here but me...
-            return friends.get(0).getPosition();
         }
 
         int xTotal = 0;

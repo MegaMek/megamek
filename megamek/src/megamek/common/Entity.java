@@ -7316,12 +7316,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         return roll;
     }
-
     /**
      * Checks if the entity is getting up. If so, returns the target roll for
      * the piloting skill check.
      */
     public PilotingRollData checkGetUp(MoveStep step, EntityMovementType moveType) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
+        return checkGetUp(roll, step);
+    }
+    /**
+     * Checks if the entity is getting up. If so, returns the target roll for
+     * the piloting skill check.
+     */
+    public PilotingRollData checkGetUp(PilotingRollData basePilotRoll, MoveStep step) {
         if ((step == null)
                 || ((step.getType() != MoveStepType.GET_UP)
                         && (step.getType() != MoveStepType.CAREFUL_STAND))) {
@@ -7329,7 +7336,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     "Check false: Entity is not attempting to get up.");
         }
 
-        PilotingRollData roll = getBasePilotingRoll(moveType);
+        PilotingRollData roll = basePilotRoll.copy();
 
         if (this instanceof BipedMek) {
             if ((((Mek) this).countBadLegs() >= 1)
@@ -7365,9 +7372,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is attempting to run with damage that would force a
      * PSR. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkRunningWithDamage(
-            EntityMovementType overallMoveType) {
+    public PilotingRollData checkRunningWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkRunningWithDamage(roll, overallMoveType);
+    }
+
+    /**
+     * Checks if the entity is attempting to run with damage that would force a
+     * PSR. If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkRunningWithDamage(PilotingRollData basePilotingRoll, EntityMovementType overallMoveType) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                 Mek.SYSTEM_GYRO, Mek.LOC_CT);
@@ -7394,8 +7409,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkSprintingWithMASCXorSupercharger(
-            EntityMovementType overallMoveType, int used) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        EntityMovementType overallMoveType, int used) {
+            PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkSprintingWithMASCXorSupercharger(roll, overallMoveType, used);
+    }
+    /**
+     * Checks if the entity is attempting to sprint with MASC or Supercharger
+     * engaged (but not both). If so,
+     * returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkSprintingWithMASCXorSupercharger(
+        PilotingRollData basePilotingRoll, EntityMovementType overallMoveType, int used) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT
                 || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
@@ -7417,8 +7442,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkSprintingWithMASCAndSupercharger(
-            EntityMovementType overallMoveType, int used) {
+        EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkSprintingWithMASCXorSupercharger(roll, overallMoveType, used);
+    }
+
+    /**
+     * Checks if the entity is attempting to sprint with MASC and supercharger
+     * engaged.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkSprintingWithMASCAndSupercharger(
+        PilotingRollData basePilotingRoll, EntityMovementType overallMoveType, int used) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT
                 || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
@@ -7440,6 +7476,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public PilotingRollData checkUsingOverdrive(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkUsingOverdrive(roll, overallMoveType);
+    }
+
+    /**
+     * Checks if the entity is attempting to sprint with supercharger engaged.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkUsingOverdrive(PilotingRollData basePilotingRoll, EntityMovementType overallMoveType) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT
                 || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
@@ -7460,6 +7505,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public PilotingRollData checkGunningIt(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkGunningIt(roll, overallMoveType);
+    }
+
+    /**
+     * Checks if the entity is attempting to increase two speed categories.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkGunningIt(PilotingRollData basePilotingRoll, EntityMovementType overallMoveType) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
                 && (this instanceof Tank
@@ -7487,10 +7541,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * carefully
      */
     public PilotingRollData checkRecklessMove(MoveStep step,
+                                              EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                              Coords curPos, Hex prevHex) {
+
+        PilotingRollData roll = getBasePilotingRoll(moveType);
+        return checkRecklessMove(roll, step, moveType, curHex, lastPos, curPos, prevHex);
+    }
+
+    /**
+     * Checks if an entity is passing through certain terrain while not moving
+     * carefully
+     */
+    public PilotingRollData checkRecklessMove(PilotingRollData basePilotingRoll, MoveStep step,
             EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, Hex prevHex) {
+        PilotingRollData roll = new PilotingRollData(basePilotingRoll);
+
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
         if (step.isCareful()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "moving carefully");
@@ -7548,9 +7615,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity is landing (from a jump) with damage that would
      * force a PSR. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkLandingWithDamage(
-            EntityMovementType overallMoveType) {
+    public PilotingRollData checkLandingWithDamage(EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkLandingWithDamage(roll);
+    }
+    /**
+     * Checks if the entity is landing (from a jump) with damage that would
+     * force a PSR. If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkLandingWithDamage(PilotingRollData basePilotingRoll) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO, Mek.LOC_CT);
         // Heavy duty gyro does not force PSR until second hit
@@ -7576,8 +7650,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkLandingWithPrototypeJJ(
-            EntityMovementType overallMoveType) {
+        EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkLandingWithPrototypeJJ(roll);
+    }
+    /**
+     * Checks if the entity is landing (from a jump) with a prototype JJ If so,
+     * returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkLandingWithPrototypeJJ(PilotingRollData basePilotingRoll) {
+        PilotingRollData roll = basePilotingRoll.copy();
 
         if (getJumpType() == Mek.JUMP_PROTOTYPE) {
             // append the reason modifier
@@ -7595,9 +7677,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks if an entity is landing (from a jump) in heavy woods.
      */
-    public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, Hex curHex) {
+    public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkLandingInHeavyWoods(roll, curHex);
+    }
+    /**
+     * Checks if an entity is landing (from a jump) in heavy woods.
+     */
+    public PilotingRollData checkLandingInHeavyWoods(PilotingRollData basePilotingRoll, Hex curHex) {
+        PilotingRollData roll = basePilotingRoll.copy();
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
                     "landing in heavy woods"));
@@ -7654,16 +7742,32 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return roll;
     }
 
+
+
     /**
      * return a <code>PilotingRollData</code> checking for whether this Entity
      * moved too fast due to low gravity
      *
      * @param step
-     * @return
+     * @param moveType
+     * @return PilotingRollData
      */
-    public PilotingRollData checkMovedTooFast(MoveStep step,
-            EntityMovementType moveType) {
+    public PilotingRollData checkMovedTooFast(MoveStep step, EntityMovementType moveType) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
+        return checkMovedTooFast(roll, step, moveType);
+    }
+
+    /**
+     * return a <code>PilotingRollData</code> checking for whether this Entity
+     * moved too fast due to low gravity
+     *
+     * @param pilotBaseRoll
+     * @param step
+     * @return PilotingRollData
+     */
+    public PilotingRollData checkMovedTooFast(PilotingRollData pilotBaseRoll, MoveStep step,
+            EntityMovementType moveType) {
+        PilotingRollData roll = pilotBaseRoll.copy();
         addPilotingModifierForTerrain(roll, step);
         int maxSafeMP;
         switch (moveType) {
@@ -7701,6 +7805,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks if the entity might skid. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex,
+                                      EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
+                                      int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+                                      boolean isInfantry, int distance) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkSkid(roll, moveType, prevHex, overallMoveType, prevStep, currStep, prevFacing, curFacing, lastPos, curPos, isInfantry, distance);
+
+    }
+    /**
+     * Checks if the entity might skid. If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkSkid(PilotingRollData pilotBaseRoll,  EntityMovementType moveType, Hex prevHex,
             EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
@@ -7717,7 +7832,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE, "units don't skid from getting up");
         }
 
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = pilotBaseRoll.copy();
 
         // If we aren't traveling along a road, apply terrain modifiers
         boolean previousStepCountsAsPavement = (prevStep == null) || prevStep.isPavementStep();
@@ -7827,8 +7942,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(MoveStep step,
+                                           EntityMovementType moveType, Hex curHex, Coords lastPos,
+                                           Coords curPos, boolean isPavementStep) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
+        return checkWaterMove(roll, step, moveType, curHex, lastPos, curPos, isPavementStep);
+    }
+    /**
+     * Checks if the entity is moving into depth 1+ water. If so, returns the
+     * target roll for the piloting skill check.
+     */
+    public PilotingRollData checkWaterMove(PilotingRollData pilotBaseRoll, MoveStep step,
             EntityMovementType moveType, Hex curHex, Coords lastPos,
             Coords curPos, boolean isPavementStep) {
+        PilotingRollData roll = pilotBaseRoll.copy();
+
         if ((curHex.terrainLevel(Terrains.WATER) > 0)
                 && (step.getElevation() < 0) && !lastPos.equals(curPos)
                 && (moveType != EntityMovementType.MOVE_JUMP)
@@ -7843,18 +7970,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && (getMovementMode() != EntityMovementMode.WIGE)
                 && canFall()
                 && !isPavementStep) {
-            return checkWaterMove(curHex.terrainLevel(Terrains.WATER), moveType);
+            return checkWaterMove(roll, curHex.terrainLevel(Terrains.WATER));
         }
-        return checkWaterMove(0, moveType);
+        return checkWaterMove(roll, 0);
     }
+
 
     /**
      * Checks if the entity is moving into depth 1+ water. If so, returns the
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(int waterLevel,
-            EntityMovementType overallMoveType) {
+                                           EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkWaterMove(roll, waterLevel);
+    }
+
+    /**
+     * Checks if the entity is moving into depth 1+ water. If so, returns the
+     * target roll for the piloting skill check.
+     */
+    public PilotingRollData checkWaterMove(PilotingRollData pilotBaseRoll, int waterLevel) {
+        PilotingRollData roll = pilotBaseRoll.copy();
 
         int mod;
         if (waterLevel == 1) {
@@ -7881,14 +8018,23 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         return roll;
     }
+    // pilotingBaseRoll
 
     /**
      * Checks if the entity is being swarmed. If so, returns the target roll for
      * the piloting skill check to dislodge them.
      */
     public PilotingRollData checkDislodgeSwarmers(MoveStep step,
-            EntityMovementType moveType) {
+                                                  EntityMovementType moveType) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
+        return checkDislodgeSwarmers(roll, step);
+    }
 
+        /**
+         * Checks if the entity is being swarmed. If so, returns the target roll for
+         * the piloting skill check to dislodge them.
+         */
+    public PilotingRollData checkDislodgeSwarmers(PilotingRollData pilotingBaseRoll, MoveStep step) {
         // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
             return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
@@ -7896,7 +8042,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // append the reason modifier
-        PilotingRollData roll = getBasePilotingRoll(moveType);
+        PilotingRollData roll = pilotingBaseRoll.copy();
         roll.append(new PilotingRollData(getId(), 0,
                 "attempting to dislodge swarmers by dropping prone"));
         addPilotingModifierForTerrain(roll, step);
@@ -7995,12 +8141,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return rv;
     }
 
+
+
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(Building bldg, int distance,
-            String why, EntityMovementType overallMoveType) {
+    public PilotingRollData rollMovementInBuilding(Building bldg, int distance, String why, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return rollMovementInBuilding(roll, bldg, distance, why);
+    }
+
+    /**
+     * Calculates and returns the roll for an entity moving in buildings.
+     */
+    public PilotingRollData rollMovementInBuilding(PilotingRollData pilotingBaseRoll, Building bldg, int distance, String why) {
+        PilotingRollData roll = pilotingBaseRoll.copy();
 
         if ((this instanceof Mek) && isSuperHeavy()) {
             roll.addModifier(4, "superheavy Mek moving in building");
@@ -11468,10 +11623,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
+                                          Hex prevHex, EntityMovementType overallMoveType,
+                                          MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+                                          Coords curPos, int distance, boolean speedBooster) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        return checkSideSlip(roll, moveType, prevHex, overallMoveType, prevStep, prevFacing, curFacing,
+                lastPos, curPos, distance, speedBooster);
+    }
+
+    public PilotingRollData checkSideSlip(PilotingRollData pilotBaseRoll, EntityMovementType moveType,
             Hex prevHex, EntityMovementType overallMoveType,
             MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
             Coords curPos, int distance, boolean speedBooster) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = pilotBaseRoll.copy();
 
         if ((moveType != EntityMovementType.MOVE_JUMP)
                 && (prevHex != null)

@@ -32,6 +32,16 @@ public class PilotingRollData extends TargetRoll {
         this.entityId = entityId;
     }
 
+    public PilotingRollData(PilotingRollData other) {
+        super(other.getValue(), other.getDesc());
+        this.entityId = other.getEntityId();
+        other.getModifiers().forEach(this::addModifier);
+    }
+
+    public PilotingRollData copy() {
+        return new PilotingRollData(this);
+    }
+
     /**
      * Double-logging style for situations where the mek automatically falls,
      * but the pilot can still save to avoid damage. The game will later strip

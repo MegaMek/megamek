@@ -54,12 +54,14 @@ public abstract class PathRanker implements IPathRanker {
      * Princess.InitializePathRankers
      */
     public enum PathRankerType {
+        Advanced,
         Basic,
         Infantry,
         NewtonianAerospace
     }
 
     private final Princess owner;
+    private final Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -81,7 +83,7 @@ public abstract class PathRanker implements IPathRanker {
         // the cached path probability data is really only relevant for one iteration
         // through this method
         getPathRankerState().getPathSuccessProbabilities().clear();
-
+        cachedPilotBaseRoll.clear();
         // Let's try to whittle down this list.
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
@@ -148,7 +150,7 @@ public abstract class PathRanker implements IPathRanker {
         return returnPaths;
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
+    protected List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
             double fallTolerance) {
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
@@ -312,6 +314,7 @@ public abstract class PathRanker implements IPathRanker {
         return closest;
     }
 
+
     /**
      * Returns the probability of success of a move path
      */
@@ -398,7 +401,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     protected List<TargetRoll> getPSRList(MovePath path) {
-        return SharedUtility.getPSRList(path);
+        return SharedUtility.getPSRList(cachedPilotBaseRoll, path);
     }
 
     /**

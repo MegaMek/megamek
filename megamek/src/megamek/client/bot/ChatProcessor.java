@@ -19,14 +19,7 @@
  */
 package megamek.client.bot;
 
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.ChatCommands;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.*;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Game;
@@ -38,6 +31,9 @@ import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
+
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class ChatProcessor {
     private final static MMLogger logger = MMLogger.create(ChatProcessor.class);
@@ -451,7 +447,7 @@ public class ChatProcessor {
         // Specify a priority unit target.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
             msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream()
-                    .map(Object::toString).collect(Collectors.joining(", "));
+                .map(Object::toString).collect(Collectors.joining(", "));
             princess.sendChat(msg);
             logger.info(msg);
         }

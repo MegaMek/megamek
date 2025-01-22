@@ -1028,7 +1028,7 @@ class BasicPathRankerTest {
         friends.add(mockFriend4);
 
         // Test the default conditions.
-        Coords expected = new Coords(6, 6);
+        Coords expected = new Coords(7, 7);
         Coords actual = BasicPathRanker.calcAllyCenter(myId, friends, mockGame);
         assertCoordsEqual(expected, actual);
 

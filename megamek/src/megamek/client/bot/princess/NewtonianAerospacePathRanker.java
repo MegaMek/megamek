@@ -39,24 +39,29 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      */
     @Override
     public Entity findClosestEnemy(Entity me, Coords position, Game game) {
-        int range = 9999;
+        int range = Integer.MAX_VALUE;
         Entity closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
-        for (Entity e : enemies) {
-            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected MekWarriors
-            if (getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+        var ignoredTargets = getOwner().getBehaviorSettings().getIgnoredUnitTargets();
+        var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
+        for (Entity enemy : enemies) {
+            // targets that are withdrawing and are not priorities are ignored
+            // targets in the ignore list are ignored
+            // therefore... a priority target in the ignore list is ignored
+            if ((!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
+                || ignoredTargets.contains(enemy.getId())) {
                 continue;
             }
 
             // If a unit has not moved, assume it will move away from me.
             int unmovedDistMod = 0;
-            if (e.isSelectableThisTurn() && !e.isImmobile()) {
-                unmovedDistMod = e.getWalkMP();
+            if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
+                unmovedDistMod = enemy.getWalkMP();
             }
 
-            if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
-                range = position.distance(e.getPosition());
-                closest = e;
+            if ((position.distance(enemy.getPosition()) + unmovedDistMod) < range) {
+                range = position.distance(enemy.getPosition());
+                closest = enemy;
             }
         }
         return closest;

@@ -363,9 +363,9 @@ public abstract class BotClient extends Client {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()
-                        && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
-
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (entity.getCrew() != null) && !entity.getCrew().isDead()
+                    && !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
             }

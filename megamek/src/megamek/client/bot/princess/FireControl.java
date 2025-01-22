@@ -1374,7 +1374,7 @@ public class FireControl {
             return 0;
         }
 
-        final int id = ((Entity) target).getId();
+        final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
             return PRIORITY_TARGET_UTILITY;
         }
@@ -1544,31 +1544,6 @@ public class FireControl {
                                                                                                                // that
                                                                                                                // does 0
                                                                                                                // damage)).
-    }
-
-    /**
-     * calculates the 'utility' of a physical action.
-     *
-     * @param physicalInfo The {@link PhysicalInfo} to be calculated.
-     */
-    void calculateUtility(final PhysicalInfo physicalInfo) {
-        // If we can't hit, there's no point.
-        if (0.0 >= physicalInfo.getProbabilityToHit()) {
-            physicalInfo.setUtility(-10000);
-            return;
-        }
-
-        double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
-        utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
-        utility += KILL_UTILITY * physicalInfo.getKillProbability();
-        utility *= calcTargetPotentialDamageMultiplier(physicalInfo.getTarget());
-        utility -= (physicalInfo.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-        utility += calcCommandUtility(physicalInfo.getTarget());
-        utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
-        utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
-        utility -= calcCivilianTargetDisutility(physicalInfo.getTarget());
-
-        physicalInfo.setUtility(utility);
     }
 
     /**
@@ -2705,19 +2680,17 @@ public class FireControl {
 
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
-
             if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
                 logger.info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
 
+            final int playerId = enemy.getOwnerId();
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getId());
-
-            // Skip retreating enemies so long as they haven't fired on me while retreating.
-            final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
-            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getId(), playerId,
-                    owner.getForcedWithdrawal())) {
-                logger.info(enemy.getDisplayName() + " is broken - ignoring");
+            final boolean isEnemyBroken = honorUtil.isEnemyBroken(enemy.getId(), playerId, owner.getForcedWithdrawal());
+            // Only skip retreating enemies that are not priority targets so long as they haven't fired on me while retreating.
+            if (!priorityTarget && isEnemyBroken) {
+                logger.info(enemy.getDisplayName() + " is broken and not priority - ignoring");
                 continue;
             }
 
@@ -2727,7 +2700,8 @@ public class FireControl {
                     ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
+            if ((bestPlan == null)
+                || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }
         }

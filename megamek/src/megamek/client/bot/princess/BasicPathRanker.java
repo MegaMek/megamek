@@ -19,25 +19,20 @@
  */
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * A very "basic" path ranker
@@ -53,6 +48,8 @@ public class BasicPathRanker extends PathRanker {
     // destroyed as a result of
     // what it's doing
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
+
+    private final static int MOVEMENT_FACTOR = 5;
 
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
@@ -387,23 +384,27 @@ public class BasicPathRanker extends PathRanker {
         return aggressionMod;
     }
 
-    // The further I am from my teammates, the lower this path ranks (weighted by
-    // Herd Mentality).
+    // Lower this path ranking if I am moving away from my friends (weighted by Herd Mentality).
     protected double calculateHerdingMod(Coords friendsCoords, MovePath path, StringBuilder formula) {
         if (friendsCoords == null) {
-            formula.append(" - herdingMod [0 no friends]");
+            formula.append(" + herdingMod [0 no friends]");
             return 0;
         }
 
-        double distanceToAllies = friendsCoords.distance(path.getFinalCoords());
+        double startingDistance = friendsCoords.distance(path.getStartCoords());
+        double finalDistance = friendsCoords.distance(path.getFinalCoords());
+        // If difference is positive => we moved closer => reward
+        // If difference is negative => we moved farther => penalize
+        double difference = (startingDistance - finalDistance);
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
-        double herdingMod = distanceToAllies * herding;
+        double herdingMod = difference * herding;
 
-        formula.append(" - herdingMod [").append(LOG_DECIMAL.format(herdingMod))
-                .append(" = ")
-                .append(LOG_DECIMAL.format(distanceToAllies)).append(" * ")
-                .append(LOG_DECIMAL.format(herding))
-                .append("]");
+        formula.append(" + herdingMod [")
+            .append(LOG_DECIMAL.format(herdingMod)).append(" = (")
+            .append(LOG_DECIMAL.format(startingDistance)).append(" - ")
+            .append(LOG_DECIMAL.format(finalDistance)).append(") * ")
+            .append(LOG_DECIMAL.format(herding))
+            .append("]");
         return herdingMod;
     }
 
@@ -584,21 +585,8 @@ public class BasicPathRanker extends PathRanker {
 
         // I can kick a different target than I shoot, so add physical to
         // total damage after I've looked at all enemies
-        double maximumDamageDone = damageEstimate.firingDamage + damageEstimate.physicalDamage;
 
-        // My bravery modifier is based on my chance of getting to the
-        // firing position (successProbability), how much damage I can do
-        // (weighted by bravery), less the damage I might take.
-        double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
-        double braveryMod = (successProbability * (maximumDamageDone * braveryValue)) - expectedDamageTaken;
-        formula.append(" + braveryMod [")
-                .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
-                .append(LOG_PERCENT.format(successProbability))
-                .append(" * ((")
-                .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-                .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-                .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
-        utility += braveryMod;
+        utility += getBraveryMod(successProbability, damageEstimate, expectedDamageTaken, formula);
 
         // the only critters not subject to aggression and herding mods are
         // airborne aeros on ground maps, as they move incredibly fast
@@ -611,6 +599,8 @@ public class BasicPathRanker extends PathRanker {
             // ranks (weighted by Herd Mentality).
             utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
         }
+
+        utility += calculateMovementMod(movingUnit, pathCopy, game, formula);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);
@@ -628,8 +618,47 @@ public class BasicPathRanker extends PathRanker {
         utility -= utility * calculateOffBoardMod(pathCopy);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
-        rankedPath.setExpectedDamage(maximumDamageDone);
+        rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         return rankedPath;
+    }
+
+    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken, StringBuilder formula) {
+        double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
+        // My bravery modifier is based on my chance of getting to the
+        // firing position (successProbability), how much damage I can do
+        // (weighted by bravery), less the damage I might take.
+        double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
+        double braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken;
+        formula.append(" + braveryMod [")
+                .append(LOG_DECIMAL.format(braveryMod)).append(" = (")
+                .append(LOG_PERCENT.format(successProbability))
+                .append(" * ")
+                .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
+                .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
+                .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
+        return braveryMod;
+    }
+
+
+    private double calculateMovementMod(Entity movingUnit, MovePath pathCopy, Game game, StringBuilder formula) {
+        var hexMoved = (double) pathCopy.getHexesMoved();
+        var distanceMoved = pathCopy.getDistanceTravelled();
+        var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
+        var tmmValue = tmm.getValue();
+        if (tmmValue == 0 || ((hexMoved + distanceMoved) == 0)) {
+            formula.append(" + movementMod [0]");
+            return 0;
+        }
+        var movementFactor = tmmValue * (hexMoved * distanceMoved) / (hexMoved + distanceMoved);
+
+        formula.append(" + movementMod [")
+            .append(LOG_DECIMAL.format(movementFactor))
+            .append(" = tmm [").append(tmm).append("] * (distance[")
+            .append(LOG_DECIMAL.format(distanceMoved)).append("] * hexMoved[")
+            .append(LOG_DECIMAL.format(hexMoved)).append("]) / (distance[")
+            .append(LOG_DECIMAL.format(distanceMoved)).append("] + hexMoved[")
+            .append(LOG_DECIMAL.format(hexMoved)).append("])]");
+        return movementFactor;
     }
 
     /**
@@ -796,7 +825,7 @@ public class BasicPathRanker extends PathRanker {
                 previousCoords = coords;
             }
             logMsg.append("\nCompiled Hazard for Path (")
-                    .append(path.toString()).append("): ").append(LOG_DECIMAL.format(totalHazard));
+                    .append(path).append("): ").append(LOG_DECIMAL.format(totalHazard));
 
             return totalHazard;
         } finally {
@@ -1527,5 +1556,9 @@ public class BasicPathRanker extends PathRanker {
     protected class FiringPhysicalDamage {
         public double firingDamage;
         public double physicalDamage;
+
+        public double getMaximumDamageEstimate() {
+            return firingDamage + physicalDamage;
+        }
     }
 }

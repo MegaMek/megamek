@@ -9287,7 +9287,8 @@ public class TWGameManager extends AbstractGameManager {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
 
-        if (entity instanceof IAero aero) {
+        // entity.isAero will check if a unit is a LAM in Fighter mode
+        if (entity instanceof IAero aero && entity.isAero()) {
             entity.setAltitude(elevation);
             if ((elevation == 0) && !entity.isSpaceborne()) {
                 aero.land();

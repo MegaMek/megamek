@@ -623,12 +623,12 @@ public class BasicPathRanker extends PathRanker {
         double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
         double braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken;
         formula.append(" + braveryMod [")
-                .append(LOG_DECIMAL.format(braveryMod)).append(" = (")
-                .append(LOG_PERCENT.format(successProbability))
-                .append(" * ")
-                .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-                .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-                .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
+            .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
+            .append(LOG_PERCENT.format(successProbability))
+            .append(" * ((")
+            .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
+            .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
+            .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
         return braveryMod;
     }
 

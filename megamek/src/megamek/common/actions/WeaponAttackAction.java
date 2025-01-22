@@ -3352,6 +3352,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Missile Munitions
+        boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
 
         // Apollo FCS for MRMs
         if (bApollo) {
@@ -3359,7 +3360,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // add Artemis V bonus
-        if (bArtemisV) {
+        if (bArtemisV && !isIndirect) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.ArtemisV"));
         }
 

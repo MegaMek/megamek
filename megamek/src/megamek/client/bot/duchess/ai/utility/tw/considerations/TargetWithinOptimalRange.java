@@ -26,14 +26,19 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 @JsonTypeName("TargetWithinOptimalRange")
 public class TargetWithinOptimalRange extends TWConsideration {
-
+    public static final String descriptionKey = "TargetWithinOptimalRange";
     public TargetWithinOptimalRange() {
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return descriptionKey;
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
         var targets = context.getTargets();
-        var firingUnit = context.getCurrentUnit().orElseThrow();
+        var firingUnit = context.getCurrentUnit();
         var distance = targets.stream().map(Entity::getPosition)
                 .mapToInt(coords -> firingUnit.getPosition().distance(coords)).max()
                 .orElse(Integer.MAX_VALUE);;

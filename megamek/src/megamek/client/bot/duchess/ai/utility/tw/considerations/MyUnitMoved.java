@@ -17,17 +17,22 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.context.TWWorld;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Compute;
 import megamek.common.Entity;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if the unit is crippled or not.
+ * This consideration is used to determine the defense due to the movement.
  */
-@JsonTypeName("MyUnitIsCrippled")
-public class MyUnitIsCrippled extends TWConsideration {
-    public static final String descriptionKey = "MyUnitIsCrippled";
-    public MyUnitIsCrippled() {
+@JsonTypeName("MyUnitTMM")
+public class MyUnitMoved extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitTMM";
+
+    public MyUnitMoved() {
     }
 
     @Override
@@ -37,8 +42,20 @@ public class MyUnitIsCrippled extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return currentUnit.isCrippled(true) ? 1d : 0d;
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var movePath = twContext.getMovePath();
+        var hexesMoved = movePath.getHexesMoved();
+        if (hexesMoved == 0) {
+            return 0;
+        }
+        int distanceMoved = 0;
+        if (movePath.getStartCoords() != null) {
+            var lastStep = movePath.getLastStep();
+            if (lastStep != null) {
+                distanceMoved = movePath.getStartCoords().distance(lastStep.getPosition());
+            }
+        }
+        return clamp01((double) distanceMoved / hexesMoved);
     }
 
 }

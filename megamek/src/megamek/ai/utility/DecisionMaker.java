@@ -19,23 +19,23 @@ import java.util.*;
 
 public interface DecisionMaker<IN_GAME_OBJECT, TARGETABLE> {
 
-    default Optional<Decision<IN_GAME_OBJECT, TARGETABLE>> pickOne(PriorityQueue<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> scoredDecisions) {
+    default Optional<Decision<IN_GAME_OBJECT, TARGETABLE>> pickOne(TreeSet<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> scoredDecisions) {
         if (scoredDecisions.isEmpty()) {
             return Optional.empty();
         }
 
         if (scoredDecisions.size() == 1) {
-            return Optional.of(scoredDecisions.poll().getDecisionScoreEvaluator());
+            return Optional.of(scoredDecisions.first().getDecisionScoreEvaluator());
         }
 
         var decisionScoreEvaluators = new ArrayList<Decision<IN_GAME_OBJECT, TARGETABLE>>();
         if (getTopN() > 0) {
             for (int i = 0; i < getTopN(); i++) {
-                var scoredDecision = Optional.ofNullable(scoredDecisions.poll());
-                if (scoredDecision.isEmpty()) {
+                if (scoredDecisions.isEmpty()) {
                     break;
                 }
-                decisionScoreEvaluators.add(scoredDecision.get().getDecisionScoreEvaluator());
+                var scoredDecision = scoredDecisions.first();
+                decisionScoreEvaluators.add(scoredDecision.getDecisionScoreEvaluator());
             }
             Collections.shuffle(decisionScoreEvaluators);
             return Optional.of(decisionScoreEvaluators.get(0));
@@ -51,16 +51,19 @@ public interface DecisionMaker<IN_GAME_OBJECT, TARGETABLE> {
         return 1;
     };
 
-    default void scoreAllDecisions(List<Decision<IN_GAME_OBJECT, TARGETABLE>> decisions, DecisionContext<IN_GAME_OBJECT, TARGETABLE> lastContext) {
-        double cutoff = 0.0d;
-        for (var decision : decisions) {
-            double bonus = decision.getDecisionContext().getBonusFactor(lastContext);
-            if (bonus < cutoff) {
-                continue;
+    default void scoreAllDecisions(List<Decision<IN_GAME_OBJECT, TARGETABLE>> decisions, List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts) {
+        var debugReporter = new DebugReporter();
+        for (var context : contexts) {
+            double cutoff = 0.0d;
+            for (var decision : decisions) {
+                double bonus = decision.getDecisionContext().getBonusFactor(context);
+                if (bonus < cutoff) {
+                    continue;
+                }
+                var decisionScoreEvaluator = decision.getDecisionScoreEvaluator();
+                var score = decisionScoreEvaluator.score(decision.getDecisionContext(), getBonusFactor(decision), 0.0d, debugReporter);
+                decision.setScore(score);
             }
-            var decisionScoreEvaluator = decision.getDecisionScoreEvaluator();
-            var score = decisionScoreEvaluator.score(decision.getDecisionContext(), getBonusFactor(decision), 0.0d);
-            decision.setScore(score);
         }
     }
 

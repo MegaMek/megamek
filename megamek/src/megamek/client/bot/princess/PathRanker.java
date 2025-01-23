@@ -61,7 +61,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     private final Princess owner;
-    private final Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
+    protected final Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -75,9 +75,10 @@ public abstract class PathRanker implements IPathRanker {
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
             double fallTolerance, List<Entity> enemies,
             List<Entity> friends) {
+        cachedPilotBaseRoll.clear();
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
-            return new TreeSet<>();
+            return new TreeSet<>(Collections.reverseOrder());
         }
 
         // the cached path probability data is really only relevant for one iteration
@@ -104,6 +105,7 @@ public abstract class PathRanker implements IPathRanker {
             BigDecimal interval = new BigDecimal(5);
 
             boolean pathsHaveExpectedDamage = false;
+
             for (MovePath path : validPaths) {
                 try {
                     count = count.add(BigDecimal.ONE);
@@ -128,6 +130,7 @@ public abstract class PathRanker implements IPathRanker {
                     logger.error(e, e.getMessage() + "while processing " + path);
                 }
             }
+
             Entity mover = movePaths.get(0).getEntity();
             UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
             boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage
@@ -153,8 +156,6 @@ public abstract class PathRanker implements IPathRanker {
     protected List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
             double fallTolerance) {
         if (startingPathList.isEmpty()) {
-            // Nothing to validate here, might as well return the empty list
-            // straight away.
             return startingPathList;
         }
 

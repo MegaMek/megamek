@@ -172,6 +172,37 @@ public class BoardClusterTracker {
                 cluster.contents.get(first) == firstElevation && cluster.contents.get(second) == secondElevation;
     }
 
+    private BoardCluster getEntityCluster(Entity entity, MovementType movementType, boolean terrainReduction, boolean useBridges) {
+        if (terrainReduction) {
+            return useBridges ? movableAreasBridgesWithTerrainReduction.get(movementType).get(entity.getPosition())
+                : movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
+        } else {
+            return useBridges ? movableAreasBridges.get(movementType).get(entity.getPosition())
+                : movableAreas.get(movementType).get(entity.getPosition());
+        }
+    }
+
+    public Set<Coords> getDestinationCoords(Entity entity, Coords destination, boolean terrainReduction) {
+        updateMovableAreas(entity);
+
+        MovementType movementType = MovementType.getMovementType(entity);
+        Set<Coords> retVal = Collections.emptySet();
+
+        BoardCluster entityCluster = getEntityCluster(entity, movementType, terrainReduction, false);
+        if (entityCluster != null) {
+            retVal = entityCluster.getIntersectingHexes(destination, 3);
+        }
+
+        if (retVal.isEmpty()) {
+            entityCluster = getEntityCluster(entity, movementType, terrainReduction, true);
+            if (entityCluster != null) {
+                retVal = entityCluster.getIntersectingHexes(destination, 3);
+            }
+        }
+
+        return retVal;
+    }
+
     /**
      * Returns a set of coordinates on a given board edge that intersects with the
      * cluster
@@ -470,6 +501,22 @@ public class BoardClusterTracker {
             }
 
             return getIntersectingHexes(xStart, xEnd, yStart, yEnd);
+        }
+
+        /**
+         * Returns a set of coordinates in the current cluster that intersect
+         * an arbitrary rectangle.
+         */
+        public Set<Coords> getIntersectingHexes(Coords coords, int size) {
+            Set<Coords> retVal = new HashSet<>();
+            var destinationCluster = coords.allAtDistanceOrLess(size);
+            for (var coord : destinationCluster) {
+                if (contents.containsKey(coord)) {
+                    retVal.add(coords);
+                }
+            }
+
+            return retVal;
         }
 
         /**

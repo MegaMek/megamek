@@ -19,19 +19,19 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
-
-import java.util.HashMap;
-import java.util.Map;
+import megamek.common.Infantry;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if you are an easy target.
+ * Decides that it is too dangerous to stay under enemy weapons range.
  */
-@JsonTypeName("MyUnitUnderThreat")
-public class MyUnitUnderThreat extends TWConsideration {
-    public static final String descriptionKey = "MyUnitUnderThreat";
-    public MyUnitUnderThreat() {
+@JsonTypeName("MyUnitAggression")
+public class MyUnitAggression extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitAggression";
+
+    public MyUnitAggression() {
     }
 
     @Override
@@ -41,9 +41,23 @@ public class MyUnitUnderThreat extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        var twContext = (TWDecisionContext) context;
-        var expectedDamage = twContext.getExpectedDamage();
-        return clamp01( expectedDamage / currentUnit.getTotalArmor());
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var self = twContext.getCurrentUnit();
+        var closestEnemy = twContext.getClosestEnemy(self.getPosition());
+        if (closestEnemy == null) {
+            return 0d;
+        }
+        double distToEnemy = closestEnemy.getPosition().distance(self.getPosition());
+
+        if ((distToEnemy == 0) && !(self instanceof Infantry)) {
+            distToEnemy = 2;
+        }
+
+        double aggression = twContext.getDuchess().getBehaviorSettings().getHyperAggressionIndex();
+        double aggressionFraction = aggression / 10.0;
+        double closeness = 1.0 / (1.0 + distToEnemy);
+        double aggressionMod = aggressionFraction * closeness;
+        return clamp01(aggressionMod);
     }
+
 }

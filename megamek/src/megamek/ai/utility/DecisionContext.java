@@ -58,8 +58,8 @@ public abstract class DecisionContext<IN_GAME_OBJECT, TARGETABLE> {
         return targetUnits;
     }
 
-    public Optional<IN_GAME_OBJECT> getCurrentUnit() {
-        return Optional.ofNullable(currentUnit);
+    public IN_GAME_OBJECT getCurrentUnit() {
+        return currentUnit;
     }
 
     public List<TARGETABLE> getEnemyUnits() {

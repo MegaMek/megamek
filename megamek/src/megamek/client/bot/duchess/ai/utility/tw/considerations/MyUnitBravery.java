@@ -17,17 +17,21 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Compute;
 import megamek.common.Entity;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if the unit is crippled or not.
+ * Decides that it is too dangerous to stay under enemy weapons range.
  */
-@JsonTypeName("MyUnitIsCrippled")
-public class MyUnitIsCrippled extends TWConsideration {
-    public static final String descriptionKey = "MyUnitIsCrippled";
-    public MyUnitIsCrippled() {
+@JsonTypeName("MyUnitBravery")
+public class MyUnitBravery extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitBravery";
+
+    public MyUnitBravery() {
     }
 
     @Override
@@ -37,8 +41,15 @@ public class MyUnitIsCrippled extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return currentUnit.isCrippled(true) ? 1d : 0d;
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var self = twContext.getCurrentUnit();
+        var myWeaponsDamage = Compute.computeTotalDamage(self.getTotalWeaponList());
+        var totalDamageFraction = clamp01(twContext.getTotalDamage() / (double) myWeaponsDamage);
+        var damageCap = clamp01(twContext.getExpectedDamage() / (double) self.getTotalArmor()) / 2;
+        double braveryValue = twContext.getDuchess().getBehaviorSettings().getBraveryIndex();
+        double braveryFraction = braveryValue / 10.0;
+        double braveryMod = totalDamageFraction * braveryFraction - (1 - damageCap);
+        return clamp01(braveryMod);
     }
 
 }

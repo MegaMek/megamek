@@ -18,6 +18,7 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
+import megamek.common.UnitRole;
 
 import java.util.Map;
 
@@ -28,11 +29,16 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 @JsonTypeName("TargetUnitsArmor")
 public class TargetUnitsArmor extends TWConsideration {
-
+    public static final String descriptionKey = "TargetUnitsArmor";
     public enum Aggregation {
         AVERAGE,
         MIN,
         MAX
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return descriptionKey;
     }
 
     public TargetUnitsArmor() {
@@ -43,20 +49,27 @@ public class TargetUnitsArmor extends TWConsideration {
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
         var targets = context.getTargets();
+        var currentUnit = context.getCurrentUnit();
         if (targets.isEmpty()) {
             return 0d;
         }
+
         var armorPercent = 0d;
+        var targetsNumber = 0;
+        var maxDistance = currentUnit.getMaxWeaponRange(currentUnit.isAirborne());
         for (var target : targets) {
+            if (currentUnit.getPosition().distance(target.getPosition()) > maxDistance) {
+                continue;
+            }
             armorPercent += target.getArmorRemainingPercent();
+            targetsNumber++;
         }
-        if (getBooleanParameter("average")) {
-            return clamp01(armorPercent / targets.size());
-        } else if (getBooleanParameter("min")) {
-            return clamp01(targets.stream().mapToDouble(Entity::getArmorRemainingPercent).min().orElse(0d));
-        } else if (getBooleanParameter("max")) {
-            return clamp01(targets.stream().mapToDouble(Entity::getArmorRemainingPercent).max().orElse(0d));
-        }
+
+        armorPercent = switch (Aggregation.valueOf(getStringParameter("aggregation"))) {
+            case AVERAGE -> targetsNumber == 0d ? 0d : armorPercent / targetsNumber;
+            case MIN -> targets.stream().mapToDouble(Entity::getArmorRemainingPercent).min().orElse(0d);
+            case MAX -> targets.stream().mapToDouble(Entity::getArmorRemainingPercent).max().orElse(0d);
+        };
 
         return clamp01(armorPercent);
     }

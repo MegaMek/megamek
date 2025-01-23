@@ -66,6 +66,13 @@ public class RankedPath implements Comparable<RankedPath> {
         this.reason = reason;
     }
 
+    public RankedPath(double r, MovePath p, String reason, double damage) {
+        rank = r;
+        path = p;
+        this.reason = reason;
+        expectedDamage = damage;
+    }
+
     @Override
     public int compareTo(RankedPath p) {
         if (rank < p.rank) {

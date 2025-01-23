@@ -16,33 +16,37 @@ package megamek.client.bot.duchess;
 
 import megamek.ai.utility.Agent;
 import megamek.ai.utility.Intelligence;
+import megamek.client.bot.duchess.ai.utility.tw.ClusteringService;
 import megamek.client.bot.duchess.ai.utility.tw.context.TWWorld;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.duchess.ai.utility.tw.intelligence.SimpleIntelligence;
+import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
+import megamek.client.bot.princess.*;
 import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.logging.MMLogger;
 
-public class Duchess implements Agent<Entity, Entity> {
+import java.util.HashMap;
+
+public class Duchess extends Princess implements Agent<Entity, Entity> {
     private static final MMLogger logger = MMLogger.create(Duchess.class);
 
-    private final Intelligence<Entity, Entity> intelligence;
+    private final SimpleIntelligence intelligence;
     private final TWWorld world;
-    private final Princess princess;
 
-    public Duchess(Game game, Intelligence<Entity, Entity> intelligence, Princess princess) {
-        this.world = new TWWorld(game);
-        this.intelligence = intelligence;
-        this.princess = princess;
+    public Duchess(String name, String host, int port, TWProfile profile) {
+        super(name, host, port);
+        this.intelligence = new SimpleIntelligence(this, profile);
+        this.world = new TWWorld(this.getGame(), this, new ClusteringService(15d, 6));
+    }
+
+    @Override
+    public void initializePathRankers() {
+        super.initializePathRankers();
+        pathRankers.put(PathRanker.PathRankerType.Basic, intelligence);
     }
 
     @Override
     public int getId() {
-        return princess.getLocalPlayerNumber();
-    }
-
-    @Override
-    public TWWorld getContext() {
-        return world;
+        return getLocalPlayerNumber();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class Duchess implements Agent<Entity, Entity> {
     }
 
     @Override
-    public Princess getClient() {
-        return princess;
+    public Duchess getClient() {
+        return this;
     }
 }

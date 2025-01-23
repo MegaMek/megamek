@@ -57,24 +57,30 @@ public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Named
         this.considerations.addAll(considerations);
     }
 
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, double min) {
+    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, double min, DebugReporter debugReport) {
         var finalScore = bonus;
         var considerationSize = getConsiderations().size();
-
+        debugReport.append("Consideration size: " + considerationSize);
+        debugReport.append("Bonus: " + bonus);
         for (var consideration : getConsiderations()) {
             if ((0.0f < finalScore) || (0.0f < min)) {
+                debugReport.append("Final score is greater than 0.0f or min is greater than 0.0f");
                 break;
             }
             var score = consideration.score(context);
+            debugReport.append("Consideration: " + consideration.getName());
+            debugReport.append("Score: " + score);
             var response = consideration.computeResponseCurve(score);
-
+            response = clamp01(response);
+            debugReport.append("curve: " + response);
             finalScore *= clamp01(response);
+            debugReport.append("currentScore: " + finalScore);
         }
         // adjustment
         var modificationFactor = 1 - (1 / considerationSize);
         var makeUpValue = (1 - finalScore) * modificationFactor;
         finalScore = finalScore + (makeUpValue * finalScore);
-
+        debugReport.append("Adjusted Final score: " + finalScore);
         return finalScore;
     }
 

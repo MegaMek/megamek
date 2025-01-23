@@ -45,7 +45,7 @@ public class DummyAgent implements Agent<Entity, Entity> {
     }
 
     @Override
-    public World<Entity, Entity> getContext() {
+    public World<Entity, Entity> getWorld() {
         return world;
     }
 

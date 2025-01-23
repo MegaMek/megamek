@@ -57,14 +57,18 @@ public class BasicPathRanker extends PathRanker {
 
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
-    private final Map<Integer, Double> bestDamageByEnemies;
+    private Map<Integer, Double> bestDamageByEnemies;
 
     protected int blackIce = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
+        this(owningPrincess, owningPrincess.getPrecognition().getPathEnumerator());
+    }
+
+    public BasicPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
-        logger.debug("Using {} behavior.", getOwner().getBehaviorSettings().getDescription());
+        logger.debug("Using {} behavior.", owningPrincess.getBehaviorSettings().getDescription());
     }
 
     FireControl getFireControl(Entity entity) {
@@ -105,7 +109,7 @@ public class BasicPathRanker extends PathRanker {
         Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
 
         if (enemyFacingSet == null) {
-            logger.warn("no facing set for {}", enemy.getDisplayName());
+            logger.warn("no facing set for %s", enemy.getDisplayName());
             return false;
         }
 
@@ -390,6 +394,36 @@ public class BasicPathRanker extends PathRanker {
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
         return facingMod;
+    }
+
+    private double calculateWaypointMod(Entity movingUnit, MovePath path, StringBuilder formula) {
+        var waypointOpt = getOwner().getUnitBehaviorTracker().getWaypointForEntity(movingUnit);
+
+        double waypointMod = 0.0;
+        if (waypointOpt.isPresent() && path.getFinalCoords() != null && path.getStartCoords() != null) {
+            var wayPoint = waypointOpt.get();
+            var finalCoords = path.getFinalCoords();
+            var startingCoords = path.getStartCoords();
+            int finalDistanceToWayPoint = finalCoords.distance(wayPoint);
+            int startingDistanceToWaypoint = startingCoords.distance(wayPoint);
+
+            int distanceReduced = startingDistanceToWaypoint - finalDistanceToWayPoint;
+            // Multiply the distance reduced by that factor
+            waypointMod = distanceReduced * ARRIVED_AT_DESTINATION_FACTOR;
+
+            // Now log it in a consistent way:
+            formula.append(" + waypointMod [")
+                .append(LOG_DECIMAL.format(waypointMod))
+                .append(" = (")
+                .append(startingDistanceToWaypoint).append(" - ")
+                .append(finalDistanceToWayPoint)
+                .append(") * ")
+                .append(LOG_DECIMAL.format(ARRIVED_AT_DESTINATION_FACTOR))
+                .append("] ");
+        } else {
+            formula.append(" + waypointMod [").append(LOG_DECIMAL.format(waypointMod)).append("]");
+        }
+        return waypointMod;
     }
 
     // todo account for damaged locations and face those away from enemy.

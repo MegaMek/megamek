@@ -18,13 +18,17 @@
  */
 package megamek.client.bot.princess;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Mek;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 public class UnitBehavior {
+    private final static MMLogger logger = MMLogger.create(UnitBehavior.class);
+
     public enum BehaviorType {
         // this unit is under 'forced withdrawal' due to being crippled
         ForcedWithdrawal,
@@ -42,7 +46,8 @@ public class UnitBehavior {
         NoPathToDestination
     }
 
-    private Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
+    private final Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
+    private final Map<Integer, Deque<Coords>> entityWaypoints = new HashMap<>();
 
     /**
      * Worker function that calculates a unit's desired behavior
@@ -62,6 +67,16 @@ public class UnitBehavior {
             }
 
             return BehaviorType.MoveToDestination;
+        } else if (entityWaypoints.containsKey(entity.getId()) && getWaypointForEntity(entity).isPresent()) {
+            while (getWaypointForEntity(entity).isPresent() &&
+                owner.getClusterTracker().getDestinationCoords(entity, getWaypointForEntity(entity).get(), true).isEmpty()) {
+                removeHeadWaypoint(entity);
+            }
+            if (getWaypointForEntity(entity).isPresent()) {
+                return BehaviorType.MoveToDestination;
+            }
+
+            return BehaviorType.NoPathToDestination;
         } else if ((entity instanceof Mek) && ((Mek) entity).isJustMovedIntoIndustrialKillingWater()) {
             if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
@@ -76,6 +91,84 @@ public class UnitBehavior {
 
             return BehaviorType.Engaged;
         }
+    }
+
+    public Optional<Coords> getWaypointForEntity(Entity entity) {
+        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).peek());
+    }
+
+    public boolean isDestinationValidForEntity(Entity entity, Coords destination, Princess owner) {
+        var value = owner.getClusterTracker().getDestinationCoords(entity, destination, true).isEmpty();
+        logger.debug("Checking if destination is valid for entity " + entity.getId() + ": " + destination + " -> " + value);
+        return value;
+    }
+
+    public boolean addEntityWaypoint(Entity entity, List<Coords> waypoints, Princess owner) {
+        var coords = new ArrayList<Coords>();
+        for (var waypoint : waypoints) {
+            if (isDestinationValidForEntity(entity, waypoint, owner)) {
+                // just discard any invalid waypoint
+                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                continue;
+            }
+            coords.add(waypoint);
+        }
+        entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).addAll(coords);
+        logger.info("Adding waypoints for entity " + entity.getId() + ": " + coords);
+        return true;
+    }
+
+
+    public boolean addEntityWaypoint(Entity entity, Coords destination, Princess owner) {
+        return addEntityWaypoint(entity, List.of(destination), owner);
+    }
+
+    /**
+     * Removes the head waypoint from the entity's waypoint queue
+     * If waypoints were added (1,1) then (2,2), then (3,3), this would remove (1,1)
+     * @param entity the entity to remove the waypoint from
+     */
+    public Optional<Coords> removeHeadWaypoint(Entity entity) {
+        logger.info("Removing head waypoint for entity " + entity.getId());
+        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollFirst());
+    }
+
+
+    /**
+     * Removes the head waypoint from the entity's waypoint queue
+     * If waypoints were added (1,1) then (2,2) then (3,3), this would remove (3,3), good for an "undo" behavior.
+     * @param entity the entity to remove the waypoint from
+     */
+    public Optional<Coords> removeTailWaypoint(Entity entity) {
+        logger.info("Removing tail waypoint for entity " + entity.getId());
+        return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollLast());
+    }
+
+    /**
+     * Sets the entity's waypoints to the given destination
+     * @param entity
+     * @param waypoints
+     * @param owner
+     * @return
+     */
+    public boolean setEntityWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
+        var deque = new ArrayDeque<Coords>();
+        for (var waypoint : waypoints) {
+            if (isDestinationValidForEntity(entity, waypoint, owner)) {
+                // just discard any invalid waypoint
+                logger.info("Discarding invalid waypoint for entity " + entity.getId() + ": " + waypoint);
+                continue;
+            }
+            deque.add(waypoint);
+        }
+        logger.debug("Setting waypoints for entity " + entity.getId() + ": " + deque);
+        entityWaypoints.put(entity.getId(), deque);
+        return true;
+    }
+
+    public void clearWaypoints() {
+        logger.debug("Clearing all waypoints");
+        entityWaypoints.clear();
     }
 
     /**

@@ -17,20 +17,21 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
-import java.util.Map;
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if a target is an easy target.
+ * Decides that it is too dangerous to stay under enemy weapons range.
  */
-@JsonTypeName("MyUnitRoleIs")
-public class MyUnitRoleIs extends TWConsideration {
-    public static final String descriptionKey = "MyUnitRoleIs";
-    public MyUnitRoleIs() {
-        parameters = Map.of("role", UnitRole.AMBUSHER);
-        parameterTypes = Map.of("role", UnitRole.class);
+@JsonTypeName("PilotingCaution")
+public class PilotingCaution extends TWConsideration {
+
+    public static final String descriptionKey = "PilotingCaution";
+
+    public PilotingCaution() {
     }
 
     @Override
@@ -40,14 +41,12 @@ public class MyUnitRoleIs extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        if (!hasParameter("role")) {
-            return 0d;
-        }
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var pilotingSuccess = twContext.getMovePathSuccessProbability();
 
-        var currentUnit = context.getCurrentUnit();
-        var role = UnitRole.valueOf(getStringParameter("role"));
-
-        return currentUnit.getRole().equals(role) ? 1d : 0d;
+        double fallShameValue = twContext.getDuchess().getBehaviorSettings().getFallShameIndex();
+        double fallShameFraction = fallShameValue / 10.0;
+        return clamp01(pilotingSuccess * fallShameFraction);
     }
 
 }

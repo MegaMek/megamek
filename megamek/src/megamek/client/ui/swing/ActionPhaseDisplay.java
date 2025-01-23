@@ -284,5 +284,4 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected final Entity ce() {
         return clientgui.getClient().getGame().getEntity(currentEntity);
     }
-
 }

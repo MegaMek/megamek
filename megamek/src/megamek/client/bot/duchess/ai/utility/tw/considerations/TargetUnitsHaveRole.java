@@ -27,10 +27,15 @@ import java.util.Map;
  */
 @JsonTypeName("TargetUnitsHaveRole")
 public class TargetUnitsHaveRole extends TWConsideration {
-
+    public static final String descriptionKey = "TargetUnitsHaveRole";
     public TargetUnitsHaveRole() {
         parameters = Map.of("role", UnitRole.AMBUSHER);
         parameterTypes = Map.of("role", UnitRole.class);
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return descriptionKey;
     }
 
     @Override

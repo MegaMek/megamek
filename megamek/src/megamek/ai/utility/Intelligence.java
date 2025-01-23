@@ -18,6 +18,7 @@ package megamek.ai.utility;
 import java.util.List;
 import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 
 public interface Intelligence<IN_GAME_OBJECT, TARGETABLE> {
 
@@ -31,11 +32,11 @@ public interface Intelligence<IN_GAME_OBJECT, TARGETABLE> {
         getDecisions().clear();
     }
 
-    default void scoreAllDecisions(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context) {
-        getDecisionMaker().scoreAllDecisions(getDecisions(), context);
+    default void scoreAllDecisions(List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts) {
+        getDecisionMaker().scoreAllDecisions(getDecisions(), contexts);
     }
 
-    default Optional<Decision<IN_GAME_OBJECT, TARGETABLE>> pickOne(PriorityQueue<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> scoredDecisions) {
+    default Optional<Decision<IN_GAME_OBJECT, TARGETABLE>> pickOne(TreeSet<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> scoredDecisions) {
         return getDecisionMaker().pickOne(scoredDecisions);
     }
 }

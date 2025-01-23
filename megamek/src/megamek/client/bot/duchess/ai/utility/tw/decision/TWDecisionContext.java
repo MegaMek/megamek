@@ -14,14 +14,18 @@
  */
 package megamek.client.bot.duchess.ai.utility.tw.decision;
 
-import megamek.ai.utility.Agent;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.World;
+import megamek.client.bot.duchess.Duchess;
+import megamek.client.bot.duchess.ai.utility.tw.context.TWWorld;
+import megamek.client.bot.duchess.ai.utility.tw.intelligence.PathRankerUtilCalculator;
+import megamek.client.bot.duchess.ai.utility.tw.intelligence.SimpleIntelligence;
+import megamek.client.bot.princess.*;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
 import megamek.common.options.OptionsConstants;
 
-import java.util.*;
+import java.util.List;
 
 import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 
@@ -29,10 +33,30 @@ import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
     private final MovePath movePath;
+    private final Duchess duchess;
+    private final PathRankerUtilCalculator pathRankerUtilCalculator;
 
-    public TWDecisionContext(Agent<Entity, Entity> agent, World<Entity, Entity> world, Entity currentUnit, List<Entity> targetUnits, MovePath movePath) {
-        super(agent, world, currentUnit, targetUnits);
+    public TWDecisionContext(Duchess duchess, TWWorld world, Entity currentUnit, List<Entity> targetUnits, MovePath movePath, PathRankerUtilCalculator pathRankerUtilCalculator) {
+        super(duchess, world, currentUnit, targetUnits);
+        this.duchess = duchess;
         this.movePath = movePath.clone();
+        this.pathRankerUtilCalculator = pathRankerUtilCalculator;
+    }
+
+    public Duchess getDuchess() {
+        return duchess;
+    }
+
+    public UnitBehavior.BehaviorType getUnitBehavior(Entity entity) {
+        return duchess.getUnitBehaviorTracker().getBehaviorType(entity, duchess);
+    }
+
+    public int distanceToRetreatEdge(Entity entity) {
+        return pathRankerUtilCalculator.distanceToHomeEdge(entity.getPosition(), duchess.getBehaviorSettings().getRetreatEdge(), ((TWWorld)getWorld()).getGame());
+    }
+
+    public int distanceToDestinationEdge(Entity entity) {
+        return pathRankerUtilCalculator.distanceToHomeEdge(entity.getPosition(), duchess.getBehaviorSettings().getDestinationEdge(), ((TWWorld)getWorld()).getGame());
     }
 
     @Override
@@ -41,6 +65,65 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
             getWorld().useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE),
             getWorld().useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE));
     }
+    private SimpleIntelligence.FiringPhysicalDamage cachedDamage;
+
+    public double getExpectedDamage() {
+        if (cachedDamage == null) {
+            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
+        }
+        return cachedDamage.takenDamage();
+    }
+
+    public double getTotalDamage() {
+        if (cachedDamage == null) {
+            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
+        }
+        return cachedDamage.firingDamage() + cachedDamage.physicalDamage();
+    }
+
+    public double getFiringDamage() {
+        if (cachedDamage == null) {
+            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
+        }
+        return cachedDamage.firingDamage();
+    }
+
+    public double getPhysicalDamage() {
+        if (cachedDamage == null) {
+            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
+        }
+        return cachedDamage.physicalDamage();
+    }
+
+    public double getMovePathSuccessProbability() {
+        return pathRankerUtilCalculator.getMovePathSuccessProbability(movePath, new StringBuilder());
+    }
+
+    public List<Entity> getClosestEnemyCluster(Entity entity) {
+        var cluster = ((TWWorld) getWorld()).getEntityCluster(entity);
+        var enemyCluster = ((TWWorld) getWorld()).getClosestEnemyCluster(cluster);
+        return enemyCluster.getMembers();
+    }
+
+    public Entity getClosestEnemy(Coords coords) {
+        var distance = Integer.MAX_VALUE;
+        Entity currentEnemy = null;
+        for (var enemy : getWorld().getEnemyUnits()) {
+            var dist = enemy.getPosition().distance(coords);
+            if (dist < distance) {
+                distance = dist;
+                currentEnemy = enemy;
+            }
+        }
+
+        return currentEnemy;
+    }
+
+    public Coords getFriendsClusterCentroid(Entity entity) {
+        return ((TWWorld) getWorld()).getEntityClusterCentroid(entity);
+    }
+
+
 
     @Override
     public double getBonusFactor(DecisionContext<Entity, Entity> lastContext) {

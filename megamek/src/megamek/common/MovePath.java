@@ -120,18 +120,34 @@ public class MovePath implements Cloneable, Serializable {
     private boolean careful = true;
     private boolean gravityConcern = false;
     private final float gravity;
+    private final Coords waypoint;
 
     /**
      * Generates a new, empty, movement path object.
      */
-    public MovePath(final Game game, final Entity entity) {
+    public MovePath(final Game game, final Entity entity, final Coords waypoint) {
         this.setEntity(entity);
         this.setGame(game);
+        this.waypoint = waypoint;
         // Do we care about gravity when adding steps?
         gravity = game.getPlanetaryConditions().getGravity();
         gravityConcern = ((gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0
-                || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
-                && game.getBoard().onGround() && !entity.isAirborne());
+            || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
+            && game.getBoard().onGround() && !entity.isAirborne());
+    }
+    /**
+     * Generates a new, empty, movement path object.
+     */
+    public MovePath(final Game game, final Entity entity) {
+        this(game, entity, null);
+    }
+
+    public boolean hasWaypoint() {
+        return waypoint != null;
+    }
+
+    public Coords getWaypoint() {
+        return waypoint;
     }
 
     public Entity getEntity() {
@@ -1634,7 +1650,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     @Override
     public MovePath clone() {
-        final MovePath copy = new MovePath(getGame(), getEntity());
+        final MovePath copy = new MovePath(getGame(), getEntity(), getWaypoint());
         copyFields(copy);
         return copy;
     }

@@ -22,14 +22,17 @@ import megamek.common.UnitRole;
 
 import java.util.Map;
 
+import static megamek.codeUtilities.MathUtility.clamp01;
+
 /**
  * This consideration is used to determine if a target is an easy target.
  */
-@JsonTypeName("MyUnitRoleIs")
-public class MyUnitRoleIs extends TWConsideration {
-    public static final String descriptionKey = "MyUnitRoleIs";
-    public MyUnitRoleIs() {
-        parameters = Map.of("role", UnitRole.AMBUSHER);
+@JsonTypeName("FavoriteTargetInRange")
+public class FavoriteTargetInRange extends TWConsideration {
+    public static final String descriptionKey = "FavoriteTargetInRange";
+
+    public FavoriteTargetInRange() {
+        parameters = Map.of("role", UnitRole.MISSILE_BOAT);
         parameterTypes = Map.of("role", UnitRole.class);
     }
 
@@ -40,14 +43,18 @@ public class MyUnitRoleIs extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        if (!hasParameter("role")) {
-            return 0d;
-        }
-
-        var currentUnit = context.getCurrentUnit();
+        var targets = context.getTargets();
+        var firingUnit = context.getCurrentUnit();
+        var maxRange = firingUnit.getMaxWeaponRange();
         var role = UnitRole.valueOf(getStringParameter("role"));
-
-        return currentUnit.getRole().equals(role) ? 1d : 0d;
+        var distance = Integer.MAX_VALUE;
+        for (var target : targets) {
+            if (target.getRole().equals(role) && target.getPosition().distance(firingUnit.getPosition()) <= maxRange) {
+                return 1d;
+            } else {
+                distance = Math.min(distance, target.getPosition().distance(firingUnit.getPosition()));
+            }
+        }
+        return clamp01( 1.000001d - (((double) (distance - maxRange)) / (double) maxRange));
     }
-
 }

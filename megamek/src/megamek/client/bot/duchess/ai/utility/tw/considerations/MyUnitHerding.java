@@ -17,17 +17,21 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
+import megamek.common.Infantry;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if the unit is crippled or not.
+ * Decides that it is too dangerous to stay under enemy weapons range.
  */
-@JsonTypeName("MyUnitIsCrippled")
-public class MyUnitIsCrippled extends TWConsideration {
-    public static final String descriptionKey = "MyUnitIsCrippled";
-    public MyUnitIsCrippled() {
+@JsonTypeName("MyUnitHerding")
+public class MyUnitHerding extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitHerding";
+
+    public MyUnitHerding() {
     }
 
     @Override
@@ -37,8 +41,16 @@ public class MyUnitIsCrippled extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return currentUnit.isCrippled(true) ? 1d : 0d;
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var self = twContext.getCurrentUnit();
+        var clusterCentroid = twContext.getFriendsClusterCentroid(self);
+        double distToFriends = clusterCentroid.distance(self.getPosition());
+
+        double herding = twContext.getDuchess().getBehaviorSettings().getHerdMentalityIndex();
+        double herdingFraction = herding / 10.0;
+        double closeness = 1.0 / (1.0 + distToFriends);
+        double herdingMod = herdingFraction * closeness;
+        return clamp01(herdingMod);
     }
 
 }

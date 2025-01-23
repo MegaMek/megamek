@@ -18,6 +18,8 @@ package megamek.client.bot.duchess.ai.utility.tw.decision;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.Consideration;
+import megamek.ai.utility.DebugReporter;
+import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.common.Entity;
 
@@ -27,6 +29,7 @@ import java.util.List;
 @JsonTypeName("TWDecisionScoreEvaluator")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Entity> {
+
     public TWDecisionScoreEvaluator() {
     }
 

@@ -67,8 +67,13 @@ public class BasicPathRanker extends PathRanker {
     protected int blackIce = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
+        this(owningPrincess, owningPrincess.getPrecognition().getPathEnumerator());
+    }
+
+    public BasicPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
+        this.pathEnumerator = pathEnumerator;
         logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
@@ -130,7 +135,7 @@ public class BasicPathRanker extends PathRanker {
      * TODO estimated damage is sloppy. Improve for missile attacks, gun skill, and
      * range
      */
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
             boolean useLOSRange) {
         // some preliminary calculations
         final double damageDiscount = 0.25;
@@ -336,7 +341,7 @@ public class BasicPathRanker extends PathRanker {
         return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
     }
 
-    EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
+    public EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
         int distance = enemy.getPosition().distance(path.getFinalCoords());
@@ -400,6 +405,36 @@ public class BasicPathRanker extends PathRanker {
                 .append(LOG_DECIMAL.format(herding))
                 .append("]");
         return herdingMod;
+    }
+
+    private double calculateWaypointMod(Entity movingUnit, MovePath path, StringBuilder formula) {
+        var waypointOpt = getOwner().getUnitBehaviorTracker().getWaypointForEntity(movingUnit);
+
+        double waypointMod = 0.0;
+        if (waypointOpt.isPresent() && path.getFinalCoords() != null && path.getStartCoords() != null) {
+            var wayPoint = waypointOpt.get();
+            var finalCoords = path.getFinalCoords();
+            var startingCoords = path.getStartCoords();
+            int finalDistanceToWayPoint = finalCoords.distance(wayPoint);
+            int startingDistanceToWaypoint = startingCoords.distance(wayPoint);
+
+            int distanceReduced = startingDistanceToWaypoint - finalDistanceToWayPoint;
+            // Multiply the distance reduced by that factor
+            waypointMod = distanceReduced * ARRIVED_AT_DESTINATION_FACTOR;
+
+            // Now log it in a consistent way:
+            formula.append(" + waypointMod [")
+                .append(LOG_DECIMAL.format(waypointMod))
+                .append(" = (")
+                .append(startingDistanceToWaypoint).append(" - ")
+                .append(finalDistanceToWayPoint)
+                .append(") * ")
+                .append(LOG_DECIMAL.format(ARRIVED_AT_DESTINATION_FACTOR))
+                .append("] ");
+        } else {
+            formula.append(" + waypointMod [").append(LOG_DECIMAL.format(waypointMod)).append("]");
+        }
+        return waypointMod;
     }
 
     // todo account for damaged locations and face those away from enemy.
@@ -606,6 +641,7 @@ public class BasicPathRanker extends PathRanker {
             // ranks (weighted by Herd Mentality).
             utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
         }
+        utility += calculateWaypointMod(movingUnit, pathCopy, formula);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);

@@ -30,12 +30,19 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("MyUnitArmor")
 public class MyUnitArmor extends TWConsideration {
 
+    public static final String descriptionKey = "MyUnitArmor";
+
     public MyUnitArmor() {
     }
 
     @Override
+    public String getDescriptionKey() {
+        return descriptionKey;
+    }
+
+    @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit().orElseThrow();
+        var currentUnit = context.getCurrentUnit();
         return clamp01(currentUnit.getArmorRemainingPercent());
     }
 

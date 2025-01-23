@@ -20,7 +20,6 @@ import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -28,10 +27,13 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 /**
  * This consideration is used to determine if you are an easy target.
  */
-@JsonTypeName("MyUnitUnderThreat")
-public class MyUnitUnderThreat extends TWConsideration {
-    public static final String descriptionKey = "MyUnitUnderThreat";
-    public MyUnitUnderThreat() {
+@JsonTypeName("DamageOutput")
+public class DamageOutput extends TWConsideration {
+    public static final String descriptionKey = "DamageOutput";
+
+    public DamageOutput() {
+        parameters = Map.of("damage factor", "2:1");
+        parameterTypes = Map.of("damage factor", String.class);
     }
 
     @Override
@@ -41,9 +43,18 @@ public class MyUnitUnderThreat extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
         var twContext = (TWDecisionContext) context;
-        var expectedDamage = twContext.getExpectedDamage();
-        return clamp01( expectedDamage / currentUnit.getTotalArmor());
+        var totalDamage = twContext.getFiringDamage() + twContext.getPhysicalDamage();
+        var damageTaken = twContext.getExpectedDamage();
+
+        var damageFactor = getStringParameter("damage factor");
+        var damageFactorSplit = damageFactor.split(":");
+        var damageFactorNum = Double.parseDouble(damageFactorSplit[0]);
+        var damageFactorDenom = Double.parseDouble(damageFactorSplit[1]);
+        var damageFactorValue = damageFactorNum / damageFactorDenom;
+
+        double ratio = damageTaken == 0 ? Double.POSITIVE_INFINITY : totalDamage / damageTaken;
+        double score = ratio / (ratio + damageFactorValue);
+        return clamp01(score);
     }
 }

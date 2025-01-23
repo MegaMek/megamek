@@ -17,14 +17,17 @@ package megamek.client.bot.duchess.ai.utility.tw;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
+import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecision;
 import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
 import megamek.common.Configuration;
 import megamek.logging.MMLogger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -175,7 +178,6 @@ public class TWUtilityAIRepository {
         byte[] buffer = new byte[1024];
         var zis = new ZipInputStream(new FileInputStream(zipFile.toFile()));
         ZipEntry zipEntry = zis.getNextEntry();
-
         while (zipEntry != null) {
             File newFile = newFile(destDir, zipEntry);
             if (zipEntry.isDirectory()) {

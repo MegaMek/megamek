@@ -106,9 +106,9 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      * Guesses a number of things about an enemy that has not yet moved
      */
     @Override
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
-                                                  boolean useExtremeRange,
-                                                  boolean useLOSRange) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
+                                                         boolean useExtremeRange,
+                                                         boolean useLOSRange) {
         EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 

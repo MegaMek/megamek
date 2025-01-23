@@ -17,20 +17,22 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.context.TWWorld;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
-import java.util.Map;
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if a target is an easy target.
+ * This consideration is used to determine the defense due to the movement.
  */
-@JsonTypeName("MyUnitRoleIs")
-public class MyUnitRoleIs extends TWConsideration {
-    public static final String descriptionKey = "MyUnitRoleIs";
-    public MyUnitRoleIs() {
-        parameters = Map.of("role", UnitRole.AMBUSHER);
-        parameterTypes = Map.of("role", UnitRole.class);
+@JsonTypeName("MyUnitTMM")
+public class MyUnitTMM extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitTMM";
+
+    public MyUnitTMM() {
     }
 
     @Override
@@ -40,14 +42,17 @@ public class MyUnitRoleIs extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        if (!hasParameter("role")) {
-            return 0d;
-        }
-
         var currentUnit = context.getCurrentUnit();
-        var role = UnitRole.valueOf(getStringParameter("role"));
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var movePath = twContext.getMovePath();
+        var hexesMoved = movePath.getHexesMoved();
+        var tmm = Compute.getTargetMovementModifier(
+            hexesMoved,
+            movePath.isJumping(),
+            movePath.getFinalAltitude() > 0 && !currentUnit.isAerospace(),
+            ((TWWorld) context.getWorld()).getGame());
 
-        return currentUnit.getRole().equals(role) ? 1d : 0d;
+        return clamp01(tmm.getValue() / 6d);
     }
 
 }

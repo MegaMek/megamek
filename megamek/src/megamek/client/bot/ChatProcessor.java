@@ -23,6 +23,7 @@ import megamek.client.bot.princess.*;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
@@ -32,6 +33,8 @@ import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
@@ -421,15 +424,18 @@ public class ChatProcessor {
             }
 
             String hex = arguments[0];
-            if (hex.length() != 4 || !StringUtil.isPositiveInteger(hex)) {
+            if (!StringUtil.isPositiveInteger(hex) && (hex.length() % 2 == 1)) {
                 msg = "Invalid hex number: " + hex;
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
             }
 
-            int x = Integer.parseInt(hex.substring(0, 2)) - 1;
-            int y = Integer.parseInt(hex.substring(2, 4)) - 1;
+            var splitPosition = hex.length() / 2;
+
+            int x = Integer.parseInt(hex.substring(0, splitPosition)) - 1;
+            int y = Integer.parseInt(hex.substring(splitPosition)) - 1;
+
             Coords coords = new Coords(x, y);
             if (!princess.getGame().getBoard().contains(coords)) {
                 msg = "Board does not have hex " + hex;
@@ -503,6 +509,98 @@ public class ChatProcessor {
             princess.getBehaviorSettings().clearIgnoredUnitTargets();
             msg = "Cleared ignored targets list.";
             princess.sendChat(msg);
+        }
+
+        if (command.toLowerCase().startsWith(ChatCommands.ADD_WAYPOINT.getAbbreviation())
+            || command.toLowerCase().startsWith(ChatCommands.SET_WAYPOINT.getAbbreviation())) {
+            if (arguments == null || arguments.length < 2) {
+                msg = "Invalid syntax.  Should be 'princessName : aw : hexNumber unitID'.";
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String unitIdString = arguments[0];
+            if (!StringUtil.isPositiveInteger(unitIdString)) {
+                msg = "Invalid unit id number: " + unitIdString;
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            int unitID = Integer.parseInt(unitIdString);
+
+            List<Coords> waypoints = new ArrayList<>();
+
+            for (int i = 1; i < arguments.length; i++) {
+                String hex = arguments[i];
+                if (!StringUtil.isPositiveInteger(hex) && (hex.length() % 2 == 1)) {
+                    msg = "Invalid hex number: " + hex;
+                    logger.warn(msg + "\n" + chatEvent.getMessage());
+                    princess.sendChat(msg);
+                    return;
+                }
+
+                var splitPosition = hex.length() / 2;
+
+                int x = Integer.parseInt(hex.substring(0, splitPosition)) - 1;
+                int y = Integer.parseInt(hex.substring(splitPosition)) - 1;
+
+                Coords coords = new Coords(x, y);
+                if (!princess.getGame().getBoard().contains(coords)) {
+                    msg = "Board does not have hex " + hex;
+                    logger.warn(msg + "\n" + chatEvent.getMessage());
+                    princess.sendChat(msg);
+                    return;
+                }
+                waypoints.add(coords);
+            }
+
+            if (command.toLowerCase().startsWith(ChatCommands.ADD_WAYPOINT.getAbbreviation())) {
+                princess.getEntitiesOwned().stream().filter(entity -> entity.getId() == unitID).findFirst().ifPresent(entity -> {
+                    if (princess.getUnitBehaviorTracker().setEntityWaypoints(entity, waypoints, princess)) {
+                        var message = "Waypoint " + waypoints + " set for unit " + unitID;
+                        princess.sendChat(message);
+                    }
+                });
+            } else {
+                princess.getEntitiesOwned().stream().filter(entity -> entity.getId() == unitID).findFirst().ifPresent(entity -> {
+                    if (princess.getUnitBehaviorTracker().addEntityWaypoint(entity, waypoints, princess)) {
+                        var message = "Waypoint " + waypoints + " added to unit " + unitID;
+                        princess.sendChat(message);
+                    }
+                });
+            }
+        }
+
+        if (command.toLowerCase().startsWith(ChatCommands.REMOVE_WAYPOINT.getAbbreviation())) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid syntax.  Should be 'princessName : rw : unitID'.";
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            String unitIdString = arguments[0];
+            if (!StringUtil.isPositiveInteger(unitIdString)) {
+                msg = "Invalid unit id number: " + unitIdString;
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            int unitID = Integer.parseInt(unitIdString);
+            princess.getEntitiesOwned().stream().filter(entity -> entity.getId() == unitID).findFirst().ifPresent(entity -> {
+                var waypoint = princess.getUnitBehaviorTracker().removeHeadWaypoint(entity);
+                if (waypoint.isPresent()) {
+                    var message = "Waypoint " + waypoint.get() + " removed from unit " + unitID;
+                    princess.sendChat(message);
+                }
+            });
+        }
+
+        if (command.toLowerCase().startsWith(ChatCommands.CLEAR_ALL_WAYPOINTS.getAbbreviation())) {
+            princess.getUnitBehaviorTracker().clearWaypoints();
+            var message = "I removed all waypoints for my units";
+            princess.sendChat(message);
         }
     }
 }

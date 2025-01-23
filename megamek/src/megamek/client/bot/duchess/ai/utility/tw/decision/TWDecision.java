@@ -16,30 +16,37 @@
 package megamek.client.bot.duchess.ai.utility.tw.decision;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.Action;
 import megamek.ai.utility.Decision;
 import megamek.ai.utility.DecisionScoreEvaluator;
+import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;
-
-import java.util.HashMap;
-import java.util.StringJoiner;
 
 @JsonTypeName("TWDecision")
 public class TWDecision extends Decision<Entity, Entity> {
 
+    private RankedPath rankedPath;
+
     public TWDecision() {
     }
 
-    public TWDecision(Action action, double weight, DecisionScoreEvaluator<Entity, Entity> decisionScoreEvaluator) {
-        super(action, weight, decisionScoreEvaluator);
+    public TWDecision(String name, String description, double weight, DecisionScoreEvaluator<Entity, Entity> decisionScoreEvaluator) {
+        super(name, description, weight, decisionScoreEvaluator);
     }
 
-    public TWDecision(Action action, double weight) {
-        this(action, weight, new TWDecisionScoreEvaluator());
+    public TWDecision(String name, String description, double weight) {
+        this(name, description, weight, new TWDecisionScoreEvaluator());
     }
 
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    public RankedPath getRankedPath() {
+        return rankedPath;
+    }
+
+    private void setRankedPath(RankedPath rankedPath) {
+        this.rankedPath = rankedPath;
     }
 }

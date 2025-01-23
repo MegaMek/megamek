@@ -28,6 +28,8 @@ public abstract class TWConsideration extends Consideration<Entity, Entity> {
     public TWConsideration() {
     }
 
+    public abstract String getDescriptionKey();
+
     public TWConsideration(String name) {
         super(name);
     }

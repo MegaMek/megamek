@@ -15,7 +15,6 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import megamek.ai.utility.Action;
 import megamek.ai.utility.Decision;
 import megamek.ai.utility.DecisionScoreEvaluator;
 
@@ -64,7 +63,7 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
         DECISION dse = rows.get(rowIndex);
         return switch (columnIndex) {
             case 0 -> rowIndex;  // or some ID from dse
-            case 1 -> dse.getAction().getActionName();
+            case 1 -> dse.getName();
             case 2 -> dse.getWeight();
             case 3 -> dse.getDecisionScoreEvaluator().getName();
             default -> null;
@@ -82,8 +81,8 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
 
         switch (columnIndex) {
             case 1:
-                if (aValue instanceof Action action) {
-                    dse.setAction(action);
+                if (aValue instanceof String name) {
+                    dse.setName(name);
                 }
                 break;
             case 2:

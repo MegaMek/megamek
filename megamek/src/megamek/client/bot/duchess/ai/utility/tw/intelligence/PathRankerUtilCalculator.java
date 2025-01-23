@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,21 +13,20 @@
  *
  */
 
-package megamek.ai.utility;
+package megamek.client.bot.duchess.ai.utility.tw.intelligence;
 
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.Coords;
-import megamek.common.InGameObject;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.MovePath;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-public interface World<IN_GAME_OBJECT, TARGETABLE> {
-    List<InGameObject> getInGameObjects();
-    Map<Integer, Integer> getTeamByPlayer();
-    List<IN_GAME_OBJECT> getMyUnits();
-    List<TARGETABLE> getAlliedUnits();
-    List<TARGETABLE> getEnemyUnits();
-    boolean useBooleanOption(String option);
-    boolean contains(Coords position);
+public interface PathRankerUtilCalculator {
+    SimpleIntelligence.FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies);
+
+    double getMovePathSuccessProbability(MovePath path, StringBuilder report);
+
+    int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game);
 }

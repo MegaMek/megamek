@@ -26,14 +26,19 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 @JsonTypeName("TargetWithinRange")
 public class TargetWithinRange extends TWConsideration {
-
+    public static final String descriptionKey = "TargetWithinRange";
     public TargetWithinRange() {
+    }
+
+    @Override
+    public String getDescriptionKey() {
+        return descriptionKey;
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
         var targets = context.getTargets();
-        var firingUnit = context.getCurrentUnit().orElseThrow();
+        var firingUnit = context.getCurrentUnit();
         var maxRange = firingUnit.getMaxWeaponRange();
 
         var distance = targets.stream()

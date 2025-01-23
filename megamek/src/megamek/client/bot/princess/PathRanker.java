@@ -27,6 +27,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.Level;
 
 import java.math.BigDecimal;
@@ -61,7 +62,7 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     private final Princess owner;
-    private final Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
+    protected final Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -72,31 +73,38 @@ public abstract class PathRanker implements IPathRanker {
             Coords friendsCoords);
 
     @Override
-    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
+    public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
             double fallTolerance, List<Entity> enemies,
             List<Entity> friends) {
+        cachedPilotBaseRoll.clear();
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
-            return new ArrayList<>();
+            return new TreeSet<>(Collections.reverseOrder());
         }
 
         // the cached path probability data is really only relevant for one iteration
         // through this method
         getPathRankerState().getPathSuccessProbabilities().clear();
-        cachedPilotBaseRoll.clear();
+        StopWatch stopWatch = StopWatch.createStarted();
+
         // Let's try to whittle down this list.
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
+        stopWatch.split();
         logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
-
+        logger.debug("validPaths: " + stopWatch.toSplitString());
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
         // the anchor point
         Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
+        stopWatch.split();
+        logger.debug("Hotspot: " + stopWatch.toSplitString());
         if (allyCenter == null) {
             allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+            stopWatch.split();
+            logger.debug("calcAllyCenter: " + stopWatch.toSplitString());
         }
-
-        ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
+        stopWatch.split();
+        TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
 
         try {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
@@ -109,6 +117,7 @@ public abstract class PathRanker implements IPathRanker {
                 count = count.add(BigDecimal.ONE);
 
                 RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies, allyCenter);
+                stopWatch.split();
 
                 returnPaths.add(rankedPath);
 
@@ -124,6 +133,8 @@ public abstract class PathRanker implements IPathRanker {
                     }
                     interval = percent.add(new BigDecimal(5));
                 }
+
+                logger.debug("rankPath " + count + "/" + validPaths.size() + " " + stopWatch.toSplitString());
             }
 
             Entity mover = movePaths.get(0).getEntity();
@@ -141,18 +152,20 @@ public abstract class PathRanker implements IPathRanker {
                         game, maxRange, fallTolerance, enemies, friends);
             }
         } catch (Exception ignored) {
+            stopWatch.unsplit();
+            stopWatch.stop();
+            logger.debug("rankPaths: " + stopWatch);
             logger.error(ignored, ignored.getMessage());
             return returnPaths;
         }
-
+        stopWatch.unsplit();
+        stopWatch.stop();
+        logger.debug("rankPaths: " + stopWatch);
         return returnPaths;
     }
 
-    protected List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
-            double fallTolerance) {
+    protected List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange, double fallTolerance) {
         if (startingPathList.isEmpty()) {
-            // Nothing to validate here, might as well return the empty list
-            // straight away.
             return startingPathList;
         }
 
@@ -198,8 +211,7 @@ public abstract class PathRanker implements IPathRanker {
                 // point here
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
-                            inRange);
+                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
                     if (!StringUtility.isNullOrBlank(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
@@ -249,8 +261,8 @@ public abstract class PathRanker implements IPathRanker {
      * @return "Best" out of those paths
      */
     @Override
-    public @Nullable RankedPath getBestPath(List<RankedPath> ps) {
-        return ps.isEmpty() ? null : Collections.max(ps);
+    public @Nullable RankedPath getBestPath(TreeSet<RankedPath> ps) {
+        return ps.isEmpty() ? null : ps.first();
     }
 
     /**

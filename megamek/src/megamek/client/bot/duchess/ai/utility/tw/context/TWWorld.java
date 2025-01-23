@@ -16,9 +16,15 @@
 package megamek.client.bot.duchess.ai.utility.tw.context;
 
 import megamek.ai.utility.World;
+import megamek.client.bot.duchess.ai.utility.tw.Cluster;
+import megamek.client.bot.duchess.ai.utility.tw.ClusteringService;
+import megamek.client.bot.princess.Princess;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.InGameObject;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,12 +33,38 @@ import java.util.Map;
 public class TWWorld implements World<Entity, Entity> {
 
     private final Game game;
-    private final List<Entity> myUnits = new ArrayList<>();
-    private final List<Entity> alliedUnits = new ArrayList<>();
-    private final List<Entity> enemyUnits = new ArrayList<>();
+    private final ClusteringService clusteringService;
+    private final Princess princess;
 
-    public TWWorld(Game game) {
+    public TWWorld(Game game, Princess princess, ClusteringService clusteringService) {
         this.game = game;
+        this.princess = princess;
+        this.clusteringService = clusteringService;
+
+        this.game.addGameListener(new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                if (e.getNewPhase().isInitiative()) {
+                    initializeClusters();
+                }
+            }
+        });
+    }
+
+    public void initializeClusters() {
+        clusteringService.buildClusters(princess.getFriendEntities());
+    }
+
+    public Cluster getEntityCluster(Entity entity) {
+        return clusteringService.getCluster(entity);
+    }
+
+    public Coords getEntityClusterCentroid(Entity entity) {
+        return clusteringService.getClusterMidpoint(entity);
+    }
+
+    public List<Entity> getEntities() {
+        return game.getEntitiesVector();
     }
 
     @Override
@@ -46,40 +78,35 @@ public class TWWorld implements World<Entity, Entity> {
     }
 
     @Override
-    public void setMyUnits(List<Entity> myUnits) {
-        this.myUnits.clear();
-        this.myUnits.addAll(myUnits);
-    }
-
-    @Override
-    public void setAlliedUnits(List<Entity> alliedUnits) {
-        this.alliedUnits.clear();
-        this.alliedUnits.addAll(alliedUnits);
-    }
-
-    @Override
-    public void setEnemyUnits(List<Entity> enemyUnits) {
-        this.enemyUnits.clear();
-        this.enemyUnits.addAll(enemyUnits);
-    }
-
-    @Override
     public List<Entity> getMyUnits() {
-        return myUnits;
+        return princess.getFriendEntities();
     }
 
     @Override
     public List<Entity> getAlliedUnits() {
-        return alliedUnits;
+        return princess.getFriendEntities();
     }
 
     @Override
     public List<Entity> getEnemyUnits() {
-        return enemyUnits;
+        return princess.getEnemyEntities();
     }
 
     @Override
     public boolean useBooleanOption(String option) {
         return game.getOptions().booleanOption(option);
+    }
+
+    @Override
+    public boolean contains(Coords position) {
+        return game.getBoard().contains(position);
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public Cluster getClosestEnemyCluster(Cluster cluster) {
+        return clusteringService.getClosestEnemyCluster(cluster);
     }
 }

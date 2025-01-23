@@ -20,6 +20,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -29,8 +30,8 @@ import megamek.common.Targetable;
 
 public interface IPathRanker {
 
-    ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
-            List<Entity> enemies, List<Entity> friends);
+    TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
+                                  List<Entity> enemies, List<Entity> friends);
 
     /**
      * Performs initialization to help speed later calls of rankPath for this
@@ -58,7 +59,7 @@ public interface IPathRanker {
      * @param ps The list of ranked paths to process
      * @return "Best" out of those paths
      */
-    RankedPath getBestPath(List<RankedPath> ps);
+    RankedPath getBestPath(TreeSet<RankedPath> ps);
 
     /**
      * Find the closest enemy to a unit with a path

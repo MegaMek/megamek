@@ -33,9 +33,9 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = TWDecision.class, name = "TWDecision"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
-
-    private Action action;
+public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
+    private String name;
+    private String description;
     private double weight;
     private DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator;
     @JsonIgnore
@@ -46,23 +46,28 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
     public Decision() {
     }
 
-    public Decision(Action action, double weight, DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
-        this.action = action;
+    public Decision(String name, String description, double weight, DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+        this.name = name;
+        this.description = description;
         this.weight = weight;
         this.decisionScoreEvaluator = decisionScoreEvaluator;
     }
 
     @Override
     public String getName() {
-        return (action.name() + "::" + decisionScoreEvaluator.getName()).replace(" ", "_");
+        return name;
     }
 
-    public Action getAction() {
-        return action;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public double getWeight() {
@@ -100,7 +105,6 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
     @Override
     public String toString() {
         return new StringJoiner(", ", Decision.class.getSimpleName() + " [", "]")
-            .add("action=" + action)
             .add("weight=" + weight)
             .add("score=" + score)
             .add("decisionScoreEvaluator=" + decisionScoreEvaluator)

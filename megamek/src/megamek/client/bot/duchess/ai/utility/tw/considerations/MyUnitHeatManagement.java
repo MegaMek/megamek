@@ -17,20 +17,20 @@ package megamek.client.bot.duchess.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
-import java.util.Map;
+import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if a target is an easy target.
+ * This consideration is used to determine the defense due to the movement.
  */
-@JsonTypeName("MyUnitRoleIs")
-public class MyUnitRoleIs extends TWConsideration {
-    public static final String descriptionKey = "MyUnitRoleIs";
-    public MyUnitRoleIs() {
-        parameters = Map.of("role", UnitRole.AMBUSHER);
-        parameterTypes = Map.of("role", UnitRole.class);
+@JsonTypeName("MyUnitHeatManagement")
+public class MyUnitHeatManagement extends TWConsideration {
+
+    public static final String descriptionKey = "MyUnitHeatManagement";
+
+    public MyUnitHeatManagement() {
     }
 
     @Override
@@ -40,14 +40,10 @@ public class MyUnitRoleIs extends TWConsideration {
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        if (!hasParameter("role")) {
-            return 0d;
-        }
+        TWDecisionContext twContext = (TWDecisionContext) context;
+        var movePath = twContext.getMovePath();
 
-        var currentUnit = context.getCurrentUnit();
-        var role = UnitRole.valueOf(getStringParameter("role"));
-
-        return currentUnit.getRole().equals(role) ? 1d : 0d;
+        return clamp01(0d);
     }
 
 }

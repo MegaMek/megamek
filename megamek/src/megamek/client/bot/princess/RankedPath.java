@@ -20,6 +20,8 @@
 package megamek.client.bot.princess;
 
 import megamek.common.MovePath;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.text.DecimalFormat;
 
@@ -64,6 +66,13 @@ public class RankedPath implements Comparable<RankedPath> {
         this.reason = reason;
     }
 
+    public RankedPath(double r, MovePath p, String reason, double damage) {
+        rank = r;
+        path = p;
+        this.reason = reason;
+        expectedDamage = damage;
+    }
+
     @Override
     public int compareTo(RankedPath p) {
         if (rank < p.rank) {
@@ -72,48 +81,28 @@ public class RankedPath implements Comparable<RankedPath> {
         if (p.rank < rank) {
             return 1;
         }
-        if (path.getKey().hashCode() < p.path.getKey().hashCode()) {
-            return -1;
-        }
-        if (path.getKey().hashCode() > p.path.getKey().hashCode()) {
-            return 1;
-        }
-        return 0;
+        return Integer.compare(p.path.getHexesMoved(), path.getHexesMoved());
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    public boolean equals(Object object) {
+        if (this == object) return true;
 
-        RankedPath that = (RankedPath) o;
+        if (!(object instanceof RankedPath that)) return false;
 
-        if (Double.compare(that.rank, rank) != 0) {
-            return false;
-        }
-        if (!path.equals(that.path)) {
-            return false;
-        }
-        if (reason != null ? !reason.equals(that.reason) : that.reason != null) {
-            return false;
-        }
-
-        return true;
+        return new EqualsBuilder()
+            .append(getRank(), that.getRank())
+            .append(getExpectedDamage(), that.getExpectedDamage())
+            .append(getPath(), that.getPath())
+            .append(getReason(), that.getReason())
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = path.hashCode();
-        temp = Double.doubleToLongBits(rank);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (reason != null ? reason.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+            .append(getPath()).append(getRank()).append(getReason()).append(getExpectedDamage())
+            .toHashCode();
     }
 
     @Override

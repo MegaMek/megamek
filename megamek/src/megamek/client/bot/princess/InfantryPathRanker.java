@@ -127,8 +127,8 @@ public class InfantryPathRanker extends BasicPathRanker {
     }
 
     @Override
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
-                                                  boolean useExtremeRange, boolean useLOSRange) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
+                                                         boolean useExtremeRange, boolean useLOSRange) {
 
         //some preliminary calculations
         final double damageDiscount = 0.25;

@@ -546,6 +546,7 @@ public class TWGameManager extends AbstractGameManager {
         game.getEntitiesVector().stream()
                 .filter(e -> e.getOwnerId() != pid)
                 .filter(Entity::partOfForce)
+                .filter(e -> forces.getForce(e.getForceId()) != null)
                 .filter(e -> forces.getForce(e.getForceId()).getOwnerId() == pid)
                 .forEach(forces::removeEntityFromForces);
 
@@ -9287,7 +9288,8 @@ public class TWGameManager extends AbstractGameManager {
         entity.setFacing(nFacing);
         entity.setSecondaryFacing(nFacing);
 
-        if (entity instanceof IAero aero) {
+        // entity.isAero will check if a unit is a LAM in Fighter mode
+        if (entity instanceof IAero aero && entity.isAero()) {
             entity.setAltitude(elevation);
             if ((elevation == 0) && !entity.isSpaceborne()) {
                 aero.land();

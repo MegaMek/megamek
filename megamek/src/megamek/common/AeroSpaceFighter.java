@@ -104,4 +104,5 @@ public class AeroSpaceFighter extends Aero {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(3.729 + 0.898 * Math.log(getWeight())));
     }
+
 }

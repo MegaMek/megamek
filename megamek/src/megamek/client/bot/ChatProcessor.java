@@ -19,14 +19,7 @@
  */
 package megamek.client.bot;
 
-import java.util.StringTokenizer;
-import java.util.stream.Collectors;
-
-import megamek.client.bot.princess.BehaviorSettings;
-import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.ChatCommands;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.*;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Game;
@@ -38,6 +31,9 @@ import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
+
+import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 public class ChatProcessor {
     private final static MMLogger logger = MMLogger.create(ChatProcessor.class);
@@ -302,7 +298,7 @@ public class ChatProcessor {
         // Adjust fall shame.
         if (command.toLowerCase().startsWith(ChatCommands.CAUTION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid Syntax.  Should be 'princessName : caution : <+/->'.";
+                msg = "Invalid Syntax. " + ChatCommands.CAUTION.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -311,7 +307,11 @@ public class ChatProcessor {
             String adjustment = arguments[0];
             int currentFallShame = princess.getBehaviorSettings().getFallShameIndex();
             int newFallShame = currentFallShame;
-            newFallShame += princess.calculateAdjustment(adjustment);
+            if (StringUtil.isNumeric(adjustment)) {
+                newFallShame = princess.calculateAdjustment(adjustment);
+            } else {
+                newFallShame += princess.calculateAdjustment(adjustment);
+            }
             princess.getBehaviorSettings().setFallShameIndex(newFallShame);
             msg = "Piloting Caution changed from " + currentFallShame + " to " +
                     princess.getBehaviorSettings().getFallShameIndex();
@@ -321,7 +321,7 @@ public class ChatProcessor {
         // Adjust self preservation.
         if (command.toLowerCase().startsWith(ChatCommands.AVOID.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid Syntax.  Should be 'princessName : avoid : <+/->'.";
+                msg = "Invalid Syntax. " + ChatCommands.AVOID.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -330,7 +330,11 @@ public class ChatProcessor {
             String adjustment = arguments[0];
             int currentSelfPreservation = princess.getBehaviorSettings().getSelfPreservationIndex();
             int newSelfPreservation = currentSelfPreservation;
-            newSelfPreservation += princess.calculateAdjustment(adjustment);
+            if (StringUtil.isNumeric(adjustment)) {
+                newSelfPreservation = princess.calculateAdjustment(adjustment);
+            } else {
+                newSelfPreservation += princess.calculateAdjustment(adjustment);
+            }
             princess.getBehaviorSettings().setSelfPreservationIndex(newSelfPreservation);
             msg = "Self Preservation changed from " + currentSelfPreservation + " to " +
                     princess.getBehaviorSettings().getSelfPreservationIndex();
@@ -340,7 +344,7 @@ public class ChatProcessor {
         // Adjust aggression.
         if (command.toLowerCase().startsWith(ChatCommands.AGGRESSION.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid Syntax.  Should be 'princessName : aggression : <+/->'.";
+                msg = "Invalid Syntax. " + ChatCommands.AGGRESSION.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -349,7 +353,11 @@ public class ChatProcessor {
             String adjustment = arguments[0];
             int currentAggression = princess.getBehaviorSettings().getHyperAggressionIndex();
             int newAggression = currentAggression;
-            newAggression += princess.calculateAdjustment(adjustment);
+            if (StringUtil.isNumeric(adjustment)) {
+                newAggression = princess.calculateAdjustment(adjustment);
+            } else {
+                newAggression += princess.calculateAdjustment(adjustment);
+            }
             princess.getBehaviorSettings().setHyperAggressionIndex(newAggression);
             msg = "Aggression changed from " + currentAggression + " to " +
                     princess.getBehaviorSettings().getHyperAggressionIndex();
@@ -360,7 +368,7 @@ public class ChatProcessor {
         // Adjust herd mentality.
         if (command.toLowerCase().startsWith(ChatCommands.HERDING.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid Syntax.  Should be 'princessName : herding : <+/->'.";
+                msg = "Invalid Syntax. " + ChatCommands.HERDING.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -369,7 +377,11 @@ public class ChatProcessor {
             String adjustment = arguments[0];
             int currentHerding = princess.getBehaviorSettings().getHerdMentalityIndex();
             int newHerding = currentHerding;
-            newHerding += princess.calculateAdjustment(adjustment);
+            if (StringUtil.isNumeric(adjustment)) {
+                newHerding = princess.calculateAdjustment(adjustment);
+            } else {
+                newHerding += princess.calculateAdjustment(adjustment);
+            }
             princess.getBehaviorSettings().setHerdMentalityIndex(newHerding);
             msg = "Herding changed from " + currentHerding + " to " +
                     princess.getBehaviorSettings().getHerdMentalityIndex();
@@ -379,7 +391,7 @@ public class ChatProcessor {
         // Adjust bravery.
         if (command.toLowerCase().startsWith(ChatCommands.BRAVERY.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid Syntax.  Should be 'princessName : brave : <+/->'.";
+                msg = "Invalid Syntax. " + ChatCommands.BRAVERY.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -388,7 +400,11 @@ public class ChatProcessor {
             String adjustment = arguments[0];
             int currentBravery = princess.getBehaviorSettings().getBraveryIndex();
             int newBravery = currentBravery;
-            newBravery += princess.calculateAdjustment(adjustment);
+            if (StringUtil.isNumeric(adjustment)) {
+                newBravery = princess.calculateAdjustment(adjustment);
+            } else {
+                newBravery += princess.calculateAdjustment(adjustment);
+            }
             princess.getBehaviorSettings().setBraveryIndex(newBravery);
             msg = "Bravery changed from " + currentBravery + " to " +
                     princess.getBehaviorSettings().getBraveryIndex();
@@ -398,7 +414,7 @@ public class ChatProcessor {
         // Specify a "strategic" building target.
         if (command.toLowerCase().startsWith(ChatCommands.TARGET.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid syntax.  Should be 'princessName : target : hexNumber'.";
+                msg = "Invalid Syntax. " + ChatCommands.TARGET.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -430,7 +446,7 @@ public class ChatProcessor {
         // Specify a priority unit target.
         if (command.toLowerCase().startsWith(ChatCommands.PRIORITIZE.getAbbreviation())) {
             if (arguments == null || arguments.length == 0) {
-                msg = "Invalid syntax.  Should be 'princessName : priority : unitId'.";
+                msg = "Invalid Syntax. " + ChatCommands.PRIORITIZE.getSyntax();
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);
                 return;
@@ -451,9 +467,42 @@ public class ChatProcessor {
         // Specify a priority unit target.
         if (command.toLowerCase().startsWith(ChatCommands.SHOW_DISHONORED.getAbbreviation())) {
             msg = "Dishonored Player ids: " + princess.getHonorUtil().getDishonoredEnemies().stream()
-                    .map(Object::toString).collect(Collectors.joining(", "));
+                .map(Object::toString).collect(Collectors.joining(", "));
             princess.sendChat(msg);
             logger.info(msg);
+        }
+
+        if (command.toLowerCase().startsWith(ChatCommands.BLOOD_FEUD.getAbbreviation())) {
+            if (arguments == null || arguments.length == 0) {
+                msg = "Invalid Syntax. " + ChatCommands.BLOOD_FEUD.getSyntax();
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            String id = arguments[0];
+            if (!StringUtil.isPositiveInteger(id)) {
+                msg = "Invalid player id number: " + id;
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+            var playerId = Integer.parseInt(id);
+            var player = princess.getGame().getPlayer(playerId);
+            if (player != null) {
+                princess.getHonorUtil().setEnemyDishonored(playerId);
+                msg = "Player " + id + " added to the dishonored list.";
+                princess.sendChat(msg);
+            } else {
+                msg = "Player with id " + id + " not found.";
+                logger.warn(msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+            }
+        }
+
+        if (command.toLowerCase().startsWith(ChatCommands.CLEAR_IGNORED_TARGETS.getAbbreviation())) {
+            princess.getBehaviorSettings().clearIgnoredUnitTargets();
+            msg = "Cleared ignored targets list.";
+            princess.sendChat(msg);
         }
     }
 }

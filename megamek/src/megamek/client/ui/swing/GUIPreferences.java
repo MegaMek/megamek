@@ -372,6 +372,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SBFSHEET_VALUEFONT = "SBFSheetValueFont";
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
+    public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
+    public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
+    public static final String BOT_COMMANDS_WIDTH = "BotCommandsWidth";
+    public static final String BOT_COMMANDS_HEIGHT = "BotCommandsHeight";
+    public static final String BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE = "BotCommandsAutoDisplayNonReportPhase";
+    public static final String BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE = "BotCommandsAutoDisplayReportPhase";
+
+
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
     public static String RAT_BV_MIN = "RATBVMin";
@@ -1700,6 +1709,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
+    public void setBotCommandAutoDisplayReportPhase(int i) {
+        store.setValue(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, i);
+    }
+
+    public void setBotCommandAutoDisplayNonReportPhase(int i) {
+        store.setValue(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, i);
+    }
+
     public void toggleForceDisplay() {
         store.setValue(FORCE_DISPLAY_ENABLED, !getBoolean(FORCE_DISPLAY_ENABLED));
     }
@@ -2061,6 +2078,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setMinimapEnabled(!getMinimapEnabled());
     }
 
+    public void toggleBotCommandsEnabled() {
+        setBotCommandsEnabled(!getBotCommandsEnabled());
+    }
+
+    public int getBotCommandsAutoDisplayNonReportPhase() {
+        return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE);
+    }
+    public int getBotCommandsAutoDisplayReportPhase() {
+        return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE);
+    }
+
+
     public void setMinimapPosX(int i) {
         store.setValue(MINI_MAP_POS_X, i);
     }
@@ -2332,6 +2361,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
             ToolTipManager.sharedInstance().setDismissDelay(i);
         }
     }
+
 
     public void setTooltipDistSuppression(int i) {
         store.setValue(TOOLTIP_DIST_SUPRESSION, i);
@@ -3010,6 +3040,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(PLAYERS_REMAINING_TO_SHOW);
     }
 
+    public boolean getBotCommandsEnabled() {
+        return getBoolean(BOT_COMMANDS_ENABLED);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -3220,6 +3254,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayersRemainingToShow(int i) {
         store.setValue(PLAYERS_REMAINING_TO_SHOW, i);
+    }
+
+    public void setBotCommandsEnabled(boolean state) {
+        store.setValue(BOT_COMMANDS_ENABLED, state);
+    }
+
+    public void setBotCommandsPosX(int i) {
+        store.setValue(BOT_COMMANDS_POS_X, i);
+    }
+
+    public void setBotCommandsPosY(int i) {
+        store.setValue(BOT_COMMANDS_POS_Y, i);
+    }
+
+    public int getBotCommandsPosX() {
+        return getInt(BOT_COMMANDS_POS_X);
+    }
+
+    public int getBotCommandsPosY() {
+        return getInt(BOT_COMMANDS_POS_Y);
+    }
+
+    public void setBotCommandsHeight(int i) {
+        store.setValue(BOT_COMMANDS_HEIGHT, i);
+    }
+
+    public int getBotCommandsHeight() {
+        return getInt(BOT_COMMANDS_HEIGHT);
+    }
+
+    public void setBotCommandsWidth(int i) {
+        store.setValue(BOT_COMMANDS_WIDTH, i);
+    }
+
+    public int getBotCommandsWidth() {
+        return getInt(BOT_COMMANDS_WIDTH);
     }
 
     /**

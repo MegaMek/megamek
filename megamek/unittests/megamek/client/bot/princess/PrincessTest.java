@@ -89,10 +89,16 @@ class PrincessTest {
         assertEquals(-2, mockPrincess.calculateAdjustment("--"));
 
         // Test an adjustment with some bad characters.
-        assertEquals(1, mockPrincess.calculateAdjustment("+4"));
+        assertEquals(1, mockPrincess.calculateAdjustment("+p"));
 
-        // Test an adjustment with nothing but bad characters.
-        assertEquals(0, mockPrincess.calculateAdjustment("5"));
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(5, mockPrincess.calculateAdjustment("5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(-5, mockPrincess.calculateAdjustment("-5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(22, mockPrincess.calculateAdjustment("+22"));
 
         // Test an empty ticks argument.
         assertEquals(0, mockPrincess.calculateAdjustment(""));

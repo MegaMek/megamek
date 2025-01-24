@@ -31,7 +31,12 @@ MEGAMEK VERSION HISTORY:
 + PR #6414: Warnings on Campaign Load - MegaMek Portion 
 + Fix #6412: Fix TacOps "Standing Still" modifier description
 + Fix 6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
-
++ PR #6427 & #6428: Fix for Princess not ignoring Hidden and Ignored units. - Scoppio
++ PR #6431: Fix Artemis derivatives getting bonus on indirect fire
++ PR #6430: Renamed Directory ProtomMek Pilots to ProtoMek Pilots in MegaMek to match MekHQ
++ Fix #6359: LAMs now properly consider if they're in fighter mode or not when deploying.
++ PR #6418: new feature: Headless client, Commander GUI, Bot Commands panel
++ PR #6433: Princess - Chat Commands fix
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

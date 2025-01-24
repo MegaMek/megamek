@@ -2896,6 +2896,10 @@ public class Princess extends BotClient {
         if (StringUtility.isNullOrBlank(ticks)) {
             return 0;
         }
+        if (StringUtil.isNumeric(ticks)) {
+            return Integer.parseInt(ticks);
+        }
+
         for (final char tick : ticks.toCharArray()) {
             if (PLUS == tick) {
                 adjustment++;

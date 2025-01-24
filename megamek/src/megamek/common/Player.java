@@ -334,7 +334,7 @@ public final class Player extends TurnOrdered {
         return gameMaster || observer;
     }
 
-    /** set the {@link #observer} flag. Observers have no units ad no team */
+    /** set the {@link #observer} flag. Observers have no units add no team */
     public void setObserver(boolean observer) {
         this.observer = observer;
     }

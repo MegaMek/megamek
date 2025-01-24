@@ -23,28 +23,29 @@ package megamek.client.bot.princess;
  * @since 10/24/2014 9:57 AM
  */
 public enum ChatCommands {
-    FLEE("fl", "princessName: flee", "Causes princess-controlled units to start fleeing the board, regardless of " +
+    FLEE("fl", "princessName: fl", "Flee - Causes princess-controlled units to start fleeing the board, regardless of " +
                                      "damage level or Forced Withdrawal setting."),
-    VERBOSE("ve", "princessName: verbose : <error/warning/info/debug>", "Sets princess's verbosity level."),
-    BEHAVIOR("be", "princessName: behavior : behaviorName", "Change's princess's behavior to the named behavior."),
-    CAUTION("ca", "princessName: caution : <+/->", "Modifies princess's Piloting Caution setting. Each '+' increases " +
+    VERBOSE("ve", "princessName: ve: <error/warning/info/debug>", "Sets princess's verbosity level."),
+    BEHAVIOR("be", "princessName: be: behaviorName", "Behavior - Change's princess's behavior to the named behavior."),
+    CAUTION("ca", "princessName: ca: +/-", "Caution - Modifies princess's Piloting Caution setting. Each '+' increases " +
                                                    "it by 1 and each '-' decreases it by one."),
-    AVOID("av", "princessName: avoid : <+/->", "Modifies princess's Self Preservation setting. Each '+' increases it " +
+    AVOID("av", "princessName: av: +/-", "Avoid - Modifies princess's Self Preservation setting. Each '+' increases it " +
                                                "by 1 and each '-' decreases it by one."),
-    AGGRESSION("ag", "princessName: aggression : <+/->", "Modifies princess's Aggression setting. Each '+' increases " +
+    AGGRESSION("ag", "princessName: ag : +/-", "Aggression - Modifies princess's Aggression setting. Each '+' increases " +
                                                          "it by 1 and each '-' decreases it by one."),
-    HERDING("he", "princessName: herd : <+/->", "Modifies princess's Herding setting. Each '+' increases it by 1 and " +
+    HERDING("he", "princessName: he: +/-", "Herd - Modifies princess's Herding setting. Each '+' increases it by 1 and " +
                                                 "each '-' decreases it by one."),
-    BRAVERY("br", "princessName: brave : <+/->", "Modifies princess's Bravery setting. Each '+' increases it by 1 " +
+    BRAVERY("br", "princessName: br: +/-", "Brave - Modifies princess's Bravery setting. Each '+' increases it by 1 " +
                                                  "and each '-' decreases it by one."),
-    TARGET("ta", "princessName: target : hexNumber", "Adds the specified hex to princess's list of Strategic Targets."),
-    PRIORITIZE("pr", "princessName: prioritize : unitId", "Adds the specified unit to princess's Priority Targets " +
+    TARGET("ta", "princessName: ta: hexNumber", "Target Hex - Adds the specified hex to princess's list of Strategic Targets."),
+    PRIORITIZE("pr", "princessName: pr: unitId", "Priority Target - Adds the specified unit to princess's Priority Targets " +
                                                           "list."),
-    SHOW_BEHAVIOR("sh", "princessName: showBehavior", "Princess will state the name of her current behavior."),
-    LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
-    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID."),
-    SHOW_DISHONORED("di", "princessName: dishonored", "Show the players on the dishonored enemies list.");
-
+    SHOW_BEHAVIOR("sh", "princessName: sh", "Show Behavior - Princess will state the name of her current behavior."),
+    LIST__COMMANDS("li", "princessName: li", "List Commands - Displays this list of commands."),
+    IGNORE_TARGET("ig", "princessName: ig: unitId", "Ignore Target - Will not fire on the entity with this ID."),
+    SHOW_DISHONORED("di", "princessName: di", "Show Dishonored - Show the players on the dishonored enemies list."),
+    CLEAR_IGNORED_TARGETS("cl", "princessName: cl", "Clear Ignored Target - Clears the list of ignored targets."),
+    BLOOD_FEUD("bf", "princessName: bf: playerId", "Blood Feud - Adds player to the dishonored enemies list.");
     private final String abbreviation;
     private final String syntax;
     private final String description;

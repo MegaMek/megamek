@@ -35,6 +35,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6431: Fix Artemis derivatives getting bonus on indirect fire
 + PR #6430: Renamed Directory ProtomMek Pilots to ProtoMek Pilots in MegaMek to match MekHQ
 + Fix #6359: LAMs now properly consider if they're in fighter mode or not when deploying.
++ PR #6418: new feature: Headless client, Commander GUI, Bot Commands panel
++ PR #6433: Princess - Chat Commands fix
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

@@ -1,0 +1,3 @@
+PACAR Commanders GUI is in an experimental state currently, and does not implement
+ many of the necessary features to join a game online, so it is only available on MekHQ for games against the AI,
+ and to use it you must enable the experimental PACAR GUI in the MekHQ Auto-Resolve settings.

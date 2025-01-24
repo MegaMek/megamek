@@ -136,6 +136,10 @@ public abstract class AbstractClient implements IClient {
         return result;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     /** Shuts down threads and sockets */
     @Override
     public synchronized void die() {

@@ -15845,5 +15845,4 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return false;
     }
-
 }

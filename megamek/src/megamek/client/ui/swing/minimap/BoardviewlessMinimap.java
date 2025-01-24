@@ -22,11 +22,11 @@ import megamek.client.ui.swing.overlay.IFF;
 import megamek.client.ui.swing.overlay.OverlayPainter;
 import megamek.client.ui.swing.overlay.OverlayPanel;
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,11 +53,9 @@ import static megamek.common.Terrains.FUEL_TANK;
 public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     private final Client client;
     private final IGame game;
-    private final List<Blip> blips;
     private final List<Blip> removedUnits;
     private final List<Line> lines;
-    private final List<Line> attackLines;
-    private final List<Line> artilleryAttackLines;
+    private final List<Line> attackActions;
     private final List<OverlayPanel> overlays;
 
     private record Blip(int x, int y, String code, IFF iff , Color color, int round) {};
@@ -71,17 +69,16 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     private int mSize = -1;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private static final int[] UNIT_SCALE = { 7, 8, 9, 11, 12, 14, 16 };
     private final int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
-    private final int symbolsDisplayMode = GUIP.getMinimapSymbolsDisplayMode();
 
     private static final int SHOW_NO_HEIGHT = 0;
     private static final int SHOW_GROUND_HEIGHT = 1;
     private static final int SHOW_BUILDING_HEIGHT = 2;
     private static final int SHOW_TOTAL_HEIGHT = 3;
 
-    private static final int SHOW_SYMBOLS = 0;
+    private int currentRound = -1;
 
     private final Map<Coords, Integer> multiUnits = new HashMap<>();
     private static final String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
@@ -100,11 +97,9 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         this.client = client;
         this.game = client.getGame();
         this.overlays = new ArrayList<>();
-        this.blips = new ArrayList<>();
         this.removedUnits = new ArrayList<>();
         this.lines = new ArrayList<>();
-        this.attackLines = new ArrayList<>();
-        this.artilleryAttackLines = new ArrayList<>();
+        this.attackActions = new ArrayList<>();
 
         this.game.addGameListener(new GameListenerAdapter() {
             @Override
@@ -114,13 +109,14 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (e.getNewPhase() == GamePhase.MOVEMENT_REPORT) {
-                    update();
-                } else if (e.getNewPhase() == GamePhase.FIRING_REPORT) {
-                    update();
-                } else if (e.getNewPhase() == GamePhase.END) {
-                    update();
-                }
+                update();
+//                if (e.getNewPhase() == GamePhase.MOVEMENT_REPORT) {
+//                    update();
+//                } else if (e.getNewPhase() == GamePhase.FIRING_REPORT) {
+//                    update();
+//                } else if (e.getNewPhase() == GamePhase.END) {
+//                    update();
+//                }
             }
 
             @Override
@@ -136,10 +132,12 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                             IFF.getIFFStatus(e.getEntity(), client.getLocalPlayer()),
                             e.getEntity().getOwner().getColour().getColour(),
                             game.getCurrentRound()));
+                update();
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
+                currentRound = game.getCurrentRound();
                 update();
             }
 
@@ -155,8 +153,23 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             public void gameNewAction(GameNewActionEvent e) {
                 EntityAction entityAction = e.getAction();
                 if (entityAction instanceof AttackAction attackAction) {
-                    addAttack(attackAction);
+                    Entity source = ((Game)game).getEntity(attackAction.getEntityId());
+                    Targetable target = ((Game)game).getTarget(attackAction.getTargetType(), attackAction.getTargetId());
+                    // sanity check...
+                    if ((null == source) || (null == target)) {
+                        return;
+                    }
+
+                    if (attackAction.getTargetType() == Targetable.TYPE_INARC_POD) {
+                        // iNarc pods don't have a position
+                        return;
+                    }
+                    attackActions.add(new Line(source.getPosition().getX(), source.getPosition().getY(),
+                        target.getPosition().getX(), target.getPosition().getY(),
+                        source.getOwner().getColour().getColour(),
+                        game.getCurrentRound()));
                 }
+
             }
         });
 
@@ -189,23 +202,6 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     }
 
     public void update() {
-        blips.clear();
-        for (var inGameObject : game.getInGameObjects()) {
-            if (inGameObject instanceof Entity entity) {
-                if (!entity.isActive() || entity.getPosition() == null) {
-                    continue;
-                }
-                var coord = entity.getPosition();
-                blips.add(
-                    new Blip(
-                        coord.getX(),
-                        coord.getY(),
-                        entity.getDisplayName() + " ID:" + entity.getId(),
-                        IFF.getIFFStatus(entity, client.getLocalPlayer()),
-                        entity.getOwner().getColour().getColour(),
-                        game.getCurrentRound()));
-            }
-        }
         updateUI();
     }
 
@@ -220,8 +216,6 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         g.drawPolyline(xs, ys, 3);
     }
 
-    private static final Color BG_COLOR = new Color(0x151a15);
-
     private BufferedImage boardImage = null;
     private boolean boardNeedsRedraw = true;
     int size = -1;
@@ -232,16 +226,22 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         var height = getHeight();
         var width = getWidth();
         var board = client.getGame().getBoard();
-        g.setColor(BG_COLOR);
+        g.setColor(UIManager.getColor("Table.background"));
         g.fillRect(0, 0, width, height);
 
         // 1) Create or re-create the cached board image if needed
         if (boardImage == null
             || boardNeedsRedraw
             || size == -1) {
+            if (game.getBoard().getHeight() == 0 || game.getBoard().getWidth() == 0) {
+                return;
+            }
             boardNeedsRedraw = false;
-            boardImage = Minimap.getMinimapImageMaxZoom(board);
-            size = Math.min(boardImage.getHeight() / game.getBoard().getHeight(), boardImage.getWidth() / game.getBoard().getWidth());
+
+            boardImage = Minimap.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getStrategicViewTheme());
+            size = Math.min(
+                boardImage.getHeight() / game.getBoard().getHeight(),
+                boardImage.getWidth() / game.getBoard().getWidth());
         }
 
         // 2) Draw the pre-rendered board image
@@ -256,90 +256,60 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
 
         // 3) Movement lines
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setStroke(new BasicStroke(2));
-        for (var line : lines) {
-            var delta =  Math.max(1, game.getCurrentRound() - line.round + 1);
-            var newColor = new Color(line.color.getRed(),
-                    line.color.getGreen(),
-                    line.color.getBlue(),
-                    (int) (line.color.getAlpha() / (double) delta));
-
-            g2d.setColor(newColor);
-            var p1 = this.projectToView(line.x1, line.y1);
-            var p2 = this.projectToView(line.x2, line.y2);
-            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-        }
-
-        // 4) Draw attack lines
-        Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-            0, new float[]{14}, 0);
+        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+            0, new float[]{6}, 3);
         g2d.setStroke(dashed);
-        for (var line : attackLines) {
-            var delta =  Math.max(1, game.getCurrentRound() - line.round);
-            var newColor = new Color(line.color.getRed(),
-                line.color.getGreen(),
-                line.color.getBlue(),
-                (int) (line.color.getAlpha() / (double) delta));
-            if (!g2d.getColor().equals(newColor)) {
-                g2d.setColor(newColor);
-            }
+        for (var line : lines) {
+            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
+
+            g.setColor(fadeColor(line.color.darker(), delta));
+            g2d.setColor(fadeColor(line.color.darker(), delta));
             var p1 = this.projectToView(line.x1, line.y1);
             var p2 = this.projectToView(line.x2, line.y2);
             g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
         }
-        for (var arty : artilleryAttackLines) {
-            var delta =  Math.max(1, game.getCurrentRound() - arty.round);
-            var newColor = new Color(arty.color.getRed(),
-                arty.color.getGreen(),
-                arty.color.getBlue(),
-                (int) (arty.color.getAlpha() / (double) delta));
-            if (!g2d.getColor().equals(newColor)) {
-                g2d.setColor(newColor);
-            }
-            var p1 = this.projectToView(arty.x1, arty.y1);
-            var p2 = this.projectToView(arty.x2, arty.y2);
-            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
+        lines.removeIf(line -> line.round < currentRound - 4);
+        // 4) Draw attack lines
 
-        }
+//        for (var line : attackLines) {
+//            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
+//            var newColor = new Color(line.color.getRed(),
+//                line.color.getGreen(),
+//                line.color.getBlue(),
+//                (int) (line.color.getAlpha() / (double) delta));
+//            if (!g2d.getColor().equals(newColor)) {
+//                g2d.setColor(newColor);
+//            }
+//            var p1 = this.projectToView(line.x1, line.y1);
+//            var p2 = this.projectToView(line.x2, line.y2);
+//            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
+//            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
+//        }
         g2d.dispose();
+
+
+
+        for (var attackAction : attackActions) {
+            paintAttack(g, attackAction);
+        }
+
+        attackActions.removeIf(timedAction -> timedAction.round < currentRound - 2);
 
         // 5) Draw destroyed units
         for (var blip : removedUnits) {
-            var color = blip.iff().getDarkColor();
-            var delta = Math.max(1, game.getCurrentRound() + 1 - blip.round);
-            var newColor = new Color(color.getRed(),
-                    color.getGreen(),
-                    color.getBlue(),
-                    (int) (color.getAlpha() / (double) delta));
+            var delta = Math.max(1, (game.getCurrentRound() + 1 - blip.round) * 2);
             var p1 = this.projectToView(blip.x, blip.y);
-            g.setColor(newColor);
+            g.setColor(fadeColor(blip.iff().getDarkColor(), delta));
             g.drawRect(p1[0] - 4 + xOffset, p1[1] - 4 + yOffset, 9, 9);
             g.drawString(blip.code, p1[0] - 10 + xOffset, p1[1] - 15 + yOffset);
         }
 
-        // 6) Draw live units
-        for (var blip : blips) {
-            g.setColor(blip.iff().getColor());
-            var p1 = this.projectToView(blip.x, blip.y);
-            g.fillRect(p1[0] - 6 + xOffset, p1[1] - 6 + yOffset, 13, 13);
-            g.setColor(new Color(blip.color.getRed(),
-                    blip.color.getGreen(),
-                    blip.color.getBlue(),
-                    255));
-            g.fillRect(p1[0] - 4 + xOffset, p1[1] - 4 + yOffset, 9, 9);
-            g.drawString(blip.code, p1[0] - 10 + xOffset, p1[1] - 15 + yOffset);
-        }
-
         // 7) Draw unit symbols
-        if (symbolsDisplayMode == SHOW_SYMBOLS) {
-            multiUnits.clear();
-            for (var inGameObject : game.getInGameObjects()) {
-                if (inGameObject instanceof Entity entity) {
-                    if (entity.getPosition() != null) {
-                        paintUnit(g, entity);
-                    }
+        multiUnits.clear();
+        for (var inGameObject : game.getInGameObjects()) {
+            if (inGameObject instanceof Entity entity) {
+                if (entity.getPosition() != null) {
+                    paintUnit(g, entity);
                 }
             }
         }
@@ -374,6 +344,41 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             g.setColor(Color.white);
             g.drawString(sHeight, baseX + 5 + xOffset, baseY + 5 + yOffset);
         }
+    }
+    private void paintAttack(Graphics g, Line attackAction) {
+        int[] xPoints = new int[4];
+        int[] yPoints = new int[4];
+
+        xPoints[0] = ((attackAction.x1 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
+            + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 +xOffset;
+        yPoints[0] = (((2 * attackAction.y1) + 1 + (attackAction.x1 % 2))
+            * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
+        xPoints[1] = ((attackAction.x2 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]))
+            + leftMargin + ((int) (1.5 * HEX_SIDE[zoom]))) - 2 + xOffset;
+        yPoints[1] = (((2 * attackAction.y2) + 1 + (attackAction.x2 % 2))
+            * HEX_SIDE_BY_COS30[zoom]) + topMargin + yOffset;
+        xPoints[2] = xPoints[1] + 2;
+        xPoints[3] = xPoints[0] + 2;
+        if (((attackAction.x1 > attackAction.x2) && (attackAction.y1 < attackAction.y2))
+            || ((attackAction.x1 < attackAction.x2) && (attackAction.y1 > attackAction.y2))) {
+            yPoints[3] = yPoints[0] + 2;
+            yPoints[2] = yPoints[1] + 2;
+        } else {
+            yPoints[3] = yPoints[0] - 2;
+            yPoints[2] = yPoints[1] - 2;
+        }
+        var delta = Math.max(1, (game.getCurrentRound() + 1 - attackAction.round) * 2);
+        g.setColor(fadeColor(attackAction.color, delta));
+        g.fillPolygon(xPoints, yPoints, 4);
+        g.setColor(fadeColor(Color.black, delta));
+        g.drawPolygon(xPoints, yPoints, 4);
+    }
+
+    private static Color fadeColor(Color color, double alphaDivisor) {
+        return new Color(color.getRed(),
+            color.getGreen(),
+            color.getBlue(),
+            (int) (color.getAlpha() / alphaDivisor));
     }
 
     /** Draws a red crosshair for artillery autohit hexes (predesignated only). */
@@ -421,6 +426,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         if (GUIP.getTeamColoring()) {
             boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
             boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
+//            iconColor = IFF.getPlayerIff(client.getLocalPlayer(), entity.getOwner()).getColor();
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
             } else if (isLocalTeam) {
@@ -535,51 +541,13 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         return new int[]{baseX, baseY};
     }
 
-    public void addAttack(AttackAction ea) {
-        var attacker = ea.getEntityId();
-        var target = ea.getTargetId();
-        if (ea instanceof ArtilleryAttackAction artilleryAttackAction) {
-            if (game.getInGameObject(attacker).isPresent()) {
-                var attackerEntity = (Entity) game.getInGameObject(attacker).get();
-                var attackerPos = attackerEntity.getPosition();
-                if (attackerPos != null && artilleryAttackAction.getCoords() != null) {
-                    artilleryAttackLines.add(
-                        new Line(attackerPos.getX(), attackerPos.getY(),
-                            artilleryAttackAction.getCoords().getX(),
-                            artilleryAttackAction.getCoords().getY(),
-                            attackerEntity.getOwner().getColour().getColour(),
-                            game.getCurrentRound() + artilleryAttackAction.getTurnsTilHit()));
-                } else if (attackerPos == null && artilleryAttackAction.getCoords() != null) {
-                    artilleryAttackLines.add(
-                        new Line(-1, -1,
-                            artilleryAttackAction.getCoords().getX(),
-                            artilleryAttackAction.getCoords().getY(),
-                            attackerEntity.getOwner().getColour().getColour(),
-                            game.getCurrentRound() + artilleryAttackAction.getTurnsTilHit()));
-                }
-            }
-        } else if (game.getInGameObject(attacker).isPresent() && game.getInGameObject(target).isPresent()) {
-            var attackerEntity = (Entity) game.getInGameObject(attacker).get();
-            var targetEntity = (Entity) game.getInGameObject(target).get();
-            var attackerPos = attackerEntity.getPosition();
-            var targetPos = targetEntity.getPosition();
-            if (attackerPos != null && targetPos != null) {
-                attackLines.add(
-                    new Line(attackerPos.getX(), attackerPos.getY(),
-                        targetPos.getX(), targetPos.getY(),
-                        attackerEntity.getOwner().getColour().getColour(),
-                        game.getCurrentRound()));
-            }
-        }
-    }
-
     public void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
         Coords previousCoords = entity.getPosition();
         for (var unitLocation : unitLocations) {
             var coords = unitLocation.getCoords();
             lines.add(new Line(previousCoords.getX(), previousCoords.getY(),
                 coords.getX(), coords.getY(),
-                Color.BLACK,
+                Color.GREEN,
                 game.getCurrentRound()));
             previousCoords = coords;
         }

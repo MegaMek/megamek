@@ -49,10 +49,6 @@ public class HeadlessClient extends Client {
     private boolean sendDoneOnVictoryAutomatically = true;
 
     public HeadlessClient(String name, String host, int port) {
-        this(name, host, port, 10);
-    }
-
-    public HeadlessClient(String name, String host, int port, int maxIdleCounter) {
         super(name, host, port);
 
         // Make a list of the player's living units.
@@ -87,8 +83,13 @@ public class HeadlessClient extends Client {
                     String sLogDir = PREFERENCES.getLogDirectory();
                     File logDir = new File(sLogDir);
                     if (!logDir.exists()) {
-                        // noinspection ResultOfMethodCallIgnored
-                        logDir.mkdir();
+                        try {
+                            // noinspection ResultOfMethodCallIgnored
+                            logDir.mkdir();
+                        } catch (SecurityException ex) {
+                            logger.error(ex, "Failed to create log directory");
+                            return;
+                        }
                     }
                     String fileName = CG_FILENAMESALVAGE + CG_FILEEXTENTIONMUL;
                     if (PREFERENCES.stampFilenames()) {

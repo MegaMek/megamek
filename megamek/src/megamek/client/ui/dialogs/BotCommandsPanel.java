@@ -302,8 +302,8 @@ public class BotCommandsPanel extends JPanel {
 
     private void carefulAimManeuver(Player botPlayer) {
         setAvoid(botPlayer, 6);
-        setBravery(botPlayer, 3);
-        setHyperAggression(botPlayer, 5);
+        setBravery(botPlayer, 8);
+        setHyperAggression(botPlayer, 3);
         setFallShame(botPlayer, 7);
     }
 
@@ -315,17 +315,17 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void fallBackManeuver(Player botPlayer) {
-        setAvoid(botPlayer, 10);
+        setAvoid(botPlayer, 8);
         setBravery(botPlayer, 3);
-        setHyperAggression(botPlayer, 5);
-        setFallShame(botPlayer, 3);
+        setHyperAggression(botPlayer, 3);
+        setFallShame(botPlayer, 7);
     }
 
     private void finalGloryManeuver(Player botPlayer) {
         setAvoid(botPlayer, 0);
         setBravery(botPlayer, 10);
         setHyperAggression(botPlayer, 10);
-        setFallShame(botPlayer, 3);
+        setFallShame(botPlayer, 6);
     }
 
     private void doubleTimeMarchManeuver(Player botPlayer) {
@@ -341,7 +341,7 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void looseFormationManeuver(Player botPlayer) {
-        setHerdMentality(botPlayer, 5);
+        setHerdMentality(botPlayer, 3);
     }
 
     private void tightFormationManeuver(Player botPlayer) {
@@ -349,8 +349,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private void stayAtRangeManeuver(Player botPlayer) {
-        setBravery(botPlayer, 4);
-        setHyperAggression(botPlayer, 10);
+        setBravery(botPlayer, 8);
+        setHyperAggression(botPlayer, 3);
         setAvoid(botPlayer, 7);
     }
 

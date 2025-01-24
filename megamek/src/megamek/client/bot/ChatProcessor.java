@@ -466,9 +466,10 @@ public class ChatProcessor {
                 princess.sendChat(msg);
                 return;
             }
-            var player = princess.getGame().getPlayer(Integer.parseInt(id));
+            var playerId = Integer.parseInt(id);
+            var player = princess.getGame().getPlayer(playerId);
             if (player != null) {
-                princess.getHonorUtil().setEnemyDishonored(Integer.parseInt(id));
+                princess.getHonorUtil().setEnemyDishonored(playerId);
                 msg = "Player " + id + " added to the dishonored list.";
                 princess.sendChat(msg);
             } else {

@@ -95,6 +95,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         while (alive) {
             currentNanos = System.nanoTime();
             elapsedNanos = currentNanos - previousNanos;
+            // keeps around 60fps, not that it is important now, but anyway
             tick(elapsedNanos / 1_000_000);
             previousNanos = currentNanos;
             awaitMillis = (targetFrameTimeNanos - elapsedNanos) / 1_000_000;
@@ -107,6 +108,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         }
     }
 
+    @SuppressWarnings("unused")
     private void tick(long deltaTime) {
         // nothing to do here for now
     }

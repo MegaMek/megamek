@@ -28,18 +28,18 @@ public class SpaceStation extends Jumpship {
 
     // This only affects cost, but may have an effect in a large-scale strategic setting.
     private boolean modularOrKFAdapter = false;
-    
+
     @Override
     public int getUnitType() {
         return UnitType.SPACE_STATION;
     }
-    
+
     public SpaceStation() {
         super();
         setDriveCoreType(DRIVE_CORE_NONE);
         setSail(false);
     }
-    
+
     private static final TechAdvancement TA_SPACE_STATION = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES)
             .setTechRating(RATING_D)
@@ -85,7 +85,7 @@ public class SpaceStation extends Jumpship {
     public void setModularOrKFAdapter(boolean modularOrKFAdapter) {
         this.modularOrKFAdapter = modularOrKFAdapter;
     }
-    
+
     /**
      * @return True if this space station has a modular construction (or has a KF adapter for stations less than 100kt,
      *         otherwise false.

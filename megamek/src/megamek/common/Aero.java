@@ -1804,7 +1804,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-    
+
      */
     @Override
     public void setOmni(boolean omni) {

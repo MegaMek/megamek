@@ -87,5 +87,10 @@ public class SimulatedClient implements IClient {
     public void sendChat(String message) {}
 
     @Override
+    public void sendPause() {
+        //
+    }
+
+    @Override
     public void die() {}
 }

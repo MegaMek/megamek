@@ -28,7 +28,6 @@ import java.util.List;
  */
 public class SingletonForces extends ForceConsolidation {
 
-
     @Override
     public void consolidateForces(IGame game) {
 

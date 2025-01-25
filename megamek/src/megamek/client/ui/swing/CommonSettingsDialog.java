@@ -422,6 +422,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox<String> playerListAutoDisplayNonReportCombo;
     private JComboBox<String> forceDisplayAutoDisplayReportCombo;
     private JComboBox<String> forceDisplayAutoDisplayNonReportCombo;
+    private JComboBox<String> botCommandsAutoDisplayReportCombo;
+    private JComboBox<String> botCommandsAutoDisplayNonReportCombo;
     private JCheckBox displayMoveDisplayDuringMovePhases;
     private JCheckBox displayFireDisplayDuringFirePhases;
 
@@ -2227,6 +2229,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
         forceDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayReportPhase());
         forceDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayNonReportPhase());
+        botCommandsAutoDisplayReportCombo.setSelectedItem(GUIP.getBotCommandsAutoDisplayReportPhase());
+        botCommandsAutoDisplayNonReportCombo.setSelectedItem(GUIP.getBotCommandsAutoDisplayNonReportPhase());
         displayMoveDisplayDuringMovePhases.setSelected(GUIP.getMoveDisplayTabDuringMovePhases());
         displayFireDisplayDuringFirePhases.setSelected(GUIP.getFireDisplayTabDuringFiringPhases());
 
@@ -2666,6 +2670,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
         GUIP.setForceDisplayAutoDisplayReportPhase(forceDisplayAutoDisplayReportCombo.getSelectedIndex());
         GUIP.setForceDisplayAutoDisplayNonReportPhase(forceDisplayAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setBotCommandAutoDisplayReportPhase(botCommandsAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setBotCommandAutoDisplayNonReportPhase(botCommandsAutoDisplayNonReportCombo.getSelectedIndex());
         GUIP.setMoveDisplayTabDuringMovePhases(displayMoveDisplayDuringMovePhases.isSelected());
         GUIP.setFireDisplayTabDuringFiringPhases(displayFireDisplayDuringFirePhases.isSelected());
 
@@ -3161,6 +3167,26 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(row);
 
         addLineSpacer(comps);
+
+        row = new ArrayList<>();
+        JLabel botCommandsLabel = new JLabel(Messages.getString("CommonMenuBar.viewBotCommands"));
+        row.add(botCommandsLabel);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
+        row.add(phaseLabel);
+        botCommandsAutoDisplayReportCombo = createHideShowComboBox(GUIP.getBotCommandsAutoDisplayReportPhase());
+        row.add(botCommandsAutoDisplayReportCombo);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
+        row.add(phaseLabel);
+        botCommandsAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getBotCommandsAutoDisplayNonReportPhase());
+        row.add(botCommandsAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
 
         // Firing/Movement Display changes
         row = new ArrayList<>();

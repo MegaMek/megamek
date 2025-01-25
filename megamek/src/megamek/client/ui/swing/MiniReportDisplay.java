@@ -56,23 +56,27 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private JComboBox<String> comboPlayer = new JComboBox<>();
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
-    private ClientGUI currentClientgui;
+    private IClientGUI currentClientgui;
     private Client currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(ClientGUI clientgui) {
+    public MiniReportDisplay(IClientGUI clientgui) {
 
         if (clientgui == null) {
             return;
         }
 
         currentClientgui = clientgui;
-        currentClient = clientgui.getClient();
-        currentClient.getGame().addGameListener(gameListener);
+        if (clientgui.getClient() instanceof Client) {
+            currentClient = (Client) clientgui.getClient();
+        } else {
+            return;
+        }
 
+        currentClient.getGame().addGameListener(gameListener);
         butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
         butSwitchLocation.addActionListener(this);
         butPlayerSearchUp = new JButton(Messages.getString("MiniReportDisplay.ArrowUp"));
@@ -337,13 +341,18 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 } catch (Exception ex) {
                     id = -1;
                 }
-                Entity ent = currentClientgui.getClient().getGame().getEntity(id);
-                if (ent != null) {
-                    currentClientgui.getUnitDisplay().displayEntity(ent);
-                    GUIP.setUnitDisplayEnabled(true);
-                    if (ent.isDeployed() && !ent.isOffBoard() && ent.getPosition() != null) {
-                        currentClientgui.getBoardView().centerOnHex(ent.getPosition());
+                var optionalEntity = currentClientgui.getClient().getGame().getInGameObject(id);
+                if (optionalEntity.isPresent() && optionalEntity.get() instanceof Entity entity) {
+                    if (currentClientgui instanceof IHasUnitDisplay) {
+                        ((IHasUnitDisplay) currentClientgui).getUnitDisplay().displayEntity(entity);
+                        GUIP.setUnitDisplayEnabled(true);
+                        if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
+                            if (currentClientgui instanceof IHasBoardView) {
+                                ((IHasBoardView) currentClientgui).getBoardView().centerOnHex(entity.getPosition());
+                            }
+                        }
                     }
+
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

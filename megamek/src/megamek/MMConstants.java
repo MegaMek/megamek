@@ -78,6 +78,7 @@ public final class MMConstants extends SuiteConstants {
     public static final int MAX_PORT = 65535;
     public static final String DEFAULT_PLAYERNAME = "Player";
     public static final String LOCALHOST = "localhost";
+    public static final String LOCALHOST_IP = "127.0.0.1";
     // endregion ClientServer
 
     // region SaveGame
@@ -102,6 +103,6 @@ public final class MMConstants extends SuiteConstants {
     public static final int TSEMP_EFFECT_INTERFERENCE = 1;
     public static final int TSEMP_EFFECT_SHUTDOWN = 2;
     // endregion Magic Numbers That Should Be Enums
-    
+
     public static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
 }

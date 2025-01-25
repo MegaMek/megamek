@@ -25,6 +25,8 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
 import megamek.server.ServerHelper;
 
+import java.util.Vector;
+
 class TWPhaseEndManager {
 
     private final TWGameManager gameManager;
@@ -140,10 +142,12 @@ class TWPhaseEndManager {
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
+                Vector<Report> pilotingRollsFromDamage = gameManager.resolvePilotingRolls();
                 gameManager.checkForFlawedCooling();
                 // check phase report
-                if (gameManager.getvPhaseReport().size() > 1) {
+                if (gameManager.getvPhaseReport().size() + pilotingRollsFromDamage.size() > 1) {
                     gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(pilotingRollsFromDamage);
                     gameManager.changePhase(GamePhase.FIRING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label

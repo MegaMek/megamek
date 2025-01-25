@@ -41,6 +41,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6390: Units switching from multi-hex to single-hex and vice-versa
 + Fix #6389: Dropships in Movement phase cannot Assault Drop more units per turn than possible
 + PR #6432: Fix/princess should favor moving #6432
++ Fix #2457: Aero units on ground maps should use TO:AR visual range tables
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

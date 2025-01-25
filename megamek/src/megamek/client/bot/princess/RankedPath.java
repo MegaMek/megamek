@@ -81,7 +81,7 @@ public class RankedPath implements Comparable<RankedPath> {
         if (p.rank < rank) {
             return 1;
         }
-        return Integer.compare(p.path.getHexesMoved(), path.getHexesMoved());
+        return Integer.compare(path.getHexesMoved(), p.path.getHexesMoved());
     }
 
     @Override

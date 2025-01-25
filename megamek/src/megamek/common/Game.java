@@ -1571,16 +1571,16 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
      *
-     * @param c      The <code>Coords</code> of the hex in which the accidental fall
+     * @param coords      The <code>Coords</code> of the hex in which the accidental fall
      *               from above happens
      * @param ignore The entity who is falling, so shouldn't be returned
      * @return The <code>Entity</code> that should be an AFFA target.
      */
-    public @Nullable Entity getAffaTarget(Coords c, Entity ignore) {
+    public @Nullable Entity getAffaTarget(Coords coords, Entity ignore) {
         Vector<Entity> vector = new Vector<>();
-        if (getBoard().contains(c)) {
-            Hex hex = getBoard().getHex(c);
-            for (Entity entity : getEntitiesVector(c)) {
+        if (getBoard().contains(coords)) {
+            Hex hex = getBoard().getHex(coords);
+            for (Entity entity : getEntitiesVector(coords)) {
                 if (entity.isTargetable()
                     && ((entity.getElevation() == 0) // Standing on hex surface
                     || (entity.getElevation() == -hex.depth())) // Standing on hex floor
@@ -3273,6 +3273,31 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
 
     public void removeCompletelyDissipatedSmokeClouds() {
         smokeCloudList.removeIf(SmokeCloud::isCompletelyDissipated);
+    }
+
+    /**
+     * Only needed for Entity's that have secondaryPositions. This method
+     * is used to make sure setPosition() doesn't get an inaccurate list
+     * of positions for an entity that changed from between
+     * using secondaryPositions and not, such as a Dropship taking off.
+     * Iterates through all cached coords to get where the provided entity is.
+     * Inefficient, and usually unnecessary.
+     * @see Dropship#setPosition(Coords)
+     * @param entity Entity we want to get the cached old positions of
+     * @return cached coords that contain this entity
+     */
+    public synchronized HashSet<Coords> getEntityPositions(Entity entity) {
+        HashSet<Coords> retVal = new HashSet<>();
+        if (entityPosLookup.isEmpty()) {
+            return retVal;
+        }
+
+        for (Coords coords : entityPosLookup.keySet()) {
+            if (entityPosLookup.get(coords).contains(entity.getId())) {
+                retVal.add(coords);
+            }
+        }
+        return retVal;
     }
 
     /**

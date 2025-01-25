@@ -33,7 +33,7 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FavoriteTargetInRange extends TWConsideration {
     public static final String roleParam = "role";
     private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("UnitRole"));
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
 
     public FavoriteTargetInRange() {
         parameters = Map.of(roleParam, UnitRole.UNDETERMINED);

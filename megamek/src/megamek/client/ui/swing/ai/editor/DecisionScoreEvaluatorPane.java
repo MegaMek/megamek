@@ -15,8 +15,6 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.ui.Messages;
@@ -25,7 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -82,17 +79,25 @@ public class DecisionScoreEvaluatorPane extends JPanel {
 
     public void addEmptyConsideration() {
         considerationsPane.removeAll();
-        considerationsPane.setLayout(new GridLayoutManager((considerationPaneList.size() + 1) * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        int row = 0;
+
+        considerationsPane.setLayout(new GridBagLayout());
+        var gbc = new GridBagConstraints();
         var emptyConsideration = new ConsiderationPane();
         emptyConsideration.setEmptyConsideration();
         emptyConsideration.setHoverStateModel(hoverStateModel);
-        considerationsPane.add(emptyConsideration, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        // add new consideration at the top of the screen
+        considerationsPane.add(emptyConsideration, gbc);
+        gbc.gridy++;
+        considerationsPane.add(new JSeparator(), gbc);
+        gbc.gridy++;
+        // reinsert old considerations to the screen
         for (var c : considerationPaneList) {
-            considerationsPane.add(c, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-            considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+            considerationsPane.add(c, gbc);
+            gbc.gridy++;
+            considerationsPane.add(new JSeparator(), gbc);
+            gbc.gridy++;
         }
+        // add new consideration at the top of the list
         considerationPaneList.add(0, emptyConsideration);
     }
 
@@ -111,17 +116,18 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         considerationsPane.removeAll();
 
         var considerations = dse.getConsiderations();
-        considerationsPane.setLayout(new GridLayoutManager(considerations.size() * 2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationsPane.setLayout(new GridBagLayout());
         considerationPaneList.clear();
-
-        int row = 0;
+        var gbc = new GridBagConstraints();
         for (var consideration : considerations) {
             var c = new ConsiderationPane();
             c.setConsideration(consideration);
             c.setHoverStateModel(hoverStateModel);
             considerationPaneList.add(c);
-            considerationsPane.add(c, new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-            considerationsPane.add(new JSeparator(), new GridConstraints(row++, 0, 1, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+            considerationsPane.add(c, gbc);
+            gbc.gridy++;
+            considerationsPane.add(new JSeparator(), gbc);
+            gbc.gridy++;
         }
         this.updateUI();
     }
@@ -131,65 +137,107 @@ public class DecisionScoreEvaluatorPane extends JPanel {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
-     *
+     * @noinspection ALL
      */
     private void $$$setupUI$$$() {
         decisionScoreEvaluatorPane = new JPanel();
-        decisionScoreEvaluatorPane.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
+        decisionScoreEvaluatorPane.setLayout(new GridBagLayout());
         nameField = new JTextField();
-        decisionScoreEvaluatorPane.add(nameField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        decisionScoreEvaluatorPane.add(nameField, gbc);
         descriptionField = new JTextField();
-        decisionScoreEvaluatorPane.add(descriptionField, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        decisionScoreEvaluatorPane.add(descriptionField, gbc);
         notesField = new JTextField();
-        decisionScoreEvaluatorPane.add(notesField, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        decisionScoreEvaluatorPane.add(notesField, gbc);
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setHorizontalScrollBarPolicy(31);
         scrollPane1.setMaximumSize(new Dimension(800, 32767));
         scrollPane1.setMinimumSize(new Dimension(800, 600));
         scrollPane1.setWheelScrollingEnabled(true);
-        decisionScoreEvaluatorPane.add(scrollPane1, new GridConstraints(8, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.gridheight = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        decisionScoreEvaluatorPane.add(scrollPane1, gbc);
         considerationsPane = new JPanel();
-        considerationsPane.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationsPane.setLayout(new GridBagLayout());
         considerationsPane.setMaximumSize(new Dimension(800, 2147483647));
         considerationsPane.setMinimumSize(new Dimension(800, 600));
         scrollPane1.setViewportView(considerationsPane);
         final JLabel label1 = new JLabel();
         this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.considerations"));
-        decisionScoreEvaluatorPane.add(label1, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label1, gbc);
         final JLabel label2 = new JLabel();
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.notes"));
-        decisionScoreEvaluatorPane.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label2, gbc);
         final JLabel label3 = new JLabel();
         this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.description"));
-        decisionScoreEvaluatorPane.add(label3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label3, gbc);
         final JLabel label4 = new JLabel();
         this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.name"));
-        decisionScoreEvaluatorPane.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        decisionScoreEvaluatorPane.add(label4, gbc);
         considerationsToolbar = new JToolBar();
-        decisionScoreEvaluatorPane.add(considerationsToolbar, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 7;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        decisionScoreEvaluatorPane.add(considerationsToolbar, gbc);
         label1.setLabelFor(scrollPane1);
         label2.setLabelFor(notesField);
         label3.setLabelFor(descriptionField);
         label4.setLabelFor(nameField);
     }
 
-    private static Method $$$cachedGetBundleMethod$$$ = null;
-
     private String $$$getMessageFromBundle$$$(String path, String key) {
-        ResourceBundle bundle;
-        try {
-            Class<?> thisClass = this.getClass();
-            if ($$$cachedGetBundleMethod$$$ == null) {
-                Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
-                $$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
-            }
-            bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
-        } catch (Exception e) {
-            bundle = ResourceBundle.getBundle(path);
-        }
+        ResourceBundle bundle = ResourceBundle.getBundle(path);
         return bundle.getString(key);
     }
 
+    /**
+     * @noinspection ALL
+     */
     private void $$$loadLabelText$$$(JLabel component, String text) {
         StringBuffer result = new StringBuffer();
         boolean haveMnemonic = false;
@@ -214,6 +262,9 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         }
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return decisionScoreEvaluatorPane;
     }

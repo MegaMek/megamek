@@ -16,6 +16,7 @@
 package megamek.client.ui.swing.ai.editor;
 
 import megamek.ai.utility.Consideration;
+import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.logging.MMLogger;
 
 import javax.swing.table.AbstractTableModel;
@@ -29,13 +30,13 @@ public class ParametersTableModel extends AbstractTableModel {
     private final List<Row> rowValues = new ArrayList<>();
     private final String[] columnNames = { "Name", "Value" };
     private final Class<?>[] columnClasses = { String.class, String.class };
-    private record Row(String name, Object value, Class<?> clazz) {}
+    private record Row(String name, Object value, Class<?> clazz, ParameterTitleTooltip parameterTitleTooltip) {}
 
     public ParametersTableModel() {
     }
 
     public void setParameters(Consideration<?,?> consideration) {
-        setParameters(consideration.getParameters(), consideration.getParameterTypes());
+        setParameters(consideration.getParameters(), consideration.getParameterTypes(), consideration.getParameterTooltips());
     }
 
     public void setEmptyParameters() {
@@ -43,9 +44,11 @@ public class ParametersTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    private void setParameters(Map<String, Object> parameters, Map<String, Class<?>> parameterTypes) {
+    private void setParameters(Map<String, Object> parameters,
+                               Map<String, Class<?>> parameterTypes,
+                               Map<String, ParameterTitleTooltip> parameterTitleTooltipMap) {
         rowValues.clear();
-        parameters.forEach((k, v) -> rowValues.add(new Row(k, v, parameterTypes.get(k))));
+        parameters.forEach((k, v) -> rowValues.add(new Row(k, v, parameterTypes.get(k), parameterTitleTooltipMap.get(k))));
         fireTableDataChanged();
     }
 
@@ -89,8 +92,12 @@ public class ParametersTableModel extends AbstractTableModel {
         return row.value;
     }
 
-    public Class<?> getParameterValueAt(int rowIndex) {
+    public Class<?> getParameterValueClassAt(int rowIndex) {
         return rowValues.get(rowIndex).clazz;
+    }
+
+    public String getTooltipAt(int rowIndex) {
+        return rowValues.get(rowIndex).parameterTitleTooltip.getTooltip();
     }
 
     @Override
@@ -98,7 +105,7 @@ public class ParametersTableModel extends AbstractTableModel {
         var row = rowValues.get(rowIndex);
         if (columnIndex == 1) {
             if (aValue.getClass().equals(row.clazz)) {
-                rowValues.set(rowIndex, new Row(row.name, aValue, row.clazz));
+                rowValues.set(rowIndex, new Row(row.name, aValue, row.clazz, row.parameterTitleTooltip));
             } else {
                 logger.error("Invalid value type: " + aValue.getClass() + " for " + row.clazz, "Invalid value type");
             }

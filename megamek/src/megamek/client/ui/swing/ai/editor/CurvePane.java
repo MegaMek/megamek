@@ -60,6 +60,7 @@ public class CurvePane extends JPanel {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
+     * @noinspection ALL
      */
     private void $$$setupUI$$$() {
         createUIComponents();
@@ -165,6 +166,9 @@ public class CurvePane extends JPanel {
         return bundle.getString(key);
     }
 
+    /**
+     * @noinspection ALL
+     */
     private void $$$loadLabelText$$$(JLabel component, String text) {
         StringBuffer result = new StringBuffer();
         boolean haveMnemonic = false;
@@ -189,6 +193,9 @@ public class CurvePane extends JPanel {
         }
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return basePane;
     }

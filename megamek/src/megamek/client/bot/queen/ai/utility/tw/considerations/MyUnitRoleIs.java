@@ -28,9 +28,9 @@ import java.util.Map;
  */
 @JsonTypeName("MyUnitRoleIs")
 public class MyUnitRoleIs extends TWConsideration {
-    public static final String roleParam = "role";
+    public static final String roleParam = "my unit's role";
     private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("UnitRole"));
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("MyUnitRole"));
 
     public MyUnitRoleIs() {
         parameters = Map.of(roleParam, UnitRole.UNDETERMINED);

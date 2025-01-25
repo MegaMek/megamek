@@ -1035,7 +1035,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // just to free some memory
         client = null;
+        // noinspection CallToSystemGC
         System.gc();
+        // noinspection CallToRunFinalization
         System.runFinalization();
     }
 

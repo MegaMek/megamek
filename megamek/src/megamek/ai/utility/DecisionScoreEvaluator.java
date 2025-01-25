@@ -15,6 +15,7 @@
 
 package megamek.ai.utility;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -57,6 +58,7 @@ public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Named
         this.considerations.addAll(considerations);
     }
 
+    @JsonIgnore
     public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, double min, DebugReporter debugReport) {
         var finalScore = bonus;
         var considerationSize = getConsiderations().size();

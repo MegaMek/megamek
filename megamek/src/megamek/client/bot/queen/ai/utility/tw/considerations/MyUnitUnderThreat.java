@@ -27,7 +27,7 @@ import static megamek.codeUtilities.MathUtility.clamp01;
  */
 @JsonTypeName("MyUnitUnderThreat")
 public class MyUnitUnderThreat extends TWConsideration {
-    public static final String descriptionKey = "MyUnitUnderThreat";
+
     public MyUnitUnderThreat() {
     }
 

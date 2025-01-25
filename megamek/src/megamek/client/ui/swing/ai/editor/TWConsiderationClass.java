@@ -15,16 +15,23 @@
 
 package megamek.client.ui.swing.ai.editor;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import megamek.ai.utility.Consideration;
 import megamek.client.bot.queen.ai.utility.tw.considerations.*;
 
 public enum TWConsiderationClass {
 
+    DamageOutput(DamageOutput.class),
+    FacingTheEnemy(FacingTheEnemy.class),
+    FavoriteTargetInRange(FavoriteTargetInRange.class),
+    IsVIPCloser(IsVIPCloser.class),
+    MyUnitBotSettings(MyUnitBotSettings.class),
+    MyUnitHeatManagement(MyUnitHeatManagement.class),
+    MyUnitIsMovingTowardsWaypoint(MyUnitIsMovingTowardsWaypoint.class),
     MyUnitArmor(MyUnitArmor.class),
     MyUnitIsCrippled(MyUnitIsCrippled.class),
     MyUnitUnderThreat(MyUnitUnderThreat.class),
     TargetUnitsArmor(TargetUnitsArmor.class),
-    TargetUnitsHaveRole(TargetUnitsHaveRole.class),
     MyUnitRoleIs(MyUnitRoleIs.class),
     TargetWithinRange(TargetWithinRange.class),
     TargetWithinOptimalRange(TargetWithinOptimalRange.class);

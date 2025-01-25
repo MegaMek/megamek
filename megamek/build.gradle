@@ -37,12 +37,9 @@ sourceSets {
 
 repositories {
     mavenCentral()
-    maven { url "https://www.jetbrains.com/intellij-repository/releases" }
-    maven { url "https://jetbrains.bintray.com/intellij-third-party-dependencies" }
 }
 
 dependencies {
-    implementation 'com.jetbrains.intellij.java:java-gui-forms-rt:243.22562.242'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
     implementation 'com.formdev:flatlaf:3.5.1'

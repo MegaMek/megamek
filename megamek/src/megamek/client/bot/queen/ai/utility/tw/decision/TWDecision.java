@@ -15,6 +15,7 @@
 
 package megamek.client.bot.queen.ai.utility.tw.decision;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.Decision;
 import megamek.ai.utility.DecisionScoreEvaluator;
@@ -24,6 +25,7 @@ import megamek.common.Entity;
 @JsonTypeName("TWDecision")
 public class TWDecision extends Decision<Entity, Entity> {
 
+    @JsonIgnore
     private RankedPath rankedPath;
 
     public TWDecision() {
@@ -42,10 +44,12 @@ public class TWDecision extends Decision<Entity, Entity> {
         return this.getName();
     }
 
+    @JsonIgnore
     public RankedPath getRankedPath() {
         return rankedPath;
     }
 
+    @JsonIgnore
     private void setRankedPath(RankedPath rankedPath) {
         this.rankedPath = rankedPath;
     }

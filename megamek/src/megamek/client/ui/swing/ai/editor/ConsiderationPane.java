@@ -15,8 +15,6 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DefaultCurve;
 import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
@@ -118,37 +116,94 @@ public class ConsiderationPane extends JPanel {
      * >>> IMPORTANT!! <<<
      * DO NOT edit this method OR call it in your code!
      *
+     * @noinspection ALL
      */
     private void $$$setupUI$$$() {
         createUIComponents();
         considerationPane = new JPanel();
-        considerationPane.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationPane.setLayout(new GridBagLayout());
         considerationPane.setAutoscrolls(false);
         considerationPane.setMaximumSize(new Dimension(800, 600));
         considerationPane.setMinimumSize(new Dimension(800, 300));
         considerationPane.setPreferredSize(new Dimension(800, 600));
         topThingsPane = new JPanel();
-        topThingsPane.setLayout(new GridLayoutManager(6, 6, new Insets(0, 0, 0, 0), -1, -1));
-        considerationPane.add(topThingsPane, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        topThingsPane.add(considerationComboBox, new GridConstraints(1, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        topThingsPane.setLayout(new GridBagLayout());
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        considerationPane.add(topThingsPane, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 6;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        topThingsPane.add(considerationComboBox, gbc);
         considerationName = new JTextField();
-        topThingsPane.add(considerationName, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        topThingsPane.add(curveContainer, new GridConstraints(5, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(400, 300), new Dimension(400, 300), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 6;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        topThingsPane.add(considerationName, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 6;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        topThingsPane.add(curveContainer, gbc);
         final JLabel label1 = new JLabel();
         this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.curve"));
-        topThingsPane.add(label1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(66, 17), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        topThingsPane.add(label1, gbc);
         final JLabel label2 = new JLabel();
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.name"));
-        topThingsPane.add(label2, new GridConstraints(2, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 6;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        topThingsPane.add(label2, gbc);
         final JLabel label3 = new JLabel();
         this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.considerationType"));
-        topThingsPane.add(label3, new GridConstraints(0, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 6;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        topThingsPane.add(label3, gbc);
         final JLabel label4 = new JLabel();
         this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.parameters"));
-        considerationPane.add(label4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        considerationPane.add(label4, gbc);
         parametersTable.setFillsViewportHeight(false);
         parametersTable.setPreferredScrollableViewportSize(new Dimension(100, 50));
-        considerationPane.add(parametersTable, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        considerationPane.add(parametersTable, gbc);
         label2.setLabelFor(considerationName);
         label3.setLabelFor(considerationComboBox);
     }
@@ -156,20 +211,14 @@ public class ConsiderationPane extends JPanel {
     private static Method $$$cachedGetBundleMethod$$$ = null;
 
     private String $$$getMessageFromBundle$$$(String path, String key) {
-        ResourceBundle bundle;
-        try {
-            Class<?> thisClass = this.getClass();
-            if ($$$cachedGetBundleMethod$$$ == null) {
-                Class<?> dynamicBundleClass = thisClass.getClassLoader().loadClass("com.intellij.DynamicBundle");
-                $$$cachedGetBundleMethod$$$ = dynamicBundleClass.getMethod("getBundle", String.class, Class.class);
-            }
-            bundle = (ResourceBundle) $$$cachedGetBundleMethod$$$.invoke(null, path, thisClass);
-        } catch (Exception e) {
-            bundle = ResourceBundle.getBundle(path);
-        }
+        ResourceBundle bundle = ResourceBundle.getBundle(path);
+
         return bundle.getString(key);
     }
 
+    /**
+     * @noinspection ALL
+     */
     private void $$$loadLabelText$$$(JLabel component, String text) {
         StringBuffer result = new StringBuffer();
         boolean haveMnemonic = false;
@@ -194,6 +243,9 @@ public class ConsiderationPane extends JPanel {
         }
     }
 
+    /**
+     * @noinspection ALL
+     */
     public JComponent $$$getRootComponent$$$() {
         return considerationPane;
     }

@@ -388,7 +388,7 @@ public class TWUtilityAIRepository {
             try (MappingIterator<T> it = mapper.readerFor(clazz).readValues(file)) {
                 return it.readAll();
             } catch (IOException e) {
-                logger.error(e, "Could not load file: {}", file);
+                logger.error(e, "Could not load file: " + file, file);
             }
         } else if (file.isDirectory()) {
             return objectsFromDirectory(file, clazz);

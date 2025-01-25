@@ -39,8 +39,9 @@ public class ConsiderationParametersTable extends JTable {
     @Override
     public TableCellEditor getCellEditor(int row, int column) {
         if (column == 1) {
-            var clazz = getModel().getParameterValueAt(row);
+            var clazz = getModel().getParameterValueClassAt(row);
             var value = getModel().getValueAt(row, column);
+            var tooltip = getModel().getTooltipAt(row);
             if (clazz == null) {
                 // Should actually throw an error here...
                 return super.getCellEditor(row, column);
@@ -52,28 +53,32 @@ public class ConsiderationParametersTable extends JTable {
                     (double) (value == null ? 0d : value),
                     Double.MIN_VALUE,
                     Double.MAX_VALUE,
-                    0.1d
+                    0.1d,
+                    tooltip
                 );
             } else if (clazz.equals(Float.class)) {
                 return new SpinnerCellEditor(
                     (float) (value == null ? 0f : value),
                     Float.MIN_VALUE,
                     Float.MAX_VALUE,
-                    0.1f
+                    0.1f,
+                    tooltip
                 );
             } else if (clazz.equals(Integer.class)) {
                 return new SpinnerCellEditor(
                     (int) (value == null ? 0 : value),
                     Integer.MIN_VALUE,
                     Integer.MAX_VALUE,
-                    1
+                    1,
+                    tooltip
                 );
             } else if (clazz.equals(Long.class)) {
                 return new SpinnerCellEditor(
                     (long) (value == null ? 0 : value),
                     Long.MIN_VALUE,
                     Long.MAX_VALUE,
-                    1
+                    1,
+                    tooltip
                 );
             } else if (clazz.equals(String.class)) {
                 return new DefaultCellEditor(new JTextField());
@@ -81,6 +86,7 @@ public class ConsiderationParametersTable extends JTable {
                 var cb = new JComboBox<>(
                     clazz.getEnumConstants()
                 );
+                cb.setToolTipText(tooltip);
                 return new DefaultCellEditor(cb);
             }
         }
@@ -90,7 +96,7 @@ public class ConsiderationParametersTable extends JTable {
     public static class SpinnerCellEditor extends AbstractCellEditor implements TableCellEditor {
         private final JSpinner spinner;
 
-        public SpinnerCellEditor(double defaultValue, double min, double max, double step) {
+        public SpinnerCellEditor(double defaultValue, double min, double max, double step, String tooltip) {
             spinner = new JSpinner(new SpinnerNumberModel(min, min, max, step));
             spinner.setValue(defaultValue);
             JComponent editor = spinner.getEditor();

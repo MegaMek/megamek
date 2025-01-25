@@ -61,21 +61,15 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private JTextField profileNameTextField;
     private JPanel profileTabPane;
     private JTable profileDecisionTable;
-    private JPanel decisionTabPane;
-    private JSpinner weightSpinner;
     private JPanel uAiEditorPanel;
     private JScrollPane profileScrollPane;
-    private JPanel decisionTabDsePanel;
     private JPanel dsePane;
     private JPanel considerationTabPane;
     private JPanel considerationEditorPanel;
     private JButton saveProfileButton;
     private JButton saveDseButton;
     private JButton saveConsiderationButton;
-    private JButton saveDecisionButton;
     private JToolBar profileTools;
-    private JTextField decisionNameTextField;
-    private JTextField decisionDescriptionTextField;
 
     private ConsiderationPane considerationPane;
 
@@ -210,39 +204,23 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                     "One or more fields are empty or invalid in the Consideration tab. Please correct the errors and try again.");
             }
         });
-        saveDecisionButton.addActionListener(e -> {
-            try {
-                persistDecision();
-            } catch (IllegalArgumentException ex) {
-                logger.formattedErrorDialog("Error saving decision",
-                    "One or more fields are empty or invalid in the Decision tab. Please correct the errors and try again.");
-            }
-        });
+
         saveProfileButton.setVisible(true);
         saveDseButton.setVisible(false);
         saveConsiderationButton.setVisible(false);
-        saveDecisionButton.setVisible(false);
         mainEditorTabbedPane.addChangeListener(e -> {
             if (mainEditorTabbedPane.getSelectedComponent() == profileTabPane) {
                 saveProfileButton.setVisible(true);
                 saveDseButton.setVisible(false);
                 saveConsiderationButton.setVisible(false);
-                saveDecisionButton.setVisible(false);
             } else if (mainEditorTabbedPane.getSelectedComponent() == dseTabPane) {
                 saveProfileButton.setVisible(false);
                 saveDseButton.setVisible(true);
                 saveConsiderationButton.setVisible(false);
-                saveDecisionButton.setVisible(false);
             } else if (mainEditorTabbedPane.getSelectedComponent() == considerationTabPane) {
                 saveProfileButton.setVisible(false);
                 saveDseButton.setVisible(false);
                 saveConsiderationButton.setVisible(true);
-                saveDecisionButton.setVisible(false);
-            } else if (mainEditorTabbedPane.getSelectedComponent() == decisionTabPane) {
-                saveProfileButton.setVisible(false);
-                saveDseButton.setVisible(false);
-                saveConsiderationButton.setVisible(false);
-                saveDecisionButton.setVisible(true);
             }
         });
 
@@ -317,14 +295,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                         ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(dse);
                     });
                     contextMenu.add(action1);
-                } else if (mainEditorTabbedPane.getSelectedComponent() == decisionTabPane) {
-                    var action1 = new JMenuItem(Messages.getString("aiEditor.add.to.decision"));
-                    action1.addActionListener(evt -> {
-                        var dse = ((DecisionScoreEvaluatorPane) decisionTabDsePanel).getDecisionScoreEvaluator();
-                        dse.addConsideration(twConsideration);
-                        ((DecisionScoreEvaluatorPane) decisionTabDsePanel).setDecisionScoreEvaluator(dse);
-                    });
-                    contextMenu.add(action1);
                 }
             }
 
@@ -361,9 +331,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
 
     private void handleOpenNodeAction(DefaultMutableTreeNode node) {
         var obj = node.getUserObject();
-        if (obj instanceof TWDecision twDecision) {
-            openDecision(twDecision);
-        } else if (obj instanceof TWProfile twProfile) {
+        if (obj instanceof TWProfile twProfile) {
             openProfile(twProfile);
         } else if (obj instanceof TWDecisionScoreEvaluator twDse) {
             openDecisionScoreEvaluator(twDse);
@@ -395,12 +363,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         considerationPane.setConsideration(twConsideration);
         mainEditorTabbedPane.setSelectedComponent(considerationTabPane);
         hasConsiderationChanges = true;
-    }
-
-    private void openDecision(TWDecision twDecision) {
-        ((DecisionScoreEvaluatorPane) decisionTabDsePanel).setDecisionScoreEvaluator(twDecision.getDecisionScoreEvaluator());
-        mainEditorTabbedPane.setSelectedComponent(decisionTabPane);
-        hasDecisionChanges = true;
     }
 
     private void openProfile(TWProfile twProfile) {
@@ -445,9 +407,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             if (hasProfileChanges) {
                 persistProfile();
             }
-            if (hasDecisionChanges) {
-                persistDecision();
-            }
             if (hasDseChanges) {
                 persistDecisionScoreEvaluator();
             }
@@ -470,15 +429,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         var consideration = considerationPane.getConsideration();
         sharedData.addConsideration(consideration);
         hasConsiderationChanges = false;
-        hasChangesToSave = true;
-        loadDataRepoViewer();
-    }
-
-    private void persistDecision() {
-        var dse = ((DecisionScoreEvaluatorPane) decisionTabDsePanel).getDecisionScoreEvaluator();
-        var decision = new TWDecision(decisionNameTextField.getText(), decisionDescriptionTextField.getText(), (double) weightSpinner.getValue(), dse);
-        sharedData.addDecision(decision);
-        hasDecisionChanges = false;
         hasChangesToSave = true;
         loadDataRepoViewer();
     }
@@ -605,21 +555,15 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     }
 
     private void createNewDecision() {
-        var name = decisionNameTextField.getText();
-        var description = decisionDescriptionTextField.getText();
-        var weight = (double) weightSpinner.getValue();
-        var dse = new TWDecision(name, description, weight);
-        var model = profileDecisionTable.getModel();
+        var dse = new TWDecision("New Decision", "Created at " + new Date(), 1.0);
         //noinspection unchecked
-        ((DecisionTableModel<TWDecision>) model).addRow(dse);
+        var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
+        model.addRow(dse);
     }
 
     private void createUIComponents() {
-        weightSpinner = new JSpinner(new SpinnerNumberModel(1d, 0d, 4d, 0.01d));
-
         loadDataRepoViewer();
         initializeProfileUI();
-        decisionTabDsePanel = new DecisionScoreEvaluatorPane();
         dsePane = new DecisionScoreEvaluatorPane();
     }
 
@@ -663,37 +607,75 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void $$$setupUI$$$() {
         createUIComponents();
         uAiEditorPanel = new JPanel();
-        uAiEditorPanel.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        uAiEditorPanel.setLayout(new GridBagLayout());
         final JSplitPane splitPane1 = new JSplitPane();
-        uAiEditorPanel.add(splitPane1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(200, 200), null, 0, false));
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        uAiEditorPanel.add(splitPane1, gbc);
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(5, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridBagLayout());
         splitPane1.setLeftComponent(panel1);
-        panel1.add(repositoryViewer, new com.intellij.uiDesigner.core.GridConstraints(4, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(233, 50), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(repositoryViewer, gbc);
         saveProfileButton = new JButton();
         saveProfileButton.setText("Save");
-        panel1.add(saveProfileButton, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(saveProfileButton, gbc);
         saveDseButton = new JButton();
         saveDseButton.setText("Save");
-        panel1.add(saveDseButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(saveDseButton, gbc);
         saveConsiderationButton = new JButton();
         saveConsiderationButton.setText("Save");
-        panel1.add(saveConsiderationButton, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        saveDecisionButton = new JButton();
-        saveDecisionButton.setText("Save");
-        panel1.add(saveDecisionButton, new com.intellij.uiDesigner.core.GridConstraints(3, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(saveConsiderationButton, gbc);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setLayout(new GridBagLayout());
         splitPane1.setRightComponent(panel2);
         mainEditorTabbedPane = new JTabbedPane();
-        panel2.add(mainEditorTabbedPane, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel2.add(mainEditorTabbedPane, gbc);
         profileTabPane = new JPanel();
-        profileTabPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        profileTabPane.setLayout(new GridBagLayout());
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile"), profileTabPane);
         profileScrollPane = new JScrollPane();
         profileScrollPane.setDoubleBuffered(false);
         profileScrollPane.setWheelScrollingEnabled(true);
-        profileTabPane.add(profileScrollPane, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        profileTabPane.add(profileScrollPane, gbc);
         profileDecisionTable.setColumnSelectionAllowed(false);
         profileDecisionTable.setDragEnabled(true);
         profileDecisionTable.setFillsViewportHeight(true);
@@ -702,63 +684,84 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         profileDecisionTable.setPreferredScrollableViewportSize(new Dimension(150, 32));
         profileScrollPane.setViewportView(profileDecisionTable);
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        profileTabPane.add(panel3, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel3.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        profileTabPane.add(panel3, gbc);
         profileNameTextField = new JTextField();
-        panel3.add(profileNameTextField, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(profileNameTextField, gbc);
         descriptionTextField = new JTextField();
-        panel3.add(descriptionTextField, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(descriptionTextField, gbc);
         final JLabel label1 = new JLabel();
         this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.profile.name"));
-        panel3.add(label1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(label1, gbc);
         final JLabel label2 = new JLabel();
         this.$$$loadLabelText$$$(label2, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "AiEditor.description"));
-        panel3.add(label2, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel3.add(label2, gbc);
         profileTools = new JToolBar();
-        profileTabPane.add(profileTools, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 20), null, 0, false));
-        decisionTabPane = new JPanel();
-        decisionTabPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.decision"), decisionTabPane);
-        final JPanel panel4 = new JPanel();
-        panel4.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(3, 5, new Insets(0, 0, 0, 0), -1, -1));
-        decisionTabPane.add(panel4, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 2, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label3 = new JLabel();
-        this.$$$loadLabelText$$$(label3, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.action"));
-        panel4.add(label3, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        panel4.add(weightSpinner, new com.intellij.uiDesigner.core.GridConstraints(0, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_EAST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, new Dimension(100, -1), new Dimension(100, -1), new Dimension(100, -1), 0, false));
-        final JLabel label4 = new JLabel();
-        this.$$$loadLabelText$$$(label4, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.weight"));
-        panel4.add(label4, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final com.intellij.uiDesigner.core.Spacer spacer1 = new com.intellij.uiDesigner.core.Spacer();
-        panel4.add(spacer1, new com.intellij.uiDesigner.core.GridConstraints(0, 4, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        panel4.add(scrollPane1, new com.intellij.uiDesigner.core.GridConstraints(2, 0, 1, 5, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setViewportView(decisionTabDsePanel);
-        decisionNameTextField = new JTextField();
-        panel4.add(decisionNameTextField, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setText("Description");
-        panel4.add(label5, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_NONE, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        decisionDescriptionTextField = new JTextField();
-        panel4.add(decisionDescriptionTextField, new com.intellij.uiDesigner.core.GridConstraints(1, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_WEST, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        profileTabPane.add(profileTools, gbc);
         dseTabPane = new JPanel();
-        dseTabPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        dseTabPane.setLayout(new GridBagLayout());
         dseTabPane.setName("");
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.dse"), dseTabPane);
-        final JScrollPane scrollPane2 = new JScrollPane();
-        scrollPane2.setHorizontalScrollBarPolicy(31);
-        scrollPane2.setWheelScrollingEnabled(true);
-        dseTabPane.add(scrollPane2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane2.setViewportView(dsePane);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setHorizontalScrollBarPolicy(31);
+        scrollPane1.setWheelScrollingEnabled(true);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        dseTabPane.add(scrollPane1, gbc);
+        scrollPane1.setViewportView(dsePane);
         considerationTabPane = new JPanel();
-        considerationTabPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        considerationTabPane.setLayout(new GridBagLayout());
         mainEditorTabbedPane.addTab(this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.tab.consideration"), considerationTabPane);
-        final JScrollPane scrollPane3 = new JScrollPane();
-        considerationTabPane.add(scrollPane3, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JScrollPane scrollPane2 = new JScrollPane();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        considerationTabPane.add(scrollPane2, gbc);
         considerationEditorPanel = new JPanel();
         considerationEditorPanel.setLayout(new GridBagLayout());
-        scrollPane3.setViewportView(considerationEditorPanel);
-        label4.setLabelFor(weightSpinner);
+        scrollPane2.setViewportView(considerationEditorPanel);
     }
 
     private static Method $$$cachedGetBundleMethod$$$ = null;

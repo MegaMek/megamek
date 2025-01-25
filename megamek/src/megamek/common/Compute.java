@@ -5208,8 +5208,9 @@ public class Compute {
 
         // If we're an airborne aero, sensor range is limited to within a few hexes of
         // the flightline against ground targets
-        // TO Dec 2017 Errata p17
-        if (te != null && ae.isAirborne() && !te.isAirborne()) {
+        // TO:AR Errata forum post clarifies that ground
+        // mapsheet aero use ground sensor table
+        if (game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;

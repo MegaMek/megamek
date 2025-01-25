@@ -23,7 +23,6 @@ import megamek.client.bot.princess.*;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.Game;
-import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
@@ -147,7 +146,7 @@ public class ChatProcessor {
 
     void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
         // Commands should be sent in this format:
-        // <botName>: <command> : <arguments>
+        // <botName>: <command>: <arguments>
 
         StringTokenizer tokenizer = new StringTokenizer(chatEvent.getMessage(), ":");
         if (tokenizer.countTokens() < 3) {

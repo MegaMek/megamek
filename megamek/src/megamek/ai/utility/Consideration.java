@@ -14,14 +14,11 @@
 package megamek.ai.utility;
 
 import com.fasterxml.jackson.annotation.*;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
+import megamek.client.bot.queen.ai.utility.tw.considerations.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -30,12 +27,18 @@ import java.util.stream.Collectors;
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(value = TWConsideration.class, name = "TWConsideration"),
+    @JsonSubTypes.Type(value = DamageOutput.class, name = "DamageOutput"),
+    @JsonSubTypes.Type(value = FacingTheEnemy.class, name = "FacingTheEnemy"),
+    @JsonSubTypes.Type(value = FavoriteTargetInRange.class, name = "FavoriteTargetInRange"),
+    @JsonSubTypes.Type(value = IsVIPCloser.class, name = "IsVIPCloser"),
     @JsonSubTypes.Type(value = MyUnitArmor.class, name = "MyUnitArmor"),
+    @JsonSubTypes.Type(value = MyUnitBotSettings.class, name = "MyUnitBotSettings"),
+    @JsonSubTypes.Type(value = MyUnitHeatManagement.class, name = "MyUnitHeatManagement"),
+    @JsonSubTypes.Type(value = MyUnitIsCrippled.class, name = "MyUnitIsCrippled"),
+    @JsonSubTypes.Type(value = MyUnitIsMovingTowardsWaypoint.class, name = "MyUnitIsMovingTowardsWaypoint"),
+    @JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
     @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
-    @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
-    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
-    @JsonSubTypes.Type(value = MyUnitRoleIs.class, name = "MyUnitRoleIs"),
-    @JsonSubTypes.Type(value = TargetUnitsHaveRole.class, name = "TargetUnitsHaveRole"),
+    @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements NamedObject {
@@ -45,8 +48,6 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     private Curve curve;
     @JsonProperty("parameters")
     protected Map<String, Object> parameters = Collections.emptyMap();
-    @JsonIgnore
-    protected transient Map<String, Class<?>> parameterTypes = Collections.emptyMap();
 
     public Consideration() {
     }
@@ -65,6 +66,16 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
         this.parameters = Map.copyOf(parameters);
     }
 
+    @JsonIgnore
+    public Map<String, Class<?>> getParameterTypes() {
+        return Collections.emptyMap();
+    }
+
+    @JsonIgnore
+    public Map<String, ParameterTitleTooltip> getParameterTooltips() {
+        return Collections.emptyMap();
+    }
+
     public abstract double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context);
 
     public Curve getCurve() {
@@ -79,13 +90,9 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
         return Map.copyOf(parameters);
     }
 
-    public Map<String, Class<?>> getParameterTypes() {
-        return Map.copyOf(parameterTypes);
-    }
-
     public void setParameters(Map<String, Object> parameters) {
         for (var entry : parameters.entrySet()) {
-            var clazz = parameterTypes.get(entry.getKey());
+            var clazz = getParameterTypes().get(entry.getKey());
             if (clazz == null) {
                 throw new IllegalArgumentException("Unknown parameter: " + entry.getKey());
             }
@@ -132,7 +139,11 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
         return parameters.get(key);
     }
 
-    public boolean hasParameter(String key) {
+    public <T> T getParameter(String key, Class<T> clazz) {
+        return clazz.cast(parameters.get(key));
+    }
+
+    public boolean containsParameter(String key) {
         return parameters.containsKey(key);
     }
 

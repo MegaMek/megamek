@@ -13,21 +13,26 @@
  *
  */
 
-package megamek.ai.utility;
+package megamek.client.bot.queen.ai.utility.tw.considerations;
 
-import megamek.common.Coords;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
-import megamek.common.InGameObject;
 
-import java.util.*;
+import static megamek.codeUtilities.MathUtility.clamp01;
 
-public interface World<IN_GAME_OBJECT, TARGETABLE> {
-    List<InGameObject> getInGameObjects();
-    Map<Integer, Integer> getTeamByPlayer();
-    List<IN_GAME_OBJECT> getMyUnits();
-    List<TARGETABLE> getAlliedUnits();
-    List<TARGETABLE> getEnemyUnits();
-    boolean useBooleanOption(String option);
-    boolean contains(Coords position);
-    List<IN_GAME_OBJECT> getEntities(List<Integer> ids);
+/**
+ * Just check if the current unit is crippled or not.
+ */
+@JsonTypeName("MyUnitIsCrippled")
+public class MyUnitIsCrippled extends TWConsideration {
+    public MyUnitIsCrippled() {
+    }
+
+    @Override
+    public double score(DecisionContext<Entity, Entity> context) {
+        var currentUnit = context.getCurrentUnit();
+        return currentUnit.isCrippled(true) ? 1d : 0d;
+    }
+
 }

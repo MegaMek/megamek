@@ -13,21 +13,27 @@
  *
  */
 
-package megamek.ai.utility;
+package megamek.client.bot.queen.ai.utility.tw.considerations;
 
-import megamek.common.Coords;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
-import megamek.common.InGameObject;
 
-import java.util.*;
+import static megamek.codeUtilities.MathUtility.clamp01;
 
-public interface World<IN_GAME_OBJECT, TARGETABLE> {
-    List<InGameObject> getInGameObjects();
-    Map<Integer, Integer> getTeamByPlayer();
-    List<IN_GAME_OBJECT> getMyUnits();
-    List<TARGETABLE> getAlliedUnits();
-    List<TARGETABLE> getEnemyUnits();
-    boolean useBooleanOption(String option);
-    boolean contains(Coords position);
-    List<IN_GAME_OBJECT> getEntities(List<Integer> ids);
+/**
+ * This consideration is used to determine the armor percent.
+ */
+@JsonTypeName("MyUnitArmor")
+public class MyUnitArmor extends TWConsideration {
+
+    public MyUnitArmor() {
+    }
+
+    @Override
+    public double score(DecisionContext<Entity, Entity> context) {
+        var currentUnit = context.getCurrentUnit();
+        return clamp01(currentUnit.getArmorRemainingPercent());
+    }
+
 }

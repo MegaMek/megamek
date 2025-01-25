@@ -18,7 +18,7 @@ package megamek.client.ui.swing.ai.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.DecisionScoreEvaluator;
-import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.ui.Messages;
 
 import javax.swing.*;

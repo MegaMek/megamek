@@ -47,6 +47,7 @@ public class BandPassCurve implements Curve {
         return new BandPassCurve(m, b, k, c);
     }
 
+    @Override
     public double evaluate(double x) {
         var bandStart = m - b / 2;
         var bandEnd = m + b / 2;

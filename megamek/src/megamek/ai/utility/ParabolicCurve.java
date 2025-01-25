@@ -46,6 +46,7 @@ public class ParabolicCurve implements Curve {
         return new ParabolicCurve(m, b, k);
     }
 
+    @Override
     public double evaluate(double x) {
         return clamp01(-m * Math.pow(x - b, 2) + k);
     }

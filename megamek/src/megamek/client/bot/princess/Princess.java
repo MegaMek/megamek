@@ -23,7 +23,6 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
-import megamek.client.bot.duchess.ai.utility.tw.intelligence.SimpleIntelligence;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;

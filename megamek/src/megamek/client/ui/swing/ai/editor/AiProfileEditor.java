@@ -17,11 +17,11 @@ package megamek.client.ui.swing.ai.editor;
 
 import megamek.ai.utility.Decision;
 import megamek.ai.utility.NamedObject;
-import megamek.client.bot.duchess.ai.utility.tw.TWUtilityAIRepository;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
-import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecision;
-import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
-import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
+import megamek.client.bot.queen.ai.utility.tw.TWUtilityAIRepository;
+import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecision;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.CommonMenuBar;

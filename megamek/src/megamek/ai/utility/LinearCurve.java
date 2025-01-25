@@ -42,6 +42,7 @@ public class LinearCurve implements Curve {
         return new LinearCurve(m, b);
     }
 
+    @Override
     public double evaluate(double x) {
         return clamp01(m * x + b);
     }

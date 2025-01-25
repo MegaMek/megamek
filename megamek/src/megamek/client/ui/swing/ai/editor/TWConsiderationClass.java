@@ -16,7 +16,7 @@
 package megamek.client.ui.swing.ai.editor;
 
 import megamek.ai.utility.Consideration;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.*;
+import megamek.client.bot.queen.ai.utility.tw.considerations.*;
 
 public enum TWConsiderationClass {
 

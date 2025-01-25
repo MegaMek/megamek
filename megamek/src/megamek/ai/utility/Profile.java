@@ -16,7 +16,7 @@
 package megamek.ai.utility;
 
 import com.fasterxml.jackson.annotation.*;
-import megamek.client.bot.duchess.ai.utility.tw.profile.TWProfile;
+import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
 
 import java.util.List;
 

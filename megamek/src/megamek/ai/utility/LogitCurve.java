@@ -48,6 +48,7 @@ public class LogitCurve implements Curve {
         return new LogitCurve(m, b, k, c);
     }
 
+    @Override
     public double evaluate(double x) {
         if (x <= c) {
            x = c + 0.0001;

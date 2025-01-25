@@ -18,7 +18,7 @@ package megamek.ai.utility;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import megamek.client.bot.duchess.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 
 import java.util.ArrayList;
 import java.util.Collections;

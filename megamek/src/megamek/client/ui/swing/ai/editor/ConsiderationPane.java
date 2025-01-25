@@ -19,7 +19,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DefaultCurve;
-import megamek.client.bot.duchess.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
 
 import javax.swing.*;
 import java.awt.*;

@@ -2097,6 +2097,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int calcElevation(Hex current, Hex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
+        if (next == null) {
+            return retVal;
+        }
         if (isAero()) {
             return retVal;
         }

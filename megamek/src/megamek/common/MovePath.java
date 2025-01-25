@@ -982,6 +982,19 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * returns if the unit had any altitude above 0 during the movement path
+     */
+    public boolean isAirborne() {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            if (step.getAltitude() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * get final altitude
      */
     public int getFinalAltitude() {
@@ -1221,6 +1234,21 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * Returns the linear distance between the first and last hexes in the path.
+     */
+    public int getDistanceTravelled() {
+        var currentEntityPosition = getEntity().getPosition();
+        if (currentEntityPosition == null) {
+            return 0;
+        }
+        var finalCoords = getFinalCoords();
+        if (finalCoords == null) {
+            return 0;
+        }
+        return currentEntityPosition.distance(finalCoords);
+    }
+
+    /**
      * Returns true if the entity is jumping or if it's a flying lam.
      */
     public boolean isJumping() {
@@ -1341,10 +1369,10 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // for aero units move must use up all their velocity
-        if (getEntity().isAero()) {
-            IAero a = (IAero) getEntity();
+        // but only if it is actually IAero, because anything could return isAero() == true but not implement IAero
+        if (getEntity().isAero() && getEntity() instanceof IAero aero) {
             if (getLastStep() == null) {
-                if ((a.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
+                if ((aero.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
                     return false;
                 }
             } else {
@@ -1359,7 +1387,6 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() == null) {
             return true;
         }
-
         if (getLastStep().getType() == MoveStepType.CHARGE) {
             return getSecondLastStep().isLegal(this);
         }

@@ -79,9 +79,9 @@ public class Coords implements Serializable {
     public Coords translated(String dir) {
         int intDir = 0;
 
-        try {
+        if (Character.isDigit(dir.charAt(0))) {
             intDir = Integer.parseInt(dir);
-        } catch (NumberFormatException nfe) {
+        } else {
             if (dir.equalsIgnoreCase("N")) {
                 intDir = 0;
             } else if (dir.equalsIgnoreCase("NE")) {

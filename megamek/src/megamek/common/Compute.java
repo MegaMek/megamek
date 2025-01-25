@@ -1036,8 +1036,9 @@ public class Compute {
                 ToHitData mods = los.losModifiers(game);
                 // If the target isn't spotted, can't target
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                        && !Compute.inVisualRange(game, los, other, target)
-                        && !Compute.inSensorRange(game, los, other, target, null)) {
+                        && ((!Compute.inVisualRange(game, los, other, target)
+                            && !Compute.inSensorRange(game, los, other, target, null))
+                        || (!target.isHexBeingBombed()))) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE,
                             "outside of visual and sensor range");
                 }

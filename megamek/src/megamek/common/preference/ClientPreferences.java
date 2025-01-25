@@ -116,7 +116,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
-        store.setDefault(MML_PATH, "");
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }

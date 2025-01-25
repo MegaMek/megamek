@@ -18,9 +18,7 @@ package megamek.client.ui.baseComponents;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * The FileNameComboBoxModel class is a ComboBoxModel that uses the file name as the value.
@@ -68,9 +66,16 @@ public class FileNameComboBoxModel implements ComboBoxModel<String> {
         return files.size();
     }
 
+    /**
+     * Returns the file name of the file at the given index.
+     * @param index the requested index
+     * @return the file name of the file at the given index, or {@code null} if the index is out of bounds or there is no element at the given index.
+     */
     @Override
     public String getElementAt(int index) {
-        return files.get(index).getName();
+        return Optional.ofNullable(files.get(index))
+            .map(File::getName)
+            .orElse(null);
     }
 
     @Override

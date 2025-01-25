@@ -33,10 +33,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
 import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
@@ -73,12 +70,12 @@ public abstract class PathRanker implements IPathRanker {
             Coords friendsCoords);
 
     @Override
-    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
+    public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
             double fallTolerance, List<Entity> enemies,
             List<Entity> friends) {
         // No point in ranking an empty list.
         if (movePaths.isEmpty()) {
-            return new ArrayList<>();
+            return new TreeSet<>();
         }
 
         // the cached path probability data is really only relevant for one iteration
@@ -97,7 +94,7 @@ public abstract class PathRanker implements IPathRanker {
             allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
         }
 
-        ArrayList<RankedPath> returnPaths = new ArrayList<>(validPaths.size());
+        TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
 
         try {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
@@ -105,28 +102,30 @@ public abstract class PathRanker implements IPathRanker {
             BigDecimal interval = new BigDecimal(5);
 
             boolean pathsHaveExpectedDamage = false;
-
             for (MovePath path : validPaths) {
-                count = count.add(BigDecimal.ONE);
+                try {
+                    count = count.add(BigDecimal.ONE);
 
-                RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies, allyCenter);
+                    RankedPath rankedPath = rankPath(path, game, maxRange, fallTolerance, enemies, allyCenter);
 
-                returnPaths.add(rankedPath);
+                    returnPaths.add(rankedPath);
 
-                // we want to keep track of if any of the paths we've considered have some kind
-                // of damage potential
-                pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
+                    // we want to keep track of if any of the paths we've considered have some kind
+                    // of damage potential
+                    pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
 
-                BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
+                    BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                         .round(new MathContext(0, RoundingMode.DOWN));
-                if (percent.compareTo(interval) >= 0) {
-                    if (logger.isLevelLessSpecificThan(Level.INFO)) {
-                        getOwner().sendChat("... " + percent.intValue() + "% complete.");
+                    if (percent.compareTo(interval) >= 0) {
+                        if (logger.isLevelLessSpecificThan(Level.INFO)) {
+                            getOwner().sendChat("... " + percent.intValue() + "% complete.");
+                        }
+                        interval = percent.add(new BigDecimal(5));
                     }
-                    interval = percent.add(new BigDecimal(5));
+                } catch (Exception e) {
+                    logger.error(e, e.getMessage() + "while processing " + path);
                 }
             }
-
             Entity mover = movePaths.get(0).getEntity();
             UnitBehavior behaviorTracker = getOwner().getUnitBehaviorTracker();
             boolean noDamageButCanDoDamage = !pathsHaveExpectedDamage
@@ -162,7 +161,7 @@ public abstract class PathRanker implements IPathRanker {
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null) ? Integer.MAX_VALUE
                 : closestTarget.getPosition().distance(mover.getPosition());
-
+        boolean hasNoEnemyAvailable = (closestTarget == null);
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = maxRange >= startingTargetDistance;
 
@@ -197,7 +196,7 @@ public abstract class PathRanker implements IPathRanker {
                 // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
                 // also skip this part if I'm attempting to retreat, as engagement is not the
                 // point here
-                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
+                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
                             inRange);
@@ -250,8 +249,8 @@ public abstract class PathRanker implements IPathRanker {
      * @return "Best" out of those paths
      */
     @Override
-    public @Nullable RankedPath getBestPath(List<RankedPath> ps) {
-        return ps.isEmpty() ? null : Collections.max(ps);
+    public @Nullable RankedPath getBestPath(TreeSet<RankedPath> ps) {
+        return ps.isEmpty() ? null : ps.first();
     }
 
     /**
@@ -536,11 +535,8 @@ public abstract class PathRanker implements IPathRanker {
     }
 
     public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {
-        if ((friends == null) || friends.isEmpty()) {
+        if ((friends == null) || friends.size() <= 1) {
             return null;
-        } else if (friends.size() == 1) {
-            // Nobody here but me...
-            return friends.get(0).getPosition();
         }
 
         int xTotal = 0;

@@ -5210,7 +5210,7 @@ public class Compute {
         // the flightline against ground targets
         // TO:AR Errata forum post clarifies that ground
         // mapsheet aero use ground sensor table
-        if (game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
+        if (!game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;

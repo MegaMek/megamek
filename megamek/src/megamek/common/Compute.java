@@ -4404,11 +4404,11 @@ public class Compute {
      *
      * @param game   The current {@link Game}
      * @param los
-     * @param ae
+     * @param attackingEntity
      * @param target
      * @return
      */
-    public static boolean inVisualRange(Game game, LosEffects los, Entity ae,
+    public static boolean inVisualRange(Game game, LosEffects los, Entity attackingEntity,
             Targetable target) {
         // Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
@@ -4432,56 +4432,63 @@ public class Compute {
         }
 
         // if either does not have a position then return false
-        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
+        if ((attackingEntity.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
 
         // check visual range based on planetary conditions
         if (los == null) {
-            los = LosEffects.calculateLOS(game, ae, target);
+            los = LosEffects.calculateLOS(game, attackingEntity, target);
         }
-        int visualRange = getVisualRange(game, ae, los, teIlluminated);
+        int visualRange = getVisualRange(game, attackingEntity, los, teIlluminated);
 
         // Check for factors that only apply to an entity target
         Coords targetPos = target.getPosition();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            Entity te = (Entity) target;
+            Entity targetedEntity = (Entity) target;
 
             // check for camo and null sig on the target
-            if (te.isVoidSigActive()) {
+            if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                 visualRange = visualRange / 2;
-            } else if (te.isChameleonShieldActive()) {
+            } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if (te.isConventionalInfantry() && ((Infantry) te).hasSneakCamo()) {
+            } else if (targetedEntity.isConventionalInfantry() && ((Infantry) targetedEntity).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
 
             // Ground targets pick the closest path to Aeros (TW pg 107)
-            if ((te.isAero()) && isGroundToAir(ae, target)) {
-                targetPos = Compute.getClosestFlightPath(ae.getId(),
-                        ae.getPosition(), te);
+            if ((targetedEntity.isAero()) && isGroundToAir(attackingEntity, target)) {
+                targetPos = Compute.getClosestFlightPath(attackingEntity.getId(),
+                        attackingEntity.getPosition(), targetedEntity);
             }
-            // Airborne aeros can only see ground targets they overfly, and only at Alt <=8
-            if (isAirToGround(ae, target)) {
-                if (ae.getAltitude() > 8) {
-                    return false;
-                }
-                if (ae.passedOver(target)) {
-                    return true;
-                } else {
-                    return false;
+
+            // Airborne units targeting ground have special rules
+            if (isAirToGround(attackingEntity, target)) {
+                // In Low Altitude, Airborne aeros can only see ground targets
+                // they overfly, and only at Alt <=8. It should also spot units
+                // next to this; Low-atmo board with ground units isn't implemented
+                if (game.getBoard().getType() == Board.T_ATMOSPHERE) {
+                    if (attackingEntity.getAltitude() > 8) {
+                        return false;
+                    }
+                    if (attackingEntity.passedOver(target)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
 
+        // Undoes any negative visual ranges
         visualRange = Math.max(visualRange, 1);
         int distance;
         // Ground distance
-        distance = ae.getPosition().distance(targetPos);
+        distance = attackingEntity.getPosition().distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
-        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
+        distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
         return distance <= visualRange;
 
     }
@@ -5201,8 +5208,9 @@ public class Compute {
 
         // If we're an airborne aero, sensor range is limited to within a few hexes of
         // the flightline against ground targets
-        // TO Dec 2017 Errata p17
-        if (te != null && ae.isAirborne() && !te.isAirborne()) {
+        // TO:AR Errata forum post clarifies that ground
+        // mapsheet aero use ground sensor table
+        if (!game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;

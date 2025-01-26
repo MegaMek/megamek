@@ -8282,6 +8282,19 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if check succeeds, false otherwise.
      */
     boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
+        return doSkillCheckInPlace(entity, roll, vPhaseReport);
+    }
+
+    /**
+     * Do a piloting skill check while standing still (during the movement
+     * phase).
+     *
+     * @param entity The <code>Entity</code> that should make the PSR
+     * @param roll   The <code>PilotingRollData</code> to be used for this PSR.
+     * @param vPhaseReport the report vector to write into (sometimes an interim collection)
+     * @return true if check succeeds, false otherwise.
+     */
+    boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll, Vector<Report> vPhaseReport) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
         }
@@ -8295,7 +8308,7 @@ public class TWGameManager extends AbstractGameManager {
         r.subject = entity.getId();
         r.addDesc(entity);
         r.add(roll.getLastPlainDesc(), true);
-        addReport(r);
+        vPhaseReport.add(r);
 
         // roll
         final Roll diceRoll = entity.getCrew().rollPilotingSkill();
@@ -8308,7 +8321,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (diceRoll.getIntValue() < roll.getValue()) {
             r.choose(false);
-            addReport(r);
+            vPhaseReport.add(r);
             if ((entity instanceof Mek)
                     && game.getOptions().booleanOption(
                             OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
@@ -8323,14 +8336,14 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (!entity.isHullDown()
                     || (entity.isHullDown() && !entity.canGoHullDown())) {
-                addReport(doEntityFall(entity, roll));
+                vPhaseReport.addAll(doEntityFall(entity, roll));
             } else {
                 ServerHelper.sinkToBottom(entity);
 
                 r = new Report(2317);
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
-                addReport(r);
+                vPhaseReport.add(r);
             }
 
             suc = false;
@@ -8338,7 +8351,7 @@ public class TWGameManager extends AbstractGameManager {
             entity.doCheckEngineStallRoll(vPhaseReport);
         } else {
             r.choose(true);
-            addReport(r);
+            vPhaseReport.add(r);
             suc = true;
         }
 
@@ -8920,7 +8933,7 @@ public class TWGameManager extends AbstractGameManager {
                 && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
             PilotingRollData waterRoll = entity.checkWaterMove(waterDepth, entity.moved);
             if (waterRoll.getValue() != TargetRoll.CHECK_FALSE) {
-                doSkillCheckInPlace(entity, waterRoll);
+                doSkillCheckInPlace(entity, waterRoll, vPhaseReport);
             }
         }
 
@@ -22900,7 +22913,7 @@ public class TWGameManager extends AbstractGameManager {
                 tank.setDriverHit(true);
                 PilotingRollData psr = tank.getBasePilotingRoll();
                 psr.addModifier(0, "pilot injury");
-                if (!doSkillCheckInPlace(tank, psr)) {
+                if (!doSkillCheckInPlace(tank, psr, reports)) {
                     r = new Report(6675);
                     r.subject = tank.getId();
                     r.addDesc(tank);

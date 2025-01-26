@@ -141,14 +141,11 @@ class TWPhaseEndManager {
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
-//                gameManager.addReport(gameManager.resolvePilotingRolls());
-                Vector<Report> pilotingRollsFromDamage = gameManager.resolvePilotingRolls();
+                gameManager.addReport(gameManager.resolvePilotingRolls());
                 gameManager.checkForFlawedCooling();
                 // check phase report
-                if (gameManager.getvPhaseReport().size() + pilotingRollsFromDamage.size() > 1) {
+                if (gameManager.getvPhaseReport().size() > 1) {
                     gameManager.getGame().addReports(gameManager.getvPhaseReport());
-                    gameManager.addReport(pilotingRollsFromDamage);
-                    gameManager.getGame().addReports(pilotingRollsFromDamage);
                     gameManager.changePhase(GamePhase.FIRING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label

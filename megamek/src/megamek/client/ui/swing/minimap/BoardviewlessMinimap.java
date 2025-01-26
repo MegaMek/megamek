@@ -110,13 +110,6 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 update();
-//                if (e.getNewPhase() == GamePhase.MOVEMENT_REPORT) {
-//                    update();
-//                } else if (e.getNewPhase() == GamePhase.FIRING_REPORT) {
-//                    update();
-//                } else if (e.getNewPhase() == GamePhase.END) {
-//                    update();
-//                }
             }
 
             @Override
@@ -398,6 +391,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     private void paintUnit(Graphics g, Entity entity) {
         int x = entity.getPosition().getX();
         int y = entity.getPosition().getY();
+        int facing = entity.getFacing();
         int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom] + xOffset;
         int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin + yOffset;
 
@@ -419,14 +413,11 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
-        boolean stratOpsSymbols = GUIP.getMmSymbol();
-
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIP.getTeamColoring()) {
             boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
             boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
-//            iconColor = IFF.getPlayerIff(client.getLocalPlayer(), entity.getOwner()).getColor();
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
             } else if (isLocalTeam) {
@@ -435,6 +426,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
+        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 200);
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
@@ -456,76 +448,74 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         float innerBorderWidth = 10f;
         float formStrokeWidth = 20f;
 
-        if (stratOpsSymbols) {
-            // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-            g2.setColor(Color.BLACK);
-            g2.draw(STRAT_BASERECT);
+        // White border to set off the icon from the background
+        g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+        g2.setColor(Color.BLACK);
+        g2.draw(STRAT_BASERECT);
 
-            // Black background to fill forms like the DropShip
-            g2.setColor(fontColor);
-            g2.fill(STRAT_BASERECT);
+        // Black background to fill forms like the DropShip
+        g2.setColor(fontColor);
+        g2.fill(STRAT_BASERECT);
 
-            // Set a thin brush for filled areas (leave a thick brush for line symbols
-            if ((entity instanceof Mek) || (entity instanceof ProtoMek)
-                    || (entity instanceof VTOL) || (entity.isAero())) {
-                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            } else {
-                g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-            }
-
-            // Fill the form in player color / team color
-            g.setColor(iconColor);
-            g2.fill(form);
-
-            // Add the weight class or other lettering for certain units
-            g.setColor(fontColor);
-            if ((entity instanceof ProtoMek) || (entity instanceof Mek) || (entity instanceof Aero)) {
-                String s = "";
-                if (entity instanceof ProtoMek) {
-                    s = "P";
-                } else if ((entity instanceof Mek) && ((Mek) entity).isIndustrial()) {
-                    s = "I";
-                } else if (entity.getWeightClass() < 6) {
-                    s = STRAT_WEIGHTS[entity.getWeightClass()];
-                }
-                if (!s.isBlank()) {
-                    var fontContext = new FontRenderContext(null, true, true);
-                    var font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 100);
-                    FontMetrics currentMetrics = getFontMetrics(font);
-                    int stringWidth = currentMetrics.stringWidth(s);
-                    GlyphVector gv = font.createGlyphVector(fontContext, s);
-                    g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
-                            (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
-                }
-            } else if (entity instanceof MekWarrior) {
-                g2.setColor(fontColor);
-                g2.fillOval(-25, -25, 50, 50);
-            }
-            // Draw the unit icon in black
-            g2.draw(form);
-
-            // Rectangle border for all units
-            g2.setColor(borderColor);
-            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-            g2.draw(STRAT_BASERECT);
-
+        // Set a thin brush for filled areas (leave a thick brush for line symbols
+        if ((entity instanceof Mek) || (entity instanceof ProtoMek)
+                || (entity instanceof VTOL) || (entity.isAero())) {
+            g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         } else {
-            // Standard symbols
-            // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            g2.setColor(Color.BLACK);
-            g2.draw(form);
-
-            // Fill the form in player color / team color
-            g.setColor(iconColor);
-            g2.fill(form);
-
-            // Black border
-            g2.setColor(borderColor);
-            g2.setStroke(new BasicStroke(innerBorderWidth / 2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            g2.draw(form);
+            g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         }
+
+        // Fill the form in player color / team color
+        g.setColor(iconColor);
+        g2.fill(form);
+
+        // Add the weight class or other lettering for certain units
+        g.setColor(fontColor);
+        if ((entity instanceof ProtoMek) || (entity instanceof Mek) || (entity instanceof Aero)) {
+            String s = "";
+            if (entity instanceof ProtoMek) {
+                s = "P";
+            } else if ((entity instanceof Mek) && ((Mek) entity).isIndustrial()) {
+                s = "I";
+            } else if (entity.getWeightClass() < 6) {
+                s = STRAT_WEIGHTS[entity.getWeightClass()];
+            }
+            if (!s.isBlank()) {
+                var fontContext = new FontRenderContext(null, true, true);
+                var font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 100);
+                FontMetrics currentMetrics = getFontMetrics(font);
+                int stringWidth = currentMetrics.stringWidth(s);
+                GlyphVector gv = font.createGlyphVector(fontContext, s);
+                g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
+                        (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
+            }
+        } else if (entity instanceof MekWarrior) {
+            g2.setColor(fontColor);
+            g2.fillOval(-25, -25, 50, 50);
+        }
+        // Draw the unit icon in black
+        g2.draw(form);
+        g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+        var sensorRange = entity.getActiveSensor().getRangeByBracket();
+        if (sensorRange > 0) {
+            sensorRange *= 130;
+            g2.setColor(iconColorSemiTransparent);
+            g2.drawOval(-sensorRange, -sensorRange, sensorRange * 2, sensorRange * 2);
+        }
+
+        // Rectangle border for all units
+        g2.setColor(borderColor);
+        g2.draw(STRAT_BASERECT);
+
+        // Draw Facing Arrow
+        if (facing > -1) {
+            g2.setColor(Color.BLACK);
+            g2.rotate(Math.toRadians(facing * 60));
+            g2.draw(FACING_ARROW);
+            g.setColor(iconColor);
+            g2.fill(FACING_ARROW);
+        }
+
         g2.setTransform(saveTransform);
         g2.setStroke(saveStroke);
     }

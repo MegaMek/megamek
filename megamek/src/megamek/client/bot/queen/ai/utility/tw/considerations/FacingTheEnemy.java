@@ -16,6 +16,7 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Compute;
@@ -24,6 +25,7 @@ import megamek.common.Entity;
 import megamek.common.MovePath;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -49,7 +51,9 @@ public class FacingTheEnemy extends TWConsideration {
                 coordsToFace.add(enemy.getPosition());
             }
         }
-
+        if (coordsToFace.isEmpty()) {
+            return 1d;
+        }
         Coords toFace = Compute.randomListElement(coordsToFace);
         int desiredFacing = (toFace.direction(firingUnit.getPosition()) + 3) % 6;
         int facingDiff = getFacingDiff(movePath, desiredFacing);
@@ -73,5 +77,14 @@ public class FacingTheEnemy extends TWConsideration {
             facingDiff = 3;
         }
         return facingDiff;
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new FacingTheEnemy();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 }

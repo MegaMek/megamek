@@ -18,42 +18,37 @@ package megamek.client.bot.queen.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 
 import java.util.Map;
 
-import static megamek.codeUtilities.MathUtility.clamp01;
-
 /**
- * This consideration is used to determine if a target is an easy target.
+ * This consideration is used to see if the unit wants to stick to the previous movement type taken.
  */
-@JsonTypeName("TargetWithinOptimalRange")
-public class TargetWithinOptimalRange extends TWConsideration {
-    public TargetWithinOptimalRange() {
+@JsonTypeName("StickyMoveType")
+public class StickyMoveType extends TWConsideration {
+
+    public StickyMoveType() {
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var targets = context.getTargets();
-        var firingUnit = context.getCurrentUnit();
-        var distance = targets.stream().map(Entity::getPosition)
-                .mapToInt(coords -> firingUnit.getPosition().distance(coords)).max()
-                .orElse(Integer.MAX_VALUE);;
-
-        var maxRange = firingUnit.getMaxWeaponRange();
-        var bestRange = firingUnit.getOptimalRange();
-
-        if (distance <= bestRange) {
-            return 1d;
+        var twContext = (TWDecisionContext) context;
+        var previousPathTaken = twContext.getPreviousRankedPath();
+        if (previousPathTaken.isEmpty()) {
+            return 1;
+        }
+        if (twContext.getMovePath().getLastStepMovementType().equals(previousPathTaken.get().getPath().getLastStepMovementType())) {
+            return 1;
         }
 
-        return clamp01(1.0001d - (double) (distance - bestRange) / (maxRange - bestRange));
+        return 0;
     }
-
 
     @Override
     public Consideration<Entity, Entity> copy() {
-        var copy = new TargetWithinOptimalRange();
+        var copy = new StickyMoveType();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

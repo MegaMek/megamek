@@ -37,7 +37,7 @@ import static megamek.codeUtilities.MathUtility.clamp01;
     @JsonSubTypes.Type(value = TWDecisionScoreEvaluator.class, name = "TWDecisionScoreEvaluator"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
+public abstract class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
     private String name;
     private String description;
     private String notes;
@@ -59,33 +59,32 @@ public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Named
     }
 
     @JsonIgnore
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, double min, DebugReporter debugReport) {
+    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, DebugReporter debugReport) {
         var finalScore = bonus;
         var considerationSize = getConsiderations().size();
-        debugReport.append("Consideration size: " + considerationSize);
-        debugReport.append("Bonus: " + bonus);
+        debugReport.append("\n\tConsideration size: ").append(considerationSize);
+        debugReport.append("\n\t\tBonus: ").append(bonus);
         for (var consideration : getConsiderations()) {
-            if ((0.0f < finalScore) || (0.0f < min)) {
-                debugReport.append("Final score is greater than 0.0f or min is greater than 0.0f");
+            debugReport.append("\n\t\tConsideration: ").append(consideration.getName());
+            if (0.0f >= finalScore) {
+                debugReport.append("\n\t\tFinal score is 0 or less.");
                 break;
             }
             var score = consideration.score(context);
-            debugReport.append("Consideration: " + consideration.getName());
-            debugReport.append("Score: " + score);
+            debugReport.append("\n\t\t\tScore: ").append(score);
             var response = consideration.computeResponseCurve(score);
             response = clamp01(response);
-            debugReport.append("curve: " + response);
+            debugReport.append("\n\t\t\tcurve: ").append(response);
             finalScore *= clamp01(response);
-            debugReport.append("currentScore: " + finalScore);
+            debugReport.append("\n\t\t\tcurrentScore: ").append(finalScore);
         }
         // adjustment
         var modificationFactor = 1 - (1 / considerationSize);
         var makeUpValue = (1 - finalScore) * modificationFactor;
         finalScore = finalScore + (makeUpValue * finalScore);
-        debugReport.append("Adjusted Final score: " + finalScore);
+        debugReport.append("\n\t\tAdjusted Final score: ").append(finalScore).appendLine();
         return finalScore;
     }
-
 
     public List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations() {
         return considerations;
@@ -119,6 +118,8 @@ public class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Named
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> copy();
 
     @Override
     public String toString() {

@@ -203,7 +203,6 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String AI_EDITOR_RELOAD_FROM_DISK = "aiEditorReloadFromDisk";
     public static final String AI_EDITOR_UNDO = "aiEditorUndo";
     public static final String AI_EDITOR_REDO = "aiEditorRedo";
-    public static final String AI_EDITOR_NEW_DECISION = "aiEditorNewDecision";
     public static final String AI_EDITOR_NEW_CONSIDERATION = "aiEditorNewConsideration";
     public static final String AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR = "aiEditorNewDecisionScoreEvaluator";
     public static final String AI_EDITOR_EXPORT = "aiEditorExport";

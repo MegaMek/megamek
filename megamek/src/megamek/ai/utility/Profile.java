@@ -67,4 +67,9 @@ public class Profile <A,B> implements NamedObject {
     public List<Decision<A, B>> getDecisions() {
         return decisions;
     }
+
+    public void setDecisions(List<Decision<A, B>> decisions) {
+        this.decisions.clear();
+        this.decisions.addAll(decisions);
+    }
 }

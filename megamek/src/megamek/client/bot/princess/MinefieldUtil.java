@@ -31,7 +31,7 @@ import megamek.common.annotations.Nullable;
 /**
  * This class contains logic to evaluate the damage a unit could sustain from
  * moving a long a move path containing minefields
- * 
+ *
  * @author NickAragua
  */
 public class MinefieldUtil {

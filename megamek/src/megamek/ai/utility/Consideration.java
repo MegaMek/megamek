@@ -29,16 +29,21 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = TWConsideration.class, name = "TWConsideration"),
     @JsonSubTypes.Type(value = DamageOutput.class, name = "DamageOutput"),
     @JsonSubTypes.Type(value = FacingTheEnemy.class, name = "FacingTheEnemy"),
+    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
     @JsonSubTypes.Type(value = FavoriteTargetInRange.class, name = "FavoriteTargetInRange"),
     @JsonSubTypes.Type(value = IsVIPCloser.class, name = "IsVIPCloser"),
+    @JsonSubTypes.Type(value = MyUnitRoleIs.class, name = "MyUnitRoleIs"),
     @JsonSubTypes.Type(value = MyUnitArmor.class, name = "MyUnitArmor"),
+    @JsonSubTypes.Type(value = MyUnitTMM.class, name = "MyUnitTMM"),
+    @JsonSubTypes.Type(value = MyUnitMoved.class, name = "MyUnitMoved"),
     @JsonSubTypes.Type(value = MyUnitBotSettings.class, name = "MyUnitBotSettings"),
     @JsonSubTypes.Type(value = MyUnitHeatManagement.class, name = "MyUnitHeatManagement"),
     @JsonSubTypes.Type(value = MyUnitIsCrippled.class, name = "MyUnitIsCrippled"),
     @JsonSubTypes.Type(value = MyUnitIsMovingTowardsWaypoint.class, name = "MyUnitIsMovingTowardsWaypoint"),
     @JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
     @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
-    @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange")
+    @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
+    @JsonSubTypes.Type(value = MyUnitIsGettingAwayFromDanger.class, name = "MyUnitIsGettingAwayFromDanger")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements NamedObject {
@@ -159,6 +164,8 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
     public void setName(String name) {
         this.name = name;
     }
+
+    public abstract Consideration<IN_GAME_OBJECT, TARGETABLE> copy();
 
     @Override
     public String toString() {

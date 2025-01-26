@@ -263,22 +263,8 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
         }
         lines.removeIf(line -> line.round < currentRound - 4);
-        // 4) Draw attack lines
 
-//        for (var line : attackLines) {
-//            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
-//            var newColor = new Color(line.color.getRed(),
-//                line.color.getGreen(),
-//                line.color.getBlue(),
-//                (int) (line.color.getAlpha() / (double) delta));
-//            if (!g2d.getColor().equals(newColor)) {
-//                g2d.setColor(newColor);
-//            }
-//            var p1 = this.projectToView(line.x1, line.y1);
-//            var p2 = this.projectToView(line.x2, line.y2);
-//            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-//            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
-//        }
+
         g2d.dispose();
 
 
@@ -430,7 +416,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
-        
+
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
@@ -617,7 +603,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             var coords = unitLocation.getCoords();
             lines.add(new Line(previousCoords.getX(), previousCoords.getY(),
                 coords.getX(), coords.getY(),
-                Color.GREEN,
+                Color.BLACK,
                 game.getCurrentRound()));
             previousCoords = coords;
         }

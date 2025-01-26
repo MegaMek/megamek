@@ -23,6 +23,7 @@ import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
 import megamek.client.bot.princess.*;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -97,27 +98,29 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
         DecisionMaker<Entity, Entity> simpleDecisionMaker = new DecisionMaker<>() {
             @Override
             public double getBonusFactor(Decision<Entity, Entity> scoreEvaluator) {
-                return 0;
+                return scoreEvaluator.getWeight();
             }
 
             @Override
             public void scoreAllDecisions(List<Decision<Entity, Entity>> decisions, List<DecisionContext<Entity, Entity>> contexts) {
-                TWDecisionContext previousContext = null;
-                for (var context : contexts) {
-                    TWDecisionContext decisionContext = (TWDecisionContext) context;
+                for (var decision : decisions) {
                     double cutoff = 0.0d;
-                    for (var decision : decisions) {
+                    for (var context : contexts) {
+                        TWDecisionContext decisionContext = (TWDecisionContext) context;
                         decision.setDecisionContext(decisionContext);
-                        decision.setScore(0d);
-                        double bonus = decisionContext.getBonusFactor(previousContext);
+                        double bonus = decisionContext.getBonusFactor(previousRankedPath(currentEntity).orElse(null));
                         if (bonus < cutoff) {
                             continue;
                         }
                         var decisionScoreEvaluator = decision.getDecisionScoreEvaluator();
-                        var debugReporter = new DebugReporter();
 
-                        var score = decisionScoreEvaluator.score(decisionContext, getBonusFactor(decision), 0.0d, debugReporter);
-                        returnPaths.add(new RankedPath(score, decisionContext.getMovePath(), debugReporter.getReport(), decisionContext.getExpectedDamage()));
+                        var debugReporter = new DebugReporter(150 + 256 * decision.getDecisionScoreEvaluator().getConsiderations().size());
+                        debugReporter.append(decision.getName()).append("::");
+                        debugReporter.append(decisionScoreEvaluator.getName());
+                        var score = decisionScoreEvaluator.score(decisionContext, getBonusFactor(decision), debugReporter);
+                        var rankedPath = new RankedPath(score, decisionContext.getMovePath(), debugReporter.getReport(), decisionContext.getExpectedDamage());
+                        returnPaths.add(rankedPath);
+                        logger.info(debugReporter.getReport());
                     }
                 }
             }
@@ -127,6 +130,8 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
 
         return returnPaths;
     }
+
+    private final Map<Integer, RankedPath> memoryOfPastDecisions = new HashMap<>();
 
     @Override
     public FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies) {
@@ -232,4 +237,19 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
         }
     }
 
+    @Override
+    public @Nullable RankedPath getBestPath(TreeSet<RankedPath> ps) {
+        if (ps.isEmpty()) {
+            return null;
+        } else {
+            var bestPath = ps.first();
+            memoryOfPastDecisions.put(bestPath.getPath().getEntity().getId(), bestPath);
+        }
+        return ps.isEmpty() ? null : ps.first();
+    }
+
+    @Override
+    public Optional<RankedPath> previousRankedPath(Entity entity) {
+        return Optional.ofNullable(memoryOfPastDecisions.get(entity.getId()));
+    }
 }

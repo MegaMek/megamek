@@ -29,10 +29,14 @@ public class ParametersTableModel extends AbstractTableModel {
     private static final MMLogger logger = MMLogger.create(ParametersTableModel.class);
     private final List<Row> rowValues = new ArrayList<>();
     private final String[] columnNames = { "Name", "Value" };
-    private final Class<?>[] columnClasses = { String.class, String.class };
     private record Row(String name, Object value, Class<?> clazz, ParameterTitleTooltip parameterTitleTooltip) {}
 
     public ParametersTableModel() {
+        fireTableDataChanged();
+    }
+
+    public ParametersTableModel(Consideration<?,?> consideration) {
+        setParameters(consideration);
     }
 
     public void setParameters(Consideration<?,?> consideration) {
@@ -75,7 +79,11 @@ public class ParametersTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return columnClasses[columnIndex];
+        if (columnIndex == 0) {
+            return String.class;
+        } else {
+            return Object.class;
+        }
     }
 
     @Override
@@ -102,6 +110,9 @@ public class ParametersTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        if (rowIndex > rowValues.size()) {
+            return;
+        }
         var row = rowValues.get(rowIndex);
         if (columnIndex == 1) {
             if (aValue.getClass().equals(row.clazz)) {

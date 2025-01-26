@@ -16,12 +16,14 @@
 package megamek.client.bot.queen.ai.utility.tw.intelligence;
 
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.client.bot.princess.RankedPath;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.MovePath;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PathRankerUtilCalculator {
     SimpleIntelligence.FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies);
@@ -29,4 +31,6 @@ public interface PathRankerUtilCalculator {
     double getMovePathSuccessProbability(MovePath path, StringBuilder report);
 
     int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game);
+
+    Optional<RankedPath> previousRankedPath(Entity entity);
 }

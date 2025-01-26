@@ -16,8 +16,11 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
+
+import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -36,4 +39,12 @@ public class MyUnitArmor extends TWConsideration {
         return clamp01(currentUnit.getArmorRemainingPercent());
     }
 
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitArmor();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
+    }
 }

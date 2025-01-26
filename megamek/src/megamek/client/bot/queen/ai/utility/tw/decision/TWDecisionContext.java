@@ -56,6 +56,10 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
         return queen.getUnitBehaviorTracker().getBehaviorType(entity, queen);
     }
 
+    public Optional<RankedPath> getPreviousRankedPath() {
+        return pathRankerUtilCalculator.previousRankedPath(getCurrentUnit());
+    }
+
     public int distanceToRetreatEdge(Entity entity) {
         return distanceToRetreatEdge(entity.getPosition());
     }
@@ -258,6 +262,10 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
     @Override
     public double getBonusFactor(DecisionContext<Entity, Entity> lastContext) {
+        return 0;
+    }
+
+    public double getBonusFactor(RankedPath rankedPath) {
         return 0;
     }
 

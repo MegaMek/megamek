@@ -43,6 +43,11 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
         fireTableRowsInserted(rows.size() - 1, rows.size() - 1);
     }
 
+    public void deleteRow(int row) {
+        rows.remove(row);
+        fireTableRowsDeleted(row, row);
+    }
+
     @Override
     public int getRowCount() {
         return rows.size();
@@ -90,7 +95,9 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
                     dse.setWeight((Double) weight);
                 }
             case 3:
+                // noinspection rawtypes
                 if (aValue instanceof DecisionScoreEvaluator decisionScoreEvaluator) {
+                    // noinspection unchecked
                     dse.setDecisionScoreEvaluator(decisionScoreEvaluator);
                 }
                 break;

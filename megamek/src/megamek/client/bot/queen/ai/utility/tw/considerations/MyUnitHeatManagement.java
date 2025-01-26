@@ -16,8 +16,11 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
+
+import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -34,6 +37,15 @@ public class MyUnitHeatManagement extends TWConsideration {
     public double score(DecisionContext<Entity, Entity> context) {
         var currentUnit = context.getCurrentUnit();
         return clamp01( currentUnit.getHeat() / (double) currentUnit.getHeatCapacity());
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitHeatManagement();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 
 }

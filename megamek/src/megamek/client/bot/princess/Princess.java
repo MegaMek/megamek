@@ -224,11 +224,11 @@ public class Princess extends BotClient {
      */
     IPathRanker getPathRanker(Entity entity) {
         if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            return pathRankers.get(PathRankerType.Infantry);
+            return getPathRanker(PathRankerType.Infantry);
         } else if (entity.isAero() && game.useVectorMove()) {
-            return pathRankers.get(PathRankerType.NewtonianAerospace);
+            return getPathRanker(PathRankerType.NewtonianAerospace);
         }
-        return pathRankers.get(PathRankerType.Basic);
+        return getPathRanker(PathRankerType.Basic);
     }
 
     IPathRanker getPathRanker(PathRankerType pathRankerType) {
@@ -2729,9 +2729,6 @@ public class Princess extends BotClient {
 
         BasicPathRanker basicPathRanker = new BasicPathRanker(this);
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
-
-        PathRanker advanced = new AdvancedPathRanker(this, precognition.getPathEnumerator());
-        pathRankers.put(PathRankerType.Advanced, advanced);
 
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);

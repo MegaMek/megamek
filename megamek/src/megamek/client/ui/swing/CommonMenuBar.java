@@ -409,8 +409,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         aiEditorNewConsideration.setMnemonic(VK_U);
         initMenuItem(aiEditorNewDecisionScoreEvaluator, menu, AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR);
         aiEditorNewDecisionScoreEvaluator.setMnemonic(VK_I);
-        initMenuItem(aiEditorNewDecision, menu, AI_EDITOR_NEW_DECISION);
-        aiEditorNewDecision.setMnemonic(VK_O);
         menu.addSeparator();
 
         initMenuItem(aiEditorExport, menu, AI_EDITOR_EXPORT);
@@ -464,6 +462,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
         gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
+        viewBotCommands.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.BOT_COMMANDS));
     }
 
     @Override
@@ -620,7 +619,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMekDisplay.setEnabled(isInGameBoardView);
         viewForceDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
-        viewBotCommands.setEnabled(isInGame);
+
         aiEditorExport.setEnabled(isAiEditor);
         aiEditorImport.setEnabled(isAiEditor);
         aiEditorNew.setEnabled(isAiEditor);
@@ -634,6 +633,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         aiEditorNewDecision.setEnabled(isAiEditor);
         aiEditorNewConsideration.setEnabled(isAiEditor);
         aiEditorNewDecisionScoreEvaluator.setEnabled(isAiEditor);
+
+        viewBotCommands.setEnabled(isInGame);
     }
 
     /**
@@ -687,6 +688,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
+        } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
+            viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
         }
     }
 

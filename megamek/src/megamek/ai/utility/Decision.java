@@ -33,7 +33,7 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = TWDecision.class, name = "TWDecision"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
+public abstract class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
     private String name;
     private String description;
     private double weight;
@@ -101,6 +101,8 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
     public void setDecisionContext(DecisionContext<IN_GAME_OBJECT, TARGETABLE> decisionContext) {
         this.decisionContext = decisionContext;
     }
+
+    public abstract Decision<IN_GAME_OBJECT, TARGETABLE> copy();
 
     @Override
     public String toString() {

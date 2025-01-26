@@ -49,6 +49,11 @@ public class TWDecision extends Decision<Entity, Entity> {
         return rankedPath;
     }
 
+    @Override
+    public TWDecision copy() {
+        return new TWDecision(getName(), getDescription(), getWeight(), getDecisionScoreEvaluator().copy());
+    }
+
     @JsonIgnore
     private void setRankedPath(RankedPath rankedPath) {
         this.rankedPath = rankedPath;

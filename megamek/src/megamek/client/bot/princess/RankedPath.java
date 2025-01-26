@@ -87,6 +87,12 @@ public class RankedPath implements Comparable<RankedPath> {
         if (p.path.getHexesMoved() < path.getHexesMoved()) {
             return 1;
         }
+        if (path.hasWaypoint() && !p.path.hasWaypoint()) {
+            return -1;
+        }
+        if (p.path.hasWaypoint() && !path.hasWaypoint()) {
+            return 1;
+        }
         if (expectedDamage < p.expectedDamage) {
             return -1;
         }

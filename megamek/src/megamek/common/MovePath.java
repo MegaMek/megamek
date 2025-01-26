@@ -26,6 +26,8 @@ import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Holds movement path for an entity.
@@ -2053,5 +2055,33 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return maxMP;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (!(object instanceof MovePath movePath)) return false;
+
+        return new EqualsBuilder()
+            .append(entity, movePath.entity)
+            .append(careful, movePath.careful)
+            .append(gravityConcern, movePath.gravityConcern)
+            .append(gravity, movePath.gravity)
+            .append(steps, movePath.steps)
+            .append(containedStepTypes, movePath.containedStepTypes)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+            .append(entity)
+            .append(steps)
+            .append(containedStepTypes)
+            .append(careful)
+            .append(gravityConcern)
+            .append(gravity)
+            .toHashCode();
     }
 }

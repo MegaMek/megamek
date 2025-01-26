@@ -2125,11 +2125,25 @@ public class MovePath implements Cloneable, Serializable {
 
         if (!(object instanceof MovePath movePath)) return false;
 
-        return new EqualsBuilder().append(isCareful(), movePath.isCareful()).append(gravityConcern, movePath.gravityConcern).append(gravity, movePath.gravity).append(getCoordsSet(), movePath.getCoordsSet()).append(getSteps(), movePath.getSteps()).append(containedStepTypes, movePath.containedStepTypes).append(getWaypoint(), movePath.getWaypoint()).isEquals();
+        return new EqualsBuilder()
+            .append(entity, movePath.entity)
+            .append(careful, movePath.careful)
+            .append(gravityConcern, movePath.gravityConcern)
+            .append(gravity, movePath.gravity)
+            .append(steps, movePath.steps)
+            .append(containedStepTypes, movePath.containedStepTypes)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(getCoordsSet()).append(getSteps()).append(containedStepTypes).append(isCareful()).append(gravityConcern).append(gravity).append(getWaypoint()).toHashCode();
+        return new HashCodeBuilder(17, 37)
+            .append(entity)
+            .append(steps)
+            .append(containedStepTypes)
+            .append(careful)
+            .append(gravityConcern)
+            .append(gravity)
+            .toHashCode();
     }
 }

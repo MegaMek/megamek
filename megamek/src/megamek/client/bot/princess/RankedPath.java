@@ -119,7 +119,10 @@ public class RankedPath implements Comparable<RankedPath> {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-            .append(getPath()).append(getRank()).append(getReason()).append(getExpectedDamage())
+            .append(getPath())
+            .append(getRank())
+            .append(getReason())
+            .append(getExpectedDamage())
             .toHashCode();
     }
 

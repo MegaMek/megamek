@@ -46,6 +46,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #1072: Can bomb and strafe the ground even if no LOS
 + PR #6442: Unit Tests for WeaponAttackAction to help test megamek
 + Fix #6434: pilot rolls reported before all attacks (also #3890)
++ PR #6443: Fix for ranked path entries being overwritten
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

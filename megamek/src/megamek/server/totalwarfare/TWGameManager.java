@@ -88,10 +88,10 @@ public class TWGameManager extends AbstractGameManager {
 
     private Game game = new Game();
 
-    private Vector<Report> vPhaseReport = new Vector<>();
+    private Vector<Report> mainPhaseReport = new Vector<>();
 
-    public Vector<Report> getvPhaseReport() {
-        return vPhaseReport;
+    public Vector<Report> getMainPhaseReport() {
+        return mainPhaseReport;
     }
 
     // Track buildings that are affected by an entity's movement.
@@ -1709,8 +1709,8 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        vPhaseReport.addAll(teamReport);
-        vPhaseReport.addAll(playerReport);
+        mainPhaseReport.addAll(teamReport);
+        mainPhaseReport.addAll(playerReport);
     }
 
     private List<Report> bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
@@ -1845,7 +1845,7 @@ public class TWGameManager extends AbstractGameManager {
         r.add("<pre>");
         reports.add(r);
 
-        vPhaseReport.addAll(reports);
+        mainPhaseReport.addAll(reports);
     }
 
     @Override
@@ -2988,7 +2988,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         Building bldg = game.getBoard().getBuildingAt(centralPos);
         if (null != bldg) {
-            collapseBuilding(bldg, positionMap, centralPos, vPhaseReport);
+            collapseBuilding(bldg, positionMap, centralPos, mainPhaseReport);
         }
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
@@ -3000,7 +3000,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             bldg = game.getBoard().getBuildingAt(pos);
             if (null != bldg) {
-                collapseBuilding(bldg, positionMap, pos, vPhaseReport);
+                collapseBuilding(bldg, positionMap, pos, mainPhaseReport);
             }
         }
 
@@ -3015,7 +3015,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
-                        killer, null, false, 0, vPhaseReport, false,
+                        killer, null, false, 0, mainPhaseReport, false,
                         alreadyHit, true);
             }
         }
@@ -4557,7 +4557,7 @@ public class TWGameManager extends AbstractGameManager {
                 // and add it to the list of affected buildings.
                 if (bldg.getCurrentCF(nextPos) > 0) {
                     stopTheSkid = true;
-                    if (bldg.rollBasement(nextPos, game.getBoard(), vPhaseReport)) {
+                    if (bldg.rollBasement(nextPos, game.getBoard(), mainPhaseReport)) {
                         sendChangedHex(nextPos);
                         Vector<Building> buildings = new Vector<>();
                         buildings.add(bldg);
@@ -4566,7 +4566,7 @@ public class TWGameManager extends AbstractGameManager {
                     addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg, entity, nextPos));
                 } else {
                     // otherwise it collapses immediately on our head
-                    checkForCollapse(bldg, game.getPositionMap(), nextPos, true, vPhaseReport);
+                    checkForCollapse(bldg, game.getPositionMap(), nextPos, true, mainPhaseReport);
                 }
             } // End handle-building.
 
@@ -4584,7 +4584,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check for collapse of any building the entity might be on
             Building roof = game.getBoard().getBuildingAt(nextPos);
             if (roof != null) {
-                if (checkForCollapse(roof, game.getPositionMap(), nextPos, true, vPhaseReport)) {
+                if (checkForCollapse(roof, game.getPositionMap(), nextPos, true, mainPhaseReport)) {
                     break; // stop skidding if the building collapsed
                 }
             }
@@ -4637,7 +4637,7 @@ public class TWGameManager extends AbstractGameManager {
             // note that this must sequentially occur before the next 'entering liquid
             // magma' check
             // otherwise, magma crust won't have a chance to break
-            ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, vPhaseReport, this);
+            ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, mainPhaseReport, this);
             ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
 
             // is the next hex a swamp?
@@ -5350,7 +5350,7 @@ public class TWGameManager extends AbstractGameManager {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
                 // TODO : a Mek suffers a Head Blown Off crit.
-                vPhaseReport.addAll(destroyEntity(entity,
+                mainPhaseReport.addAll(destroyEntity(entity,
                         "impossible displacement", entity instanceof Mek,
                         entity instanceof Mek));
             }
@@ -8282,7 +8282,7 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if check succeeds, false otherwise.
      */
     boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll) {
-        return doSkillCheckInPlace(entity, roll, vPhaseReport);
+        return doSkillCheckInPlace(entity, roll, mainPhaseReport);
     }
 
     /**
@@ -8386,7 +8386,7 @@ public class TWGameManager extends AbstractGameManager {
             r.choose(false);
             addReport(r);
             // failed a PSR, possibly check for engine stalling
-            entity.doCheckEngineStallRoll(vPhaseReport);
+            entity.doCheckEngineStallRoll(mainPhaseReport);
             return false;
         }
         // Dislodged swarmers don't get turns.
@@ -8478,7 +8478,7 @@ public class TWGameManager extends AbstractGameManager {
                 entity.setPosition(fallsInPlace ? src : dest);
             }
             // failed a PSR, possibly check for engine stalling
-            entity.doCheckEngineStallRoll(vPhaseReport);
+            entity.doCheckEngineStallRoll(mainPhaseReport);
             return roll.getValue() - diceRoll.getIntValue();
         }
         r.choose(true);
@@ -9363,7 +9363,7 @@ public class TWGameManager extends AbstractGameManager {
         // of basement it has
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
-            if (bldg.rollBasement(entity.getPosition(), game.getBoard(), vPhaseReport)) {
+            if (bldg.rollBasement(entity.getPosition(), game.getBoard(), mainPhaseReport)) {
                 sendChangedHex(entity.getPosition());
                 Vector<Building> buildings = new Vector<>();
                 buildings.add(bldg);
@@ -10283,7 +10283,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
-            ServerHelper.detectHiddenUnits(game, detector, detector.getPosition(), vPhaseReport, this);
+            ServerHelper.detectHiddenUnits(game, detector, detector.getPosition(), mainPhaseReport, this);
         }
     }
 
@@ -10555,7 +10555,7 @@ public class TWGameManager extends AbstractGameManager {
         r.add(pos.getBoardNum(), true);
         addReport(r);
 
-        if (clearMinefield(mf, ent, clear, boom, vPhaseReport)) {
+        if (clearMinefield(mf, ent, clear, boom, mainPhaseReport)) {
             removeMinefield(mf);
         }
         // some mines might have blown up
@@ -12245,7 +12245,7 @@ public class TWGameManager extends AbstractGameManager {
                 String rollCalc2 = rollValue2 + " [" + diceRoll2.getIntValue() + " - 2]";
                 r.addDataWithTooltip(rollCalc2, diceRoll2.getReport());
                 r.newlines = 0;
-                vPhaseReport.add(r);
+                mainPhaseReport.add(r);
 
                 if (te instanceof BattleArmor) {
                     r = new Report(3706);
@@ -12254,8 +12254,8 @@ public class TWGameManager extends AbstractGameManager {
                     // TODO : fix for salvage purposes
                     HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     r.add(te.getLocationAbbr(targetTrooper));
-                    vPhaseReport.add(r);
-                    vPhaseReport.addAll(criticalEntity(ae, targetTrooper.getLocation(),
+                    mainPhaseReport.add(r);
+                    mainPhaseReport.addAll(criticalEntity(ae, targetTrooper.getLocation(),
                             targetTrooper.isRear(), 0, false, false, 0));
                 } else if (te instanceof Mek) {
                     if (((Mek) te).isIndustrial()) {
@@ -12277,14 +12277,14 @@ public class TWGameManager extends AbstractGameManager {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(3);
-                            vPhaseReport.add(r);
+                            mainPhaseReport.add(r);
                             te.taserShutdown(3, false);
                         } else {
                             r = new Report(3710);
                             r.addDesc(te);
                             r.add(2);
                             r.add(3);
-                            vPhaseReport.add(r);
+                            mainPhaseReport.add(r);
                             te.setTaserInterference(2, 3, true);
                         }
                     }
@@ -12294,14 +12294,14 @@ public class TWGameManager extends AbstractGameManager {
                         r = new Report(3705);
                         r.addDesc(te);
                         r.add(4);
-                        vPhaseReport.add(r);
+                        mainPhaseReport.add(r);
                         te.taserShutdown(4, false);
                     } else {
                         r = new Report(3710);
                         r.addDesc(te);
                         r.add(2);
                         r.add(4);
-                        vPhaseReport.add(r);
+                        mainPhaseReport.add(r);
                         te.setTaserInterference(2, 4, false);
                     }
                 }
@@ -14098,14 +14098,14 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(3362);
             r.newlines = 1;
             r.subject = te.getId();
-            vPhaseReport.add(r);
+            mainPhaseReport.add(r);
 
             // If the target's point defenses overheated, report that
             if (taa.getPDOverheated()) {
                 r = new Report(3361);
                 r.newlines = 1;
                 r.subject = te.getId();
-                vPhaseReport.add(r);
+                mainPhaseReport.add(r);
             }
 
             // Damage the missile
@@ -14916,7 +14916,7 @@ public class TWGameManager extends AbstractGameManager {
                     // target gets displaced
                     targetDest = Compute.getValidDisplacement(game,
                             violation.getId(), dest, direction);
-                    vPhaseReport.addAll(doEntityDisplacement(violation, dest,
+                    mainPhaseReport.addAll(doEntityDisplacement(violation, dest,
                             targetDest, new PilotingRollData(violation.getId(),
                                     0, "domino effect")));
                     // Update the violating entity's position on the client.
@@ -15231,7 +15231,7 @@ public class TWGameManager extends AbstractGameManager {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
-                ServerHelper.resolveAeroHeat(game, entity, vPhaseReport, rhsReports, radicalHSBonus, hotDogMod, this);
+                ServerHelper.resolveAeroHeat(game, entity, mainPhaseReport, rhsReports, radicalHSBonus, hotDogMod, this);
                 continue;
             }
 
@@ -15334,7 +15334,7 @@ public class TWGameManager extends AbstractGameManager {
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
-            ServerHelper.adjustHeatExtremeTemp(game, entity, vPhaseReport);
+            ServerHelper.adjustHeatExtremeTemp(game, entity, mainPhaseReport);
 
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
@@ -15490,8 +15490,8 @@ public class TWGameManager extends AbstractGameManager {
             r.add(r.bold(r.fgColor(color, String.valueOf(entity.heat))));
             addReport(r);
             entity.heatBuildup = 0;
-            vPhaseReport.addAll(rhsReports);
-            vPhaseReport.addAll(heatEffectsReports);
+            mainPhaseReport.addAll(rhsReports);
+            mainPhaseReport.addAll(heatEffectsReports);
 
             // Does the unit have inferno ammo?
             if (entity.hasInfernoAmmo()) {
@@ -15936,7 +15936,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        if (vPhaseReport.size() == 1) {
+        if (mainPhaseReport.size() == 1) {
             // I guess nothing happened...
             addReport(new Report(1205, Report.PUBLIC));
         }
@@ -16178,7 +16178,7 @@ public class TWGameManager extends AbstractGameManager {
             // phew!
             r.choose(true);
             addReport(r);
-            Report.addNewline(vPhaseReport);
+            Report.addNewline(mainPhaseReport);
         } else {
             // eek
             r.choose(false);
@@ -16191,7 +16191,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 Building building = getGame().getBoard().getBuildingAt(entity.getPosition());
 
-                Report.addNewline(vPhaseReport);
+                Report.addNewline(mainPhaseReport);
                 addReport(criticalGunEmplacement(gun, building, entity.getPosition()));
                 // Taharqa: TacOps rules, protos and vees no longer die instantly
                 // (hurray!)
@@ -16201,7 +16201,7 @@ public class TWGameManager extends AbstractGameManager {
                     bonus = 0;
                 }
                 // roll a critical hit
-                Report.addNewline(vPhaseReport);
+                Report.addNewline(mainPhaseReport);
                 addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0, true));
             } else if (entity instanceof ProtoMek) {
                 // this code is taken from inferno hits
@@ -16233,13 +16233,13 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     if (entity.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
                         addReport(destroyEntity(entity, "flaming death", false, true));
-                        Report.addNewline(vPhaseReport);
+                        Report.addNewline(mainPhaseReport);
                     }
                 }
             } else {
                 // sucks to be you
                 addReport(destroyEntity(entity, "fire", false, false));
-                Report.addNewline(vPhaseReport);
+                Report.addNewline(mainPhaseReport);
             }
         }
     }
@@ -16589,7 +16589,7 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     r.choose(false);
                 }
-                vPhaseReport.add(r);
+                mainPhaseReport.add(r);
             }
         }
     }
@@ -16674,7 +16674,7 @@ public class TWGameManager extends AbstractGameManager {
     private void checkForIndustrialUnstall() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext();) {
             final Entity entity = i.next();
-            entity.checkUnstall(vPhaseReport);
+            entity.checkUnstall(mainPhaseReport);
         }
     }
 
@@ -16692,7 +16692,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.addDesc(mek);
                     r.subject = mek.getId();
                     r.newlines = 0;
-                    vPhaseReport.add(r);
+                    mainPhaseReport.add(r);
                     // for being hit by a physical weapon
                     if (mek.getLevelsFallen() == 0) {
                         r = new Report(5531);
@@ -16703,9 +16703,9 @@ public class TWGameManager extends AbstractGameManager {
                         r.subject = mek.getId();
                         r.add(mek.getLevelsFallen());
                     }
-                    vPhaseReport.add(r);
+                    mainPhaseReport.add(r);
                     HitData newHit = mek.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                    vPhaseReport.addAll(criticalEntity(mek,
+                    mainPhaseReport.addAll(criticalEntity(mek,
                             newHit.getLocation(), newHit.isRear(),
                             mek.getLevelsFallen(), 0));
                 }
@@ -19538,10 +19538,10 @@ public class TWGameManager extends AbstractGameManager {
                                         if (transport != null) {
                                             c = transport.getPosition();
                                         }
-                                        vPhaseReport.addAll(deliverInfernoMissiles(te, te, infernos));
+                                        mainPhaseReport.addAll(deliverInfernoMissiles(te, te, infernos));
                                     }
                                     if (c != null) {
-                                        vPhaseReport.addAll(deliverInfernoMissiles(te,
+                                        mainPhaseReport.addAll(deliverInfernoMissiles(te,
                                                 new HexTarget(c, Targetable.TYPE_HEX_ARTILLERY),
                                                 infernos));
                                     }
@@ -20567,8 +20567,8 @@ public class TWGameManager extends AbstractGameManager {
             .newLines(0)
             .add(Messages.getString("OrbitalBombardment.source"))
             .add(orbitalBombardment.getCoords().getBoardNum());
-        getvPhaseReport().addElement(r);
-        Report.addNewline(getvPhaseReport());
+        getMainPhaseReport().addElement(r);
+        Report.addNewline(getMainPhaseReport());
 
         drawOrbitalBombardmentIncomingOnBoard(orbitalBombardment);
         scheduledOrbitalBombardment.add(orbitalBombardment);
@@ -20658,11 +20658,11 @@ public class TWGameManager extends AbstractGameManager {
             drawNukeHitOnBoard(nuke);
             if (nuke.length == 3) {
                 doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), nuke[2],
-                        vPhaseReport);
+                    mainPhaseReport);
             }
             if (nuke.length == 6) {
                 doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), nuke[2], nuke[3],
-                        nuke[4], nuke[5], vPhaseReport);
+                        nuke[4], nuke[5], mainPhaseReport);
             }
         }
         scheduledNukes.clear();
@@ -20679,7 +20679,7 @@ public class TWGameManager extends AbstractGameManager {
         var r = new Report(1303, Report.PUBLIC);
         r.indent();
         r.newlines = 2;
-        getvPhaseReport().add(r);
+        getMainPhaseReport().add(r);
 
         scheduledOrbitalBombardment
             .forEach(ob ->  doOrbitalBombardment(new Coords(ob.getX(), ob.getY()), ob.getDamage(), ob.getRadius()));
@@ -20690,7 +20690,7 @@ public class TWGameManager extends AbstractGameManager {
         r = new Report(1301, Report.PUBLIC);
         r.indent();
         r.newlines = 2;
-        getvPhaseReport().add(r);
+        getMainPhaseReport().add(r);
     }
 
     public void drawNukeHitOnBoard(int[] nukeArgs) {
@@ -20779,7 +20779,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r = new Report(1300, Report.PUBLIC);
         r.indent();
         r.add(position.getBoardNum(), true);
-        getvPhaseReport().add(r);
+        getMainPhaseReport().add(r);
 
         // Then, do actual blast damage.
         // Use the standard blast function for this.
@@ -20790,7 +20790,7 @@ public class TWGameManager extends AbstractGameManager {
         doExplosion(damage, degradation , false, position, true, tmpV,
             blastedUnitsVec, -1, true);
         Report.indentAll(tmpV, 2);
-        getvPhaseReport().addAll(tmpV);
+        getMainPhaseReport().addAll(tmpV);
     }
 
     /**
@@ -27346,7 +27346,7 @@ public class TWGameManager extends AbstractGameManager {
         // report. This will
         // handle that issue.
         return new Packet(PacketCommand.SENDING_REPORTS,
-                (p == null) || !doBlind() ? vPhaseReport : filterReportVector(vPhaseReport, p));
+                (p == null) || !doBlind() ? mainPhaseReport : filterReportVector(mainPhaseReport, p));
     }
 
     /**
@@ -27354,7 +27354,7 @@ public class TWGameManager extends AbstractGameManager {
      * sent during a phase that is not a report phase.
      */
     public Packet createSpecialReportPacket() {
-        return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, vPhaseReport.clone());
+        return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, mainPhaseReport.clone());
     }
 
     /**
@@ -27363,7 +27363,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private Packet createTacticalGeniusReportPacket(Player p) {
         return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS,
-                (p == null) || !doBlind() ? vPhaseReport.clone() : filterReportVector(vPhaseReport, p));
+                (p == null) || !doBlind() ? mainPhaseReport.clone() : filterReportVector(mainPhaseReport, p));
     }
 
     /**
@@ -27626,7 +27626,7 @@ public class TWGameManager extends AbstractGameManager {
         if (mailer != null) {
             for (var player : mailer.getEmailablePlayers(game)) {
                 try {
-                    var reports = filterReportVector(vPhaseReport, player);
+                    var reports = filterReportVector(mainPhaseReport, player);
                     var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
                 } catch (Exception ex) {
@@ -27973,7 +27973,7 @@ public class TWGameManager extends AbstractGameManager {
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Check for collapse of this building due to overloading, and return.
-        boolean rv = checkForCollapse(bldg, positionMap, curPos, true, vPhaseReport);
+        boolean rv = checkForCollapse(bldg, positionMap, curPos, true, mainPhaseReport);
 
         // If the entity was not displaced and didn't fall, move it back where it was
         if (curPos.equals(entity.getPosition()) && !entity.isProne()) {
@@ -28652,7 +28652,7 @@ public class TWGameManager extends AbstractGameManager {
                     Report r = new Report(6460, Report.PUBLIC);
                     r.add(bldg.getName());
                     addReport(r);
-                    collapseBuilding(bldg, positionMap, coords, vPhaseReport);
+                    collapseBuilding(bldg, positionMap, coords, mainPhaseReport);
                 }
             }
         }
@@ -28666,7 +28666,7 @@ public class TWGameManager extends AbstractGameManager {
                 Vector<Coords> coordsToRemove = new Vector<>();
                 for (Coords coords : updateCoords) {
                     if (checkForCollapse(bldg, positionMap, coords, false,
-                            vPhaseReport)) {
+                        mainPhaseReport)) {
                         coordsToRemove.add(coords);
                     }
                 }
@@ -28992,7 +28992,7 @@ public class TWGameManager extends AbstractGameManager {
                             -1, false);
                     Report.indentAll(vRep, 2);
                     vDesc.addAll(vRep);
-                    return vPhaseReport;
+                    return mainPhaseReport;
                 }
                 if (bldg.getType() == BuildingType.WALL) {
                     r = new Report(3442);
@@ -30922,7 +30922,7 @@ public class TWGameManager extends AbstractGameManager {
      * Master report queue vPhaseReport.
      */
     public void addReport(Vector<Report> reports) {
-        vPhaseReport.addAll(reports);
+        mainPhaseReport.addAll(reports);
     }
 
     /**
@@ -30933,7 +30933,7 @@ public class TWGameManager extends AbstractGameManager {
     public void addReport(Vector<Report> reports, int indents) {
         for (Report r : reports) {
             r.indent(indents);
-            vPhaseReport.add(r);
+            mainPhaseReport.add(r);
         }
     }
 
@@ -30942,14 +30942,14 @@ public class TWGameManager extends AbstractGameManager {
      * vPhaseReport queue
      */
     public void addReport(ReportEntry report) {
-        vPhaseReport.addElement((Report) report);
+        mainPhaseReport.addElement((Report) report);
     }
 
     /**
      * New Round has started clear everyone's report queue
      */
     void clearReports() {
-        vPhaseReport.removeAllElements();
+        mainPhaseReport.removeAllElements();
     }
 
     /**
@@ -30957,7 +30957,7 @@ public class TWGameManager extends AbstractGameManager {
      * added to all of the players filters
      */
     void addNewLines() {
-        Report.addNewline(vPhaseReport);
+        Report.addNewline(mainPhaseReport);
     }
 
     /**
@@ -31099,7 +31099,7 @@ public class TWGameManager extends AbstractGameManager {
                     // ack! automatic death! Tanks
                     // suffer an ammo/power plant hit.
                     // TODO : a Mek suffers a Head Blown Off crit.
-                    vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
+                    mainPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
                             entity instanceof Mek, entity instanceof Mek));
                 }
             }
@@ -31849,7 +31849,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
         }
-        Report.addNewline(vPhaseReport);
+        Report.addNewline(mainPhaseReport);
         return vFullReport;
     }
 

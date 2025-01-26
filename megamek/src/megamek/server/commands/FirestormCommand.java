@@ -102,6 +102,6 @@ public class FirestormCommand extends GamemasterServerCommand {
             // they should not happen, but I don't want to crash the command
             return;
         }
-        gameManager.ignite(coords, fireType, gameManager.getvPhaseReport());
+        gameManager.ignite(coords, fireType, gameManager.getMainPhaseReport());
     }
 }

@@ -21,7 +21,6 @@ import megamek.server.commands.arguments.*;
 import megamek.server.totalwarfare.TWGameManager;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -73,7 +72,7 @@ public class FirestarterCommand extends GamemasterServerCommand {
         try {
             Hex hex = gameManager.getGame().getBoard().getHex(coords);
             Objects.requireNonNull(hex, "Hex not found.");
-            gameManager.ignite(coords, fireType, gameManager.getvPhaseReport());
+            gameManager.ignite(coords, fireType, gameManager.getMainPhaseReport());
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to ignite hex: " + e.getMessage());
         }

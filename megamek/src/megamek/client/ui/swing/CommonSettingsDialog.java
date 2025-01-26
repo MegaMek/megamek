@@ -31,6 +31,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -54,20 +55,26 @@ import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.FileNameComboBoxModel;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
+import megamek.common.MapSettings;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.BoardUtilities;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
@@ -357,6 +364,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private JComboBox<String> tileSetChoice;
     private List<String> tileSets;
+    private MMComboBox<String> minimapTheme;
+
     private final MMToggleButton choiceToggle = new MMToggleButton(
             Messages.getString("CommonSettingsDialog.keyBinds.buttoneTabbing"));
     private final MMButton defaultKeyBindButton = new MMButton("default",
@@ -647,7 +656,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(Box.createHorizontalStrut(15));
         row.add(tileSetChoice);
         comps.add(row);
-
         addLineSpacer(comps);
 
         comps.add(checkboxEntry(nagForNoAction, null));
@@ -1609,14 +1617,48 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return createSettingsPanel(comps);
     }
 
+    private BufferedImage boardImage;
+    private JLabel boardImageLabel;
+
     private JPanel getMiniMapPanel() {
         List<List<Component>> comps = new ArrayList<>();
+        JLabel minimapThemeLabel = new JLabel(Messages.getString("CommonSettingsDialog.minimapTheme"));
+        minimapTheme = new MMComboBox<>("minimapTheme", new FileNameComboBoxModel(GUIP.getMinimapThemes()));
+        minimapTheme.setMaximumSize(new Dimension(200, 25));
+        minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme().getName());
 
+        List<Component> row = new ArrayList<>();
+        row.add(minimapThemeLabel);
+        row.add(Box.createHorizontalStrut(15));
+        row.add(minimapTheme);
+
+        MapSettings mapSettings = MapSettings.getInstance();
+        var board = BoardUtilities.generateRandom(mapSettings);
+
+        boardImage = Minimap.getMinimapImageMaxZoom(board, CLIENT_PREFERENCES.getMinimapTheme());
+
+        boardImageLabel = new JLabel(new ImageIcon(boardImage));
+        boardImageLabel.setPreferredSize(new Dimension(250, 250));
+
+        minimapTheme.addActionListener(e -> {
+            String theme = minimapTheme.getSelectedItem();
+            if (theme != null) {
+                var newTheme = new MegaMekFile(Configuration.minimapThemesDir(), theme).getFile();
+                SwingUtilities.invokeLater(() -> {
+                    boardImage = Minimap.getMinimapImageMaxZoom(board, newTheme);
+                    boardImageLabel.setIcon(new ImageIcon(boardImage));
+                    boardImageLabel.revalidate();
+                    boardImageLabel.repaint();
+                });
+            }
+        });
+        row.add(boardImageLabel);
+        comps.add(row);
+        addLineSpacer(comps);
         comps.add(checkboxEntry(mmSymbol, null));
         comps.add(checkboxEntry(gameSummaryMM,
                 Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
                         Configuration.gameSummaryImagesMMDir())));
-
         return createSettingsPanel(comps);
     }
 
@@ -2017,7 +2059,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             teamColoring.setSelected(GUIP.getTeamColoring());
 
             File dir = Configuration.hexesDir();
-            tileSets = new ArrayList<>(Arrays.asList(dir.list((direc, name) -> name.endsWith(".tileset"))));
+            tileSets = new ArrayList<>(Arrays.asList(Objects.requireNonNull(dir.list((direc, name) -> name.endsWith(".tileset")))));
             tileSets.addAll(userDataFiles(Configuration.hexesDir(), ".tileset"));
             tileSetChoice.removeAllItems();
             for (int i = 0; i < tileSets.size(); i++) {
@@ -2027,6 +2069,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                     tileSetChoice.setSelectedIndex(i);
                 }
             }
+
+            minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme());
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
@@ -2517,6 +2561,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             }
             CLIENT_PREFERENCES.setMapTileset(tileSetFileName);
         }
+
+        CLIENT_PREFERENCES.setMinimapTheme(minimapTheme.getSelectedItem());
+
         ToolTipManager.sharedInstance().setInitialDelay(GUIP.getTooltipDelay());
         if (GUIP.getTooltipDismissDelay() > 0) {
             ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());

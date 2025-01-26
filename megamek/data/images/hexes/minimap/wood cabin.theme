@@ -1,0 +1,24 @@
+#
+# Minimap configuration file
+# Lines starting with "#" (like this one) are comments
+
+background 30 10 10
+none 255 245 245
+sinkhole 255 210 200
+woods 255 140 105
+heavywoods 255 110 80
+ultraheavywoods 220 70 50
+rough 255 190 170
+rubble 235 150 140
+water 255 140 180
+pavement 200 130 120
+road 180 100 90
+fire 255 70 20
+smoke 200 130 120
+smokeandfire 255 100 60
+swamp 255 160 130
+building 235 150 140
+bridge 200 130 120
+
+# unit size: defines the size of the triangle for unit representation
+unitsize 6

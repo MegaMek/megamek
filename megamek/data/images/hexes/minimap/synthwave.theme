@@ -1,0 +1,25 @@
+#
+# Minimap configuration file
+# Lines starting with "#" (like this one) are comments
+
+# Pal 3 Sinthwave
+background 10 10 45
+none 252 127 237
+sinkhole 141 76 206
+woods 0 255 204
+heavywoods 0 186 148
+ultraheavywoods 0 139 111
+rough 127 0 255
+rubble 204 102 255
+water 0 204 255
+pavement 102 102 153
+road 77 77 128
+fire 255 71 71
+smoke 153 102 204
+smokeandfire 255 112 112
+swamp 0 255 204
+building 102 102 153
+bridge 77 77 128
+
+# unit size: defines the size of the triangle for unit representation
+unitsize 6

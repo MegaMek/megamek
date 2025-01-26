@@ -44,6 +44,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #2457: Aero units on ground maps should use TO:AR visual range tables
 + PR #6436: Feat: minimap preview and selection option
 + Fix #1072: Can bomb and strafe the ground even if no LOS
++ PR #6442: Unit Tests for WeaponAttackAction to help test megamek
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

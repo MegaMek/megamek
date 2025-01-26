@@ -8291,10 +8291,10 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @param entity The <code>Entity</code> that should make the PSR
      * @param roll   The <code>PilotingRollData</code> to be used for this PSR.
-     * @param vPhaseReport the report vector to write into (sometimes an interim collection)
+     * @param skillReport the report vector to write into (sometimes an interim collection)
      * @return true if check succeeds, false otherwise.
      */
-    boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll, Vector<Report> vPhaseReport) {
+    boolean doSkillCheckInPlace(Entity entity, PilotingRollData roll, Vector<Report> skillReport) {
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
         }
@@ -8308,7 +8308,7 @@ public class TWGameManager extends AbstractGameManager {
         r.subject = entity.getId();
         r.addDesc(entity);
         r.add(roll.getLastPlainDesc(), true);
-        vPhaseReport.add(r);
+        skillReport.add(r);
 
         // roll
         final Roll diceRoll = entity.getCrew().rollPilotingSkill();
@@ -8321,7 +8321,7 @@ public class TWGameManager extends AbstractGameManager {
 
         if (diceRoll.getIntValue() < roll.getValue()) {
             r.choose(false);
-            vPhaseReport.add(r);
+            skillReport.add(r);
             if ((entity instanceof Mek)
                     && game.getOptions().booleanOption(
                             OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
@@ -8336,22 +8336,22 @@ public class TWGameManager extends AbstractGameManager {
             }
             if (!entity.isHullDown()
                     || (entity.isHullDown() && !entity.canGoHullDown())) {
-                vPhaseReport.addAll(doEntityFall(entity, roll));
+                skillReport.addAll(doEntityFall(entity, roll));
             } else {
                 ServerHelper.sinkToBottom(entity);
 
                 r = new Report(2317);
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
-                vPhaseReport.add(r);
+                skillReport.add(r);
             }
 
             suc = false;
             // failed a PSR, possibly check for engine stalling
-            entity.doCheckEngineStallRoll(vPhaseReport);
+            entity.doCheckEngineStallRoll(skillReport);
         } else {
             r.choose(true);
-            vPhaseReport.add(r);
+            skillReport.add(r);
             suc = true;
         }
 
@@ -8771,7 +8771,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     Vector<Report> doEntityDisplacement(Entity entity, Coords src,
             Coords dest, PilotingRollData roll) {
-        Vector<Report> vPhaseReport = new Vector<>();
+        Vector<Report> displacementReport = new Vector<>();
         Report r;
 
         if (!game.getBoard().contains(dest)) {
@@ -8798,10 +8798,10 @@ public class TWGameManager extends AbstractGameManager {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(retreatEdge);
-                vPhaseReport.add(r);
+                displacementReport.add(r);
                 // TODO : remove passengers and swarmers.
             }
-            return vPhaseReport;
+            return displacementReport;
         }
         final Hex srcHex = game.getBoard().getHex(src);
         final Hex destHex = game.getBoard().getHex(dest);
@@ -8811,7 +8811,7 @@ public class TWGameManager extends AbstractGameManager {
         if ((srcHex == null) || (destHex == null)) {
             logger.error("Can not displace " + entity.getShortName()
                     + " from " + src + " to " + dest + ".");
-            return vPhaseReport;
+            return displacementReport;
         }
         int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)
                 ? destHex.terrainLevel(Terrains.BLDG_ELEV)
@@ -8823,12 +8823,12 @@ public class TWGameManager extends AbstractGameManager {
                 roll = entity.getBasePilotingRoll();
             }
             if (!(entity.isAirborneVTOLorWIGE())) {
-                vPhaseReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest,
+                displacementReport.addAll(doEntityFallsInto(entity, entity.getElevation(), src, dest,
                         roll, true));
             } else {
                 entity.setPosition(dest);
             }
-            return vPhaseReport;
+            return displacementReport;
         }
         // unstick the entity if it was stuck in swamp
         boolean wasStuck = entity.isStuck();
@@ -8849,7 +8849,7 @@ public class TWGameManager extends AbstractGameManager {
             checkBuildingCollapseWhileMoving(bldg, entity, dest);
         }
 
-        ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, vPhaseReport, this);
+        ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, displacementReport, this);
         ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
@@ -8869,14 +8869,14 @@ public class TWGameManager extends AbstractGameManager {
             r.add(dest.getBoardNum(), true);
             r.addDesc(violation);
         }
-        vPhaseReport.add(r);
+        displacementReport.add(r);
         // trigger any special things for moving to the new hex
-        vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
-        vPhaseReport.addAll(doSetLocationsExposure(entity, destHex, false, entity.getElevation()));
+        displacementReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
+        displacementReport.addAll(doSetLocationsExposure(entity, destHex, false, entity.getElevation()));
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)
                 && (entity.getElevation() == 0)) {
             bldg = game.getBoard().getBuildingAt(dest);
-            if (bldg.rollBasement(dest, game.getBoard(), vPhaseReport)) {
+            if (bldg.rollBasement(dest, game.getBoard(), displacementReport)) {
                 sendChangedHex(dest);
                 Vector<Building> buildings = new Vector<>();
                 buildings.add(bldg);
@@ -8889,10 +8889,10 @@ public class TWGameManager extends AbstractGameManager {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
             }
-            vPhaseReport.addAll(doEntityFall(entity, dest, 0, roll));
+            displacementReport.addAll(doEntityFall(entity, dest, 0, roll));
         }
         // check bog-down conditions
-        vPhaseReport.addAll(doEntityDisplacementBogDownCheck(entity, dest, entity.getElevation()));
+        displacementReport.addAll(doEntityDisplacementBogDownCheck(entity, dest, entity.getElevation()));
 
         if (roll != null) {
             if (entity.canFall()) {
@@ -8911,10 +8911,10 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(entity);
                 r.add(diceRoll);
                 r.subject = entity.getId();
-                vPhaseReport.add(r);
+                displacementReport.add(r);
 
                 if (diceRoll.getIntValue() == 6) {
-                    vPhaseReport.addAll(resolveIceBroken(dest));
+                    displacementReport.addAll(resolveIceBroken(dest));
                 }
             }
         }
@@ -8928,12 +8928,12 @@ public class TWGameManager extends AbstractGameManager {
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
-            vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
+            displacementReport.addAll(destroyEntity(entity, "a watery grave", false));
         } else if ((waterDepth > 0)
                 && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
             PilotingRollData waterRoll = entity.checkWaterMove(waterDepth, entity.moved);
             if (waterRoll.getValue() != TargetRoll.CHECK_FALSE) {
-                doSkillCheckInPlace(entity, waterRoll, vPhaseReport);
+                doSkillCheckInPlace(entity, waterRoll, displacementReport);
             }
         }
 
@@ -8966,7 +8966,7 @@ public class TWGameManager extends AbstractGameManager {
                 r.addDesc(violation);
                 r.add(roll);
                 r.add(diceRoll);
-                vPhaseReport.add(r);
+                displacementReport.add(r);
 
                 if (diceRoll.getIntValue() < roll.getValue()) {
                     r.choose(false);
@@ -8978,7 +8978,7 @@ public class TWGameManager extends AbstractGameManager {
                     for (Report newReport : newReports) {
                         newReport.indent(3);
                     }
-                    vPhaseReport.addAll(newReports);
+                    displacementReport.addAll(newReports);
                 } else {
                     r.choose(true);
                     sendDominoEffectCFR(violation);
@@ -9010,7 +9010,7 @@ public class TWGameManager extends AbstractGameManager {
                                 r.addDesc(violation);
                                 r.choose(mp.getLastStep().getType() != MovePath.MoveStepType.FORWARDS);
                                 r.add(mp.getLastStep().getPosition().getBoardNum());
-                                vPhaseReport.add(r);
+                                displacementReport.add(r);
                                 // Move unit
                                 violation.setPosition(mp.getFinalCoords());
                                 violation.mpUsed += mp.getMpUsed();
@@ -9020,12 +9020,12 @@ public class TWGameManager extends AbstractGameManager {
                                 r.indent(3);
                                 r.subject = violation.getId();
                                 r.addDesc(violation);
-                                vPhaseReport.add(r);
-                                vPhaseReport.addAll(doEntityDisplacement(violation, dest,
+                                displacementReport.add(r);
+                                displacementReport.addAll(doEntityDisplacement(violation, dest,
                                         dest.translated(direction), null));
                             }
                         } else { // If no responses, treat as no action
-                            vPhaseReport.addAll(doEntityDisplacement(violation,
+                            displacementReport.addAll(doEntityDisplacement(violation,
                                     dest, dest.translated(direction),
                                     new PilotingRollData(violation.getId(), 0,
                                             "domino effect")));
@@ -9037,8 +9037,8 @@ public class TWGameManager extends AbstractGameManager {
                 r.indent(2);
                 r.subject = violation.getId();
                 r.addDesc(violation);
-                vPhaseReport.add(r);
-                vPhaseReport.addAll(doEntityDisplacement(violation, dest, dest.translated(direction),
+                displacementReport.add(r);
+                displacementReport.addAll(doEntityDisplacement(violation, dest, dest.translated(direction),
                         new PilotingRollData(violation.getId(), 0, "domino effect")));
 
             }
@@ -9049,7 +9049,7 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        return vPhaseReport;
+        return displacementReport;
     }
 
     private void sendDominoEffectCFR(Entity e) {

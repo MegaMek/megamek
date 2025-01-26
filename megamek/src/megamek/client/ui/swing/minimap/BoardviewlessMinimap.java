@@ -239,6 +239,9 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         if (boardImage == null
             || boardNeedsRedraw
             || size == -1) {
+            if (game.getBoard().getWidth() == 0 || game.getBoard().getHeight() == 0) {
+                return;
+            }
             boardNeedsRedraw = false;
             boardImage = Minimap.getMinimapImageMaxZoom(board);
             size = Math.min(boardImage.getHeight() / game.getBoard().getHeight(), boardImage.getWidth() / game.getBoard().getWidth());

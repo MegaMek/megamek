@@ -16,9 +16,12 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
+
+import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -37,5 +40,14 @@ public class MyUnitUnderThreat extends TWConsideration {
         var expectedDamage = twContext.getExpectedDamage();
         var currentUnit = context.getCurrentUnit();
         return clamp01( expectedDamage / currentUnit.getTotalArmor());
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitUnderThreat();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 }

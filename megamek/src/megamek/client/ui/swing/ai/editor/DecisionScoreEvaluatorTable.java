@@ -20,16 +20,14 @@ import megamek.ai.utility.DecisionScoreEvaluator;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+import java.util.ArrayList;
 import java.util.List;
 
-public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE extends DecisionScoreEvaluator<?,?>> extends JTable {
-
-    private final List<DSE> dse;
+public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>> extends JTable {
 
     public DecisionScoreEvaluatorTable(
-        DecisionTableModel<DECISION> model, List<DSE> dse) {
+        DecisionTableModel<DECISION> model) {
         super(model);
-        this.dse = dse;
     }
 
     public void createUIComponents() {
@@ -49,11 +47,6 @@ public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>, DSE ext
             return new DefaultCellEditor(new JTextField());
         } else if (column == 2) {
             return new SpinnerCellEditor(1d, 0d, 5d, 0.1d);
-        } else if (column == 3) {
-            var cb = new JComboBox<>(
-                dse.toArray(new DecisionScoreEvaluator[0])
-            );
-            return new DefaultCellEditor(cb);
         }
         return super.getCellEditor(row, column);
     }

@@ -18,6 +18,7 @@ package megamek.client.bot.queen.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
+import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 
 import java.util.Map;
@@ -25,35 +26,32 @@ import java.util.Map;
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine if a target is an easy target.
+ * This consideration is used to check if the unit could suffer less damage this turn than previous turn
  */
-@JsonTypeName("TargetWithinOptimalRange")
-public class TargetWithinOptimalRange extends TWConsideration {
-    public TargetWithinOptimalRange() {
+@JsonTypeName("MyUnitIsGettingAwayFromDanger")
+public class MyUnitIsGettingAwayFromDanger extends TWConsideration {
+
+    public MyUnitIsGettingAwayFromDanger() {
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var targets = context.getTargets();
-        var firingUnit = context.getCurrentUnit();
-        var distance = targets.stream().map(Entity::getPosition)
-                .mapToInt(coords -> firingUnit.getPosition().distance(coords)).max()
-                .orElse(Integer.MAX_VALUE);;
-
-        var maxRange = firingUnit.getMaxWeaponRange();
-        var bestRange = firingUnit.getOptimalRange();
-
-        if (distance <= bestRange) {
-            return 1d;
+        var twContext = (TWDecisionContext) context;
+        var previousPathTaken = twContext.getPreviousRankedPath();
+        if (previousPathTaken.isEmpty()) {
+            return 1;
         }
-
-        return clamp01(1.0001d - (double) (distance - bestRange) / (maxRange - bestRange));
+        var expectedDamage = twContext.getExpectedDamage();
+        if (expectedDamage == 0) {
+            return 1;
+        }
+        var previousPathDamage = previousPathTaken.get().getExpectedDamage();
+        return clamp01( previousPathDamage / expectedDamage);
     }
-
 
     @Override
     public Consideration<Entity, Entity> copy() {
-        var copy = new TargetWithinOptimalRange();
+        var copy = new MyUnitIsGettingAwayFromDanger();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

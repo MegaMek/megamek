@@ -39,6 +39,12 @@ public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Ent
     }
 
     @Override
+    public DecisionScoreEvaluator<Entity, Entity> copy() {
+        return new TWDecisionScoreEvaluator(
+            getName(), getDescription(), getNotes(), getConsiderations().stream().map(Consideration::copy).toList());
+    }
+
+    @Override
     public String toString() {
         return this.getName();
     }

@@ -409,8 +409,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         aiEditorNewConsideration.setMnemonic(VK_U);
         initMenuItem(aiEditorNewDecisionScoreEvaluator, menu, AI_EDITOR_NEW_DECISION_SCORE_EVALUATOR);
         aiEditorNewDecisionScoreEvaluator.setMnemonic(VK_I);
-        initMenuItem(aiEditorNewDecision, menu, AI_EDITOR_NEW_DECISION);
-        aiEditorNewDecision.setMnemonic(VK_O);
         menu.addSeparator();
 
         initMenuItem(aiEditorExport, menu, AI_EDITOR_EXPORT);
@@ -635,7 +633,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         aiEditorNewDecision.setEnabled(isAiEditor);
         aiEditorNewConsideration.setEnabled(isAiEditor);
         aiEditorNewDecisionScoreEvaluator.setEnabled(isAiEditor);
-      
+
         viewBotCommands.setEnabled(isInGame);
     }
 

@@ -16,10 +16,13 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+
+import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -57,4 +60,12 @@ public class MyUnitMoved extends TWConsideration {
         return clamp01(distanceMoved / (double) div);
     }
 
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitMoved();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
+    }
 }

@@ -16,10 +16,11 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.Entity;
 
-import static megamek.codeUtilities.MathUtility.clamp01;
+import java.util.Map;
 
 /**
  * Just check if the current unit is crippled or not.
@@ -33,6 +34,15 @@ public class MyUnitIsCrippled extends TWConsideration {
     public double score(DecisionContext<Entity, Entity> context) {
         var currentUnit = context.getCurrentUnit();
         return currentUnit.isCrippled(true) ? 1d : 0d;
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitIsGettingAwayFromDanger();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 
 }

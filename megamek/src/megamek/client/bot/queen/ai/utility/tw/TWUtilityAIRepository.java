@@ -22,6 +22,7 @@ import megamek.client.bot.queen.ai.utility.tw.decision.TWDecision;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
 import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 import java.io.File;
@@ -68,16 +69,17 @@ public class TWUtilityAIRepository {
     }
 
     private void initialize() {
-        loadRepository();
-        loadUserDataRepository();
-    }
-
-    public void reloadRepository() {
         decisionScoreEvaluators.clear();
         considerations.clear();
         profiles.clear();
         decisions.clear();
+        loadRepository();
+        loadUserDataRepository();
+    }
+
+    public TWUtilityAIRepository reloadRepository() {
         initialize();
+        return this;
     }
 
     public void persistData() {
@@ -330,13 +332,13 @@ public class TWUtilityAIRepository {
     }
 
     private void loadData(File directory) {
-        loadConsiderations(new File(directory, CONSIDERATIONS))
+        loadConsiderations(new MegaMekFile(new File(directory, CONSIDERATIONS).toString()).getFile())
             .forEach(twConsideration -> considerations.put(twConsideration.getName(), twConsideration));
-        loadDecisionScoreEvaluators(new File(directory, EVALUATORS)).forEach(
+        loadDecisionScoreEvaluators(new MegaMekFile(new File(directory, EVALUATORS).toString()).getFile()).forEach(
             twDecisionScoreEvaluator -> decisionScoreEvaluators.put(twDecisionScoreEvaluator.getName(), twDecisionScoreEvaluator));
-        loadDecisions(new File(directory, DECISIONS)).forEach(
+        loadDecisions(new MegaMekFile(new File(directory, DECISIONS).toString()).getFile()).forEach(
             twDecision -> decisions.put(twDecision.getName(), twDecision));
-        loadProfiles(new File(directory, PROFILES)).forEach(
+        loadProfiles(new MegaMekFile(new File(directory, PROFILES).toString()).getFile()).forEach(
             twProfile -> profiles.put(twProfile.getName(), twProfile));
     }
 
@@ -368,7 +370,7 @@ public class TWUtilityAIRepository {
                 return objects;
             }
         }
-        logger.formattedErrorDialog("Invalid directory", "Input file {} is not a directory", inputFile);
+        logger.info("No objects of type {} loaded from {}", clazz.getSimpleName(), inputFile);
         return Collections.emptyList();
     }
 

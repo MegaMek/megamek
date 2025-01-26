@@ -22,11 +22,19 @@ import java.util.StringJoiner;
 
 public class DebugReporter {
     private static final MMLogger logger = MMLogger.create(DebugReporter.class);
+    public static final String LINE_BREAK = "\n";
+
     private StringBuilder stringBuilder;
 
     public DebugReporter() {
         if (logger.isLevelLessSpecificThan(Level.INFO)) {
             stringBuilder = new StringBuilder();
+        }
+    }
+
+    public DebugReporter(int size) {
+        if (logger.isLevelLessSpecificThan(Level.INFO)) {
+            stringBuilder = new StringBuilder(size);
         }
     }
 
@@ -37,16 +45,58 @@ public class DebugReporter {
         return this;
     }
 
+    public DebugReporter append(double s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
+    public DebugReporter append(int s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
+    public DebugReporter append(float s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
+    public DebugReporter append(boolean s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
+    public DebugReporter append(Object s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
+    public DebugReporter append(long s) {
+        if (stringBuilder != null) {
+            stringBuilder.append(s);
+        }
+        return this;
+    }
+
     public DebugReporter appendLine(String s) {
         if (stringBuilder != null) {
-            stringBuilder.append(s).append("\n");
+            stringBuilder.append(s).append(LINE_BREAK);
         }
         return this;
     }
 
     public DebugReporter appendLine() {
         if (stringBuilder != null) {
-            stringBuilder.append("\n");
+            stringBuilder.append(LINE_BREAK);
         }
         return this;
     }

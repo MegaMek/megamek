@@ -26,6 +26,8 @@ import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Holds movement path for an entity.
@@ -34,6 +36,8 @@ public class MovePath implements Cloneable, Serializable {
     private static final MMLogger logger = MMLogger.create(MovePath.class);
 
     private static final long serialVersionUID = -4258296679177532986L;
+    // EXPERIMENTAL!!! If true, we will check if the unit is inside the board when adding new steps
+    private static final boolean CHECK_INSIDE_BOARD = true;
 
     private Set<Coords> coordsSet = null;
     private final transient Object COORD_SET_LOCK = new Object();
@@ -166,8 +170,8 @@ public class MovePath implements Cloneable, Serializable {
         sb.append("MOVE PATH:");
         sb.append(this.getKey().hashCode());
         sb.append(' '); // it's useful to know for debugging purposes which path you're looking at.
-        sb.append("Length: " + this.length());
-        sb.append("Final Coords: " + this.getFinalCoords());
+        sb.append("Length: ").append(this.length());
+        sb.append("Final Coords: ").append(this.getFinalCoords());
         sb.append(System.lineSeparator());
 
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements();) {
@@ -195,8 +199,52 @@ public class MovePath implements Cloneable, Serializable {
      * @param type the type of movement.
      */
     public MovePath addStep(final MoveStepType type) {
-        // TODO : detect steps off the map *here*.
+        // EXPERIMENTAL: detect steps off the map here.
+        if (CHECK_INSIDE_BOARD && type.entersNewHex()) {
+            if (!checkIfInsideTheBoard(type)) {
+                var newStep = new MoveStep(this, type);
+                newStep.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                return addStep(newStep);
+            }
+        }
         return addStep(new MoveStep(this, type));
+    }
+
+    private boolean checkIfInsideTheBoard(final MoveStepType type) {
+        if (type.entersNewHex()) {
+            Coords currentPosition;
+            if (this.getLastStep() == null) {
+                currentPosition = getEntity().getPosition();
+            } else {
+                currentPosition = this.getLastStep().getPosition();
+            }
+            if (currentPosition == null) {
+                // is it even possible?!
+                return true;
+            }
+            var currentFacing = getEntity().getFacing();
+            if (currentFacing == -1) {
+                // is it even possible?!
+                return true;
+            }
+
+            int translateTo = switch (type) {
+                case BACKWARDS -> 3;
+                case LATERAL_LEFT -> 5;
+                case LATERAL_RIGHT -> 1;
+                case LATERAL_LEFT_BACKWARDS -> 4;
+                case LATERAL_RIGHT_BACKWARDS -> 2;
+                default -> 0;
+            };
+            currentFacing += translateTo;
+            var destination = currentPosition.translated(currentFacing % 5, 1);
+            var insideBoard = getGame().getBoard().contains(destination);
+            if (!insideBoard) {
+                logger.debug("Possibly illegal move step detected: " + type + " - " + destination.toFriendlyString());
+            }
+            return insideBoard;
+        }
+        return true;
     }
 
     /**
@@ -2069,5 +2117,19 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return maxMP;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (!(object instanceof MovePath movePath)) return false;
+
+        return new EqualsBuilder().append(isCareful(), movePath.isCareful()).append(gravityConcern, movePath.gravityConcern).append(gravity, movePath.gravity).append(getCoordsSet(), movePath.getCoordsSet()).append(getSteps(), movePath.getSteps()).append(containedStepTypes, movePath.containedStepTypes).append(getWaypoint(), movePath.getWaypoint()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(getCoordsSet()).append(getSteps()).append(containedStepTypes).append(isCareful()).append(gravityConcern).append(gravity).append(getWaypoint()).toHashCode();
     }
 }

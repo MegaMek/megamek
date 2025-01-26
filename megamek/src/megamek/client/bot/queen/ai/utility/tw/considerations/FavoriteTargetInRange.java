@@ -16,6 +16,7 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
@@ -71,5 +72,14 @@ public class FavoriteTargetInRange extends TWConsideration {
         }
 
         return clamp01(maxRange / (double) distanceValue);
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new FavoriteTargetInRange();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 }

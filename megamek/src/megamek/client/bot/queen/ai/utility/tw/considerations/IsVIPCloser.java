@@ -16,10 +16,12 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 
+import java.util.Map;
 import java.util.OptionalInt;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -41,4 +43,12 @@ public class IsVIPCloser extends TWConsideration {
         return clamp01(delta / ((double) twContext.getCurrentUnitMaxRunMP()));
     }
 
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new IsVIPCloser();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
+    }
 }

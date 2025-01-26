@@ -18,6 +18,7 @@ package megamek.client.ui.swing.ai.editor;
 import megamek.ai.utility.DecisionScoreEvaluator;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.ui.Messages;
+import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,8 +27,11 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DecisionScoreEvaluatorPane extends JPanel {
+    private static final MMLogger logger = MMLogger.create(DecisionScoreEvaluatorPane.class);
+
     private JTextField nameField;
     private JTextField descriptionField;
     private JTextField notesField;
@@ -36,6 +40,8 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private JToolBar considerationsToolbar;
     private final HoverStateModel hoverStateModel;
     private final List<ConsiderationPane> considerationPaneList = new ArrayList<>();
+
+    private AtomicReference<TWDecisionScoreEvaluator> editedDecisionScoreEvaluator;
 
     public DecisionScoreEvaluatorPane() {
         $$$setupUI$$$();
@@ -64,6 +70,22 @@ public class DecisionScoreEvaluatorPane extends JPanel {
                 }
             }
         });
+    }
+
+    public void updateInPlaceTheDSE() {
+        var editedDse = editedDecisionScoreEvaluator.get();
+        if (editedDse != null) {
+            editedDse.setName(nameField.getText());
+            editedDse.setDescription(descriptionField.getText());
+            editedDse.setNotes(notesField.getText());
+            editedDse.getConsiderations().clear();
+            for (var considerationPane : considerationPaneList) {
+                editedDse.addConsideration(considerationPane.getConsideration());
+            }
+        } else {
+            logger.error(Messages.getString("aiEditor.edit.decisionScoreEvaluator.update.error"),
+                Messages.getString("aiEditor.edit.decisionScoreEvaluator.update.error.title"));
+        }
     }
 
     public TWDecisionScoreEvaluator getDecisionScoreEvaluator() {
@@ -109,7 +131,12 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         considerationPaneList.clear();
     }
 
-    public void setDecisionScoreEvaluator(DecisionScoreEvaluator<?, ?> dse) {
+    public void setDecisionScoreEvaluator(AtomicReference<TWDecisionScoreEvaluator> dse) {
+        editedDecisionScoreEvaluator = dse;
+        setDecisionScoreEvaluator(dse.get());
+    }
+
+    public void setDecisionScoreEvaluator(TWDecisionScoreEvaluator dse) {
         nameField.setText(dse.getName());
         descriptionField.setText(dse.getDescription());
         notesField.setText(dse.getNotes());

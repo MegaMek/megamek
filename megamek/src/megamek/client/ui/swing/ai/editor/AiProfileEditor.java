@@ -43,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.ClientGUI.*;
@@ -72,6 +73,11 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private JToolBar profileTools;
 
     private ConsiderationPane considerationPane;
+
+    private final AtomicReference<TWProfile> currentProfile = new AtomicReference<>();
+    private final AtomicReference<TWDecision> currentDecision = new AtomicReference<>();
+    private final AtomicReference<TWDecisionScoreEvaluator> currentDecisionScoreEvaluator = new AtomicReference<>();
+    private final AtomicReference<TWConsideration> currentConsideration = new AtomicReference<>();
 
     private final CommonMenuBar menuBar = CommonMenuBar.getMenuBarForAiEditor();
     private int profileId = -1;
@@ -112,12 +118,53 @@ public class AiProfileEditor extends JFrame implements ActionListener {
 
         // Profile toolbar
 
-        var newDecisionBtn = new JButton(Messages.getString("aiEditor.new.decision"));
         var copyDecisionBtn = new JButton(Messages.getString("aiEditor.copy.decision"));
+        copyDecisionBtn.addActionListener(e -> {
+            var model = profileDecisionTable.getModel();
+            var selectedRow = profileDecisionTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                // noinspection unchecked
+                var decision = ((DecisionTableModel<TWDecision>) model).getDecisions().get(selectedRow);
+                if (decision != null) {
+                    var newDecision = decision.copy();
+                    // noinspection unchecked
+                    ((DecisionTableModel<TWDecision>) model).addRow(newDecision);
+                } else {
+                    logger.error(Messages.getString("aiEditor.copy.decision.error"),
+                        Messages.getString("aiEditor.copy.decision.error.title"));
+                }
+            }
+        });
         var editDecisionBtn = new JButton(Messages.getString("aiEditor.edit.decision"));
-        var deleteDecisionBtn = new JButton(Messages.getString("aiEditor.delete.decision"));
+        editDecisionBtn.addActionListener(e -> {
+            var model = profileDecisionTable.getModel();
+            var selectedRow = profileDecisionTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                // noinspection unchecked
+                var decision = ((DecisionTableModel<TWDecision>) model).getDecisions().get(selectedRow);
+                if (decision != null) {
+                    editDecisionScoreEvaluator(decision);
+                } else {
+                    logger.error(Messages.getString("aiEditor.edit.decisionScoreEvaluator.error"),
+                        Messages.getString("aiEditor.edit.decisionScoreEvaluator.error.title"));
+                }
+            }
 
-        profileTools.add(newDecisionBtn);
+        });
+        var deleteDecisionBtn = new JButton(Messages.getString("aiEditor.delete.decision"));
+        deleteDecisionBtn.addActionListener(e -> {
+            var model = profileDecisionTable.getModel();
+            var selectedRow = profileDecisionTable.getSelectedRow();
+            if (selectedRow >= 0) {
+                var decision = ((DecisionTableModel<TWDecision>) model).getDecisions().get(selectedRow);
+                if (decision.equals(currentDecision.get())) {
+                    currentDecision.set(null);
+                }
+                // noinspection unchecked
+                ((DecisionTableModel<TWDecision>) model).deleteRow(selectedRow);
+            }
+        });
+
         profileTools.add(copyDecisionBtn);
         profileTools.add(editDecisionBtn);
         profileTools.add(deleteDecisionBtn);
@@ -237,12 +284,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                     createNewProfile();
                 });
                 contextMenu.add(menuItemAction);
-            } else if (obj.equals(Messages.getString("aiEditor.Decisions"))) {
-                JMenuItem menuItemAction = new JMenuItem(Messages.getString("aiEditor.new.decision"));
-                menuItemAction.addActionListener(evt -> {
-                    createNewDecision();
-                });
-                contextMenu.add(menuItemAction);
             } else if (obj.equals(Messages.getString("aiEditor.DecisionScoreEvaluators"))) {
                 JMenuItem menuItemAction = new JMenuItem(Messages.getString("aiEditor.new.dse"));
                 menuItemAction.addActionListener(evt -> {
@@ -257,44 +298,42 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                 contextMenu.add(menuItemAction);
             }
         } else {
-            JMenuItem menuItemAction = new JMenuItem("Open");
-            menuItemAction.addActionListener(evt -> {
-                handleOpenNodeAction(node);
-            });
+            JMenuItem menuItemAction;
+            menuItemAction = new JMenuItem("Edit " + ((obj instanceof NamedObject) ? ((NamedObject) obj).getName() : "item"));
+            menuItemAction.addActionListener(evt -> { handleOpenNodeAction(node); });
             contextMenu.add(menuItemAction);
 
-            if (obj instanceof TWDecision twDecision) {
-                var action = new JMenuItem(Messages.getString("aiEditor.add.to.profile"));
-                action.addActionListener(evt -> {
-                    var model = profileDecisionTable.getModel();
-                    //noinspection unchecked
-                    ((DecisionTableModel<TWDecision>) model).addRow(twDecision);
-                });
-                contextMenu.add(action);
-            } else if (obj instanceof TWProfile) {
+            if (obj instanceof TWProfile) {
                 var action = getCopyProfileMenuItem((TWProfile) obj);
                 contextMenu.add(action);
-            } else if (obj instanceof TWDecisionScoreEvaluator) {
-                var action = new JMenuItem(Messages.getString("aiEditor.new.dse"));
-                action.addActionListener(evt -> {
+            } else if (obj instanceof TWDecisionScoreEvaluator dse) {
+                var action1 = new JMenuItem(Messages.getString("aiEditor.new.dse"));
+                action1.addActionListener(evt -> {
                     createNewDecisionScoreEvaluator();
                 });
-                contextMenu.add(action);
+                contextMenu.add(action1);
+                var action2 = new JMenuItem(Messages.getString("aiEditor.add.to.profile"));
+                action2.addActionListener(evt -> {
+                    var model = profileDecisionTable.getModel();
+                    //noinspection unchecked
+                    ((DecisionTableModel<TWDecision>) model).addRow(createNewDecision(dse));
+                });
+                contextMenu.add(action2);
             } else if (obj instanceof TWConsideration twConsideration) {
-                var action = new JMenuItem(Messages.getString("aiEditor.new.consideration"));
-                action.addActionListener(evt -> {
+                var action1 = new JMenuItem(Messages.getString("aiEditor.new.consideration"));
+                action1.addActionListener(evt -> {
                     addNewConsideration();
                 });
-                contextMenu.add(action);
-                // if the tab is a DSE, add the consideration to the DSE
+                contextMenu.add(action1);
+                // if the tab is a DSE, you may add the consideration to the DSE
                 if (mainEditorTabbedPane.getSelectedComponent() == dseTabPane) {
-                    var action1 = new JMenuItem(Messages.getString("aiEditor.add.to.dse"));
+                    var action2 = new JMenuItem(Messages.getString("aiEditor.add.to.dse"));
                     action1.addActionListener(evt -> {
                         var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
                         dse.addConsideration(twConsideration);
                         ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(dse);
                     });
-                    contextMenu.add(action1);
+                    contextMenu.add(action2);
                 }
             }
 
@@ -344,15 +383,27 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void handleDeleteNodeAction(DefaultMutableTreeNode node) {
         var obj = node.getUserObject();
         if (obj instanceof TWDecision twDecision) {
+            if (twDecision.equals(currentDecision.get())) {
+                currentDecision.set(null);
+            }
             sharedData.removeDecision(twDecision);
             hasDecisionChanges = true;
         } else if (obj instanceof TWProfile twProfile) {
+            if (twProfile.equals(currentProfile.get())) {
+                currentProfile.set(null);
+            }
             sharedData.removeProfile(twProfile);
             hasProfileChanges = true;
         } else if (obj instanceof TWDecisionScoreEvaluator twDse) {
+            if (twDse.equals(currentDecisionScoreEvaluator.get())) {
+                currentDecisionScoreEvaluator.set(null);
+            }
             sharedData.removeDecisionScoreEvaluator(twDse);
             hasDseChanges = true;
         } else if (obj instanceof TWConsideration twConsideration) {
+            if (twConsideration.equals(currentConsideration.get())) {
+                currentConsideration.set(null);
+            }
             sharedData.removeConsideration(twConsideration);
             hasConsiderationChanges = true;
         }
@@ -360,12 +411,14 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     }
 
     private void openConsideration(TWConsideration twConsideration) {
+        currentConsideration.set(twConsideration);
         considerationPane.setConsideration(twConsideration);
         mainEditorTabbedPane.setSelectedComponent(considerationTabPane);
         hasConsiderationChanges = true;
     }
 
     private void openProfile(TWProfile twProfile) {
+        currentProfile.set(twProfile);
         profileId = twProfile.getId();
         profileNameTextField.setText(twProfile.getName());
         descriptionTextField.setText(twProfile.getDescription());
@@ -375,7 +428,17 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     }
 
     private void openDecisionScoreEvaluator(TWDecisionScoreEvaluator twDse) {
+        currentDecision.set(null);
+        currentDecisionScoreEvaluator.set(twDse);
         ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(twDse);
+        mainEditorTabbedPane.setSelectedComponent(dseTabPane);
+        hasDseChanges = true;
+    }
+
+    private void editDecisionScoreEvaluator(TWDecision twDecision) {
+        currentDecision.set(twDecision);
+        currentDecisionScoreEvaluator.set((TWDecisionScoreEvaluator) twDecision.getDecisionScoreEvaluator());
+        ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(currentDecisionScoreEvaluator);
         mainEditorTabbedPane.setSelectedComponent(dseTabPane);
         hasDseChanges = true;
     }
@@ -430,14 +493,23 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         sharedData.addConsideration(consideration);
         hasConsiderationChanges = false;
         hasChangesToSave = true;
+        sharedData.persistDataToUserData();
         loadDataRepoViewer();
     }
 
     private void persistDecisionScoreEvaluator() {
-        var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
-        sharedData.addDecisionScoreEvaluator(dse);
+        if (currentDecision.get() != null && currentDecisionScoreEvaluator.get() != null) {
+            // This updates the current decision with the edits that were made on it
+            ((DecisionScoreEvaluatorPane) dsePane).updateInPlaceTheDSE();
+            var profile = currentProfile.get();
+            sharedData.addProfile(profile);
+        } else {
+            var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
+            sharedData.addDecisionScoreEvaluator(dse);
+        }
         hasDseChanges = false;
         hasChangesToSave = true;
+        sharedData.persistDataToUserData();
         loadDataRepoViewer();
     }
 
@@ -454,6 +526,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         sharedData.addProfile(new TWProfile(profileId, profileNameTextField.getText(), descriptionTextField.getText(), decisions));
         hasProfileChanges = false;
         hasChangesToSave = true;
+        sharedData.persistDataToUserData();
         loadDataRepoViewer();
     }
 
@@ -484,9 +557,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             case AI_EDITOR_UNDO:
                 break;
             case AI_EDITOR_REDO:
-                break;
-            case AI_EDITOR_NEW_DECISION:
-                createNewDecision();
                 break;
             case AI_EDITOR_NEW_CONSIDERATION:
                 addNewConsideration();
@@ -554,11 +624,12 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         dsePane.updateUI();
     }
 
-    private void createNewDecision() {
-        var dse = new TWDecision("New Decision", "Created at " + new Date(), 1.0);
-        //noinspection unchecked
-        var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
-        model.addRow(dse);
+    private TWDecision createNewDecision(TWDecision decision) {
+        return decision.copy();
+    }
+
+    private TWDecision createNewDecision(TWDecisionScoreEvaluator dse) {
+        return new TWDecision("New Decision", "Created at " + new Date(), 1.0, dse.copy());
     }
 
     private void createUIComponents() {
@@ -569,13 +640,13 @@ public class AiProfileEditor extends JFrame implements ActionListener {
 
     private void initializeProfileUI() {
         var model = new DecisionTableModel<>(sharedData.getDecisions());
-        profileDecisionTable = new DecisionScoreEvaluatorTable<>(model, sharedData.getDecisionScoreEvaluators());
+        profileDecisionTable = new DecisionScoreEvaluatorTable<>(model);
     }
 
     private void loadDataRepoViewer() {
+        sharedData.reloadRepository();
         var root = new DefaultMutableTreeNode(Messages.getString("aiEditor.tree.title"));
         addToMutableTreeNode(root, Messages.getString("aiEditor.Profiles"), sharedData.getProfiles());
-        addToMutableTreeNode(root, Messages.getString("aiEditor.Decisions"), sharedData.getDecisions());
         addToMutableTreeNode(root, Messages.getString("aiEditor.DecisionScoreEvaluators"), sharedData.getDecisionScoreEvaluators());
         addToMutableTreeNode(root, Messages.getString("aiEditor.Considerations"), sharedData.getConsiderations());
         DefaultTreeModel treeModel = new DefaultTreeModel(root);

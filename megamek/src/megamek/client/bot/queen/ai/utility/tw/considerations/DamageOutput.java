@@ -16,6 +16,7 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
@@ -58,5 +59,14 @@ public class DamageOutput extends TWConsideration {
         double ratio = (damageTaken == 0) ? Double.POSITIVE_INFINITY : (totalDamage / damageTaken);
         double score = ratio / getIntParameter(damageFactorParam);
         return clamp01(score);
+    }
+
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new DamageOutput();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
     }
 }

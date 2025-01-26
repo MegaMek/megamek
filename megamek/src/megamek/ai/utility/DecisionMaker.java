@@ -61,7 +61,7 @@ public interface DecisionMaker<IN_GAME_OBJECT, TARGETABLE> {
                     continue;
                 }
                 var decisionScoreEvaluator = decision.getDecisionScoreEvaluator();
-                var score = decisionScoreEvaluator.score(decision.getDecisionContext(), getBonusFactor(decision), 0.0d, debugReporter);
+                var score = decisionScoreEvaluator.score(decision.getDecisionContext(), getBonusFactor(decision), debugReporter);
                 decision.setScore(score);
             }
         }

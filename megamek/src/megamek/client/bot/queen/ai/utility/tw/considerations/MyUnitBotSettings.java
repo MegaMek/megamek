@@ -16,6 +16,7 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
@@ -173,4 +174,12 @@ public class MyUnitBotSettings extends TWConsideration {
         return 1;
     }
 
+    @Override
+    public Consideration<Entity, Entity> copy() {
+        var copy = new MyUnitBotSettings();
+        copy.setCurve(getCurve().copy());
+        copy.setParameters(Map.copyOf(getParameters()));
+        copy.setName(getName());
+        return copy;
+    }
 }

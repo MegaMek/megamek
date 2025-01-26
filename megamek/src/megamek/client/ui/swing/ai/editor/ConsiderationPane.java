@@ -69,14 +69,14 @@ public class ConsiderationPane extends JPanel {
     public void setConsideration(Consideration<?, ?> consideration) {
         considerationComboBox.setSelectedItem(TWConsiderationClass.fromClass(consideration.getClass()));
         considerationName.setText(consideration.getName());
-        ((ParametersTableModel) parametersTable.getModel()).setParameters(consideration);
+        parametersTable.setModel(new ParametersTableModel(consideration));
         ((CurvePane) curveContainer).setCurve(consideration.getCurve());
     }
 
     public void setEmptyConsideration() {
         considerationComboBox.setSelectedItem(null);
         considerationName.setText("");
-        ((ParametersTableModel) parametersTable.getModel()).setEmptyParameters();
+        parametersTable.setModel(new ParametersTableModel());
         ((CurvePane) curveContainer).setCurve(DefaultCurve.Logit.getCurve());
     }
 
@@ -103,8 +103,6 @@ public class ConsiderationPane extends JPanel {
 
     private void createUIComponents() {
         parametersTable = new ConsiderationParametersTable(new ParametersTableModel());
-        parametersTable.setModel(new ParametersTableModel());
-
         considerationComboBox = new JComboBox<>(TWConsiderationClass.values());
         considerationComboBox.setSelectedItem(null);
 

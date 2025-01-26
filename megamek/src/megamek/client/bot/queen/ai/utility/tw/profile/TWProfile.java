@@ -28,6 +28,9 @@ import java.util.List;
 @JsonTypeName("TWProfile")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TWProfile extends Profile<Entity, Entity> {
+
+
+
     @JsonCreator
     public TWProfile(
         @JsonProperty("id") int id,

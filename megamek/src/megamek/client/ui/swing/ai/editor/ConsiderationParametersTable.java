@@ -56,27 +56,11 @@ public class ConsiderationParametersTable extends JTable {
                     0.1d,
                     tooltip
                 );
-            } else if (clazz.equals(Float.class)) {
-                return new SpinnerCellEditor(
-                    (float) (value == null ? 0f : value),
-                    Float.MIN_VALUE,
-                    Float.MAX_VALUE,
-                    0.1f,
-                    tooltip
-                );
             } else if (clazz.equals(Integer.class)) {
                 return new SpinnerCellEditor(
                     (int) (value == null ? 0 : value),
                     Integer.MIN_VALUE,
                     Integer.MAX_VALUE,
-                    1,
-                    tooltip
-                );
-            } else if (clazz.equals(Long.class)) {
-                return new SpinnerCellEditor(
-                    (long) (value == null ? 0 : value),
-                    Long.MIN_VALUE,
-                    Long.MAX_VALUE,
                     1,
                     tooltip
                 );
@@ -99,6 +83,18 @@ public class ConsiderationParametersTable extends JTable {
         public SpinnerCellEditor(double defaultValue, double min, double max, double step, String tooltip) {
             spinner = new JSpinner(new SpinnerNumberModel(min, min, max, step));
             spinner.setValue(defaultValue);
+            spinner.setToolTipText(tooltip);
+            JComponent editor = spinner.getEditor();
+            if (editor instanceof JSpinner.DefaultEditor) {
+                JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+                textField.setHorizontalAlignment(JFormattedTextField.LEFT);
+            }
+        }
+
+        public SpinnerCellEditor(int defaultValue, int min, int max, int step, String tooltip) {
+            spinner = new JSpinner(new SpinnerNumberModel(min, min, max, step));
+            spinner.setValue(defaultValue);
+            spinner.setToolTipText(tooltip);
             JComponent editor = spinner.getEditor();
             if (editor instanceof JSpinner.DefaultEditor) {
                 JFormattedTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();

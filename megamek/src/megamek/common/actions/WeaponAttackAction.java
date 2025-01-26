@@ -1373,7 +1373,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         // Can shoot at something in sensor range if it has
                         // been spotted by another unit
                         && (te != null) && te.hasSeenEntity(ae.getOwner()))
-                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile) {
+                && !isArtilleryIndirect && !isIndirect && !isBearingsOnlyMissile
+                && !isStrafing && !target.isHexBeingBombed()) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in

@@ -1333,7 +1333,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // if LOS is blocked, block the shot except in the case of indirect artillery
         // fire
-        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isStrafing) {
+        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
 

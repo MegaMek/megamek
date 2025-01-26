@@ -416,6 +416,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
+        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 200);
 
 
         // Transform for placement and scaling
@@ -486,6 +487,13 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         // Draw the unit icon in black
         g2.draw(form);
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+
+        var sensorRange = entity.getActiveSensor().getRangeByBracket();
+        if (sensorRange > 0) {
+            sensorRange *= 130;
+            g2.setColor(iconColorSemiTransparent);
+            g2.drawOval(-sensorRange, -sensorRange, sensorRange * 2, sensorRange * 2);
+        }
 
         // Rectangle border for all units
         g2.setColor(borderColor);

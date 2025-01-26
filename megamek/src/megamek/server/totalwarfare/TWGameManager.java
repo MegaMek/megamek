@@ -17925,7 +17925,7 @@ public class TWGameManager extends AbstractGameManager {
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                                 && lam.isCondEjectCTDest()))) {
-                            addReport(ejectEntity(en, true, false));
+                            vDesc.addAll(ejectEntity(en, true, false));
                         }
                     } else {
                         // Aeros eject if the SI Destroyed switch is on
@@ -17934,7 +17934,7 @@ public class TWGameManager extends AbstractGameManager {
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                                 && aero.isCondEjectSIDest()))) {
-                            addReport(ejectEntity(en, true, false));
+                            vDesc.addAll(ejectEntity(en, true, false));
                         }
                     }
                     vDesc.addAll(destroyEntity((Entity) ship, "fatal damage threshold"));
@@ -18600,7 +18600,7 @@ public class TWGameManager extends AbstractGameManager {
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                                 && lam.isCondEjectCTDest()))) {
-                            addReport(ejectEntity(te, true, false));
+                            vDesc.addAll(ejectEntity(te, true, false));
                         }
                     } else {
                         // Aeros eject if the SI Destroyed switch is on
@@ -18609,7 +18609,7 @@ public class TWGameManager extends AbstractGameManager {
                                 && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                         || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                                 && aero.isCondEjectSIDest()))) {
-                            addReport(ejectEntity(te, true, false));
+                            vDesc.addAll(ejectEntity(te, true, false));
                         }
                     }
                     vDesc.addAll(destroyEntity(te, "Structural Integrity Collapse"));

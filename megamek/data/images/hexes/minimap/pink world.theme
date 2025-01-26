@@ -1,0 +1,25 @@
+#
+# Minimap configuration file
+# Lines starting with "#" (like this one) are comments
+
+# Pal 6 full pink world
+background 0 0 0
+none 244 195 211
+sinkhole 246 162 183
+woods 246 121 159
+heavywoods 241 80 123
+ultraheavywoods 230 55 79
+rough 246 162 183
+rubble 244 195 211
+water 246 121 159
+pavement 246 162 183
+road 241 80 123
+fire 255 165 0
+smoke 241 80 123
+smokeandfire 246 162 183
+swamp 246 121 159
+building 241 80 123
+bridge 230 55 79
+
+# unit size: defines the size of the triangle for unit representation
+unitsize 6

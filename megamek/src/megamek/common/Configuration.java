@@ -107,6 +107,9 @@ public final class Configuration {
     /** The default hex images directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_HEXES = "hexes";
 
+    /** The default minimap themes directory name (under the hexes directory). */
+    private static final String DEFAULT_DIR_NAME_HEXES_MINIMAP = "minimap";
+
     /** The default misc images directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_MISC_IMAGES = "misc";
 
@@ -326,6 +329,14 @@ public final class Configuration {
      */
     public static File hexesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_HEXES);
+    }
+
+    /**
+     * Return the minimap themes directory, which is relative to the hexes directory.
+     * @return {@link File} containing the path to the minimap themes directory.
+     */
+    public static File minimapThemesDir() {
+        return new File(hexesDir(), DEFAULT_DIR_NAME_HEXES_MINIMAP);
     }
 
     /**

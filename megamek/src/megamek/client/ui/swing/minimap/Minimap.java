@@ -69,8 +69,10 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -134,7 +136,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final String ACTION_SYMBOLS_SHOW = "SYMBOLS_SHOW";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private BufferedImage mapImage;
     private final BoardView bv;
     private final Game game;
@@ -198,34 +200,46 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         });
 
-        result.add(new Minimap(result, game, bv, cg));
+        result.add(new Minimap(result, game, bv, cg, null));
         result.pack();
         return result;
     }
 
     /** Returns a minimap image of the given board at the maximum zoom index. */
     public static BufferedImage getMinimapImageMaxZoom(Board board) {
-        return getMinimapImage(board, MAX_ZOOM);
+        return getMinimapImage(board, MAX_ZOOM, null);
+    }
+
+    /** Returns a minimap image of the given board at the maximum zoom index. */
+    public static BufferedImage getMinimapImageMaxZoom(Board board, @Nullable File minimapTheme) {
+        return getMinimapImage(board, MAX_ZOOM, minimapTheme);
     }
 
     /** Returns a minimap image of the given board at the given zoom index. */
     public static BufferedImage getMinimapImage(Board board, int zoom) {
         Game game = new Game();
         game.setBoard(board);
-        return getMinimapImage(game, null, zoom);
+        return getMinimapImage(game, null, zoom, null);
+    }
+
+    /** Returns a minimap image of the given board at the given zoom index. */
+    public static BufferedImage getMinimapImage(Board board, int zoom, @Nullable File minimapTheme) {
+        Game game = new Game();
+        game.setBoard(board);
+        return getMinimapImage(game, null, zoom, minimapTheme);
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
-            Minimap tempMM = new Minimap(null, game, bv, null);
+            Minimap tempMM = new Minimap(null, game, bv, null, minimapTheme);
             tempMM.zoom = zoom;
             tempMM.initializeMap();
             tempMM.drawMap(true);
@@ -246,7 +260,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * used to create a snapshot image. When a boardview is given, the visible area
      * is shown.
      */
-    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg) {
+    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable IClientGUI cg, @Nullable File minimapTheme) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
@@ -255,7 +269,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (clientGui != null && clientGui.getClient() instanceof Client castClient) {
             client = castClient;
         }
-        initializeColors();
+        initializeColors(minimapTheme);
         if (dialog != null) {
             initializeDialog();
             initializeListeners();
@@ -300,7 +314,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** Initialize default colors and override with config file if there is one. */
-    private void initializeColors() {
+    private void initializeColors(File minimapTheme) {
 
         BACKGROUND = Color.black;
         terrainColors[0] = new Color(218, 215, 170);
@@ -333,14 +347,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int green;
         int blue;
 
-        File coloursFile = new MegaMekFile(Configuration.hexesDir(), GUIP.getMinimapColours()).getFile();
+        if (minimapTheme == null || !minimapTheme.exists()) {
+            minimapTheme = CLIENT_PREFERENCES.getMinimapTheme();
+        }
 
         // only while the defaults are hard-coded!
-        if (!coloursFile.exists()) {
+        if (!minimapTheme.exists()) {
             return;
         }
 
-        try (Reader cr = new FileReader(coloursFile)) {
+        try (Reader cr = new FileReader(minimapTheme)) {
             StreamTokenizer st = new StreamTokenizer(cr);
 
             st.lowerCaseMode(true);
@@ -348,10 +364,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             st.commentChar('#');
 
             scan: while (true) {
-                red = 0;
-                green = 0;
-                blue = 0;
-
                 switch (st.nextToken()) {
                     case StreamTokenizer.TT_EOF:
                     case StreamTokenizer.TT_EOL:
@@ -1476,7 +1488,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + e.getOldPhase() + ".png");
                 try {
-                    ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM), "png", imgFile);
+                    ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, null), "png", imgFile);
                 } catch (Exception ex) {
                     logger.error(ex, "");
                 }

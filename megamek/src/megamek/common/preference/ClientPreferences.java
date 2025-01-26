@@ -20,7 +20,11 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 import megamek.MMConstants;
+import megamek.client.ui.baseComponents.FileNameComboBoxModel;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.Configuration;
 import megamek.common.MovePath;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
@@ -34,6 +38,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String LAST_SERVER_PORT = "LastServerPort";
     public static final String LOCALE = "Locale";
     public static final String MAP_TILESET = "MapTileset";
+    public static final String MINIMAP_THEME = "MinimapTheme";
+    public static final String STRATEGIC_VIEW_THEME = "StrategicViewTheme";
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
@@ -82,6 +88,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(LAST_CONNECT_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(LAST_SERVER_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(MAP_TILESET, "saxarba.tileset");
+        store.setDefault(MINIMAP_THEME, "default.theme");
+        store.setDefault(STRATEGIC_VIEW_THEME, "gbc green.theme");
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
@@ -342,6 +350,22 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setStartSearchlightsOn(boolean value) {
         store.setValue(START_SEARCHLIGHTS_ON, value);
+    }
+
+    public void setStrategicViewTheme(String theme) {
+        store.setValue(STRATEGIC_VIEW_THEME, theme);
+    }
+
+    public File getStrategicViewTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(STRATEGIC_VIEW_THEME)).getFile();
+    }
+
+    public void setMinimapTheme(String theme) {
+        store.setValue(MINIMAP_THEME, theme);
+    }
+
+    public File getMinimapTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(MINIMAP_THEME)).getFile();
     }
 
     protected Locale locale = null;

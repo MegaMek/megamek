@@ -13,19 +13,19 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.Configuration;
 import megamek.common.EntityMovementType;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -3429,5 +3429,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
         return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
+    }
+
+    public File[] getMinimapThemes() {
+        // List all .theme files inside the minimap themes folder
+        return Configuration.minimapThemesDir().listFiles((dir, name) -> name.endsWith(".theme"));
     }
 }

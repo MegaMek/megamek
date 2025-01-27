@@ -53,7 +53,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         var copyConsiderationBtn = new JButton(Messages.getString("aiEditor.copy.consideration"));
         var editConsiderationBtn = new JButton(Messages.getString("aiEditor.edit.consideration"));
         var deleteConsiderationBtn = new JButton(Messages.getString("aiEditor.delete.consideration"));
-
+        newConsiderationBtn.addActionListener(l -> addEmptyConsideration());
         considerationsToolbar.add(newConsiderationBtn);
         considerationsToolbar.add(copyConsiderationBtn);
         considerationsToolbar.add(editConsiderationBtn);
@@ -72,7 +72,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         });
     }
 
-    public void updateInPlaceTheDSE() {
+    public TWDecisionScoreEvaluator updateInPlaceTheDSE() {
         var editedDse = editedDecisionScoreEvaluator.get();
         if (editedDse != null) {
             editedDse.setName(nameField.getText());
@@ -82,10 +82,12 @@ public class DecisionScoreEvaluatorPane extends JPanel {
             for (var considerationPane : considerationPaneList) {
                 editedDse.addConsideration(considerationPane.getConsideration());
             }
+            return editedDse;
         } else {
             logger.error(Messages.getString("aiEditor.edit.decisionScoreEvaluator.update.error"),
                 Messages.getString("aiEditor.edit.decisionScoreEvaluator.update.error.title"));
         }
+        return null;
     }
 
     public TWDecisionScoreEvaluator getDecisionScoreEvaluator() {
@@ -121,6 +123,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         }
         // add new consideration at the top of the list
         considerationPaneList.add(0, emptyConsideration);
+        this.updateUI();
     }
 
     public void reset() {

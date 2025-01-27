@@ -91,7 +91,7 @@ public abstract class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> impleme
     }
 
     public void addConsideration(Consideration<IN_GAME_OBJECT, TARGETABLE> consideration) {
-        considerations.add(consideration);
+        considerations.add(0, consideration);
     }
 
     public String getDescription() {

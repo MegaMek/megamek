@@ -876,9 +876,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-        if (border) {
-            g.setColor(g.getColor().darker());
-        }
+//        if (border) {
+//            g.setColor(g.getColor().darker());
+//        }
         g.drawPolygon(xPoints, yPoints, 6);
     }
 
@@ -1209,25 +1209,32 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Stroke saveStroke = g2.getStroke();
 
         g2.setStroke(new BasicStroke(2));
-        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 180);
+        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 200);
         g2.setColor(iconColorSemiTransparent);
 
-        int x = entity.getPosition().getX();
-        int y = entity.getPosition().getY();
-
+        var origin = entity.getPosition();
         for (var sensorRange : List.of(minSensorRange, maxSensorRange)) {
             if (sensorRange <= 0) {
                 continue;
             }
 
-            int topLeftX = coordsXToPixel(x-sensorRange);
-            int topLeftY = coordsYtoPixel(y-sensorRange, x-sensorRange);
-            int bottomRightX = coordsXToPixel(x+sensorRange);
-            int bottomRightY = coordsYtoPixel(y+sensorRange, x+sensorRange);
-            int sensorWidth = bottomRightX - topLeftX;
-            int sensorHeight = bottomRightY - topLeftY;
+            int xo;
+            int yo;
+            var sensor = new Path2D.Double();
 
-            g2.drawOval(topLeftX - unitSize - 1, topLeftY - unitSize - 1, sensorWidth + unitSize * 2 + 2, sensorHeight + unitSize * 2 + 2);
+            var internalOrExternal = (sensorRange == minSensorRange) && (maxSensorRange != 0) ? -1 : 1;
+            for (int i = 0; i < 6; i++) {
+                var movingCoord = origin.translated(i, sensorRange + internalOrExternal);
+                xo = coordsXToPixel(movingCoord.getX());
+                yo = coordsYtoPixel(movingCoord.getY(), movingCoord.getX());
+                if (i == 0) {
+                    sensor.moveTo(xo, yo);
+                } else {
+                    sensor.lineTo(xo, yo);
+                }
+            }
+            sensor.closePath();
+            g2.draw(sensor);
         }
         g2.setStroke(saveStroke);
     }

@@ -430,7 +430,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 iconColor = GUIP.getEnemyUnitColor();
             }
         }
-        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 200);
+        
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);

@@ -49,6 +49,7 @@ public class MinimapUnitSymbols {
     public static final Path2D STRAT_HOVER;
     public static final Path2D STRAT_WHEELED;
     public static final Path2D STRAT_NAVAL;
+    public static final Path2D FACING_ARROW;
     public static final Path2D STD_MEK;
     public static final Path2D STD_TANK;
     public static final Path2D STD_VTOL;
@@ -64,6 +65,13 @@ public class MinimapUnitSymbols {
     private static final double PIHALF = PI / 2;
 
     static {
+        FACING_ARROW = new Path2D.Double();
+        FACING_ARROW.moveTo(0, -130);
+        FACING_ARROW.lineTo(25, -130);
+        FACING_ARROW.lineTo(0, -180);
+        FACING_ARROW.lineTo(-25, -130);
+        FACING_ARROW.closePath();
+
         STD_MEK = new Path2D.Double();
         STD_MEK.moveTo(-25, 45);
         STD_MEK.lineTo(25, 45);

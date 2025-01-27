@@ -328,10 +328,9 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                 // if the tab is a DSE, you may add the consideration to the DSE
                 if (mainEditorTabbedPane.getSelectedComponent() == dseTabPane) {
                     var action2 = new JMenuItem(Messages.getString("aiEditor.add.to.dse"));
-                    action1.addActionListener(evt -> {
-                        var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
-                        dse.addConsideration(twConsideration);
-                        ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(dse);
+                    action2.addActionListener(evt -> {
+                        System.out.println(">>>>>>>>>>>>>>>>>>HERE!!!!!!!!!!!!!!");
+                        addConsiderationToDse(twConsideration);
                     });
                     contextMenu.add(action2);
                 }
@@ -352,6 +351,20 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             contextMenu.add(menuItemOther);
         }
         return contextMenu;
+    }
+
+    private void addConsiderationToDse(TWConsideration twConsideration) {
+        System.out.println("HERE!!!!!!!!!!!!!!");
+        if (currentDecision.get() == null) {
+            var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
+            dse.addConsideration(twConsideration);
+            ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(dse);
+        } else {
+            currentDecisionScoreEvaluator.get().addConsideration(twConsideration);
+            ((DecisionScoreEvaluatorPane) dsePane).setDecisionScoreEvaluator(currentDecisionScoreEvaluator);
+        }
+        hasDseChanges = true;
+        dsePane.updateUI();
     }
 
     private JMenuItem getCopyProfileMenuItem(TWProfile obj) {
@@ -500,8 +513,13 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void persistDecisionScoreEvaluator() {
         if (currentDecision.get() != null && currentDecisionScoreEvaluator.get() != null) {
             // This updates the current decision with the edits that were made on it
-            ((DecisionScoreEvaluatorPane) dsePane).updateInPlaceTheDSE();
+            var dse = ((DecisionScoreEvaluatorPane) dsePane).updateInPlaceTheDSE();
+            currentDecision.get().setDecisionScoreEvaluator(dse);
             var profile = currentProfile.get();
+            sharedData.addDecisionScoreEvaluator(dse);
+            if (!profile.getDecisions().contains(currentDecision.get())) {
+                profile.getDecisions().add(currentDecision.get());
+            }
             sharedData.addProfile(profile);
         } else {
             var dse = ((DecisionScoreEvaluatorPane) dsePane).getDecisionScoreEvaluator();
@@ -516,13 +534,15 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void persistProfile() {
         //noinspection unchecked
         var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
+        var decisions = model.getDecisions().stream().map(e -> (Decision<Entity, Entity>) e).toList();
+
         if (profileId <= 0) {
             var ids = sharedData.getProfiles().stream().map(TWProfile::getId).collect(Collectors.toSet());
             while (ids.contains(profileId) || profileId <= 0) {
                 profileId = new Random().nextInt(1, Integer.MAX_VALUE);
             }
         }
-        var decisions = model.getDecisions().stream().map(e -> (Decision<Entity, Entity>) e).toList();
+
         sharedData.addProfile(new TWProfile(profileId, profileNameTextField.getText(), descriptionTextField.getText(), decisions));
         hasProfileChanges = false;
         hasChangesToSave = true;

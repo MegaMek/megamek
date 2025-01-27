@@ -75,9 +75,9 @@ public class ConsiderationPane extends JPanel {
 
     public void setEmptyConsideration() {
         considerationComboBox.setSelectedItem(null);
-        considerationName.setText("");
+        considerationName.setText("NEW CONSIDERATION");
         parametersTable.setModel(new ParametersTableModel());
-        ((CurvePane) curveContainer).setCurve(DefaultCurve.Logit.getCurve());
+        ((CurvePane) curveContainer).setCurve(DefaultCurve.Linear.getCurve());
     }
 
     public void setHoverStateModel(HoverStateModel model) {

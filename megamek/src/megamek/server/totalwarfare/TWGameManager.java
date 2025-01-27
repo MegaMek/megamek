@@ -8436,7 +8436,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Do a piloting skill check while moving.  Writes directly into mainPhaseReport immediately.
+     * Do a piloting skill check while moving.
      *
      * @param entity          - the <code>Entity</code> that must roll.
      * @param entityElevation The elevation of the supplied Entity above the surface
@@ -8457,6 +8457,7 @@ public class TWGameManager extends AbstractGameManager {
      *                        failure will
      *                        result in a fall or not. Falls will be processed.
      * @param skillReport     Report Vector into which reports should be written.
+     *
      * @return Margin of Failure if the pilot fails the skill check, 0 if they
      *         pass.
      */

@@ -2214,13 +2214,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         var autodetect = false;
         if (null == mmlPath || mmlPath.isBlank()) {
             autodetect = true;
-            if (SystemUtils.IS_OS_WINDOWS) {
-                mmlPath = "MegaMekLab.exe";
-            } else if(SystemUtils.IS_OS_MAC) {
-                mmlPath = "MegaMekLab.jar";
-            } else /* Linux, we hope */ {
-                mmlPath = "MegaMekLab.sh";
-            }
+            mmlPath = "MegaMekLab.jar";
         }
 
         var pb = printToMegaMekLab(unitList, new File(mmlPath), autodetect);

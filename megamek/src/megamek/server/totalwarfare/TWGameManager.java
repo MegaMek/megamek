@@ -3939,6 +3939,50 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     *
+     * @param skidder   the unit which should skid
+     * @param curPos    The Coords where displacement may take place due to stacking violations
+     * @param direction the direction of the skid
+     * @return
+     */
+    private Vector<Report> processSkidDisplacement(Entity skidder, Coords curPos, int direction) {
+        Coords nextPos;
+        Report r;
+        Vector<Report> skidDisplacementReports = new Vector<>();
+
+        // If the skidding entity violates stacking,
+        // displace targets until it doesn't.
+        // Set climb mode off for skid calcs A) in buildings, B) by non-flying vehicles?
+        Entity target = Compute.stackingViolation(game, skidder.getId(), curPos, false);
+        while (target != null) {
+            nextPos = Compute.getValidDisplacement(game, target.getId(), target.getPosition(), direction);
+            // ASSUMPTION
+            // There should always be *somewhere* that
+            // the target can go... last skid hex if
+            // nothing else is available.
+            if (null == nextPos) {
+                // But I don't trust the assumption fully.
+                // Report the error and try to continue.
+                logger.error("The skid of " + skidder.getShortName()
+                    + " should displace " + target.getShortName()
+                    + " in hex " + curPos.getBoardNum()
+                    + " but there is nowhere to go.");
+                break;
+            }
+            // indent displacement
+            r = new Report(1210, Report.PUBLIC);
+            r.indent();
+            r.newlines = 0;
+            skidDisplacementReports.add(r);
+            skidDisplacementReports.addAll(doEntityDisplacement(target, curPos, nextPos, null));
+            skidDisplacementReports.addAll(doEntityDisplacementMinefieldCheck(skidder, curPos, nextPos, skidder.getElevation()));
+            target = Compute.stackingViolation(game, skidder.getId(), curPos, skidder.climbMode());
+        }
+
+        return skidDisplacementReports;
+    }
+
+    /**
      * makes a unit skid or sideslip on the board
      *
      * @param entity    the unit which should skid
@@ -3950,8 +3994,8 @@ public class TWGameManager extends AbstractGameManager {
      * @return true if the entity was removed from play
      */
     boolean processSkid(Entity entity, Coords start, int elevation,
-            int direction, int distance, MoveStep step,
-            EntityMovementType moveType) {
+                        int direction, int distance, MoveStep step,
+                        EntityMovementType moveType) {
         return processSkid(entity, start, elevation, direction, distance, step, moveType, false);
     }
 
@@ -4557,6 +4601,10 @@ public class TWGameManager extends AbstractGameManager {
                 // and add it to the list of affected buildings.
                 if (bldg.getCurrentCF(nextPos) > 0) {
                     stopTheSkid = true;
+
+                    // Before doing the basement check, displace any other entities in the building at the same level.
+                    addReport(processSkidDisplacement(entity, entity.getPosition(), direction));
+
                     if (bldg.rollBasement(nextPos, game.getBoard(), mainPhaseReport)) {
                         sendChangedHex(nextPos);
                         Vector<Building> buildings = new Vector<>();
@@ -4687,34 +4735,8 @@ public class TWGameManager extends AbstractGameManager {
 
         } // Handle the next skid hex.
 
-        // If the skidding entity violates stacking,
-        // displace targets until it doesn't.
-        curPos = entity.getPosition();
-        Entity target = Compute.stackingViolation(game, entity.getId(), curPos, entity.climbMode());
-        while (target != null) {
-            nextPos = Compute.getValidDisplacement(game, target.getId(), target.getPosition(), direction);
-            // ASSUMPTION
-            // There should always be *somewhere* that
-            // the target can go... last skid hex if
-            // nothing else is available.
-            if (null == nextPos) {
-                // But I don't trust the assumption fully.
-                // Report the error and try to continue.
-                logger.error("The skid of " + entity.getShortName()
-                        + " should displace " + target.getShortName()
-                        + " in hex " + curPos.getBoardNum()
-                        + " but there is nowhere to go.");
-                break;
-            }
-            // indent displacement
-            r = new Report(1210, Report.PUBLIC);
-            r.indent();
-            r.newlines = 0;
-            addReport(r);
-            addReport(doEntityDisplacement(target, curPos, nextPos, null));
-            addReport(doEntityDisplacementMinefieldCheck(entity, curPos, nextPos, entity.getElevation()));
-            target = Compute.stackingViolation(game, entity.getId(), curPos, entity.climbMode());
-        }
+        // Handle additional displacements
+        addReport(processSkidDisplacement(entity, entity.getPosition(), direction));
 
         // Meks suffer damage for every hex skidded.
         // For QuadVees in vehicle mode, apply

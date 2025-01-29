@@ -24,7 +24,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6407: Feature: ACAR formations reintroduced
 + Data #6408: Grabbing the Bull by the horns adding Taurian infantry
 + Fix #6385: Incorrect TMM bonus for WiGE
-+ Fix #6395:
++ Fix #6395:  Add knowledge of smoke zero damage to princess
 + PR #6409: Campaign Options IIC - MegaMek Portion
 + PR #6415: fixes an error where force consolidation would not set the correct owner of the force
 + PR #6411: Don't load mml scratch files into unit cache
@@ -52,6 +52,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6450: Allow the print-unit-list code to run with MegaMekLab.jar
 + PR #6453: Change keys List from ArrayList to thread-safe Vector
 + Fix #5870: princess engaging targets outside visual range in heavy fog
++ PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
++ Fix #3837: illegal stacking in buildings after skid and failed accidental charge
++ Fix #6421: NullPointerException in LobbyMekCellFormatter.java
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

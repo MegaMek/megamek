@@ -47,6 +47,10 @@ MEGAMEK VERSION HISTORY:
 + PR #6442: Unit Tests for WeaponAttackAction to help test megamek
 + Fix #6434: pilot rolls reported before all attacks (also #3890)
 + PR #6443: Fix for ranked path entries being overwritten
++ Fix #6299: Fix 6299 skid building damage and displaced messages out of order
++ Fix #6444: fix issue where closing window closes the unit display
++ PR #6450: Allow the print-unit-list code to run with MegaMekLab.jar
++ PR #6453: Change keys List from ArrayList to thread-safe Vector
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

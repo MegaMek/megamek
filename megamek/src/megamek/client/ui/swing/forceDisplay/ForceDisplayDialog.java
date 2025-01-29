@@ -50,7 +50,7 @@ public class ForceDisplayDialog extends JDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                GUIP.setUnitDisplayEnabled(false);
+                GUIP.setForceDisplayEnabled(false);
             }
         });
     }

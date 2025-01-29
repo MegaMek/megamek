@@ -876,9 +876,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int[] xPoints = xPoints(x);
         int[] yPoints = yPoints(x, y);
         g.fillPolygon(xPoints, yPoints, 6);
-//        if (border) {
-//            g.setColor(g.getColor().darker());
-//        }
+        if (border) {
+            g.setColor(g.getColor().darker());
+        }
         g.drawPolygon(xPoints, yPoints, 6);
     }
 

@@ -44,7 +44,7 @@ public class IsVIPCloser extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public IsVIPCloser copy() {
         var copy = new IsVIPCloser();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

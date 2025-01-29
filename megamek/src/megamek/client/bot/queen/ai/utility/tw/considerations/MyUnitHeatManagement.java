@@ -40,7 +40,7 @@ public class MyUnitHeatManagement extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitHeatManagement copy() {
         var copy = new MyUnitHeatManagement();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

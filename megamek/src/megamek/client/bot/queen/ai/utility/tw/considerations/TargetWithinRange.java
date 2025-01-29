@@ -48,7 +48,7 @@ public class TargetWithinRange extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public TargetWithinRange copy() {
         var copy = new TargetWithinRange();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

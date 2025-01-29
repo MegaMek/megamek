@@ -45,6 +45,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.awt.Taskbar.Feature;
 
 import static megamek.client.ui.swing.ClientGUI.*;
 
@@ -71,7 +72,6 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private JButton saveDseButton;
     private JButton saveConsiderationButton;
     private JToolBar profileTools;
-
     private ConsiderationPane considerationPane;
 
     private final AtomicReference<TWProfile> currentProfile = new AtomicReference<>();
@@ -97,6 +97,38 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         setSize(1200, 1000);
         setContentPane(uAiEditorPanel);
         setVisible(true);
+        showNotification(this, false);
+    }
+
+    private static void showNotification(JFrame frame, boolean dismiss) {
+        if (Taskbar.isTaskbarSupported()) {
+            Taskbar taskbar = Taskbar.getTaskbar();
+
+            if (taskbar.isSupported(Feature.ICON_BADGE_TEXT)) {
+                // Set badge text (macOS)
+                if (dismiss) {
+                    taskbar.setIconBadge("");
+                } else {
+                    taskbar.setIconBadge("Turn!");
+                }
+            }
+
+            if (taskbar.isSupported(Feature.USER_ATTENTION)) {
+                // Request user attention (macOS bounce or Windows flash)
+                if (dismiss) {
+                    taskbar.requestUserAttention(false, true);
+                } else {
+                    taskbar.requestUserAttention(true, true);
+                }
+            }
+        } else {
+            // Fallback for unsupported platforms
+            if (dismiss) {
+                frame.setTitle("AI Profile Editor");
+            } else {
+                frame.setTitle("New Message! - Notification Example");
+            }
+        }
     }
 
     private boolean hasChanges() {
@@ -275,6 +307,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
 
     private JPopupMenu createContextMenu(DefaultMutableTreeNode node) {
         // Create a popup menu
+        showNotification(this, true);
         JPopupMenu contextMenu = new JPopupMenu();
         var obj = node.getUserObject();
         if (obj instanceof String) {
@@ -300,7 +333,9 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         } else {
             JMenuItem menuItemAction;
             menuItemAction = new JMenuItem("Edit " + ((obj instanceof NamedObject) ? ((NamedObject) obj).getName() : "item"));
-            menuItemAction.addActionListener(evt -> { handleOpenNodeAction(node); });
+            menuItemAction.addActionListener(evt -> {
+                handleOpenNodeAction(node);
+            });
             contextMenu.add(menuItemAction);
 
             if (obj instanceof TWProfile) {
@@ -420,6 +455,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             sharedData.removeConsideration(twConsideration);
             hasConsiderationChanges = true;
         }
+
         ((DefaultTreeModel) repositoryViewer.getModel()).removeNodeFromParent(node);
     }
 
@@ -684,6 +720,8 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         root.add(categoryNode);
         for (var item : items) {
             var childNode = new DefaultMutableTreeNode(item);
+            childNode.setUserObject(item);
+
             categoryNode.add(childNode);
         }
     }
@@ -836,6 +874,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.BOTH;
         dseTabPane.add(scrollPane1, gbc);
         scrollPane1.setViewportView(dsePane);

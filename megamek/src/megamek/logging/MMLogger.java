@@ -165,16 +165,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
     }
 
-    /**
-     * Error Level Logging w/ Exception
-     *
-     * @param exception Exception that was caught via a try/catch block.
-     * @param message   Additional message to report to the log file.
-     */
-    public void error(Throwable exception, String message, Object... args) {
-        Sentry.captureException(exception);
-        message = String.format(message, args);
-        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
+
+    @Override
+    public void debug(final String message, final Object p0, final Object p1, final Object p2) {
+        logIfEnabled(FQCN, Level.DEBUG, null, message, p0, p1, p2);
     }
 
     /**

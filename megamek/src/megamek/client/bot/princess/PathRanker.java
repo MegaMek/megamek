@@ -27,6 +27,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.Level;
 
 import java.math.BigDecimal;
@@ -89,6 +90,7 @@ public abstract class PathRanker implements IPathRanker {
         List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         logger.debug("Validated " + validPaths.size() + " out of " + movePaths.size() + " possible paths.");
 
+        logger.debug("Validated {} out of {} possible paths", validPaths.size(), movePaths.size());
         // If the heat map of friendly activity has sufficient data, use the nearest hot
         // spot as
         // the anchor point
@@ -127,7 +129,7 @@ public abstract class PathRanker implements IPathRanker {
                         interval = percent.add(new BigDecimal(5));
                     }
                 } catch (Exception e) {
-                    logger.error(e, e.getMessage() + "while processing " + path);
+                    logger.error(e, e.getMessage());
                 }
             }
 
@@ -319,7 +321,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Returns the probability of success of a move path
      */
-    protected double getMovePathSuccessProbability(MovePath movePath) {
+    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
         // introduced a caching mechanism, as the success probability was being
         // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {

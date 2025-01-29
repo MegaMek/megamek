@@ -17,7 +17,6 @@ package megamek.client.ui;
 import java.util.*;
 
 import megamek.client.Client;
-import megamek.client.bot.princess.PathRanker;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;

@@ -61,7 +61,7 @@ public class MyUnitMoved extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitMoved copy() {
         var copy = new MyUnitMoved();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

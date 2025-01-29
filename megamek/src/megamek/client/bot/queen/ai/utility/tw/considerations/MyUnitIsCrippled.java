@@ -37,8 +37,8 @@ public class MyUnitIsCrippled extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
-        var copy = new MyUnitIsGettingAwayFromDanger();
+    public MyUnitIsCrippled copy() {
+        var copy = new MyUnitIsCrippled();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

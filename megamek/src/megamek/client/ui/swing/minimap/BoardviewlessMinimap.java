@@ -39,10 +39,8 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.*;
 import static megamek.common.Terrains.BUILDING;
@@ -488,7 +486,7 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         g2.draw(form);
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
-        var sensorRange = entity.getActiveSensor().getRangeByBracket();
+       int sensorRange = Optional.ofNullable(entity.getActiveSensor()).map(Sensor::getRangeByBracket).orElse(0);
         if (sensorRange > 0) {
             sensorRange *= 130;
             g2.setColor(iconColorSemiTransparent);

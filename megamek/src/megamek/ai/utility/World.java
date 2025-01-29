@@ -16,7 +16,6 @@
 package megamek.ai.utility;
 
 import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.InGameObject;
 
 import java.util.*;

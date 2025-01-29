@@ -45,7 +45,7 @@ public class RankedPath implements Comparable<RankedPath> {
         return path;
     }
 
-    double getRank() {
+    public double getRank() {
         return rank;
     }
 

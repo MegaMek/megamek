@@ -18,9 +18,7 @@ package megamek.ai.utility;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.awt.*;
 import java.util.StringJoiner;
 
 import static megamek.codeUtilities.MathUtility.clamp01;

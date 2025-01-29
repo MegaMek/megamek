@@ -18,23 +18,28 @@ import java.util.*;
 
 public abstract class DecisionContext<IN_GAME_OBJECT, TARGETABLE> {
 
-    private final Agent<IN_GAME_OBJECT, TARGETABLE> agent;
     private final World<IN_GAME_OBJECT, TARGETABLE> world;
     private final IN_GAME_OBJECT currentUnit;
     private final List<TARGETABLE> targetUnits;
-    private final Map<String, Double> damageCache;
-    private final static int DAMAGE_CACHE_SIZE = 10_000;
+    protected final Map<String, Double> damageCache;
+    protected final static int DAMAGE_CACHE_SIZE = 10_000;
 
-    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world) {
-        this(agent, world, null, Collections.emptyList());
+    public DecisionContext(World<IN_GAME_OBJECT, TARGETABLE> world) {
+        this(world, null, Collections.emptyList());
     }
 
-    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit) {
-        this(agent, world, currentUnit, Collections.emptyList());
+    public DecisionContext(World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit) {
+        this(world, currentUnit, Collections.emptyList());
     }
 
-    public DecisionContext(Agent<IN_GAME_OBJECT, TARGETABLE> agent, World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit, List<TARGETABLE> targetUnits) {
-        this.agent = agent;
+    public DecisionContext(World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit, List<TARGETABLE> targetUnits, Map<String, Double> damageCache) {
+        this.world = world;
+        this.currentUnit = currentUnit;
+        this.targetUnits = targetUnits;
+        this.damageCache = damageCache;
+    }
+
+    public DecisionContext(World<IN_GAME_OBJECT, TARGETABLE> world, IN_GAME_OBJECT currentUnit, List<TARGETABLE> targetUnits) {
         this.world = world;
         this.currentUnit = currentUnit;
         this.targetUnits = targetUnits;
@@ -48,10 +53,6 @@ public abstract class DecisionContext<IN_GAME_OBJECT, TARGETABLE> {
 
     public World<IN_GAME_OBJECT, TARGETABLE> getWorld() {
         return world;
-    }
-
-    public Agent<IN_GAME_OBJECT, TARGETABLE> getAgent() {
-        return agent;
     }
 
     public List<TARGETABLE> getTargets() {
@@ -83,5 +84,5 @@ public abstract class DecisionContext<IN_GAME_OBJECT, TARGETABLE> {
         damageCache.clear();
     }
 
-    public abstract double getBonusFactor(DecisionContext<IN_GAME_OBJECT, TARGETABLE> lastContext);
+    public abstract double getBonusFactor();
 }

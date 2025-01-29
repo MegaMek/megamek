@@ -66,6 +66,7 @@ public class CurveGraph extends JPanel {
             return;
         }
         var curve = selectedCurve.get();
+
         curve.drawAxes(g, getWidth(), getHeight());
         curve.drawCurve(g, getWidth(), getHeight(), Color.BLUE);
 

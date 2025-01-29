@@ -81,15 +81,15 @@ public class InfantryPathRanker extends BasicPathRanker {
                 eval = evaluateUnmovedEnemy(enemy, pathCopy, extremeRange, losRange);
             }
 
-            if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+            if (damageEstimate.firingDamage() < eval.getMyEstimatedDamage()) {
+                damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedDamage());
             }
 
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
         }
 
         calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
-        double maximumDamageDone = damageEstimate.firingDamage;
+        double maximumDamageDone = damageEstimate.firingDamage();
 
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do

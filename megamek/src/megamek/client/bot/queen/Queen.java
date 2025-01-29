@@ -18,6 +18,7 @@ import megamek.ai.utility.Agent;
 import megamek.ai.utility.Intelligence;
 import megamek.client.bot.princess.PathRanker;
 import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.RankedPath;
 import megamek.client.bot.queen.ai.utility.tw.ClusteringService;
 import megamek.client.bot.queen.ai.utility.tw.context.TWWorld;
 import megamek.client.bot.queen.ai.utility.tw.intelligence.SimpleIntelligence;
@@ -25,7 +26,7 @@ import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
 import megamek.common.Entity;
 import megamek.logging.MMLogger;
 
-public class Queen extends Princess implements Agent<Entity, Entity> {
+public class Queen extends Princess implements Agent<Entity, Entity, RankedPath> {
     private static final MMLogger logger = MMLogger.create(Queen.class);
 
     private final SimpleIntelligence intelligence;
@@ -49,7 +50,7 @@ public class Queen extends Princess implements Agent<Entity, Entity> {
     }
 
     @Override
-    public Intelligence<Entity, Entity> getIntelligence() {
+    public Intelligence<Entity, Entity, RankedPath> getIntelligence() {
         return intelligence;
     }
 

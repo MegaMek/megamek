@@ -23,6 +23,7 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -32,7 +33,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * A very "basic" path ranker
@@ -68,7 +68,8 @@ public class BasicPathRanker extends PathRanker {
     public BasicPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
-        logger.debug("Using {} behavior.", owningPrincess.getBehaviorSettings().getDescription());
+        this.pathEnumerator = pathEnumerator;
+        logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
     FireControl getFireControl(Entity entity) {
@@ -129,7 +130,7 @@ public class BasicPathRanker extends PathRanker {
      * TODO estimated damage is sloppy. Improve for missile attacks, gun skill, and
      * range
      */
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange,
             boolean useLOSRange) {
         // some preliminary calculations
         final double damageDiscount = 0.25;
@@ -207,11 +208,18 @@ public class BasicPathRanker extends PathRanker {
         return super.getMovePathSuccessProbability(movePath);
     }
 
-    private double calculateFallMod(double successProbability) {
+    private double calculateFallMod(double successProbability, StringBuilder formula) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
-        double fallMod = pilotingFailure * (pilotingFailure == 1 ? UNIT_DESTRUCTION_FACTOR : fallShame);
-        logger.trace("fall mod [{} = {} * {}]", fallMod, pilotingFailure, fallShame);
+        double fallMod = pilotingFailure * (pilotingFailure == 1 ? -UNIT_DESTRUCTION_FACTOR : fallShame);
+
+        formula.append("fall mod [")
+                .append(LOG_DECIMAL.format(fallMod))
+                .append(" = ")
+                .append(LOG_DECIMAL.format(pilotingFailure))
+                .append(" * ")
+                .append(LOG_DECIMAL.format(fallShame))
+                .append("]");
         return fallMod;
     }
 
@@ -331,7 +339,7 @@ public class BasicPathRanker extends PathRanker {
         return myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
     }
 
-    EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
+    public EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game) {
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
         int distance = enemy.getPosition().distance(path.getFinalCoords());
@@ -358,7 +366,7 @@ public class BasicPathRanker extends PathRanker {
         return returnResponse;
     }
 
-    // The further I am from a target, the lower this path ranks weighted by
+    // The further I am from a target, the lower this path ranks (weighted by
     // Hyper Aggression.
     protected double calculateAggressionMod(Entity movingUnit, MovePath path, Game game) {
 
@@ -549,11 +557,11 @@ public class BasicPathRanker extends PathRanker {
             // however, just because we're ignoring them doesn't mean they won't shoot at
             // us.
             if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
-                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+                if (damageEstimate.firingDamage() < eval.getMyEstimatedDamage()) {
+                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedDamage());
                 }
-                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
+                if (damageEstimate.physicalDamage() < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedPhysicalDamage());
                 }
             }
 
@@ -583,7 +591,7 @@ public class BasicPathRanker extends PathRanker {
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
                 && path.getEntity().getCrew().isClanPilot()) {
-            damageEstimate.physicalDamage = 0;
+            damageEstimate = damageEstimate.withPhysicalDamage(0);
         }
 
         // I can kick a different target than I shoot, so add physical to
@@ -675,7 +683,7 @@ public class BasicPathRanker extends PathRanker {
         return rankedPath;
     }
 
-    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
+    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken, StringBuilder formula) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
@@ -705,7 +713,7 @@ public class BasicPathRanker extends PathRanker {
      * Worker function that determines if a given enemy entity should be evaluated
      * as if it has moved.
      */
-    protected boolean evaluateAsMoved(Entity enemy) {
+    public boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
         // somewhat pointless to try to predict their movement.
         return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAirborneAeroOnGroundMap();
@@ -743,7 +751,7 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game,
+    public FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game,
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
@@ -764,8 +772,8 @@ public class BasicPathRanker extends PathRanker {
             FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 
             double myDamagePotential = myFiringPlan.getUtility();
-            if (myDamagePotential > damageStructure.firingDamage) {
-                damageStructure.firingDamage = myDamagePotential;
+            if (myDamagePotential > damageStructure.firingDamage()) {
+                damageStructure = damageStructure.withFiringDamage(myDamagePotential);
             }
 
             if (path.getEntity() instanceof Mek) {
@@ -776,8 +784,8 @@ public class BasicPathRanker extends PathRanker {
                         true);
                 double expectedKickDamage = myKick.getExpectedDamageOnHit() *
                         myKick.getProbabilityToHit();
-                if (expectedKickDamage > damageStructure.physicalDamage) {
-                    damageStructure.physicalDamage = expectedKickDamage;
+                if (expectedKickDamage > damageStructure.physicalDamage()) {
+                    damageStructure = damageStructure.withPhysicalDamage(expectedKickDamage);
                 }
             }
         }
@@ -1092,7 +1100,7 @@ public class BasicPathRanker extends PathRanker {
         // but all other hazards (e.g. breaches, crush depth) still apply.
         if (!(movingUnit instanceof Mek || movingUnit instanceof ProtoMek ||
                 movingUnit instanceof BattleArmor || movingUnit.hasUMU())) {
-            logger.trace("Drowning (1000).");
+            logger.trace("Unit will drown ({}).", UNIT_DESTRUCTION_FACTOR);
             return UNIT_DESTRUCTION_FACTOR;
         }
 
@@ -1341,6 +1349,7 @@ public class BasicPathRanker extends PathRanker {
      * @param modifier    Modifier, based on unit type and terrain type
      * @param bogPossible whether the unit can actually get bogged own in this
      *                    terrain type, or just calculating
+     * @param logMsg      Ref to StringBuilder used for logging.
      * @return double Factor to multiply by terrain hazards.
      */
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
@@ -1369,7 +1378,8 @@ public class BasicPathRanker extends PathRanker {
             logger.trace("Chance to bog down = {}, expected turns = {}", oddsBogged, expectedTurns);
         }
         factor = 1.0 + oddsBogged + (expectedTurns);
-
+        logger.trace("Effective Piloting Skill: {}, Expected turns before escape: {}, Factor = {}",
+            effectiveSkill, expectedTurns, factor);
         return factor;
     }
 
@@ -1518,19 +1528,5 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
-    }
-
-    /**
-     * Simple data structure that holds a separate firing and physical damage
-     * number.
-     *
-     */
-    public static class FiringPhysicalDamage {
-        public double firingDamage;
-        public double physicalDamage;
-
-        public double getMaximumDamageEstimate() {
-            return firingDamage + physicalDamage;
-        }
     }
 }

@@ -122,10 +122,10 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return A HashSet that contains an id for each terrain present in this hex.
+     * @return A Set that contains an id for each terrain present in this hex.
      */
     public Set<Integer> getTerrainTypesSet() {
-        return new HashSet<>(terrains.keySet());
+        return Set.copyOf(terrains.keySet());
     }
 
     /**

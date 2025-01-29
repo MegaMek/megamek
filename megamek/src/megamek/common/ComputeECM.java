@@ -486,6 +486,10 @@ public class ComputeECM {
             return null;
         }
 
+        if (allEcmInfo != null && allEcmInfo.isEmpty()) {
+            allEcmInfo.addAll(computeAllEntitiesECMInfo(ae.getGame().getEntitiesVector()));
+        }
+
         if (allEcmInfo == null) {
             allEcmInfo = computeAllEntitiesECMInfo(ae.getGame().getEntitiesVector());
         }

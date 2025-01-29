@@ -16,9 +16,9 @@ package megamek.ai.utility;
 
 import megamek.client.IClient;
 
-public interface Agent<IN_GAME_OBJECT, TARGETABLE>  {
+public interface Agent<IN_GAME_OBJECT, TARGETABLE, RANKED>  {
     int getId();
     World<IN_GAME_OBJECT, TARGETABLE> getWorld();
-    Intelligence<IN_GAME_OBJECT, TARGETABLE> getIntelligence();
+    Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> getIntelligence();
     IClient getClient();
 }

@@ -15,8 +15,7 @@
 
 package megamek.client.bot.queen.ai.utility.tw.intelligence;
 
-import megamek.client.bot.princess.CardinalEdge;
-import megamek.client.bot.princess.RankedPath;
+import megamek.client.bot.princess.*;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -26,11 +25,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PathRankerUtilCalculator {
-    SimpleIntelligence.FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies);
+    FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies);
 
-    double getMovePathSuccessProbability(MovePath path, StringBuilder report);
+    double getMovePathSuccessProbability(MovePath path);
 
     int distanceToHomeEdge(Coords position, CardinalEdge homeEdge, Game game);
 
-    Optional<RankedPath> previousRankedPath(Entity entity);
+    double calculateMovePathPSRDamage(Entity movingUnit, MovePath pathCopy);
+
+    double checkPathForHazards(MovePath path, Entity movingUnit, Game game);
+
+    FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game, FireControlState fireControlState, FiringPhysicalDamage damageStructure);
+
+    boolean evaluateAsMoved(Entity enemy);
+
+    EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game);
+
+    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean extremeRange, boolean losRange);
 }

@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.JarFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -94,6 +95,7 @@ import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.SystemUtils;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
@@ -2119,6 +2121,79 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    private ProcessBuilder printToMegaMekLab(ArrayList<Entity> unitList, File mmlExecutable, boolean autodetected) {
+        boolean jarfile;
+        try (var ignored = new JarFile(mmlExecutable)) {
+            jarfile = true;
+        } catch (IOException ignored) {
+            jarfile = false;
+        }
+
+        File unitFile;
+        try {
+            unitFile = File.createTempFile("MegaMekPrint", ".mul");
+            EntityListFile.saveTo(unitFile, unitList);
+            unitFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String[] command;
+
+        if (!jarfile) {
+            if (!mmlExecutable.canExecute()) {
+                if (autodetected) {
+                    logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
+                } else {
+                    logger.error("%s does not appear to be an executable! You may need to set execute permission or configure the path to the MegaMekLab executable in the settings.".formatted(mmlExecutable.getName()), "Error printing unit list");
+                }
+                return null;
+            }
+
+            if (mmlExecutable.getName().toLowerCase().contains("gradle")) {
+                // If the executable is `gradlew`/`gradelw.bat`, assume it's the gradle wrapper
+                // which comes in the MML git repo. Compile and run MML from source in order to print units.
+                command = new String[] {
+                    mmlExecutable.getAbsolutePath(),
+                    "run",
+                    "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
+                };
+            } else {
+                // Start mml normally. "--no-startup" tells MML to exit after the user closes the
+                // print dialog (by printing or cancelling)
+                command = new String[] {
+                    mmlExecutable.getAbsolutePath(),
+                    unitFile.getAbsolutePath(),
+                    "--no-startup"
+                };
+            }
+        } else {
+            if (!mmlExecutable.exists()) {
+                if (autodetected) {
+                    logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
+                } else {
+                    logger.error("%s does not appear to exist! Please configure the path to the MegaMekLab executable in the settings.".formatted(mmlExecutable.getName()), "Error printing unit list");
+                }
+                return null;
+            }
+
+            // The executable is a jarfile, so let's execute it.
+            var javaExecutable = ProcessHandle.current().info().command().orElse("java");
+            command = new String[] {
+                javaExecutable,
+                "-jar",
+                mmlExecutable.getAbsolutePath(),
+                unitFile.getAbsolutePath(),
+                "--no-startup"
+            };
+
+        }
+
+        return new ProcessBuilder(command)
+            .directory(mmlExecutable.getAbsoluteFile().getParentFile())
+            .inheritIO();
+    }
+
     /**
      * Request MegaMekLab to print out record sheets for the current player's selected units.
      * The method will try to find MML either automatically or based on a configured client setting.
@@ -2139,58 +2214,23 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         var autodetect = false;
         if (null == mmlPath || mmlPath.isBlank()) {
             autodetect = true;
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                mmlPath = "MegaMekLab.exe";
-            } else {
-                mmlPath = "MegaMekLab.sh";
-            }
+            mmlPath = "MegaMekLab.jar";
         }
 
-        var mml = new File(mmlPath);
-
-        if (!mml.canExecute()) {
-            if (autodetect) {
-                logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
-            } else {
-                logger.error("%s does not appear to be an executable! Please configure the path to the MegaMekLab executable in the settings.".formatted(mml.getName()), "Error printing unit list");
-            }
+        var pb = printToMegaMekLab(unitList, new File(mmlPath), autodetect);
+        if (pb == null) {
             return;
         }
 
         try {
-            // Save unit list to a temporary file
-            var unitFile = File.createTempFile("MegaMekPrint", ".mul");
-            EntityListFile.saveTo(unitFile, unitList);
-
-            String[] command;
-            if (mml.getName().toLowerCase().contains("gradle")) {
-                // If the executable is `gradlew`/`gradelw.bat`, assume it's the gradle wrapper
-                // which comes in the MML git repo. Compile and run MML from source in order to print units.
-                command = new String[] {
-                    mml.getAbsolutePath(),
-                    "run",
-                    "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
-                };
-            } else {
-                // Start mml normally. "--no-startup" tells MML to exit after the user closes the
-                // print dialog (by printing or cancelling)
-                command = new String[] {
-                    mml.getAbsolutePath(),
-                    unitFile.getAbsolutePath(),
-                    "--no-startup"
-                };
-            }
-            // It takes a while for MML to start, so we change the text of the button
+            // It sometimes takes a while for MML to start, so we change the text of the button
             // to let the user know that something is happening
             button.setText(Messages.getString("ChatLounge.butPrintList.printing"));
 
-            logger.info("Running command: {}", String.join(" ", command));
+            logger.info("Running command: {}", String.join(" ", pb.command()));
 
 
-            var p = new ProcessBuilder(command)
-                .directory(mml.getAbsoluteFile().getParentFile())
-                .inheritIO()
-                .start();
+            var p = pb.start();
 
             // This thread's only purpose is to wait for the MML process to finish and change the button's text back to
             // its original value.
@@ -2207,8 +2247,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } catch (Exception e) {
             // If something goes wrong, probably ProcessBuild.start if anything,
             // Make sure to set the button text back to what it started as no matter what.
-            logger.error(e, "Operation failed", "Error printing unit list");
             button.setText(Messages.getString("ChatLounge.butPrintList"));
+            logger.error(e, "Operation failed", "Error printing unit list");
+
         }
     }
 

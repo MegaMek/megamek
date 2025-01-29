@@ -6717,12 +6717,12 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
                 if (game.getBoard().getBuildingAt(t.getPosition()) != null) {
-                    Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
+                    Vector<Report> vBuildingDamageReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
                             2 * missiles, t.getPosition());
-                    for (Report report : vBuildingReport) {
+                    for (Report report : vBuildingDamageReport) {
                         report.subject = attId;
                     }
-                    vPhaseReport.addAll(vBuildingReport);
+                    vPhaseReport.addAll(vBuildingDamageReport);
                 }
                 // fall through
             case Targetable.TYPE_HEX_CLEAR:
@@ -6743,12 +6743,12 @@ public class TWGameManager extends AbstractGameManager {
                         new TargetRoll(0, "inferno"), -1, vPhaseReport);
                 break;
             case Targetable.TYPE_BUILDING:
-                Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
+                Vector<Report> vBuildingDamageReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()),
                         2 * missiles, t.getPosition());
-                for (Report report : vBuildingReport) {
+                for (Report report : vBuildingDamageReport) {
                     report.subject = attId;
                 }
-                vPhaseReport.addAll(vBuildingReport);
+                vPhaseReport.addAll(vBuildingDamageReport);
 
                 // For each missile, check to see if it hits a unit in this hex
                 for (Entity e : game.getEntitiesVector(t.getPosition())) {
@@ -8407,7 +8407,7 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Do a piloting skill check while moving.
+     * Do a piloting skill check while moving.  Writes directly into mainPhaseReport immediately.
      *
      * @param entity          - the <code>Entity</code> that must roll.
      * @param entityElevation The elevation of the supplied Entity above the surface
@@ -8431,7 +8431,38 @@ public class TWGameManager extends AbstractGameManager {
      *         pass.
      */
     int doSkillCheckWhileMoving(Entity entity, int entityElevation,
-            Coords src, Coords dest, PilotingRollData roll, boolean isFallRoll) {
+                                Coords src, Coords dest, PilotingRollData roll, boolean isFallRoll) {
+        return doSkillCheckWhileMoving(entity, entityElevation, src, dest, roll, isFallRoll, mainPhaseReport);
+    }
+
+    /**
+     * Do a piloting skill check while moving.
+     *
+     * @param entity          - the <code>Entity</code> that must roll.
+     * @param entityElevation The elevation of the supplied Entity above the surface
+     *                        of the
+     *                        src hex. This is necessary as the state of the Entity
+     *                        may
+     *                        represent the elevation of the entity about the
+     *                        surface of the
+     *                        destination hex.
+     * @param src             - the <code>Coords</code> the entity is moving from.
+     * @param dest            - the <code>Coords</code> the entity is moving to.
+     *                        This value
+     *                        can be the same as src for in-place checks.
+     * @param roll            - the <code>PilotingRollData</code> that is causing
+     *                        this
+     *                        check.
+     * @param isFallRoll      - a <code>boolean</code> flag that indicates that
+     *                        failure will
+     *                        result in a fall or not. Falls will be processed.
+     * @param skillReport     Report Vector into which reports should be written.
+     *
+     * @return Margin of Failure if the pilot fails the skill check, 0 if they
+     *         pass.
+     */
+    int doSkillCheckWhileMoving(Entity entity, int entityElevation,
+            Coords src, Coords dest, PilotingRollData roll, boolean isFallRoll, Vector<Report> skillReport) {
         boolean fallsInPlace;
 
         // Start the info for this roll.
@@ -8453,7 +8484,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Finish the info.
         r.add(roll.getLastPlainDesc(), true);
-        addReport(r);
+        skillReport.add(r);
 
         // roll
         final Roll diceRoll = entity.getCrew().rollPilotingSkill();
@@ -8467,14 +8498,14 @@ public class TWGameManager extends AbstractGameManager {
             // Does failing the PSR result in a fall.
             if (isFallRoll && entity.canFall()) {
                 r.choose(false);
-                addReport(r);
-                addReport(doEntityFallsInto(entity, entityElevation,
+                skillReport.add(r);
+                skillReport.addAll(doEntityFallsInto(entity, entityElevation,
                         fallsInPlace ? dest : src, fallsInPlace ? src : dest,
                         roll, true));
             } else {
                 r.messageId = 2190;
                 r.choose(false);
-                addReport(r);
+                skillReport.add(r);
                 entity.setPosition(fallsInPlace ? src : dest);
             }
             // failed a PSR, possibly check for engine stalling
@@ -8483,7 +8514,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         r.choose(true);
         r.newlines = 2;
-        addReport(r);
+        skillReport.add(r);
         return 0;
     }
 
@@ -8844,7 +8875,7 @@ public class TWGameManager extends AbstractGameManager {
                 passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1,
                         "displaced into",
                         Math.abs(entity.getFacing() - src.direction(dest)) == 3,
-                        entity.moved, true);
+                        entity.moved, true, displacementReport);
             }
             checkBuildingCollapseWhileMoving(bldg, entity, dest);
         }
@@ -23028,7 +23059,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         PilotingRollData psr = lam.checkAirMekLanding();
         if (psr.getValue() != TargetRoll.CHECK_FALSE
-                && (0 > doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false))) {
+                && (0 > doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false, vDesc))) {
             crashAirMek(lam, pos, elevation, distance, psr, vDesc);
         }
         return vDesc;
@@ -23088,7 +23119,7 @@ public class TWGameManager extends AbstractGameManager {
         }
         PilotingRollData psr = en.checkGliderLanding();
         if ((psr.getValue() != TargetRoll.CHECK_FALSE)
-                && (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false))) {
+                && (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false, vDesc))) {
             for (int i = 0; i < en.getNumberOfCriticals(ProtoMek.LOC_LEG); i++) {
                 en.getCritical(ProtoMek.LOC_LEG, i).setHit(true);
             }
@@ -27851,6 +27882,12 @@ public class TWGameManager extends AbstractGameManager {
         }
     }
 
+    void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos,
+                          int distance, String why, boolean backwards,
+                          EntityMovementType overallMoveType, boolean entering) {
+        passBuildingWall(entity, bldg, lastPos, curPos, distance, why, backwards, overallMoveType, entering,
+            mainPhaseReport);
+    }
     /**
      * Determine the results of an entity moving through a wall of a building
      * after having moved a certain distance. This gets called when a Mek or a
@@ -27881,21 +27918,21 @@ public class TWGameManager extends AbstractGameManager {
      */
     void passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos,
             int distance, String why, boolean backwards,
-            EntityMovementType overallMoveType, boolean entering) {
+            EntityMovementType overallMoveType, boolean entering, Vector<Report> buildingReport) {
         Report r;
 
         if (entity instanceof ProtoMek) {
-            Vector<Report> vBuildingReport = damageBuilding(bldg, 1, curPos);
-            for (Report report : vBuildingReport) {
+            Vector<Report> vBuildingDamageReport = damageBuilding(bldg, 1, curPos);
+            for (Report report : vBuildingDamageReport) {
                 report.subject = entity.getId();
             }
-            addReport(vBuildingReport);
+            buildingReport.addAll(vBuildingDamageReport);
         } else {
             // Need to roll based on building type.
             PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why, overallMoveType);
 
             // Did the entity make the roll?
-            if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(), lastPos, curPos, psr, false)) {
+            if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(), lastPos, curPos, psr, false, buildingReport)) {
 
                 // Divide the building's current CF by 10, round up.
                 int damage = (int) Math.floor(bldg.getDamageFromScale()
@@ -27912,7 +27949,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(entity.getDisplayName());
                     r.subject = entity.getId();
                     r.indent(2);
-                    addReport(r);
+                    buildingReport.add(r);
                 } else {
                     // TW, pg. 268: if unit moves forward, damage from front,
                     // if backwards, damage from rear.
@@ -27922,7 +27959,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                    addReport(damageEntity(entity, hit, damage));
+                    buildingReport.addAll(damageEntity(entity, hit, damage));
                 }
             }
 
@@ -27948,7 +27985,7 @@ public class TWGameManager extends AbstractGameManager {
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
-            addReport(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
+            buildingReport.addAll(damageInfantryIn(bldg, toBldg, entering ? curPos : lastPos));
         }
     }
 

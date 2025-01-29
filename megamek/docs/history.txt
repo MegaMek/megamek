@@ -51,6 +51,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6444: fix issue where closing window closes the unit display
 + PR #6450: Allow the print-unit-list code to run with MegaMekLab.jar
 + PR #6453: Change keys List from ArrayList to thread-safe Vector
++ Fix #5870: princess engaging targets outside visual range in heavy fog
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

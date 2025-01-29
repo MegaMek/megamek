@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -233,6 +235,11 @@ class FireControlTest {
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getBoard()).thenReturn(mockBoard);
+
+        // Base planetary conditions
+        PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setAtmosphere(Atmosphere.STANDARD);
+        when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
 
         mockTarget = mock(BipedMek.class);
         when(mockTarget.getDisplayName()).thenReturn("mock target");

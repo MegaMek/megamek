@@ -1380,7 +1380,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {
-                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target)) {
+                    // We got here because ae can't see the target, so we need a C3 buddy that _can_
+                    // or there's no shot.
+                    if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae) && Compute.canSee(game, en, target, false, null, null)) {
                         networkSee = true;
                         break;
                     }

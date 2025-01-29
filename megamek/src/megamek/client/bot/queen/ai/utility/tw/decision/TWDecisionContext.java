@@ -15,22 +15,20 @@
 package megamek.client.bot.queen.ai.utility.tw.decision;
 
 import megamek.ai.utility.DecisionContext;
-import megamek.client.bot.queen.Queen;
+import megamek.ai.utility.Intelligence;
+import megamek.ai.utility.World;
+import megamek.client.bot.princess.*;
 import megamek.client.bot.queen.ai.utility.tw.context.StructOfArraysEntity;
 import megamek.client.bot.queen.ai.utility.tw.context.TWWorld;
 import megamek.client.bot.queen.ai.utility.tw.intelligence.PathRankerUtilCalculator;
-import megamek.client.bot.queen.ai.utility.tw.intelligence.SimpleIntelligence;
-import megamek.client.bot.princess.*;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
 import megamek.common.UnitRole;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 
 import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 
@@ -38,33 +36,55 @@ import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
     private final MovePath movePath;
-    private final Queen queen;
     private final PathRankerUtilCalculator pathRankerUtilCalculator;
+    private final Intelligence<Entity, Entity, RankedPath> intelligence;
+    private final BehaviorSettings behaviorSettings;
+    private final UnitBehavior.BehaviorType unitBehavior;
+    private final Coords waypoint;
+    private final FireControlState fireControlState;
+    private FiringPhysicalDamage cachedDamage = null;
 
-    public TWDecisionContext(Queen queen, TWWorld world, Entity currentUnit, List<Entity> targetUnits, MovePath movePath, PathRankerUtilCalculator pathRankerUtilCalculator) {
-        super(queen, world, currentUnit, targetUnits);
-        this.queen = queen;
+    public TWDecisionContext(
+        Intelligence<Entity, Entity, RankedPath> intelligence,
+        TWWorld world,
+        Entity currentUnit,
+        List<Entity> targetUnits,
+        MovePath movePath,
+        PathRankerUtilCalculator pathRankerUtilCalculator,
+        UnitBehavior.BehaviorType unitBehavior,
+        BehaviorSettings behaviorSettings,
+        FireControlState fireControlState,
+        @Nullable Coords waypoint,
+        Map<String, Double> damageCache
+    )
+    {
+        super(world, currentUnit, targetUnits, damageCache);
+        this.intelligence = intelligence;
         this.movePath = movePath.clone();
         this.pathRankerUtilCalculator = pathRankerUtilCalculator;
+        this.unitBehavior = unitBehavior;
+        this.behaviorSettings = behaviorSettings;
+        this.waypoint = waypoint;
+        this.fireControlState = fireControlState;
     }
 
-    public Queen getDuchess() {
-        return queen;
+    public UnitBehavior.BehaviorType getUnitBehavior() {
+        return unitBehavior;
     }
 
-    public UnitBehavior.BehaviorType getUnitBehavior(Entity entity) {
-        return queen.getUnitBehaviorTracker().getBehaviorType(entity, queen);
+    public BehaviorSettings getBehaviorSettings() {
+        return behaviorSettings;
     }
 
-    public Optional<RankedPath> getPreviousRankedPath() {
-        return pathRankerUtilCalculator.previousRankedPath(getCurrentUnit());
+    public Optional<RankedPath> getPreviouslyRanked() {
+        return intelligence.getPastRankedPath(getCurrentUnit());
     }
 
     public int distanceToRetreatEdge(Entity entity) {
         return distanceToRetreatEdge(entity.getPosition());
     }
     public int distanceToRetreatEdge(Coords coords) {
-        return pathRankerUtilCalculator.distanceToHomeEdge(coords, queen.getBehaviorSettings().getRetreatEdge(), ((TWWorld)getWorld()).getGame());
+        return pathRankerUtilCalculator.distanceToHomeEdge(coords, behaviorSettings.getRetreatEdge(), ((TWWorld)getWorld()).getGame());
     }
 
     public int distanceToDestinationEdge(Entity entity) {
@@ -72,7 +92,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     }
 
     public int distanceToDestinationEdge(Coords coords) {
-        return pathRankerUtilCalculator.distanceToHomeEdge(coords, queen.getBehaviorSettings().getDestinationEdge(), ((TWWorld)getWorld()).getGame());
+        return pathRankerUtilCalculator.distanceToHomeEdge(coords, behaviorSettings.getDestinationEdge(), ((TWWorld)getWorld()).getGame());
     }
 
     public int getCurrentUnitMaxRunMP() {
@@ -98,38 +118,37 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
             getWorld().useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE),
             getWorld().useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE));
     }
-    private SimpleIntelligence.FiringPhysicalDamage cachedDamage;
+
+    @Override
+    public double getBonusFactor() {
+        return intelligence.getBonusFactor(getCurrentUnit(), getMovePath());
+    }
 
     public double getExpectedDamage() {
-        if (cachedDamage == null) {
-            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
-        }
-        return cachedDamage.takenDamage();
+        return cacheDamage().takenDamage();
     }
 
     public double getTotalDamage() {
-        if (cachedDamage == null) {
-            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
-        }
-        return cachedDamage.firingDamage() + cachedDamage.physicalDamage();
+        return cacheDamage().getMaximumDamageEstimate();
     }
 
     public double getFiringDamage() {
-        if (cachedDamage == null) {
-            cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
-        }
-        return cachedDamage.firingDamage();
+        return cacheDamage().firingDamage();
     }
 
     public double getPhysicalDamage() {
+        return cacheDamage().physicalDamage();
+    }
+
+    private FiringPhysicalDamage cacheDamage() {
         if (cachedDamage == null) {
             cachedDamage = pathRankerUtilCalculator.damageCalculator(movePath, getWorld().getEnemyUnits());
         }
-        return cachedDamage.physicalDamage();
+        return cachedDamage;
     }
 
     public double getMovePathSuccessProbability() {
-        return pathRankerUtilCalculator.getMovePathSuccessProbability(movePath, new StringBuilder());
+        return pathRankerUtilCalculator.getMovePathSuccessProbability(movePath);
     }
 
     public int getNumberOfEnemiesAtRange(Coords coords, int distance) {
@@ -163,9 +182,9 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     }
 
     public VIPType getVIPType(Entity entity) {
-        if (getDuchess().getFireControlState().isCommander(entity)) {
+        if (fireControlState.isCommander(entity)) {
             return VIPType.COMMANDER;
-        } else if (getDuchess().getFireControlState().isSubCommander(entity)) {
+        } else if (fireControlState.isSubCommander(entity)) {
             return VIPType.SUB_COMMANDER;
         } else {
             return VIPType.NONE;
@@ -173,12 +192,11 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     }
 
     public int getDistanceToDestination() {
-        var unitBehaviorType = getDuchess().getUnitBehaviorTracker().getBehaviorType(getCurrentUnit(), getDuchess());
-        if (unitBehaviorType == UnitBehavior.BehaviorType.MoveToDestination) {
-            var waypoint =  getDuchess().getUnitBehaviorTracker().getWaypointForEntity(getCurrentUnit());
-            return waypoint.map(coords -> getCurrentUnit().getPosition().distance(coords))
+
+        if (unitBehavior == UnitBehavior.BehaviorType.MoveToDestination) {
+            return Optional.ofNullable(waypoint).map(coords -> getCurrentUnit().getPosition().distance(coords))
                 .orElseGet(() -> distanceToDestinationEdge(getCurrentUnit()));
-        } else if (unitBehaviorType == UnitBehavior.BehaviorType.ForcedWithdrawal) {
+        } else if (unitBehavior == UnitBehavior.BehaviorType.ForcedWithdrawal) {
             return distanceToRetreatEdge(getCurrentUnit());
         }
         return -1;
@@ -197,17 +215,15 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
             return OptionalInt.empty();
         }
 
-        var unitBehaviorType = getDuchess().getUnitBehaviorTracker().getBehaviorType(getCurrentUnit(), getDuchess());
-        if (unitBehaviorType == UnitBehavior.BehaviorType.MoveToDestination) {
-            var waypoint =  getDuchess().getUnitBehaviorTracker().getWaypointForEntity(getCurrentUnit());
-            if (waypoint.isPresent()) {
-                return OptionalInt.of(startingPosition.distance(waypoint.get()) - finalPosition.distance(waypoint.get()));
+        if (unitBehavior == UnitBehavior.BehaviorType.MoveToDestination) {
+            if (waypoint != null) {
+                return OptionalInt.of(startingPosition.distance(waypoint) - finalPosition.distance(waypoint));
             } else {
                 var distToEdge = distanceToDestinationEdge(startingPosition);
                 var finalDistToEdge = distanceToDestinationEdge(finalPosition);
                 return OptionalInt.of(distToEdge - finalDistToEdge);
             }
-        } else if (unitBehaviorType == UnitBehavior.BehaviorType.ForcedWithdrawal) {
+        } else if (unitBehavior == UnitBehavior.BehaviorType.ForcedWithdrawal) {
             var distToEdge = distanceToRetreatEdge(startingPosition);
             var finalDistToEdge = distanceToRetreatEdge(finalPosition);
             return OptionalInt.of(distToEdge - finalDistToEdge);
@@ -258,21 +274,9 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
         return ((TWWorld) getWorld()).getEntityClusterCentroid(entity);
     }
 
-
-
-    @Override
-    public double getBonusFactor(DecisionContext<Entity, Entity> lastContext) {
-        return 0;
-    }
-
-    public double getBonusFactor(RankedPath rankedPath) {
-        return 0;
-    }
-
     public MovePath getMovePath() {
         return movePath;
     }
-
 
     public int getNumberOfFriendsInRange(Coords coords, int range) {
         var x = coords.getX();
@@ -388,5 +392,127 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
             ym = y2 - yMax;
         }
         return xd + ym;
+    }
+
+
+    public static final class TWDecisionContextBuilder {
+        private MovePath movePath;
+        private PathRankerUtilCalculator pathRankerUtilCalculator;
+        private Intelligence<Entity, Entity, RankedPath> intelligence;
+        private BehaviorSettings behaviorSettings;
+        private UnitBehavior.BehaviorType unitBehavior;
+        private Coords waypoint;
+        private FireControlState fireControlState;
+        private TWWorld world;
+        private Entity currentUnit;
+        private List<Entity> targetUnits;
+        private Map<String, Double> damageCache;
+
+        public TWDecisionContextBuilder() {
+        }
+
+        public TWDecisionContextBuilder(TWDecisionContext other) {
+            this.movePath = other.movePath;
+            this.pathRankerUtilCalculator = other.pathRankerUtilCalculator;
+            this.intelligence = other.intelligence;
+            this.behaviorSettings = other.behaviorSettings;
+            this.unitBehavior = other.unitBehavior;
+            this.waypoint = other.waypoint;
+            this.fireControlState = other.fireControlState;
+            this.world = other.getWorld();
+            this.currentUnit = other.getCurrentUnit();
+            this.targetUnits = other.getEnemyUnits();
+            this.damageCache = other.damageCache;
+        }
+
+        public static TWDecisionContextBuilder aTWDecisionContext() {
+            return new TWDecisionContextBuilder();
+        }
+
+        public TWDecisionContextBuilder withMovePath(MovePath movePath) {
+            this.movePath = movePath;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withPathRankerUtilCalculator(PathRankerUtilCalculator pathRankerUtilCalculator) {
+            this.pathRankerUtilCalculator = pathRankerUtilCalculator;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withIntelligence(Intelligence<Entity, Entity, RankedPath> intelligence) {
+            this.intelligence = intelligence;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withBehaviorSettings(BehaviorSettings behaviorSettings) {
+            this.behaviorSettings = behaviorSettings;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withUnitBehavior(UnitBehavior.BehaviorType unitBehavior) {
+            this.unitBehavior = unitBehavior;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withWaypoint(Coords waypoint) {
+            this.waypoint = waypoint;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withFireControlState(FireControlState fireControlState) {
+            this.fireControlState = fireControlState;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withWorld(TWWorld world) {
+            this.world = world;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withCurrentUnit(Entity currentUnit) {
+            this.currentUnit = currentUnit;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withTargetUnits(List<Entity> targetUnits) {
+            this.targetUnits = targetUnits;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withDamageCache(Map<String, Double> damageCache) {
+            this.damageCache = damageCache;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withSharedDamageCache() {
+            this.damageCache = new LinkedHashMap<>(128, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Double> eldest) {
+                    return size() > DAMAGE_CACHE_SIZE;
+                }
+            };
+            return this;
+        }
+
+        public TWDecisionContextBuilder but() {
+            return aTWDecisionContext()
+                .withMovePath(movePath)
+                .withPathRankerUtilCalculator(pathRankerUtilCalculator)
+                .withIntelligence(intelligence)
+                .withBehaviorSettings(behaviorSettings)
+                .withUnitBehavior(unitBehavior)
+                .withWaypoint(waypoint)
+                .withFireControlState(fireControlState)
+                .withWorld(world)
+                .withCurrentUnit(currentUnit)
+                .withTargetUnits(targetUnits)
+                .withDamageCache(damageCache);
+        }
+
+        public TWDecisionContext build() {
+            return
+                new TWDecisionContext(intelligence, world, currentUnit, targetUnits, movePath, pathRankerUtilCalculator, unitBehavior,
+                    behaviorSettings, fireControlState, waypoint, damageCache);
+        }
     }
 }

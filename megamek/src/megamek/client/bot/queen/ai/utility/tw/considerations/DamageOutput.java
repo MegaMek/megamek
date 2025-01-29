@@ -62,7 +62,7 @@ public class DamageOutput extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public DamageOutput copy() {
         var copy = new DamageOutput();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

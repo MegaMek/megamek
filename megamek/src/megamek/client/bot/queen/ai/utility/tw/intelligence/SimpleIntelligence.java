@@ -7,7 +7,7 @@
  * any later version.
  *
  * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * without ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  *
@@ -15,16 +15,19 @@
 
 package megamek.client.bot.queen.ai.utility.tw.intelligence;
 
-import megamek.ai.utility.*;
+import megamek.ai.utility.Decision;
+import megamek.ai.utility.DecisionContext;
+import megamek.ai.utility.DecisionMaker;
+import megamek.ai.utility.Intelligence;
+import megamek.client.bot.princess.BasicPathRanker;
+import megamek.client.bot.princess.RankedPath;
 import megamek.client.bot.queen.Queen;
-import megamek.client.bot.queen.ai.utility.tw.ClusteringService;
-import megamek.client.bot.queen.ai.utility.tw.context.TWWorld;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
 import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
-import megamek.client.bot.princess.*;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.MovePath;
 import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
 import java.util.*;
@@ -35,29 +38,21 @@ import java.util.*;
  *
  * @author Luana Coppio
  */
-public class SimpleIntelligence extends BasicPathRanker implements Intelligence<Entity, Entity>, PathRankerUtilCalculator {
-
+public class SimpleIntelligence extends BasicPathRanker implements Intelligence<Entity, Entity, RankedPath> {
     private final static MMLogger logger = MMLogger.create(SimpleIntelligence.class);
     private final List<Decision<Entity, Entity>> decisions = new ArrayList<>();
-    private final DecisionMaker<Entity, Entity> decisionMaker = scoreEvaluator -> 0;
-    private final TWWorld world;
+    private final DecisionMaker<Entity, Entity, RankedPath> decisionMaker = new DecisionScorer();
+    private final PathRankerUtilCalculator pathRankerUtilCalculator;
 
-    public SimpleIntelligence(Princess princess, TWProfile profile) {
-        super(princess);
-        this.world = new TWWorld(princess.getGame(), princess, new ClusteringService(15d, 6));
-        if (profile != null) {
-            this.decisions.addAll(profile.getDecisions());
-        }
+    public SimpleIntelligence(Queen queen, TWProfile profile) {
+        super(queen);
+        this.decisions.addAll(profile.getDecisions());
+        pathRankerUtilCalculator = new SimplePathRankerUtilCalculator(queen, queen.getGame(), this);
     }
 
     @Override
-    public void update(Intelligence<Entity, Entity> intelligence) {
+    public void update(Intelligence<Entity, Entity, RankedPath> intelligence) {
         // there is nothing to update
-    }
-
-    @Override
-    public void addDecisionScoreEvaluator(Decision<Entity, Entity> decision) {
-        decisions.add(decision);
     }
 
     @Override
@@ -66,190 +61,89 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
     }
 
     @Override
-    public DecisionMaker<Entity, Entity> getDecisionMaker() {
+    public DecisionMaker<Entity, Entity, RankedPath> getDecisionMaker() {
         return decisionMaker;
     }
 
     @Override
-    public double getBonusFactor(Decision<Entity, Entity> scoreEvaluator) {
-        return 0;
+    public double getBonusFactor(Entity entity, MovePath movePath) {
+        // Can be used to control flow on the battlefield, negate areas, make sure that the unit does not
+        // do something specific like jumping or sprinting when we dont want to
+        // this would allow to create a list of denied actions
+        // For now, all it does is check if the current movePath being taken move as many hexes as
+        // it did in the previous movePath, if it did not, it will be penalized
+        if (!entity.isProne()) {
+            var pastRankedPathOpt = getPastRankedPath(entity);
+            if (pastRankedPathOpt.isPresent()) {
+                var pastRankedPath = pastRankedPathOpt.get();
+                if (pastRankedPath.getPath().getHexesMoved() > movePath.getHexesMoved()) {
+                    return 0.9;
+                }
+            }
+        }
+        return 1.0;
     }
 
+    @Override
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange,
-                                           double fallTolerance, List<Entity> enemies,
-                                           List<Entity> friends) {
+                                         double fallTolerance, List<Entity> enemies,
+                                         List<Entity> friends) {
         if (movePaths.isEmpty()) {
-          return new TreeSet<>(Collections.reverseOrder());
+            return new TreeSet<>();
         }
         cachedPilotBaseRoll.clear();
         getPathRankerState().getPathSuccessProbabilities().clear();
-        List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
+        var validPaths = validatePaths(movePaths, game, maxRange, fallTolerance);
         var currentEntity = movePaths.get(0).getEntity();
-        List<DecisionContext<Entity, Entity>> decisionContexts = new ArrayList<>(validPaths.size());
-
-        if (getOwner() instanceof Queen queen) {
-            for (var path : validPaths) {
-                var decisionContext = new TWDecisionContext(queen, queen.getWorld(), currentEntity, enemies, path, this);
-                decisionContexts.add(decisionContext);
-            }
-        }
-
-        TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
-        DecisionMaker<Entity, Entity> simpleDecisionMaker = new DecisionMaker<>() {
-            @Override
-            public double getBonusFactor(Decision<Entity, Entity> scoreEvaluator) {
-                return scoreEvaluator.getWeight();
-            }
-
-            @Override
-            public void scoreAllDecisions(List<Decision<Entity, Entity>> decisions, List<DecisionContext<Entity, Entity>> contexts) {
-                for (var decision : decisions) {
-                    double cutoff = 0.0d;
-                    for (var context : contexts) {
-                        TWDecisionContext decisionContext = (TWDecisionContext) context;
-                        decision.setDecisionContext(decisionContext);
-                        double bonus = decisionContext.getBonusFactor(previousRankedPath(currentEntity).orElse(null));
-                        if (bonus < cutoff) {
-                            continue;
-                        }
-                        var decisionScoreEvaluator = decision.getDecisionScoreEvaluator();
-
-                        var debugReporter = new DebugReporter(150 + 256 * decision.getDecisionScoreEvaluator().getConsiderations().size());
-                        debugReporter.append(decision.getName()).append("::");
-                        debugReporter.append(decisionScoreEvaluator.getName());
-                        var score = decisionScoreEvaluator.score(decisionContext, getBonusFactor(decision), debugReporter);
-                        var rankedPath = new RankedPath(score, decisionContext.getMovePath(), debugReporter.getReport(), decisionContext.getExpectedDamage());
-                        returnPaths.add(rankedPath);
-                        logger.info(debugReporter.getReport());
-                    }
-                }
-            }
-        };
-
-        simpleDecisionMaker.scoreAllDecisions(decisions, decisionContexts);
-
+        var decisionContexts = createDecisionContexts(validPaths, currentEntity, enemies);
+        var returnPaths = scoreAllDecisions(decisionContexts);
+        logger.info("Ranked paths: {}", returnPaths.size());
         return returnPaths;
     }
 
-    private final Map<Integer, RankedPath> memoryOfPastDecisions = new HashMap<>();
+    private List<DecisionContext<Entity, Entity>> createDecisionContexts(List<MovePath> validPaths, Entity currentEntity, List<Entity> enemies) {
+        List<DecisionContext<Entity, Entity>> decisionContexts = new ArrayList<>(validPaths.size());
+        Queen queen = getOwner();
+        var decisionContextBuilder = TWDecisionContext.TWDecisionContextBuilder.aTWDecisionContext()
+            .withSharedDamageCache()
+            .withBehaviorSettings(queen.getBehaviorSettings())
+            .withCurrentUnit(currentEntity)
+            .withFireControlState(queen.getFireControlState())
+            .withIntelligence(this)
+            .withWorld(queen.getWorld())
+            .withTargetUnits(enemies)
+            .withWaypoint(queen.getUnitBehaviorTracker().getWaypointForEntity(currentEntity).orElse(null))
+            .withUnitBehavior(queen.getUnitBehaviorTracker().getBehaviorType(currentEntity, queen))
+            .withPathRankerUtilCalculator(pathRankerUtilCalculator);
 
-    @Override
-    public FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies) {
-        Entity movingUnit = path.getEntity();
-        MovePath pathCopy = path.clone();
-
-        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy, new StringBuilder());
-        expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, world.getGame());
-        expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
-
-        BasicPathRanker.FiringPhysicalDamage damageEstimate = new BasicPathRanker.FiringPhysicalDamage();
-
-        boolean extremeRange = world.useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean losRange = world.useBooleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
-        for (Entity enemy : enemies) {
-            // Skip ejected pilots.
-            if (enemy instanceof MekWarrior) {
-                continue;
-            }
-
-            // Skip units not actually on the board.
-            if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                || !world.contains(enemy.getPosition())) {
-                continue;
-            }
-
-            // Skip broken enemies
-            if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(),
-                getOwner().getForcedWithdrawal())) {
-                continue;
-            }
-
-            EntityEvaluationResponse eval;
-
-            if (evaluateAsMoved(enemy)) {
-                // For units that have already moved
-                eval = evaluateMovedEnemy(enemy, pathCopy, world.getGame());
-            } else {
-                // For units that have not moved this round
-                eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
-            }
-
-            // if we're not ignoring the enemy, we consider damage that we may do to them;
-            // however, just because we're ignoring them doesn't mean they won't shoot at
-            // us.
-            if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
-                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
-                }
-                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
-                }
-            }
-
-            expectedDamageTaken += eval.getEstimatedEnemyDamage();
+        for (var path : validPaths) {
+            var decisionContext = decisionContextBuilder.withMovePath(path).build();
+            decisionContexts.add(decisionContext);
         }
-
-        // if we're not in the air, we may get hit by friendly artillery
-        if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
-            double friendlyArtilleryDamage = 0;
-            Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
-
-            if (!artyDamage.containsKey(path.getFinalCoords())) {
-                friendlyArtilleryDamage = ArtilleryTargetingControl
-                    .evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
-                artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
-            } else {
-                friendlyArtilleryDamage = artyDamage.get(path.getFinalCoords());
-            }
-
-            expectedDamageTaken += friendlyArtilleryDamage;
-        }
-
-        calcDamageToStrategicTargets(pathCopy, world.getGame(), getOwner().getFireControlState(), damageEstimate);
-
-        // If I cannot kick because I am a clan unit and "No physical attacks for the
-        // clans"
-        // is enabled, set maximum physical damage for this path to zero.
-        if (world.useBooleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-            && path.getEntity().getCrew().isClanPilot()) {
-            damageEstimate.physicalDamage = 0;
-        }
-
-        return new FiringPhysicalDamage().withTakenDamage(expectedDamageTaken).withFiringDamage(damageEstimate.firingDamage)
-            .withPhysicalDamage(damageEstimate.physicalDamage);
+        return decisionContexts;
     }
 
-    public record FiringPhysicalDamage(double firingDamage, double physicalDamage, double takenDamage) {
-        public FiringPhysicalDamage() {
-            this(0, 0, 0);
-        }
+    private final Map<Integer, RankedPath> memoryOfPastPathsTaken = new HashMap<>();
 
-        public FiringPhysicalDamage withFiringDamage(double firingDamage) {
-            return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
-        }
-
-        public FiringPhysicalDamage withPhysicalDamage(double physicalDamage) {
-            return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
-        }
-
-        public FiringPhysicalDamage withTakenDamage(double takenDamage) {
-            return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
-        }
+    @Override
+    public Optional<RankedPath> getPastRankedPath(Entity entity) {
+        return Optional.ofNullable(memoryOfPastPathsTaken.get(entity.getId()));
     }
 
     @Override
-    public @Nullable RankedPath getBestPath(TreeSet<RankedPath> ps) {
-        if (ps.isEmpty()) {
+    public @Nullable RankedPath getBestPath(TreeSet<RankedPath> rankedPaths) {
+        var picked = getDecisionMaker().pickOne(rankedPaths);
+        if (picked.isEmpty()) {
             return null;
         } else {
-            var bestPath = ps.first();
-            memoryOfPastDecisions.put(bestPath.getPath().getEntity().getId(), bestPath);
+            var bestPath = picked.get();
+            memoryOfPastPathsTaken.put(bestPath.getPath().getEntity().getId(), bestPath);
+            return bestPath;
         }
-        return ps.isEmpty() ? null : ps.first();
     }
 
     @Override
-    public Optional<RankedPath> previousRankedPath(Entity entity) {
-        return Optional.ofNullable(memoryOfPastDecisions.get(entity.getId()));
+    protected Queen getOwner() {
+        return (Queen) super.getOwner();
     }
 }

@@ -16,7 +16,6 @@
 package megamek.client.bot.queen.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionContext;
@@ -83,30 +82,30 @@ public class MyUnitBotSettings extends TWConsideration {
 
     private double herding(TWDecisionContext twContext) {
         var herdingMod = getDoubleParameter(herdingWeight);
-        if (herdingMod == 0) {
-            return 0;
+        if (herdingMod == 0.0) {
+            return 1;
         }
         var self = twContext.getCurrentUnit();
         var clusterCentroid = twContext.getFriendsClusterCentroid(self);
         double distToFriends = clusterCentroid.distance(self.getPosition());
 
-        double herding = twContext.getDuchess().getBehaviorSettings().getHerdMentalityIndex();
+        double herding = twContext.getBehaviorSettings().getHerdMentalityIndex();
         double herdingFraction = herding / 10.0;
         double closeness = 1.0 / (1.0 + distToFriends);
-        herdingMod *= herdingFraction * closeness * getDoubleParameter(herdingWeight);
+        herdingMod *= herdingFraction * closeness;
         return clamp01(herdingMod);
     }
 
-    public double bravery(TWDecisionContext twContext) {
+    private double bravery(TWDecisionContext twContext) {
         var braveryMod = getDoubleParameter(braveryWeight);
         if (braveryMod == 0) {
-            return 0;
+            return 1.0;
         }
         var self = twContext.getCurrentUnit();
         var myWeaponsDamage = Compute.computeTotalDamage(self.getTotalWeaponList());
         var totalDamageFraction = clamp01(twContext.getTotalDamage() / (double) myWeaponsDamage);
         var damageCap = clamp01(twContext.getExpectedDamage() / (double) self.getTotalArmor()) / 2;
-        double braveryValue = twContext.getDuchess().getBehaviorSettings().getBraveryIndex();
+        double braveryValue = twContext.getBehaviorSettings().getBraveryIndex();
         double braveryFraction = braveryValue / 10.0;
         braveryMod *= totalDamageFraction * braveryFraction - (1 - damageCap);
         return clamp01(braveryMod);
@@ -118,14 +117,14 @@ public class MyUnitBotSettings extends TWConsideration {
     public double aggression(TWDecisionContext twContext) {
         var aggressionMod = getDoubleParameter(aggressionWeight);
         if (aggressionMod == 0) {
-            return 1;
+            return 1.0;
         }
         var self = twContext.getCurrentUnit();
         var distanceToClosestEnemy = twContext.getDistanceToClosestEnemy(self);
 
         // If there are no enemies at all, then this is as good as any other path
         if (distanceToClosestEnemy.isEmpty()) {
-            return 1;
+            return 1.0;
         }
 
         int distToEnemy = distanceToClosestEnemy.getAsInt();
@@ -134,7 +133,7 @@ public class MyUnitBotSettings extends TWConsideration {
             distToEnemy = 2;
         }
 
-        double aggressionFraction = twContext.getDuchess().getBehaviorSettings().getHyperAggressionIndex() /  10.0;
+        double aggressionFraction = twContext.getBehaviorSettings().getHyperAggressionIndex() /  10.0;
         double closeness = 1.0 / (1.0 + distToEnemy);
         aggressionMod *= aggressionFraction * closeness;
         return clamp01(aggressionMod);
@@ -147,11 +146,11 @@ public class MyUnitBotSettings extends TWConsideration {
         var fallShameMod = getDoubleParameter(cautionWeight);
         // If the fall shame mod is 0, then we don't care about caution
         if (fallShameMod == 0) {
-            return 1;
+            return 1.0;
         }
 
         var pilotingSuccess = twContext.getMovePathSuccessProbability();
-        double fallShameFraction = twContext.getDuchess().getBehaviorSettings().getFallShameIndex() / 10.0;
+        double fallShameFraction = twContext.getBehaviorSettings().getFallShameIndex() / 10.0;
         fallShameMod *= fallShameFraction;
         return clamp01(pilotingSuccess / fallShameMod);
     }
@@ -162,20 +161,20 @@ public class MyUnitBotSettings extends TWConsideration {
     private double selfPreservation(TWDecisionContext twContext) {
         var selfPreservationMod = getDoubleParameter(selfPreservationWeight);
         if (selfPreservationMod == 0) {
-            return 1;
+            return 1.0;
         }
-        var selfPreservation = twContext.getDuchess().getBehaviorSettings().getSelfPreservationValue() / 10.0;
+        var selfPreservation = twContext.getBehaviorSettings().getSelfPreservationValue() / 10.0;
         var self = twContext.getCurrentUnit();
         var distance = twContext.getDistanceToDestination();
         if (distance > 0) {
             var risk = 1 - (twContext.getExpectedDamage() / (double) self.getTotalArmor());
             return risk * selfPreservation;
         }
-        return 1;
+        return 1.0;
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitBotSettings copy() {
         var copy = new MyUnitBotSettings();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

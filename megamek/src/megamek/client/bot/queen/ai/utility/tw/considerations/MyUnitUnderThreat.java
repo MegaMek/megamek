@@ -43,7 +43,7 @@ public class MyUnitUnderThreat extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitUnderThreat copy() {
         var copy = new MyUnitUnderThreat();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

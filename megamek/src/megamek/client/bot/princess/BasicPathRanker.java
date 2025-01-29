@@ -23,22 +23,25 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A very "basic" path ranker
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
+    private static final Logger log = LogManager.getLogger(BasicPathRanker.class);
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -57,7 +60,7 @@ public class BasicPathRanker extends PathRanker {
 
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
-    private Map<Integer, Double> bestDamageByEnemies;
+    private final Map<Integer, Double> bestDamageByEnemies = new TreeMap<>();
 
     protected int blackIce = -1;
 
@@ -67,9 +70,8 @@ public class BasicPathRanker extends PathRanker {
 
     public BasicPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
-        bestDamageByEnemies = new TreeMap<>();
         this.pathEnumerator = pathEnumerator;
-        logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
+        logger.debug("Using {} behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
     FireControl getFireControl(Entity entity) {
@@ -101,16 +103,16 @@ public class BasicPathRanker extends PathRanker {
                 && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
-    double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange,
+    double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange,
             boolean useLOSRange) {
-        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
+        return FireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
     }
 
     boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
         Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
 
         if (enemyFacingSet == null) {
-            logger.warn("no facing set for %s", enemy.getDisplayName());
+            logger.warn("no facing set for {}", enemy.getDisplayName());
             return false;
         }
 
@@ -172,7 +174,7 @@ public class BasicPathRanker extends PathRanker {
 
         if (isInMyLoS(enemy, leftBounds, rightBounds)) {
             returnResponse.addToMyEstimatedDamage(
-                    getMaxDamageAtRange(getFireControl(path.getEntity()),
+                    getMaxDamageAtRange(
                             path.getEntity(),
                             range,
                             useExtremeRange,
@@ -181,7 +183,7 @@ public class BasicPathRanker extends PathRanker {
 
         // in general if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(
-                getMaxDamageAtRange(getFireControl(enemy),
+                getMaxDamageAtRange(
                         enemy,
                         range,
                         useExtremeRange,
@@ -200,9 +202,8 @@ public class BasicPathRanker extends PathRanker {
     }
 
     @Override
-    public double getMovePathSuccessProbability(MovePath movePath,
-            StringBuilder msg) {
-        return super.getMovePathSuccessProbability(movePath, msg);
+    public double getMovePathSuccessProbability(MovePath movePath) {
+        return super.getMovePathSuccessProbability(movePath);
     }
 
     private double calculateFallMod(double successProbability, StringBuilder formula) {
@@ -524,11 +525,11 @@ public class BasicPathRanker extends PathRanker {
         MovePath pathCopy = path.clone();
 
         // Worry about failed piloting rolls (weighted by Fall Shame).
-        double successProbability = getMovePathSuccessProbability(pathCopy, formula);
+        double successProbability = getMovePathSuccessProbability(pathCopy);
         double utility = -calculateFallMod(successProbability, formula);
 
         // Worry about how badly we can damage ourselves on this path!
-        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy, formula);
+        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
 
@@ -569,11 +570,11 @@ public class BasicPathRanker extends PathRanker {
             // however, just because we're ignoring them doesn't mean they won't shoot at
             // us.
             if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
-                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+                if (damageEstimate.firingDamage() < eval.getMyEstimatedDamage()) {
+                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedDamage());
                 }
-                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
+                if (damageEstimate.physicalDamage() < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedPhysicalDamage());
                 }
             }
 
@@ -603,7 +604,7 @@ public class BasicPathRanker extends PathRanker {
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
                 && path.getEntity().getCrew().isClanPilot()) {
-            damageEstimate.physicalDamage = 0;
+            damageEstimate = damageEstimate.withPhysicalDamage(0);
         }
 
         // I can kick a different target than I shoot, so add physical to
@@ -685,7 +686,7 @@ public class BasicPathRanker extends PathRanker {
      * Worker function that determines if a given enemy entity should be evaluated
      * as if it has moved.
      */
-    protected boolean evaluateAsMoved(Entity enemy) {
+    public boolean evaluateAsMoved(Entity enemy) {
         // Aerospace units on ground maps can go pretty much anywhere they want, so it's
         // somewhat pointless to try to predict their movement.
         return !enemy.isSelectableThisTurn() || enemy.isImmobile() || enemy.isAirborneAeroOnGroundMap();
@@ -723,7 +724,7 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected void calcDamageToStrategicTargets(MovePath path, Game game,
+    public FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game,
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
@@ -744,8 +745,8 @@ public class BasicPathRanker extends PathRanker {
             FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 
             double myDamagePotential = myFiringPlan.getUtility();
-            if (myDamagePotential > damageStructure.firingDamage) {
-                damageStructure.firingDamage = myDamagePotential;
+            if (myDamagePotential > damageStructure.firingDamage()) {
+                damageStructure = damageStructure.withFiringDamage(myDamagePotential);
             }
 
             if (path.getEntity() instanceof Mek) {
@@ -756,11 +757,12 @@ public class BasicPathRanker extends PathRanker {
                         true);
                 double expectedKickDamage = myKick.getExpectedDamageOnHit() *
                         myKick.getProbabilityToHit();
-                if (expectedKickDamage > damageStructure.physicalDamage) {
-                    damageStructure.physicalDamage = expectedKickDamage;
+                if (expectedKickDamage > damageStructure.physicalDamage()) {
+                    damageStructure = damageStructure.withPhysicalDamage(expectedKickDamage);
                 }
             }
         }
+        return damageStructure;
     }
 
     /**
@@ -800,65 +802,115 @@ public class BasicPathRanker extends PathRanker {
     }
 
     public double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
-        StringBuilder logMsg = new StringBuilder("Checking Path (")
-                .append(path.toString()).append(") for hazards.");
+        logger.trace("Checking Path ({}) for hazards", path);
 
-        try {
-            // If we're flying or swimming, we don't care about ground hazards.
-            if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
-                    EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
+        // If we're flying or swimming, we don't care about ground hazards.
+        if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
 
-                logMsg.append("\n\tMove Type (").append(path.getLastStepMovementType().toString())
-                        .append(") ignores ground hazards.");
-                return 0;
-            }
-
-            // If we're jumping, we only care about where we land.
-            if (path.isJumping()) {
-                logMsg.append("\n\tJumping");
-                Coords endCoords = path.getFinalCoords();
-                Hex endHex = game.getBoard().getHex(endCoords);
-                return checkHexForHazards(endHex, movingUnit, true,
-                        path.getLastStep(), true,
-                        path, game.getBoard(), logMsg);
-            }
-
-            double totalHazard = 0;
-            Coords previousCoords = null;
-            MoveStep lastStep = path.getLastStep();
-            for (MoveStep step : path.getStepVector()) {
-                Coords coords = step.getPosition();
-                if ((coords == null) || coords.equals(previousCoords)) {
-                    continue;
-                }
-                Hex hex = game.getBoard().getHex(coords);
-                totalHazard += checkHexForHazards(hex, movingUnit,
-                        lastStep.equals(step), step,
-                        false, path,
-                        game.getBoard(), logMsg);
-                previousCoords = coords;
-            }
-            logMsg.append("\nCompiled Hazard for Path (")
-                    .append(path).append("): ").append(LOG_DECIMAL.format(totalHazard));
-
-            return totalHazard;
-        } finally {
-            logger.debug(logMsg.toString());
+            logger.trace("Move Type ({}) ignores ground hazards", path.getLastStepMovementType());
+            return 0;
         }
+
+        // If we're jumping, we only care about where we land.
+        if (path.isJumping()) {
+            logger.trace("Jumping, only checking landing hex for hazards");
+            Coords endCoords = path.getFinalCoords();
+            Hex endHex = game.getBoard().getHex(endCoords);
+            return checkHexForHazards(endHex, movingUnit, true,
+                    path.getLastStep(), true,
+                    path, game.getBoard());
+        }
+
+        double totalHazard = 0;
+        Coords previousCoords = null;
+        MoveStep lastStep = path.getLastStep();
+        for (MoveStep step : path.getStepVector()) {
+            Coords coords = step.getPosition();
+            if ((coords == null) || coords.equals(previousCoords)) {
+                continue;
+            }
+            Hex hex = game.getBoard().getHex(coords);
+            totalHazard += checkHexForHazards(hex, movingUnit,
+                    lastStep.equals(step), step,
+                    false, path,
+                    game.getBoard());
+            previousCoords = coords;
+        }
+        logger.trace("Compiled Hazard for Path ({}): {}", path, totalHazard);
+        return totalHazard;
     }
 
     private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step,
-            boolean jumpLanding, MovePath movePath, Board board,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tHex ").append(hex.getCoords().toFriendlyString());
+            boolean jumpLanding, MovePath movePath, Board board) {
+        logger.trace("Checking Hex {} for hazards", hex.getCoords());
 
-        final List<Integer> HAZARDS = new ArrayList<>(Arrays.asList(Terrains.FIRE,
+        Set<Integer> hazards = getHazards(hex);
+
+        // No hazards were found, so nothing to worry about.
+        if (hazards.isEmpty()) {
+            logger.trace("No hazards found on hex {}", hex.getCoords());
+            return 0;
+        }
+
+        // Calculate hazard value by terrain type.
+        double hazardValue = 0;
+        for (int hazard : hazards) {
+            switch (hazard) {
+                case Terrains.FIRE:
+                    hazardValue += calcFireHazard(movingUnit, endHex);
+                    break;
+                case Terrains.MAGMA:
+                    hazardValue += calcMagmaHazard(hex, endHex, movingUnit, jumpLanding, step);
+                    break;
+                case Terrains.ICE, Terrains.BLACK_ICE:
+                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding);
+                    break;
+                case Terrains.WATER:
+                    if (!hazards.contains(Terrains.ICE)) {
+                        hazardValue += calcWaterHazard(movingUnit, hex, step, movePath);
+                    }
+                    break;
+                case Terrains.BUILDING:
+                    hazardValue += calcBuildingHazard(step, movingUnit, jumpLanding, board);
+                    break;
+                case Terrains.BRIDGE:
+                    hazardValue += calcBridgeHazard(movingUnit, hex, step, jumpLanding, board);
+                    break;
+                case Terrains.SNOW:
+                    hazardValue += calcSnowHazard(hex, endHex, movingUnit);
+                    break;
+                case Terrains.RUBBLE:
+                    hazardValue += calcRubbleHazard(hex, endHex, movingUnit, jumpLanding);
+                    break;
+                case Terrains.SWAMP:
+                    hazardValue += calcSwampHazard(hex, endHex, movingUnit, jumpLanding);
+                    break;
+                case Terrains.MUD:
+                    hazardValue += calcMudHazard(endHex, movingUnit);
+                    break;
+                case Terrains.TUNDRA:
+                    hazardValue += calcTundraHazard(endHex, jumpLanding, movingUnit);
+                    break;
+                case Terrains.PAVEMENT:
+                    // 1 in 3 chance to hit Black Ice on any given Pavement hex
+                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding) / 3.0;
+                    break;
+            }
+        }
+
+        logger.trace("Hazard for Hex {} is {}", hex.getCoords(), hazardValue);
+        return hazardValue;
+    }
+
+    private Set<Integer> getHazards(Hex hex) {
+        final Set<Integer> HAZARDS = new HashSet<>(Set.of(Terrains.FIRE,
                 Terrains.MAGMA,
                 Terrains.ICE,
                 Terrains.WATER,
@@ -875,83 +927,18 @@ public class BasicPathRanker extends PathRanker {
             HAZARDS.add(Terrains.PAVEMENT);
         }
 
-        int[] terrainTypes = hex.getTerrainTypes();
-        Set<Integer> hazards = new HashSet<>();
-        for (int type : terrainTypes) {
-            if (HAZARDS.contains(type)) {
-                hazards.add(type);
-            }
-        }
-
-        // No hazards were found, so nothing to worry about.
-        if (hazards.isEmpty()) {
-            logMsg.append(" has no hazards.");
-            return 0;
-        }
-
-        // Calculate hazard value by terrain type.
-        double hazardValue = 0;
-        for (int hazard : hazards) {
-            switch (hazard) {
-                case Terrains.FIRE:
-                    hazardValue += calcFireHazard(movingUnit, endHex, logMsg);
-                    break;
-                case Terrains.MAGMA:
-                    hazardValue += calcMagmaHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
-                    break;
-                case Terrains.ICE:
-                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
-                    break;
-                case Terrains.WATER:
-                    if (!hazards.contains(Terrains.ICE)) {
-                        hazardValue += calcWaterHazard(movingUnit, hex, step, movePath, logMsg);
-                    }
-                    break;
-                case Terrains.BUILDING:
-                    hazardValue += calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
-                    break;
-                case Terrains.BRIDGE:
-                    hazardValue += calcBridgeHazard(movingUnit, hex, step, jumpLanding, board, logMsg);
-                    break;
-                case Terrains.BLACK_ICE:
-                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg);
-                    break;
-                case Terrains.SNOW:
-                    hazardValue += calcSnowHazard(hex, endHex, movingUnit, logMsg);
-                    break;
-                case Terrains.RUBBLE:
-                    hazardValue += calcRubbleHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
-                    break;
-                case Terrains.SWAMP:
-                    hazardValue += calcSwampHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
-                    break;
-                case Terrains.MUD:
-                    hazardValue += calcMudHazard(endHex, movingUnit, logMsg);
-                    break;
-                case Terrains.TUNDRA:
-                    hazardValue += calcTundraHazard(endHex, jumpLanding, movingUnit, logMsg);
-                    break;
-                case Terrains.PAVEMENT:
-                    // 1 in 3 chance to hit Black Ice on any given Pavement hex
-                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding, logMsg) / 3.0;
-                    break;
-            }
-        }
-
-        logMsg.append("\n\tTotal Hazard = ")
-                .append(LOG_DECIMAL.format(hazardValue));
-
-        return hazardValue;
+        var hazardTerrains = hex.getTerrainTypesSet();
+        hazardTerrains.retainAll(HAZARDS);
+        return hazardTerrains;
     }
 
     // Building collapse and basements are handled in PathRanker.validatePaths.
-    private double calcBuildingHazard(MoveStep step, Entity movingUnit, boolean jumpLanding,
-            Board board, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating building hazard:  ");
+    private double calcBuildingHazard(MoveStep step, Entity movingUnit, boolean jumpLanding, Board board) {
+        logger.trace("Checking Building Hazard for Hex {}", step.getPosition());
 
         // Protos, BA and Infantry move through buildings freely.
         if (movingUnit instanceof ProtoMek || movingUnit instanceof Infantry) {
-            logMsg.append("Safe for infantry and protos.");
+            logger.trace("Safe for infantry and protos.");
             return 0;
         }
 
@@ -963,45 +950,37 @@ public class BasicPathRanker extends PathRanker {
         // Get the odds of failing the piloting roll while moving through the building.
         double odds = (1.0 - (Compute.oddsAbove(movingUnit.getCrew()
                 .getPiloting()) / 100));
-        logMsg.append("\n\t\tChance to fail piloting roll: ")
-                .append(LOG_PERCENT.format(odds));
+        logger.trace("Chance to fail piloting roll: {}", odds);
 
         // Hazard is based on potential damage taken.
         double dmg = board.getBuildingAt(step.getPosition())
                 .getCurrentCF(step.getPosition()) / 10D;
-        logMsg.append("\n\t\tPotential building damage: ")
-                .append(LOG_DECIMAL.format(dmg));
+        logger.trace("Potential building damage: {}", dmg);
 
         double hazard = dmg * odds;
-        logMsg.append("\n\t\tHazard value (")
-                .append(LOG_DECIMAL.format(hazard)).append(").");
+        logger.trace("Building Hazard for Hex {} is {}", step.getPosition(), hazard);
         return hazard;
     }
 
-    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
-            Board board, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating bridge hazard:  ");
-
+    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding, Board board) {
+        logger.trace("Checking Bridge Hazard for Hex {}", hex.getCoords());
         // if we are going to BWONGGG into a bridge from below, then it's treated as a
         // building.
         // Otherwise, bridge collapse checks have already been handled in validatePaths
         int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
         if ((bridgeElevation > step.getElevation()) &&
                 (bridgeElevation <= (step.getElevation() + movingUnit.getHeight()))) {
-            return calcBuildingHazard(step, movingUnit, jumpLanding, board, logMsg);
+            return calcBuildingHazard(step, movingUnit, jumpLanding, board);
         }
 
         return 0;
     }
 
-    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating ice hazard:  ");
-
+    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding) {
+        logger.trace("Checking Ice Hazard for Hex {}", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
-                EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above ice (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above ice (0).");
             return 0;
         }
 
@@ -1010,7 +989,7 @@ public class BasicPathRanker extends PathRanker {
                 EntityMovementMode.INF_MOTORIZED == movingUnit.getMovementMode() ||
                 EntityMovementMode.INF_JUMP == movingUnit.getMovementMode() ||
                 EntityMovementMode.INF_UMU == movingUnit.getMovementMode()) {
-            logMsg.append("Infantry on Ice (0).");
+            logger.trace("Infantry on Ice (0).");
             return 0;
         }
 
@@ -1030,31 +1009,28 @@ public class BasicPathRanker extends PathRanker {
         // If there is no water under the ice, don't worry about breaking
         // through.
         if (hex.depth() < 1) {
-            logMsg.append("No water under ice (0).");
+            logger.trace("No water under ice (0).");
             return hazard;
         }
 
         // Hazard is based on chance to break through to the water underneath.
         double breakthroughMod = jumpLanding ? 0.5 : 0.1667;
-        logMsg.append("\n\t\tChance to break through ice: ")
-                .append(LOG_PERCENT.format(breakthroughMod));
+        logger.trace("Chance to break through ice: {}", breakthroughMod);
 
-        hazard += calcWaterHazard(movingUnit, hex, step, movePath, logMsg) *
+        hazard += calcWaterHazard(movingUnit, hex, step, movePath) *
                 breakthroughMod;
-        logMsg.append("\n\t\tHazard value (")
-                .append(LOG_DECIMAL.format(hazard)).append(").");
+        logger.trace("Ice Hazard for Hex {} is {}", hex.getCoords(), hazard);
         // Changed this to UNIT_DESTRUCTION_FACTOR because she suicided too often.
         // No reason to be on the ice at all except as an absolute last resort.
         return UNIT_DESTRUCTION_FACTOR;
     }
 
-    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating water hazard:  ");
+    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath) {
+        logger.trace("Checking Water Hazard for Hex {}", hex.getCoords());
 
         // Puddles don't count.
         if (hex.depth() == 0) {
-            logMsg.append("Puddles don't count (0).");
+            logger.trace("Puddles don't count (0).");
             return 0;
         }
 
@@ -1062,20 +1038,20 @@ public class BasicPathRanker extends PathRanker {
         if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
                 EntityMovementMode.WIGE == movingUnit.getMovementMode() ||
                 EntityMovementMode.NAVAL == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering or swimming above water (0).");
+            logger.trace("Hovering or swimming above water (0).");
             return 0;
         }
 
         // Amphibious units are safe (kind of the point).
         if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
                 movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
-            logMsg.append("Amphibious unit (0).");
+            logger.trace("Amphibious unit (0).");
             return 0;
         }
 
         // Submarine units should be fine; Orca-riding Infantry goes here.
         if (EntityMovementMode.SUBMARINE == movingUnit.getMovementMode()) {
-            logMsg.append("Submarine locomotion unit (0).");
+            logger.trace("Submarine locomotion unit (0).");
             return 0;
         }
 
@@ -1085,7 +1061,7 @@ public class BasicPathRanker extends PathRanker {
         if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
             if (bridgeElevation == step.getElevation()) {
-                logMsg.append("Unit (0) crossing bridge.");
+                logger.trace("Unit (0) crossing bridge.");
                 return 0;
             }
         }
@@ -1095,7 +1071,7 @@ public class BasicPathRanker extends PathRanker {
         // but all other hazards (e.g. breaches, crush depth) still apply.
         if (!(movingUnit instanceof Mek || movingUnit instanceof ProtoMek ||
                 movingUnit instanceof BattleArmor || movingUnit.hasUMU())) {
-            logMsg.append("Ill drown (1000).");
+            logger.trace("Unit will drown ({}).", UNIT_DESTRUCTION_FACTOR);
             return UNIT_DESTRUCTION_FACTOR;
         }
 
@@ -1108,7 +1084,7 @@ public class BasicPathRanker extends PathRanker {
                 && hex.depth() >= 1
                 && step.equals(lastStep)) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
-            logMsg.append(String.format("Industrial Meks drown too (%f).", destructionFactor));
+            logger.trace("Industrial Meks drown too ({}).", destructionFactor);
             return destructionFactor;
         }
 
@@ -1138,16 +1114,14 @@ public class BasicPathRanker extends PathRanker {
                 submergedLocations.add(loc);
             }
         }
-        logMsg.append("\n\t\tSubmerged locations: ")
-                .append(submergedLocations.size());
-
+        logger.trace("Submerged locations: {}", submergedLocations.size());
         int hazardValue = 0;
         for (int loc : submergedLocations) {
-            logMsg.append("\n\t\t\tLocation ").append(loc).append(" is ");
+            logger.trace("Checking submerged location {}", loc);
 
             // Only locations without armor can breach in movement phase.
             if (movingUnit.getArmor(loc) > 0) {
-                logMsg.append(" not breached (0).");
+                logger.trace("Location not breached (0).");
                 continue;
             }
 
@@ -1160,67 +1134,62 @@ public class BasicPathRanker extends PathRanker {
                     ProtoMek.LOC_TORSO == loc ||
                     (!(movingUnit instanceof Mek) &&
                             !(movingUnit instanceof ProtoMek))) {
-                logMsg.append(" breached and critical (1000).");
+                logger.trace("Unit will drown, location breached ({}).", UNIT_DESTRUCTION_FACTOR);
                 return UNIT_DESTRUCTION_FACTOR;
             }
 
             // Add 50 points per potential breach location.
-            logMsg.append(" breached (50).");
+            logger.trace("Potential breach location (50).");
             hazardValue += 50;
         }
 
         return hazardValue;
     }
 
-    private double calcFireHazard(Entity movingUnit, boolean endHex,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating fire hazard:  ");
-
+    private double calcFireHazard(Entity movingUnit, boolean endHex) {
+        logger.trace("Calculating fire hazard");
         double hazardValue = 0;
 
         // Fireproof BA ignores fire.
         if ((movingUnit instanceof BattleArmor) &&
                 ((BattleArmor) movingUnit).isFireResistant()) {
-            logMsg.append("Ignored by fire resistant armor (0).");
+            logger.trace("Ignored by fire resistant armor (0).");
             return 0;
         }
 
         // Tanks risk critical hits.
         if (movingUnit instanceof Tank) {
-            logMsg.append("Possible crit on tank (25).");
+            logger.trace("Possible crit on tank (25).");
             return 25;
         }
 
         // ProtoMeks risk location destruction.
         if (movingUnit instanceof ProtoMek) {
-            logMsg.append("Possible location destruction (50).");
+            logger.trace("Possible location destruction (50).");
             return 50;
         }
 
         // Infantry and BA risk total destruction.
         if (movingUnit instanceof Infantry) {
-            logMsg.append(("Possible unit destruction (1000)."));
+            logger.trace("Possible unit destruction ({}).", UNIT_DESTRUCTION_FACTOR);
             return UNIT_DESTRUCTION_FACTOR;
         }
 
         // If this unit tracks heat, add the heat gain to the hazard value.
         if (movingUnit.getHeatCapacity() != Entity.DOES_NOT_TRACK_HEAT) {
             hazardValue += endHex ? 5 : 2;
-            logMsg.append("Heat gain (").append(hazardValue).append(").");
+            logger.trace("Heat gain ({})", hazardValue);
         }
 
         return hazardValue;
     }
 
-    private double calcMagmaHazard(Hex hex, boolean endHex, Entity movingUnit,
-            boolean jumpLanding, MoveStep step,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating magma hazard:  ");
-
+    private double calcMagmaHazard(Hex hex, boolean endHex, Entity movingUnit, boolean jumpLanding, MoveStep step) {
+        logger.trace("Calculating magma hazard");
         // Hovers / WiGE are normally unaffected.
         if ((EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
                 EntityMovementMode.WIGE == movingUnit.getMovementMode()) && !endHex) {
-            logMsg.append("Hovering above magma (0).");
+            logger.trace("Hovering above magma (0).");
             return 0;
         }
 
@@ -1229,44 +1198,36 @@ public class BasicPathRanker extends PathRanker {
 
         // Liquid magma.
         if (magmaLevel == 2) {
-            return calcLavaHazard(endHex, jumpLanding, movingUnit, step, logMsg);
+            return calcLavaHazard(endHex, jumpLanding, movingUnit, step);
         } else {
             double breakThroughMod = jumpLanding ? 0.5 : 0.1667;
-            logMsg.append("\n\t\tChance to break through crust = ")
-                    .append(LOG_PERCENT.format(breakThroughMod));
-
+            logger.trace("Chance to break through crust = {}", breakThroughMod);
             // Factor in the chance to break through.
-            double lavalHazard = Math.round(calcLavaHazard(endHex, jumpLanding, movingUnit, step,
-                    logMsg) * breakThroughMod);
-            logMsg.append("\n\t\t\tLava hazard (")
-                    .append(LOG_DECIMAL.format(lavalHazard)).append(").");
+            double lavalHazard = Math.round(calcLavaHazard(endHex, jumpLanding, movingUnit, step) * breakThroughMod);
+            logger.trace("Lava hazard = {}", lavalHazard);
             hazardValue += lavalHazard;
 
             // Factor in heat.
             if (movingUnit.getHeatCapacity() != Entity.DOES_NOT_TRACK_HEAT) {
                 double heatMod = (endHex ? 5 : 2) * (1 - breakThroughMod);
                 hazardValue += heatMod;
-                logMsg.append("\n\t\tHeat gain (")
-                        .append(LOG_DECIMAL.format(heatMod)).append(").");
+                logger.trace("Heat gain = {}", heatMod);
             }
         }
 
         return hazardValue;
     }
 
-    private double calcLavaHazard(boolean endHex, boolean jumpLanding, Entity movingUnit,
-            MoveStep step, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating laval hazard:  ");
-
+    private double calcLavaHazard(boolean endHex, boolean jumpLanding, Entity movingUnit, MoveStep step) {
+        logger.trace("Calculating lava hazard");
         int unitDamageLevel = movingUnit.getDamageLevel();
         double dmg;
 
         // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
         // losing mobility.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+        if (isHoveringAboveGround(movingUnit)) {
             if (!endHex) {
-                logMsg.append("Hovering/VTOL while traversing lava (0).");
+                logger.trace("Hovering/VTOL while traversing lava (0).");
                 return 0;
             } else {
                 // Estimate chance of being disabled or immobilized over open lava; this is
@@ -1274,15 +1235,14 @@ public class BasicPathRanker extends PathRanker {
                 // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
                 // UNIT_DESTRUCTION_FACTOR
                 dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
-                logMsg.append("Ending hover/VTOL movement over lava (");
-                logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
+                logger.trace("Ending hover/VTOL movement over lava ({})", dmg);
                 return dmg;
             }
         }
 
         // Non-Mek units auto-destroyed.
         if (!(movingUnit instanceof Mek)) {
-            logMsg.append("Non-Mek instant destruction (1000).");
+            logger.trace("Non-Mek unit destroyed by lava ({})", UNIT_DESTRUCTION_FACTOR);
             return UNIT_DESTRUCTION_FACTOR;
         }
 
@@ -1297,59 +1257,59 @@ public class BasicPathRanker extends PathRanker {
             // Former is: %chance _not_ passing PSR
             // Latter is: N = log(desired failure to escape chance, e.g. 10%)/log(%chance
             // Fail PSR)
-            logMsg.append("Possibly jumping onto lava hex, may get bogged down.");
+            logger.trace("Jumping onto lava hex, may get bogged down.");
             int pilotSkill = movingUnit.getCrew().getPiloting();
             int psrMod = +4;
             double oddsPSR = Compute.oddsAbove(pilotSkill + psrMod) / 100;
             double oddsBogged = (1.0 - oddsPSR);
             double expectedTurns = Math.log10(0.10) / Math.log10(oddsBogged);
-            logMsg.append("\n\t\tEffective Piloting Skill: ").append(LOG_INT.format(pilotSkill));
-            logMsg.append("\n\t\tChance to bog down: ").append(LOG_PERCENT.format(oddsBogged));
-            logMsg.append("\n\t\tExpected turns before escape: ").append(LOG_DECIMAL.format(expectedTurns));
+            logger.trace("Effective Piloting Skill: {}", pilotSkill);
+            logger.trace("Chance to bog down: {}", oddsBogged);
+            logger.trace("Expected turns before escape: {}", expectedTurns);
+
             psrFactor = 1.0 + oddsBogged + (expectedTurns);
         }
 
         // Factor in heat.
         double heat = endHex ? 10.0 : 5.0;
         hazardValue += heat;
-        logMsg.append("\n\t\tHeat gain (").append(LOG_DECIMAL.format(heat)).append(").");
+        logger.trace("Heat gain = {}", heat);
 
         // Factor in potential to suffer fatal damage.
         // Dependent on expected average damage / exposed remaining armor *
         // UNIT_DESTRUCTION_FACTOR
         int exposedArmor = 0;
-        logMsg.append("\n\t\tDamage to ");
         if (step.isProne()) {
             dmg = 7 * movingUnit.locations();
             exposedArmor = movingUnit.getTotalArmor();
-            logMsg.append("everything [prone] (");
+            logger.trace("Prone Mek damage = {}", dmg);
         } else if (movingUnit instanceof BipedMek) {
             dmg = 14;
-            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG).stream().mapToInt(a -> movingUnit.getArmor(a)).sum();
-            logMsg.append("legs (");
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Biped Mek damage = {}", dmg);
         } else if (movingUnit instanceof TripodMek) {
-            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG).stream()
-                    .mapToInt(a -> movingUnit.getArmor(a)).sum();
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG)
+                    .mapToInt(movingUnit::getArmor).sum();
             dmg = 21;
-            logMsg.append("legs (");
+            logger.trace("Tripod Mek damage = {}", dmg);
         } else {
-            exposedArmor = List.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM).stream()
-                    .mapToInt(a -> movingUnit.getArmor(a)).sum();
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
+                    .mapToInt(movingUnit::getArmor).sum();
             dmg = 28;
-            logMsg.append("legs (");
+            logger.trace("Quad Mek damage = {}", dmg);
         }
-        logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
+
         hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
 
         // Multiply total hazard value by the chance of getting stuck for 1 or more
         // additional turns
-        logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(psrFactor));
+        logger.trace("Factor = {} - Total hazard value = {}", psrFactor, hazardValue * psrFactor);
         return Math.round(hazardValue * psrFactor);
     }
 
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
-            int modifier, StringBuilder logMsg) {
-        return calcBogDownFactor(name, endHex, jumpLanding, pilotSkill, modifier, true, logMsg);
+            int modifier) {
+        return calcBogDownFactor(name, endHex, jumpLanding, pilotSkill, modifier, true);
     }
 
     /**
@@ -1366,11 +1326,9 @@ public class BasicPathRanker extends PathRanker {
      * @param modifier    Modifier, based on unit type and terrain type
      * @param bogPossible whether the unit can actually get bogged own in this
      *                    terrain type, or just calculating
-     * @param logMsg      Ref to StringBuilder used for logging.
      * @return double Factor to multiply by terrain hazards.
      */
-    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,
-            int modifier, boolean bogPossible, StringBuilder logMsg) {
+    private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill, int modifier, boolean bogPossible) {
         double factor;
         int effectiveSkill = pilotSkill + modifier;
         double oddsPSR = Math.max((Compute.oddsAbove(effectiveSkill) / 100.0), 0.0);
@@ -1380,38 +1338,29 @@ public class BasicPathRanker extends PathRanker {
         if (endHex && jumpLanding) {
             // Chance of getting stuck in swamp/mud is the chance of failing one PSR, or
             // 100% if jumping.
-            logMsg.append("\nJumping onto ");
-            logMsg.append(name);
-            logMsg.append((bogPossible) ? " hex, would get bogged down." : " hex but cannot bog down.");
             oddsBogged = 1.0;
+            logger.trace("Jumping onto {} hex, would get bogged down if the unit can get bog down = {}", name, bogPossible);
         } else if (!jumpLanding) {
-            logMsg.append("\nEntering ");
-            logMsg.append(name);
-            logMsg.append((bogPossible) ? " hex, may get bogged down." : " hex but cannot bog down.");
             oddsBogged = 1.0 - oddsPSR;
+            logger.trace("Chance to bog down: {}", oddsBogged);
         }
         // (Reuse PSR odds to avoid infinite trapped time on turns when jumping into
         // terrain causes 100% bog-down)
         double expectedTurns = ((1 - oddsPSR) < 1.0) ? Math.log10(0.10) / Math.log10(1 - oddsPSR)
                 : UNIT_DESTRUCTION_FACTOR;
 
-        logMsg.append("\n\t\tEffective Piloting Skill: ").append(LOG_INT.format(effectiveSkill));
-        if (bogPossible) {
-            logMsg.append("\n\t\tChance to bog down: ").append(LOG_PERCENT.format(oddsBogged));
-            logMsg.append("\n\t\tExpected turns before escape: ").append(LOG_DECIMAL.format(expectedTurns));
-        }
-        factor = 1.0 + oddsBogged + (expectedTurns);
 
+        factor = 1.0 + oddsBogged + (expectedTurns);
+        logger.trace("Effective Piloting Skill: {}, Expected turns before escape: {}, Factor = {}",
+            effectiveSkill, expectedTurns, factor);
         return factor;
     }
 
-    private double calcSnowHazard(Hex hex, boolean endHex, Entity movingUnit, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating Deep Snow hazard:  ");
-
+    private double calcSnowHazard(Hex hex, boolean endHex, Entity movingUnit) {
+        logger.trace("Checking Deep Snow Hazard for Hex {}", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above Snow (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above snow (0).");
             return 0;
         }
 
@@ -1424,10 +1373,8 @@ public class BasicPathRanker extends PathRanker {
             double hazard;
 
             // Base hazard is arbitrarily set to 10
-            hazard = 10 * calcBogDownFactor(
-                    "Deep Snow", endHex, false, pilotSkill, psrMod, logMsg);
-
-            logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+            hazard = 10 * calcBogDownFactor("Deep Snow", endHex, false, pilotSkill, psrMod);
+            logger.trace("Base hazard value: {}", hazard);
             return Math.round(hazard);
         }
 
@@ -1435,15 +1382,11 @@ public class BasicPathRanker extends PathRanker {
         return 0;
     }
 
-    private double calcSwampHazard(Hex hex, boolean endHex, Entity movingUnit,
-            boolean jumpLanding, MoveStep step,
-            StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating Swamp hazard:  ");
-
+    private double calcSwampHazard(Hex hex, boolean endHex, Entity movingUnit, boolean jumpLanding) {
+        logger.trace("Checking Swamp Hazard for Hex {}", hex.getCoords());
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above swamp (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above swamp (0).");
             return 0;
         }
 
@@ -1455,8 +1398,7 @@ public class BasicPathRanker extends PathRanker {
         double quicksandChance = (quicksand) ? 1.0 : 1 / 36.0;
         // Height + 1 turns to fully sink and be destroyed
         double hazard = quicksandChance * UNIT_DESTRUCTION_FACTOR / (1 + movingUnit.getHeight());
-        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
-
+        logger.trace("Base hazard value: {}", hazard);
         // Mod is to difficulty, not to PSR roll results
         // Quicksand makes PSRs an additional +3! Otherwise +1 for Meks, +2 for all
         // other types
@@ -1465,8 +1407,8 @@ public class BasicPathRanker extends PathRanker {
         // Infantry use 4+ check instead of Pilot / Driving skill
         int pilotSkill = (movingUnit.isInfantry()) ? 4 : movingUnit.getCrew().getPiloting();
 
-        double factor = calcBogDownFactor(type, endHex, jumpLanding, pilotSkill, psrMod, logMsg);
-        logMsg.append("\nFactor applied to hazard value: ").append(LOG_DECIMAL.format(factor));
+        double factor = calcBogDownFactor(type, endHex, jumpLanding, pilotSkill, psrMod);
+        logger.trace("Factor applied to hazard value: {}", factor);
 
         // The danger is increased if pilot skill is low, as the chance of succumbing or
         // getting
@@ -1476,13 +1418,12 @@ public class BasicPathRanker extends PathRanker {
         return Math.round(hazard);
     }
 
-    private double calcMudHazard(boolean endHex, Entity movingUnit, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating Mud hazard:  ");
+    private double calcMudHazard(boolean endHex, Entity movingUnit) {
+        logger.trace("Checking Mud Hazard");
 
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above Mud (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above mud (0).");
             return 0;
         }
 
@@ -1496,25 +1437,27 @@ public class BasicPathRanker extends PathRanker {
         if (movingUnit instanceof Mek) {
             // The only hazard is the +1 to PSRs, which are difficult to quantify
             // Even jumping Meks cannot bog down in mud.
-            hazard = calcBogDownFactor(
-                    "Mud", endHex, false, pilotSkill, psrMod, false, logMsg);
+            hazard = calcBogDownFactor("Mud", endHex, false, pilotSkill, psrMod, false);
         } else {
             // Mud is more dangerous for units that can actually bog down
             // Base hazard is arbitrarily set to 10
             hazard = 10 * calcBogDownFactor(
-                    "Mud", endHex, false, pilotSkill, psrMod, logMsg);
+                    "Mud", endHex, false, pilotSkill, psrMod);
         }
-        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        logger.trace("Mud Hazard: {}", hazard);
         return Math.round(hazard);
     }
 
-    private double calcTundraHazard(boolean endHex, boolean jumpLanding, Entity movingUnit, StringBuilder logMsg) {
-        logMsg.append("\n\tCalculating Tundra hazard:  ");
+    private static boolean isHoveringAboveGround(Entity movingUnit) {
+        return EntityMovementMode.HOVER == movingUnit.getMovementMode()
+            || EntityMovementMode.WIGE == movingUnit.getMovementMode();
+    }
 
+    private double calcTundraHazard(boolean endHex, boolean jumpLanding, Entity movingUnit) {
+        logger.trace("Checking Tundra Hazard");
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above Tundra (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above Tundra (0).");
             return 0;
         }
 
@@ -1526,22 +1469,17 @@ public class BasicPathRanker extends PathRanker {
         double hazard;
 
         // Base hazard is arbitrarily set to 10
-        hazard = 10 * calcBogDownFactor(
-                "Tundra", endHex, jumpLanding, pilotSkill, psrMod, logMsg);
-        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        hazard = 10 * calcBogDownFactor("Tundra", endHex, jumpLanding, pilotSkill, psrMod);
+        logger.trace("Tundra Hazard: {}", hazard);
         return Math.round(hazard);
     }
 
-    private double calcRubbleHazard(Hex hex, boolean endHex, Entity movingUnit,
-            boolean jumpLanding, MoveStep step,
-            StringBuilder logMsg) {
-
-        logMsg.append("\n\tCalculating Rubble hazard:  ");
+    private double calcRubbleHazard(Hex hex, boolean endHex, Entity movingUnit, boolean jumpLanding) {
+        logger.trace("Checking Rubble Hazard for Hex {}", hex.getCoords());
 
         // Hover units are above the surface.
-        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
-                || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
-            logMsg.append("Hovering above Rubble (0).");
+        if (isHoveringAboveGround(movingUnit)) {
+            logger.trace("Hovering above Rubble (0).");
             return 0;
         }
 
@@ -1562,23 +1500,9 @@ public class BasicPathRanker extends PathRanker {
 
             // The only hazard is the +1 to PSRs, which are difficult to quantify
             hazard = calcBogDownFactor(
-                    "Rubble", endHex, jumpLanding, pilotSkill, psrMod, false, logMsg);
+                    "Rubble", endHex, jumpLanding, pilotSkill, psrMod, false);
         }
-        logMsg.append("\nBase hazard value: ").append(LOG_DECIMAL.format(hazard));
+        logger.trace("Rubble Hazard for Hex {} is {}", hex.getCoords(), hazard);
         return Math.round(hazard);
-    }
-
-    /**
-     * Simple data structure that holds a separate firing and physical damage
-     * number.
-     *
-     */
-    public static class FiringPhysicalDamage {
-        public double firingDamage;
-        public double physicalDamage;
-
-        public double getMaximumDamageEstimate() {
-            return firingDamage + physicalDamage;
-        }
     }
 }

@@ -40,7 +40,7 @@ public class MyUnitArmor extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitArmor copy() {
         var copy = new MyUnitArmor();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

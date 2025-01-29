@@ -15,15 +15,14 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import megamek.ai.utility.DecisionScoreEvaluator;
+import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
 import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.ui.Messages;
 import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -38,10 +37,22 @@ public class DecisionScoreEvaluatorPane extends JPanel {
     private JPanel decisionScoreEvaluatorPane;
     private JPanel considerationsPane;
     private JToolBar considerationsToolbar;
+    private JScrollPane scrollablePane;
     private final HoverStateModel hoverStateModel;
     private final List<ConsiderationPane> considerationPaneList = new ArrayList<>();
-
     private AtomicReference<TWDecisionScoreEvaluator> editedDecisionScoreEvaluator;
+    private static final JSeparator SEPARATOR = new JSeparator(SwingConstants.HORIZONTAL);
+
+    // Add a MouseWheelListener to forward the event to the parent JScrollPane
+    private final MouseWheelListener mouseScrollListener = e -> {
+        if (getParent() instanceof JViewport viewport) {
+            if (viewport.getParent() instanceof JScrollPane scrollPane) {
+                scrollPane.dispatchEvent(SwingUtilities.convertMouseEvent(e.getComponent(), e, scrollPane));
+            }
+        }
+    };
+
+    private final AtomicReference<TWConsideration> considerationParametersForCopyAndPaste = new AtomicReference<>();
 
     public DecisionScoreEvaluatorPane() {
         $$$setupUI$$$();
@@ -50,26 +61,9 @@ public class DecisionScoreEvaluatorPane extends JPanel {
 
         // Considerations Toolbar
         var newConsiderationBtn = new JButton(Messages.getString("aiEditor.new.consideration"));
-        var copyConsiderationBtn = new JButton(Messages.getString("aiEditor.copy.consideration"));
-        var editConsiderationBtn = new JButton(Messages.getString("aiEditor.edit.consideration"));
-        var deleteConsiderationBtn = new JButton(Messages.getString("aiEditor.delete.consideration"));
         newConsiderationBtn.addActionListener(l -> addEmptyConsideration());
         considerationsToolbar.add(newConsiderationBtn);
-        considerationsToolbar.add(copyConsiderationBtn);
-        considerationsToolbar.add(editConsiderationBtn);
-        considerationsToolbar.add(deleteConsiderationBtn);
-
-        // Add a MouseWheelListener to forward the event to the parent JScrollPane
-        this.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (getParent() instanceof JViewport viewport) {
-                    if (viewport.getParent() instanceof JScrollPane scrollPane) {
-                        scrollPane.dispatchEvent(SwingUtilities.convertMouseEvent(e.getComponent(), e, scrollPane));
-                    }
-                }
-            }
-        });
+        SEPARATOR.addMouseWheelListener(mouseScrollListener);
     }
 
     public TWDecisionScoreEvaluator updateInPlaceTheDSE() {
@@ -101,24 +95,111 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         return dse;
     }
 
+    private JPopupMenu createContextMenu(TWConsideration consideration, int index) {
+        // Create a popup menu
+        JPopupMenu contextMenu = new JPopupMenu();
+        var newConsideration = new JMenuItem(Messages.getString("aiEditor.new.consideration"));
+        var copyConsideration = new JMenuItem(Messages.getString("aiEditor.copy.consideration"));
+        var pasteConsideration = new JMenuItem(Messages.getString("aiEditor.paste.consideration"));
+        if (considerationParametersForCopyAndPaste.get() == null) {
+            pasteConsideration.setEnabled(false);
+        }
+        var deleteConsideration = new JMenuItem(Messages.getString("aiEditor.delete.consideration"));
+        newConsideration.addActionListener(evt -> {
+            addEmptyConsideration();
+        });
+        copyConsideration.addActionListener(evt -> {
+            considerationParametersForCopyAndPaste.set(consideration.copy());
+            pasteConsideration.setEnabled(true);
+        });
+        pasteConsideration.addActionListener(evt -> {
+            // consideration // do something so it makes sense...
+            var considerationPane = new ConsiderationPane();
+            considerationPane.setConsideration(considerationParametersForCopyAndPaste.get().copy());
+            considerationPane.setHoverStateModel(hoverStateModel);
+            considerationsPane.add(considerationPane, index);
+            considerationsPane.remove(index+1);
+            considerationPaneList.add(index/2, considerationPane);
+            considerationPaneList.remove(index/2 + 1);
+        });
+        deleteConsideration.addActionListener(evt -> {
+            considerationsPane.remove(index);
+        });
+
+        contextMenu.add(newConsideration);
+        contextMenu.add(copyConsideration);
+        contextMenu.add(pasteConsideration);
+        contextMenu.add(deleteConsideration);
+
+        JMenuItem menuItemOther = new JMenuItem(Messages.getString("aiEditor.contextualMenu.delete"));
+        menuItemOther.addActionListener(evt -> {
+            // Another action
+            int deletePrompt = JOptionPane.showConfirmDialog(null,
+                Messages.getString("aiEditor.deleteNodePrompt"),
+                Messages.getString("aiEditor.deleteNode.title"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+            if (deletePrompt == JOptionPane.YES_OPTION) {
+                removeConsiderationEntry(index);
+            }
+        });
+        contextMenu.add(menuItemOther);
+
+        return contextMenu;
+    }
+
+    private void removeConsiderationEntry(int index) {
+        considerationsPane.remove(index);
+        considerationPaneList.remove(index/2);
+        this.updateUI();
+    }
+
     public void addEmptyConsideration() {
         considerationsPane.removeAll();
-
         considerationsPane.setLayout(new GridBagLayout());
         var gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
         var emptyConsideration = new ConsiderationPane();
         emptyConsideration.setEmptyConsideration();
         emptyConsideration.setHoverStateModel(hoverStateModel);
+        emptyConsideration.addMouseWheelListener(mouseScrollListener);
+        emptyConsideration.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3) {
+                    var t = emptyConsideration.getConsideration();
+                    var contextMenu = createContextMenu(t, 0);
+                    contextMenu.show(emptyConsideration, e.getX(), e.getY());
+                }
+            }
+        });
         // add new consideration at the top of the screen
         considerationsPane.add(emptyConsideration, gbc);
         gbc.gridy++;
-        considerationsPane.add(new JSeparator(), gbc);
+        considerationsPane.add(SEPARATOR, gbc);
         gbc.gridy++;
+        int i = 2;
         // reinsert old considerations to the screen
         for (var c : considerationPaneList) {
             considerationsPane.add(c, gbc);
+            c.addMouseWheelListener(mouseScrollListener);
+            int finalI = i;
+            c.addMouseListener(new MouseAdapter() {
+                private final int index = finalI;
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3) {
+                        var t = c.getConsideration();
+                        var contextMenu = createContextMenu(t, index);
+                        contextMenu.show(c, e.getX(), e.getY());
+                    }
+                }
+            });
+            i++;
             gbc.gridy++;
             considerationsPane.add(new JSeparator(), gbc);
+            i++;
             gbc.gridy++;
         }
         // add new consideration at the top of the list
@@ -149,15 +230,31 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         considerationsPane.setLayout(new GridBagLayout());
         considerationPaneList.clear();
         var gbc = new GridBagConstraints();
+        int i = 0;
         for (var consideration : considerations) {
             var c = new ConsiderationPane();
             c.setConsideration(consideration);
+            c.addMouseWheelListener(mouseScrollListener);
             c.setHoverStateModel(hoverStateModel);
             considerationPaneList.add(c);
             considerationsPane.add(c, gbc);
+            int finalI = i;
+            c.addMouseListener(new MouseAdapter() {
+                private final int index = finalI;
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON2 || e.getButton() == MouseEvent.BUTTON3) {
+                        var t = c.getConsideration();
+                        var contextMenu = createContextMenu(t, index);
+                        contextMenu.show(c, e.getX(), e.getY());
+                    }
+                }
+            });
             gbc.gridy++;
-            considerationsPane.add(new JSeparator(), gbc);
+            i++;
+            considerationsPane.add(SEPARATOR, gbc);
             gbc.gridy++;
+            i++;
         }
         this.updateUI();
     }
@@ -194,27 +291,28 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         decisionScoreEvaluatorPane.add(notesField, gbc);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setHorizontalScrollBarPolicy(31);
-        scrollPane1.setMaximumSize(new Dimension(800, 32767));
-        scrollPane1.setMinimumSize(new Dimension(800, 600));
-        scrollPane1.setWheelScrollingEnabled(true);
+        scrollablePane = new JScrollPane();
+        scrollablePane.setHorizontalScrollBarPolicy(31);
+        scrollablePane.setMaximumSize(new Dimension(-1, Integer.MAX_VALUE));
+        scrollablePane.setMinimumSize(new Dimension(400, 400));
+        scrollablePane.setWheelScrollingEnabled(true);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 8;
         gbc.gridheight = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.BOTH;
-        decisionScoreEvaluatorPane.add(scrollPane1, gbc);
+        decisionScoreEvaluatorPane.add(scrollablePane, gbc);
         considerationsPane = new JPanel();
         considerationsPane.setLayout(new GridBagLayout());
-        considerationsPane.setMaximumSize(new Dimension(800, 2147483647));
-        considerationsPane.setMinimumSize(new Dimension(800, 600));
-        scrollPane1.setViewportView(considerationsPane);
+        considerationsPane.setMaximumSize(new Dimension(-1, Integer.MAX_VALUE));
+        considerationsPane.setMinimumSize(new Dimension(400, 400));
+        scrollablePane.setViewportView(considerationsPane);
         final JLabel label1 = new JLabel();
         this.$$$loadLabelText$$$(label1, this.$$$getMessageFromBundle$$$("megamek/common/options/messages", "aiEditor.considerations"));
         gbc = new GridBagConstraints();
@@ -254,7 +352,7 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         decisionScoreEvaluatorPane.add(considerationsToolbar, gbc);
-        label1.setLabelFor(scrollPane1);
+        label1.setLabelFor(scrollablePane);
         label2.setLabelFor(notesField);
         label3.setLabelFor(descriptionField);
         label4.setLabelFor(nameField);

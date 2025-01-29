@@ -75,7 +75,7 @@ public class FavoriteTargetInRange extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public FavoriteTargetInRange copy() {
         var copy = new FavoriteTargetInRange();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

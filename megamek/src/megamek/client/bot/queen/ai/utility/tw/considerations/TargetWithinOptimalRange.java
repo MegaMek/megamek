@@ -52,7 +52,7 @@ public class TargetWithinOptimalRange extends TWConsideration {
 
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public TargetWithinOptimalRange copy() {
         var copy = new TargetWithinOptimalRange();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

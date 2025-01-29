@@ -47,7 +47,7 @@ public class MyUnitIsMovingTowardsWaypoint extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitIsMovingTowardsWaypoint copy() {
         var copy = new MyUnitIsMovingTowardsWaypoint();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

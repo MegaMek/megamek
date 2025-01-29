@@ -15,28 +15,21 @@
 
 package megamek.ai.utility;
 
+import megamek.client.bot.princess.RankedPath;
+import megamek.common.MovePath;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.PriorityQueue;
 import java.util.TreeSet;
 
-public interface Intelligence<IN_GAME_OBJECT, TARGETABLE> {
+public interface Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> {
 
-    void update(Intelligence<IN_GAME_OBJECT, TARGETABLE> intelligence);
-    void addDecisionScoreEvaluator(Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator);
+    void update(Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> intelligence);
     List<Decision<IN_GAME_OBJECT, TARGETABLE>> getDecisions();
-    DecisionMaker<IN_GAME_OBJECT, TARGETABLE> getDecisionMaker();
-    double getBonusFactor(Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator);
-
-    default void clearDecisionScoreEvaluators() {
-        getDecisions().clear();
-    }
-
-    default void scoreAllDecisions(List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts) {
-        getDecisionMaker().scoreAllDecisions(getDecisions(), contexts);
-    }
-
-    default Optional<Decision<IN_GAME_OBJECT, TARGETABLE>> pickOne(TreeSet<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> scoredDecisions) {
-        return getDecisionMaker().pickOne(scoredDecisions);
+    DecisionMaker<IN_GAME_OBJECT, TARGETABLE, RANKED> getDecisionMaker();
+    double getBonusFactor(IN_GAME_OBJECT inGameObject, MovePath movePath);
+    Optional<RANKED> getPastRankedPath(IN_GAME_OBJECT inGameObject);
+    default TreeSet<RANKED> scoreAllDecisions(List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts) {
+        return getDecisionMaker().scoreAllDecisions(getDecisions(), contexts);
     }
 }

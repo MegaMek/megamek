@@ -19,34 +19,6 @@
  */
 package megamek.client.bot.princess;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -60,6 +32,16 @@ import megamek.common.options.PilotOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Weather;
 import megamek.utils.MockGenerators;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -157,7 +139,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
-        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
     }
 
@@ -176,7 +158,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
-        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
     }
 
@@ -189,8 +171,7 @@ class BasicPathRankerTest {
         final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
 
-        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
-                eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
 
         final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
         when(mockPath.getFinalFacing()).thenReturn(3);
@@ -213,7 +194,7 @@ class BasicPathRankerTest {
         final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
 
-        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(
                 eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
 
         final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
@@ -232,7 +213,7 @@ class BasicPathRankerTest {
                 .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
         doReturn(8.5)
                 .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                .getMaxDamageAtRange(eq(mockEnemyMek), anyInt(),
                         anyBoolean(),
                         anyBoolean());
         doReturn(false)
@@ -258,7 +239,7 @@ class BasicPathRankerTest {
         final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
 
-        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(
                 eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
 
         final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
@@ -277,7 +258,7 @@ class BasicPathRankerTest {
                 .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
         doReturn(8.5)
                 .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                .getMaxDamageAtRange(eq(mockEnemyMek), anyInt(),
                         anyBoolean(), anyBoolean());
         doReturn(false)
                 .when(testRanker)
@@ -300,7 +281,7 @@ class BasicPathRankerTest {
         final Entity mockMyUnit = MockGenerators.generateMockBipedMek(0, 0);
         when(mockMyUnit.canChangeSecondaryFacing()).thenReturn(true);
 
-        doReturn(10.0).when(testRanker).getMaxDamageAtRange(nullable(FireControl.class),
+        doReturn(10.0).when(testRanker).getMaxDamageAtRange(
                 eq(mockMyUnit), anyInt(), anyBoolean(), anyBoolean());
 
         final MovePath mockPath = MockGenerators.generateMockPath(testCoords, mockMyUnit);
@@ -319,7 +300,7 @@ class BasicPathRankerTest {
                 .isInMyLoS(eq(mockEnemyMek), any(HexLine.class), any(HexLine.class));
         doReturn(8.5)
                 .when(testRanker)
-                .getMaxDamageAtRange(nullable(FireControl.class), eq(mockEnemyMek), anyInt(),
+                .getMaxDamageAtRange(eq(mockEnemyMek), anyInt(),
                         anyBoolean(), anyBoolean());
         doReturn(true)
                 .when(testRanker)
@@ -408,7 +389,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(1.0)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         doReturn(5)
                 .when(testRanker)
                 .distanceToClosestEdge(any(Coords.class), any(Game.class));
@@ -535,7 +516,7 @@ class BasicPathRankerTest {
         // Change the move path success probability.
         doReturn(0.5)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         expected = new RankedPath(-318.125, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(250) + " = " + LOG_DECIMAL.format(0.5) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
@@ -556,7 +537,7 @@ class BasicPathRankerTest {
         }
         doReturn(0.75)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         expected = new RankedPath(-184.6875, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(125) + " = " + LOG_DECIMAL.format(0.25) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
@@ -577,7 +558,7 @@ class BasicPathRankerTest {
         }
         doReturn(1.0)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
 
         // Change the damage to enemy mek 1.
         evalForMockEnemyMek = new EntityEvaluationResponse();

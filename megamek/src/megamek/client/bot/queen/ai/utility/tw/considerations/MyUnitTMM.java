@@ -52,7 +52,7 @@ public class MyUnitTMM extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public MyUnitTMM copy() {
         var copy = new MyUnitTMM();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

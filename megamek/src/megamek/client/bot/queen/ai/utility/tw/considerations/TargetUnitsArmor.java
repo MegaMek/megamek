@@ -57,7 +57,7 @@ public class TargetUnitsArmor extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public TargetUnitsArmor copy() {
         var copy = new TargetUnitsArmor();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

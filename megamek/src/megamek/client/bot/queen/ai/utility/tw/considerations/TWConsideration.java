@@ -22,6 +22,7 @@ import megamek.ai.utility.Curve;
 import megamek.common.Entity;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class TWConsideration extends Consideration<Entity, Entity> {
@@ -52,7 +53,10 @@ public abstract class TWConsideration extends Consideration<Entity, Entity> {
     }
 
     @Override
+    public abstract TWConsideration copy();
+
+    @Override
     public String toString() {
-        return this.getName();
+        return getName();
     }
 }

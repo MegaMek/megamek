@@ -189,7 +189,10 @@
                         <children>
                           <grid id="52c8c" binding="dsePane" custom-create="true" layout-manager="GridBagLayout">
                             <constraints/>
-                            <properties/>
+                            <properties>
+                              <minimumSize width="600" height="400"/>
+                              <preferredSize width="2147483647" height="2147483647"/>
+                            </properties>
                             <border type="none"/>
                             <children/>
                           </grid>

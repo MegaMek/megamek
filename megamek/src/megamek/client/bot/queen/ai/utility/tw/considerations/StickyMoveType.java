@@ -35,7 +35,7 @@ public class StickyMoveType extends TWConsideration {
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
         var twContext = (TWDecisionContext) context;
-        var previousPathTaken = twContext.getPreviousRankedPath();
+        var previousPathTaken = twContext.getPreviouslyRanked();
         if (previousPathTaken.isEmpty()) {
             return 1;
         }
@@ -47,7 +47,7 @@ public class StickyMoveType extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public StickyMoveType copy() {
         var copy = new StickyMoveType();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

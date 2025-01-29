@@ -80,7 +80,7 @@ public class FacingTheEnemy extends TWConsideration {
     }
 
     @Override
-    public Consideration<Entity, Entity> copy() {
+    public FacingTheEnemy copy() {
         var copy = new FacingTheEnemy();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));

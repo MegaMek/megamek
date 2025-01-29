@@ -420,6 +420,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
     protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+    private transient Boolean cacheHasModularArmor = null;
+
 
     protected String source = "";
 
@@ -12299,15 +12301,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasModularArmor(int loc) {
-        for (MiscMounted mount : getMisc()) {
-            if ((loc == -1) || (mount.getLocation() == loc)) {
-                if (!mount.isDestroyed() && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                    return true;
+        if (cacheHasModularArmor == null) {
+            cacheHasModularArmor = false;
+
+            for (MiscMounted mount : getMisc()) {
+                if ((loc == -1) || (mount.getLocation() == loc)) {
+                    if (!mount.isDestroyed() && mount.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                        cacheHasModularArmor = true;
+                    }
                 }
             }
         }
 
-        return false;
+        return cacheHasModularArmor;
     }
 
     public int getDamageReductionFromModularArmor(HitData hit, int damage, Vector<Report> vDesc) {

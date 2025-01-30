@@ -831,7 +831,6 @@ public class BasicPathRanker extends PathRanker {
         logMsg.append("\n\tHex ").append(hex.getCoords().toFriendlyString());
 
         Set<Integer> hazards = getHazardTerrainIds(hex);
-
         // No hazards were found, so nothing to worry about.
         if (hazards.isEmpty()) {
             logMsg.append(" has no hazards.");

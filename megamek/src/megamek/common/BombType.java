@@ -266,7 +266,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
         bomb.addLookupName("AAAMissile Ammo");
         bomb.damagePerShot = 20;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_AAA_MISSILE;
         bomb.bombType = BombType.B_AAA;
@@ -298,7 +298,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AS));
         bomb.addLookupName("ASMissile Ammo");
         bomb.damagePerShot = 30;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_AS_MISSILE;
         bomb.bombType = BombType.B_AS;
@@ -330,7 +330,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_ASEW));
         bomb.addLookupName("ASEWMissile Ammo");
         bomb.damagePerShot = 0;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_ASEW_MISSILE;
         bomb.bombType = BombType.B_ASEW;
@@ -364,7 +364,7 @@ public class BombType extends AmmoType {
         // Allow Homing munitions to instantly switch between modes
         bomb.instantModeSwitch = true;
         bomb.setModes("Homing", "Non-Homing");
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_SPACE_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_SPACE_BOMB_AMMO);
         bomb.shots = 1;
         bomb.bv = 30;
         bomb.cost = 3000;
@@ -398,7 +398,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 20;
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_ARROW;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_SPACE_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_SPACE_BOMB_AMMO);
         bomb.shots = 1;
         bomb.bv = 34;
         bomb.cost = 2000;
@@ -431,7 +431,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_CLUSTER;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_SPACE_BOMB).or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_SPACE_BOMB_AMMO).or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 13;
         bomb.cost = 8000;
@@ -458,7 +458,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_FAE_SMALL;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 37;
         bomb.cost = 18000;
@@ -486,7 +486,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 2;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_FAE_LARGE;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 2;
         bomb.bv = 63;
         bomb.cost = 35000;
@@ -514,7 +514,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_HE;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_SPACE_BOMB).or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_SPACE_BOMB_AMMO).or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 12;
         bomb.cost = 5000;
@@ -539,7 +539,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_INFERNO;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 16;
         bomb.cost = 6000;
@@ -567,7 +567,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_LG;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_SPACE_BOMB).or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_SPACE_BOMB_AMMO).or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 20;
         bomb.cost = 10000;
@@ -597,7 +597,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
         bomb.addLookupName("LAAMissile Ammo");
         bomb.damagePerShot = 6;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_LAA_MISSILE;
         bomb.bombType = BombType.B_LAA;
@@ -623,7 +623,7 @@ public class BombType extends AmmoType {
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
         bomb.addLookupName("RL 10 (Bomb)");
         bomb.damagePerShot = 1;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 10;
         bomb.ammoType = AmmoType.T_RL_BOMB;
         bomb.bombType = BombType.B_RL;
@@ -647,7 +647,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("RL-P 10 (Bomb)");
         bomb.damagePerShot = 1;
         // This works but is fragile
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB).or(WeaponTypeFlag.F_PROTOTYPE);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB).or(EquipmentFlag.F_PROTOTYPE_WEAPON);
         bomb.rackSize = 10;
         bomb.ammoType = AmmoType.T_RL_BOMB;
         bomb.bombType = BombType.B_RLP;
@@ -680,7 +680,7 @@ public class BombType extends AmmoType {
         bomb.addLookupName("ISTAGBomb");
         bomb.addLookupName("TAGBomb");
         bomb.damagePerShot = 0;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_OTHER_BOMB);
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_TAG;
@@ -715,7 +715,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 1;
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_THUNDER;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_GROUND_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_GROUND_BOMB);
         bomb.shots = 1;
         bomb.bv = 112;
         bomb.cost = 12000;
@@ -771,7 +771,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 100;
         bomb.cost = 1000000;
-        bomb.flags = bomb.flags.or(AmmoTypeFlag.F_NUCLEAR).or(AmmoTypeFlag.F_OTHER_BOMB);
+        bomb.flags = bomb.flags.or(EquipmentFlag.F_NUCLEAR).or(EquipmentFlag.F_OTHER_BOMB);
         bomb.capital = true;
         bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS).setTechRating(RATING_E)
             .setISAdvancement(2200).setPrototypeFactions(F_TA)

@@ -93,7 +93,7 @@ public class FixedWingSupportCostCalculator {
         double paWeight = 0;
         for (Mounted<?> m : fixedWingSupport.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponTypeFlag.F_LASER) || wt.hasFlag(WeaponTypeFlag.F_PPC)) {
+            if (wt.hasFlag(EquipmentFlag.F_LASER) || wt.hasFlag(EquipmentFlag.F_PPC)) {
                 sinks += wt.getHeat();
                 paWeight += m.getTonnage() / 10.0;
             }

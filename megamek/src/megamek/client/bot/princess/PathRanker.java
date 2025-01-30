@@ -183,7 +183,7 @@ public abstract class PathRanker implements IPathRanker {
                 if (isAirborneAeroOnGroundMap) {
                     // if we have no bombs, we want to make sure our altitude is above 1
                     // if we do have bombs, we may consider altitude bombing (in the future)
-                    if (path.getEntity().getBombs(AmmoTypeFlag.F_GROUND_BOMB).isEmpty()
+                    if (path.getEntity().getBombs(EquipmentFlag.F_GROUND_BOMB).isEmpty()
                             && (path.getFinalAltitude() < 2)) {
                         msg.append("\n\tNo bombs but at altitude 1. No way.");
                         continue;

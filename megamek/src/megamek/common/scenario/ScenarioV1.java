@@ -346,8 +346,8 @@ public class ScenarioV1 extends HashMap<String, Collection<String>> implements S
         int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType()
                 : 0;
         if ((((AmmoType) newAmmoType).getRackSize() == ((AmmoType) currentAmmoType).getRackSize())
-                && (newAmmoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR))
-                && (newAmmoType.hasFlag(AmmoTypeFlag.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoTypeFlag.F_ENCUMBERING))
+                && (newAmmoType.hasFlag(EquipmentFlag.F_BATTLEARMOR_ONLY) == currentAmmoType.hasFlag(EquipmentFlag.F_BATTLEARMOR_ONLY))
+                && (newAmmoType.hasFlag(EquipmentFlag.F_ENCUMBERING) == currentAmmoType.hasFlag(EquipmentFlag.F_ENCUMBERING))
                 && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))
                 && (((AmmoType) newAmmoType).getAmmoType() == weaponAmmoType)) {
             return (AmmoType) newAmmoType;

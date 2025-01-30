@@ -71,7 +71,7 @@ import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 
 // TODO add XML support back in.
 
@@ -367,7 +367,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(EquipmentFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
                 mRange = 14;
@@ -381,7 +381,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if (ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     minRange = 4;
                     sRange = 5;
                     mRange = 10;
@@ -418,7 +418,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 8;
             }
         }
-        if (hasFlag(WeaponTypeFlag.F_PDBAY)) {
+        if (hasFlag(EquipmentFlag.F_PDBAY)) {
             if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
                 sRange = 1;
             } else {
@@ -502,7 +502,7 @@ public class WeaponType extends EquipmentType {
         }
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType ammoType = ammo.getType();
-            if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(EquipmentFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 return RANGE_LONG;
             } else {
                 return RANGE_SHORT;

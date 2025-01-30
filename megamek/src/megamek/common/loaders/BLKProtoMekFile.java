@@ -190,7 +190,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                         mount = t.addEquipment(etype, nLoc);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
+                                && etype.hasFlag(EquipmentFlag.F_VGL)) {
                             mount.setFacing(defaultVGLFacing(nLoc, rearMount));
                         }
                     } else {

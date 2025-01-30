@@ -704,7 +704,7 @@ public class TestTank extends TestEntity {
             double weight = 0;
             for (Mounted<?> m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponTypeFlag.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon)
+                if (wt.hasFlag(EquipmentFlag.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon)
                         && !(wt instanceof VehicleFlamerWeapon)) {
                     weight += m.getTonnage();
                 }
@@ -918,14 +918,14 @@ public class TestTank extends TestEntity {
                 buffer.append(eq.getName()).append(" cannot be mounted on a turret.\n");
                 return false;
             }
-            if (!eq.hasFlag(WeaponTypeFlag.F_C3M) && !eq.hasFlag(WeaponTypeFlag.F_C3MBS)
-                    && !eq.hasFlag(WeaponTypeFlag.F_TAG) && (location == Tank.LOC_BODY)
+            if (!eq.hasFlag(EquipmentFlag.F_C3M) && !eq.hasFlag(EquipmentFlag.F_C3MBS)
+                    && !eq.hasFlag(EquipmentFlag.F_TAG) && (location == Tank.LOC_BODY)
                     && !(tank instanceof GunEmplacement)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 return false;
             }
             if ((tank instanceof VTOL) && (location == VTOL.LOC_ROTOR)
-                    && !eq.hasFlag(WeaponTypeFlag.F_TAG)) {
+                    && !eq.hasFlag(EquipmentFlag.F_TAG)) {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }

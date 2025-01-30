@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 
 /**
  * @author Jay Lawson

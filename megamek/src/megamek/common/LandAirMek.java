@@ -1443,8 +1443,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             return super.getWeaponArc(wn);
         }
         final Mounted<?> mounted = getEquipment(wn);
-        if (mounted.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
-                || mounted.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(EquipmentFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)
+                || mounted.getType().hasFlag(EquipmentFlag.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         // We use Aero locations for weapon groups for fighter squadron
@@ -2095,10 +2095,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (mounted instanceof WeaponMounted) {
             totalWeaponList.add((WeaponMounted) mounted);
             weaponList.add((WeaponMounted) mounted);
-            if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
-            if (mounted.getType().hasFlag(WeaponTypeFlag.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 AmmoMounted m = (AmmoMounted) Mounted.createMounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);

@@ -26,27 +26,23 @@ import org.apache.commons.lang3.ArrayUtils;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
-import static megamek.common.AmmoTypeFlag.F_MG;
-import static megamek.common.AmmoTypeFlag.F_BATTLEARMOR;
-import static megamek.common.AmmoTypeFlag.F_PROTOMEK;
-import static megamek.common.AmmoTypeFlag.F_HOTLOAD;
-import static megamek.common.AmmoTypeFlag.F_ENCUMBERING;
-import static megamek.common.AmmoTypeFlag.F_MML_LRM;
-import static megamek.common.AmmoTypeFlag.F_AR10_WHITE_SHARK;
-import static megamek.common.AmmoTypeFlag.F_AR10_KILLER_WHALE;
-import static megamek.common.AmmoTypeFlag.F_AR10_BARRACUDA;
-import static megamek.common.AmmoTypeFlag.F_NUCLEAR;
-import static megamek.common.AmmoTypeFlag.F_SANTA_ANNA;
-import static megamek.common.AmmoTypeFlag.F_PEACEMAKER;
-import static megamek.common.AmmoTypeFlag.F_TELE_MISSILE;
-import static megamek.common.AmmoTypeFlag.F_CAP_MISSILE;
-import static megamek.common.AmmoTypeFlag.F_SPACE_BOMB;
-import static megamek.common.AmmoTypeFlag.F_GROUND_BOMB;
-import static megamek.common.AmmoTypeFlag.F_MML_SRM;
-import static megamek.common.AmmoTypeFlag.F_OTHER_BOMB;
-import static megamek.common.AmmoTypeFlag.F_CRUISE_MISSILE;
-import static megamek.common.AmmoTypeFlag.F_SCREEN;
-import static megamek.common.AmmoTypeFlag.F_INTERNAL_BOMB;
+import static megamek.common.EquipmentFlag.F_MG_AMMO;
+import static megamek.common.EquipmentFlag.F_BATTLEARMOR_ONLY;
+import static megamek.common.EquipmentFlag.F_PROTOMEK_ONLY;
+import static megamek.common.EquipmentFlag.F_HOTLOAD;
+import static megamek.common.EquipmentFlag.F_ENCUMBERING;
+import static megamek.common.EquipmentFlag.F_MML_LRM;
+import static megamek.common.EquipmentFlag.F_AR10_WHITE_SHARK;
+import static megamek.common.EquipmentFlag.F_AR10_KILLER_WHALE;
+import static megamek.common.EquipmentFlag.F_AR10_BARRACUDA;
+import static megamek.common.EquipmentFlag.F_NUCLEAR;
+import static megamek.common.EquipmentFlag.F_SANTA_ANNA;
+import static megamek.common.EquipmentFlag.F_PEACEMAKER;
+import static megamek.common.EquipmentFlag.F_TELE_MISSILE;
+import static megamek.common.EquipmentFlag.F_CAP_MISSILE;
+import static megamek.common.EquipmentFlag.F_MML_SRM;
+import static megamek.common.EquipmentFlag.F_CRUISE_MISSILE_AMMO;
+import static megamek.common.EquipmentFlag.F_SCREEN;
 
 
 public class AmmoType extends EquipmentType {
@@ -3412,7 +3408,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 75;
         ammo.cost = 20000;
         ammo.tonnage = 25;
-        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE_AMMO);
         ammo.rulesRefs = "284, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -3438,7 +3434,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 129;
         ammo.cost = 50000;
         ammo.tonnage = 35;
-        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE_AMMO);
         ammo.rulesRefs = "284, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -3464,7 +3460,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 191;
         ammo.cost = 90000;
         ammo.tonnage = 45;
-        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE_AMMO);
         ammo.rulesRefs = "284, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -3490,7 +3486,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 285;
         ammo.cost = 140000;
         ammo.tonnage = 60;
-        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE);
+        ammo.flags = ammo.flags.or(F_CRUISE_MISSILE_AMMO);
         ammo.rulesRefs = "284, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         ammo.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -3679,7 +3675,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_BA_TUBE;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 2;
         ammo.bv = 4;
         ammo.kgPerShot = 15;
@@ -5331,7 +5327,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -5358,7 +5354,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -5386,7 +5382,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
@@ -5415,7 +5411,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -5443,7 +5439,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
@@ -5469,7 +5465,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
@@ -5494,7 +5490,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -5520,7 +5516,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -5548,7 +5544,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -5573,7 +5569,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -5599,7 +5595,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
@@ -5624,7 +5620,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
+        ammo.flags = ammo.flags.or(F_MG_AMMO);
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
@@ -7046,7 +7042,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 8.33;
         ammo.bv = 0.016;
@@ -7072,7 +7068,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 16.67;
         ammo.bv = 0.033;
@@ -7098,7 +7094,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 24.99;
         ammo.bv = 0.05;
@@ -7124,7 +7120,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 33.32;
         ammo.bv = 0.067;
@@ -7150,7 +7146,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 49.98;
         ammo.bv = 0.1;
@@ -7176,7 +7172,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 58.31;
         ammo.bv = 0.117;
@@ -7202,7 +7198,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 66.64;
         ammo.bv = 0.133;
@@ -7228,7 +7224,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 74.97;
         ammo.bv = 0.15;
@@ -7254,7 +7250,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 91.63;
         ammo.bv = 0.183;
@@ -7280,7 +7276,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 99.96;
         ammo.bv = 0.2;
@@ -7306,7 +7302,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 108.29;
         ammo.bv = 0.216;
@@ -7332,7 +7328,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 116.62;
         ammo.bv = 0.233;
@@ -7358,7 +7354,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 133.28;
         ammo.bv = 0.266;
@@ -7384,7 +7380,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 141.61;
         ammo.bv = 0.283;
@@ -7410,7 +7406,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 149.94;
         ammo.bv = 0.3;
@@ -7436,7 +7432,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_PROTOMEK_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 158.27;
         ammo.bv = 0.316;
@@ -11897,7 +11893,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.kgPerShot = 0;
         ammo.bv = 0;
@@ -11921,7 +11917,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.cost = 30000;
@@ -11943,7 +11939,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2; // only used for ammo crits
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_NARC;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR).or(F_ENCUMBERING);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY).or(F_ENCUMBERING);
         ammo.shots = 1;
         ammo.explosive = false;
         ammo.bv = 0;
@@ -11969,7 +11965,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MINE;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 15000;
@@ -11995,7 +11991,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_MG_AMMO).or(F_PROTOMEK_ONLY);
         ammo.shots = 100;
         ammo.kgPerShot = 10;
         ammo.bv = 1;
@@ -12019,7 +12015,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_MG_AMMO).or(F_PROTOMEK_ONLY);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
@@ -12044,7 +12040,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
+        ammo.flags = ammo.flags.or(F_MG_AMMO).or(F_PROTOMEK_ONLY);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
@@ -12071,7 +12067,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -12098,7 +12094,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -12125,7 +12121,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -12152,7 +12148,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -12178,7 +12174,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -12206,7 +12202,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 8.3;
@@ -12230,7 +12226,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 16.6;
@@ -12254,7 +12250,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 25;
@@ -12278,7 +12274,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 33.3;
@@ -12302,7 +12298,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 41.5;
@@ -12327,7 +12323,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -12355,7 +12351,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
@@ -12383,7 +12379,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
@@ -12411,7 +12407,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 40;
@@ -12439,7 +12435,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
@@ -12467,7 +12463,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 60;
@@ -12496,7 +12492,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -12521,7 +12517,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 20;
@@ -12545,7 +12541,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 30;
@@ -12569,7 +12565,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 8;
         ammo.kgPerShot = 40;
@@ -12593,7 +12589,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 10;
         ammo.kgPerShot = 50;
@@ -12617,7 +12613,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 12;
         ammo.kgPerShot = 60;
@@ -12642,7 +12638,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
@@ -12667,7 +12663,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -12692,7 +12688,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 15;
@@ -12717,7 +12713,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
@@ -12742,7 +12738,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MRM;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 25;
@@ -12765,7 +12761,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TASER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "345, TO";
@@ -12791,7 +12787,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "261, TM";
@@ -12814,7 +12810,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "261, TM";
@@ -12837,7 +12833,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "261, TM";
@@ -12860,7 +12856,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "261, TM";
@@ -12883,7 +12879,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        ammo.flags = ammo.flags.or(F_BATTLEARMOR);
+        ammo.flags = ammo.flags.or(F_BATTLEARMOR_ONLY);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.rulesRefs = "261, TM";
@@ -14355,7 +14351,7 @@ public class AmmoType extends EquipmentType {
             return false;
         } else if (!(ammo.getType() instanceof AmmoType)) {
             return false;
-        } else if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
+        } else if (weaponType.hasFlag(EquipmentFlag.F_ONESHOT)) {
             return ammo.getUsableShotsLeft() > 0 && isAmmoValid((AmmoType) ammo.getType(), weaponType);
         } else {
             return ammo.isAmmoUsable() && isAmmoValid((AmmoType) ammo.getType(), weaponType);

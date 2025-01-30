@@ -15,7 +15,7 @@ package megamek.common.weapons.flamers;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
-import megamek.common.WeaponTypeFlag;
+import megamek.common.EquipmentFlag;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
@@ -32,7 +32,7 @@ public class ISERFlamer extends FlamerWeapon {
         addLookupName("IS ER Flamer");
         addLookupName("ISERFlamer");
         sortingName = "Flamer X ER";
-        flags = flags.or(WeaponTypeFlag.F_ER_FLAMER);
+        flags = flags.or(EquipmentFlag.F_ER_FLAMER);
         heat = 4;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

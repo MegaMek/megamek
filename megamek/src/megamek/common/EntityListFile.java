@@ -122,7 +122,7 @@ public class EntityListFile {
             }
 
             if ((mount.getType() instanceof WeaponType)
-                    && (mount.getType()).hasFlag(WeaponTypeFlag.F_ONESHOT)
+                    && (mount.getType()).hasFlag(EquipmentFlag.F_ONESHOT)
                     && (mount.getLinked() != null)) {
                 output.append("\" " + MULParser.ATTR_MUNITION + "=\"");
                 output.append(mount.getLinked().getType().getInternalName());
@@ -393,7 +393,7 @@ public class EntityListFile {
                     // and the ammunition shots of small SV weapons
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)
-                            && ((mount.getType()).hasFlag(WeaponTypeFlag.F_ONESHOT)
+                            && ((mount.getType()).hasFlag(EquipmentFlag.F_ONESHOT)
                                     || (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),

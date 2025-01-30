@@ -313,8 +313,8 @@ public class WeaponAttackActionToHitTest {
             assertEquals(11, toHit.getValue());
 
             // Let's test some common bombing scenarios
-            when(mockWeaponType.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)).thenReturn(true);
-            when(mockWeaponType.hasFlag(WeaponTypeFlag.F_ALT_BOMB)).thenReturn(false);
+            when(mockWeaponType.hasFlag(EquipmentFlag.F_DIVE_BOMB)).thenReturn(true);
+            when(mockWeaponType.hasFlag(EquipmentFlag.F_ALT_BOMB)).thenReturn(false);
             when(mockTarget.isHexBeingBombed()).thenReturn(true);
             when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_HEX_AERO_BOMB);
 
@@ -337,8 +337,8 @@ public class WeaponAttackActionToHitTest {
             }
 
             // Altitude Bombing should still work at low altitude
-            when(mockWeaponType.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)).thenReturn(false);
-            when(mockWeaponType.hasFlag(WeaponTypeFlag.F_ALT_BOMB)).thenReturn(true);
+            when(mockWeaponType.hasFlag(EquipmentFlag.F_DIVE_BOMB)).thenReturn(false);
+            when(mockWeaponType.hasFlag(EquipmentFlag.F_ALT_BOMB)).thenReturn(true);
             toHit = WeaponAttackAction.toHit(mockGame, 0, mockTarget, 0, false);
             assertEquals(11, toHit.getValue());
         }

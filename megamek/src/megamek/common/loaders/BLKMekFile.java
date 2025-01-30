@@ -276,7 +276,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                                 rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
                                 turretMounted);
                         mount.setOmniPodMounted(isOmniMounted);
-                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(EquipmentFlag.F_VGL)) {
                             // vehicular grenade launchers need to have their
                             // facing set
                             if (facing == -1) {

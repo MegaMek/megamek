@@ -14,7 +14,7 @@ package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 
-import static megamek.common.WeaponTypeFlag.F_MISSILE;
+import static megamek.common.EquipmentFlag.F_MISSILE;
 
 /**
  * @author Ben Grills

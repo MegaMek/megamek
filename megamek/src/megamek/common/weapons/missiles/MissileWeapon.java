@@ -26,7 +26,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 
 /**
  * @author Sebastian Brocks

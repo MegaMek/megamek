@@ -235,15 +235,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public boolean isDiveBomb(Game game) {
-        return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponTypeFlag.F_DIVE_BOMB);
+        return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(EquipmentFlag.F_DIVE_BOMB);
     }
 
     public int getAltitudeLoss(Game game) {
         if (isAirToGround(game)) {
-            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                 return 2;
             }
-            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+            if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                 return 0;
             }
             if (isStrafing) {
@@ -368,7 +368,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         boolean isAttackerInfantry = ae instanceof Infantry;
 
-        boolean isWeaponInfantry = wtype.hasFlag(WeaponTypeFlag.F_INFANTRY) && !ae.isSupportVehicle();
+        boolean isWeaponInfantry = wtype.hasFlag(EquipmentFlag.F_INFANTRY) && !ae.isSupportVehicle();
 
         boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
@@ -417,14 +417,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
             || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
             || (atype.getAmmoType() == AmmoType.T_MML))
             && (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))
-            || (isWeaponInfantry && (wtype.hasFlag(WeaponTypeFlag.F_INFERNO))));
+            || (isWeaponInfantry && (wtype.hasFlag(EquipmentFlag.F_INFERNO))));
 
-        boolean isArtilleryDirect = (wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY) ||
+        boolean isArtilleryDirect = (wtype.hasFlag(EquipmentFlag.F_ARTILLERY) ||
             (wtype instanceof CapitalMissileWeapon
                 && Compute.isGroundToGround(ae, target)))
             && game.getPhase().isFiring();
 
-        boolean isArtilleryIndirect = (wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY) ||
+        boolean isArtilleryIndirect = (wtype.hasFlag(EquipmentFlag.F_ARTILLERY) ||
             (wtype instanceof CapitalMissileWeapon
                 && Compute.isGroundToGround(ae, target)))
             && (game.getPhase().isTargeting() || game.getPhase().isOffboard());
@@ -432,7 +432,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isBearingsOnlyMissile = (weapon.isInBearingsOnlyMode())
             && (game.getPhase().isTargeting() || game.getPhase().isFiring());
 
-        boolean isCruiseMissile = (weapon.getType().hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)
+        boolean isCruiseMissile = (weapon.getType().hasFlag(EquipmentFlag.F_CRUISE_MISSILE)
             || (wtype instanceof CapitalMissileWeapon
             && Compute.isGroundToGround(ae, target)));
 
@@ -452,7 +452,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae, target.getPosition(), target.getPosition(),
             allECMInfo);
 
-        boolean isTAG = wtype.hasFlag(WeaponTypeFlag.F_TAG);
+        boolean isTAG = wtype.hasFlag(EquipmentFlag.F_TAG);
 
         // target type checked later because its different for
         // direct/indirect (BMRr p77 on board arrow IV)
@@ -501,7 +501,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // If the artillery bay is firing cruise missiles, they have some special rules
                 // It is possible to combine cruise missiles and other artillery in a bay, so
                 // set this to true if any of the weapons are cruise missile launchers.
-                if (bayW.getType().hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)) {
+                if (bayW.getType().hasFlag(EquipmentFlag.F_CRUISE_MISSILE)) {
                     isCruiseMissile = true;
                 }
 
@@ -633,7 +633,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
 
-            if (wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT) && isIndirect) {
+            if (wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT) && isIndirect) {
                 los.setArcedAttack(true);
             }
 
@@ -663,7 +663,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
 
-            if (wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT) || semiGuidedIndirectVsTaggedTarget) {
+            if (wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT) || semiGuidedIndirectVsTaggedTarget) {
                 los.setArcedAttack(true);
             }
 
@@ -723,17 +723,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Start with the attacker's weapon skill
         toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
         if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+            if (wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
                 toHit = new ToHitData(ae.getCrew().getGunneryL(), Messages.getString("WeaponAttackAction.GunLSkill"));
             }
-            if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+            if (wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                 toHit = new ToHitData(ae.getCrew().getGunneryM(), Messages.getString("WeaponAttackAction.GunMSkill"));
             }
-            if (wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC)) {
+            if (wtype.hasFlag(EquipmentFlag.F_BALLISTIC)) {
                 toHit = new ToHitData(ae.getCrew().getGunneryB(), Messages.getString("WeaponAttackAction.GunBSkill"));
             }
         }
-        if (wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)
+        if (wtype.hasFlag(EquipmentFlag.F_ARTILLERY)
             && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             toHit = new ToHitData(ae.getCrew().getArtillery(), Messages.getString("WeaponAttackAction.ArtySkill"));
         }
@@ -1072,7 +1072,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Some Mek mortar ammo types can only be aimed at a hex
-            if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_MEK_MORTAR)
+            if (wtype != null && wtype.hasFlag(EquipmentFlag.F_MEK_MORTAR)
                 && ((atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))
                 || (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE))
                 || (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)))) {
@@ -1303,7 +1303,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Tasers must target units and can't target flying units
-        if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_TASER)) {
+        if (wtype != null && wtype.hasFlag(EquipmentFlag.F_TASER)) {
             if (te != null) {
                 if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
                     return Messages.getString("WeaponAttackAction.NoTaserAtAirborne");
@@ -1482,9 +1482,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ((ae instanceof LandAirMek)
             && wtype != null
             && (ae.getConversionMode() == LandAirMek.CONV_MODE_MEK)
-            && wtype.hasFlag(WeaponTypeFlag.F_BOMB_WEAPON)
+            && wtype.hasFlag(EquipmentFlag.F_BOMB_WEAPON)
             && wtype.getAmmoType() != AmmoType.T_RL_BOMB
-            && !wtype.hasFlag(WeaponTypeFlag.F_TAG)) {
+            && !wtype.hasFlag(EquipmentFlag.F_TAG)) {
             return Messages.getString("WeaponAttackAction.NoBombInMekMode");
         }
 
@@ -1617,7 +1617,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Protomeks can't fire energy weapons while charging EDP armor
         if ((ae instanceof ProtoMek) && ((ProtoMek) ae).isEDPCharging()
-            && wtype != null && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+            && wtype != null && wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
             return Messages.getString("WeaponAttackAction.ChargingEDP");
         }
 
@@ -1641,7 +1641,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                 && wtype != null
                 // Unless the weapon is used as artillery
-                && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)
+                && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(EquipmentFlag.F_ARTILLERY)
                 || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon)
                 || isIndirect))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
@@ -1650,7 +1650,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // or higher
             if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)
                 && wtype != null
-                && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY))) {
+                && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(EquipmentFlag.F_ARTILLERY))) {
                 return Messages.getString("WeaponAttackAction.TooLowForFrontSide");
             }
             // Aft-mounted weapons can only be fired at targets at least 1 altitude lower
@@ -1715,7 +1715,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Anti-Infantry weapons can only target infantry
-            if (wtype.hasFlag(WeaponTypeFlag.F_INFANTRY_ONLY)) {
+            if (wtype.hasFlag(EquipmentFlag.F_INFANTRY_ONLY)) {
                 if ((te != null) && !(te instanceof Infantry)) {
                     return Messages.getString("WeaponAttackAction.TargetOnlyInf");
                 }
@@ -1728,7 +1728,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
                 // Can't strike from above altitude 5. Dive bombing uses a different test below
                 if ((ae.getAltitude() > 5)
-                    && !wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB) && !wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                    && !wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB) && !wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
                 // Can't strafe from above altitude 3
@@ -1760,10 +1760,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
 
                 // Only direct-fire energy weapons can strafe
-                boolean isDirectFireEnergy = (wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                    && (wtype.hasFlag(WeaponTypeFlag.F_LASER) || wtype.hasFlag(WeaponTypeFlag.F_PPC)
-                    || wtype.hasFlag(WeaponTypeFlag.F_PLASMA) || wtype.hasFlag(WeaponTypeFlag.F_PLASMA_MFUK)))
-                    || wtype.hasFlag(WeaponTypeFlag.F_FLAMER);
+                boolean isDirectFireEnergy = (wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                    && (wtype.hasFlag(EquipmentFlag.F_LASER) || wtype.hasFlag(EquipmentFlag.F_PPC)
+                    || wtype.hasFlag(EquipmentFlag.F_PLASMA) || wtype.hasFlag(EquipmentFlag.F_PLASMA_MFUK)))
+                    || wtype.hasFlag(EquipmentFlag.F_FLAMER);
                 // Note: flamers are direct fire energy, but don't have the flag,
                 // so they won't work with targeting computers
                 boolean isEnergyBay = (wtype instanceof LaserBayWeapon) || (wtype instanceof PPCBayWeapon)
@@ -1803,7 +1803,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // the flight path, unless it is an artillery weapon in the nose.
                 // http://www.classicbattletech.com/forums/index.php?topic=65110.0
                 if (!ae.passedOver(target)) {
-                    if (!wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                    if (!wtype.hasFlag(EquipmentFlag.F_ARTILLERY)) {
                         return Messages.getString("WeaponAttackAction.NotOnFlightPath");
                     } else if (weapon.getLocation() != Aero.LOC_NOSE) {
                         return Messages.getString("WeaponAttackAction.NotOnFlightPath");
@@ -1813,11 +1813,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // Strike attacks cost the attacker 1 altitude
                 int altitudeLoss = 1;
                 // Dive bombing costs 2 altitude
-                if (wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+                if (wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                     altitudeLoss = 2;
                 }
                 // Altitude bombing and strafing cost nothing
-                if (wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB) || isStrafing) {
+                if (wtype.hasFlag(EquipmentFlag.F_ALT_BOMB) || isStrafing) {
                     altitudeLoss = 0;
                 }
                 int altLossThisRound = 0;
@@ -1839,17 +1839,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
                         WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
                         if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getId())
-                            && !wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                            && !wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                             return Messages.getString("WeaponAttackAction.CantSplitFire");
                         }
                     }
                 }
                 // VTOL Strafing
             } else if ((ae instanceof VTOL) && isStrafing) {
-                if (!(wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                    && (wtype.hasFlag(WeaponTypeFlag.F_LASER) || wtype.hasFlag(WeaponTypeFlag.F_PPC)
-                    || wtype.hasFlag(WeaponTypeFlag.F_PLASMA) || wtype.hasFlag(WeaponTypeFlag.F_PLASMA_MFUK)))
-                    || wtype.hasFlag(WeaponTypeFlag.F_FLAMER)) {
+                if (!(wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                    && (wtype.hasFlag(EquipmentFlag.F_LASER) || wtype.hasFlag(EquipmentFlag.F_PPC)
+                    || wtype.hasFlag(EquipmentFlag.F_PLASMA) || wtype.hasFlag(EquipmentFlag.F_PLASMA_MFUK)))
+                    || wtype.hasFlag(EquipmentFlag.F_FLAMER)) {
                     return Messages.getString("WeaponAttackAction.StrafeDirectEnergyOnly");
                 }
                 if (weapon.getLocation() != VTOL.LOC_FRONT
@@ -1862,7 +1862,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Artillery
 
             // Arty shots have to be with arty, non arty shots with non arty.
-            if (wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+            if (wtype.hasFlag(EquipmentFlag.F_ARTILLERY)) {
 
                 // Don't allow Artillery Flak attacks by off-board artillery.
                 if (te != null && te.isAirborne() && ae.isOffBoard()) {
@@ -2007,12 +2007,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Ballistic and Missile weapons are subject to wind conditions
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.getWind().isTornadoF1ToF3() && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)
+            if (conditions.getWind().isTornadoF1ToF3() && wtype.hasFlag(EquipmentFlag.F_MISSILE)
                 && !game.getBoard().inSpace()) {
                 return Messages.getString("WeaponAttackAction.NoMissileTornado");
             }
-            boolean missleOrBallistic = wtype.hasFlag(WeaponTypeFlag.F_MISSILE)
-                || wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC);
+            boolean missleOrBallistic = wtype.hasFlag(EquipmentFlag.F_MISSILE)
+                || wtype.hasFlag(EquipmentFlag.F_BALLISTIC);
             if (conditions.getWind().isTornadoF4()
                 && !game.getBoard().inSpace()
                 && missleOrBallistic) {
@@ -2022,7 +2022,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Battle Armor
 
             // BA can only make one AP attack
-            if ((ae instanceof BattleArmor) && wtype.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+            if ((ae instanceof BattleArmor) && wtype.hasFlag(EquipmentFlag.F_INFANTRY)) {
                 final int weapId = ae.getEquipmentNum(weapon);
                 // See if this unit has made a previous AP attack
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
@@ -2035,7 +2035,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     if (prevAttack.getEntityId() == ae.getId()) {
                         Mounted<?> prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                         WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                        if (prevWtype.hasFlag(WeaponTypeFlag.F_INFANTRY) && (prevAttack.getWeaponId() != weapId)) {
+                        if (prevWtype.hasFlag(EquipmentFlag.F_INFANTRY) && (prevAttack.getWeaponId() != weapId)) {
                             return Messages.getString("WeaponAttackAction.OnlyOneBAAPAttack");
                         }
                     }
@@ -2071,7 +2071,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // BA NARCs and Tasers can only fire at one target in a round
             if ((ae instanceof BattleArmor)
-                && (wtype.hasFlag(WeaponTypeFlag.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
+                && (wtype.hasFlag(EquipmentFlag.F_TASER) || wtype.getAmmoType() == AmmoType.T_NARC)) {
                 // Go through all of the current actions to see if a NARC or Taser
                 // has been fired
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
@@ -2084,8 +2084,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     if (prevAttack.getEntityId() == ae.getId() && prevAttack.getTargetId() != target.getId()) {
                         Mounted<?> prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                         WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                        if (prevWeapon.getType().hasFlag(WeaponTypeFlag.F_TASER)
-                            && weapon.getType().hasFlag(WeaponTypeFlag.F_TASER)) {
+                        if (prevWeapon.getType().hasFlag(EquipmentFlag.F_TASER)
+                            && weapon.getType().hasFlag(EquipmentFlag.F_TASER)) {
                             return Messages.getString("WeaponAttackAction.BATaserSameTarget");
                         }
                         if (prevWtype.getAmmoType() == AmmoType.T_NARC && wtype.getAmmoType() == AmmoType.T_NARC) {
@@ -2105,7 +2105,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Bombs and such
 
             // Anti ship missiles can't be launched from altitude 3 or lower
-            if (wtype.hasFlag(WeaponTypeFlag.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
+            if (wtype.hasFlag(EquipmentFlag.F_ANTI_SHIP) && !game.getBoard().inSpace() && (ae.getAltitude() < 4)) {
                 return Messages.getString("WeaponAttackAction.TooLowForASM");
             }
 
@@ -2132,17 +2132,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         // and Altitude
                         if ((weaponId != prevAttack.getWeaponId())
                             && ae.getEquipment(prevAttack.getWeaponId()).getType()
-                            .hasFlag(WeaponTypeFlag.F_SPACE_BOMB)) {
+                            .hasFlag(EquipmentFlag.F_SPACE_BOMB)) {
                             return Messages.getString("WeaponAttackAction.BusySpaceBombing");
                         }
                         if ((weaponId != prevAttack.getWeaponId())
                             && ae.getEquipment(prevAttack.getWeaponId()).getType()
-                            .hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+                            .hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                             return Messages.getString("WeaponAttackAction.BusyDiveBombing");
                         }
                         if ((weaponId != prevAttack.getWeaponId())
-                            && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
-                            if (!wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                            && ae.getEquipment(prevAttack.getWeaponId()).getType().hasFlag(EquipmentFlag.F_ALT_BOMB)) {
+                            if (!wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                                 return Messages.getString("WeaponAttackAction.BusyAltBombing");
                             }
                             firstAltBomb = false;
@@ -2158,15 +2158,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         }
                     }
                 }
-                if (wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB) && !firstAltBomb && !adjacentAltBomb) {
+                if (wtype.hasFlag(EquipmentFlag.F_ALT_BOMB) && !firstAltBomb && !adjacentAltBomb) {
                     return Messages.getString("WeaponAttackAction.BombNotInLine");
                 }
             }
 
             // Altitude and dive bombing attacks...
-            if (wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB) || wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+            if (wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB) || wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                 // Can't fire if the unit is out of bombs
-                if (ae.getBombs(AmmoTypeFlag.F_GROUND_BOMB).isEmpty()) {
+                if (ae.getBombs(EquipmentFlag.F_GROUND_BOMB).isEmpty()) {
                     return Messages.getString("WeaponAttackAction.OutOfBombs");
                 }
                 // Spheroid Aeros can't bomb
@@ -2187,7 +2187,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
                 // Dive Bombing can only be conducted if starting between altitude 5 and
                 // altitude 3
-                if (wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+                if (wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                     if (ae.getAltitude() > MMConstants.DIVE_BOMB_MAX_ALTITUDE) {
                         return Messages.getString("WeaponAttackAction.TooHighForDiveBomb");
                     }
@@ -2201,8 +2201,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Can't attack bomb hex targets with weapons other than alt/dive bombs
-            if ((target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) && !wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
-                && !wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+            if ((target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) && !wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB)
+                && !wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                 return Messages.getString("WeaponAttackAction.InvalidForBombing");
             }
 
@@ -2226,7 +2226,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Space bombing attacks
-            if (wtype.hasFlag(WeaponTypeFlag.F_SPACE_BOMB) && te != null) {
+            if (wtype.hasFlag(EquipmentFlag.F_SPACE_BOMB) && te != null) {
                 toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
                 // Return if the attack is impossible.
                 if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
@@ -2236,7 +2236,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // B-Pods
 
-            if (wtype.hasFlag(WeaponTypeFlag.F_B_POD)) {
+            if (wtype.hasFlag(EquipmentFlag.F_B_POD)) {
                 // B-Pods are only effective against infantry
                 if (!(target instanceof Infantry)) {
                     return Messages.getString("WeaponAttackAction.BPodOnlyAtInf");
@@ -2266,7 +2266,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Capital Mass Drivers can only fire at targets directly in front of the
             // attacker
-            if ((target.getTargetType() == Targetable.TYPE_ENTITY) && wtype.hasFlag(WeaponTypeFlag.F_MASS_DRIVER)
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY) && wtype.hasFlag(EquipmentFlag.F_MASS_DRIVER)
                 && (ae instanceof SpaceStation)) {
                 if (!ae.getPosition().translated(ae.getFacing(), Compute.effectiveDistance(game, ae, target))
                     .equals(target.getPosition())) {
@@ -2306,7 +2306,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Causing Fires
 
             // Some weapons can't cause fires, but Infernos always can.
-            if ((vf_cool || (wtype.hasFlag(WeaponTypeFlag.F_NO_FIRES) && !isInferno))
+            if ((vf_cool || (wtype.hasFlag(EquipmentFlag.F_NO_FIRES) && !isInferno))
                 && (Targetable.TYPE_HEX_IGNITE == target.getTargetType())) {
                 return Messages.getString("WeaponAttackAction.WeaponCantIgnite");
             }
@@ -2351,9 +2351,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                     if (prevAttack.getEntityId() == attackerId) {
                         Mounted<?> prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                        if ((prevWeapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
+                        if ((prevWeapon.getType().hasFlag(EquipmentFlag.F_INFANTRY)
                             && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS))
-                            || (weapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
+                            || (weapon.getType().hasFlag(EquipmentFlag.F_INFANTRY)
                             && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
                             return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                         }
@@ -2368,14 +2368,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // to extinguish burning hexes (and units).
             // TODO: This functionality does not appear to be implemented
             if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {
-                if (!wtype.hasFlag(WeaponTypeFlag.F_EXTINGUISHER) && !vf_cool) {
+                if (!wtype.hasFlag(EquipmentFlag.F_EXTINGUISHER) && !vf_cool) {
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getBoard().getHex(target.getPosition());
                 if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
-            } else if (wtype.hasFlag(WeaponTypeFlag.F_EXTINGUISHER)) {
+            } else if (wtype.hasFlag(EquipmentFlag.F_EXTINGUISHER)) {
                 if (!(((target instanceof Tank) && ((Tank) target).isOnFire())
                     || ((target instanceof Entity) && (((Entity) target).infernos.getTurnsLeftToBurn() > 0)))) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
@@ -2419,7 +2419,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // specialized AA infantry weapons,
             // or direct-fire artillery flak attacks
             boolean isWeaponFieldGuns = isAttackerInfantry && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
-            if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponTypeFlag.F_INF_AA)
+            if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(EquipmentFlag.F_INF_AA)
                 && !isArtilleryFLAK
                 && !isWeaponFieldGuns) {
                 return Messages.getString("WeaponAttackAction.NoInfantryGta");
@@ -2465,7 +2465,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Can't fire an MML indirectly when loaded with SRM munitions
             if (isIndirect && usesAmmo
-                && atype != null && (atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                && atype != null && (atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(EquipmentFlag.F_MML_LRM)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectSRM");
             }
 
@@ -2475,7 +2475,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (isIndirect) {
                 if ((spotter == null) && !(wtype instanceof ArtilleryCannonWeapon)
                     && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
-                    && !wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT)) {
+                    && !wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT)) {
                     return Messages.getString("WeaponAttackAction.NoSpotter");
                 }
             }
@@ -2530,7 +2530,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     return Messages.getString("WeaponAttackAction.0DamageWeapon");
                 }
                 // Missiles and BA body-mounted weapons cannot be used when swarming
-                if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                if (wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     return Messages.getString("WeaponAttackAction.NoMissileWhenSwarming");
                 }
                 if (weapon.isBodyMounted()) {
@@ -2543,13 +2543,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // MG arrays
 
             // Can't fire one if none of the component MGs are functional
-            if (wtype.hasFlag(WeaponTypeFlag.F_MGA) && (weapon.getCurrentShots() == 0)) {
+            if (wtype.hasFlag(EquipmentFlag.F_MGA) && (weapon.getCurrentShots() == 0)) {
                 return Messages.getString("WeaponAttackAction.NoWorkingMGs");
             }
             // Or if the array is off
-            if (wtype.hasFlag(WeaponTypeFlag.F_MGA) && weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_AMS_OFF)) {
+            if (wtype.hasFlag(EquipmentFlag.F_MGA) && weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_AMS_OFF)) {
                 return Messages.getString("WeaponAttackAction.MGArrayOff");
-            } else if (wtype.hasFlag(WeaponTypeFlag.F_MG)) {
+            } else if (wtype.hasFlag(EquipmentFlag.F_MG)) {
                 // and you can't fire an individual MG if it's in an array
                 if (ae.hasLinkedMGA(weapon)) {
                     return Messages.getString("WeaponAttackAction.MGPartOfArray");
@@ -2558,7 +2558,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // Protomek can fire MGA only into front arc, TW page 137
             if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)
-                && wtype.hasFlag(WeaponTypeFlag.F_MGA) && (ae instanceof ProtoMek)) {
+                && wtype.hasFlag(EquipmentFlag.F_MGA) && (ae instanceof ProtoMek)) {
                 return Messages.getString("WeaponAttackAction.ProtoMGAOnlyFront");
             }
 
@@ -2575,7 +2575,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // PPCs linked to capacitors can't fire while charging
-            if (weapon.getType().hasFlag(WeaponTypeFlag.F_PPC) && (weapon.getLinkedBy() != null)
+            if (weapon.getType().hasFlag(EquipmentFlag.F_PPC) && (weapon.getLinkedBy() != null)
                 && weapon.getLinkedBy().getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
                 && weapon.getLinkedBy().pendingMode().equals(Weapon.MODE_PPC_CHARGE)) {
                 return Messages.getString("WeaponAttackAction.PPCCharging");
@@ -2595,7 +2595,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         continue;
                     }
                     final WeaponType otherWtype = (WeaponType) otherWeapon.getType();
-                    hasSoloAttack |= (otherWtype.hasFlag(WeaponTypeFlag.F_SOLO_ATTACK)
+                    hasSoloAttack |= (otherWtype.hasFlag(EquipmentFlag.F_SOLO_ATTACK)
                         && otherWAA.getWeaponId() != weaponId);
                     if (hasSoloAttack) {
                         soloWeaponName = otherWeapon.getName();
@@ -2608,7 +2608,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             // Handle solo attack weapons.
-            if (wtype.hasFlag(WeaponTypeFlag.F_SOLO_ATTACK)) {
+            if (wtype.hasFlag(EquipmentFlag.F_SOLO_ATTACK)) {
                 for (EntityAction ea : game.getActionsVector()) {
                     if (!(ea instanceof WeaponAttackAction)) {
                         continue;
@@ -2657,12 +2657,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // TSEMPs
 
             // Can't fire a one-shot TSEMP more than once
-            if (wtype.hasFlag(WeaponTypeFlag.F_TSEMP) && wtype.hasFlag(WeaponTypeFlag.F_ONESHOT) && weapon.isFired()) {
+            if (wtype.hasFlag(EquipmentFlag.F_TSEMP) && wtype.hasFlag(EquipmentFlag.F_ONESHOT) && weapon.isFired()) {
                 return Messages.getString("WeaponAttackAction.OneShotTSEMP");
             }
 
             // Can't fire a regular TSEMP while it is recharging
-            if (wtype.hasFlag(WeaponTypeFlag.F_TSEMP) && weapon.isFired()) {
+            if (wtype.hasFlag(EquipmentFlag.F_TSEMP) && weapon.isFired()) {
                 return Messages.getString("WeaponAttackAction.TSEMPRecharging");
             }
 
@@ -2696,7 +2696,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             // If you're an aero, can't fire an AMS Bay at all or a Point Defense bay that's
             // in PD Mode
-            if (wtype.hasFlag(WeaponTypeFlag.F_AMSBAY)) {
+            if (wtype.hasFlag(EquipmentFlag.F_AMSBAY)) {
                 return Messages.getString("WeaponAttackAction.AutoWeapon");
             } else if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)) {
                 return Messages.getString("WeaponAttackAction.PDWeapon");
@@ -2767,7 +2767,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Special Weapon Rules
 
         // B-Pod firing at infantry in the same hex autohit
-        if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_B_POD) && (target instanceof Infantry)
+        if (wtype != null && wtype.hasFlag(EquipmentFlag.F_B_POD) && (target instanceof Infantry)
             && target.getPosition().equals(ae.getPosition())) {
             return Messages.getString("WeaponAttackAction.BPodAtInf");
         }
@@ -2786,7 +2786,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Vehicular grenade launchers
-        if (weapon != null && weapon.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+        if (weapon != null && weapon.getType().hasFlag(EquipmentFlag.F_VGL)) {
             int facing = weapon.getFacing();
             if (ae.isSecondaryArcWeapon(ae.getEquipmentNum(weapon))) {
                 facing = (facing + ae.getSecondaryFacing()) % 6;
@@ -3009,26 +3009,26 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // wind mods (not in space)
         if (!game.getBoard().inSpace()) {
             if (conditions.getWind().isModerateGale()) {
-                if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                if (wtype != null && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isModerateGale()) {
-                if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC) && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                if (wtype != null && wtype.hasFlag(EquipmentFlag.F_BALLISTIC) && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(1, conditions.getWind().toString());
-                } else if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                } else if (wtype != null && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isStorm()) {
-                if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC) && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                if (wtype != null && wtype.hasFlag(EquipmentFlag.F_BALLISTIC) && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
-                } else if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                } else if (wtype != null && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isTornadoF1ToF3()) {
-                if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+                if (wtype != null && wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
                     weatherToHitMods.addModifier(2, conditions.getWind().toString());
-                } else if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC)
-                    && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                } else if (wtype != null && wtype.hasFlag(EquipmentFlag.F_BALLISTIC)
+                    && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     weatherToHitMods.addModifier(3, conditions.getWind().toString());
                 }
             } else if (conditions.getWind().isTornadoF4()) {
@@ -3038,7 +3038,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // fog mods (not in space)
         if (wtype != null
-            && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
+            && wtype.hasFlag(EquipmentFlag.F_ENERGY)
             && !game.getBoard().inSpace()
             && conditions.getFog().isFogHeavy()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.HeavyFog"));
@@ -3046,7 +3046,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // blowing sand mods
         if (wtype != null
-            && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
+            && wtype.hasFlag(EquipmentFlag.F_ENERGY)
             && !game.getBoard().inSpace()
             && conditions.isBlowingSandActive()) {
             weatherToHitMods.addModifier(1, Messages.getString("WeaponAttackAction.BlowingSand"));
@@ -3063,8 +3063,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (!game.getBoard().inSpace()) {
             int mod = (int) Math.floor(Math.abs((conditions.getGravity() - 1.0f) / 0.2f));
             if ((mod != 0) && wtype != null &&
-                ((wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC) && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE))
-                    || wtype.hasFlag(WeaponTypeFlag.F_MISSILE))) {
+                ((wtype.hasFlag(EquipmentFlag.F_BALLISTIC) && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE))
+                    || wtype.hasFlag(EquipmentFlag.F_MISSILE))) {
                 toHit.addModifier(mod, Messages.getString("WeaponAttackAction.Gravity"));
             }
         }
@@ -3125,7 +3125,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // +4 for trying to fire ASEW or antiship missile at a target of < 500 tons
-        if ((wtype.hasFlag(WeaponTypeFlag.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
+        if ((wtype.hasFlag(EquipmentFlag.F_ANTI_SHIP) || wtype.getAmmoType() == AmmoType.T_ASEW_MISSILE)
             && (te != null) && (te.getWeight() < 500)) {
             toHit.addModifier(4, Messages.getString("WeaponAttackAction.TeTooSmallForASM"));
         }
@@ -3159,7 +3159,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Capital ship mass driver penalty. YOU try hitting a maneuvering target with a
         // spinal-mount weapon!
-        if (wtype.hasFlag(WeaponTypeFlag.F_MASS_DRIVER)) {
+        if (wtype.hasFlag(EquipmentFlag.F_MASS_DRIVER)) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MassDriver"));
         }
 
@@ -3247,7 +3247,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // And if this is a Mek Mortar
-        if (wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT)) {
+        if (wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT)) {
             if (isIndirect) {
                 // +2 penalty if there's no spotting entity
                 if (spotter == null) {
@@ -3678,9 +3678,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
-            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                && !wtype.hasFlag(WeaponTypeFlag.F_CWS)
-                && !wtype.hasFlag(WeaponTypeFlag.F_TASER)
+            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                && !wtype.hasFlag(EquipmentFlag.F_CWS)
+                && !wtype.hasFlag(EquipmentFlag.F_TASER)
                 && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
             }
@@ -3787,7 +3787,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Secondary targets modifier, if this is not a iNarc Nemesis confused attack
         // Also does not apply for altitude bombing or strafing
-        if (!isNemesisConfused && wtype != null && !wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB) && !isStrafing) {
+        if (!isNemesisConfused && wtype != null && !wtype.hasFlag(EquipmentFlag.F_ALT_BOMB) && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         }
 
@@ -3810,9 +3810,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             boolean usesHAGFlak = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null) && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null) && (munition.contains(AmmoType.Munitions.M_FLAK));
-            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                && !wtype.hasFlag(WeaponTypeFlag.F_CWS)
-                && !wtype.hasFlag(WeaponTypeFlag.F_TASER)
+            if (ae.hasTargComp() && wtype != null && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                && !wtype.hasFlag(EquipmentFlag.F_CWS)
+                && !wtype.hasFlag(EquipmentFlag.F_TASER)
                 && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TComp"));
             }
@@ -3895,7 +3895,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (Compute.isAirToGround(ae, target)
                 || (ae.isMakingVTOLGroundAttack())) {
                 // When altitude bombing, add the altitude as a modifier
-                if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                if (wtype != null && wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                     toHit.addModifier(ae.getAltitude(), Messages.getString("WeaponAttackAction.BombAltitude"));
                     // -2 for the Golden Goose SPA
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -3918,7 +3918,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     // +2 modifier for striking
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AtgStrike"));
                     if (ae.hasAbility(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
-                        if (wtype != null && wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+                        if (wtype != null && wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                             // -2 for the Golden Goose SPA if dive bombing
                             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GoldenGoose"));
                         } else {
@@ -4046,7 +4046,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         AmmoMounted bammo = bweap.getLinkedAmmo();
                         if (bammo != null) {
                             AmmoType batype = bammo.getType();
-                            if (!batype.hasFlag(AmmoTypeFlag.F_AR10_BARRACUDA)) {
+                            if (!batype.hasFlag(EquipmentFlag.F_AR10_BARRACUDA)) {
                                 onlyBarracuda = false;
                             }
                         }
@@ -4315,8 +4315,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
                 int tcMod = 0;
                 if (ae.hasTargComp() && wtype != null
-                    && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE) && !wtype.hasFlag(WeaponTypeFlag.F_CWS)
-                    && !wtype.hasFlag(WeaponTypeFlag.F_TASER) && (atype != null)
+                    && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE) && !wtype.hasFlag(EquipmentFlag.F_CWS)
+                    && !wtype.hasFlag(EquipmentFlag.F_TASER) && (atype != null)
                     && (!usesAmmo || !(((atype.getAmmoType() == AmmoType.T_AC_LBX)
                     || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
                     && (munition.contains(AmmoType.Munitions.M_CLUSTER))))) {
@@ -4394,7 +4394,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // target immobile
-        boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(WeaponTypeFlag.F_MEK_MORTAR)
+        boolean mekMortarMunitionsIgnoreImmobile = wtype != null && wtype.hasFlag(EquipmentFlag.F_MEK_MORTAR)
             && (atype != null) && (munition.contains(AmmoType.Munitions.M_AIRBURST));
         if (wtype != null && !(wtype instanceof ArtilleryCannonWeapon) && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod;
@@ -4595,8 +4595,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Also don't apply to ADA Missiles (range computed separately)
         if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition()))
             && (wtype != null
-            && (!(wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)
-            || wtype.hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
+            && (!(wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)
+            || wtype.hasFlag(EquipmentFlag.F_DIVE_BOMB)
             || (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA))))
             && weaponId > WeaponType.WEAPON_NA)) {
             toHit.append(Compute.getRangeMods(game, ae, weapon, ammo, target));
@@ -4617,7 +4617,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             Compute.isTargetTagged(target, game);
 
         // TW p.111
-        boolean indirectMortarWithoutSpotter = (wtype != null) && wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT)
+        boolean indirectMortarWithoutSpotter = (wtype != null) && wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT)
             && isIndirect && (Compute.findSpotter(game, ae, target) == null);
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
@@ -4628,7 +4628,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Fortified/Dug-In Infantry
-        if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(WeaponTypeFlag.F_FLAMER)) {
+        if ((target instanceof Infantry) && wtype != null && !wtype.hasFlag(EquipmentFlag.F_FLAMER)) {
             if (targetHexContainsFortified
                 || (((Infantry) target).getDugIn() == Infantry.DUG_IN_COMPLETE)) {
                 toHit.addModifier(2, Messages.getString("WeaponAttackAction.DugInInf"));
@@ -4873,7 +4873,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Engineer's fire extinguisher has fixed to hit number,
         // Note that coolant trucks make a regular attack.
-        if (wtype.hasFlag(WeaponTypeFlag.F_EXTINGUISHER)) {
+        if (wtype.hasFlag(EquipmentFlag.F_EXTINGUISHER)) {
             toHit = new ToHitData(8, Messages.getString("WeaponAttackAction.FireExt"));
             if (((target instanceof Entity) && ((Entity) target).infernos.isStillBurning())
                 || ((target instanceof Tank) && ((Tank) target).isInfernoFire())) {
@@ -4888,7 +4888,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // if this is a space bombing attack then get the to hit and return
-        if (wtype.hasFlag(WeaponTypeFlag.F_SPACE_BOMB)) {
+        if (wtype.hasFlag(EquipmentFlag.F_SPACE_BOMB)) {
             if (te != null) {
                 toHit = Compute.getSpaceBombBaseToHit(ae, te, game);
                 srt.setSpecialResolution(true);
@@ -5485,17 +5485,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (wtype != null) {
             // Unofficial weapon class specialist - Does not have an unspecialized penalty
             if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_LASER)
-                && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+                && wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunLSkill"));
             }
 
             if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
-                && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC)) {
+                && wtype.hasFlag(EquipmentFlag.F_BALLISTIC)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunBSkill"));
             }
 
             if (ae.hasAbility(OptionsConstants.UNOFF_GUNNERY_MISSILE)
-                && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.GunMSkill"));
             }
 
@@ -5513,19 +5513,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // Note that weapon specialist supersedes gunnery specialization, so if you have
                 // a specialization in Medium Lasers and a Laser specialization, you only get
                 // the -2 specialization mod
-                if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+                if (wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
                     if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
-                } else if (wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC)) {
+                } else if (wtype.hasFlag(EquipmentFlag.F_BALLISTIC)) {
                     if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_BALLISTIC)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BallisticSpec"));
                     } else {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.Unspec"));
                     }
-                } else if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                } else if (wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.MissileSpec"));
                     } else {
@@ -5541,7 +5541,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
                 // Fog Specialist
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
-                    && wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
+                    && wtype.hasFlag(EquipmentFlag.F_ENERGY)
                     && !game.getBoard().inSpace()
                     && conditions.getFog().isFogHeavy()) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
@@ -5581,7 +5581,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
 
                     if (conditions.getWeather().isIceStorm()
-                        && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                        && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
@@ -5594,12 +5594,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                     .equals(Crew.ENVSPC_WIND)) {
                     if (conditions.getWind().isModerateGale()
-                        && wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                        && wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
                     }
 
-                    if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)
-                        && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC)
+                    if (wtype.hasFlag(EquipmentFlag.F_MISSILE)
+                        && wtype.hasFlag(EquipmentFlag.F_BALLISTIC)
                         && conditions.getWind().isStrongGaleOrStorm()) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                     }

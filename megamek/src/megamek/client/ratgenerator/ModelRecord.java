@@ -533,7 +533,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Add the spotter role to all units which carry TAG
-                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponTypeFlag.F_TAG)) {
+                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(EquipmentFlag.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                     losTech = true;
                     continue;
@@ -542,14 +542,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 totalWeaponBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
 
                 // Check for C3 master units. These are bit-masked values.
-                if (eq.hasFlag(WeaponTypeFlag.F_C3M)) {
+                if (eq.hasFlag(EquipmentFlag.F_C3M)) {
                     networkMask |= NETWORK_C3_MASTER;
                     if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
                     losTech = true;
                     continue;
-                } else if (eq.hasFlag(WeaponTypeFlag.F_C3MBS)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_C3MBS)) {
                     networkMask |= NETWORK_BOOSTED_MASTER;
                     if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
@@ -613,7 +613,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ammoFactor = 0.4;
                     }
 
-                    if (eq.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
+                    if (eq.hasFlag(EquipmentFlag.F_ONESHOT)) {
                         ammoFactor = 0.1;
                     }
 

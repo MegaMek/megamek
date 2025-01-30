@@ -1106,8 +1106,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getWeaponArc(int wn) {
         final Mounted<?> mounted = getEquipment(wn);
-        if (mounted.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
-                || mounted.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(EquipmentFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)
+                || mounted.getType().hasFlag(EquipmentFlag.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         int arc;
@@ -3059,9 +3059,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             List<WeaponMounted> ams = new ArrayList<>();
             for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
-                if (!weapon.getType().hasFlag(WeaponTypeFlag.F_AMS)
-                        && !weapon.getType().hasFlag(WeaponTypeFlag.F_AMSBAY)
-                        && !weapon.getType().hasFlag(WeaponTypeFlag.F_PDBAY)) {
+                if (!weapon.getType().hasFlag(EquipmentFlag.F_AMS)
+                        && !weapon.getType().hasFlag(EquipmentFlag.F_AMSBAY)
+                        && !weapon.getType().hasFlag(EquipmentFlag.F_PDBAY)) {
                     continue;
                 }
 
@@ -3081,7 +3081,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 // Make sure ammo is loaded
                 for (WeaponMounted bayW : weapon.getBayWeapons()) {
                     AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-                    if (!(weapon.getType().hasFlag(WeaponTypeFlag.F_ENERGY))
+                    if (!(weapon.getType().hasFlag(EquipmentFlag.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
@@ -3089,7 +3089,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     }
 
                     // try again
-                    if (!(weapon.getType().hasFlag(WeaponTypeFlag.F_ENERGY))
+                    if (!(weapon.getType().hasFlag(EquipmentFlag.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         // No ammo for this AMS.

@@ -877,7 +877,7 @@ public final class UnitToolTip {
      * special Infantry attacks (Swarm Attacks and the like).
      */
     private static boolean isNotTTRelevant(WeaponType wtype) {
-        return wtype.hasFlag(WeaponTypeFlag.F_C3M) || wtype.hasFlag(WeaponTypeFlag.F_C3MBS) || wtype instanceof InfantryAttack;
+        return wtype.hasFlag(EquipmentFlag.F_C3M) || wtype.hasFlag(EquipmentFlag.F_C3MBS) || wtype instanceof InfantryAttack;
     }
 
     /**
@@ -1011,7 +1011,7 @@ public final class UnitToolTip {
 
                 WeaponType wpT = ((WeaponType) curWp.getType());
 
-                if (!wpT.hasFlag(WeaponTypeFlag.F_AMS)
+                if (!wpT.hasFlag(EquipmentFlag.F_AMS)
                     || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
                 }
@@ -1023,7 +1023,7 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
-                    && (!wtype.hasFlag(WeaponTypeFlag.F_ONESHOT) || wtype.hasFlag(WeaponTypeFlag.F_BA_INDIVIDUAL))
+                    && (!wtype.hasFlag(EquipmentFlag.F_ONESHOT) || wtype.hasFlag(EquipmentFlag.F_BA_INDIVIDUAL))
                     && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 

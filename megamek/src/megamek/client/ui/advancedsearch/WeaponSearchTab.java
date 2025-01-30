@@ -460,12 +460,12 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         if (areAllUnitTypesSelected()) {
             return true;
         } else {
-            return (btnUnitTypeMek.isSelected() && eq.hasFlag(WeaponTypeFlag.F_MEK_WEAPON))
-                || (btnUnitTypeVee.isSelected() && eq.hasFlag(WeaponTypeFlag.F_TANK_WEAPON))
-                || (btnUnitTypePM.isSelected() && eq.hasFlag(WeaponTypeFlag.F_PROTO_WEAPON))
-                || (btnUnitTypeBA.isSelected() && eq.hasFlag(WeaponTypeFlag.F_BA_WEAPON))
-                || (btnUnitTypeCI.isSelected() && eq.hasFlag(WeaponTypeFlag.F_INFANTRY))
-                || (btnUnitTypeAero.isSelected() && eq.hasFlag(WeaponTypeFlag.F_AERO_WEAPON));
+            return (btnUnitTypeMek.isSelected() && eq.hasFlag(EquipmentFlag.F_MEK_WEAPON))
+                || (btnUnitTypeVee.isSelected() && eq.hasFlag(EquipmentFlag.F_TANK_WEAPON))
+                || (btnUnitTypePM.isSelected() && eq.hasFlag(EquipmentFlag.F_PROTO_WEAPON))
+                || (btnUnitTypeBA.isSelected() && eq.hasFlag(EquipmentFlag.F_BA_WEAPON))
+                || (btnUnitTypeCI.isSelected() && eq.hasFlag(EquipmentFlag.F_INFANTRY))
+                || (btnUnitTypeAero.isSelected() && eq.hasFlag(EquipmentFlag.F_AERO_WEAPON));
         }
     }
 

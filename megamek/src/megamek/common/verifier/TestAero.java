@@ -28,7 +28,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -391,7 +390,7 @@ public class TestAero extends TestEntity {
             double weight = 0;
             for (Mounted<?> m : aero.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponTypeFlag.F_ENERGY) &&
+                if (wt.hasFlag(EquipmentFlag.F_ENERGY) &&
                         !(wt instanceof CLChemicalLaserWeapon) &&
                         !(wt instanceof VehicleFlamerWeapon)) {
                     weight += m.getTonnage();
@@ -634,11 +633,11 @@ public class TestAero extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(AmmoTypeFlag.F_SPACE_BOMB)
-                    || m.getType().hasFlag(AmmoTypeFlag.F_GROUND_BOMB)
-                    || m.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
-                    || m.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)
-                    || m.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_SPACE_BOMB_AMMO)
+                    || m.getType().hasFlag(EquipmentFlag.F_GROUND_BOMB)
+                    || m.getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)
+                    || m.getType().hasFlag(EquipmentFlag.F_ALT_BOMB)
+                    || m.getType().hasFlag(EquipmentFlag.F_SPACE_BOMB)) {
                 numBombs++;
             } else {
                 numWeapons[m.getLocation()]++;
@@ -867,8 +866,8 @@ public class TestAero extends TestEntity {
                 buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 return false;
             }
-            if (!eq.hasFlag(WeaponTypeFlag.F_C3M) && !eq.hasFlag(WeaponTypeFlag.F_C3MBS)
-                    && !eq.hasFlag(WeaponTypeFlag.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
+            if (!eq.hasFlag(EquipmentFlag.F_C3M) && !eq.hasFlag(EquipmentFlag.F_C3MBS)
+                    && !eq.hasFlag(EquipmentFlag.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                 return false;
             }
@@ -889,19 +888,19 @@ public class TestAero extends TestEntity {
                     && !en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
         }
 
-        if (weapon.hasFlag(WeaponTypeFlag.F_ARTILLERY) && !weapon.hasFlag(WeaponTypeFlag.F_BA_WEAPON)) {
+        if (weapon.hasFlag(EquipmentFlag.F_ARTILLERY) && !weapon.hasFlag(EquipmentFlag.F_BA_WEAPON)) {
             return (weapon.getAmmoType() == AmmoType.T_ARROW_IV)
                     || en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
-        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(WeaponTypeFlag.F_MISSILE)))
+        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(EquipmentFlag.F_MISSILE)))
                 || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
             return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
-        if (weapon.hasFlag(WeaponTypeFlag.F_VGL)) {
+        if (weapon.hasFlag(EquipmentFlag.F_VGL)) {
             return !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
@@ -913,7 +912,7 @@ public class TestAero extends TestEntity {
             return en.usesWeaponBays();
         }
 
-        if (!weapon.hasFlag(WeaponTypeFlag.F_AERO_WEAPON)) {
+        if (!weapon.hasFlag(EquipmentFlag.F_AERO_WEAPON)) {
             return false;
         }
 
@@ -938,12 +937,12 @@ public class TestAero extends TestEntity {
             return false;
         }
 
-        if (weapon.hasFlag(WeaponTypeFlag.F_ENERGY)
-                || (weapon.hasFlag(WeaponTypeFlag.F_PLASMA) && (weapon
+        if (weapon.hasFlag(EquipmentFlag.F_ENERGY)
+                || (weapon.hasFlag(EquipmentFlag.F_PLASMA) && (weapon
                         .getAmmoType() == AmmoType.T_PLASMA))) {
 
-            if (weapon.hasFlag(WeaponTypeFlag.F_ENERGY)
-                    && weapon.hasFlag(WeaponTypeFlag.F_PLASMA)
+            if (weapon.hasFlag(EquipmentFlag.F_ENERGY)
+                    && weapon.hasFlag(EquipmentFlag.F_PLASMA)
                     && (weapon.getAmmoType() == AmmoType.T_NA)) {
                 return false;
             }

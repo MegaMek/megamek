@@ -442,7 +442,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(" (PT)");
         }
         // Append the facing for VGLs
-        if (getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+        if (getType().hasFlag(EquipmentFlag.F_VGL)) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");
@@ -915,12 +915,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return;
             }
-            if (link.getType().hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
+            if (link.getType().hasFlag(EquipmentFlag.F_HOTLOAD)) {
                 link.hotloaded = hotload;
             }
         }
         if (getType() instanceof AmmoType) {
-            if (getType().hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
+            if (getType().hasFlag(EquipmentFlag.F_HOTLOAD)) {
                 hotloaded = hotload;
             }
         }
@@ -1295,8 +1295,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return True if
      */
     public boolean isGroundBomb() {
-        return getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB) || getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB) ||
-                getType().hasFlag(AmmoTypeFlag.F_GROUND_BOMB);
+        return getType().hasFlag(EquipmentFlag.F_DIVE_BOMB) || getType().hasFlag(EquipmentFlag.F_ALT_BOMB) ||
+                getType().hasFlag(EquipmentFlag.F_GROUND_BOMB);
     }
 
     public void setInternalBomb(boolean internal) {

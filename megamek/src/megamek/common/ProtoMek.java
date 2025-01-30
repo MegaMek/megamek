@@ -571,7 +571,7 @@ public class ProtoMek extends Entity {
         final Mounted<?> mounted = getEquipment(wn);
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
-        } else if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+        } else if (mounted.getType().hasFlag(EquipmentFlag.F_VGL)) {
             // VGLs base arc on their facing
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         } else {

@@ -192,7 +192,7 @@ public class CLIATMHandler extends ATMHandler {
 
         // Fusillade doesn't have streak effect, but has the built-in Artemis IV of the
         // ATM.
-        if (weapon.getType().hasFlag(WeaponTypeFlag.F_PROTO_WEAPON)) {
+        if (weapon.getType().hasFlag(EquipmentFlag.F_PROTO_WEAPON)) {
             if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
                 Report r = new Report(3330);
                 r.subject = subjectId;
@@ -357,7 +357,7 @@ public class CLIATMHandler extends ATMHandler {
         }
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
-            if (wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
+            if (wtype.hasFlag(EquipmentFlag.F_ONESHOT)) {
                 weapon.setFired(true);
             }
             setDone();
@@ -406,7 +406,7 @@ public class CLIATMHandler extends ATMHandler {
      */
     private boolean streakInactive() {
         return weapon.curMode().equals("Indirect")
-                || weapon.getType().hasFlag(WeaponTypeFlag.F_PROTO_WEAPON);
+                || weapon.getType().hasFlag(EquipmentFlag.F_PROTO_WEAPON);
     }
 
     /*

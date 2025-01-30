@@ -780,7 +780,7 @@ public class SmallCraft extends Aero {
             return success;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(EquipmentFlag.F_ONESHOT)
                 && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;

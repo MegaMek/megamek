@@ -164,7 +164,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        return wtype.hasFlag(WeaponTypeFlag.F_LARGEMISSILE);
+        return wtype.hasFlag(EquipmentFlag.F_LARGEMISSILE);
     }
 
     /**
@@ -237,7 +237,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML
-                && !atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                && !atype.hasFlag(EquipmentFlag.F_MML_LRM)) {
             current_av = 2 * current_av;
             if (range > WeaponType.RANGE_SHORT) {
                 current_av = 0;

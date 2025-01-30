@@ -945,7 +945,7 @@ public class MekView {
             }
             /*
              * TODO: this should probably go in the ammo table somewhere if
-             * (wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)) { sWeapons.append(" [")
+             * (wtype.hasFlag(EquipmentFlag.F_ONESHOT)) { sWeapons.append(" [")
              * .append(mounted.getLinked().getDesc()).append("]");
              * }
              */

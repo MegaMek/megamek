@@ -217,7 +217,7 @@ public class BombAttackHandler extends WeaponHandler {
                             moF = -typeModifiedToHit.getMoS() - 2;
                         }
                     }
-                    if (wtype.hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                    if (wtype.hasFlag(EquipmentFlag.F_ALT_BOMB)) {
                         // Need to determine location in flight path
                         int idx = 0;
                         for (; idx < ae.getPassedThrough().size(); idx++) {

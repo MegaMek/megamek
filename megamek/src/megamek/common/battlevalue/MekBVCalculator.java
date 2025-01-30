@@ -180,8 +180,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)
-                    || (etype.hasFlag(WeaponTypeFlag.F_B_POD)
-                            || (etype.hasFlag(WeaponTypeFlag.F_M_POD)))) {
+                    || (etype.hasFlag(EquipmentFlag.F_B_POD)
+                            || (etype.hasFlag(EquipmentFlag.F_M_POD)))) {
                 toSubtract = 1;
             }
 

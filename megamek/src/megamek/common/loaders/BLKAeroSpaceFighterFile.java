@@ -268,7 +268,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
+                                && etype.hasFlag(EquipmentFlag.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {

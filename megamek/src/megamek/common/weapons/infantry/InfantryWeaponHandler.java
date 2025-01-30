@@ -116,7 +116,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         // conventional infantry weapons with high damage get treated as if they have
         // the infantry burst mod
         if (target.isConventionalInfantry() &&
-                (wtype.hasFlag(WeaponTypeFlag.F_INF_BURST) ||
+                (wtype.hasFlag(EquipmentFlag.F_INF_BURST) ||
                         (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
@@ -124,10 +124,10 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damageDealt /= 2;
         }
         // this doesn't work...
-        if ((target instanceof Building) && (wtype.hasFlag(WeaponTypeFlag.F_INF_NONPENETRATING))) {
+        if ((target instanceof Building) && (wtype.hasFlag(EquipmentFlag.F_INF_NONPENETRATING))) {
             damageDealt = 0;
         }
-        if (wtype.hasFlag(WeaponTypeFlag.F_INF_NONPENETRATING)) {
+        if (wtype.hasFlag(EquipmentFlag.F_INF_NONPENETRATING)) {
             damageType = DamageType.NONPENETRATING;
         }
         Report r = new Report(3325);

@@ -290,10 +290,10 @@ public class MekFileParser {
                 Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null)
                         && (mount.getLocation() == m.getLocation())
                         && (mount.getType() instanceof WeaponType)
-                        && mount.getType().hasFlag(WeaponTypeFlag.F_LASER);
+                        && mount.getType().hasFlag(EquipmentFlag.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
                 if (m.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
-                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponTypeFlag.F_PULSE)
+                    linkable = linkable.and(mount -> !mount.getType().hasFlag(EquipmentFlag.F_PULSE)
                             && !mount.getType().isClan());
                 }
 
@@ -360,7 +360,7 @@ public class MekFileParser {
                 // link up to a weapon in the same location
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
 
-                    if (!mWeapon.getType().hasFlag(WeaponTypeFlag.F_ARTEMIS_COMPATIBLE)) {
+                    if (!mWeapon.getType().hasFlag(EquipmentFlag.F_ARTEMIS_COMPATIBLE)) {
                         continue;
                     }
 
@@ -408,7 +408,7 @@ public class MekFileParser {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // Only PPCS are Valid
-                    if (!wtype.hasFlag(WeaponTypeFlag.F_PPC)) {
+                    if (!wtype.hasFlag(EquipmentFlag.F_PPC)) {
                         continue;
                     }
 
@@ -585,7 +585,7 @@ public class MekFileParser {
                             WeaponType bayWeapType = bayMountedWeapon.getType();
 
                             // Check for PPC that isn't crosslinked
-                            if (!bayWeapType.hasFlag(WeaponTypeFlag.F_PPC) ||
+                            if (!bayWeapType.hasFlag(EquipmentFlag.F_PPC) ||
                                     (bayMountedWeapon.getCrossLinkedBy() != null)) {
                                 continue;
                             }
@@ -608,7 +608,7 @@ public class MekFileParser {
                     }
 
                     // Check for PPC that isn't crosslinked
-                    if (!wtype.hasFlag(WeaponTypeFlag.F_PPC) ||
+                    if (!wtype.hasFlag(EquipmentFlag.F_PPC) ||
                             (mWeapon.getCrossLinkedBy() != null)) {
                         continue;
                     }
@@ -843,7 +843,7 @@ public class MekFileParser {
     static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
         for (WeaponMounted mga : entity.getWeaponList()) {
-            if (mga.getType().hasFlag(WeaponTypeFlag.F_MGA)) {
+            if (mga.getType().hasFlag(EquipmentFlag.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there
                 // may be old data that needs to be cleared
                 mga.clearBayWeapons();
@@ -854,7 +854,7 @@ public class MekFileParser {
                         WeaponType wtype = (WeaponType) slot.getMount().getType();
                         int eqNum = entity.getEquipmentNum(slot.getMount());
                         if (!usedMG.contains(eqNum)
-                                && wtype.hasFlag(WeaponTypeFlag.F_MG)
+                                && wtype.hasFlag(EquipmentFlag.F_MG)
                                 && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
                             mga.addWeaponToBay(eqNum);
                             usedMG.add(eqNum);

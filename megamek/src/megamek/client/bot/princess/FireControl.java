@@ -881,7 +881,7 @@ public class FireControl {
         }
 
         // Now deal with range effects
-        if (!weaponType.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+        if (!weaponType.hasFlag(EquipmentFlag.F_INFANTRY)) {
             if (RangeType.RANGE_SHORT == range) {
                 toHit.addModifier(TH_SHORT_RANGE);
             } else if (RangeType.RANGE_MEDIUM == range) {
@@ -991,7 +991,7 @@ public class FireControl {
         }
 
         // targeting computer
-        if (shooter.hasTargComp() && weaponType.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+        if (shooter.hasTargComp() && weaponType.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
             toHit.addModifier(TH_TARGETING_COMP);
         }
 
@@ -1725,7 +1725,7 @@ public class FireControl {
         // cycle through my weapons
         for (final WeaponMounted weapon : shooter.getWeaponList()) {
             // respect restriction on manual AMS firing.
-            if (weapon.getType().hasFlag(WeaponTypeFlag.F_AMS) &&
+            if (weapon.getType().hasFlag(EquipmentFlag.F_AMS) &&
                 (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
                     !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
@@ -1855,7 +1855,7 @@ public class FireControl {
 
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude()
-            && shooter.getBombs(AmmoTypeFlag.F_GROUND_BOMB).isEmpty()) {
+            && shooter.getBombs(EquipmentFlag.F_GROUND_BOMB).isEmpty()) {
             logger.error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
@@ -1979,7 +1979,7 @@ public class FireControl {
         }
 
         // not having any bombs (due to expenditure/damage)
-        List<BombMounted> groundBombs = shooter.getBombs(AmmoTypeFlag.F_GROUND_BOMB);
+        List<BombMounted> groundBombs = shooter.getBombs(EquipmentFlag.F_GROUND_BOMB);
         if (groundBombs.isEmpty()) {
             return diveBombPlan;
         } else {
@@ -1988,7 +1988,7 @@ public class FireControl {
 
         while (weaponIter.hasNext()) {
             final WeaponMounted weapon = weaponIter.next();
-            if (weapon.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+            if (weapon.getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                 final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
                 bombPayloads.put("internal", new int[BombType.B_NUM]);
                 bombPayloads.put("external", new int[BombType.B_NUM]);
@@ -1996,7 +1996,7 @@ public class FireControl {
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause
                 // why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
-                for (final BombMounted bomb : shooter.getBombs(AmmoTypeFlag.F_GROUND_BOMB)) {
+                for (final BombMounted bomb : shooter.getBombs(EquipmentFlag.F_GROUND_BOMB)) {
                     int bType = bomb.getType().getBombType();
                     if (bomb.isInternalBomb()) {
                         // Can only drop 6 internal bombs in one turn.
@@ -2061,7 +2061,7 @@ public class FireControl {
             }
 
             // respect restriction on manual AMS firing.
-            if (weapon.getType().hasFlag(WeaponTypeFlag.F_AMS) &&
+            if (weapon.getType().hasFlag(EquipmentFlag.F_AMS) &&
                 (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) ||
                     !weapon.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
@@ -2290,7 +2290,7 @@ public class FireControl {
         // soon as it passes over an enemy
         // dropping everything it has, including specialized munitions such as thunder
         // bombs and infernos
-        if (shooter.isAirborne() && !shooter.getBombs(AmmoTypeFlag.F_GROUND_BOMB).isEmpty()) {
+        if (shooter.isAirborne() && !shooter.getBombs(EquipmentFlag.F_GROUND_BOMB).isEmpty()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                 shooter.getGame(), shooter.passedOver(target), false);
 
@@ -2781,7 +2781,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(EquipmentFlag.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
             }
 
@@ -2876,7 +2876,7 @@ public class FireControl {
                     returnAmmo = ammo;
                     break;
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -2970,7 +2970,7 @@ public class FireControl {
             msg.append("\n\tRange to target is ").append(range);
 
             // AMS only uses 1 type of ammo.
-            if (weaponType.hasFlag(WeaponTypeFlag.F_AMS)) {
+            if (weaponType.hasFlag(EquipmentFlag.F_AMS)) {
                 return validAmmo.get(0);
             }
 
@@ -3074,7 +3074,7 @@ public class FireControl {
         AmmoMounted mmlLrm = null;
         int switchedReason = 0;
         for (final AmmoMounted ammo : ammoList) {
-            if ((null == mmlLrm) && ammo.getType().hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+            if ((null == mmlLrm) && ammo.getType().hasFlag(EquipmentFlag.F_MML_LRM)) {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
@@ -3207,7 +3207,7 @@ public class FireControl {
                     returnAmmo = ammo;
                     break;
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -3251,7 +3251,7 @@ public class FireControl {
                     returnAmmo = ammo;
                     break;
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -3292,7 +3292,7 @@ public class FireControl {
                     returnAmmo = ammo;
                     break;
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -3336,7 +3336,7 @@ public class FireControl {
                     returnAmmo = ammo;
                     break;
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -3408,7 +3408,7 @@ public class FireControl {
                 returnAmmo = ammo;
                 break;
             }
-            if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+            if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
@@ -3463,7 +3463,7 @@ public class FireControl {
                         returnAmmo = ammo;
                     }
                 }
-                if ((null == mmlLrm) && ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+                if ((null == mmlLrm) && ammoType.hasFlag(EquipmentFlag.F_MML_LRM)) {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
@@ -3679,7 +3679,7 @@ public class FireControl {
         // check that we're operating a missile weapon that can switch direct/indirect
         // modes
         // don't bother checking non-missile weapons
-        if (weapon.getType().hasFlag(WeaponTypeFlag.F_MISSILE) &&
+        if (weapon.getType().hasFlag(EquipmentFlag.F_MISSILE) &&
             (weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT) || weapon.hasModeType(Weapon.MODE_INDIRECT_HEAT))) {
 
             // if we are able to switch the weapon to indirect fire mode, do so and try

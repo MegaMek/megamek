@@ -60,7 +60,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         }
 
         //Capital missiles need a racksize for this
-        if (getType().hasFlag(AmmoTypeFlag.F_CAP_MISSILE)) {
+        if (getType().hasFlag(EquipmentFlag.F_CAP_MISSILE)) {
             rackSize = 1;
         }
 

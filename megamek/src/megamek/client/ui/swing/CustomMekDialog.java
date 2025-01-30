@@ -571,7 +571,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 for (WeaponMounted wep : entity.getWeaponList()) {
                     WeaponType w = wep.getType();
                     int nDistance = 0;
-                    if (w.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                    if (w.hasFlag(EquipmentFlag.F_ARTILLERY)) {
                         if (w instanceof ArtilleryBayWeapon) {
                             // Artillery bays can mix and match, so limit the bay
                             // to the shortest range of the weapons in it
@@ -1147,7 +1147,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             final boolean entityEligibleForOffBoard = !space && (e.getAltitude() == 0) && !(e instanceof GunEmplacement)
                     && e.getWeaponList().stream()
                             .map(mounted -> (WeaponType) mounted.getType())
-                            .anyMatch(wtype -> wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)
+                            .anyMatch(wtype -> wtype.hasFlag(EquipmentFlag.F_ARTILLERY)
                                     || (wtype instanceof CapitalMissileBayWeapon));
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }

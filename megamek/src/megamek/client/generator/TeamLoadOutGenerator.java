@@ -361,7 +361,7 @@ public class TeamLoadOutGenerator {
         }
 
         // Nukes are not allowed... unless they are!
-        legal &= (!aType.hasFlag(AmmoTypeFlag.F_NUCLEAR)
+        legal &= (!aType.hasFlag(EquipmentFlag.F_NUCLEAR)
                 || gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
 
         return legal;

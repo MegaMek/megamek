@@ -580,7 +580,7 @@ class SystemPanel extends PicMap
                 // Check for BA dumping SRM launchers
                 if ((en instanceof BattleArmor) && (!m.isMissing())
                         && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
+                        && m.getType().hasFlag(EquipmentFlag.F_MISSILE)
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     boolean isDumping = !m.isPendingDump();
@@ -778,7 +778,7 @@ class SystemPanel extends PicMap
                         && (en instanceof BattleArmor)
                         && (m.getType() instanceof WeaponType)
                         && !m.isMissing() && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
+                        && m.getType().hasFlag(EquipmentFlag.F_MISSILE)
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);

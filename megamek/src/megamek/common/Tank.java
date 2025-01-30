@@ -981,11 +981,11 @@ public class Tank extends Entity {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
+                && mounted.getType().hasFlag(EquipmentFlag.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
-        if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+        if (mounted.getType().hasFlag(EquipmentFlag.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         switch (mounted.getLocation()) {
@@ -2263,7 +2263,7 @@ public class Tank extends Entity {
         lockTurret(getLocTurret2());
         for (Mounted<?> m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
+            if (wtype.hasFlag(EquipmentFlag.F_ENERGY)
                     // Chemical lasers still work even after an engine hit.
                     && !(wtype instanceof CLChemicalLaserWeapon)
                     // And presumably vehicle flamers should, too; we can always
@@ -2279,7 +2279,7 @@ public class Tank extends Entity {
         unlockTurret();
         for (Mounted<?> m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
+            if (wtype.hasFlag(EquipmentFlag.F_ENERGY)) {
                 // not destroyed, just unpowered
                 m.setBreached(false);
             }

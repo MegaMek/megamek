@@ -790,7 +790,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (mt.hasFlag(EquipmentFlag.F_TARGCOMP)) {
             double fTons = 0.0f;
             for (WeaponMounted mounted : getEntity().getWeaponList()) {
-                if (mounted.getType().hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                if (mounted.getType().hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     fTons += mounted.getTonnage();
                 }
             }
@@ -892,15 +892,15 @@ public abstract class TestEntity implements TestEntityOption {
         int heat = 0;
         for (Mounted<?> m : entity.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponTypeFlag.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponTypeFlag.F_PPC)
-                    || wt.hasFlag(WeaponTypeFlag.F_PLASMA)
-                    || wt.hasFlag(WeaponTypeFlag.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponTypeFlag.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+            if ((wt.hasFlag(EquipmentFlag.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+                    || wt.hasFlag(EquipmentFlag.F_PPC)
+                    || wt.hasFlag(EquipmentFlag.F_PLASMA)
+                    || wt.hasFlag(EquipmentFlag.F_PLASMA_MFUK)
+                    || (wt.hasFlag(EquipmentFlag.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponTypeFlag.F_LASER) && (m.getLinkedBy() != null)
+            if (wt.hasFlag(EquipmentFlag.F_LASER) && (m.getLinkedBy() != null)
                     && !m.getLinkedBy().isInoperable()
                     && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR)) {
                 heat -= 1;
@@ -1497,7 +1497,7 @@ public abstract class TestEntity implements TestEntityOption {
                     ((m.getLinked() == null)
                             || (m.getLinked().getLocation() != m.getLocation())
                             || !(m.getLinked().getType() instanceof WeaponType)
-                            || !m.getLinked().getType().hasFlag(WeaponTypeFlag.F_LASER))) {
+                            || !m.getLinked().getType().hasFlag(EquipmentFlag.F_LASER))) {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }
@@ -1505,15 +1505,15 @@ public abstract class TestEntity implements TestEntityOption {
                     ((m.getLinked() == null)
                             || (m.getLinked().getLocation() != m.getLocation())
                             || !(m.getLinked().getType() instanceof WeaponType)
-                            || !m.getLinked().getType().hasFlag(WeaponTypeFlag.F_LASER)
-                            || m.getLinked().getType().hasFlag(WeaponTypeFlag.F_PULSE))) {
+                            || !m.getLinked().getType().hasFlag(EquipmentFlag.F_LASER)
+                            || m.getLinked().getType().hasFlag(EquipmentFlag.F_PULSE))) {
                 buff.append("RISC Laser Pulse Module requires a non-pulse laser in the same location.\n");
                 illegal = true;
             }
         }
         if ((networks > 0) && !countedC3) {
             for (Mounted<?> m : getEntity().getIndividualWeaponList()) {
-                if (m.getType().hasFlag(WeaponTypeFlag.F_C3M) || m.getType().hasFlag(WeaponTypeFlag.F_C3MBS)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_C3M) || m.getType().hasFlag(EquipmentFlag.F_C3MBS)) {
                     networks++;
                 }
             }
@@ -1526,12 +1526,12 @@ public abstract class TestEntity implements TestEntityOption {
                         || (m.getType().getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
                     buff.append("Heavy Gauss Rifles require a fusion or fission engine\n");
                     illegal = true;
-                } else if (m.getType().hasFlag(WeaponTypeFlag.F_FLAMER)
+                } else if (m.getType().hasFlag(EquipmentFlag.F_FLAMER)
                         && (m.getType().getAmmoType() == AmmoType.T_NA)
                         && !(m.getType() instanceof BAFlamerWeapon)) {
                     buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
-                } else if (m.getType().hasFlag(WeaponTypeFlag.F_HYPER)) {
+                } else if (m.getType().hasFlag(EquipmentFlag.F_HYPER)) {
                     buff.append("RISC Hyper Lasers require a fusion or fission engine\n");
                     illegal = true;
                 }
@@ -1647,7 +1647,7 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal = true;
             }
             illegal |= checkIllegalArtemisApolloLinks(buff, artemisIV + artemisV + artemisP,
-                    "Artemis", w -> w.hasFlag(WeaponTypeFlag.F_ARTEMIS_COMPATIBLE));
+                    "Artemis", w -> w.hasFlag(EquipmentFlag.F_ARTEMIS_COMPATIBLE));
         }
         if (apollo > 0) {
             illegal |= checkIllegalArtemisApolloLinks(buff, apollo, "Apollo",

@@ -21,7 +21,7 @@ package megamek.common.battlevalue;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
-import megamek.common.WeaponTypeFlag;
+import megamek.common.EquipmentFlag;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.util.ArrayList;
@@ -101,11 +101,11 @@ public class InfantryBVCalculator extends BVCalculator {
 
         if (infantry.canMakeAntiMekAttacks()) {
             bvReport.addLine("Anti-Mek:", "", "");
-            if (primaryWeapon != null && !primaryWeapon.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)) {
+            if (primaryWeapon != null && !primaryWeapon.hasFlag(EquipmentFlag.F_INF_ARCHAIC)) {
                 Mounted<?> primaryWeaponMounted = Mounted.createMounted(infantry, primaryWeapon);
                 processWeapon(primaryWeaponMounted, true, true, primaryShooterCount);
             }
-            if (secondaryWeapon != null && !secondaryWeapon.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)) {
+            if (secondaryWeapon != null && !secondaryWeapon.hasFlag(EquipmentFlag.F_INF_ARCHAIC)) {
                 Mounted<?> secondaryWeaponMounted = Mounted.createMounted(infantry, secondaryWeapon);
                 processWeapon(secondaryWeaponMounted, true, true, secondaryShooterCount);
             }

@@ -264,9 +264,9 @@ public class AR10Handler extends AmmoWeaponHandler {
     protected int calcAttackValue() {
         int av = 0;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
+        if (atype.hasFlag(EquipmentFlag.F_AR10_KILLER_WHALE)) {
             av = 4;
-        } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
+        } else if (atype.hasFlag(EquipmentFlag.F_AR10_WHITE_SHARK)) {
             av = 3;
         } else {
             av = 2;
@@ -283,9 +283,9 @@ public class AR10Handler extends AmmoWeaponHandler {
     protected int getCapMisMod() {
         int mod = 0;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
+        if (atype.hasFlag(EquipmentFlag.F_AR10_KILLER_WHALE)) {
             mod = 10;
-        } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
+        } else if (atype.hasFlag(EquipmentFlag.F_AR10_WHITE_SHARK)) {
             mod = 9;
         } else {
             mod = 11;

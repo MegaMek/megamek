@@ -508,9 +508,9 @@ public abstract class BVCalculator {
 
         EquipmentType eType = equipment.getType();
         if (eType instanceof WeaponType) {
-            return eType.hasFlag(WeaponTypeFlag.F_AMS)
-                    || eType.hasFlag(WeaponTypeFlag.F_M_POD)
-                    || eType.hasFlag(WeaponTypeFlag.F_B_POD)
+            return eType.hasFlag(EquipmentFlag.F_AMS)
+                    || eType.hasFlag(EquipmentFlag.F_M_POD)
+                    || eType.hasFlag(EquipmentFlag.F_B_POD)
                     || (((WeaponType) eType).getAtClass() == WeaponType.CLASS_SCREEN);
         } else if (eType instanceof MiscType) {
             return eType.hasFlag(EquipmentFlag.F_ECM)
@@ -585,7 +585,7 @@ public abstract class BVCalculator {
 
             if (eType instanceof WeaponType) {
                 WeaponType wtype = (WeaponType) eType;
-                if (wtype.hasFlag(WeaponTypeFlag.F_AMS)
+                if (wtype.hasFlag(EquipmentFlag.F_AMS)
                         && ((wtype.getAmmoType() == T_AMS) || (wtype.getAmmoType() == T_APDS))) {
                     amsBV += eType.getBV(entity) * equipmentEntry.getValue();
                 }
@@ -679,13 +679,13 @@ public abstract class BVCalculator {
 
     protected boolean isRearFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
-        return weapon.getType().hasFlag(WeaponTypeFlag.F_VGL) &&
+        return weapon.getType().hasFlag(EquipmentFlag.F_VGL) &&
                 (weapon.getFacing() >= 2) && (weapon.getFacing() <= 4);
     }
 
     protected boolean isFrontFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
-        return weapon.getType().hasFlag(WeaponTypeFlag.F_VGL) &&
+        return weapon.getType().hasFlag(EquipmentFlag.F_VGL) &&
                 ((weapon.getFacing() == 1) || (weapon.getFacing() >= 5));
     }
 
@@ -798,7 +798,7 @@ public abstract class BVCalculator {
         double weaponBV = weapon.getType().getBV(entity);
 
         // MG Arrays need to sum up their linked MGs
-        if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponTypeFlag.F_MGA)) {
+        if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(EquipmentFlag.F_MGA)) {
             double mgBV = 0;
             for (WeaponMounted mg : ((WeaponMounted) weapon).getBayWeapons()) {
                 if (!mg.isDestroyed()) {
@@ -845,7 +845,7 @@ public abstract class BVCalculator {
             WeaponType weaponType = (WeaponType) weapon.getType();
 
             // PPC with Capacitor
-            if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(WeaponTypeFlag.F_PPC))) {
+            if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(EquipmentFlag.F_PPC))) {
                 double capBV = ((MiscType) weapon.getLinkedBy().getType()).getBV(entity, weapon);
                 weaponBV += capBV;
                 calculation += " + " + formatForReport(capBV) + " (Cap)";
@@ -871,10 +871,10 @@ public abstract class BVCalculator {
                 }
             }
 
-            if (weaponType.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE) && hasTC) {
+            if (weaponType.hasFlag(EquipmentFlag.F_DIRECT_FIRE) && hasTC) {
                 weaponBV *= 1.25;
                 calculation += " x 1.25 (TC)";
-            } else if ((fireControlModifier() != 1) && !weaponType.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+            } else if ((fireControlModifier() != 1) && !weaponType.hasFlag(EquipmentFlag.F_INFANTRY)) {
                 weaponBV *= fireControlModifier();
                 calculation += " x " + fireControlModifier() + " (Fire Control)";
             }
@@ -946,9 +946,9 @@ public abstract class BVCalculator {
             return countMiscAsOffensiveWeapon(equipment);
         } else {
             WeaponType weaponType = (WeaponType) equipment.getType();
-            return !weaponType.hasFlag(WeaponTypeFlag.F_AMS) && !weaponType.hasFlag(WeaponTypeFlag.F_B_POD)
-                    && !weaponType.hasFlag(WeaponTypeFlag.F_M_POD)
-                    && ((weaponType.getBV(entity) > 0) || weaponType.hasFlag(WeaponTypeFlag.F_MGA))
+            return !weaponType.hasFlag(EquipmentFlag.F_AMS) && !weaponType.hasFlag(EquipmentFlag.F_B_POD)
+                    && !weaponType.hasFlag(EquipmentFlag.F_M_POD)
+                    && ((weaponType.getBV(entity) > 0) || weaponType.hasFlag(EquipmentFlag.F_MGA))
                     && !equipment.isInoperable() && !equipment.isHit()
                     && !equipment.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
                     && !(weaponType instanceof BayWeapon);
@@ -1175,20 +1175,20 @@ public abstract class BVCalculator {
         for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = weapon.getType();
 
-            if (weapon.isDestroyed() // || wtype.hasFlag(WeaponTypeFlag.F_AMS)
-                    || wtype.hasFlag(WeaponTypeFlag.F_B_POD) || wtype.hasFlag(WeaponTypeFlag.F_M_POD)
+            if (weapon.isDestroyed() // || wtype.hasFlag(EquipmentFlag.F_AMS)
+                    || wtype.hasFlag(EquipmentFlag.F_B_POD) || wtype.hasFlag(EquipmentFlag.F_M_POD)
                     || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponTypeFlag.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
+            if (!((wtype.hasFlag(EquipmentFlag.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
                     || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
-                    || wtype.hasFlag(WeaponTypeFlag.F_INFANTRY)
+                    || wtype.hasFlag(EquipmentFlag.F_ONESHOT)
+                    || wtype.hasFlag(EquipmentFlag.F_INFANTRY)
                     || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
@@ -1404,7 +1404,7 @@ public abstract class BVCalculator {
                 .filter(m -> !m.isMissing() && !m.isDestroyed())
                 .map(Mounted::getType)
                 .filter(Objects::nonNull)
-                .filter(t -> t.hasFlag(WeaponTypeFlag.F_TAG))
+                .filter(t -> t.hasFlag(EquipmentFlag.F_TAG))
                 .count();
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;

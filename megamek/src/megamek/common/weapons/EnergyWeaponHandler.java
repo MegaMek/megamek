@@ -47,7 +47,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if ((game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-            && weapon.hasModes()) || wtype.hasFlag(WeaponTypeFlag.F_BOMBAST_LASER)) {
+            && weapon.hasModes()) || wtype.hasFlag(EquipmentFlag.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
         // during a swarm, all damage gets applied as one block to one location

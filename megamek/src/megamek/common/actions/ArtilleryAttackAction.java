@@ -49,7 +49,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
         if (getEntity(game).usesWeaponBays() && wType.getAtClass() == WeaponType.CLASS_ARTILLERY) {
             for (WeaponMounted bayW : mounted.getBayWeapons()) {
                 WeaponType bayWType = bayW.getType();
-                if (bayWType.hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)) {
+                if (bayWType.hasFlag(EquipmentFlag.F_CRUISE_MISSILE)) {
                     // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
                     turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
                     break;
@@ -86,7 +86,7 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements Seriali
             } else {
                 turnsTilHit = 2;
             }
-        } else if (eType.hasFlag(WeaponTypeFlag.F_CRUISE_MISSILE)) {
+        } else if (eType.hasFlag(EquipmentFlag.F_CRUISE_MISSILE)) {
             // See TO p181. Cruise missile flight time is (1 + (Mapsheets / 5, round down)
             turnsTilHit = 1 + (distance / Board.DEFAULT_BOARD_HEIGHT / 5);
         } else {

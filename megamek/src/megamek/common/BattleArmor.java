@@ -948,7 +948,7 @@ public class BattleArmor extends Infantry {
                 // fine
                 Mounted<?> weapon = mounted.getLinkedBy();
                 if ((weapon != null) && weapon.isBodyMounted()
-                        && weapon.getType().hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                        && weapon.getType().hasFlag(EquipmentFlag.F_MISSILE)) {
                     return true;
                 }
             } // Check the next piece of equipment
@@ -1531,7 +1531,7 @@ public class BattleArmor extends Infantry {
             WeaponType wtype;
             if (m.getType() instanceof WeaponType) {
                 wtype = (WeaponType) m.getType();
-                if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                if (wtype.hasFlag(EquipmentFlag.F_MISSILE)) {
                     continue;
                 }
                 if (m.isBodyMounted()) {
@@ -1840,7 +1840,7 @@ public class BattleArmor extends Infantry {
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)) {
             boolean hasAntiMek = false;
             for (Mounted<?> m : getWeaponList()) {
-                if (!m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
+                if (!m.getType().hasFlag(EquipmentFlag.F_INFANTRY)
                         && (m.getBaMountLoc() == loc)
                         && ((m.getLocation() == LOC_SQUAD) || (m.getLocation() == trooper))) {
                     hasAntiMek = true;

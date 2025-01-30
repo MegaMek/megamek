@@ -40,7 +40,7 @@ public class FlamerHandlerHelper {
         int heatDamage = wtype.getDamage();
 
         // ER flamers don't do as much heat damage
-        if (wtype.hasFlag(WeaponTypeFlag.F_ER_FLAMER)) {
+        if (wtype.hasFlag(EquipmentFlag.F_ER_FLAMER)) {
             heatDamage = Math.max(1, heatDamage / 2);
         }
 

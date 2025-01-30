@@ -134,7 +134,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         for (Mounted<?> mount : entity.getWeaponList()) {
 
             // Is this an Anti-BA Pod?
-            if (mount.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
+            if (mount.getType().hasFlag(EquipmentFlag.F_B_POD)) {
                 // Create a checkbox for the pod, and add it to the panel.
                 String message = entity.getLocationName(mount.getLocation()) +
                     ' ' + mount.getName();

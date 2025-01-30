@@ -251,7 +251,7 @@ public class TestBattleArmor extends TestEntity {
             }
 
             // AP weapons don't take up slots in BA (the AP Mount does)
-            if (m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_INFANTRY)) {
                 continue;
             }
 
@@ -662,7 +662,7 @@ public class TestBattleArmor extends TestEntity {
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted<?> m : ba.getEquipment()) {
             // BA Tasers should be mounted individually
-            if (m.getType().hasFlag(WeaponTypeFlag.F_TASER)
+            if (m.getType().hasFlag(EquipmentFlag.F_TASER)
                     && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA Tasers should be mounted individually " +
                         "instead of as a squad weapon!");
@@ -709,15 +709,15 @@ public class TestBattleArmor extends TestEntity {
 
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType)
-                    && !m.getType().hasFlag(WeaponTypeFlag.F_BA_WEAPON)
-                    && !m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+                    && !m.getType().hasFlag(EquipmentFlag.F_BA_WEAPON)
+                    && !m.getType().hasFlag(EquipmentFlag.F_INFANTRY)) {
                 buff.append(m.getName() + " is not a BattleArmor weapon!\n");
                 correct = false;
             }
 
             // Special considerations for AP weapons
             if ((m.getType() instanceof WeaponType)
-                    && m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+                    && m.getType().hasFlag(EquipmentFlag.F_INFANTRY)) {
                 Mounted<?> link = m.getLinkedBy();
                 if (link == null) {
                     correct = false;
@@ -726,14 +726,14 @@ public class TestBattleArmor extends TestEntity {
                     continue;
                 }
                 // No AP melee weapons
-                if (m.getType().hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_INF_POINT_BLANK)) {
                     buff.append(m.getName() + " is a melee AP weapon and " +
                             "BattleArmor cannot mount melee AP weapons!\n");
                     correct = false;
                 }
                 // Special considerations for AP mounts
                 if (link.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
-                    if (m.getType().hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
+                    if (m.getType().hasFlag(EquipmentFlag.F_INF_SUPPORT)) {
                         buff.append(m.getName() + " is a support weapon and " +
                                 "BattleArmor AP mounts cannot mount " +
                                 "support weapons!\n");
@@ -741,7 +741,7 @@ public class TestBattleArmor extends TestEntity {
                     }
                     // Special considerations for armored gloves
                 } else if (link.getType().hasFlag(EquipmentFlag.F_ARMORED_GLOVE)) {
-                    if (m.getType().hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
+                    if (m.getType().hasFlag(EquipmentFlag.F_INF_SUPPORT)) {
                         if ((m.getType() instanceof InfantryWeapon)) {
                             int crew = ((InfantryWeapon) m.getType()).getCrew();
                             if (crew > 1) {
@@ -909,7 +909,7 @@ public class TestBattleArmor extends TestEntity {
                 if ((m.getType() instanceof AmmoType)
                         && (m.getLinkedBy() != null)
                         && m.getLinkedBy().getType()
-                                .hasFlag(WeaponTypeFlag.F_ONESHOT)) {
+                                .hasFlag(EquipmentFlag.F_ONESHOT)) {
                     continue;
                 }
 
@@ -1076,7 +1076,7 @@ public class TestBattleArmor extends TestEntity {
      */
     public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
         // Infantry weapons can only be mounted in armored gloves/APMs
-        if ((eq instanceof WeaponType) && eq.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
+        if ((eq instanceof WeaponType) && eq.hasFlag(EquipmentFlag.F_INFANTRY)) {
             if (buffer != null) {
                 buffer.append(eq.getName())
                         .append(" can only be mounted in an anti-personnel mount or an armored glove.\n");
@@ -1291,8 +1291,8 @@ public class TestBattleArmor extends TestEntity {
             equipmentCount.merge(mount.getType().getInternalName(), 1, Integer::sum);
 
             if (mount.getType() instanceof WeaponType) {
-                if (!mount.getType().hasFlag(WeaponTypeFlag.F_BA_WEAPON) && !mount.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
-                        && !mount.getType().hasFlag(WeaponTypeFlag.F_INFANTRY_ATTACK)) {
+                if (!mount.getType().hasFlag(EquipmentFlag.F_BA_WEAPON) && !mount.getType().hasFlag(EquipmentFlag.F_INFANTRY)
+                        && !mount.getType().hasFlag(EquipmentFlag.F_INFANTRY_ATTACK)) {
                     currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
                 }
 

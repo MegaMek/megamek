@@ -259,7 +259,7 @@ public class BLKFile {
                                 isTurreted, isPintleTurreted, isOmniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
+                                && etype.hasFlag(EquipmentFlag.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {

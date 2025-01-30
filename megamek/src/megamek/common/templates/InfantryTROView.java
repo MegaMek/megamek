@@ -177,16 +177,16 @@ public class InfantryTROView extends TROView {
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
         if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
-            if (inf.getSecondaryWeapon().hasFlag(WeaponTypeFlag.F_INF_BURST)) {
+            if (inf.getSecondaryWeapon().hasFlag(EquipmentFlag.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }
-            if (inf.getSecondaryWeapon().hasFlag(WeaponTypeFlag.F_INF_NONPENETRATING)) {
+            if (inf.getSecondaryWeapon().hasFlag(EquipmentFlag.F_INF_NONPENETRATING)) {
                 notes.add(Messages.getString("TROView.InfantryNote.NonPenetrating"));
             }
-            if (inf.getSecondaryWeapon().hasFlag(WeaponTypeFlag.F_INF_AA)) {
+            if (inf.getSecondaryWeapon().hasFlag(EquipmentFlag.F_INF_AA)) {
                 notes.add(Messages.getString("TROView.InfantryNote.AA"));
             }
-            if (inf.getSecondaryWeapon().hasFlag(WeaponTypeFlag.F_FLAMER)) {
+            if (inf.getSecondaryWeapon().hasFlag(EquipmentFlag.F_FLAMER)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Heat"));
             }
         }

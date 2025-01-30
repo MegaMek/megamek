@@ -613,7 +613,7 @@ public class MiscType extends EquipmentType {
             double fTons = 0.0;
             for (Mounted<?> m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                if (wt.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     fTons += m.getTonnage();
                 }
             }
@@ -735,9 +735,9 @@ public class MiscType extends EquipmentType {
             double weaponWeight = 0;
             // Don't count weight of AMS or light (e.g. non-support infantry) weapons
             for (Mounted<?> mount : entity.getWeaponList()) {
-                if (!mount.getType().hasFlag(WeaponTypeFlag.F_AMS)
-                    && (!mount.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
-                    || mount.getType().hasFlag(WeaponTypeFlag.F_INF_SUPPORT))) {
+                if (!mount.getType().hasFlag(EquipmentFlag.F_AMS)
+                    && (!mount.getType().hasFlag(EquipmentFlag.F_INFANTRY)
+                    || mount.getType().hasFlag(EquipmentFlag.F_INF_SUPPORT))) {
                     weaponWeight += mount.getTonnage();
                 }
             }
@@ -934,7 +934,7 @@ public class MiscType extends EquipmentType {
                 double fTons = 0.0f;
                 for (Mounted<?> mo : entity.getWeaponList()) {
                     WeaponType wt = (WeaponType) mo.getType();
-                    if (wt.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                    if (wt.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                         fTons += mo.getTonnage();
                     }
                 }
@@ -1087,7 +1087,7 @@ public class MiscType extends EquipmentType {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (WeaponMounted m : entity.getWeaponList()) {
-                if (m.getType().hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
                     fTons += m.getTonnage();
                 }
             }

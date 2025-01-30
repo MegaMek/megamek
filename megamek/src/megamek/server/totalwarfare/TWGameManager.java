@@ -9683,7 +9683,7 @@ public class TWGameManager extends AbstractGameManager {
                     } // Check the next piece of equipment on the target.
 
                     for (Mounted<?> weapon : target.getWeaponList()) {
-                        if (weapon.getType().hasFlag(WeaponTypeFlag.F_B_POD) && weapon.canFire()) {
+                        if (weapon.getType().hasFlag(EquipmentFlag.F_B_POD) && weapon.canFire()) {
 
                             // Yup. Insert a game turn to handle B pods.
                             // ASSUMPTION : B pod declarations come
@@ -9904,8 +9904,8 @@ public class TWGameManager extends AbstractGameManager {
                     isHomingMissile = true;
                 }
             }
-            if ((!weapon.getType().hasFlag(WeaponTypeFlag.F_MISSILE) && !isHomingMissile)
-                || weapon.getType().hasFlag(WeaponTypeFlag.F_MEK_MORTAR)) {
+            if ((!weapon.getType().hasFlag(EquipmentFlag.F_MISSILE) && !isHomingMissile)
+                || weapon.getType().hasFlag(EquipmentFlag.F_MEK_MORTAR)) {
                 continue;
             }
 
@@ -10713,7 +10713,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         EquipmentType equip = mount.getType();
-        if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponTypeFlag.F_B_POD)) {
+        if (!(equip instanceof WeaponType) || !equip.hasFlag(EquipmentFlag.F_B_POD)) {
             logger.error("Expecting to find an B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + " but found " + equip.getName() + " instead!!!");
             return;
@@ -25538,7 +25538,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         // Check for jettisoning missiles
                     } else if (m.isBodyMounted() && m.isPendingDump()
-                            && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
+                            && m.getType().hasFlag(EquipmentFlag.F_MISSILE)
                             && (m.getLinked() != null)
                             && (m.getLinked().getUsableShotsLeft() > 0)) {
                         m.setMissing(true);
@@ -26894,7 +26894,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) && (!m.isMissing())
                     && m.isBodyMounted()
-                    && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
+                    && m.getType().hasFlag(EquipmentFlag.F_MISSILE)
                     && (m.getLinked() != null)
                     && (m.getLinked().getUsableShotsLeft() > 0)
                     && (mode <= 0)) {
@@ -27104,8 +27104,8 @@ public class TWGameManager extends AbstractGameManager {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (mWeap.getType().hasFlag(WeaponTypeFlag.F_ONESHOT)
-                && !mWeap.getType().hasFlag(WeaponTypeFlag.F_DOUBLE_ONESHOT)) {
+        if (mWeap.getType().hasFlag(EquipmentFlag.F_ONESHOT)
+                && !mWeap.getType().hasFlag(EquipmentFlag.F_DOUBLE_ONESHOT)) {
             logger.error("Item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;

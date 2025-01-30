@@ -1436,7 +1436,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((m.getType().hasFlag(WeaponTypeFlag.F_TASER))
+            if ((m.getType().hasFlag(EquipmentFlag.F_TASER))
                     && !(mek.hasEngine() && mek.getEngine().isFusion())) {
                 buff.append(m.getType().getName()).append(" needs fusion engine\n");
                 illegal = true;
@@ -1660,7 +1660,7 @@ public class TestMek extends TestEntity {
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if (eq.hasFlag(WeaponTypeFlag.F_VGL) && !mek.locationIsTorso(location)) {
+            if (eq.hasFlag(EquipmentFlag.F_VGL) && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }

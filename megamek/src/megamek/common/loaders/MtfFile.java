@@ -944,7 +944,7 @@ public class MtfFile implements IMekLoader {
 
                         // vehicular grenade launchers need to have their facing
                         // set
-                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(EquipmentFlag.F_VGL)) {
                             if (facing == -1) {
                                 // if facing has not been set earlier, we are
                                 // front or rear mounted

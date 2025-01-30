@@ -207,7 +207,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     // For AntiShip missiles, which behave more like Thunderbolts than capital missiles except for this
     // All other thunderbolt type large missiles should be unable to score a critical hit here
     protected int getCapMisMod() {
-        if (wtype.hasFlag(WeaponTypeFlag.F_ANTI_SHIP)) {
+        if (wtype.hasFlag(EquipmentFlag.F_ANTI_SHIP)) {
             return 11;
         } else {
             return 0;

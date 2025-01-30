@@ -65,7 +65,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return getType().getRackSize() * damagePerShot;
         }
 
-        if (getType().hasFlag(WeaponTypeFlag.F_PPC) && (hasChargedCapacitor() != 0)) {
+        if (getType().hasFlag(EquipmentFlag.F_PPC) && (hasChargedCapacitor() != 0)) {
             if (isFired()) {
                 if (hasChargedCapacitor() == 2) {
                     return 15;
@@ -92,16 +92,16 @@ public class WeaponMounted extends Mounted<WeaponType> {
         // AR10's have heat based upon the loaded missile
         if (getType().getName().equals("AR10")) {
             AmmoType ammoType = (AmmoType) getLinked().getType();
-            if (ammoType.hasFlag(AmmoTypeFlag.F_AR10_BARRACUDA)) {
+            if (ammoType.hasFlag(EquipmentFlag.F_AR10_BARRACUDA)) {
                 return 10;
-            } else if (ammoType.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
+            } else if (ammoType.hasFlag(EquipmentFlag.F_AR10_WHITE_SHARK)) {
                 return 15;
-            } else { // AmmoTypeFlag.F_AR10_KILLER_WHALE
+            } else { // EquipmentFlag.F_AR10_KILLER_WHALE
                 return 20;
             }
         }
 
-        if (getType().hasFlag(WeaponTypeFlag.F_ENERGY) && getType().hasModes()) {
+        if (getType().hasFlag(EquipmentFlag.F_ENERGY) && getType().hasModes()) {
             heat = Compute.dialDownHeat(this, getType());
         }
         // multiply by number of shots and number of weapons
@@ -151,13 +151,13 @@ public class WeaponMounted extends Mounted<WeaponType> {
     public int getCurrentShots() {
         int nShots = getNumShots(getType(), curMode(), false);
         // sets number of shots for MG arrays
-        if (getType().hasFlag(WeaponTypeFlag.F_MGA)) {
+        if (getType().hasFlag(EquipmentFlag.F_MGA)) {
             nShots = 0;
             for (WeaponMounted m : getBayWeapons()) {
                 if ((m.getLocation() == getLocation())
                         && !m.isDestroyed()
                         && !m.isBreached()
-                        && m.getType().hasFlag(WeaponTypeFlag.F_MG)
+                        && m.getType().hasFlag(EquipmentFlag.F_MG)
                         && ((m.getType()).getRackSize() == getType().getRackSize())) {
                     nShots++;
                 }
@@ -168,7 +168,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
 
     @Override
     public boolean isOneShot() {
-        return getType().hasFlag(WeaponTypeFlag.F_ONESHOT);
+        return getType().hasFlag(EquipmentFlag.F_ONESHOT);
     }
 
     /**

@@ -1176,14 +1176,14 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon, ammo);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);
-        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponTypeFlag.F_TAG);
+        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(EquipmentFlag.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
         boolean isIndirect = wtype.hasIndirectFire() && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         // Naval C3 only provides full C3 range benefits to energy weapons and guided
         // missiles
-        boolean nc3EnergyGuided = ((wtype.hasFlag(WeaponTypeFlag.F_ENERGY))
+        boolean nc3EnergyGuided = ((wtype.hasFlag(EquipmentFlag.F_ENERGY))
                 || (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_TELE_MISSILE)
                 || (wtype.getAtClass() == WeaponType.CLASS_AR10)
@@ -1209,7 +1209,7 @@ public class Compute {
         // We need to adjust the ranges for Centurion Weapon Systems: it's
         // default range is 6/12/18 but that's only for units that are
         // susceptible to CWS, for those that aren't the ranges are 1/2/3
-        if (wtype.hasFlag(WeaponTypeFlag.F_CWS)
+        if (wtype.hasFlag(EquipmentFlag.F_CWS)
                 && ((te == null) || !te.hasQuirk("susceptible_cws"))) {
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
             weaponRanges[RangeType.RANGE_SHORT] = 1;
@@ -1222,7 +1222,7 @@ public class Compute {
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
         //
-        if (wtype.hasFlag(WeaponTypeFlag.F_PPC)) {
+        if (wtype.hasFlag(EquipmentFlag.F_PPC)) {
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                 if ((weapon.curMode() != null)
                         && weapon.curMode().equals("Field Inhibitor OFF")) {
@@ -1354,28 +1354,28 @@ public class Compute {
             }
 
             // AMS lack range for LOS Range, but don't have F_DIRECT_FIRE flag
-            if (wtype.hasFlag(WeaponTypeFlag.F_AMS)) {
+            if (wtype.hasFlag(EquipmentFlag.F_AMS)) {
                 range = RangeType.RANGE_OUT;
             }
 
             // Flamers lack range for LOS Range, but don't have F_DIRECT_FIRE
-            if (wtype.hasFlag(WeaponTypeFlag.F_FLAMER)) {
+            if (wtype.hasFlag(EquipmentFlag.F_FLAMER)) {
                 range = RangeType.RANGE_OUT;
             }
 
             int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
             // No Missiles or Direct Fire Ballistics with range < 13
-            if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)
-                    || (wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                            && wtype.hasFlag(WeaponTypeFlag.F_BALLISTIC))) {
+            if (wtype.hasFlag(EquipmentFlag.F_MISSILE)
+                    || (wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                            && wtype.hasFlag(EquipmentFlag.F_BALLISTIC))) {
                 if (longRange < 13) {
                     range = RangeType.RANGE_OUT;
                 }
             }
             // No Direct Fire Energy or Pulse with range < 7
-            if (wtype.hasFlag(WeaponTypeFlag.F_PULSE)
-                    || (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
-                            && wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE))) {
+            if (wtype.hasFlag(EquipmentFlag.F_PULSE)
+                    || (wtype.hasFlag(EquipmentFlag.F_ENERGY)
+                            && wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE))) {
                 if (longRange < 7) {
                     range = RangeType.RANGE_OUT;
                 }
@@ -1709,18 +1709,18 @@ public class Compute {
         // primary is used to determine range
         if (distance == 0) {
 
-            if (wpn.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)
-                    || (secondary != null && secondary.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK))) {
+            if (wpn.hasFlag(EquipmentFlag.F_INF_POINT_BLANK)
+                    || (secondary != null && secondary.hasFlag(EquipmentFlag.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            if (wpn.hasFlag(WeaponTypeFlag.F_INF_ENCUMBER) || (wpn.getCrew() > 1)
+            if (wpn.hasFlag(EquipmentFlag.F_INF_ENCUMBER) || (wpn.getCrew() > 1)
                     || (secondary != null
-                            && (secondary.hasFlag(WeaponTypeFlag.F_INF_ENCUMBER)
+                            && (secondary.hasFlag(EquipmentFlag.F_INF_ENCUMBER)
                                     || secondary.getCrew() > 1))) {
                 mods.addModifier(1, "point blank support weapon");
             }
 
-            if (wpn.hasFlag(WeaponTypeFlag.F_INF_BURST)) {
+            if (wpn.hasFlag(EquipmentFlag.F_INF_BURST)) {
                 mods.addModifier(-1, "point blank burst fire weapon");
             }
         }
@@ -1975,7 +1975,7 @@ public class Compute {
             int range = 0;
             for (Mounted<?> m : friend.getWeaponList()) {
                 WeaponType wtype = ((WeaponType) m.getType());
-                if (wtype.hasFlag(WeaponTypeFlag.F_TAG)) {
+                if (wtype.hasFlag(EquipmentFlag.F_TAG)) {
                     tag = m;
                     range = wtype.getLongRange();
                     break;
@@ -3342,7 +3342,7 @@ public class Compute {
                         fDamage = wt.getRackSize();
                     }
                 }
-                if (wt.hasFlag(WeaponTypeFlag.F_MISSILE_HITS)) {
+                if (wt.hasFlag(EquipmentFlag.F_MISSILE_HITS)) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
             }
@@ -3352,7 +3352,7 @@ public class Compute {
             if ((!ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), g
                     .getEntity(waa.getTargetId()).getPosition(), allECMInfo))
                     && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
-                    && (wt.hasFlag(WeaponTypeFlag.F_MISSILE)) && null != at) {
+                    && (wt.hasFlag(EquipmentFlag.F_MISSILE)) && null != at) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM)
                         || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -3411,12 +3411,12 @@ public class Compute {
 
             // adjust for previous AMS
             if ((wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
-                    && wt.hasFlag(WeaponTypeFlag.F_MISSILE)) {
+                    && wt.hasFlag(EquipmentFlag.F_MISSILE)) {
                 List<WeaponMounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
                     for (WeaponMounted vCounter : vCounters) {
                         EquipmentType type = vCounter.getType();
-                        if ((type instanceof WeaponType) && type.hasFlag(WeaponTypeFlag.F_AMS)) {
+                        if ((type instanceof WeaponType) && type.hasFlag(EquipmentFlag.F_AMS)) {
                             fHits *= 0.6f;
                         }
                     }
@@ -3639,9 +3639,9 @@ public class Compute {
         max_damage = 0.0;
 
         // If the weapon doesn't require ammo, just get the estimated damage
-        if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
-                || wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
-                || wtype.hasFlag(WeaponTypeFlag.F_INFANTRY)
+        if (wtype.hasFlag(EquipmentFlag.F_ENERGY)
+                || wtype.hasFlag(EquipmentFlag.F_ONESHOT)
+                || wtype.hasFlag(EquipmentFlag.F_INFANTRY)
                 || (wtype.getAmmoType() == AmmoType.T_NA)) {
             return Compute.getExpectedDamage(cgame, atk, false);
         }
@@ -4034,7 +4034,7 @@ public class Compute {
         // one for bombing while moving.
         if ((ae.getMovementMode() == EntityMovementMode.VTOL)
                 && aPos.equals(tPos)) {
-            if (ae.getEquipment(weaponId).getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
+            if (ae.getEquipment(weaponId).getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
                 return true;
             }
         }
@@ -4050,8 +4050,8 @@ public class Compute {
         // closest flight path
         // Technically it's an AirToGround attack since the AMS is on the aircraft
         if (isAirToGround(ae, t) && (t instanceof Entity)
-                && (ae.getEquipment(weaponId).getType().hasFlag(WeaponTypeFlag.F_AMS)
-                        || ae.getEquipment(weaponId).getType().hasFlag(WeaponTypeFlag.F_AMSBAY))) {
+                && (ae.getEquipment(weaponId).getType().hasFlag(EquipmentFlag.F_AMS)
+                        || ae.getEquipment(weaponId).getType().hasFlag(EquipmentFlag.F_AMSBAY))) {
             Entity te = (Entity) t;
             aPos = getClosestFlightPath(te.getId(), te.getPosition(),
                     ae);
@@ -5786,7 +5786,7 @@ public class Compute {
         // must be in control
         if (a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
-        } else if (attacker.getBombs(AmmoTypeFlag.F_SPACE_BOMB).isEmpty()) {
+        } else if (attacker.getBombs(EquipmentFlag.F_SPACE_BOMB_AMMO).isEmpty()) {
             reason.append("the attacker has no useable bombs");
         } else if (!rightFacing) {
             reason.append("the attacker is not facing the direction of travel");
@@ -7220,7 +7220,7 @@ public class Compute {
 
     public static boolean allowAimedShotWith(WeaponMounted weapon, AimingMode aimingMode) {
         WeaponType wtype = weapon.getType();
-        boolean isWeaponInfantry = wtype.hasFlag(WeaponTypeFlag.F_INFANTRY);
+        boolean isWeaponInfantry = wtype.hasFlag(EquipmentFlag.F_INFANTRY);
         boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA) && !isWeaponInfantry;
         AmmoMounted ammo = usesAmmo ? weapon.getLinkedAmmo() : null;
         AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
@@ -7292,8 +7292,8 @@ public class Compute {
 
                 break;
             case TARGETING_COMPUTER:
-                if (!wtype.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)
-                        || wtype.hasFlag(WeaponTypeFlag.F_PULSE)
+                if (!wtype.hasFlag(EquipmentFlag.F_DIRECT_FIRE)
+                        || wtype.hasFlag(EquipmentFlag.F_PULSE)
                         || weapon.curMode().getName().startsWith("Pulse")
                         || (wtype instanceof HAGWeapon)) {
                     return false;
@@ -7467,7 +7467,7 @@ public class Compute {
         } else {
             // Medium and large support vehicle gunner requirements are based on weapon
             // tonnage
-            double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(WeaponTypeFlag.F_AMS))
+            double tonnage = entity.getWeaponList().stream().filter(m -> !m.getType().hasFlag(EquipmentFlag.F_AMS))
                     .mapToDouble(Mounted::getTonnage).sum();
             if (advFireCon) {
                 if (entity.getStructuralTechRating() == ITechnology.RATING_F) {
@@ -7640,7 +7640,7 @@ public class Compute {
                 && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || Compute.canSee(game, ae, target))
                 && !(wtype instanceof ArtilleryCannonWeapon)
-                && !wtype.hasFlag(WeaponTypeFlag.F_MORTARTYPE_INDIRECT)
+                && !wtype.hasFlag(EquipmentFlag.F_MORTARTYPE_INDIRECT)
                 && !(isLandedSpheroid && noseWeaponAimedAtGroundTarget);
     }
 

@@ -188,8 +188,8 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponTypeFlag.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponTypeFlag.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(EquipmentFlag.F_AMSBAY);
+                boolean isPDBay = counter.getType().hasFlag(EquipmentFlag.F_PDBAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -217,7 +217,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponTypeFlag.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(EquipmentFlag.F_HEATASDICE)) {
                         int heatDice = Compute.d6(bayW
                                 .getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;

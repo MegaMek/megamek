@@ -20,7 +20,7 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import megamek.common.*;
+import megamek.common.EquipmentFlag;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
@@ -774,7 +775,7 @@ public class TestSupportVehicle extends TestEntity {
                 if (null != mod) {
                     weight *= mod.multiplier;
                 } else {
-                    logger.warn("Could not find multiplier for %s chassis mod.", mounted.getType().getName());
+                    logger.warn("Could not find multiplier for {} chassis mod.", mounted.getType().getName());
                 }
             }
         }
@@ -864,7 +865,7 @@ public class TestSupportVehicle extends TestEntity {
 
             for (Mounted<?> mounted : supportVee.getWeaponList()) {
                 WeaponType weaponType = (WeaponType) mounted.getType();
-                if (weaponType.hasFlag(WeaponTypeFlag.F_ENERGY) && !(weaponType instanceof CLChemicalLaserWeapon)
+                if (weaponType.hasFlag(EquipmentFlag.F_ENERGY) && !(weaponType instanceof CLChemicalLaserWeapon)
                         && !(weaponType instanceof VehicleFlamerWeapon)) {
                     weight += mounted.getTonnage();
                 }
@@ -1145,7 +1146,7 @@ public class TestSupportVehicle extends TestEntity {
                 correct = false;
             } else if ((supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
                     && (((mounted.getType() instanceof WeaponType)
-                            && !mounted.getType().hasFlag(WeaponTypeFlag.F_INFANTRY))
+                            && !mounted.getType().hasFlag(EquipmentFlag.F_INFANTRY))
                             || ((mounted.getType() instanceof MiscType)
                                     && mounted.getType().hasFlag(EquipmentFlag.F_HEAVY_EQUIPMENT)))) {
                 buff.append("Small support vehicles cannot mount heavy weapons or equipment (")
@@ -1153,7 +1154,7 @@ public class TestSupportVehicle extends TestEntity {
                 correct = false;
             } else if ((mounted.getType() instanceof WeaponType)
                     && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
-                    && !mounted.getType().hasFlag(WeaponTypeFlag.F_TANK_WEAPON)) {
+                    && !mounted.getType().hasFlag(EquipmentFlag.F_TANK_WEAPON)) {
                 buff.append(mounted.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if (!TestTank.legalForMotiveType(mounted.getType(), supportVee.getMovementMode(), true)) {
@@ -1355,11 +1356,11 @@ public class TestSupportVehicle extends TestEntity {
 
     private boolean isValidWeapon(Mounted<?> weapon) {
         if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return weapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
-                    && !weapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY_ONLY);
+            return weapon.getType().hasFlag(EquipmentFlag.F_INFANTRY)
+                    && !weapon.getType().hasFlag(EquipmentFlag.F_INFANTRY_ONLY);
         }
 
-        return weapon.getType().hasFlag(WeaponTypeFlag.F_TANK_WEAPON);
+        return weapon.getType().hasFlag(EquipmentFlag.F_TANK_WEAPON);
     }
 
     public boolean correctCriticals(StringBuffer buff) {

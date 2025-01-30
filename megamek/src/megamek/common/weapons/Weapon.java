@@ -39,138 +39,138 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
 
     // marks any weapon affected by a targeting computer
-    public static final WeaponTypeFlag F_DIRECT_FIRE = WeaponTypeFlag.F_DIRECT_FIRE;
-    public static final WeaponTypeFlag F_FLAMER = WeaponTypeFlag.F_FLAMER;
+    public static final EquipmentFlag F_DIRECT_FIRE = EquipmentFlag.F_DIRECT_FIRE;
+    public static final EquipmentFlag F_FLAMER = EquipmentFlag.F_FLAMER;
     // Glaze armor
-    public static final WeaponTypeFlag F_LASER = WeaponTypeFlag.F_LASER;
-    public static final WeaponTypeFlag F_PPC = WeaponTypeFlag.F_PPC;
+    public static final EquipmentFlag F_LASER = EquipmentFlag.F_LASER;
+    public static final EquipmentFlag F_PPC = EquipmentFlag.F_PPC;
     // for weapons that target Automatically (AMS)
-    public static final WeaponTypeFlag F_AUTO_TARGET = WeaponTypeFlag.F_AUTO_TARGET;
+    public static final EquipmentFlag F_AUTO_TARGET = EquipmentFlag.F_AUTO_TARGET;
     // can not start fires
-    public static final WeaponTypeFlag F_NO_FIRES = WeaponTypeFlag.F_NO_FIRES;
+    public static final EquipmentFlag F_NO_FIRES = EquipmentFlag.F_NO_FIRES;
     // must be only weapon attacking
-    public static final WeaponTypeFlag F_SOLO_ATTACK = WeaponTypeFlag.F_SOLO_ATTACK;
-    public static final WeaponTypeFlag F_VGL = WeaponTypeFlag.F_VGL;
+    public static final EquipmentFlag F_SOLO_ATTACK = EquipmentFlag.F_SOLO_ATTACK;
+    public static final EquipmentFlag F_VGL = EquipmentFlag.F_VGL;
     // MGL for rapid fire setup
-    public static final WeaponTypeFlag F_MG = WeaponTypeFlag.F_MG;
+    public static final EquipmentFlag F_MG = EquipmentFlag.F_MG;
     // Inferno weapon
-    public static final WeaponTypeFlag F_INFERNO = WeaponTypeFlag.F_INFERNO;
+    public static final EquipmentFlag F_INFERNO = EquipmentFlag.F_INFERNO;
     // Infantry caliber weapon, damage based on # of men shooting
-    public static final WeaponTypeFlag F_INFANTRY = WeaponTypeFlag.F_INFANTRY;
+    public static final EquipmentFlag F_INFANTRY = EquipmentFlag.F_INFANTRY;
     // use missile rules for # of hits
-    public static final WeaponTypeFlag F_MISSILE_HITS = WeaponTypeFlag.F_MISSILE_HITS;
-    public static final WeaponTypeFlag F_ONESHOT = WeaponTypeFlag.F_ONESHOT;
-    public static final WeaponTypeFlag F_ARTILLERY = WeaponTypeFlag.F_ARTILLERY;
+    public static final EquipmentFlag F_MISSILE_HITS = EquipmentFlag.F_MISSILE_HITS;
+    public static final EquipmentFlag F_ONESHOT = EquipmentFlag.F_ONESHOT;
+    public static final EquipmentFlag F_ARTILLERY = EquipmentFlag.F_ARTILLERY;
 
     // for Gunnery/Ballistic
-    public static final WeaponTypeFlag F_BALLISTIC = WeaponTypeFlag.F_BALLISTIC;
+    public static final EquipmentFlag F_BALLISTIC = EquipmentFlag.F_BALLISTIC;
     // for Gunnery/Energy
-    public static final WeaponTypeFlag F_ENERGY = WeaponTypeFlag.F_ENERGY;
+    public static final EquipmentFlag F_ENERGY = EquipmentFlag.F_ENERGY;
     // for Gunnery/Missile
-    public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
+    public static final EquipmentFlag F_MISSILE = EquipmentFlag.F_MISSILE;
 
     // fires
-    public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
-    public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
+    public static final EquipmentFlag F_PLASMA = EquipmentFlag.F_PLASMA;
+    public static final EquipmentFlag F_INCENDIARY_NEEDLES = EquipmentFlag.F_INCENDIARY_NEEDLES;
 
     // War of 3039 prototypes
-    public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
+    public static final EquipmentFlag F_PROTOTYPE = EquipmentFlag.F_PROTOTYPE_WEAPON;
     // Variable heat, heat is listed in dice, not points
-    public static final WeaponTypeFlag F_HEATASDICE = WeaponTypeFlag.F_HEATASDICE;
+    public static final EquipmentFlag F_HEATASDICE = EquipmentFlag.F_HEATASDICE;
     // AMS
-    public static final WeaponTypeFlag F_AMS = WeaponTypeFlag.F_AMS;
+    public static final EquipmentFlag F_AMS = EquipmentFlag.F_AMS;
 
     // may only target Infantry
-    public static final WeaponTypeFlag F_INFANTRY_ONLY = WeaponTypeFlag.F_INFANTRY_ONLY;
+    public static final EquipmentFlag F_INFANTRY_ONLY = EquipmentFlag.F_INFANTRY_ONLY;
 
-    public static final WeaponTypeFlag F_TAG = WeaponTypeFlag.F_TAG;
+    public static final EquipmentFlag F_TAG = EquipmentFlag.F_TAG;
     // C3 Master with Target Acquisition gear
-    public static final WeaponTypeFlag F_C3M = WeaponTypeFlag.F_C3M;
+    public static final EquipmentFlag F_C3M = EquipmentFlag.F_C3M;
 
     // Plasma Rifle
-    public static final WeaponTypeFlag F_PLASMA_MFUK = WeaponTypeFlag.F_PLASMA_MFUK;
+    public static final EquipmentFlag F_PLASMA_MFUK = EquipmentFlag.F_PLASMA_MFUK;
     // fire Extinguisher
-    public static final WeaponTypeFlag F_EXTINGUISHER = WeaponTypeFlag.F_EXTINGUISHER;
-    public static final WeaponTypeFlag F_PULSE = WeaponTypeFlag.F_PULSE;
+    public static final EquipmentFlag F_EXTINGUISHER = EquipmentFlag.F_EXTINGUISHER;
+    public static final EquipmentFlag F_PULSE = EquipmentFlag.F_PULSE;
     // Full Damage vs. Infantry
-    public static final WeaponTypeFlag F_BURST_FIRE = WeaponTypeFlag.F_BURST_FIRE;
+    public static final EquipmentFlag F_BURST_FIRE = EquipmentFlag.F_BURST_FIRE;
     // Machine Gun Array
-    public static final WeaponTypeFlag F_MGA = WeaponTypeFlag.F_MGA;
-    public static final WeaponTypeFlag F_NO_AIM = WeaponTypeFlag.F_NO_AIM;
-    public static final WeaponTypeFlag F_BOMBAST_LASER = WeaponTypeFlag.F_BOMBAST_LASER;
-    public static final WeaponTypeFlag F_CRUISE_MISSILE = WeaponTypeFlag.F_CRUISE_MISSILE;
-    public static final WeaponTypeFlag F_B_POD = WeaponTypeFlag.F_B_POD;
-    public static final WeaponTypeFlag F_TASER = WeaponTypeFlag.F_TASER;
+    public static final EquipmentFlag F_MGA = EquipmentFlag.F_MGA;
+    public static final EquipmentFlag F_NO_AIM = EquipmentFlag.F_NO_AIM;
+    public static final EquipmentFlag F_BOMBAST_LASER = EquipmentFlag.F_BOMBAST_LASER;
+    public static final EquipmentFlag F_CRUISE_MISSILE = EquipmentFlag.F_CRUISE_MISSILE;
+    public static final EquipmentFlag F_B_POD = EquipmentFlag.F_B_POD;
+    public static final EquipmentFlag F_TASER = EquipmentFlag.F_TASER;
 
     // Anti-ship missiles
-    public static final WeaponTypeFlag F_ANTI_SHIP = WeaponTypeFlag.F_ANTI_SHIP;
-    public static final WeaponTypeFlag F_SPACE_BOMB = WeaponTypeFlag.F_SPACE_BOMB;
-    public static final WeaponTypeFlag F_M_POD = WeaponTypeFlag.F_M_POD;
-    public static final WeaponTypeFlag F_DIVE_BOMB = WeaponTypeFlag.F_DIVE_BOMB;
-    public static final WeaponTypeFlag F_ALT_BOMB = WeaponTypeFlag.F_ALT_BOMB;
+    public static final EquipmentFlag F_ANTI_SHIP = EquipmentFlag.F_ANTI_SHIP;
+    public static final EquipmentFlag F_SPACE_BOMB = EquipmentFlag.F_SPACE_BOMB;
+    public static final EquipmentFlag F_M_POD = EquipmentFlag.F_M_POD;
+    public static final EquipmentFlag F_DIVE_BOMB = EquipmentFlag.F_DIVE_BOMB;
+    public static final EquipmentFlag F_ALT_BOMB = EquipmentFlag.F_ALT_BOMB;
 
     // Currently only used by MML
-    public static final WeaponTypeFlag F_BA_WEAPON = WeaponTypeFlag.F_BA_WEAPON;
-    public static final WeaponTypeFlag F_MEK_WEAPON = WeaponTypeFlag.F_MEK_WEAPON;
-    public static final WeaponTypeFlag F_AERO_WEAPON = WeaponTypeFlag.F_AERO_WEAPON;
-    public static final WeaponTypeFlag F_PROTO_WEAPON = WeaponTypeFlag.F_PROTO_WEAPON;
-    public static final WeaponTypeFlag F_TANK_WEAPON = WeaponTypeFlag.F_TANK_WEAPON;
+    public static final EquipmentFlag F_BA_WEAPON = EquipmentFlag.F_BA_WEAPON;
+    public static final EquipmentFlag F_MEK_WEAPON = EquipmentFlag.F_MEK_WEAPON;
+    public static final EquipmentFlag F_AERO_WEAPON = EquipmentFlag.F_AERO_WEAPON;
+    public static final EquipmentFlag F_PROTO_WEAPON = EquipmentFlag.F_PROTO_WEAPON;
+    public static final EquipmentFlag F_TANK_WEAPON = EquipmentFlag.F_TANK_WEAPON;
 
-    public static final WeaponTypeFlag F_INFANTRY_ATTACK = WeaponTypeFlag.F_INFANTRY_ATTACK;
-    public static final WeaponTypeFlag F_INF_BURST = WeaponTypeFlag.F_INF_BURST;
-    public static final WeaponTypeFlag F_INF_AA = WeaponTypeFlag.F_INF_AA;
-    public static final WeaponTypeFlag F_INF_NONPENETRATING = WeaponTypeFlag.F_INF_NONPENETRATING;
-    public static final WeaponTypeFlag F_INF_POINT_BLANK = WeaponTypeFlag.F_INF_POINT_BLANK;
-    public static final WeaponTypeFlag F_INF_SUPPORT = WeaponTypeFlag.F_INF_SUPPORT;
-    public static final WeaponTypeFlag F_INF_ENCUMBER = WeaponTypeFlag.F_INF_ENCUMBER;
-    public static final WeaponTypeFlag F_INF_ARCHAIC = WeaponTypeFlag.F_INF_ARCHAIC;
+    public static final EquipmentFlag F_INFANTRY_ATTACK = EquipmentFlag.F_INFANTRY_ATTACK;
+    public static final EquipmentFlag F_INF_BURST = EquipmentFlag.F_INF_BURST;
+    public static final EquipmentFlag F_INF_AA = EquipmentFlag.F_INF_AA;
+    public static final EquipmentFlag F_INF_NONPENETRATING = EquipmentFlag.F_INF_NONPENETRATING;
+    public static final EquipmentFlag F_INF_POINT_BLANK = EquipmentFlag.F_INF_POINT_BLANK;
+    public static final EquipmentFlag F_INF_SUPPORT = EquipmentFlag.F_INF_SUPPORT;
+    public static final EquipmentFlag F_INF_ENCUMBER = EquipmentFlag.F_INF_ENCUMBER;
+    public static final EquipmentFlag F_INF_ARCHAIC = EquipmentFlag.F_INF_ARCHAIC;
 
     // TODO Add game rules IO pg 84
-    public static final WeaponTypeFlag F_INF_CLIMBINGCLAWS = WeaponTypeFlag.F_INF_CLIMBINGCLAWS;
+    public static final EquipmentFlag F_INF_CLIMBINGCLAWS = EquipmentFlag.F_INF_CLIMBINGCLAWS;
 
     // C3 Master Booster System
-    public static final WeaponTypeFlag F_C3MBS = WeaponTypeFlag.F_C3MBS;
+    public static final EquipmentFlag F_C3MBS = EquipmentFlag.F_C3MBS;
 
     // Naval Mass Drivers
-    public static final WeaponTypeFlag F_MASS_DRIVER = WeaponTypeFlag.F_MASS_DRIVER;
+    public static final EquipmentFlag F_MASS_DRIVER = EquipmentFlag.F_MASS_DRIVER;
 
-    public static final WeaponTypeFlag F_CWS = WeaponTypeFlag.F_CWS;
+    public static final EquipmentFlag F_CWS = EquipmentFlag.F_CWS;
 
-    public static final WeaponTypeFlag F_MEK_MORTAR = WeaponTypeFlag.F_MEK_MORTAR;
+    public static final EquipmentFlag F_MEK_MORTAR = EquipmentFlag.F_MEK_MORTAR;
 
     // Weapon required to make a bomb type function
-    public static final WeaponTypeFlag F_BOMB_WEAPON = WeaponTypeFlag.F_BOMB_WEAPON;
+    public static final EquipmentFlag F_BOMB_WEAPON = EquipmentFlag.F_BOMB_WEAPON;
 
-    public static final WeaponTypeFlag F_BA_INDIVIDUAL = WeaponTypeFlag.F_BA_INDIVIDUAL;
+    public static final EquipmentFlag F_BA_INDIVIDUAL = EquipmentFlag.F_BA_INDIVIDUAL;
 // Next one's out of order. See F_INF_CLIMBINGCLAWS
 
     // AMS and Point Defense Bays - Have to work differently from code using the
 // F_AMS flag
-    public static final WeaponTypeFlag F_PDBAY = WeaponTypeFlag.F_PDBAY;
-    public static final WeaponTypeFlag F_AMSBAY = WeaponTypeFlag.F_AMSBAY;
+    public static final EquipmentFlag F_PDBAY = EquipmentFlag.F_PDBAY;
+    public static final EquipmentFlag F_AMSBAY = EquipmentFlag.F_AMSBAY;
 
     // Thunderbolt and similar large missiles, for use with AMS resolution
-    public static final WeaponTypeFlag F_LARGEMISSILE = WeaponTypeFlag.F_LARGEMISSILE;
+    public static final EquipmentFlag F_LARGEMISSILE = EquipmentFlag.F_LARGEMISSILE;
 
     // Hyper-Laser
-    public static final WeaponTypeFlag F_HYPER = WeaponTypeFlag.F_HYPER;
+    public static final EquipmentFlag F_HYPER = EquipmentFlag.F_HYPER;
 
     // Fusillade works like a one-shot weapon but has a second round.
-    public static final WeaponTypeFlag F_DOUBLE_ONESHOT = WeaponTypeFlag.F_DOUBLE_ONESHOT;
+    public static final EquipmentFlag F_DOUBLE_ONESHOT = EquipmentFlag.F_DOUBLE_ONESHOT;
     // ER flamers do half damage in heat mode,
-    public static final WeaponTypeFlag F_ER_FLAMER = WeaponTypeFlag.F_ER_FLAMER;
+    public static final EquipmentFlag F_ER_FLAMER = EquipmentFlag.F_ER_FLAMER;
     /** Missile weapon that can be linked to an Artemis fire control system */
-    public static final WeaponTypeFlag F_ARTEMIS_COMPATIBLE = WeaponTypeFlag.F_ARTEMIS_COMPATIBLE;
+    public static final EquipmentFlag F_ARTEMIS_COMPATIBLE = EquipmentFlag.F_ARTEMIS_COMPATIBLE;
 
     /**
      * This flag is used by mortar-type weapons that allow indirect fire without a
      * spotter and/or with LOS.
      */
-    public static final WeaponTypeFlag F_MORTARTYPE_INDIRECT = WeaponTypeFlag.F_MORTARTYPE_INDIRECT;
+    public static final EquipmentFlag F_MORTARTYPE_INDIRECT = EquipmentFlag.F_MORTARTYPE_INDIRECT;
 
     // Used for TSEMP Weapons.
-    public static final WeaponTypeFlag F_TSEMP = WeaponTypeFlag.F_TSEMP;
-    public static final WeaponTypeFlag F_REPEATING = WeaponTypeFlag.F_REPEATING;
+    public static final EquipmentFlag F_TSEMP = EquipmentFlag.F_TSEMP;
+    public static final EquipmentFlag F_REPEATING = EquipmentFlag.F_REPEATING;
 
 
     //Mode text tokens
@@ -248,7 +248,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public void adaptToGameOptions(IGameOptions gameOptions) {
         // Flamers are spread out over all sorts of weapon types not limited to FlamerWeapon.
         // So modes are handled here.
-        if (hasFlag(WeaponTypeFlag.F_FLAMER)) {
+        if (hasFlag(EquipmentFlag.F_FLAMER)) {
             if (!gameOptions.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
                 addMode(MODE_FLAMER_DAMAGE);
                 addMode(MODE_FLAMER_HEAT);
@@ -331,7 +331,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
             }
         }
 
-        if (hasFlag(WeaponTypeFlag.F_AMS)) {
+        if (hasFlag(EquipmentFlag.F_AMS)) {
             if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                 addMode(Weapon.MODE_AMS_MANUAL);
             }

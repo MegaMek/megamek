@@ -1512,8 +1512,8 @@ public class MapMenu extends JPopupMenu {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_BOMB)));
                 }
 
-                if (hasWeaponFlag(WeaponTypeFlag.F_DIVE_BOMB)
-                        || hasWeaponFlag(WeaponTypeFlag.F_ALT_BOMB)) {
+                if (hasWeaponFlag(EquipmentFlag.F_DIVE_BOMB)
+                        || hasWeaponFlag(EquipmentFlag.F_ALT_BOMB)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_AERO_BOMB)));
                 }
 
@@ -1612,7 +1612,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(WeaponTypeFlag weaponFlag) {
+    private boolean hasWeaponFlag(EquipmentFlag weaponFlag) {
         if (myEntity.getWeaponList().isEmpty()) {
             return false;
         }

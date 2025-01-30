@@ -342,7 +342,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
         av = av + bonus;
-        if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+        if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(EquipmentFlag.F_MML_LRM)) {
             av = av * 2;
         }
         // Set the Capital Fighter AV here. We'll apply counterAV to this later
@@ -464,8 +464,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // resolve AMS counter-fire
             for (WeaponMounted counter : lCounters) {
                 // Set up differences between different types of AMS
-                boolean isAMS = counter.getType().hasFlag(WeaponTypeFlag.F_AMS);
-                boolean isAMSBay = counter.getType().hasFlag(WeaponTypeFlag.F_AMSBAY);
+                boolean isAMS = counter.getType().hasFlag(EquipmentFlag.F_AMS);
+                boolean isAMSBay = counter.getType().hasFlag(EquipmentFlag.F_AMSBAY);
                 boolean isAPDS = counter.isAPDS();
 
                 // Only one AMS and one APDS can engage each missile attack
@@ -516,7 +516,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         }
 
                         // build up some heat (assume target is ams owner)
-                        if (bayW.getType().hasFlag(WeaponTypeFlag.F_HEATASDICE)) {
+                        if (bayW.getType().hasFlag(EquipmentFlag.F_HEATASDICE)) {
                             pdEnt.heatBuildup += Compute.d6(bayW.getCurrentHeat());
                         } else {
                             pdEnt.heatBuildup += bayW.getCurrentHeat();
@@ -536,7 +536,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     }
                 } else {
                     // build up some heat
-                    if (counter.getType().hasFlag(WeaponTypeFlag.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(EquipmentFlag.F_HEATASDICE)) {
                         pdEnt.heatBuildup += Compute.d6(counter.getCurrentHeat());
                     } else {
                         pdEnt.heatBuildup += counter.getCurrentHeat();
@@ -1067,6 +1067,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        return wtype.hasFlag(WeaponTypeFlag.F_LARGEMISSILE);
+        return wtype.hasFlag(EquipmentFlag.F_LARGEMISSILE);
     }
 }

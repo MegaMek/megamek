@@ -40,7 +40,7 @@ public abstract class InfantryWeapon extends Weapon {
     public InfantryWeapon() {
         super();
         damage = DAMAGE_VARIABLE;
-        flags = flags.or(WeaponTypeFlag.F_INFANTRY);
+        flags = flags.or(EquipmentFlag.F_INFANTRY);
         ammoType = AmmoType.T_NA;
         shortRange = 0;
         mediumRange = 0;
@@ -287,9 +287,9 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     public boolean isFlameBased() {
-        return hasFlag(WeaponTypeFlag.F_FLAMER)
-                || hasFlag(WeaponTypeFlag.F_INFERNO)
-                || hasFlag(WeaponTypeFlag.F_INCENDIARY_NEEDLES)
-                || hasFlag(WeaponTypeFlag.F_PLASMA);
+        return hasFlag(EquipmentFlag.F_FLAMER)
+                || hasFlag(EquipmentFlag.F_INFERNO)
+                || hasFlag(EquipmentFlag.F_INCENDIARY_NEEDLES)
+                || hasFlag(EquipmentFlag.F_PLASMA);
     }
 }

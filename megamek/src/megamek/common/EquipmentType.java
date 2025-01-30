@@ -525,17 +525,10 @@ public class EquipmentType implements ITechnology {
         return flags.intersects(flagSet);
     }
 
-    public boolean hasFlag(AmmoTypeFlag flag) {
-        return flags.get(flag.getFlagPosition());
-    }
-
     public boolean hasFlag(int flag) {
         return flags.get(flag);
     }
 
-    public boolean hasFlag(WeaponTypeFlag flag) {
-        return flags.isSet(flag);
-    }
 
     public double getBV(Entity entity) {
         return bv;
@@ -1744,25 +1737,85 @@ public class EquipmentType implements ITechnology {
      * Returns true if this equipment is any of those identified by the given type
      * Strings. The given typeInternalNames are compared to the internal name of
      * this EquipmentType, not the (display) name!
-     *
      * Best use the constants defined in EquipmentTypeLookup.
      *
-     * @param typeInternalName  An Equipment internal name to check
-     * @param typeInternalNames More Equipment internal names to check
+     * @param t1 Equipment name
+     * @param t2 Equipment name
      * @return true if the internalName of this equipment matches any of the given
      *         types
      */
-    public boolean isAnyOf(String typeInternalName, String... typeInternalNames) {
-        return internalName.equals(typeInternalName) || Arrays.asList(typeInternalNames).contains(internalName);
+    public boolean isAnyOf(String t1, String t2) {
+        return internalName.equals(t1) || internalName.equals(t2);
+    }
+
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param t1 Equipment name
+     * @param t2 Equipment name
+     * @param t3 Equipment name
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
+     */
+    public boolean isAnyOf(String t1, String t2, String t3) {
+        return internalName.equals(t1) || internalName.equals(t2) || internalName.equals(t3);
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param t1 Equipment name
+     * @param t2 Equipment name
+     * @param t3 Equipment name
+     * @param t4 Equipment name
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
+     */
+    public boolean isAnyOf(String t1, String t2, String t3, String t4) {
+        return internalName.equals(t1) || internalName.equals(t2) || internalName.equals(t3) || internalName.equals(t4);
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param equipmentNames Equipment name
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
+     */
+    public boolean isAnyOf(Set<String> equipmentNames) {
+        return equipmentNames.stream().anyMatch(internalName::equals);
+    }
+
+    /**
+     * Returns true if this equipment is any of those identified by the given type
+     * Strings. The given typeInternalNames are compared to the internal name of
+     * this EquipmentType, not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName  An Equipment internal name to check
+     * @return true if the internalName of this equipment matches any of the given
+     *         types
+     */
+    public boolean isAnyOf(String typeInternalName) {
+        return internalName.equals(typeInternalName);
     }
 
     /**
      * Returns true if this equipment is that identified by the given
      * typeInternalName String. The given typeInternalName is compared to the
      * internal name of this EquipmentType, not the (display) name!
-     *
      * Best use the constants defined in EquipmentTypeLookup. Calling this is
-     * equivalent to {@link #isAnyOf(String, String...)} with only the one
+     * equivalent to {@link #isAnyOf(String)} with only the one
      * parameter.
      *
      * @param typeInternalName An Equipment internal name to check

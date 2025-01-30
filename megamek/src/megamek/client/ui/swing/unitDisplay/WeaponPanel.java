@@ -250,8 +250,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wn.append(']');
             // determine shots left & total shots left
             if ((wtype.getAmmoType() != AmmoType.T_NA)
-                    && (!wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
-                            || wtype.hasFlag(WeaponTypeFlag.F_BA_INDIVIDUAL))
+                    && (!wtype.hasFlag(EquipmentFlag.F_ONESHOT)
+                            || wtype.hasFlag(EquipmentFlag.F_BA_INDIVIDUAL))
                     && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                 int shotsLeft = 0;
                 if ((mounted.getLinked() != null)
@@ -266,7 +266,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wn.append('/');
                 wn.append(totalShotsLeft);
                 wn.append(')');
-            } else if (wtype.hasFlag(WeaponTypeFlag.F_DOUBLE_ONESHOT)
+            } else if (wtype.hasFlag(EquipmentFlag.F_DOUBLE_ONESHOT)
                     || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
                 int totalShots = 0;
@@ -1184,9 +1184,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // Don't add bomb weapons for LAMs in mek mode except RL and TAG.
             if ((entity instanceof LandAirMek)
                     && (entity.getConversionMode() == LandAirMek.CONV_MODE_MEK)
-                    && mounted.getType().hasFlag(WeaponTypeFlag.F_BOMB_WEAPON)
+                    && mounted.getType().hasFlag(EquipmentFlag.F_BOMB_WEAPON)
                     && mounted.getType().getAmmoType() != AmmoType.T_RL_BOMB
-                    && !mounted.getType().hasFlag(WeaponTypeFlag.F_TAG)) {
+                    && !mounted.getType().hasFlag(EquipmentFlag.F_TAG)) {
                 continue;
             }
 
@@ -1577,7 +1577,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if ((wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponTypeFlag.F_TAG)) {
+        if ((wtype instanceof InfantryWeapon) && !wtype.hasFlag(EquipmentFlag.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
@@ -1611,16 +1611,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wInfantryRange5L.setVisible(false);
             wInfantryRange5R.setVisible(false);
             int zeromods = 0;
-            if (inftype.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)) {
+            if (inftype.hasFlag(EquipmentFlag.F_INF_POINT_BLANK)) {
                 zeromods++;
             }
 
-            if (inftype.hasFlag(WeaponTypeFlag.F_INF_ENCUMBER)
+            if (inftype.hasFlag(EquipmentFlag.F_INF_ENCUMBER)
                     || (inftype.getCrew() > 1)) {
                 zeromods++;
             }
 
-            if (inftype.hasFlag(WeaponTypeFlag.F_INF_BURST)) {
+            if (inftype.hasFlag(EquipmentFlag.F_INF_BURST)) {
                 zeromods--;
             }
 
@@ -1869,7 +1869,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
             wDamR.setText(damage.toString());
-        } else if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
+        } else if (wtype.hasFlag(EquipmentFlag.F_ENERGY)
                 && mounted.hasModes()
                 && (unitDisplay.getClientGUI() != null)
                 && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
@@ -1907,7 +1907,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();
             extremeR = wtype.getWExtremeRange();
-        } else if (wtype.hasFlag(WeaponTypeFlag.F_PDBAY)) {
+        } else if (wtype.hasFlag(EquipmentFlag.F_PDBAY)) {
             // Point Defense bays have a variable range, depending on the mode they're in
             if (mounted.hasModes() && mounted.curMode().equals("Point Defense")) {
                 shortR = 1;
@@ -1920,7 +1920,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // We need to adjust the ranges for Centurion Weapon Systems: it's
         // default range is 6/12/18 but that's only for units that are
         // susceptible to CWS, for those that aren't the ranges are 1/2/3
-        if (wtype.hasFlag(WeaponTypeFlag.F_CWS)) {
+        if (wtype.hasFlag(EquipmentFlag.F_CWS)) {
             Entity target = null;
             if ((unitDisplay.getClientGUI() != null)
                     && (unitDisplay.getClientGUI().getCurrentPanel() instanceof FiringDisplay)) {
@@ -2022,7 +2022,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
-        } else if (wtype.hasFlag(WeaponTypeFlag.F_DOUBLE_ONESHOT)
+        } else if (wtype.hasFlag(EquipmentFlag.F_DOUBLE_ONESHOT)
                 || (entity.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
             int count = 0;
             vAmmo = new ArrayList<>();
@@ -2041,7 +2041,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             m_chAmmo.setSelectedIndex(0);
             m_chAmmo.setEnabled(count > 0);
 
-        } else if (wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
+        } else if (wtype.hasFlag(EquipmentFlag.F_ONESHOT)) {
             // this is the situation where there's some kind of ammo but it's not changeable
             m_chAmmo.setEnabled(false);
             Mounted<?> mountedAmmo = mounted.getLinked();
@@ -2162,7 +2162,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wExtR.setText("16 - 20");
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML) {
-            if (atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+            if (atype.hasFlag(EquipmentFlag.F_MML_LRM)) {
                 if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     wMinR.setText("4");
                     wShortR.setText("1 - 5");
@@ -2299,7 +2299,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wShortAVR.setText(Integer.toString(avShort));
         if (wtype.isCapital()) {
             wShortR.setText("1-12");
-        } else if (wtype.hasFlag(WeaponTypeFlag.F_PDBAY)) {
+        } else if (wtype.hasFlag(EquipmentFlag.F_PDBAY)) {
             // Point Defense bays have a variable range too, depending on the mode they're
             // in
             if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
@@ -2370,7 +2370,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avMed = avMed + bonus;
                 avLong = avLong + bonus;
             }
-            if (!atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
+            if (!atype.hasFlag(EquipmentFlag.F_MML_LRM)) {
                 maxr = WeaponType.RANGE_SHORT;
                 avShort = avShort * 2;
                 avMed = 0;
@@ -2409,22 +2409,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_AR10) {
-            if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
+            if (atype.hasFlag(EquipmentFlag.F_AR10_KILLER_WHALE)) {
                 avShort = 4;
                 avMed = 4;
                 avLong = 4;
                 avExt = 4;
-            } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
+            } else if (atype.hasFlag(EquipmentFlag.F_AR10_WHITE_SHARK)) {
                 avShort = 3;
                 avMed = 3;
                 avLong = 3;
                 avExt = 3;
-            } else if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
+            } else if (atype.hasFlag(EquipmentFlag.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
                 avExt = 100;
-            } else if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
+            } else if (atype.hasFlag(EquipmentFlag.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2436,7 +2436,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avExt = 2;
             }
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE) {
-            if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
+            if (atype.hasFlag(EquipmentFlag.F_PEACEMAKER)) {
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
@@ -2448,7 +2448,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avExt = 4;
             }
         } else if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK) {
-            if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
+            if (atype.hasFlag(EquipmentFlag.F_SANTA_ANNA)) {
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
@@ -2612,11 +2612,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // Some weapons have a specific target, which gets handled
                 // in the target method
                 if (mounted != null
-                        && mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+                        && mounted.getType().hasFlag(EquipmentFlag.F_VGL)) {
                     // Store previous target, if it's a weapon that doesn't
                     // have a forced target
                     if ((prevMounted != null)
-                            && !prevMounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
+                            && !prevMounted.getType().hasFlag(EquipmentFlag.F_VGL)) {
                         prevTarget = firingDisplay.getTarget();
                     }
                     firingDisplay.target(null);

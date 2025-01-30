@@ -98,7 +98,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         report.addLine("--- Heat Damage (HT):", "");
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
-            if ((weaponType.hasFlag(WeaponTypeFlag.F_FLAMER) || weaponType.hasFlag(WeaponTypeFlag.F_PLASMA))
+            if ((weaponType.hasFlag(EquipmentFlag.F_FLAMER) || weaponType.hasFlag(EquipmentFlag.F_PLASMA))
                     && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
                 if (finalSDamage.damage < 1) {
                     report.addLine("Insufficient S damage", "No HT", "");

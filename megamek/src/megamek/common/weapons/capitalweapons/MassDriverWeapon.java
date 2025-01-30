@@ -19,7 +19,7 @@ package megamek.common.weapons.capitalweapons;
 
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 
 /**
  * @author Dave Nawton

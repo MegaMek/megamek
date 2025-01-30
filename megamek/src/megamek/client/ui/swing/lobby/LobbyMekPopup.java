@@ -903,7 +903,7 @@ class LobbyMekPopup {
     private static boolean hasRapidFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponTypeFlag.F_MG) && m.isRapidfire()) {
+            if (etype.hasFlag(EquipmentFlag.F_MG) && m.isRapidfire()) {
                 return true;
             }
         }
@@ -914,7 +914,7 @@ class LobbyMekPopup {
     private static boolean hasNormalFireMG(Entity entity) {
         for (Mounted<?> m : entity.getWeaponList()) {
             EquipmentType etype = m.getType();
-            if (etype.hasFlag(WeaponTypeFlag.F_MG) && !m.isRapidfire()) {
+            if (etype.hasFlag(EquipmentFlag.F_MG) && !m.isRapidfire()) {
                 return true;
             }
         }
@@ -925,7 +925,7 @@ class LobbyMekPopup {
     private static boolean hasHotLoaded(Entity entity) {
         for (Mounted<?> ammo : entity.getAmmo()) {
             AmmoType etype = (AmmoType) ammo.getType();
-            if (etype.hasFlag(AmmoTypeFlag.F_HOTLOAD) && ammo.isHotLoaded()) {
+            if (etype.hasFlag(EquipmentFlag.F_HOTLOAD) && ammo.isHotLoaded()) {
                 return true;
             }
         }
@@ -938,7 +938,7 @@ class LobbyMekPopup {
     private static boolean hasNonHotLoaded(Entity entity) {
         for (Mounted<?> ammo : entity.getAmmo()) {
             AmmoType etype = (AmmoType) ammo.getType();
-            if (etype.hasFlag(AmmoTypeFlag.F_HOTLOAD) && !ammo.isHotLoaded()) {
+            if (etype.hasFlag(EquipmentFlag.F_HOTLOAD) && !ammo.isHotLoaded()) {
                 return true;
             }
         }

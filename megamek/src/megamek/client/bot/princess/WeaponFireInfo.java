@@ -390,7 +390,7 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
-        if (!(getWeapon().getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)
+        if (!(getWeapon().getType().hasFlag(EquipmentFlag.F_ARTILLERY)
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
             return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
@@ -471,7 +471,7 @@ public class WeaponFireInfo {
 
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponTypeFlag.F_PLASMA) &&
+        if (weaponType.hasFlag(EquipmentFlag.F_PLASMA) &&
                 TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
             return 7D;
         }
@@ -505,7 +505,7 @@ public class WeaponFireInfo {
         }
 
         // Give an estimation of the utility of TAGging a given target.
-        if (weaponType.hasFlag(WeaponTypeFlag.F_TAG)) {
+        if (weaponType.hasFlag(EquipmentFlag.F_TAG)) {
             // Aero TAG usage needs to take into account incoming Indirect Fire shots from
             // friendlies, homing
             // weapons, and the disutility of foregoing its own other weapons.
@@ -522,7 +522,7 @@ public class WeaponFireInfo {
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());
-            if (weaponType.hasFlag(WeaponTypeFlag.F_PLASMA)) {
+            if (weaponType.hasFlag(EquipmentFlag.F_PLASMA)) {
                 dmg += 3; // Account for potential plasma heat.
             }
             return dmg;
@@ -614,8 +614,8 @@ public class WeaponFireInfo {
 
         // for dive attacks, we can pretty much assume that we're going to drop
         // everything we've got on the poor scrubs in this hex
-        if (weapon.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)) {
-            for (final BombMounted bomb : shooter.getBombs(AmmoTypeFlag.F_GROUND_BOMB)) {
+        if (weapon.getType().hasFlag(EquipmentFlag.F_DIVE_BOMB)) {
+            for (final BombMounted bomb : shooter.getBombs(EquipmentFlag.F_GROUND_BOMB)) {
                 final int damagePerShot = bomb.getType().getDamagePerShot();
 
                 // some bombs affect a blast radius, so we take that into account
@@ -729,7 +729,7 @@ public class WeaponFireInfo {
 
         // If expected damage from Aero tagging is zero, return out - save attacks for
         // later.
-        if (weapon.getType().hasFlag(WeaponTypeFlag.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
+        if (weapon.getType().hasFlag(EquipmentFlag.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
             logger
                     .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             setProbabilityToHit(0);
@@ -826,7 +826,7 @@ public class WeaponFireInfo {
         if (null != getAction()) {
             return getAction();
         }
-        if (!(getWeapon().getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)
+        if (!(getWeapon().getType().hasFlag(EquipmentFlag.F_ARTILLERY)
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
             setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getId(),

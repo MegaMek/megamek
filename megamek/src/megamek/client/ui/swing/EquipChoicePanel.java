@@ -425,7 +425,7 @@ public class EquipChoicePanel extends JPanel {
         panRapidfireMGs.setLayout(gbl);
         for (Mounted<?> m : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (!wtype.hasFlag(WeaponTypeFlag.F_MG)) {
+            if (!wtype.hasFlag(EquipmentFlag.F_MG)) {
                 continue;
             }
             RapidfireMGPanel rmp = new RapidfireMGPanel(m);
@@ -529,15 +529,15 @@ public class EquipChoicePanel extends JPanel {
 
             // Check to see if we've got a valid infantry weapon
             InfantryWeapon infWeap = (InfantryWeapon) eq;
-            if (infWeap.hasFlag(WeaponTypeFlag.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)
-                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
+            if (infWeap.hasFlag(EquipmentFlag.F_INFANTRY)
+                    && !infWeap.hasFlag(EquipmentFlag.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(EquipmentFlag.F_INF_ARCHAIC)
+                    && !infWeap.hasFlag(EquipmentFlag.F_INF_SUPPORT)) {
                 apWeapTypes.add(infWeap);
             }
-            if (infWeap.hasFlag(WeaponTypeFlag.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)
+            if (infWeap.hasFlag(EquipmentFlag.F_INFANTRY)
+                    && !infWeap.hasFlag(EquipmentFlag.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(EquipmentFlag.F_INF_ARCHAIC)
                     && (infWeap.getCrew() < 2)) {
                 agWeapTypes.add(infWeap);
             }
@@ -681,7 +681,7 @@ public class EquipChoicePanel extends JPanel {
                 }
 
                 // Only Protos can use Proto-specific ammo
-                if (atCheck.hasFlag(AmmoTypeFlag.F_PROTOMEK)
+                if (atCheck.hasFlag(EquipmentFlag.F_PROTOMEK_ONLY)
                         && !(entity instanceof ProtoMek)) {
                     continue;
                 }
@@ -689,8 +689,8 @@ public class EquipChoicePanel extends JPanel {
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
                 if ((entity instanceof ProtoMek)
-                        && atCheck.hasFlag(AmmoTypeFlag.F_MG)
-                        && !atCheck.hasFlag(AmmoTypeFlag.F_PROTOMEK)) {
+                        && atCheck.hasFlag(EquipmentFlag.F_MG_AMMO)
+                        && !atCheck.hasFlag(EquipmentFlag.F_PROTOMEK_ONLY)) {
                     continue;
                 }
 
@@ -698,10 +698,10 @@ public class EquipChoicePanel extends JPanel {
                 // All other ammo types need to match on rack size and tech.
                 if (bTechMatch
                         && (atCheck.getRackSize() == at.getRackSize())
-                        && (atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR) == at
-                                .hasFlag(AmmoTypeFlag.F_BATTLEARMOR))
-                        && (atCheck.hasFlag(AmmoTypeFlag.F_ENCUMBERING) == at
-                                .hasFlag(AmmoTypeFlag.F_ENCUMBERING))
+                        && (atCheck.hasFlag(EquipmentFlag.F_BATTLEARMOR_ONLY) == at
+                                .hasFlag(EquipmentFlag.F_BATTLEARMOR_ONLY))
+                        && (atCheck.hasFlag(EquipmentFlag.F_ENCUMBERING) == at
+                                .hasFlag(EquipmentFlag.F_ENCUMBERING))
                         && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
                     vTypes.add(atCheck);
                 }
@@ -1104,13 +1104,13 @@ public class EquipChoicePanel extends JPanel {
                 add(chDump, GBC.eol());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                        && curType.hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
+                        && curType.hasFlag(EquipmentFlag.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
                     add(chHotLoad, GBC.eol());
                 }
             } else if (clientgui.getClient().getGame().getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                    && curType.hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
+                    && curType.hasFlag(EquipmentFlag.F_HOTLOAD)) {
                 add(labHotLoad, GBC.std());
                 add(chHotLoad, GBC.eol());
             }

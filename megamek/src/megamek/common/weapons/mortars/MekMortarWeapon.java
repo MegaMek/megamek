@@ -36,7 +36,7 @@ import megamek.common.weapons.MekMortarHandler;
 import megamek.common.weapons.MekMortarSmokeHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 
 /**
  * @author Jason Tighe

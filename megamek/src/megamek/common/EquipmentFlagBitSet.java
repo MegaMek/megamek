@@ -30,22 +30,6 @@ public class EquipmentFlagBitSet extends BitSet {
         return this;
     }
 
-    public EquipmentFlagBitSet or(AmmoTypeFlag other) {
-        // Simplification of the original code
-        // since a flag can have only one value, this is equivalent
-        // to setting the flag in the flags position
-        set(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet or(WeaponTypeFlag other) {
-        // Simplification of the original code
-        // since a flag can have only one value, this is equivalent
-        // to setting the flag in the flags position
-        set(other.getFlagPosition());
-        return this;
-    }
-
     public EquipmentFlagBitSet or(EquipmentFlagBitSet other) {
         or((BitSet) other);
         return this;
@@ -75,56 +59,12 @@ public class EquipmentFlagBitSet extends BitSet {
         return this;
     }
 
-    public EquipmentFlagBitSet and(AmmoTypeFlag other) {
-        // simplification of the original code
-        // since a flag can have only one value, this is equivalent
-        // to clearing the entire set and setting the flag
-        // if it was set before
-        if (get(other.getFlagPosition())) {
-            clear();
-            set(other.getFlagPosition());
-        } else {
-            clear();
-        }
-        return this;
-    }
-
-    public EquipmentFlagBitSet and(WeaponTypeFlag other) {
-        // simplification of the original code
-        // since a flag can have only one value, this is equivalent
-        // to clearing the entire set and setting the flag
-        // if it was set before
-        if (get(other.getFlagPosition())) {
-            clear();
-            set(other.getFlagPosition());
-        } else {
-            clear();
-        }
-        return this;
-    }
-
     public EquipmentFlagBitSet and(EquipmentFlagBitSet other) {
         and((BitSet) other);
         return this;
     }
 
     public EquipmentFlagBitSet andNot(EquipmentFlag other) {
-        // simplification of the original code
-        // andNot simply turns off a value, therefore this should be equivalent
-        // to A & ~B
-        clear(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet andNot(AmmoTypeFlag other) {
-        // simplification of the original code
-        // andNot simply turns off a value, therefore this should be equivalent
-        // to A & ~B
-        clear(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet andNot(WeaponTypeFlag other) {
         // simplification of the original code
         // andNot simply turns off a value, therefore this should be equivalent
         // to A & ~B
@@ -143,31 +83,7 @@ public class EquipmentFlagBitSet extends BitSet {
         return this;
     }
 
-    public EquipmentFlagBitSet set(AmmoTypeFlag other) {
-        // a simple way to set a flag
-        set(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet set(WeaponTypeFlag other) {
-        // a simple way to set a flag
-        set(other.getFlagPosition());
-        return this;
-    }
-
     public EquipmentFlagBitSet clear(EquipmentFlag other) {
-        // a simple way to remove a flag
-        clear(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet clear(AmmoTypeFlag other) {
-        // a simple way to remove a flag
-        clear(other.getFlagPosition());
-        return this;
-    }
-
-    public EquipmentFlagBitSet clear(WeaponTypeFlag other) {
         // a simple way to remove a flag
         clear(other.getFlagPosition());
         return this;
@@ -177,23 +93,7 @@ public class EquipmentFlagBitSet extends BitSet {
         return get(flag.getFlagPosition());
     }
 
-    public boolean isSet(AmmoTypeFlag flag) {
-        return get(flag.getFlagPosition());
-    }
-
-    public boolean isSet(WeaponTypeFlag flag) {
-        return get(flag.getFlagPosition());
-    }
-
     public boolean contains(EquipmentFlag flag) {
-        return get(flag.getFlagPosition());
-    }
-
-    public boolean contains(AmmoTypeFlag flag) {
-        return get(flag.getFlagPosition());
-    }
-
-    public boolean contains(WeaponTypeFlag flag) {
         return get(flag.getFlagPosition());
     }
 

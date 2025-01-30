@@ -18,7 +18,7 @@ import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
-import static megamek.common.WeaponTypeFlag.F_MISSILE;
+import static megamek.common.EquipmentFlag.F_MISSILE;
 
 /**
  * @author Jay Lawson

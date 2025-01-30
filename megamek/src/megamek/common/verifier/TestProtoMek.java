@@ -281,7 +281,7 @@ public class TestProtoMek extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponTypeFlag.F_PROTO_WEAPON)) {
+                    && !mount.getType().hasFlag(EquipmentFlag.F_PROTO_WEAPON)) {
                 buff.append(mount).append(" is not a legal ProtoMek weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)

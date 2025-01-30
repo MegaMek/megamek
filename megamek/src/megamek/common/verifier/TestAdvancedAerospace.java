@@ -128,7 +128,7 @@ public class TestAdvancedAerospace extends TestAero {
                     continue;
                 }
                 if ((m.getType() instanceof WeaponType)
-                        && m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)) {
+                        && m.getType().hasFlag(EquipmentFlag.F_MASS_DRIVER)) {
                     weaponsPerArc[arc] += 10;
                 } else {
                     weaponsPerArc[arc]++;
@@ -302,7 +302,7 @@ public class TestAdvancedAerospace extends TestAero {
                     || (((WeaponType) m.getType()).getLongRange() <= 1)) {
                 continue;
             }
-            if (m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_MASS_DRIVER)) {
                 capitalWeapons += 10;
             } else if (((WeaponType) m.getType()).isCapital()
                     || (m.getType() instanceof ScreenLauncherWeapon)) {
@@ -724,7 +724,7 @@ public class TestAdvancedAerospace extends TestAero {
                     illegal = true;
                 }
             } else if (m.getType() instanceof WeaponType) {
-                if (m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)
+                if (m.getType().hasFlag(EquipmentFlag.F_MASS_DRIVER)
                         && !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
                         && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
                     buff.append("A mass driver may not be mounted on a Jumpship.\n");
@@ -754,7 +754,7 @@ public class TestAdvancedAerospace extends TestAero {
                     buff.append("Cannot mount " + m.getType().getName() + "\n");
                     illegal = true;
                 }
-                if ((m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)
+                if ((m.getType().hasFlag(EquipmentFlag.F_MASS_DRIVER)
                         && !(m.getType() instanceof BayWeapon))) {
                     massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
                     int at = ((WeaponType) m.getType()).getAmmoType();

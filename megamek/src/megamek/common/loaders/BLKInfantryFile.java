@@ -117,7 +117,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != stype && stype.hasFlag(WeaponTypeFlag.F_TAG)) {
+        if (null != stype && stype.hasFlag(EquipmentFlag.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
             try {
                 infantry.addEquipment(ptype, Infantry.LOC_INFANTRY);

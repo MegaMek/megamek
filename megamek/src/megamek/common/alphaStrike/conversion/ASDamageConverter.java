@@ -383,12 +383,12 @@ public class ASDamageConverter {
         double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
         // Oneshot or Fusillade
-        if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
+        if (weaponType.hasFlag(EquipmentFlag.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
             damageModifier *= .1;
         }
 
         // Targeting Computer
-        if (hasTargetingComputer && weaponType.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
+        if (hasTargetingComputer && weaponType.hasFlag(EquipmentFlag.F_DIRECT_FIRE)) {
             damageModifier *= 1.10;
         }
 
@@ -409,7 +409,7 @@ public class ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.getAmmoType() != AmmoType.T_NA)
-                    && !weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)
+                    && !weaponType.hasFlag(EquipmentFlag.F_ONESHOT)
                     && (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
                 weaponCount.merge(weaponType, 1, Integer::sum);
             }
@@ -443,19 +443,19 @@ public class ASDamageConverter {
     }
 
     protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponTypeFlag.F_TAG)) {
-            if (weaponType.hasFlag(WeaponTypeFlag.F_C3MBS)) {
+        if (weaponType.hasFlag(EquipmentFlag.F_TAG)) {
+            if (weaponType.hasFlag(EquipmentFlag.F_C3MBS)) {
                 assignToLocations(weapon, C3BSM, 1);
                 assignToLocations(weapon, MHQ, 6);
-            } else if (weaponType.hasFlag(WeaponTypeFlag.F_C3M)) {
+            } else if (weaponType.hasFlag(EquipmentFlag.F_C3M)) {
                 assignToLocations(weapon, C3M, 1);
                 assignToLocations(weapon, MHQ, 5);
             }
             assignToLocations(weapon, (weaponType.getShortRange() < 5) ? LTAG : TAG);
         }
 
-        if (weaponType.hasFlag(WeaponTypeFlag.F_TSEMP) || weaponType.hasFlag(WeaponTypeFlag.F_CWS)) {
-            assignToLocations(weapon, weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT) ? TSEMPO : TSEMP, 1);
+        if (weaponType.hasFlag(EquipmentFlag.F_TSEMP) || weaponType.hasFlag(EquipmentFlag.F_CWS)) {
+            assignToLocations(weapon, weaponType.hasFlag(EquipmentFlag.F_ONESHOT) ? TSEMPO : TSEMP, 1);
         }
 
         if (weaponType.getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
@@ -486,7 +486,7 @@ public class ASDamageConverter {
         if (weaponType.getInternalName().equals("ISAPDS")
                 || weaponType.getInternalName().equals("ISBAAPDS")) {
             assignToLocations(weapon, RAMS);
-        } else if (weaponType.hasFlag(WeaponTypeFlag.F_AMS)) {
+        } else if (weaponType.hasFlag(EquipmentFlag.F_AMS)) {
             assignToLocations(weapon, AMS);
         }
     }
@@ -1005,7 +1005,7 @@ public class ASDamageConverter {
 
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)
+        if (weaponType.hasFlag(EquipmentFlag.F_ONESHOT)
                 || (onlyRear && !weapon.isRearMounted())
                 || (!onlyRear && weapon.isRearMounted())
                 || (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {

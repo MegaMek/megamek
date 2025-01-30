@@ -21,7 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
-import static megamek.common.WeaponTypeFlag.*;
+import static megamek.common.EquipmentFlag.*;
 /**
  * @author Jay Lawson
  */

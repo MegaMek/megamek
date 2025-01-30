@@ -382,7 +382,7 @@ public class Infantry extends Entity {
             if ((getSecondaryWeaponsPerSquad() > 1)
                     && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                     && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(EquipmentFlag.F_INF_SUPPORT)
                     && !getMovementMode().isTracked()
                     && !getMovementMode().isJumpInfantry()) {
                 mp = Math.max(mp - 1, 0);
@@ -464,7 +464,7 @@ public class Infantry extends Entity {
                     && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                     && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                     && !getMovementMode().isSubmarine()
-                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(EquipmentFlag.F_INF_SUPPORT)) {
                 mp = Math.max(mp - 1, 0);
             } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
                 mp = Math.max(mp - 1, 0);
@@ -921,7 +921,7 @@ public class Infantry extends Entity {
      */
     public int requiredCrewForFieldWeapon(WeaponType weaponType) {
         int roundedWeight = (int) Math.ceil(weaponType.getTonnage(this));
-        return weaponType.hasFlag(WeaponTypeFlag.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
+        return weaponType.hasFlag(EquipmentFlag.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
     }
 
     /**
@@ -1785,7 +1785,7 @@ public class Infantry extends Entity {
      *         destroyed.
      */
     public boolean hasActiveFieldArtillery() {
-        return activeFieldWeapons().stream().anyMatch(gun -> gun.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY));
+        return activeFieldWeapons().stream().anyMatch(gun -> gun.getType().hasFlag(EquipmentFlag.F_ARTILLERY));
     }
 
     /**

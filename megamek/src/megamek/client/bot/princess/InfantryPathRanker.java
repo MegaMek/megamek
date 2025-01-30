@@ -94,12 +94,8 @@ public class InfantryPathRanker extends BasicPathRanker {
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
-        double braveryValue =
-         getOwner().getBehaviorSettings().getBraveryValue();
+        double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
         double braveryMod = (maximumDamageDone * braveryValue) - expectedDamageTaken;
-
-
-        double utility = braveryMod;
 
         // If an infantry unit is not in range to do damage,
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
@@ -113,6 +109,7 @@ public class InfantryPathRanker extends BasicPathRanker {
         // If I need to flee the board, I want to get closer to my home edge.
         var selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
+        double utility = braveryMod;
         utility -= aggressionMod;
         utility -= herdingMod;
         utility -= selfPreservationMod;

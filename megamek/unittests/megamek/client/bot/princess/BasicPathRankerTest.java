@@ -1693,6 +1693,7 @@ class BasicPathRankerTest {
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
+        when(mockUnit.isMek()).thenReturn(true);
 
         final Game mockGame = setupGame(testCoords, testHexes);
 

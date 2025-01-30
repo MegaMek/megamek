@@ -1331,6 +1331,7 @@ class BasicPathRankerTest {
         when(mockBA.getCrew()).thenReturn(mockCrew);
         when(mockBA.getHeatCapacity()).thenReturn(999);
         when(mockBA.isFireResistant()).thenReturn(true);
+        when(mockBA.isBattleArmor()).thenReturn(true);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.BUILDING, Terrains.FIRE });
         assertEquals(0, testRanker.checkPathForHazards(mockPath, mockBA, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1340,6 +1341,7 @@ class BasicPathRankerTest {
         when(mockProto.locations()).thenReturn(6);
         when(mockProto.getArmor(anyInt())).thenReturn(5);
         when(mockProto.getCrew()).thenReturn(mockCrew);
+        when(mockProto.isProtoMek()).thenReturn(true);
         when(mockProto.getHeatCapacity()).thenReturn(999);
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
@@ -1359,6 +1361,8 @@ class BasicPathRankerTest {
         when(mockInfantry.locations()).thenReturn(2);
         when(mockInfantry.getArmor(anyInt())).thenReturn(0);
         when(mockInfantry.getCrew()).thenReturn(mockCrew);
+        when(mockInfantry.isConventionalInfantry()).thenReturn(true);
+        when(mockInfantry.isInfantry()).thenReturn(true);
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
         when(mockHexThree.depth()).thenReturn(1);

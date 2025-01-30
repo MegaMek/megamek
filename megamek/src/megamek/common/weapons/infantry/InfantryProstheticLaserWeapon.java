@@ -46,4 +46,4 @@ public class InfantryProstheticLaserWeapon extends InfantryWeapon {
                 .setClanApproximate(false, false, false, false, false);
     }
 }
- 
+

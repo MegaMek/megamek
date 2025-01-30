@@ -32,25 +32,25 @@ public class FixedWingSupportCostCalculator {
         // Chassis cost for Support Vehicles
 
         double chassisCost = 2500 * SupportVeeStructure.getWeightStructure(fixedWingSupport);
-        if (fixedWingSupport.hasMisc(MiscType.F_AMPHIBIOUS)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_AMPHIBIOUS)) {
             chassisCost *= 1.25;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_ARMORED_CHASSIS)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_ARMORED_CHASSIS)) {
             chassisCost *= 2.0;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
             chassisCost *= 1.75;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_PROP)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_PROP)) {
             chassisCost *= 0.75;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_STOL_CHASSIS)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_STOL_CHASSIS)) {
             chassisCost *= 1.5;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_ULTRA_LIGHT)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_ULTRA_LIGHT)) {
             chassisCost *= 1.5;
         }
-        if (fixedWingSupport.hasMisc(MiscType.F_VSTOL_CHASSIS)) {
+        if (fixedWingSupport.hasMisc(EquipmentFlag.F_VSTOL_CHASSIS)) {
             chassisCost *= 2;
         }
         costs[i++] = chassisCost;
@@ -71,7 +71,7 @@ public class FixedWingSupportCostCalculator {
             }
         } else {
             ArmorType armor = ArmorType.forEntity(fixedWingSupport);
-            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            if (armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
                 costs[i++] = fixedWingSupport.getTotalOArmor() * armor.getCost();
             } else {
                 costs[i++] = fixedWingSupport.getArmorWeight() * ArmorType.forEntity(fixedWingSupport).getCost();
@@ -93,7 +93,7 @@ public class FixedWingSupportCostCalculator {
         double paWeight = 0;
         for (Mounted<?> m : fixedWingSupport.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
+            if (wt.hasFlag(WeaponTypeFlag.F_LASER) || wt.hasFlag(WeaponTypeFlag.F_PPC)) {
                 sinks += wt.getHeat();
                 paWeight += m.getTonnage() / 10.0;
             }

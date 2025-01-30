@@ -18,9 +18,9 @@
  */
 package megamek.common.alphaStrike.conversion;
 
-import static megamek.common.MiscType.F_HEAD_TURRET;
-import static megamek.common.MiscType.F_QUAD_TURRET;
-import static megamek.common.MiscType.F_SHOULDER_TURRET;
+import static megamek.common.EquipmentFlag.F_HEAD_TURRET;
+import static megamek.common.EquipmentFlag.F_QUAD_TURRET;
+import static megamek.common.EquipmentFlag.F_SHOULDER_TURRET;
 
 import megamek.common.*;
 

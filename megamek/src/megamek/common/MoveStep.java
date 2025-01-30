@@ -731,7 +731,7 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (entity.getMovementMode() != EntityMovementMode.VTOL)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)
-                && !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                && !cachedEntityState.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS)) {
             setRunProhibited(true);
         }
         if (entity.getMovedBackwards()
@@ -3052,8 +3052,8 @@ public class MoveStep implements Serializable {
                 && ((Infantry) getEntity()).isMechanized();
         final boolean isProto = getEntity() instanceof ProtoMek;
         final boolean isMek = getEntity() instanceof Mek;
-        final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                cachedEntityState.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        final boolean isAmphibious = cachedEntityState.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ||
+                cachedEntityState.hasWorkingMisc(EquipmentFlag.F_LIMITED_AMPHIBIOUS);
         final boolean isFogSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
                 .equals(Crew.ENVSPC_FOG);
         final boolean isLightSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST)
@@ -3658,7 +3658,7 @@ public class MoveStep implements Serializable {
                 && (nMove != EntityMovementMode.INF_UMU)
                 && (nMove != EntityMovementMode.VTOL)
                 && (nMove != EntityMovementMode.WIGE)
-                && !cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
+                && !cachedEntityState.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS)
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
                 && !dest.equals(entity.getPosition())

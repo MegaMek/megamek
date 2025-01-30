@@ -163,7 +163,7 @@ public class BipedMek extends Mek {
         //A Mek using tracks has its movement reduced by 50% per leg or track destroyed;
         if (getMovementMode().isTracked()) {
             for (Mounted<?> m : getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
                     }
@@ -463,7 +463,7 @@ public class BipedMek extends Mek {
     public boolean hasRetractedBlade(int loc) {
         for (Mounted<?> m : getEquipment()) {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType)
-                && m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m
+                && m.getType().hasFlag(EquipmentFlag.F_CLUB) && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE) && !m
                     .curMode().equals("extended")) {
                 return true;
             }
@@ -565,7 +565,7 @@ public class BipedMek extends Mek {
 
         for (Mounted<?> m : getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB)
+            if ((type instanceof MiscType) && type.hasFlag(EquipmentFlag.F_CLUB)
                     && (type.hasSubType(size))) {
                 // ok so we have a shield of certain size. no which arm is it.
                 if (m.getLocation() == Mek.LOC_RARM) {
@@ -776,10 +776,10 @@ public class BipedMek extends Mek {
         }
 
         for (Mounted<?> mounted : getMisc()) {
-            if ((mounted.getLocation() == location) && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
+            if ((mounted.getLocation() == location) && mounted.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                 hasAES = true;
             } // AES is destroyed their for it cannot be used.
-            else if ((mounted.getLocation() == location) && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+            else if ((mounted.getLocation() == location) && mounted.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                 return false;
             }
         }
@@ -797,7 +797,7 @@ public class BipedMek extends Mek {
 
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == Mek.LOC_LLEG) || (mounted.getLocation() == Mek.LOC_RLEG)) {
-                if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted
+                if (((MiscType) mounted.getType()).hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted
                         .isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mek.LOC_LLEG) {
                         leftLeg = true;
@@ -805,7 +805,7 @@ public class BipedMek extends Mek {
                         rightLeg = true;
                     }
                 }// AES is destroyed their for it cannot be used.
-                else if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                else if (((MiscType) mounted.getType()).hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                     return false;
                 }
             }

@@ -17,7 +17,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
 
     private static final long serialVersionUID = 1L; // Update for each unique class
@@ -38,11 +37,11 @@ public class InfantryLaserSniperRifleDWSL5L extends InfantryWeapon {
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         rulesRefs = "Shrapnel #9";
-        
+
         techAdvancement
                 .setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_C)
-                .setAvailability(new int[]{RATING_X, RATING_C, RATING_C, RATING_C})
+                .setAvailability(RATING_X, RATING_C, RATING_C, RATING_C)
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)
                 .setProductionFactions(F_LC);

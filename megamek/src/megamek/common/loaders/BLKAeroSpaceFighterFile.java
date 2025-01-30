@@ -244,7 +244,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
-                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CASE)) {
+                if ((etype instanceof MiscType) && etype.hasFlag(EquipmentFlag.F_CASE)) {
                     if (etype.isClan() || addedCase) {
                         continue;
                     }
@@ -252,7 +252,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                 }
 
                 // The stealth armor mount is added when the armor type is set
-                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                if ((etype instanceof MiscType) && etype.hasFlag(EquipmentFlag.F_STEALTH)) {
                     continue;
                 }
 
@@ -268,7 +268,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));
                             } else {
@@ -281,7 +281,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                             }
                             mount.setSize(size);
                         }
-                        if (etype.hasFlag(MiscType.F_CARGO)) {
+                        if (etype.hasFlag(EquipmentFlag.F_CARGO)) {
                             // Treat F_CARGO equipment as cargo bays with 1 door, e.g. for ASF with IBB.
                             int idx = t.getTransportBays().size();
                             t.addTransporter(new CargoBay(mount.getSize(), 1, idx), omniMounted);

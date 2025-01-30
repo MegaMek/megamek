@@ -53,15 +53,15 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         super.processMiscMounted(misc);
 
         if (entity instanceof BattleArmor) {
-            if (misc.getType().hasFlag(MiscType.F_VISUAL_CAMO)
+            if (misc.getType().hasFlag(EquipmentFlag.F_VISUAL_CAMO)
                     && !misc.getType().getName().equals(BattleArmor.MIMETIC_ARMOR)) {
                 assign("Visual Camo, not Mimetic", LMAS);
-            } else if (misc.getType().hasFlag(MiscType.F_TOOLS)
+            } else if (misc.getType().hasFlag(EquipmentFlag.F_TOOLS)
                     && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);
-            } else if (misc.getType().hasFlag(MiscType.F_PARAFOIL)) {
+            } else if (misc.getType().hasFlag(EquipmentFlag.F_PARAFOIL)) {
                 assign(misc, PAR);
-            } else if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+            } else if (misc.getType().hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)) {
                 assign(misc, XMEC);
             }
         }
@@ -69,7 +69,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
 
     @Override
     protected void processSEALandSOA(Mounted<?> misc) {
-        if (misc.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
+        if (misc.getType().hasFlag(EquipmentFlag.F_SPACE_ADAPTATION)) {
             assign(misc, SOA);
         }
     }

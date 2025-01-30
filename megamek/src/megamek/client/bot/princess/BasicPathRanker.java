@@ -1039,8 +1039,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         // Amphibious units are safe (kind of the point).
-        if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+        if (movingUnit.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ||
+                movingUnit.hasWorkingMisc(EquipmentFlag.F_AMPHIBIOUS)) {
             logMsg.append("Amphibious unit (0).");
             return 0;
         }

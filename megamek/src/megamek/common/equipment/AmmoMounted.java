@@ -48,7 +48,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
             setShotsLeft(at.getShots());
         }
     }
-    
+
     @Override
     public int getExplosionDamage() {
         int rackSize = getType().getRackSize();
@@ -60,7 +60,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
         }
 
         //Capital missiles need a racksize for this
-        if (getType().hasFlag(AmmoType.F_CAP_MISSILE)) {
+        if (getType().hasFlag(AmmoTypeFlag.F_CAP_MISSILE)) {
             rackSize = 1;
         }
 

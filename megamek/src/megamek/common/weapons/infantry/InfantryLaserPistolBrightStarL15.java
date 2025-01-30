@@ -40,7 +40,7 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
 
         techAdvancement
                 .setTechBase(TECH_BASE_CLAN)
-                .setTechRating(RATING_E) 
+                .setTechRating(RATING_E)
                 .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_D})
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)

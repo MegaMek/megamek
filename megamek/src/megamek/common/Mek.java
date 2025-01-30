@@ -604,7 +604,7 @@ public abstract class Mek extends Entity {
             MiscType mtype = (MiscType) m.getType();
 
             // Stealth can not be turned on if it's ECM is destroyed.
-            if (mtype.hasFlag(MiscType.F_STEALTH)
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)
                     && m.getLinked().isDestroyed()
                     && m.getLinked().isBreached()) {
                 m.setMode("Off");
@@ -791,7 +791,7 @@ public abstract class Mek extends Entity {
         boolean jumpBoosters = false;
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_JUMP_BOOSTER)) {
+            if (mtype.hasFlag(EquipmentFlag.F_JUMP_BOOSTER)) {
 
                 // one crit destroyed they all all screwed
                 // --Torren
@@ -811,7 +811,7 @@ public abstract class Mek extends Entity {
     public boolean hasExtendedRetractableBlade() {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_CLUB)
+                    && m.getType().hasFlag(EquipmentFlag.F_CLUB)
                     && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
                     && m.curMode().equals("extended")) {
                 return true;
@@ -838,8 +838,8 @@ public abstract class Mek extends Entity {
      */
     public boolean hasTSM(boolean includePrototype) {
         for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TSM)
-                    && (includePrototype || !m.getType().hasFlag(MiscType.F_PROTOTYPE))) {
+            if (m.getType().hasFlag(EquipmentFlag.F_TSM)
+                    && (includePrototype || !m.getType().hasFlag(EquipmentFlag.F_PROTOTYPE))) {
                 return true;
             }
         }
@@ -849,8 +849,8 @@ public abstract class Mek extends Entity {
     @Override
     public boolean antiTSMVulnerable() {
         for (Mounted<?> m : getMisc()) {
-            if ((m.getType().hasFlag(MiscType.F_TSM) && m.getType().hasFlag(MiscType.F_PROTOTYPE))
-                    || (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM) && (getYear() <= 3050))) {
+            if ((m.getType().hasFlag(EquipmentFlag.F_TSM) && m.getType().hasFlag(EquipmentFlag.F_PROTOTYPE))
+                    || (m.getType().hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM) && (getYear() <= 3050))) {
                 return true;
             }
         }
@@ -870,10 +870,10 @@ public abstract class Mek extends Entity {
      */
     public boolean hasActiveTSM(boolean includeIndustrial) {
         for (Mounted<?> m : getMisc()) {
-            if (includeIndustrial && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+            if (includeIndustrial && m.getType().hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)) {
                 return true;
-            } else if (m.getType().hasFlag(MiscType.F_TSM)) {
-                return (heat >= 9) || m.getType().hasFlag(MiscType.F_PROTOTYPE);
+            } else if (m.getType().hasFlag(EquipmentFlag.F_TSM)) {
+                return (heat >= 9) || m.getType().hasFlag(EquipmentFlag.F_PROTOTYPE);
             }
         }
         return false;
@@ -887,7 +887,7 @@ public abstract class Mek extends Entity {
     public boolean hasIndustrialTSM() {
         for (Mounted<?> m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+                    && m.getType().hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)) {
                 return true;
             }
         }
@@ -902,7 +902,7 @@ public abstract class Mek extends Entity {
     public boolean hasNullSig() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_NULLSIG)) {
+            if (mtype.hasFlag(EquipmentFlag.F_NULLSIG)) {
                 // The Mek has Null-Sig
                 return true;
             }
@@ -918,7 +918,7 @@ public abstract class Mek extends Entity {
     public boolean hasVoidSig() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_VOIDSIG)) {
+            if (mtype.hasFlag(EquipmentFlag.F_VOIDSIG)) {
                 // The Mek has Void-Sig
                 return true;
             }
@@ -935,7 +935,7 @@ public abstract class Mek extends Entity {
     public boolean hasTracks() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_TRACKS)) {
+            if (mtype.hasFlag(EquipmentFlag.F_TRACKS)) {
                 // The Mek has tracks
                 return true;
             }
@@ -951,7 +951,7 @@ public abstract class Mek extends Entity {
     public boolean hasChameleonShield() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
+            if (mtype.hasFlag(EquipmentFlag.F_CHAMELEON_SHIELD)) {
                 // The Mek has Chameleon Light Polarization Field
                 return true;
             }
@@ -1113,10 +1113,10 @@ public abstract class Mek extends Entity {
         boolean isJumpBooster = false;
 
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+            if (mounted.getType().hasFlag(EquipmentFlag.F_JUMP_JET)
                     && !mounted.isDestroyed() && !mounted.isBreached()) {
                 mp++;
-            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_JUMP_BOOSTER)
                     && !mounted.isDestroyed() && !mounted.isBreached()) {
                 mp = getOriginalJumpMP();
                 isJumpBooster = true;
@@ -1137,7 +1137,7 @@ public abstract class Mek extends Entity {
         // apply Partial Wing bonus if we have the ability to jump
         if (mp > 0) {
             for (Mounted<?> mount : getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
                     mp += getPartialWingJumpBonus(mount, mpCalculationSetting);
                     break;
                 }
@@ -1268,7 +1268,7 @@ public abstract class Mek extends Entity {
     public int getJumpType() {
         jumpType = JUMP_NONE;
         for (Mounted<?> m : miscList) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
                 if (m.getType().hasSubType(MiscType.S_IMPROVED)
                         && m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE_IMPROVED;
@@ -1280,7 +1280,7 @@ public abstract class Mek extends Entity {
                     jumpType = JUMP_STANDARD;
                 }
                 break;
-            } else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_JUMP_BOOSTER)) {
                 jumpType = JUMP_BOOSTER;
                 break;
             }
@@ -1300,7 +1300,7 @@ public abstract class Mek extends Entity {
 
         // don't count movement granted by Partial Wing
         for (Mounted<?> mount : getMisc()) {
-            if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+            if (mount.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
                 movedMP -= getPartialWingJumpBonus(mount);
                 break;
             }
@@ -1329,7 +1329,7 @@ public abstract class Mek extends Entity {
         int jump = 0;
 
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+            if (mounted.getType().hasFlag(EquipmentFlag.F_JUMP_JET)
                     && !mounted.isDestroyed() && !mounted.isBreached()
                     && locationIsTorso(mounted.getLocation())) {
                 jump++;
@@ -1339,7 +1339,7 @@ public abstract class Mek extends Entity {
         // apply Partial Wing bonus if we have the ability to jump
         if (jump > 0) {
             for (Mounted<?> mount : getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
                     jump += getPartialWingJumpBonus(mount);
                     break;
                 }
@@ -1392,7 +1392,7 @@ public abstract class Mek extends Entity {
      * Adds heat sinks to the engine. Uses clan/normal depending on the
      * currently set techLevel
      */
-    public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag) {
+    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag) {
         addEngineSinks(totalSinks, heatSinkFlag, isClan());
     }
 
@@ -1400,14 +1400,14 @@ public abstract class Mek extends Entity {
      * Adds heat sinks to the engine. Adds either the engine capacity, or the
      * entire number of heat sinks, whichever is less
      */
-    public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag,
+    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag,
             boolean clan) {
-        if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
+        if (heatSinkFlag == EquipmentFlag.F_DOUBLE_HEAT_SINK) {
             addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS
                     : EquipmentTypeLookup.IS_DOUBLE_HS);
-        } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
+        } else if (heatSinkFlag == EquipmentFlag.F_COMPACT_HEAT_SINK) {
             addEngineSinks(totalSinks, EquipmentTypeLookup.COMPACT_HS_1);
-        } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
+        } else if (heatSinkFlag == EquipmentFlag.F_LASER_HEAT_SINK) {
             addEngineSinks(totalSinks, EquipmentTypeLookup.LASER_HS);
         } else {
             addEngineSinks(totalSinks, EquipmentTypeLookup.SINGLE_HS);
@@ -1437,7 +1437,7 @@ public abstract class Mek extends Entity {
         int toAllocate = Math.min(
                 totalSinks,
                 getEngine().integralHeatSinkCapacity(
-                        sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
+                        sinkType.hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)));
         addEngineSinks(sinkName, toAllocate);
     }
 
@@ -1519,13 +1519,13 @@ public abstract class Mek extends Entity {
         int sinks = 0;
         for (Mounted<?> mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
-            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
-                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
+            if (etype.hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)
+                    && (etype.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK) || (etype
+                            .hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
-            } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
+            } else if (etype.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                    || etype.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                    || (etype.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
                 sinks++;
             }
         }
@@ -1542,9 +1542,9 @@ public abstract class Mek extends Entity {
             if (!mounted.isDestroyed()) {
                 continue;
             }
-            if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            if (etype.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                    || etype.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                    || etype.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }
@@ -1559,12 +1559,12 @@ public abstract class Mek extends Entity {
     public String getHeatSinkTypeName() {
         for (Mounted<?> m : getMisc()) {
             // The MiscType name for compact heat sinks is formatted differently
-            if (m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)) {
                 return "Compact Heat Sink";
             }
-            if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)
+                    || m.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                    || m.getType().hasFlag(EquipmentFlag.F_LASER_HEAT_SINK)) {
                 return m.getName();
             }
         }
@@ -1597,20 +1597,20 @@ public abstract class Mek extends Entity {
                 continue;
             }
             if ((activeCount > 0)
-                    && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                    && mounted.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)) {
                 capacity++;
                 activeCount--;
             } else if ((activeCount > 0)
-                    && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                    && mounted.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (mounted.getType().hasFlag(
-                    MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                    && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                    && mounted.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)
                     && // unless all crits are destroyed, we get the bonus
                     ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
                             getEquipmentNum(mounted), Mek.LOC_RT) > 0)
@@ -1627,7 +1627,7 @@ public abstract class Mek extends Entity {
             capacity += getPartialWingHeatBonus();
         }
         if (includeRadicalHeatSink
-                && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+                && hasWorkingMisc(EquipmentFlag.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
@@ -1679,11 +1679,11 @@ public abstract class Mek extends Entity {
                     || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
                     || mounted.getType().hasFlag(
-                            MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                            EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinksUnderwater += 2;
             }
         }
@@ -1914,11 +1914,11 @@ public abstract class Mek extends Entity {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+                && mounted.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
-        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+        if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         // rear mounted?
@@ -3250,7 +3250,7 @@ public abstract class Mek extends Entity {
         int explicit = 0;
         Set<Integer> caseLocations = new HashSet<>();
         for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(EquipmentFlag.F_CASE))) {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
                 caseLocations.add(m.getLocation());
@@ -3400,7 +3400,7 @@ public abstract class Mek extends Entity {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On")
                         && hasActiveECM()) {
@@ -3428,7 +3428,7 @@ public abstract class Mek extends Entity {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
                 if (mEquip.curMode().equals("On")) {
                     // Return true if the mode is "On"
                     return true;
@@ -3451,7 +3451,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
+                if (type.hasFlag(EquipmentFlag.F_NULLSIG)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3465,7 +3465,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_NULLSIG)
+                if (type.hasFlag(EquipmentFlag.F_NULLSIG)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3487,7 +3487,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
+                if (type.hasFlag(EquipmentFlag.F_VOIDSIG)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3504,7 +3504,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_VOIDSIG)
+                if (type.hasFlag(EquipmentFlag.F_VOIDSIG)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3529,7 +3529,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD)
+                if (type.hasFlag(EquipmentFlag.F_CHAMELEON_SHIELD)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3548,7 +3548,7 @@ public abstract class Mek extends Entity {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD)
+                if (type.hasFlag(EquipmentFlag.F_CHAMELEON_SHIELD)
                         && m.curMode().equals("On") && m.isReady()) {
                     return true;
                 }
@@ -3700,9 +3700,9 @@ public abstract class Mek extends Entity {
                 continue;
             }
 
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)) {
                 sinks++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
             }
         }
@@ -3711,9 +3711,9 @@ public abstract class Mek extends Entity {
 
     public boolean hasDoubleHeatSinks() {
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)) {
                 return false;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)) {
                 return true;
             }
         }
@@ -3723,11 +3723,11 @@ public abstract class Mek extends Entity {
     public boolean hasLaserHeatSinks() {
         if (hasLaserHeatSinks == HAS_UNKNOWN) {
             for (Mounted<?> mounted : getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                if (mounted.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_FALSE;
                     break;
                 } else if (mounted.getType()
-                        .hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+                        .hasFlag(EquipmentFlag.F_LASER_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_TRUE;
                     break;
                 }
@@ -3778,7 +3778,7 @@ public abstract class Mek extends Entity {
             result = false;
             // industrials can only eject when they have an ejection seat
             for (Mounted<?> misc : getMisc()) {
-                if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+                if (misc.getType().hasFlag(EquipmentFlag.F_EJECTION_SEAT)) {
                     result = true;
                 }
             }
@@ -4418,8 +4418,8 @@ public abstract class Mek extends Entity {
 
         sb.append(MtfFile.HEAT_SINKS).append(heatSinks()).append(" ");
         Optional<MiscType> heatSink = getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                        || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK))
+                .filter(m -> m.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)
+                        || m.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK))
                 .map(Mounted::getType).findFirst();
         // If we didn't find any heat sinks we may have an ICE with no added sinks, or
         // prototype
@@ -4428,11 +4428,11 @@ public abstract class Mek extends Entity {
         // here, since this determines what's installed as engine-integrated heat sinks.
         if (heatSink.isEmpty()) {
             sb.append(MtfFile.HS_SINGLE);
-        } else if (heatSink.get().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+        } else if (heatSink.get().hasFlag(EquipmentFlag.F_LASER_HEAT_SINK)) {
             sb.append(MtfFile.HS_LASER);
-        } else if (heatSink.get().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+        } else if (heatSink.get().hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)) {
             sb.append(MtfFile.HS_COMPACT);
-        } else if (heatSink.get().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+        } else if (heatSink.get().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)) {
             sb.append(heatSink.get().isClan() ? MtfFile.TECH_BASE_CLAN : MtfFile.TECH_BASE_IS);
             sb.append(" ").append(MtfFile.HS_DOUBLE);
         } else {
@@ -4447,7 +4447,7 @@ public abstract class Mek extends Entity {
         }
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getCriticals() == 0)
-                    && !mounted.getType().hasFlag(MiscType.F_CASE)
+                    && !mounted.getType().hasFlag(EquipmentFlag.F_CASE)
                     && !EquipmentType.isArmorType(mounted.getType())
                     && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())
@@ -4618,7 +4618,7 @@ public abstract class Mek extends Entity {
                 toReturn.append("|").append(cs.getMount2().getType().getInternalName());
             }
             if ((m.getType() instanceof WeaponType)
-                    && m.getType().hasFlag(WeaponType.F_VGL)) {
+                    && m.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
                 switch (m.getFacing()) {
                     case 1:
                         toReturn.append(" (FR)");
@@ -5051,7 +5051,7 @@ public abstract class Mek extends Entity {
                 || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
-                && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
+                && (!isIndustrial() || hasWorkingMisc(EquipmentFlag.F_ADVANCED_FIRECONTROL));
     }
 
     /**
@@ -5356,7 +5356,7 @@ public abstract class Mek extends Entity {
     public boolean hasHarJelIIIn(int loc) {
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == loc) && mounted.isReady()
-                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_II))) {
+                    && (mounted.getType().hasFlag(EquipmentFlag.F_HARJEL_II))) {
                 return true;
             }
         }
@@ -5373,7 +5373,7 @@ public abstract class Mek extends Entity {
     public boolean hasHarJelIIIIn(int loc) {
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == loc) && mounted.isReady()
-                    && (mounted.getType().hasFlag(MiscType.F_HARJEL_III))) {
+                    && (mounted.getType().hasFlag(EquipmentFlag.F_HARJEL_III))) {
                 return true;
             }
         }
@@ -5768,7 +5768,7 @@ public abstract class Mek extends Entity {
         // if BV is 0
         for (Mounted<?> mount : getEquipment()) {
             if (!mount.isArmored()
-                    || ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
+                    || ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR))) {
                 continue;
             }
             double mountBv = mount.getType().getBV(this);
@@ -6324,7 +6324,7 @@ public abstract class Mek extends Entity {
 
     public boolean hasCompactHeatSinks() {
         for (Mounted<?> mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)) {
                 return true;
             }
         }
@@ -6384,7 +6384,7 @@ public abstract class Mek extends Entity {
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
-                    && type.hasFlag(MiscType.F_HAND_WEAPON)
+                    && type.hasFlag(EquipmentFlag.F_HAND_WEAPON)
                     && type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
@@ -6419,7 +6419,7 @@ public abstract class Mek extends Entity {
             HashMap<Integer, List<CriticalSlot>> vCriticals) {
         Mounted<?> coolantSystem = null;
         for (Mounted<?> misc : getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+            if (misc.getType().hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)
                     && !misc.isInoperable()) {
                 coolantSystem = misc;
             }

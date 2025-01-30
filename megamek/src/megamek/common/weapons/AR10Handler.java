@@ -15,14 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -271,9 +264,9 @@ public class AR10Handler extends AmmoWeaponHandler {
     protected int calcAttackValue() {
         int av = 0;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
             av = 4;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+        } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
             av = 3;
         } else {
             av = 2;
@@ -290,9 +283,9 @@ public class AR10Handler extends AmmoWeaponHandler {
     protected int getCapMisMod() {
         int mod = 0;
         AmmoType atype = (AmmoType) ammo.getType();
-        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
             mod = 10;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+        } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
             mod = 9;
         } else {
             mod = 11;

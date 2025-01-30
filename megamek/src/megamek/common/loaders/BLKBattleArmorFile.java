@@ -224,7 +224,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMekLoader {
                             m.setSize(numShots * ((AmmoType) m.getType()).getKgPerShot() / 1000.0);
                         }
                         if ((etype instanceof MiscType)
-                                && (etype.hasFlag(MiscType.F_AP_MOUNT) || etype.hasFlag(MiscType.F_ARMORED_GLOVE))) {
+                                && (etype.hasFlag(EquipmentFlag.F_AP_MOUNT) || etype.hasFlag(EquipmentFlag.F_ARMORED_GLOVE))) {
                             lastAPM = m;
                         } else if (apmMounted) {
                             m.setAPMMounted(true);

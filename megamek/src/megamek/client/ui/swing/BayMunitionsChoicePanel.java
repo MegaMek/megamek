@@ -31,22 +31,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import megamek.client.ui.Messages;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SimpleTechLevel;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
-import static megamek.common.AmmoType.F_BATTLEARMOR;
-import static megamek.common.AmmoType.F_PROTOMEK;
+import static megamek.common.AmmoTypeFlag.F_BATTLEARMOR;
+import static megamek.common.AmmoTypeFlag.F_PROTOMEK;
 
 /**
  * @author Neoancient
@@ -245,17 +237,17 @@ public class BayMunitionsChoicePanel extends JPanel {
                             game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
             }
-            if (ammoType.hasFlag(AmmoType.F_NUCLEAR)
+            if (ammoType.hasFlag(AmmoTypeFlag.F_NUCLEAR)
                     && !game.getOptions().booleanOption(
                             OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                 return false;
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
-                return entity.hasWorkingMisc(MiscType.F_ARTEMIS)
-                        || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
+                return entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS)
+                        || entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS_PROTO);
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
-                return entity.hasWorkingMisc(MiscType.F_ARTEMIS_V);
+                return entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS_V);
             }
             // A Bay should not load BA nor Protomek exclusive ammo/weapons
             if (ammoType.hasFlag(F_BATTLEARMOR) || ammoType.hasFlag(F_PROTOMEK)) {
@@ -270,27 +262,27 @@ public class BayMunitionsChoicePanel extends JPanel {
                         AmmoType.Munitions.M_ARTEMIS_CAPABLE,
                         AmmoType.Munitions.M_ARTEMIS_V_CAPABLE);
                 if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                    return Messages.getString(atype.hasFlag(AmmoTypeFlag.F_MML_LRM)
                             ? "CustomMekDialog.LRM"
                             : "CustomMekDialog.SRM");
                 } else {
-                    return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
+                    return Messages.getString(atype.hasFlag(AmmoTypeFlag.F_MML_LRM)
                             ? "CustomMekDialog.LRMArtemis"
                             : "CustomMekDialog.SRMArtemis");
                 }
             }
 
-            if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE) ? "-T" : "";
-                if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            if (atype.hasFlag(AmmoTypeFlag.F_CAP_MISSILE)) {
+                String tele = atype.hasFlag(AmmoTypeFlag.F_TELE_MISSILE) ? "-T" : "";
+                if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
                     return Messages.getString("CustomMekDialog.Peacemaker") + tele;
-                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
                     return Messages.getString("CustomMekDialog.SantaAnna") + tele;
-                } else if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
                     return Messages.getString("CustomMekDialog.KillerWhale") + tele;
-                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
                     return Messages.getString("CustomMekDialog.WhiteShark") + tele;
-                } else if (atype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_BARRACUDA)) {
                     return Messages.getString("CustomMekDialog.Barracuda") + tele;
                 }
             }

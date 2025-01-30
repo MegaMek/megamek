@@ -107,7 +107,7 @@ public class InfantryFireControl extends FireControl {
             // 6. Shooter is non-infantry, target is non-infantry. Use base class.
 
             // case 1
-            if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+            if (weaponType.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                 int infantryCount = 1;
 
                 if (shooter.isConventionalInfantry()) {

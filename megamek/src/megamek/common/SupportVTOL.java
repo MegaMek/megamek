@@ -54,14 +54,14 @@ public class SupportVTOL extends VTOL {
 
     @Override
     public boolean hasBARArmor(int loc) {
-        return ArmorType.forEntity(this, loc).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR);
+        return ArmorType.forEntity(this, loc).hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR);
     }
 
     @Override
     public boolean hasArmoredChassis() {
-        return hasMisc(MiscType.F_ARMORED_CHASSIS);
+        return hasMisc(EquipmentFlag.F_ARMORED_CHASSIS);
     }
-    
+
     private static final TechAdvancement TA_VTOL = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
@@ -86,7 +86,7 @@ public class SupportVTOL extends VTOL {
             return TA_VTOL;
         }
     }
-    
+
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
@@ -128,12 +128,12 @@ public class SupportVTOL extends VTOL {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-    
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
     }
-    
+
     @Override
     public boolean isSupportVehicle() {
         return true;

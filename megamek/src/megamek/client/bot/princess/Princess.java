@@ -945,7 +945,7 @@ public class Princess extends BotClient {
                         damageMap.put(targetId, newDamage);
 
                         // Track manual AMS use each round
-                        if (shot.getWeapon().getType().hasFlag(Weapon.F_AMS)) {
+                        if (shot.getWeapon().getType().hasFlag(WeaponTypeFlag.F_AMS)) {
                             if (shot.getWeapon().curMode().equals(Weapon.MODE_AMS_MANUAL)) {
                                 flagManualAMSUse(shooter.getId());
                             }
@@ -1106,7 +1106,7 @@ public class Princess extends BotClient {
                     ammoConservation.put(weapon, 0.01);
                     msg.append(" doesn't use ammo.");
                     continue;
-                } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+                } else if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
                     // Shoot OS weapons on a 10 / 9 / 8 for Aggro 10 / 5 / 0
                     ammoConservation.put(weapon, (35 - 2.0 * aggroFactor) / 100.0);
                     msg.append(" One Shot weapon.");
@@ -1899,7 +1899,7 @@ public class Princess extends BotClient {
 
         // If the target is a Mek and the attack is not artillery or non-damaging anti-Mek
         if (shot.getTarget().getTargetType() == UnitType.MEK &&
-                !shot.getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) &&
+                !shot.getWeapon().getType().hasFlag(WeaponTypeFlag.F_ARTILLERY) &&
                 !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.SWARM_MEK) &&
                 !shot.getWeapon().getShortName().equalsIgnoreCase(Infantry.STOP_SWARM)) {
 
@@ -1915,7 +1915,7 @@ public class Princess extends BotClient {
                 // Increase the maximum target number for attacks that may destroy the location,
                 // as well as infantry weapons which may have multiple hits per shot
                 if ((!shooter.isInfantry() && shot.getMaxDamage() >= destructionThreshold) ||
-                        shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {
+                        shot.getWeapon().getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                     offset = 1;
                 }
 
@@ -1934,7 +1934,7 @@ public class Princess extends BotClient {
                 if (shot.getWeapon().getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE ||
                         (shot.getAmmo() != null &&
                                 shot.getAmmo().getType().getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) ||
-                        shot.getWeapon().getType().hasFlag(WeaponType.F_INFANTRY)) {
+                        shot.getWeapon().getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                     offset = 2;
                 }
 
@@ -3242,7 +3242,7 @@ public class Princess extends BotClient {
             List<WeaponMounted> activeAMS = curEntity.
                     getWeaponList().
                     stream().
-                    filter(w -> w.getType().hasFlag(AmmoWeapon.F_AMS) && w.hasModes()).
+                    filter(w -> w.getType().hasFlag(WeaponTypeFlag.F_AMS) && w.hasModes()).
                     collect(Collectors.toList());
 
             if (!activeAMS.isEmpty()) {
@@ -3271,7 +3271,7 @@ public class Princess extends BotClient {
                     EquipmentMode curMode = curAMS.curMode();
 
                     // Turn off laser AMS to help with overheating problems
-                    if (curAMS.getType().hasFlag(WeaponType.F_ENERGY)) {
+                    if (curAMS.getType().hasFlag(WeaponTypeFlag.F_ENERGY)) {
                         if (isOverheating) {
                             newAMSMode = EquipmentMode.getMode(Weapon.MODE_AMS_OFF);
                         }

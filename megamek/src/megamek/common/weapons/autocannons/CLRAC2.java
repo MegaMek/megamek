@@ -20,7 +20,6 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.SimpleTechLevel;
-
 /**
  * @author Sebastian Brocks
  * @since Oct 19, 2004

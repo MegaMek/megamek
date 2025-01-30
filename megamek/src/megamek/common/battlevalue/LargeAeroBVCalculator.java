@@ -85,20 +85,20 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
         for (Mounted<?> weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) weapon.getType();
 
-            if (weapon.isDestroyed() || wtype.hasFlag(WeaponType.F_AMS)
-                    || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)
+            if (weapon.isDestroyed() || wtype.hasFlag(WeaponTypeFlag.F_AMS)
+                    || wtype.hasFlag(WeaponTypeFlag.F_B_POD) || wtype.hasFlag(WeaponTypeFlag.F_M_POD)
                     || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
+            if (!((wtype.hasFlag(WeaponTypeFlag.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
                     || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY)
+                    || wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
+                    || wtype.hasFlag(WeaponTypeFlag.F_INFANTRY)
                     || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = bvLocation(weapon) + ":" + wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {

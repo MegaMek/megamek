@@ -23,7 +23,7 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
-
+import static megamek.common.WeaponTypeFlag.*;
 /**
  * @author Andrew Hunter
  * @since May 29, 2004

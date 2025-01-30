@@ -155,7 +155,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 continue;
             }
             EquipmentType etype = mounted.getType();
-            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if ((etype instanceof MiscType) && etype.hasFlag(EquipmentFlag.F_BLUE_SHIELD)) {
                 continue;
             }
 
@@ -180,8 +180,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)
-                    || (etype.hasFlag(WeaponType.F_B_POD)
-                            || (etype.hasFlag(WeaponType.F_M_POD)))) {
+                    || (etype.hasFlag(WeaponTypeFlag.F_B_POD)
+                            || (etype.hasFlag(WeaponTypeFlag.F_M_POD)))) {
                 toSubtract = 1;
             }
 
@@ -191,10 +191,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             }
 
             if ((etype instanceof MiscType)
-                    && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
-                            || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                            || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
-                            || etype.hasFlag(MiscType.F_JUMP_JET))) {
+                    && (etype.hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
+                            || etype.hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)
+                            || etype.hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)
+                            || etype.hasFlag(EquipmentFlag.F_JUMP_JET))) {
                 toSubtract = 1;
             }
 
@@ -270,7 +270,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         umuMP = 0;
         for (Mounted<?> m : entity.getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU) && !m.isInoperable()) {
+            if ((type instanceof MiscType) && type.hasFlag(EquipmentFlag.F_UMU) && !m.isInoperable()) {
                 umuMP++;
             }
         }
@@ -294,7 +294,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             calculation += " + " + coolantPodBonus + " (Cool. Pods)";
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
             mekHeatEfficiency += 4;
             calculation += " + 4 (ECS)";
         }
@@ -419,7 +419,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 || (mek.getCockpitType() == Mek.COCKPIT_SMALL_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             modifier = " (" + mek.getCockpitTypeString() + ")";
-        } else if (entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+        } else if (entity.hasWorkingMisc(EquipmentFlag.F_DRONE_OPERATING_SYSTEM)) {
             cockpitMod = 0.95;
             modifier = " (Drone Op. Sys.)";
         } else if (mek.getCockpitType() == Mek.COCKPIT_INTERFACE) {

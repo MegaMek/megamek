@@ -76,7 +76,7 @@ public class TestBattleArmor extends TestEntity {
     public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
         List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
-            if (armor.hasFlag(MiscType.F_BA_EQUIPMENT) && techManager.isLegal(armor)) {
+            if (armor.hasFlag(EquipmentFlag.F_BA_EQUIPMENT) && techManager.isLegal(armor)) {
                 retVal.add(armor);
             }
         }
@@ -246,12 +246,12 @@ public class TestBattleArmor extends TestEntity {
         }
         for (Mounted<?> m : ba.getEquipment()) {
             // Manipulators don't take up slots in BA
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)) {
                 continue;
             }
 
             // AP weapons don't take up slots in BA (the AP Mount does)
-            if (m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+            if (m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                 continue;
             }
 
@@ -263,7 +263,7 @@ public class TestBattleArmor extends TestEntity {
                         && !(m.getType() instanceof InfantryWeapon)) {
                     numAntiMekWeapons++;
                 }
-                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                     numAntiPersonnelWeapons++;
                 }
                 if (m.getType().isSpreadable()) {
@@ -291,7 +291,7 @@ public class TestBattleArmor extends TestEntity {
                             && !(m.getType() instanceof InfantryWeapon)) {
                         numAntiMekWeapons++;
                     }
-                    if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    if (m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                         numAntiPersonnelWeapons++;
                     }
                 }
@@ -313,7 +313,7 @@ public class TestBattleArmor extends TestEntity {
                 } else {
                     return false;
                 }
-            } else if (newMount.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+            } else if (newMount.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                 if ((numAntiPersonnelWeapons + 1) <= ba.getNumAllowedAntiPersonnelWeapons(loc, trooper)) {
                     return true;
                 } else {
@@ -591,18 +591,18 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
 
-        if ((ba.getOriginalWalkMP() < 2) && ba.hasWorkingMisc(MiscType.F_DETACHABLE_WEAPON_PACK)) {
+        if ((ba.getOriginalWalkMP() < 2) && ba.hasWorkingMisc(EquipmentFlag.F_DETACHABLE_WEAPON_PACK)) {
             buff.append("BattleArmor must not have their MP reduced to less than zero by DWPs");
             return false;
         }
 
-        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
+        if (ba.hasWorkingMisc(EquipmentFlag.F_JUMP_BOOSTER)
                 && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba.getJumpMP() < 1))) {
             buff.append("BattleArmor with jump boosters must have jump jets with a least 1MP!");
             return false;
         }
 
-        if (ba.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !ba.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)
+        if (ba.hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING) && !ba.hasWorkingMisc(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER)
                 && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba.getJumpMP() < 1))) {
             buff.append(
                     "BattleArmor with a partial wing must have jump jets with a least 1MP or mechanical jump boosters!");
@@ -626,13 +626,13 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
 
-        if (ba.countWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER) > 1) {
+        if (ba.countWorkingMisc(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER) > 1) {
             buff.append("BattleArmor may only mount 1 "
                     + "mechanical jump booster!");
             return false;
         }
         EquipmentType boosterType = EquipmentType.get(EquipmentTypeLookup.BA_MYOMER_BOOSTER);
-        if (ba.countWorkingMisc(MiscType.F_MASC) > boosterType.getCriticals(ba)) {
+        if (ba.countWorkingMisc(EquipmentFlag.F_MASC) > boosterType.getCriticals(ba)) {
             buff.append("BattleArmor may only mount 1 " + "myomer booster!");
             return false;
         }
@@ -662,7 +662,7 @@ public class TestBattleArmor extends TestEntity {
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted<?> m : ba.getEquipment()) {
             // BA Tasers should be mounted individually
-            if (m.getType().hasFlag(WeaponType.F_TASER)
+            if (m.getType().hasFlag(WeaponTypeFlag.F_TASER)
                     && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA Tasers should be mounted individually " +
                         "instead of as a squad weapon!");
@@ -691,13 +691,13 @@ public class TestBattleArmor extends TestEntity {
             }
 
             // Manipulators don't take up slots in BA
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)) {
                 critSize = 0;
             }
 
             // AP Weapons that are mounted in an AP Mount don't take up slots
             if (m.isAPMMounted() && (m.getLinkedBy() != null)
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                 critSize = 0;
             }
 
@@ -709,15 +709,15 @@ public class TestBattleArmor extends TestEntity {
 
             // Check for valid BA weapon
             if ((m.getType() instanceof WeaponType)
-                    && !m.getType().hasFlag(WeaponType.F_BA_WEAPON)
-                    && !m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    && !m.getType().hasFlag(WeaponTypeFlag.F_BA_WEAPON)
+                    && !m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                 buff.append(m.getName() + " is not a BattleArmor weapon!\n");
                 correct = false;
             }
 
             // Special considerations for AP weapons
             if ((m.getType() instanceof WeaponType)
-                    && m.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    && m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                 Mounted<?> link = m.getLinkedBy();
                 if (link == null) {
                     correct = false;
@@ -726,22 +726,22 @@ public class TestBattleArmor extends TestEntity {
                     continue;
                 }
                 // No AP melee weapons
-                if (m.getType().hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+                if (m.getType().hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)) {
                     buff.append(m.getName() + " is a melee AP weapon and " +
                             "BattleArmor cannot mount melee AP weapons!\n");
                     correct = false;
                 }
                 // Special considerations for AP mounts
-                if (link.getType().hasFlag(MiscType.F_AP_MOUNT)) {
-                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
+                if (link.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
+                    if (m.getType().hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
                         buff.append(m.getName() + " is a support weapon and " +
                                 "BattleArmor AP mounts cannot mount " +
                                 "support weapons!\n");
                         correct = false;
                     }
                     // Special considerations for armored gloves
-                } else if (link.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
-                    if (m.getType().hasFlag(WeaponType.F_INF_SUPPORT)) {
+                } else if (link.getType().hasFlag(EquipmentFlag.F_ARMORED_GLOVE)) {
+                    if (m.getType().hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
                         if ((m.getType() instanceof InfantryWeapon)) {
                             int crew = ((InfantryWeapon) m.getType()).getCrew();
                             if (crew > 1) {
@@ -762,7 +762,7 @@ public class TestBattleArmor extends TestEntity {
 
             // Check for valid BA equipment
             if ((m.getType() instanceof MiscType)
-                    && !m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                    && !m.getType().hasFlag(EquipmentFlag.F_BA_EQUIPMENT)) {
                 buff.append(m.getName() + " is not BattleArmor equipment!\n");
                 correct = false;
             }
@@ -783,13 +783,13 @@ public class TestBattleArmor extends TestEntity {
             }
 
             // Ensure that jump boosters are mounted in the body
-            if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
+            if (m.getType().hasFlag(EquipmentFlag.F_JUMP_BOOSTER)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
                 buff.append("Jump Boosters must be mounted in the body!\n");
             }
 
             // Ensure partial wing are mounted in the body
-            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)
+            if (m.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
                 buff.append("Partial wing must be mounted in the body!\n");
             }
@@ -799,7 +799,7 @@ public class TestBattleArmor extends TestEntity {
                 if ((m.getType() instanceof WeaponType)) {
                     numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
-                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                     numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
             } else {
@@ -809,13 +809,13 @@ public class TestBattleArmor extends TestEntity {
                             && !(m.getType() instanceof InfantryWeapon)) {
                         numAMWeapons[t][m.getBaMountLoc()]++;
                     }
-                    if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    if (m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                         numAPWeapons[t][m.getBaMountLoc()]++;
                     }
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_ARMORED_GLOVE)) {
                 if ((m.getLinked() != null)
                         && (m.getLinked().getType() instanceof InfantryWeapon)) {
                     numGloveMountedAPWeapons++;
@@ -909,7 +909,7 @@ public class TestBattleArmor extends TestEntity {
                 if ((m.getType() instanceof AmmoType)
                         && (m.getLinkedBy() != null)
                         && m.getLinkedBy().getType()
-                                .hasFlag(WeaponType.F_ONESHOT)) {
+                                .hasFlag(WeaponTypeFlag.F_ONESHOT)) {
                     continue;
                 }
 
@@ -922,10 +922,10 @@ public class TestBattleArmor extends TestEntity {
 
                 // Weapons mounted in a DWP don't get assigned a location
                 if (((m.getLinked() != null) && m.getLinked().getType()
-                        .hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))
+                        .hasFlag(EquipmentFlag.F_DETACHABLE_WEAPON_PACK))
                         || ((m.getLinkedBy() != null) && m.getLinkedBy()
                                 .getType()
-                                .hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+                                .hasFlag(EquipmentFlag.F_DETACHABLE_WEAPON_PACK))) {
                     continue;
                 }
 
@@ -949,7 +949,7 @@ public class TestBattleArmor extends TestEntity {
         BAManipulator laManipType = BAManipulator.NONE;
         BAManipulator raManipType = BAManipulator.NONE;
         for (Mounted<?> m : ba.getEquipment()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)) {
                 if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                     numLAManipulators++;
                     laManipType = BAManipulator.getManipulator(m.getType().getInternalName());
@@ -1076,7 +1076,7 @@ public class TestBattleArmor extends TestEntity {
      */
     public static boolean isValidBALocation(EquipmentType eq, @Nullable StringBuffer buffer) {
         // Infantry weapons can only be mounted in armored gloves/APMs
-        if ((eq instanceof WeaponType) && eq.hasFlag(WeaponType.F_INFANTRY)) {
+        if ((eq instanceof WeaponType) && eq.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
             if (buffer != null) {
                 buffer.append(eq.getName())
                         .append(" can only be mounted in an anti-personnel mount or an armored glove.\n");
@@ -1151,32 +1151,32 @@ public class TestBattleArmor extends TestEntity {
                 continue;
             }
 
-            if (mt.hasFlag(MiscType.F_ENDO_STEEL)
-                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
-                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)
-                    || mt.hasFlag(MiscType.F_REINFORCED)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
-                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
-                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
-                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
-                    || mt.hasFlag(MiscType.F_REACTIVE)
-                    || mt.hasFlag(MiscType.F_REFLECTIVE)
-                    || mt.hasFlag(MiscType.F_HARDENED_ARMOR)
-                    || mt.hasFlag(MiscType.F_PRIMITIVE_ARMOR)
-                    || mt.hasFlag(MiscType.F_COMMERCIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_HEAVY_INDUSTRIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_ANTI_PENETRATIVE_ABLATIVE)
-                    || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
-                    || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
-                    || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
-                    || mt.hasFlag(MiscType.F_HEAT_SINK)
-                    || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            if (mt.hasFlag(EquipmentFlag.F_ENDO_STEEL)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_STEEL_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_INDUSTRIAL_STRUCTURE)
+                    || mt.hasFlag(EquipmentFlag.F_REINFORCED)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(EquipmentFlag.F_LIGHT_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_HEAVY_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_REACTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_REFLECTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_HARDENED_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_PRIMITIVE_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_COMMERCIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_HEAVY_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_ANTI_PENETRATIVE_ABLATIVE)
+                    || mt.hasFlag(EquipmentFlag.F_HEAT_DISSIPATING)
+                    || mt.hasFlag(EquipmentFlag.F_IMPACT_RESISTANT)
+                    || mt.hasFlag(EquipmentFlag.F_BALLISTIC_REINFORCED)
+                    || mt.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                    || mt.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                    || mt.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
             weightSum += m.getTonnage();
@@ -1291,18 +1291,18 @@ public class TestBattleArmor extends TestEntity {
             equipmentCount.merge(mount.getType().getInternalName(), 1, Integer::sum);
 
             if (mount.getType() instanceof WeaponType) {
-                if (!mount.getType().hasFlag(WeaponType.F_BA_WEAPON) && !mount.getType().hasFlag(WeaponType.F_INFANTRY)
-                        && !mount.getType().hasFlag(WeaponType.F_INFANTRY_ATTACK)) {
+                if (!mount.getType().hasFlag(WeaponTypeFlag.F_BA_WEAPON) && !mount.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
+                        && !mount.getType().hasFlag(WeaponTypeFlag.F_INFANTRY_ATTACK)) {
                     currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
                 }
 
             } else if (mount.getType() instanceof MiscType) {
 
-                if (!mount.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                if (!mount.getType().hasFlag(EquipmentFlag.F_BA_EQUIPMENT)) {
                     currentErrors.add(mount.getName() + " is not legal BattleArmor equipment");
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)) {
                     if ((battleArmor.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
                             || (battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
                         currentErrors.add("Quad and Assault BattleArmor cannot use magnetic clamps");
@@ -1312,18 +1312,18 @@ public class TestBattleArmor extends TestEntity {
                     }
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_PARAFOIL)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_PARAFOIL)) {
                     if ((mount.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)
                             && (mount.getBaMountLoc() != Entity.LOC_NONE)) {
                         currentErrors.add("A parafoil can only be mounted in the body location");
                     }
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING) && ba.hasWorkingMisc(EquipmentFlag.F_JUMP_BOOSTER)) {
                     currentErrors.add("BattleArmor may not mount a jump booster and partial wings!");
                 }
 
-                if (mount.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
                     currentErrors.add("BattleArmor may not mount a mechanical jump booster and a myomer booster!");
                 }
             }

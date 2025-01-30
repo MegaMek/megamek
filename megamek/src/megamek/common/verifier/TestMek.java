@@ -104,7 +104,7 @@ public class TestMek extends TestEntity {
                     || (isLam && (armor.getArmorType() == EquipmentType.T_ARMOR_HARDENED))) {
                 continue;
             }
-            if (armor.hasFlag(MiscType.F_MEK_EQUIPMENT)
+            if (armor.hasFlag(EquipmentFlag.F_MEK_EQUIPMENT)
                     && ((armor.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                     && techManager.isLegal(armor)
                     && (!isLam || (armor.getCriticals(null) == 0))
@@ -207,7 +207,7 @@ public class TestMek extends TestEntity {
                 }
                 if ((m.getLinkedBy() != null)
                         && (m.getLinkedBy().getType() instanceof MiscType)
-                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                        && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                     powerAmpWeight += m.getLinkedBy().getTonnage();
                 }
             }
@@ -278,7 +278,7 @@ public class TestMek extends TestEntity {
         boolean hasCompact = false;
         double compactHsTons = 0;
         for (Mounted<?> misc : mek.getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+            if (misc.getType().hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK)) {
                 hasCompact = true;
                 compactHsTons += misc.getTonnage();
             }
@@ -351,7 +351,7 @@ public class TestMek extends TestEntity {
     public boolean checkMiscSpreadAllocation(Entity entity, Mounted<?> mounted,
             StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
-        if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
+        if (mt.hasFlag(EquipmentFlag.F_STEALTH) && !entity.hasPatchworkArmor()) {
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mek.LOC_LARM) != 2) {
@@ -382,13 +382,13 @@ public class TestMek extends TestEntity {
                 return false;
             }
         }
-        if (mt.hasFlag(MiscType.F_DRONE_CONTROL_CONSOLE)) {
+        if (mt.hasFlag(EquipmentFlag.F_DRONE_CONTROL_CONSOLE)) {
             if (mounted.getLocation() != Mek.LOC_HEAD) {
                 buff.append("Drone Control Console must be mounted in head");
                 return false;
             }
         }
-        if (mt.hasFlag(MiscType.F_MOBILE_HPG)) {
+        if (mt.hasFlag(EquipmentFlag.F_MOBILE_HPG)) {
             if ((countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mek.LOC_LARM) > 0)
                     || (countCriticalSlotsFromEquipInLocation(entity, mounted,
@@ -402,7 +402,7 @@ public class TestMek extends TestEntity {
                 buff.append("ground mobile HPG must be mounted in torso locations\n");
             }
         }
-        if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+        if (mt.hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
             // environmental sealing needs to have 1 crit per location
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (countCriticalSlotsFromEquipInLocation(entity, mounted,
@@ -412,7 +412,7 @@ public class TestMek extends TestEntity {
                 }
             }
         }
-        if (mt.hasFlag(MiscType.F_BLUE_SHIELD)) {
+        if (mt.hasFlag(EquipmentFlag.F_BLUE_SHIELD)) {
             // blue shield needs to have 1 crit per location, except head
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (locations != Mek.LOC_HEAD) {
@@ -425,7 +425,7 @@ public class TestMek extends TestEntity {
 
             }
         }
-        if (mt.hasFlag(MiscType.F_PARTIAL_WING)) {
+        if (mt.hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
             // partial wing needs 3/4 crits in the side torsos
             if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LT) != ((TechConstants.isClan(mt
                     .getTechLevel(entity.getTechLevelYear()))) ? 3
@@ -517,9 +517,9 @@ public class TestMek extends TestEntity {
                     continue;
                 }
                 MiscType mt = (MiscType) m.getType();
-                if (mt.hasFlag(MiscType.F_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                if (mt.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                        || mt.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                        || mt.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                     countInternalHeatSinks++;
                 } else {
                     unallocated.addElement(m);
@@ -674,13 +674,13 @@ public class TestMek extends TestEntity {
         // the unit can handle the weight.
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalRunMP())
                 && !mek.hasJumpBoosters()
-                && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+                && !mek.hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
         if ((mek.getJumpMP(MPCalculationSetting.NO_GRAVITY) > mek.getOriginalWalkMP())
                 && (((mek.getJumpType() != Mek.JUMP_IMPROVED) && (mek.getJumpType() != Mek.JUMP_PROTOTYPE_IMPROVED))
-                        && !mek.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !mek
+                        && !mek.hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING) && !mek
                                 .hasJumpBoosters())) {
             buff.append("Jump MP exceeds walk MP without IJJs\n");
             return false;
@@ -830,34 +830,34 @@ public class TestMek extends TestEntity {
         // so we don't have to execute another loop each time one of those situations
         // comes up.
         for (Mounted<?> m : mek.getMisc()) {
-            hasHarjelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
-            hasHarjelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
-            hasNullSig |= m.getType().hasFlag(MiscType.F_NULLSIG);
-            hasVoidSig |= m.getType().hasFlag(MiscType.F_VOIDSIG);
-            hasTC |= m.getType().hasFlag(MiscType.F_TARGCOMP);
-            hasMASC |= m.getType().hasFlag(MiscType.F_MASC)
+            hasHarjelII |= m.getType().hasFlag(EquipmentFlag.F_HARJEL_II);
+            hasHarjelIII |= m.getType().hasFlag(EquipmentFlag.F_HARJEL_III);
+            hasNullSig |= m.getType().hasFlag(EquipmentFlag.F_NULLSIG);
+            hasVoidSig |= m.getType().hasFlag(EquipmentFlag.F_VOIDSIG);
+            hasTC |= m.getType().hasFlag(EquipmentFlag.F_TARGCOMP);
+            hasMASC |= m.getType().hasFlag(EquipmentFlag.F_MASC)
                     && !m.getType().hasSubType(MiscType.S_SUPERCHARGER);
-            hasAES |= m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM);
-            if (m.getType().hasFlag(MiscType.F_TSM)
-                    || m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)
-                    || m.getType().hasFlag(MiscType.F_SCM)) {
+            hasAES |= m.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM);
+            if (m.getType().hasFlag(EquipmentFlag.F_TSM)
+                    || m.getType().hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)
+                    || m.getType().hasFlag(EquipmentFlag.F_SCM)) {
                 advancedMyomer = m.getType();
             }
             hasMekJumpBooster |= m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER);
-            hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
+            hasPartialWing |= m.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING);
         }
 
         for (Mounted<?> m : getEntity().getMisc()) {
             final MiscType misc = (MiscType) m.getType();
 
-            if (misc.hasFlag(MiscType.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)
+            if (misc.hasFlag(EquipmentFlag.F_UMU) && (mek.getJumpType() != Mek.JUMP_NONE)
                     && (mek.getJumpType() != Mek.JUMP_BOOSTER)) {
                 illegal = true;
                 buff.append("UMUs cannot be mounted with jump jets "
                         + "(jump boosters are legal)\n");
             }
 
-            if (misc.hasFlag(MiscType.F_MASC)
+            if (misc.hasFlag(EquipmentFlag.F_MASC)
                     && misc.hasSubType(MiscType.S_SUPERCHARGER)) {
                 if (mek instanceof LandAirMek) {
                     buff.append("LAMs may not mount a supercharger\n");
@@ -865,22 +865,22 @@ public class TestMek extends TestEntity {
                 }
             }
 
-            if ((misc.hasFlag(MiscType.F_TSM)
-                    || misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
-                    || misc.hasFlag(MiscType.F_SCM))
+            if ((misc.hasFlag(EquipmentFlag.F_TSM)
+                    || misc.hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)
+                    || misc.hasFlag(EquipmentFlag.F_SCM))
                     && (misc != advancedMyomer)) {
                 buff.append("Cannot mount more than one type of myomer.\n");
                 illegal = true;
             }
 
-            if (misc.hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
+            if (misc.hasFlag(EquipmentFlag.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
                 if (mek.getCockpitType() == Mek.COCKPIT_COMMAND_CONSOLE) {
                     buff.append("cockpit command console can't be combined with remote drone command console\n");
                     illegal = true;
                 }
             }
 
-            if (misc.hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
+            if (misc.hasFlag(EquipmentFlag.F_CHAMELEON_SHIELD)) {
                 if (hasStealth) {
                     buff.append("Unit mounts both chameleon-light-polarization-system and stealth armor\n");
                     illegal = true;
@@ -891,7 +891,7 @@ public class TestMek extends TestEntity {
                 }
             }
 
-            if (misc.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
+            if (misc.hasFlag(EquipmentFlag.F_LIGHT_FLUID_SUCTION_SYSTEM)
                     && !mek.isIndustrial()) {
                 illegal = true;
                 buff.append("BattleMek can't mount light fluid suction system\n");
@@ -936,28 +936,28 @@ public class TestMek extends TestEntity {
                     }
                 }
             }
-            if (misc.hasFlag(MiscType.F_HEAD_TURRET)
+            if (misc.hasFlag(EquipmentFlag.F_HEAD_TURRET)
                     && isCockpitLocation(Mek.LOC_HEAD)) {
                 illegal = true;
                 buff.append("head turret requires torso mounted cockpit\n");
             }
 
-            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET) && mek instanceof QuadMek) {
+            if (misc.hasFlag(EquipmentFlag.F_SHOULDER_TURRET) && mek instanceof QuadMek) {
                 illegal = true;
                 buff.append("quad meks can't mount shoulder turrets\n");
             }
 
-            if (misc.hasFlag(MiscType.F_SHOULDER_TURRET)) {
+            if (misc.hasFlag(EquipmentFlag.F_SHOULDER_TURRET)) {
                 if (m.getLocation() != Mek.LOC_RT
                         && m.getLocation() != Mek.LOC_LT) {
-                    if (mek.countWorkingMisc(MiscType.F_SHOULDER_TURRET, m.getLocation()) > 1) {
+                    if (mek.countWorkingMisc(EquipmentFlag.F_SHOULDER_TURRET, m.getLocation()) > 1) {
                         illegal = true;
                         buff.append("max of 1 shoulder turret per side torso\n");
                     }
                 }
             }
 
-            if (misc.hasFlag(MiscType.F_TRACKS)) {
+            if (misc.hasFlag(EquipmentFlag.F_TRACKS)) {
                 if (mek instanceof QuadVee) {
                     if (misc.hasSubType(
                             MiscType.S_QUADVEE_WHEELS) != (((QuadVee) mek).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
@@ -978,7 +978,7 @@ public class TestMek extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_TALON)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_TALON)) {
                 int slots = getMek().isSuperHeavy() ? 1 : 2;
                 for (int loc = 0; loc < mek.locations(); loc++) {
                     if (mek.locationIsLeg(loc) && countCriticalSlotsFromEquipInLocation(mek, m, loc) != slots) {
@@ -989,7 +989,7 @@ public class TestMek extends TestEntity {
                 }
             }
 
-            if (misc.hasFlag(MiscType.F_RAM_PLATE)) {
+            if (misc.hasFlag(EquipmentFlag.F_RAM_PLATE)) {
                 if (!(mek instanceof QuadMek)) {
                     buff.append(misc.getName()).append(" can only be mounted on a quad mek.\n");
                     illegal = true;
@@ -1009,55 +1009,55 @@ public class TestMek extends TestEntity {
             }
 
             if (mek.isSuperHeavy()
-                    && (misc.hasFlag(MiscType.F_TSM)
-                            || misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
-                            || misc.hasFlag(MiscType.F_SCM)
-                            || misc.hasFlag(MiscType.F_MASC)
-                            || misc.hasFlag(MiscType.F_JUMP_JET)
-                            || misc.hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER)
-                            || misc.hasFlag(MiscType.F_UMU)
-                            || misc.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
-                            || misc.hasFlag(MiscType.F_MODULAR_ARMOR)
-                            || misc.hasFlag(MiscType.F_PARTIAL_WING))) {
+                    && (misc.hasFlag(EquipmentFlag.F_TSM)
+                            || misc.hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)
+                            || misc.hasFlag(EquipmentFlag.F_SCM)
+                            || misc.hasFlag(EquipmentFlag.F_MASC)
+                            || misc.hasFlag(EquipmentFlag.F_JUMP_JET)
+                            || misc.hasFlag(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER)
+                            || misc.hasFlag(EquipmentFlag.F_UMU)
+                            || misc.hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                            || misc.hasFlag(EquipmentFlag.F_MODULAR_ARMOR)
+                            || misc.hasFlag(EquipmentFlag.F_PARTIAL_WING))) {
                 buff.append("Superheavy may not mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             }
 
             if (mek.isIndustrial()) {
-                if (misc.hasFlag(MiscType.F_TSM)
-                        || misc.hasFlag(MiscType.F_SCM)
-                        || (misc.hasFlag(MiscType.F_MASC) && !misc.hasSubType(MiscType.S_SUPERCHARGER))) {
+                if (misc.hasFlag(EquipmentFlag.F_TSM)
+                        || misc.hasFlag(EquipmentFlag.F_SCM)
+                        || (misc.hasFlag(EquipmentFlag.F_MASC) && !misc.hasSubType(MiscType.S_SUPERCHARGER))) {
                     buff.append("industrial mek can't mount ").append(misc.getName()).append("\n");
                     illegal = true;
                 }
                 if (!mek.hasAdvancedFireControl()
-                        && (misc.hasFlag(MiscType.F_TARGCOMP)
-                                || misc.hasFlag(MiscType.F_ARTEMIS)
-                                || misc.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                                || misc.hasFlag(MiscType.F_ARTEMIS_V)
-                                || misc.hasFlag(MiscType.F_BAP))) {
+                        && (misc.hasFlag(EquipmentFlag.F_TARGCOMP)
+                                || misc.hasFlag(EquipmentFlag.F_ARTEMIS)
+                                || misc.hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)
+                                || misc.hasFlag(EquipmentFlag.F_ARTEMIS_V)
+                                || misc.hasFlag(EquipmentFlag.F_BAP))) {
                     buff.append("Industrial mek without advanced fire control can't mount ")
                             .append(misc.getName()).append("\n");
                     illegal = true;
                 }
             } else {
-                if (misc.hasFlag(MiscType.F_INDUSTRIAL_TSM)
-                        || misc.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                        || misc.hasFlag(MiscType.F_FUEL)) {
+                if (misc.hasFlag(EquipmentFlag.F_INDUSTRIAL_TSM)
+                        || misc.hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)
+                        || misc.hasFlag(EquipmentFlag.F_FUEL)) {
                     buff.append("Non-industrial mek can't mount ").append(misc.getName()).append("\n");
                     illegal = true;
                 }
             }
 
             if ((mek instanceof LandAirMek)
-                    && (misc.hasFlag(MiscType.F_MODULAR_ARMOR)
-                            || misc.hasFlag(MiscType.F_JUMP_BOOSTER)
-                            || misc.hasFlag(MiscType.F_PARTIAL_WING)
-                            || misc.hasFlag(MiscType.F_DUMPER)
-                            || misc.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                            || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                            || misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                            || (misc.hasFlag(MiscType.F_CLUB)
+                    && (misc.hasFlag(EquipmentFlag.F_MODULAR_ARMOR)
+                            || misc.hasFlag(EquipmentFlag.F_JUMP_BOOSTER)
+                            || misc.hasFlag(EquipmentFlag.F_PARTIAL_WING)
+                            || misc.hasFlag(EquipmentFlag.F_DUMPER)
+                            || misc.hasFlag(EquipmentFlag.F_HEAVY_BRIDGE_LAYER)
+                            || misc.hasFlag(EquipmentFlag.F_MEDIUM_BRIDGE_LAYER)
+                            || misc.hasFlag(EquipmentFlag.F_LIGHT_BRIDGE_LAYER)
+                            || (misc.hasFlag(EquipmentFlag.F_CLUB)
                                     && (misc.getSubType() == MiscType.S_BACKHOE)
                                     || (misc.getSubType() == MiscType.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
@@ -1192,7 +1192,7 @@ public class TestMek extends TestEntity {
                     }
                 }
             }
-            if (mek.countWorkingMisc(MiscType.F_BOMB_BAY) > 20) {
+            if (mek.countWorkingMisc(EquipmentFlag.F_BOMB_BAY) > 20) {
                 buff.append("A LAM has a maximum of 20 bomb bays.\n");
                 illegal = true;
             }
@@ -1236,7 +1236,7 @@ public class TestMek extends TestEntity {
                     buff.append("LAMs cannot mount heavy gauss rifles.\n");
                     illegal = true;
                 } else if ((m.getType() instanceof MiscType)
-                        && m.getType().hasFlag(MiscType.F_CLUB)) {
+                        && m.getType().hasFlag(EquipmentFlag.F_CLUB)) {
                     buff.append("LAMs cannot be constructed with physical weapons.\n");
                     illegal = true;
                 } else if (m.getType().isSpreadable()) {
@@ -1267,11 +1267,11 @@ public class TestMek extends TestEntity {
             int allocated = 0;
             boolean compact = false;
             for (Mounted<?> m : mek.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
-                        || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                        || m.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_HEAT_SINK)
+                        || m.getType().hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                        || m.getType().hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                     total++;
-                    compact |= m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK);
+                    compact |= m.getType().hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK);
                     if (m.getLocation() != Entity.LOC_NONE) {
                         allocated++;
                     }
@@ -1307,7 +1307,7 @@ public class TestMek extends TestEntity {
             // Find all locations with an AES and map the number in that location to the
             // location index.
             Map<Integer, Long> byLocation = mek.getMisc().stream()
-                    .filter(m -> m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM))
+                    .filter(m -> m.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM))
                     .collect(Collectors.groupingBy(Mounted::getLocation, Collectors.counting()));
             boolean multiple = false;
             boolean wrongLocation = false;
@@ -1392,8 +1392,8 @@ public class TestMek extends TestEntity {
                 int count = 0;
                 for (Mounted<?> m : mek.getMisc()) {
                     if ((m.getLocation() == loc)
-                            && (m.getType().hasFlag(MiscType.F_HARJEL_II)
-                                    || m.getType().hasFlag(MiscType.F_HARJEL_III))) {
+                            && (m.getType().hasFlag(EquipmentFlag.F_HARJEL_II)
+                                    || m.getType().hasFlag(EquipmentFlag.F_HARJEL_III))) {
                         ++count;
                     }
                 }
@@ -1436,7 +1436,7 @@ public class TestMek extends TestEntity {
                     illegal = true;
                 }
             }
-            if ((m.getType().hasFlag(WeaponType.F_TASER))
+            if ((m.getType().hasFlag(WeaponTypeFlag.F_TASER))
                     && !(mek.hasEngine() && mek.getEngine().isFusion())) {
                 buff.append(m.getType().getName()).append(" needs fusion engine\n");
                 illegal = true;
@@ -1480,9 +1480,9 @@ public class TestMek extends TestEntity {
      *         arm
      */
     public static boolean replacesHandActuator(MiscType misc) {
-        return misc.hasFlag(MiscType.F_SALVAGE_ARM)
-                || misc.hasFlag(MiscType.F_HAND_WEAPON)
-                || (misc.hasFlag(MiscType.F_CLUB)
+        return misc.hasFlag(EquipmentFlag.F_SALVAGE_ARM)
+                || misc.hasFlag(EquipmentFlag.F_HAND_WEAPON)
+                || (misc.hasFlag(EquipmentFlag.F_CLUB)
                         && (misc.hasSubType(MiscType.S_CHAINSAW)
                                 || misc.hasSubType(MiscType.S_BACKHOE)
                                 || misc.hasSubType(MiscType.S_DUAL_SAW)
@@ -1499,7 +1499,7 @@ public class TestMek extends TestEntity {
      */
     public static boolean requiresHandActuator(EquipmentType equipment) {
         return (equipment instanceof MiscType)
-                && equipment.hasFlag(MiscType.F_CLUB)
+                && equipment.hasFlag(EquipmentFlag.F_CLUB)
                 && equipment.hasSubType(MiscType.S_CHAIN_WHIP
                         | MiscType.S_HATCHET
                         | MiscType.S_MACE
@@ -1515,7 +1515,7 @@ public class TestMek extends TestEntity {
      */
     public static boolean requiresLowerArm(MiscType misc) {
         return replacesHandActuator(misc) ||
-                (misc.hasFlag(MiscType.F_CLUB)
+                (misc.hasFlag(EquipmentFlag.F_CLUB)
                         && misc.hasSubType(MiscType.S_LANCE | MiscType.S_RETRACTABLE_BLADE));
     }
 
@@ -1524,7 +1524,7 @@ public class TestMek extends TestEntity {
      * @return Whether the equipment replaces the lower arm and hand actuators
      */
     public static boolean replacesLowerArm(MiscType misc) {
-        return misc.hasFlag(MiscType.F_CLUB) && misc.hasSubType(MiscType.S_PILE_DRIVER);
+        return misc.hasFlag(EquipmentFlag.F_CLUB) && misc.hasSubType(MiscType.S_PILE_DRIVER);
     }
 
     /**
@@ -1537,7 +1537,7 @@ public class TestMek extends TestEntity {
      */
     public static boolean isValidMekLocation(Mek mek, EquipmentType eq, int location, @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
+            if (eq.hasFlag(EquipmentFlag.F_CLUB) && (eq.hasSubType(MiscType.S_DUAL_SAW | MiscType.S_PILE_DRIVER
                     | MiscType.S_BACKHOE | MiscType.S_MINING_DRILL
                     | MiscType.S_COMBINE | MiscType.S_CHAINSAW
                     | MiscType.S_ROCK_CUTTER | MiscType.S_BUZZSAW | MiscType.S_SPOT_WELDER))) {
@@ -1553,7 +1553,7 @@ public class TestMek extends TestEntity {
                     return false;
                 }
             }
-            if (eq.hasFlag(MiscType.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
+            if (eq.hasFlag(EquipmentFlag.F_CLUB) && (eq.hasSubType(MiscType.S_HATCHET | MiscType.S_SWORD
                     | MiscType.S_CHAIN_WHIP | MiscType.S_FLAIL | MiscType.S_LANCE | MiscType.S_WRECKING_BALL
                     | MiscType.S_MACE | MiscType.S_RETRACTABLE_BLADE)
                     || ((MiscType) eq).isShield() || ((MiscType) eq).isVibroblade())
@@ -1563,104 +1563,104 @@ public class TestMek extends TestEntity {
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_HAND_WEAPON) && eq.hasSubType(MiscType.S_CLAW)
+            if (eq.hasFlag(EquipmentFlag.F_HAND_WEAPON) && eq.hasSubType(MiscType.S_CLAW)
                     && (mek.entityIsQuad() || ((location != Mek.LOC_LARM) && (location != Mek.LOC_RARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_SALVAGE_ARM) && (mek.entityIsQuad()
+            if (eq.hasFlag(EquipmentFlag.F_SALVAGE_ARM) && (mek.entityIsQuad()
                     || ((location != Mek.LOC_LARM) && (location != Mek.LOC_RARM)))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+            if (eq.hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                     && ((location == Mek.LOC_HEAD) || mek.locationIsTorso(location))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm or leg location.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_HEAD_TURRET) && (location != Mek.LOC_CT)) {
+            if (eq.hasFlag(EquipmentFlag.F_HEAD_TURRET) && (location != Mek.LOC_CT)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in the center torso.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_QUAD_TURRET) || eq.hasFlag(MiscType.F_SHOULDER_TURRET))
+            if ((eq.hasFlag(EquipmentFlag.F_QUAD_TURRET) || eq.hasFlag(EquipmentFlag.F_SHOULDER_TURRET))
                     && (location != Mek.LOC_RT) && (location != Mek.LOC_LT)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a side torso.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_HARJEL) && mek.hasSystem(Mek.SYSTEM_COCKPIT, location)) {
+            if (eq.hasFlag(EquipmentFlag.F_HARJEL) && mek.hasSystem(Mek.SYSTEM_COCKPIT, location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be placed in the same location as the cockpit.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_MASS) || eq.hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE))
+            if ((eq.hasFlag(EquipmentFlag.F_MASS) || eq.hasFlag(EquipmentFlag.F_REMOTE_DRONE_COMMAND_CONSOLE))
                     && !mek.hasSystem(Mek.SYSTEM_COCKPIT, location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in the same location as the cockpit.\n");
                 }
                 return false;
             }
-            if (((eq.hasFlag(MiscType.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
-                    || eq.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))
+            if (((eq.hasFlag(EquipmentFlag.F_MASC) && eq.hasSubType(MiscType.S_SUPERCHARGER))
+                    || eq.hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM))
                     && !mek.hasSystem(Mek.SYSTEM_ENGINE, location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in the a location with an engine critical.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_FUEL) || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())
-                    || eq.hasFlag(MiscType.F_LADDER) || eq.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || eq.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER))
+            if ((eq.hasFlag(EquipmentFlag.F_FUEL) || (eq.hasFlag(EquipmentFlag.F_CASE) && !eq.isClan())
+                    || eq.hasFlag(EquipmentFlag.F_LADDER) || eq.hasFlag(EquipmentFlag.F_LIGHT_BRIDGE_LAYER)
+                    || eq.hasFlag(EquipmentFlag.F_MEDIUM_BRIDGE_LAYER) || eq.hasFlag(EquipmentFlag.F_HEAVY_BRIDGE_LAYER))
                     && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_LIFTHOIST) && ((location == Mek.LOC_HEAD) || mek.locationIsLeg(location))) {
+            if (eq.hasFlag(EquipmentFlag.F_LIFTHOIST) && ((location == Mek.LOC_HEAD) || mek.locationIsLeg(location))) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso or arm location.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_JUMP_JET)
+            if (eq.hasFlag(EquipmentFlag.F_JUMP_JET)
                     && !mek.locationIsLeg(location) && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso or leg location.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_AP_POD) || eq.hasFlag(MiscType.F_TRACKS) || eq.hasFlag(MiscType.F_TALON))
+            if ((eq.hasFlag(EquipmentFlag.F_AP_POD) || eq.hasFlag(EquipmentFlag.F_TRACKS) || eq.hasFlag(EquipmentFlag.F_TALON))
                     && !mek.locationIsLeg(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a leg location.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_MODULAR_ARMOR) && (location == Mek.LOC_HEAD)) {
+            if (eq.hasFlag(EquipmentFlag.F_MODULAR_ARMOR) && (location == Mek.LOC_HEAD)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be placed in the head.\n");
                 }
                 return false;
             }
-            if (eq.hasFlag(MiscType.F_EJECTION_SEAT) && (location != Mek.LOC_HEAD)) {
+            if (eq.hasFlag(EquipmentFlag.F_EJECTION_SEAT) && (location != Mek.LOC_HEAD)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in the head.\n");
                 }
                 return false;
             }
         } else if (eq instanceof WeaponType) {
-            if (eq.hasFlag(WeaponType.F_VGL) && !mek.locationIsTorso(location)) {
+            if (eq.hasFlag(WeaponTypeFlag.F_VGL) && !mek.locationIsTorso(location)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be placed in a torso location.\n");
                 }

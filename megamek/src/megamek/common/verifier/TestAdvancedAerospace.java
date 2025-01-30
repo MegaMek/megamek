@@ -49,7 +49,7 @@ public class TestAdvancedAerospace extends TestAero {
             return Collections.singletonList(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
         } else {
             return ArmorType.allArmorTypes().stream()
-                    .filter(at -> at.hasFlag(MiscType.F_JS_EQUIPMENT) && techManager.isLegal(at))
+                    .filter(at -> at.hasFlag(EquipmentFlag.F_JS_EQUIPMENT) && techManager.isLegal(at))
                     .collect(Collectors.toList());
         }
     }
@@ -119,7 +119,7 @@ public class TestAdvancedAerospace extends TestAero {
         }
         int[] weaponsPerArc = new int[arcs];
         double[] weaponTonnage = new double[arcs];
-        boolean hasNC3 = vessel.hasWorkingMisc(MiscType.F_NAVAL_C3);
+        boolean hasNC3 = vessel.hasWorkingMisc(EquipmentFlag.F_NAVAL_C3);
 
         for (Mounted<?> m : vessel.getEquipment()) {
             if (usesWeaponSlot(vessel, m.getType())) {
@@ -128,7 +128,7 @@ public class TestAdvancedAerospace extends TestAero {
                     continue;
                 }
                 if ((m.getType() instanceof WeaponType)
-                        && m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+                        && m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)) {
                     weaponsPerArc[arc] += 10;
                 } else {
                     weaponsPerArc[arc]++;
@@ -302,7 +302,7 @@ public class TestAdvancedAerospace extends TestAero {
                     || (((WeaponType) m.getType()).getLongRange() <= 1)) {
                 continue;
             }
-            if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)) {
+            if (m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)) {
                 capitalWeapons += 10;
             } else if (((WeaponType) m.getType()).isCapital()
                     || (m.getType() instanceof ScreenLauncherWeapon)) {
@@ -711,11 +711,11 @@ public class TestAdvancedAerospace extends TestAero {
         Map<EquipmentType, Integer> rightBroad = new HashMap<>();
         Map<Integer, Integer> massDriversPerArc = new HashMap<>();
 
-        BigInteger typeFlag = MiscType.F_JS_EQUIPMENT;
+        EquipmentFlag typeFlag = EquipmentFlag.F_JS_EQUIPMENT;
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-            typeFlag = MiscType.F_WS_EQUIPMENT;
+            typeFlag = EquipmentFlag.F_WS_EQUIPMENT;
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
-            typeFlag = MiscType.F_SS_EQUIPMENT;
+            typeFlag = EquipmentFlag.F_SS_EQUIPMENT;
         }
         for (Mounted<?> m : vessel.getEquipment()) {
             if (m.getType() instanceof MiscType) {
@@ -724,7 +724,7 @@ public class TestAdvancedAerospace extends TestAero {
                     illegal = true;
                 }
             } else if (m.getType() instanceof WeaponType) {
-                if (m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
+                if (m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)
                         && !vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)
                         && !vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {
                     buff.append("A mass driver may not be mounted on a Jumpship.\n");
@@ -754,7 +754,7 @@ public class TestAdvancedAerospace extends TestAero {
                     buff.append("Cannot mount " + m.getType().getName() + "\n");
                     illegal = true;
                 }
-                if ((m.getType().hasFlag(WeaponType.F_MASS_DRIVER)
+                if ((m.getType().hasFlag(WeaponTypeFlag.F_MASS_DRIVER)
                         && !(m.getType() instanceof BayWeapon))) {
                     massDriversPerArc.merge(m.getLocation(), 1, Integer::sum);
                     int at = ((WeaponType) m.getType()).getAmmoType();

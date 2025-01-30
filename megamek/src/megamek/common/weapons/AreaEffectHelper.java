@@ -646,7 +646,7 @@ public class AreaEffectHelper {
         if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
                 || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
                 || ammo.getAmmoType() == AmmoType.T_SWORDFISH
-                || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                || ammo.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
             damage = 40;
             falloff = 20;
         }
@@ -657,13 +657,13 @@ public class AreaEffectHelper {
         if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
                 || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
                 || ammo.getAmmoType() == AmmoType.T_PIRANHA
-                || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                || ammo.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
             damage = 30;
             falloff = 15;
         }
         if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
                 || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
-                || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                || ammo.hasFlag(AmmoTypeFlag.F_AR10_BARRACUDA)) {
             damage = 20;
             falloff = 10;
         }

@@ -280,9 +280,9 @@ public abstract class BVCalculator {
     }
 
     protected void reset() {
-        hasBlueShield = entity.hasWorkingMisc(MiscType.F_BLUE_SHIELD);
+        hasBlueShield = entity.hasWorkingMisc(EquipmentFlag.F_BLUE_SHIELD);
         hasTC = entity.hasTargComp();
-        isDrone = entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM);
+        isDrone = entity.hasWorkingMisc(EquipmentFlag.F_DRONE_OPERATING_SYSTEM);
         frontAndRearDecided = false;
         switchRearAndFront = false;
         defensiveValue = 0;
@@ -364,8 +364,8 @@ public abstract class BVCalculator {
         double totalArmorBV = 0;
         // Units with patchwork armor or Harjel II/III calculate and list every location
         // separately
-        if (entity.hasPatchworkArmor() || entity.hasWorkingMisc(MiscType.F_HARJEL_II)
-                || entity.hasWorkingMisc(MiscType.F_HARJEL_III)) {
+        if (entity.hasPatchworkArmor() || entity.hasWorkingMisc(EquipmentFlag.F_HARJEL_II)
+                || entity.hasWorkingMisc(EquipmentFlag.F_HARJEL_III)) {
             bvReport.addLine("Armor:", "", "");
             for (int loc = 0; loc < entity.locations(); loc++) {
                 if (!validArmorLocation(loc)) {
@@ -383,7 +383,7 @@ public abstract class BVCalculator {
                 // Modular Armor
                 int modularArmor = 0;
                 for (MiscMounted mounted : entity.getMisc()) {
-                    if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
+                    if (mounted.getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
                         modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
                     }
                 }
@@ -415,7 +415,7 @@ public abstract class BVCalculator {
         } else {
             // Units without Patchwork armor can use the (simpler) total armor value
             int modularArmor = entity.getMisc().stream()
-                    .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
+                    .filter(m -> m.getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR))
                     .mapToInt(m -> m.getBaseDamageCapacity() - m.getDamageTaken())
                     .sum();
             double armorMultiplier = armorMultiplier(0);
@@ -508,26 +508,26 @@ public abstract class BVCalculator {
 
         EquipmentType eType = equipment.getType();
         if (eType instanceof WeaponType) {
-            return eType.hasFlag(WeaponType.F_AMS)
-                    || eType.hasFlag(WeaponType.F_M_POD)
-                    || eType.hasFlag(WeaponType.F_B_POD)
+            return eType.hasFlag(WeaponTypeFlag.F_AMS)
+                    || eType.hasFlag(WeaponTypeFlag.F_M_POD)
+                    || eType.hasFlag(WeaponTypeFlag.F_B_POD)
                     || (((WeaponType) eType).getAtClass() == WeaponType.CLASS_SCREEN);
         } else if (eType instanceof MiscType) {
-            return eType.hasFlag(MiscType.F_ECM)
-                    || eType.hasFlag(MiscType.F_BAP)
-                    || eType.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                    || eType.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
-                    || eType.hasFlag(MiscType.F_AP_POD)
-                    || eType.hasFlag(MiscType.F_MASS)
-                    || eType.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || eType.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || eType.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || eType.hasFlag(MiscType.F_BULLDOZER)
-                    || eType.hasFlag(MiscType.F_CHAFF_POD)
-                    || eType.hasFlag(MiscType.F_HARJEL_II)
-                    || eType.hasFlag(MiscType.F_HARJEL_III)
-                    || eType.hasFlag(MiscType.F_SPIKES)
-                    || eType.hasFlag(MiscType.F_MINESWEEPER)
+            return eType.hasFlag(EquipmentFlag.F_ECM)
+                    || eType.hasFlag(EquipmentFlag.F_BAP)
+                    || eType.hasFlag(EquipmentFlag.F_VIRAL_JAMMER_DECOY)
+                    || eType.hasFlag(EquipmentFlag.F_VIRAL_JAMMER_HOMING)
+                    || eType.hasFlag(EquipmentFlag.F_AP_POD)
+                    || eType.hasFlag(EquipmentFlag.F_MASS)
+                    || eType.hasFlag(EquipmentFlag.F_HEAVY_BRIDGE_LAYER)
+                    || eType.hasFlag(EquipmentFlag.F_MEDIUM_BRIDGE_LAYER)
+                    || eType.hasFlag(EquipmentFlag.F_LIGHT_BRIDGE_LAYER)
+                    || eType.hasFlag(EquipmentFlag.F_BULLDOZER)
+                    || eType.hasFlag(EquipmentFlag.F_CHAFF_POD)
+                    || eType.hasFlag(EquipmentFlag.F_HARJEL_II)
+                    || eType.hasFlag(EquipmentFlag.F_HARJEL_III)
+                    || eType.hasFlag(EquipmentFlag.F_SPIKES)
+                    || eType.hasFlag(EquipmentFlag.F_MINESWEEPER)
                     || ((MiscType) eType).isShield();
         } else {
             return false;
@@ -585,7 +585,7 @@ public abstract class BVCalculator {
 
             if (eType instanceof WeaponType) {
                 WeaponType wtype = (WeaponType) eType;
-                if (wtype.hasFlag(WeaponType.F_AMS)
+                if (wtype.hasFlag(WeaponTypeFlag.F_AMS)
                         && ((wtype.getAmmoType() == T_AMS) || (wtype.getAmmoType() == T_APDS))) {
                     amsBV += eType.getBV(entity) * equipmentEntry.getValue();
                 }
@@ -679,13 +679,13 @@ public abstract class BVCalculator {
 
     protected boolean isRearFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
-        return weapon.getType().hasFlag(WeaponType.F_VGL) &&
+        return weapon.getType().hasFlag(WeaponTypeFlag.F_VGL) &&
                 (weapon.getFacing() >= 2) && (weapon.getFacing() <= 4);
     }
 
     protected boolean isFrontFacingVGL(Mounted<?> weapon) {
         // vehicular grenade launchers facing to the rear sides count for rear BV, too
-        return weapon.getType().hasFlag(WeaponType.F_VGL) &&
+        return weapon.getType().hasFlag(WeaponTypeFlag.F_VGL) &&
                 ((weapon.getFacing() == 1) || (weapon.getFacing() >= 5));
     }
 
@@ -798,7 +798,7 @@ public abstract class BVCalculator {
         double weaponBV = weapon.getType().getBV(entity);
 
         // MG Arrays need to sum up their linked MGs
-        if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponType.F_MGA)) {
+        if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponTypeFlag.F_MGA)) {
             double mgBV = 0;
             for (WeaponMounted mg : ((WeaponMounted) weapon).getBayWeapons()) {
                 if (!mg.isDestroyed()) {
@@ -845,7 +845,7 @@ public abstract class BVCalculator {
             WeaponType weaponType = (WeaponType) weapon.getType();
 
             // PPC with Capacitor
-            if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(WeaponType.F_PPC))) {
+            if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(WeaponTypeFlag.F_PPC))) {
                 double capBV = ((MiscType) weapon.getLinkedBy().getType()).getBV(entity, weapon);
                 weaponBV += capBV;
                 calculation += " + " + formatForReport(capBV) + " (Cap)";
@@ -854,27 +854,27 @@ public abstract class BVCalculator {
             // artemis bumps up the value
             if ((weapon.getLinkedBy() != null) && (weapon.getLinkedBy().getType() instanceof MiscType)) {
                 Mounted<?> linkedBy = weapon.getLinkedBy();
-                if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if (linkedBy.getType().hasFlag(EquipmentFlag.F_ARTEMIS)) {
                     weaponBV *= 1.2;
                     calculation += " x 1.2 (Art-IV)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                } else if (linkedBy.getType().hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)) {
                     weaponBV *= 1.1;
                     calculation += " x 1.1 (P-Art)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                } else if (linkedBy.getType().hasFlag(EquipmentFlag.F_ARTEMIS_V)) {
                     weaponBV *= 1.3;
                     calculation += " x 1.3 (Art-V)";
-                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                        || linkedBy.getType().hasFlag(MiscType.F_APOLLO)) {
+                } else if (linkedBy.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)
+                        || linkedBy.getType().hasFlag(EquipmentFlag.F_APOLLO)) {
                     weaponBV *= 1.15;
                     calculation += " x 1.15 ("
-                            + (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
+                            + (linkedBy.getType().hasFlag(EquipmentFlag.F_APOLLO) ? "Apollo)" : "RISC LPM)");
                 }
             }
 
-            if (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTC) {
+            if (weaponType.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE) && hasTC) {
                 weaponBV *= 1.25;
                 calculation += " x 1.25 (TC)";
-            } else if ((fireControlModifier() != 1) && !weaponType.hasFlag(WeaponType.F_INFANTRY)) {
+            } else if ((fireControlModifier() != 1) && !weaponType.hasFlag(WeaponTypeFlag.F_INFANTRY)) {
                 weaponBV *= fireControlModifier();
                 calculation += " x " + fireControlModifier() + " (Fire Control)";
             }
@@ -946,9 +946,9 @@ public abstract class BVCalculator {
             return countMiscAsOffensiveWeapon(equipment);
         } else {
             WeaponType weaponType = (WeaponType) equipment.getType();
-            return !weaponType.hasFlag(WeaponType.F_AMS) && !weaponType.hasFlag(WeaponType.F_B_POD)
-                    && !weaponType.hasFlag(WeaponType.F_M_POD)
-                    && ((weaponType.getBV(entity) > 0) || weaponType.hasFlag(WeaponType.F_MGA))
+            return !weaponType.hasFlag(WeaponTypeFlag.F_AMS) && !weaponType.hasFlag(WeaponTypeFlag.F_B_POD)
+                    && !weaponType.hasFlag(WeaponTypeFlag.F_M_POD)
+                    && ((weaponType.getBV(entity) > 0) || weaponType.hasFlag(WeaponTypeFlag.F_MGA))
                     && !equipment.isInoperable() && !equipment.isHit()
                     && !equipment.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
                     && !(weaponType instanceof BayWeapon);
@@ -960,16 +960,16 @@ public abstract class BVCalculator {
         return (miscType.getBV(entity) > 0)
                 && !misc.isHit() && !misc.isInoperable()
                 && !misc.isWeaponGroup()
-                && (miscType.isVibroblade() || miscType.hasFlag(MiscType.F_VIBROCLAW)
-                        || miscType.hasFlag(MiscType.F_MAGNET_CLAW));
+                && (miscType.isVibroblade() || miscType.hasFlag(EquipmentFlag.F_VIBROCLAW)
+                        || miscType.hasFlag(EquipmentFlag.F_MAGNET_CLAW));
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */
     protected double fireControlModifier() {
         if (entity.isSupportVehicle()) {
-            if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
+            if (entity.hasWorkingMisc(EquipmentFlag.F_BASIC_FIRECONTROL)) {
                 return 0.9;
-            } else if (!entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+            } else if (!entity.hasWorkingMisc(EquipmentFlag.F_ADVANCED_FIRECONTROL)) {
                 return 0.8;
             }
         }
@@ -990,37 +990,37 @@ public abstract class BVCalculator {
 
             // Vibroblades are treated with weapons
             if ((misc.getType() instanceof MiscType)
-                    && misc.getType().hasFlag(MiscType.F_CLUB)
+                    && misc.getType().hasFlag(EquipmentFlag.F_CLUB)
                     && ((MiscType) misc.getType()).isVibroblade()) {
                 continue;
             }
 
-            if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG))
-                    || mtype.hasFlag(MiscType.F_AP_POD)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
-                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
-                    || mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)
-                    || mtype.hasFlag(MiscType.F_BULLDOZER)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)
-                    || mtype.hasFlag(MiscType.F_SPIKES)
-                    || mtype.hasFlag(MiscType.F_MINESWEEPER)
-                    || mtype.hasFlag(MiscType.F_HARJEL_II)
-                    || mtype.hasFlag(MiscType.F_HARJEL_III)
-                    || mtype.hasFlag(MiscType.F_MASS)
-                    || mtype.hasFlag(MiscType.F_MINE)
+            if ((mtype.hasFlag(EquipmentFlag.F_ECM) && !mtype.hasFlag(EquipmentFlag.F_WATCHDOG))
+                    || mtype.hasFlag(EquipmentFlag.F_AP_POD)
+                    || mtype.hasFlag(EquipmentFlag.F_VIRAL_JAMMER_DECOY)
+                    || mtype.hasFlag(EquipmentFlag.F_VIRAL_JAMMER_HOMING)
+                    || mtype.hasFlag(EquipmentFlag.F_LIGHT_BRIDGE_LAYER)
+                    || mtype.hasFlag(EquipmentFlag.F_MEDIUM_BRIDGE_LAYER)
+                    || mtype.hasFlag(EquipmentFlag.F_HEAVY_BRIDGE_LAYER)
+                    || mtype.hasFlag(EquipmentFlag.F_CHAFF_POD)
+                    || mtype.hasFlag(EquipmentFlag.F_BULLDOZER)
+                    || mtype.hasFlag(EquipmentFlag.F_BAP)
+                    || mtype.hasFlag(EquipmentFlag.F_TARGCOMP)
+                    || mtype.hasFlag(EquipmentFlag.F_SPIKES)
+                    || mtype.hasFlag(EquipmentFlag.F_MINESWEEPER)
+                    || mtype.hasFlag(EquipmentFlag.F_HARJEL_II)
+                    || mtype.hasFlag(EquipmentFlag.F_HARJEL_III)
+                    || mtype.hasFlag(EquipmentFlag.F_MASS)
+                    || mtype.hasFlag(EquipmentFlag.F_MINE)
                     || mtype.isShield()
                     || offensiveEquipmentBV(mtype, misc.getLocation()) == 0) {
                 continue;
             }
             double bv = offensiveEquipmentBV(mtype, misc.getLocation());
-            if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON))
+            if ((mtype.hasFlag(EquipmentFlag.F_CLUB) || mtype.hasFlag(EquipmentFlag.F_HAND_WEAPON))
                     && entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
-            } else if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
+            } else if (mtype.hasFlag(EquipmentFlag.F_WATCHDOG)) {
                 bv = 7;
             }
             offensiveValue += bv;
@@ -1175,20 +1175,20 @@ public abstract class BVCalculator {
         for (WeaponMounted weapon : entity.getTotalWeaponList()) {
             WeaponType wtype = weapon.getType();
 
-            if (weapon.isDestroyed() // || wtype.hasFlag(WeaponType.F_AMS)
-                    || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)
+            if (weapon.isDestroyed() // || wtype.hasFlag(WeaponTypeFlag.F_AMS)
+                    || wtype.hasFlag(WeaponTypeFlag.F_B_POD) || wtype.hasFlag(WeaponTypeFlag.F_M_POD)
                     || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
                 continue;
             }
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
+            if (!((wtype.hasFlag(WeaponTypeFlag.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
                     || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
                     || (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY)
+                    || wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
+                    || wtype.hasFlag(WeaponTypeFlag.F_INFANTRY)
                     || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
@@ -1297,13 +1297,13 @@ public abstract class BVCalculator {
             pilotModifiers.add("Comm. Implant");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+                && entity.hasMisc(EquipmentFlag.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 1);
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("VDNI");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
-                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+                && entity.hasMisc(EquipmentFlag.F_BATTLEMEK_NIU)) {
             gunnery = Math.max(0, gunnery - 1);
             pilotModifiers.add("Buf. VDNI");
         }
@@ -1316,7 +1316,7 @@ public abstract class BVCalculator {
             pilotModifiers.add("Sensory Implants");
         }
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)
-                && entity.hasMisc(MiscType.F_BATTLEMEK_NIU)) {
+                && entity.hasMisc(EquipmentFlag.F_BATTLEMEK_NIU)) {
             piloting = Math.max(0, piloting - 3);
             gunnery = Math.max(0, gunnery - 2);
             pilotModifiers.add("Proto DNI");
@@ -1404,7 +1404,7 @@ public abstract class BVCalculator {
                 .filter(m -> !m.isMissing() && !m.isDestroyed())
                 .map(Mounted::getType)
                 .filter(Objects::nonNull)
-                .filter(t -> t.hasFlag(WeaponType.F_TAG))
+                .filter(t -> t.hasFlag(WeaponTypeFlag.F_TAG))
                 .count();
         if (entity instanceof IBomber) {
             IBomber asBomber = (IBomber) entity;
@@ -1472,10 +1472,10 @@ public abstract class BVCalculator {
         if (hasBlueShield) {
             armorMultiplier += 0.2;
         }
-        if (entity.countWorkingMisc(MiscType.F_HARJEL_II, location) > 0) {
+        if (entity.countWorkingMisc(EquipmentFlag.F_HARJEL_II, location) > 0) {
             armorMultiplier *= 1.1;
         }
-        if (entity.countWorkingMisc(MiscType.F_HARJEL_III, location) > 0) {
+        if (entity.countWorkingMisc(EquipmentFlag.F_HARJEL_III, location) > 0) {
             armorMultiplier *= 1.2;
         }
         return armorMultiplier;
@@ -1498,10 +1498,10 @@ public abstract class BVCalculator {
         if (hasBlueShield) {
             modifiers.add("Blue Shield");
         }
-        if (entity.countWorkingMisc(MiscType.F_HARJEL_II, location) > 0) {
+        if (entity.countWorkingMisc(EquipmentFlag.F_HARJEL_II, location) > 0) {
             modifiers.add("HarJel II");
         }
-        if (entity.countWorkingMisc(MiscType.F_HARJEL_III, location) > 0) {
+        if (entity.countWorkingMisc(EquipmentFlag.F_HARJEL_III, location) > 0) {
             modifiers.add("HarJel III");
         }
         return modifiers.isEmpty() ? "" : " (" + String.join(", ", modifiers) + ")";

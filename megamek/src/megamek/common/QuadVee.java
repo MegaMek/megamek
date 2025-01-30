@@ -394,7 +394,7 @@ public class QuadVee extends QuadMek {
             }
         }
         for (MiscMounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_TRACKS)) {
                 cost += m.getDamageTaken();
                 break;
             }

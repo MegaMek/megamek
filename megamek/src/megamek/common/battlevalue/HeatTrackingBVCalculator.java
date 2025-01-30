@@ -171,18 +171,18 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         // RISC laser pulse module adds 2 heat
-        if ((wType.hasFlag(WeaponType.F_LASER)) && (weapon.getLinkedBy() != null)
+        if ((wType.hasFlag(WeaponTypeFlag.F_LASER)) && (weapon.getLinkedBy() != null)
                 && (weapon.getLinkedBy().getType() instanceof MiscType)
-                && (weapon.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                && (weapon.getLinkedBy().getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE))) {
             weaponHeat += 2;
         }
 
         // laser insulator reduce heat by 1, to a minimum of 1
-        if (wType.hasFlag(WeaponType.F_LASER)
+        if (wType.hasFlag(WeaponTypeFlag.F_LASER)
                 && (weapon.getLinkedBy() != null)
                 && !weapon.getLinkedBy().isInoperable()
                 && (weapon.getLinkedBy().getType() instanceof MiscType)
-                && weapon.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                && weapon.getLinkedBy().getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR)) {
             weaponHeat = Math.max(1, weaponHeat - 1);
         }
 
@@ -194,7 +194,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         // PPC with Capacitor
-        if (wType.hasFlag(WeaponType.F_PPC) && (weapon.getLinkedBy() != null)) {
+        if (wType.hasFlag(WeaponTypeFlag.F_PPC) && (weapon.getLinkedBy() != null)) {
             weaponHeat += 5;
         }
         return weaponHeat;

@@ -28,6 +28,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ThunderBoltWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
+import static megamek.common.WeaponTypeFlag.*;
 
 /**
  * @author Sebastian Brocks

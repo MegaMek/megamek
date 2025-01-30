@@ -41,7 +41,7 @@ public class SubCapLaserBayWeapon extends BayWeapon {
         this.capital = true;
         this.subCapital = true;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SUBCAPITAL;

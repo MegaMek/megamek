@@ -13,9 +13,12 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.Game;
+import megamek.common.Mounted;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RACHandler;
 import megamek.common.weapons.UltraWeaponHandler;

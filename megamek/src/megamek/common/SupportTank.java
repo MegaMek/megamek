@@ -56,14 +56,14 @@ public class SupportTank extends Tank {
 
     @Override
     public boolean hasBARArmor(int loc) {
-        return ArmorType.forEntity(this, loc).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR);
+        return ArmorType.forEntity(this, loc).hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR);
     }
 
     @Override
     public boolean hasArmoredChassis() {
-        return hasMisc(MiscType.F_ARMORED_CHASSIS);
+        return hasMisc(EquipmentFlag.F_ARMORED_CHASSIS);
     }
-    
+
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
             .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
@@ -212,7 +212,7 @@ public class SupportTank extends Tank {
                         || ((hex.terrainLevel(Terrains.WOODS) == 1) && !isMonoCycleOrBicycle())
                         || hex.containsTerrain(Terrains.ROUGH)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
@@ -244,7 +244,7 @@ public class SupportTank extends Tank {
     }
 
     public boolean isMonoCycleOrBicycle() {
-        return hasWorkingMisc(MiscType.F_BICYCLE) || hasWorkingMisc(MiscType.F_MONOCYCLE);
+        return hasWorkingMisc(EquipmentFlag.F_BICYCLE) || hasWorkingMisc(EquipmentFlag.F_MONOCYCLE);
     }
 
     @Override
@@ -392,12 +392,12 @@ public class SupportTank extends Tank {
 
     @Override
     public boolean isTractor() {
-        return hasWorkingMisc(MiscType.F_TRACTOR_MODIFICATION);
+        return hasWorkingMisc(EquipmentFlag.F_TRACTOR_MODIFICATION);
     }
 
     @Override
     public boolean isTrailer() {
-        return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
+        return hasWorkingMisc(EquipmentFlag.F_TRAILER_MODIFICATION);
     }
 
     @Override

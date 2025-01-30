@@ -24,7 +24,7 @@ import megamek.common.weapons.Weapon;
  * Commented out in WeaponType. Clan version is same stats as IS one. And Clan
  * versions captures
  * Tech progression for both.
- * 
+ *
  * @author Sebastian Brocks
  * @since Sep 24, 2004
  */

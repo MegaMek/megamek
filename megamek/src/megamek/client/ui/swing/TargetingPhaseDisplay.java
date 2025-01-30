@@ -622,7 +622,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 target.getId(), weaponNum);
         Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
-        if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
+        if ((mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY))
                 || (mounted.isInBearingsOnlyMode()
                         && distance >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)
                 || (mounted.getType() instanceof CapitalMissileWeapon
@@ -826,7 +826,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             Mounted<?> m = ce().getEquipment(weaponId);
 
             int targetDistance = ce().getPosition().distance(target.getPosition());
-            boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
+            boolean isArtilleryAttack = m.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
                     || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
 
@@ -853,7 +853,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+            } else if ((m.getType().hasFlag(WeaponTypeFlag.F_AUTO_TARGET)
                     && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));

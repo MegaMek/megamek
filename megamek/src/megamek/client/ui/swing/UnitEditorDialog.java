@@ -333,7 +333,7 @@ public class UnitEditorDialog extends JDialog {
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                         eqNum, m.getSecondLocation());
             }
-            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
                 hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                         eqNum, Mek.LOC_LT);
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,

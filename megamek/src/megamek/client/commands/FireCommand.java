@@ -270,7 +270,7 @@ public class FireCommand extends ClientCommand {
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
+            } else if ((m.getType().hasFlag(WeaponTypeFlag.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
                     || (m.hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");

@@ -50,9 +50,9 @@ public class ProtoMekPhysicalAttackAction extends AbstractAttackAction {
         }
 
         // ProtoMek weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
-        if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE, MiscType.S_PROTO_QMS)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_PROTOMEK_MELEE, MiscType.S_PROTO_QMS)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0) * 2;
-        } else if (entity.hasWorkingMisc(MiscType.F_PROTOMEK_MELEE)) {
+        } else if (entity.hasWorkingMisc(EquipmentFlag.F_PROTOMEK_MELEE)) {
             toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
 

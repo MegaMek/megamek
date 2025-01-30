@@ -1,7 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
- * 
+ *
  * This file is part of MegaMek.
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -16,8 +16,6 @@
  */
 package megamek.common.weapons.infantry;
 
-import java.util.Vector;
-
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
@@ -25,6 +23,8 @@ import megamek.common.weapons.DamageType;
 import megamek.common.weapons.WeaponHandler;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
@@ -100,7 +100,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        
+
         // beast-mounted infantry get range 0 bonus damage per platoon
         if ((ae instanceof Infantry) && (nRange == 0)) {
             InfantryMount mount = ((Infantry) ae).getMount();
@@ -116,7 +116,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         // conventional infantry weapons with high damage get treated as if they have
         // the infantry burst mod
         if (target.isConventionalInfantry() &&
-                (wtype.hasFlag(WeaponType.F_INF_BURST) ||
+                (wtype.hasFlag(WeaponTypeFlag.F_INF_BURST) ||
                         (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
@@ -124,10 +124,10 @@ public class InfantryWeaponHandler extends WeaponHandler {
             damageDealt /= 2;
         }
         // this doesn't work...
-        if ((target instanceof Building) && (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
+        if ((target instanceof Building) && (wtype.hasFlag(WeaponTypeFlag.F_INF_NONPENETRATING))) {
             damageDealt = 0;
         }
-        if (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+        if (wtype.hasFlag(WeaponTypeFlag.F_INF_NONPENETRATING)) {
             damageType = DamageType.NONPENETRATING;
         }
         Report r = new Report(3325);

@@ -14,8 +14,6 @@
 
 package megamek.common.weapons.infantry;
 
-import java.util.Vector;
-
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.ArmorType;
@@ -24,15 +22,17 @@ import megamek.common.weapons.DamageType;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
 
+import java.util.Vector;
+
 
 /**
  * @author Jay Lawson
  */
 public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
-  
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8430370552107061610L;
 
@@ -46,7 +46,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         super(t, w, g, m);
         bSalvo = true;
     }
-    
+
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -67,8 +67,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
             if ((!indirect || partialCoverForIndirectFire)
                     && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-                // Weapon strikes Partial Cover.            
+                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                         nCluster, bldgAbsorbs);
                 return;
@@ -95,7 +95,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                         false, false, throughFront, underWater, nukeS2S));
             }
             if (entityTarget.getArmor(hit) > 0 &&
-                    (entityTarget.getArmorType(hit.getLocation()) == 
+                    (entityTarget.getArmorType(hit.getLocation()) ==
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += nDamage / 2;
                 r.add(nDamage / 2);

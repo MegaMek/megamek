@@ -72,7 +72,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         int damage = 0;
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET) && m.isReady()
+            if (m.getType().hasFlag(EquipmentFlag.F_JUMP_JET) && m.isReady()
                     && m.getLocation() == legLoc) {
                 damage += 3;
             }
@@ -88,7 +88,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number for the specified leg to kick
-     * 
+     *
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
@@ -155,7 +155,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         boolean hasJJ = false;
         for (Mounted<?> m : ae.getMisc()) {
             int loc = m.getLocation();
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)
+            if (m.getType().hasFlag(EquipmentFlag.F_JUMP_JET)
                     && m.isReady()
                     && ((loc == kickLegs[0] && (leg == BOTH || leg == LEFT))
                             || (loc == kickLegs[1] && (leg == BOTH || leg == RIGHT)))) {

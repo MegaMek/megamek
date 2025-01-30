@@ -17,13 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.codeUtilities.MathUtility;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
 import megamek.common.options.OptionsConstants;
@@ -63,7 +57,7 @@ public class TestProtoMek extends TestEntity {
 
     public static int maxJumpMP(ProtoMek proto) {
         if (proto.getMisc().stream().map(Mounted::getType)
-                .anyMatch(eq -> eq.hasFlag(MiscType.F_JUMP_JET)
+                .anyMatch(eq -> eq.hasFlag(EquipmentFlag.F_JUMP_JET)
                         && eq.hasSubType(MiscType.S_IMPROVED))) {
             return (int) Math.ceil(proto.getOriginalWalkMP() * 1.5);
         }
@@ -287,23 +281,23 @@ public class TestProtoMek extends TestEntity {
                 illegal = true;
             }
             if ((mount.getType() instanceof WeaponType)
-                    && !mount.getType().hasFlag(WeaponType.F_PROTO_WEAPON)) {
+                    && !mount.getType().hasFlag(WeaponTypeFlag.F_PROTO_WEAPON)) {
                 buff.append(mount).append(" is not a legal ProtoMek weapon.\n");
                 illegal = true;
             } else if ((mount.getType() instanceof MiscType)
-                    && !mount.getType().hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
+                    && !mount.getType().hasFlag(EquipmentFlag.F_PROTOMEK_EQUIPMENT)) {
                 buff.append(mount).append(" is not legal ProtoMek equipment.\n");
                 illegal = true;
             }
 
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)) {
                 if (proto.isGlider() || proto.isQuad()) {
                     buff.append("Quad and glider ProtoMeks cannot use a magnetic clamp system.\n");
                     illegal = true;
                 }
             }
 
-            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_PROTOMEK_MELEE)) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(EquipmentFlag.F_PROTOMEK_MELEE)) {
                 meleeWeapons++;
                 if (meleeWeapons == 2) {
                     buff.append("Cannot mount multiple melee weapons.\n");
@@ -320,7 +314,7 @@ public class TestProtoMek extends TestEntity {
             }
         }
         ArmorType armor = ArmorType.forEntity(proto);
-        if (!armor.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT)) {
+        if (!armor.hasFlag(EquipmentFlag.F_PROTOMEK_EQUIPMENT)) {
             buff.append("Does not have legal armor type.\n");
             illegal = true;
         } else {
@@ -359,15 +353,15 @@ public class TestProtoMek extends TestEntity {
     public static boolean isValidProtoMekLocation(ProtoMek protoMek, EquipmentType eq, int location,
             @Nullable StringBuffer buffer) {
         if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
+            if (eq.hasFlag(EquipmentFlag.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTOMEK_WEAPON)
                     && (location != ProtoMek.LOC_LARM) && (location != ProtoMek.LOC_RARM)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in an arm.\n");
                 }
                 return false;
             }
-            if ((eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)
-                    || (eq.hasFlag(MiscType.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
+            if ((eq.hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)
+                    || (eq.hasFlag(EquipmentFlag.F_PROTOMEK_MELEE) && eq.hasSubType(MiscType.S_PROTO_QMS)))
                     && (location != ProtoMek.LOC_TORSO)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" must be mounted in the torso.\n");
@@ -545,9 +539,9 @@ public class TestProtoMek extends TestEntity {
             return false;
         }
         if (etype instanceof MiscType) {
-            return !(etype.hasFlag(MiscType.F_MASC)
-                    || etype.hasFlag(MiscType.F_UMU)
-                    || etype.hasFlag(MiscType.F_JUMP_JET));
+            return !(etype.hasFlag(EquipmentFlag.F_MASC)
+                    || etype.hasFlag(EquipmentFlag.F_UMU)
+                    || etype.hasFlag(EquipmentFlag.F_JUMP_JET));
         }
         return true;
     }

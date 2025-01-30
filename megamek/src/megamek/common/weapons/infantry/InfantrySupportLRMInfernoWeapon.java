@@ -21,6 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
+
 /**
  * @author Sebastian Brocks
  */

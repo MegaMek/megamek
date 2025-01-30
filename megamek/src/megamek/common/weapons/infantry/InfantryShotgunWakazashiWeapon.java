@@ -20,6 +20,7 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
 
+
 /**
  * @author Ben Grills
  */

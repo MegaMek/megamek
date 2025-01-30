@@ -23,13 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
-import megamek.common.MiscType;
-import megamek.common.SupportTank;
 import megamek.common.equipment.ArmorType;
 import megamek.common.verifier.TestSupportVehicle.ChassisModification;
 
@@ -44,8 +41,8 @@ class TestSupportVehicleTest {
     void testChassisModLookup() {
         for (ChassisModification mod : ChassisModification.values()) {
             assertNotNull(mod.equipment);
-            assertTrue(mod.equipment.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT));
-            assertTrue(mod.equipment.hasFlag(MiscType.F_CHASSIS_MODIFICATION));
+            assertTrue(mod.equipment.hasFlag(EquipmentFlag.F_SUPPORT_TANK_EQUIPMENT));
+            assertTrue(mod.equipment.hasFlag(EquipmentFlag.F_CHASSIS_MODIFICATION));
         }
     }
 

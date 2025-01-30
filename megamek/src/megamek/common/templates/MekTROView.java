@@ -254,7 +254,7 @@ public class MekTROView extends TROView {
             // Skip heat sinks, Clan CASE, armor, and structure. We do want to show things
             // like robotic control systems.
             return (mount.getCriticals() > 0)
-                    || mount.getType().hasFlag(MiscType.F_CASE)
+                    || mount.getType().hasFlag(EquipmentFlag.F_CASE)
                     || EquipmentType.isArmorType(mount.getType())
                     || EquipmentType.isStructureType(mount.getType());
         }

@@ -1106,8 +1106,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getWeaponArc(int wn) {
         final Mounted<?> mounted = getEquipment(wn);
-        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
-                || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
+                || mounted.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         int arc;
@@ -1560,7 +1560,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink) {
         int capacity = (getHeatSinks() * (getHeatType() + 1));
-        if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
+        if (includeRadicalHeatSink && hasWorkingMisc(EquipmentFlag.F_RADICAL_HEATSINK)) {
             capacity += Math.ceil(getHeatSinks() * 0.4);
         }
         return capacity;
@@ -1701,7 +1701,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         Set<Integer> caseLocations = new HashSet<>();
         int explicit = 0;
         for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(EquipmentFlag.F_CASE))) {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
                 if (m.getType() instanceof WeaponType) {
@@ -1940,7 +1940,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
@@ -1967,7 +1967,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
                 if (mEquip.curMode().equals("On")) {
                     // Return true if the mode is "On"
                     return true;
@@ -2726,12 +2726,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // per a recent ruling on the official forums, aero units can't spot
         // for indirect LRM fire, unless they have a recon cam, an infrared or
         // hyperspec imager, or a high-res imager and it's not night
-        boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+        boolean hiresLighted = hasWorkingMisc(EquipmentFlag.F_HIRES_IMAGER)
                 && game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne()
-                || hasWorkingMisc(MiscType.F_RECON_CAMERA)
-                || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
-                || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+                || hasWorkingMisc(EquipmentFlag.F_RECON_CAMERA)
+                || hasWorkingMisc(EquipmentFlag.F_INFRARED_IMAGER)
+                || hasWorkingMisc(EquipmentFlag.F_HYPERSPECTRAL_IMAGER)
                 || hiresLighted;
     }
 
@@ -3059,9 +3059,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             List<WeaponMounted> ams = new ArrayList<>();
             for (WeaponMounted weapon : getWeaponBayList()) {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
-                if (!weapon.getType().hasFlag(WeaponType.F_AMS)
-                        && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
-                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY)) {
+                if (!weapon.getType().hasFlag(WeaponTypeFlag.F_AMS)
+                        && !weapon.getType().hasFlag(WeaponTypeFlag.F_AMSBAY)
+                        && !weapon.getType().hasFlag(WeaponTypeFlag.F_PDBAY)) {
                     continue;
                 }
 
@@ -3081,7 +3081,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                 // Make sure ammo is loaded
                 for (WeaponMounted bayW : weapon.getBayWeapons()) {
                     AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                    if (!(weapon.getType().hasFlag(WeaponTypeFlag.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
@@ -3089,7 +3089,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
                     }
 
                     // try again
-                    if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                    if (!(weapon.getType().hasFlag(WeaponTypeFlag.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
                                     || bayWAmmo.isDumping())) {
                         // No ammo for this AMS.

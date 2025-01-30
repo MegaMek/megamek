@@ -21,16 +21,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.WeaponMounted;
@@ -340,16 +331,16 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         //AR10 munitions
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_AR10) {
-                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
                     av = 4;
                     armor = 40;
-                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
                     av = 3;
                     armor = 30;
-                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
                     av = 1000;
                     armor = 40;
-                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
                     av = 100;
                     armor = 30;
                 } else {
@@ -370,12 +361,12 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 }
             }
             //Nuclear Warheads for non-AR10 missiles
-            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
                 av = 100;
-            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            } else if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
                 av = 1000;
             }
-            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
+            nukeS2S = atype.hasFlag(AmmoTypeFlag.F_NUCLEAR);
         }
         // For squadrons, total the missile armor for the launched volley
         if (ae.isCapitalFighter()) {
@@ -407,25 +398,25 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         //AR10 munitions
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_AR10) {
-                if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                if (atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)) {
                     toReturn = 4;
-                } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)) {
                     toReturn = 3;
-                } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
                     toReturn = 1000;
-                } else if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                } else if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
                     toReturn = 100;
                 } else {
                     toReturn = 2;
                 }
             }
             //Nuclear Warheads for non-AR10 missiles
-            if (atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+            if (atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
                 toReturn = 100;
-            } else if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+            } else if (atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
                 toReturn = 1000;
             }
-            nukeS2S = atype.hasFlag(AmmoType.F_NUCLEAR);
+            nukeS2S = atype.hasFlag(AmmoTypeFlag.F_NUCLEAR);
         }
 
         // we default to direct fire weapons for anti-infantry damage
@@ -467,18 +458,18 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         }
         if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
                 || atype.getAmmoType() == AmmoType.T_WHITE_SHARK_T
-                || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)
+                || atype.hasFlag(AmmoTypeFlag.F_AR10_WHITE_SHARK)
                 // Santa Anna, per IO rules
-                || atype.hasFlag(AmmoType.F_SANTA_ANNA)) {
+                || atype.hasFlag(AmmoTypeFlag.F_SANTA_ANNA)) {
             return 9;
         } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
                 || atype.getAmmoType() == AmmoType.T_KRAKENM
                 // Peacemaker, per IO rules
-                || atype.hasFlag(AmmoType.F_PEACEMAKER)) {
+                || atype.hasFlag(AmmoTypeFlag.F_PEACEMAKER)) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
                 || atype.getAmmoType() == AmmoType.T_KILLER_WHALE_T
-                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
+                || atype.hasFlag(AmmoTypeFlag.F_AR10_KILLER_WHALE)
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY
                 || atype.getAmmoType() == AmmoType.T_ALAMO) {
             return 10;

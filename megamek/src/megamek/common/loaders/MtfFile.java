@@ -453,7 +453,7 @@ public class MtfFile implements IMekLoader {
 
             // add any heat sinks not allocated
             if (laserSinks) {
-                mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_LASER_HEAT_SINK);
+                mek.addEngineSinks(expectedSinks - mek.heatSinks(), EquipmentFlag.F_LASER_HEAT_SINK);
             } else if (dblSinks) {
                 // If the heat sink entry didn't specify Clan or IS double, check for sinks that
                 // take critical slots. If none are found, default to the overall tech base of
@@ -479,11 +479,11 @@ public class MtfFile implements IMekLoader {
                         clan = mek.isClan();
                 }
 
-                mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK, clan);
+                mek.addEngineSinks(expectedSinks - mek.heatSinks(), EquipmentFlag.F_DOUBLE_HEAT_SINK, clan);
             } else if (compactSinks) {
-                mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
+                mek.addEngineSinks(expectedSinks - mek.heatSinks(), EquipmentFlag.F_COMPACT_HEAT_SINK);
             } else {
-                mek.addEngineSinks(expectedSinks - mek.heatSinks(), MiscType.F_HEAT_SINK);
+                mek.addEngineSinks(expectedSinks - mek.heatSinks(), EquipmentFlag.F_HEAT_SINK);
             }
 
             if (mek.isOmni() && mek.hasEngine()) {
@@ -849,7 +849,7 @@ public class MtfFile implements IMekLoader {
                                 isTurreted);
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
-                    } else if (etype instanceof MiscType && etype.hasFlag(MiscType.F_TARGCOMP)) {
+                    } else if (etype instanceof MiscType && etype.hasFlag(EquipmentFlag.F_TARGCOMP)) {
                         // Targeting computers are special, they need to be loaded like spreadable
                         // equipment, but they aren't spreadable
                         Mounted<?> m = hSharedEquip.get(etype);
@@ -860,7 +860,7 @@ public class MtfFile implements IMekLoader {
                         mek.addCritical(loc, new CriticalSlot(m));
 
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable())
-                            || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
+                            || ((etype instanceof MiscType) && etype.hasFlag(EquipmentFlag.F_SPLITABLE))) {
                         // do we already have this one in this or an outer location?
                         Mounted<?> m = null;
                         boolean bFound = false;
@@ -917,8 +917,8 @@ public class MtfFile implements IMekLoader {
                                 }
                             } else {
                                 if (!(etype.equals(etype2))
-                                        || ((etype instanceof MiscType) && (!etype.hasFlag(MiscType.F_HEAT_SINK)
-                                                && !etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)))) {
+                                        || ((etype instanceof MiscType) && (!etype.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                                                && !etype.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)))) {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
@@ -944,7 +944,7 @@ public class MtfFile implements IMekLoader {
 
                         // vehicular grenade launchers need to have their facing
                         // set
-                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             if (facing == -1) {
                                 // if facing has not been set earlier, we are
                                 // front or rear mounted

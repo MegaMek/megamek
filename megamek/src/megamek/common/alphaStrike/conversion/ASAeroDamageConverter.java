@@ -88,7 +88,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
     @Override
     protected double determineSpecialsDamage(WeaponType weaponType, Mounted<?> linked, int range,
             BattleForceSUA dmgType) {
-        if ((dmgType == PNT) && weaponType.hasFlag(WeaponType.F_AMS)) {
+        if ((dmgType == PNT) && weaponType.hasFlag(WeaponTypeFlag.F_AMS)) {
             return range == SHORT_RANGE ? 0.3 : 0;
         } else {
             return super.determineSpecialsDamage(weaponType, linked, range, dmgType);
@@ -104,7 +104,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
 
     @Override
     protected int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
-        int totalHeat = entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ? 10 : 0;
+        int totalHeat = entity.hasWorkingMisc(EquipmentFlag.F_STEALTH, -1) ? 10 : 0;
         for (Mounted<?> mount : weaponsList) {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }
@@ -114,7 +114,7 @@ class ASAeroDamageConverter extends ASDamageConverter {
     @Override
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT)
+        if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)
                 || (onlyRear && !weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT))
                 || (!onlyRear && (weapon.isRearMounted() || (weapon.getLocation() == Aero.LOC_AFT)))
                 || (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {

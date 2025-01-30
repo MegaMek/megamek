@@ -65,7 +65,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
         Mounted<?> linkedBy = mounted.getLinkedBy();
         if ((linkedBy instanceof MiscMounted)
                 && !linkedBy.isInoperable()
-                && ((MiscMounted) linkedBy).getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                && ((MiscMounted) linkedBy).getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
             return super.getModesCount();
         } else if(this instanceof PulseLaserWeapon) {
             return super.getModesCount();
@@ -82,7 +82,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     @Override
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
-        if ((mounted == null) || !(mounted.getLinkedBy() instanceof MiscMounted) || !mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+        if ((mounted == null) || !(mounted.getLinkedBy() instanceof MiscMounted) || !mounted.getLinkedBy().getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
             return super.getToHitModifier(mounted);
         }
         return mounted.curMode().getName().startsWith("Pulse") ? -2 : 0;
@@ -93,9 +93,9 @@ public abstract class LaserWeapon extends EnergyWeapon {
             TWGameManager manager) {
         Mounted<?> linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
         if ((linkedBy != null) && !linkedBy.isInoperable()) {
-            if (linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+            if (linkedBy.getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR)) {
                 return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
-            } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            } else if (linkedBy.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
                 return new PulseLaserWeaponHandler(toHit, waa, game, manager);
             }
         }

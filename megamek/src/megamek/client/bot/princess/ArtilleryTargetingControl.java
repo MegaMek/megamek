@@ -225,7 +225,7 @@ public class ArtilleryTargetingControl {
         boolean available = false;
 
         for (WeaponMounted weapon : shooter.getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (weapon.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                 for (AmmoMounted ammo : shooter.getAmmo(weapon)) {
                     if (ammo.getType().getMunitionType().contains(munitions)
                             && !weapon.isFired() && ammo.getUsableShotsLeft() > 0) {
@@ -415,7 +415,7 @@ public class ArtilleryTargetingControl {
         for (WeaponMounted currentWeapon : shooter.getWeaponList()) {
             List<WeaponFireInfo> topValuedFireInfos = new ArrayList<>();
             double maxDamage = 0;
-            if (currentWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (currentWeapon.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                 WeaponType wType = currentWeapon.getType();
                 int damage = wType.getRackSize(); // crazy, but rack size appears to correspond to given damage values
                                                   // for arty pieces in TacOps
@@ -522,7 +522,7 @@ public class ArtilleryTargetingControl {
                                 actualFireInfo.getAmmo().getSwitchedReason());
                     }
                 }
-            } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
+            } else if (currentWeapon.getType().hasFlag(WeaponTypeFlag.F_TAG)) {
                 WeaponFireInfo tagInfo = getTAGInfo(currentWeapon, shooter, game, owner);
 
                 if (tagInfo != null) {

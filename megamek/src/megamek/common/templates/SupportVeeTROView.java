@@ -152,7 +152,7 @@ public class SupportVeeTROView extends TROView {
                 continue;
             }
             if ((m.getType() instanceof MiscType) && (m.getLinked() == null) && (m.getLinkedBy() == null)) {
-                if (m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_CHASSIS_MODIFICATION)) {
                     chassisMods.add(m.getName().replaceAll(".*\\[", "").replace("]", ""));
                 } else {
                     miscCount.merge(new EquipmentKey(m.getType(), m.getSize()), 1, Integer::sum);

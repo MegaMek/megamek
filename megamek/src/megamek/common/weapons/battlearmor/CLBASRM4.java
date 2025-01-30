@@ -28,14 +28,8 @@ import megamek.common.weapons.srms.SRMWeapon;
  */
 public class CLBASRM4 extends SRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6776541552712952370L;
 
-    /**
-     *
-     */
     public CLBASRM4() {
         super();
         name = "SRM 4";

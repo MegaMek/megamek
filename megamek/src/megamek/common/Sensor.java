@@ -326,7 +326,7 @@ public class Sensor implements Serializable {
                     mod += 1;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(EquipmentFlag.F_VISUAL_CAMO, -1)) {
                     mod += 1;
                 }
 
@@ -376,7 +376,7 @@ public class Sensor implements Serializable {
                     mod += 4;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(EquipmentFlag.F_VISUAL_CAMO, -1)) {
                     mod += 2;
                 }
 
@@ -406,7 +406,7 @@ public class Sensor implements Serializable {
                     mod += 5;
                 }
 
-                if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+                if (te.hasWorkingMisc(EquipmentFlag.F_VISUAL_CAMO, -1)) {
                     mod += 3;
                 }
 

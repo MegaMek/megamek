@@ -14,7 +14,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-
 /**
  * @author Ben Grills
  * @since Sep 7, 2005

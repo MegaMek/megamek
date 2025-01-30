@@ -16,6 +16,7 @@ package megamek.common.weapons.flamers;
 import megamek.common.AmmoType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
@@ -49,8 +50,8 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MEK_WEAPON)
-                .or(WeaponType.F_TANK_WEAPON);
+        flags = flags.or(WeaponTypeFlag.F_AERO_WEAPON).or(WeaponTypeFlag.F_MEK_WEAPON)
+                .or(WeaponTypeFlag.F_TANK_WEAPON);
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)

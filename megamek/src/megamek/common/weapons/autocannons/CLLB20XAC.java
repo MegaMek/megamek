@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Andrew Hunter

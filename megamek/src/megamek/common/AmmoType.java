@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -26,6 +25,29 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+
+import static megamek.common.AmmoTypeFlag.F_MG;
+import static megamek.common.AmmoTypeFlag.F_BATTLEARMOR;
+import static megamek.common.AmmoTypeFlag.F_PROTOMEK;
+import static megamek.common.AmmoTypeFlag.F_HOTLOAD;
+import static megamek.common.AmmoTypeFlag.F_ENCUMBERING;
+import static megamek.common.AmmoTypeFlag.F_MML_LRM;
+import static megamek.common.AmmoTypeFlag.F_AR10_WHITE_SHARK;
+import static megamek.common.AmmoTypeFlag.F_AR10_KILLER_WHALE;
+import static megamek.common.AmmoTypeFlag.F_AR10_BARRACUDA;
+import static megamek.common.AmmoTypeFlag.F_NUCLEAR;
+import static megamek.common.AmmoTypeFlag.F_SANTA_ANNA;
+import static megamek.common.AmmoTypeFlag.F_PEACEMAKER;
+import static megamek.common.AmmoTypeFlag.F_TELE_MISSILE;
+import static megamek.common.AmmoTypeFlag.F_CAP_MISSILE;
+import static megamek.common.AmmoTypeFlag.F_SPACE_BOMB;
+import static megamek.common.AmmoTypeFlag.F_GROUND_BOMB;
+import static megamek.common.AmmoTypeFlag.F_MML_SRM;
+import static megamek.common.AmmoTypeFlag.F_OTHER_BOMB;
+import static megamek.common.AmmoTypeFlag.F_CRUISE_MISSILE;
+import static megamek.common.AmmoTypeFlag.F_SCREEN;
+import static megamek.common.AmmoTypeFlag.F_INTERNAL_BOMB;
+
 
 public class AmmoType extends EquipmentType {
 
@@ -180,44 +202,6 @@ public class AmmoType extends EquipmentType {
      * SRM 6, both fire SRM rounds), and conceptually can share ammo.
      */
     public static final Set<Integer> ALLOWED_BY_TYPE = Set.of(ALLOWED_BY_TYPE_ARRAY);
-
-    // ammo flags
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
-    public static final BigInteger F_PROTOMEK = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
-    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
-
-    // BA can't jump or make anti-mek until dumped
-    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
-
-    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
-    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
-    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
-    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda type
-    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear missile
-    public static final BigInteger F_SANTA_ANNA = BigInteger.valueOf(1).shiftLeft(14); // Santa Anna Missile
-    public static final BigInteger F_PEACEMAKER = BigInteger.valueOf(1).shiftLeft(15); // Peacemaker Missile
-    public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
-    public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Other Capital-Missile
-    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can be used to space bomb
-
-    // can be used to ground bomb
-    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13);
-    public static final BigInteger F_MML_SRM = BigInteger.valueOf(1).shiftLeft(14); // SRM type
-
-    // Numbers 14-15 out of order. See nuclear missiles, above
-
-    // For tag, rl pods, missiles and the like
-    public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1).shiftLeft(16);
-
-    // Used by MHQ for loading ammo bins
-    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(17);
-
-    // Used by MHQ for loading ammo bins
-    public static final BigInteger F_SCREEN = BigInteger.valueOf(1).shiftLeft(18);
-
-    // Used for Internal Bomb Bay bombs; to differentiate them from
-    public static final BigInteger F_INTERNAL_BOMB = BigInteger.valueOf(1).shiftLeft(19);
 
     // ammo munitions, used for custom load outs
     // N.B. We use EnumSet<Munitions> allow "incendiary"
@@ -464,14 +448,14 @@ public class AmmoType extends EquipmentType {
             // LRMs...
             if (is(T_MML) && hasFlag(F_MML_LRM) && other.is(T_LRM)) {
                 return true;
-            } else if (other.is(T_MML) && other.hasFlag(AmmoType.F_MML_LRM) && is(T_LRM)) {
+            } else if (other.is(T_MML) && other.hasFlag(F_MML_LRM) && is(T_LRM)) {
                 return true;
             }
 
             // SRMs
-            if (is(T_MML) && !hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+            if (is(T_MML) && !hasFlag(F_MML_LRM) && is(T_SRM)) {
                 return true;
-            } else if (other.is(T_MML) && !other.hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
+            } else if (other.is(T_MML) && !other.hasFlag(F_MML_LRM) && is(T_SRM)) {
                 return true;
             }
         }
@@ -610,22 +594,16 @@ public class AmmoType extends EquipmentType {
      * @return true if the munition can be used by aerospace units
      */
     public boolean canAeroUse() {
-        switch (ammoType) {
-            case T_AC_LBX:
-            case T_SBGAUSS:
-                return munitionType.contains(Munitions.M_CLUSTER);
-            case T_ATM:
-            case T_IATM:
-                return (munitionType.contains(Munitions.M_STANDARD))
-                        || (munitionType.contains(Munitions.M_HIGH_EXPLOSIVE))
-                        || (munitionType.contains(Munitions.M_EXTENDED_RANGE));
-            case T_AR10:
-                return true;
-            default:
-                return (munitionType.contains(Munitions.M_STANDARD))
-                        || (munitionType.contains(Munitions.M_ARTEMIS_CAPABLE))
-                        || (munitionType.contains(Munitions.M_ARTEMIS_V_CAPABLE));
-        }
+        return switch (ammoType) {
+            case T_AC_LBX, T_SBGAUSS -> munitionType.contains(Munitions.M_CLUSTER);
+            case T_ATM, T_IATM -> (munitionType.contains(Munitions.M_STANDARD))
+                || (munitionType.contains(Munitions.M_HIGH_EXPLOSIVE))
+                || (munitionType.contains(Munitions.M_EXTENDED_RANGE));
+            case T_AR10 -> true;
+            default -> (munitionType.contains(Munitions.M_STANDARD))
+                || (munitionType.contains(Munitions.M_ARTEMIS_CAPABLE))
+                || (munitionType.contains(Munitions.M_ARTEMIS_V_CAPABLE));
+        };
     }
 
     /**
@@ -14377,7 +14355,7 @@ public class AmmoType extends EquipmentType {
             return false;
         } else if (!(ammo.getType() instanceof AmmoType)) {
             return false;
-        } else if (weaponType.hasFlag(WeaponType.F_ONESHOT)) {
+        } else if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
             return ammo.getUsableShotsLeft() > 0 && isAmmoValid((AmmoType) ammo.getType(), weaponType);
         } else {
             return ammo.isAmmoUsable() && isAmmoValid((AmmoType) ammo.getType(), weaponType);

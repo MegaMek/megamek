@@ -436,7 +436,7 @@ public class BattleArmor extends Infantry {
             if (!mpCalculationSetting.ignoreMyomerBooster) {
                 mp += (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) ? 1 : 2;
             }
-        } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+        } else if (hasWorkingMisc(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
         }
 
@@ -491,7 +491,7 @@ public class BattleArmor extends Infantry {
     public boolean hasMyomerBooster() {
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_MASC) && !mEquip.isInoperable()) {
+            if (mtype.hasFlag(EquipmentFlag.F_MASC) && !mEquip.isInoperable()) {
                 return true;
             }
         }
@@ -522,7 +522,7 @@ public class BattleArmor extends Infantry {
         }
         // if we have no normal jump jets, we get 1 jump MP from mechanical jump
         // boosters, if we have them.
-        if ((mp == 0) && hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+        if ((mp == 0) && hasWorkingMisc(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
         }
 
@@ -532,19 +532,19 @@ public class BattleArmor extends Infantry {
             boolean ignoreGameLessThanThin = mpCalculationSetting.ignoreWeather
                     || !conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
             if ((mp > 0)
-                    && hasWorkingMisc(MiscType.F_PARTIAL_WING)
+                    && hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING)
                     && ignoreGameLessThanThin) {
                 mp++;
             }
         } else {
             // MML just cares that the Partial Wing exists and is installed
-            if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+            if ((mp > 0) && hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING)) {
                 mp++;
             }
         }
 
         if ((mp > 0)
-                && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+                && hasWorkingMisc(EquipmentFlag.F_JUMP_BOOSTER)) {
             mp++;
         }
 
@@ -948,7 +948,7 @@ public class BattleArmor extends Infantry {
                 // fine
                 Mounted<?> weapon = mounted.getLinkedBy();
                 if ((weapon != null) && weapon.isBodyMounted()
-                        && weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+                        && weapon.getType().hasFlag(WeaponTypeFlag.F_MISSILE)) {
                     return true;
                 }
             } // Check the next piece of equipment
@@ -1289,7 +1289,7 @@ public class BattleArmor extends Infantry {
     public int getVibroClaws() {
         int claws = 0;
         for (MiscMounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_VIBROCLAW)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_VIBROCLAW)) {
                 claws++;
             }
         }
@@ -1303,7 +1303,7 @@ public class BattleArmor extends Infantry {
      */
     public boolean isFireResistant() {
         for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+            if (equip.getType().hasFlag(EquipmentFlag.F_FIRE_RESISTANT)) {
                 return true;
             }
         }
@@ -1317,7 +1317,7 @@ public class BattleArmor extends Infantry {
      */
     public boolean isReflective() {
         for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REFLECTIVE)) {
+            if (equip.getType().hasFlag(EquipmentFlag.F_REFLECTIVE)) {
                 return true;
             }
         }
@@ -1331,7 +1331,7 @@ public class BattleArmor extends Infantry {
      */
     public boolean isReactive() {
         for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_REACTIVE)) {
+            if (equip.getType().hasFlag(EquipmentFlag.F_REACTIVE)) {
                 return true;
             }
         }
@@ -1345,7 +1345,7 @@ public class BattleArmor extends Infantry {
      */
     public boolean hasImprovedSensors() {
         for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_BAP)) {
+            if (equip.getType().hasFlag(EquipmentFlag.F_BAP)) {
                 if (equip.getType().getInternalName().equals(Sensor.ISIMPROVED)
                         || equip.getType().getInternalName()
                                 .equals(Sensor.CLIMPROVED)) {
@@ -1363,7 +1363,7 @@ public class BattleArmor extends Infantry {
      */
     public boolean hasActiveProbe() {
         for (Mounted<?> equip : getMisc()) {
-            if (equip.getType().hasFlag(MiscType.F_BAP)
+            if (equip.getType().hasFlag(EquipmentFlag.F_BAP)
                     && !(equip.getType().getInternalName()
                             .equals(Sensor.ISIMPROVED)
                             || equip.getType()
@@ -1392,12 +1392,12 @@ public class BattleArmor extends Infantry {
      */
     public boolean canDoMechanizedBA() {
         if (getChassisType() != CHASSIS_TYPE_QUAD) {
-            if (hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP)) {
+            if (hasWorkingMisc(EquipmentFlag.F_MAGNETIC_CLAMP)) {
                 return true;
             }
-            int tBasicManipulatorCount = countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
-            int tArmoredGloveCount = countWorkingMisc(MiscType.F_ARMORED_GLOVE);
-            int tBattleClawCount = countWorkingMisc(MiscType.F_BATTLE_CLAW);
+            int tBasicManipulatorCount = countWorkingMisc(EquipmentFlag.F_BASIC_MANIPULATOR);
+            int tArmoredGloveCount = countWorkingMisc(EquipmentFlag.F_ARMORED_GLOVE);
+            int tBattleClawCount = countWorkingMisc(EquipmentFlag.F_BATTLE_CLAW);
             switch (getWeightClass()) {
                 case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
                 case EntityWeightClass.WEIGHT_LIGHT:
@@ -1531,7 +1531,7 @@ public class BattleArmor extends Infantry {
             WeaponType wtype;
             if (m.getType() instanceof WeaponType) {
                 wtype = (WeaponType) m.getType();
-                if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                if (wtype.hasFlag(WeaponTypeFlag.F_MISSILE)) {
                     continue;
                 }
                 if (m.isBodyMounted()) {
@@ -1626,8 +1626,8 @@ public class BattleArmor extends Infantry {
         // Partial wings and jump boosters add 1 jump MP and can increase it
         // over the max and they cannot be used together
         if (!ignoreEquipment
-                && (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
-                        || hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
+                && (hasWorkingMisc(EquipmentFlag.F_JUMP_BOOSTER)
+                        || hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING))) {
             max++;
         }
 
@@ -1645,7 +1645,7 @@ public class BattleArmor extends Infantry {
         }
 
         // Mechanical jump boosters add 1 MP and can increase it over the max
-        if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+        if (hasWorkingMisc(EquipmentFlag.F_MECHANICAL_JUMP_BOOSTER)) {
             max++;
         }
 
@@ -1840,7 +1840,7 @@ public class BattleArmor extends Infantry {
         if ((loc == MOUNT_LOC_LARM) || (loc == MOUNT_LOC_RARM)) {
             boolean hasAntiMek = false;
             for (Mounted<?> m : getWeaponList()) {
-                if (!m.getType().hasFlag(WeaponType.F_INFANTRY)
+                if (!m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
                         && (m.getBaMountLoc() == loc)
                         && ((m.getLocation() == LOC_SQUAD) || (m.getLocation() == trooper))) {
                     hasAntiMek = true;
@@ -1878,7 +1878,7 @@ public class BattleArmor extends Infantry {
      * @return true if the unit has at least one magnetic clamp, else false
      */
     public boolean hasMagneticClamps() {
-        return countWorkingMisc(MiscType.F_MAGNETIC_CLAMP) > 0;
+        return countWorkingMisc(EquipmentFlag.F_MAGNETIC_CLAMP) > 0;
     }
 
     /**
@@ -1919,7 +1919,7 @@ public class BattleArmor extends Infantry {
      */
     public Mounted<?> getLeftManipulator() {
         for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
+            if (m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)
                     && (m.getBaMountLoc() == MOUNT_LOC_LARM)) {
                 return m;
             }
@@ -1935,7 +1935,7 @@ public class BattleArmor extends Infantry {
      */
     public Mounted<?> getRightManipulator() {
         for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)
+            if (m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)
                     && (m.getBaMountLoc() == MOUNT_LOC_RARM)) {
                 return m;
             }

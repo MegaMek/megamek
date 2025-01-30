@@ -658,7 +658,7 @@ public class ServerHelper {
 
         Set<Integer> reportPlayers = new HashSet<>();
 
-        boolean detectorHasBloodhound = detector.hasWorkingMisc(MiscType.F_BLOODHOUND);
+        boolean detectorHasBloodhound = detector.hasWorkingMisc(EquipmentFlag.F_BLOODHOUND);
         boolean hiddenUnitFound = false;
 
         for (Entity detected : hiddenUnits) {

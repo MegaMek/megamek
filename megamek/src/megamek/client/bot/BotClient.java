@@ -735,7 +735,7 @@ public abstract class BotClient extends Client {
                 }
             } else if (ammoType.getAmmoType() == AmmoType.T_MML) {
                 weapon_count++;
-                if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
                     av_range = 9.0;
                 } else {
                     av_range = 21.0;
@@ -1056,10 +1056,10 @@ public abstract class BotClient extends Client {
             }
             // adjust for previous AMS
             List<WeaponMounted> vCounters = waa.getCounterEquipment();
-            if (wt.hasFlag(WeaponType.F_MISSILE) && vCounters != null) {
+            if (wt.hasFlag(WeaponTypeFlag.F_MISSILE) && vCounters != null) {
                 for (WeaponMounted vCounter : vCounters) {
                     WeaponType type = vCounter.getType();
-                    if (type.hasFlag(WeaponType.F_AMS)) {
+                    if (type.hasFlag(WeaponTypeFlag.F_AMS)) {
                         float fAMS = 3.5f * type.getDamage();
                         fHits = Math.max(0.0f, fHits - fAMS);
                     }
@@ -1093,7 +1093,7 @@ public abstract class BotClient extends Client {
                 if (check_ent.hasStealth()) {
                     for (Mounted<?> mEquip : check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
-                        if (mtype.hasFlag(MiscType.F_STEALTH)) {
+                        if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
 
                             if (!check_ent.tracksHeat()) {
                                 // Always activate Stealth if the heat doesn't matter!

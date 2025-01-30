@@ -36,6 +36,7 @@ import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.EquipmentFlag;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.actions.TriggerAPPodAction;
@@ -124,7 +125,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
         // Walk through the entity's misc equipment, looking for AP Pods.
         for (Mounted<?> mount : entity.getMisc()) {
             // Is this an AP Pod?
-            if (mount.getType().hasFlag(MiscType.F_AP_POD)) {
+            if (mount.getType().hasFlag(EquipmentFlag.F_AP_POD)) {
 
                 // Create a checkbox for the pod, and add it to the panel.
                 StringBuffer message = new StringBuffer();

@@ -17,7 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-
+import static megamek.common.WeaponTypeFlag.*;
 /**
  * @author Jay Lawson
  * @since Sep 25, 2004

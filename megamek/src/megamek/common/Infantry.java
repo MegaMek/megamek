@@ -382,7 +382,7 @@ public class Infantry extends Entity {
             if ((getSecondaryWeaponsPerSquad() > 1)
                     && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                     && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)
                     && !getMovementMode().isTracked()
                     && !getMovementMode().isJumpInfantry()) {
                 mp = Math.max(mp - 1, 0);
@@ -464,7 +464,7 @@ public class Infantry extends Entity {
                     && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                     && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                     && !getMovementMode().isSubmarine()
-                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
                 mp = Math.max(mp - 1, 0);
             } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
                 mp = Math.max(mp - 1, 0);
@@ -921,7 +921,7 @@ public class Infantry extends Entity {
      */
     public int requiredCrewForFieldWeapon(WeaponType weaponType) {
         int roundedWeight = (int) Math.ceil(weaponType.getTonnage(this));
-        return weaponType.hasFlag(WeaponType.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
+        return weaponType.hasFlag(WeaponTypeFlag.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
     }
 
     /**
@@ -1264,13 +1264,13 @@ public class Infantry extends Entity {
 
     public EquipmentType getArmorKit() {
         return getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .filter(m -> m.getType().hasFlag(EquipmentFlag.F_ARMOR_KIT))
                 .findFirst().map(Mounted::getType).orElse(null);
     }
 
     public void setArmorKit(EquipmentType armorKit) {
         removeArmorKits();
-        if ((armorKit != null) && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
+        if ((armorKit != null) && armorKit.hasFlag(EquipmentFlag.F_ARMOR_KIT)) {
             try {
                 addEquipment(armorKit, LOC_INFANTRY);
             } catch (LocationFullException ex) {
@@ -1290,7 +1290,7 @@ public class Infantry extends Entity {
         List<MiscMounted> toRemove = getEquipment().stream()
                 .filter(m -> m instanceof MiscMounted)
                 .map(m -> (MiscMounted) m)
-                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .filter(m -> m.getType().hasFlag(EquipmentFlag.F_ARMOR_KIT))
                 .collect(toList());
 
         getEquipment().removeAll(toRemove);
@@ -1387,7 +1387,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBROSHOVEL)) {
+                if (eq.getType().hasFlag(EquipmentFlag.F_TOOLS) && eq.getType().hasSubType(MiscType.S_VIBROSHOVEL)) {
                     eqToRemove.add(eq);
                 }
             }
@@ -1407,7 +1407,7 @@ public class Infantry extends Entity {
             // Need to remove vibro shovels
             List<Mounted<?>> eqToRemove = new ArrayList<>();
             for (Mounted<?> eq : getEquipment()) {
-                if (eq.getType().hasFlag(MiscType.F_TOOLS) && eq.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                if (eq.getType().hasFlag(EquipmentFlag.F_TOOLS) && eq.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
                     eqToRemove.add(eq);
                 }
             }
@@ -1785,7 +1785,7 @@ public class Infantry extends Entity {
      *         destroyed.
      */
     public boolean hasActiveFieldArtillery() {
-        return activeFieldWeapons().stream().anyMatch(gun -> gun.getType().hasFlag(WeaponType.F_ARTILLERY));
+        return activeFieldWeapons().stream().anyMatch(gun -> gun.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY));
     }
 
     /**

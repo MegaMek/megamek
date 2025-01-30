@@ -305,7 +305,7 @@ public class Tank extends Entity {
             return 0;
         }
 
-        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
+        if (hasWorkingMisc(EquipmentFlag.F_HYDROFOIL)) {
             mp = (int) Math.round(mp * 1.25);
         }
         mp = Math.max(0, mp - motiveDamage);
@@ -340,7 +340,7 @@ public class Tank extends Entity {
             mp--;
         }
 
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+        if (hasWorkingMisc(EquipmentFlag.F_DUNE_BUGGY)) {
             mp--;
         }
 
@@ -612,12 +612,12 @@ public class Tank extends Entity {
 
     @Override
     public boolean hasCommandConsoleBonus() {
-        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
+        if (!hasWorkingMisc(EquipmentFlag.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
             return false;
         }
         if (isSupportVehicle()) {
             return getWeightClass() >= EntityWeightClass.WEIGHT_LARGE_SUPPORT
-                    && hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
+                    && hasWorkingMisc(EquipmentFlag.F_ADVANCED_FIRECONTROL);
         } else {
             return getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
         }
@@ -657,8 +657,8 @@ public class Tank extends Entity {
             }
         }
 
-        boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
-        boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
+        boolean hasFlotationHull = hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL);
+        boolean isAmphibious = hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS);
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1)
                 && hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
@@ -981,11 +981,11 @@ public class Tank extends Entity {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType)
-                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+                && mounted.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
-        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+        if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         switch (mounted.getLocation()) {
@@ -1708,13 +1708,13 @@ public class Tank extends Entity {
             }
         }
         if (!isSupportVehicle()) {
-            if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                    || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            if (hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL)
+                    || hasWorkingMisc(EquipmentFlag.F_VACUUM_PROTECTION)
+                    || hasWorkingMisc(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
                 priceMultiplier *= 1.25;
 
             }
-            if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+            if (hasWorkingMisc(EquipmentFlag.F_OFF_ROAD)) {
                 priceMultiplier *= 1.2;
             }
         }
@@ -1729,7 +1729,7 @@ public class Tank extends Entity {
         int explicit = 0;
         Set<Integer> caseLocations = new HashSet<>();
         for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(EquipmentFlag.F_CASE))) {
                 explicit++;
             } else if (m.getType().isExplosive(m)) {
                 caseLocations.add(m.getLocation());
@@ -1890,7 +1890,7 @@ public class Tank extends Entity {
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(mounted));
         if ((mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                && mounted.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
             setOriginalJumpMP(getOriginalJumpMP() + 1);
         }
         // Track unusual turrets for tech calculations
@@ -2180,7 +2180,7 @@ public class Tank extends Entity {
             boolean front = false;
             boolean rear = false;
             for (Mounted<?> m : getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_HITCH)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_HITCH)) {
                     if (m.getLocation() == Tank.LOC_FRONT && !isTrailer()) {
                         front = true;
                     } else {
@@ -2263,7 +2263,7 @@ public class Tank extends Entity {
         lockTurret(getLocTurret2());
         for (Mounted<?> m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponType.F_ENERGY)
+            if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)
                     // Chemical lasers still work even after an engine hit.
                     && !(wtype instanceof CLChemicalLaserWeapon)
                     // And presumably vehicle flamers should, too; we can always
@@ -2279,7 +2279,7 @@ public class Tank extends Entity {
         unlockTurret();
         for (Mounted<?> m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+            if (wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
                 // not destroyed, just unpowered
                 m.setBreached(false);
             }
@@ -2371,7 +2371,7 @@ public class Tank extends Entity {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
@@ -2398,7 +2398,7 @@ public class Tank extends Entity {
         // Try to find a Mek Stealth system.
         for (Mounted<?> mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+            if (mtype.hasFlag(EquipmentFlag.F_STEALTH)) {
                 if (mEquip.curMode().equals("On")) {
                     // Return true if the mode is "On"
                     return true;
@@ -2429,7 +2429,7 @@ public class Tank extends Entity {
         boolean addedCargo = false;
         for (Mounted<?> mount : this.getEquipment()) {
             if ((mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_CARGO)) {
+                    && mount.getType().hasFlag(EquipmentFlag.F_CARGO)) {
                 if (!addedCargo) {
                     usedSlots += mount.getType().getTankSlots(this);
                     addedCargo = true;
@@ -2437,8 +2437,8 @@ public class Tank extends Entity {
                 continue;
             }
             if ((mount.getType() instanceof MiscType)
-                    && (mount.getType().hasFlag(MiscType.F_JUMP_JET)
-                            || mount.getType().hasFlag(MiscType.F_FUEL))) {
+                    && (mount.getType().hasFlag(EquipmentFlag.F_JUMP_JET)
+                            || mount.getType().hasFlag(EquipmentFlag.F_FUEL))) {
                 // Only one slot each for all jump jets or fuel tanks, added later.
                 continue;
             }
@@ -2451,7 +2451,7 @@ public class Tank extends Entity {
             usedSlots++;
         }
         // So do fuel tanks
-        if (hasWorkingMisc(MiscType.F_FUEL)) {
+        if (hasWorkingMisc(EquipmentFlag.F_FUEL)) {
             usedSlots++;
         }
         // different engines take different amounts of slots
@@ -2602,7 +2602,7 @@ public class Tank extends Entity {
             if (!m.isDestroyed()
                     && !m.isBreached()
                     && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)
+                    && m.getType().hasFlag(EquipmentFlag.F_MASC)
                     && (m.curMode().equals("Armed") || m.getType().hasSubType(
                             MiscType.S_JETBOOSTER))) {
                 return true;
@@ -2906,7 +2906,7 @@ public class Tank extends Entity {
         double fuelUnit = fuelTonnagePer100km();
         if (fuelUnit > 0) {
             int range = (int) (getFuelTonnage() / fuelUnit * 100);
-            int fuelTanks = countWorkingMisc(MiscType.F_FUEL);
+            int fuelTanks = countWorkingMisc(EquipmentFlag.F_FUEL);
             if (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
                 range += fuelTanks * 600;
             } else if (getEngine().getEngineType() == Engine.FUEL_CELL) {
@@ -3111,7 +3111,7 @@ public class Tank extends Entity {
             // if it is capable of independent operations or it is equipped with
             // a hitch (making it a trailer that is part of a train).
             return (hasEngine() && !hasNoControlSystems())
-                    || hasWorkingMisc(MiscType.F_HITCH);
+                    || hasWorkingMisc(EquipmentFlag.F_HITCH);
         }
         return false;
     }

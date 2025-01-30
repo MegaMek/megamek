@@ -46,7 +46,7 @@ class WeaponTypeTest {
             if (equipmentType instanceof WeaponType weaponType) {
                 int ammoType = weaponType.getAmmoType();
 
-                assertEquals(equipmentType.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE),
+                assertEquals(equipmentType.hasFlag(WeaponTypeFlag.F_ARTEMIS_COMPATIBLE),
                         (ammoType == AmmoType.T_LRM)
                                 || (ammoType == AmmoType.T_LRM_IMP)
                                 || (ammoType == AmmoType.T_MML)

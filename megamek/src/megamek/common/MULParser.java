@@ -2625,7 +2625,7 @@ public class MULParser {
         int meaMountLoc = Integer.parseInt(meaMountLocString);
         boolean foundMea = false;
         for (Mounted<?> m : entity.getEquipment()) {
-            if ((m.getBaMountLoc() == meaMountLoc) && m.getType().hasFlag(MiscType.F_BA_MEA)) {
+            if ((m.getBaMountLoc() == meaMountLoc) && m.getType().hasFlag(EquipmentFlag.F_BA_MEA)) {
                 foundMea = true;
                 break;
             }

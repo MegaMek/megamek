@@ -3479,7 +3479,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex hex = game.getBoard().getHex(finalPos);
         if ((aero instanceof Aero) && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                 && (hex.terrainLevel(Terrains.WATER) > 0)
-                && !((Entity) aero).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+                && !((Entity) aero).hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL)) {
             if ((hex.terrainLevel(Terrains.WATER) > 1) || !(aero instanceof Dropship)) {
                 Report r = new Report(9702);
                 r.subject(((Entity) aero).getId());
@@ -7109,7 +7109,7 @@ public class TWGameManager extends AbstractGameManager {
         // Check for Mine sweepers
         Mounted<?> minesweeper = null;
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
                 minesweeper = m;
                 break; // Can only have one minesweeper
             }
@@ -7520,7 +7520,7 @@ public class TWGameManager extends AbstractGameManager {
         // Check for Mine sweepers
         Mounted<?> minesweeper = null;
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_MINESWEEPER) && m.isReady() && (m.getArmorValue() > 0)) {
                 minesweeper = m;
                 break; // Can only have one minesweeper
             }
@@ -9666,7 +9666,7 @@ public class TWGameManager extends AbstractGameManager {
                     // Does the target have any AP Pods available?
                     final Entity target = game.getEntity(waa.getTargetId());
                     for (Mounted<?> equip : target.getMisc()) {
-                        if (equip.getType().hasFlag(MiscType.F_AP_POD) && equip.canFire()) {
+                        if (equip.getType().hasFlag(EquipmentFlag.F_AP_POD) && equip.canFire()) {
 
                             // Yup. Insert a game turn to handle AP pods.
                             // ASSUMPTION : AP pod declarations come
@@ -9683,7 +9683,7 @@ public class TWGameManager extends AbstractGameManager {
                     } // Check the next piece of equipment on the target.
 
                     for (Mounted<?> weapon : target.getWeaponList()) {
-                        if (weapon.getType().hasFlag(WeaponType.F_B_POD) && weapon.canFire()) {
+                        if (weapon.getType().hasFlag(WeaponTypeFlag.F_B_POD) && weapon.canFire()) {
 
                             // Yup. Insert a game turn to handle B pods.
                             // ASSUMPTION : B pod declarations come
@@ -9904,8 +9904,8 @@ public class TWGameManager extends AbstractGameManager {
                     isHomingMissile = true;
                 }
             }
-            if ((!weapon.getType().hasFlag(WeaponType.F_MISSILE) && !isHomingMissile)
-                || weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)) {
+            if ((!weapon.getType().hasFlag(WeaponTypeFlag.F_MISSILE) && !isHomingMissile)
+                || weapon.getType().hasFlag(WeaponTypeFlag.F_MEK_MORTAR)) {
                 continue;
             }
 
@@ -10640,7 +10640,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         EquipmentType equip = mount.getType();
-        if (!(equip instanceof MiscType) || !equip.hasFlag(MiscType.F_AP_POD)) {
+        if (!(equip instanceof MiscType) || !equip.hasFlag(EquipmentFlag.F_AP_POD)) {
             logger
                     .error("Expecting to find an AP Pod at " + podId + " on the unit, " + entity.getDisplayName()
                             + " but found " + equip.getName() + " instead!!!");
@@ -10713,7 +10713,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         EquipmentType equip = mount.getType();
-        if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponType.F_B_POD)) {
+        if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponTypeFlag.F_B_POD)) {
             logger.error("Expecting to find an B Pod at " + podId + " on the unit, "
                     + entity.getDisplayName() + " but found " + equip.getName() + " instead!!!");
             return;
@@ -12849,7 +12849,7 @@ public class TWGameManager extends AbstractGameManager {
                 for (Mounted<?> eq : ae.getWeaponList()) {
                     if ((eq.getLocation() == club.getLocation())
                             && (eq.getType() instanceof MiscType)
-                            && eq.getType().hasFlag(MiscType.F_CLUB)
+                            && eq.getType().hasFlag(EquipmentFlag.F_CLUB)
                             && eq.getType().hasSubType(MiscType.S_BUZZSAW)) {
                         eq.setHit(true);
                         break;
@@ -14423,7 +14423,7 @@ public class TWGameManager extends AbstractGameManager {
             damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
                     .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
         }
-        if (ae.hasWorkingMisc(MiscType.F_RAM_PLATE)) {
+        if (ae.hasWorkingMisc(EquipmentFlag.F_RAM_PLATE)) {
             damage = (int) Math.ceil(damage * 1.5);
             damageTaken = (int) Math.floor(damageTaken * 0.5);
         }
@@ -14495,7 +14495,7 @@ public class TWGameManager extends AbstractGameManager {
         if (ae instanceof Mek) {
             int spikeDamage = 0;
             for (int loc = 0; loc < ae.locations(); loc++) {
-                if (((Mek) ae).locationIsTorso(loc) && ae.hasWorkingMisc(MiscType.F_SPIKES, -1, loc)) {
+                if (((Mek) ae).locationIsTorso(loc) && ae.hasWorkingMisc(EquipmentFlag.F_SPIKES, -1, loc)) {
                     spikeDamage += 2;
                 }
             }
@@ -14663,7 +14663,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     private int checkForSpikes(Entity target, int targetLocation, int damage,
             Entity attacker, int attackerLocation, int attackerLocation2) {
-        if (target.hasWorkingMisc(MiscType.F_SPIKES, -1, targetLocation)) {
+        if (target.hasWorkingMisc(EquipmentFlag.F_SPIKES, -1, targetLocation)) {
             Report r;
             if (damage == 0) {
                 // Only show damage to attacker (push attack)
@@ -14682,7 +14682,7 @@ public class TWGameManager extends AbstractGameManager {
             // a push
             if (attackerLocation != Entity.LOC_NONE) {
                 // Spikes also protect from retaliatory spike damage
-                if (attacker.hasWorkingMisc(MiscType.F_SPIKES, -1, attackerLocation)) {
+                if (attacker.hasWorkingMisc(EquipmentFlag.F_SPIKES, -1, attackerLocation)) {
                     r = new Report(4332);
                     r.indent(2);
                     r.subject = attacker.getId();
@@ -15219,7 +15219,7 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setHasDamagedRHS(true);
                     int loc = Entity.LOC_NONE;
                     for (Mounted<?> m : entity.getEquipment()) {
-                        if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                        if (m.getType().hasFlag(EquipmentFlag.F_RADICAL_HEATSINK)) {
                             loc = m.getLocation();
                             m.setDestroyed(true);
                             break;
@@ -15232,7 +15232,7 @@ public class TWGameManager extends AbstractGameManager {
                     for (int s = 0; s < entity.getNumberOfCriticals(loc); s++) {
                         CriticalSlot slot = entity.getCritical(loc, s);
                         if ((slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                                && slot.getMount().getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                                && slot.getMount().getType().hasFlag(EquipmentFlag.F_RADICAL_HEATSINK)) {
                             slot.setHit(true);
                             break;
                         }
@@ -16023,7 +16023,7 @@ public class TWGameManager extends AbstractGameManager {
 
     void resolveEmergencyCoolantSystem() {
         for (Entity e : game.getEntitiesVector()) {
-            if ((e instanceof Mek) && e.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+            if ((e instanceof Mek) && e.hasWorkingMisc(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)
                     && (e.heat > 13)) {
                 Mek mek = (Mek) e;
                 Vector<Report> vDesc = new Vector<>();
@@ -16078,8 +16078,8 @@ public class TWGameManager extends AbstractGameManager {
                         // and there can be at most one in a given location
                         for (Mounted<?> m : me.getMisc()) {
                             if ((m.getLocation() == loc)
-                                    && (m.getType().hasFlag(MiscType.F_HARJEL_II)
-                                            || m.getType().hasFlag(MiscType.F_HARJEL_III))) {
+                                    && (m.getType().hasFlag(EquipmentFlag.F_HARJEL_II)
+                                            || m.getType().hasFlag(EquipmentFlag.F_HARJEL_III))) {
                                 harJel = m;
                             }
                         }
@@ -16612,7 +16612,7 @@ public class TWGameManager extends AbstractGameManager {
 
                 if (diceRoll.getIntValue() < target) {
                     for (Mounted<?> m : entity.getMisc()) {
-                        if (m.getType().hasFlag(MiscType.F_BLUE_SHIELD)) {
+                        if (m.getType().hasFlag(EquipmentFlag.F_BLUE_SHIELD)) {
                             m.setBreached(true);
                         }
                     }
@@ -19018,7 +19018,7 @@ public class TWGameManager extends AbstractGameManager {
                 // on it get destroyed
                 if ((te instanceof VTOL)
                         && (hit.getLocation() == VTOL.LOC_ROTOR)
-                        && te.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1,
+                        && te.hasWorkingMisc(EquipmentFlag.F_MAST_MOUNT, -1,
                                 VTOL.LOC_ROTOR)) {
                     r = new Report(6081);
                     r.subject = te_n;
@@ -19550,7 +19550,7 @@ public class TWGameManager extends AbstractGameManager {
                                             && (at.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
                                         infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }
-                                } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                                } else if (m.getType().hasFlag(EquipmentFlag.F_FIRE_RESISTANT)) {
                                     // immune to inferno explosion
                                     infernos = 0;
                                     break;
@@ -19743,7 +19743,7 @@ public class TWGameManager extends AbstractGameManager {
                 vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
             }
             // Damage from any source can break spikes
-            if (te.hasWorkingMisc(MiscType.F_SPIKES, -1, hit.getLocation())) {
+            if (te.hasWorkingMisc(EquipmentFlag.F_SPIKES, -1, hit.getLocation())) {
                 vDesc.add(checkBreakSpikes(te, hit.getLocation()));
             }
 
@@ -21354,11 +21354,11 @@ public class TWGameManager extends AbstractGameManager {
             mounted.setHit(true);
         }
 
-        if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+        if ((eqType instanceof MiscType) && eqType.hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
             ((Mek) en).setHasDamagedCoolantSystem(true);
         }
 
-        if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_HARJEL)) {
+        if ((eqType instanceof MiscType) && eqType.hasFlag(EquipmentFlag.F_HARJEL)) {
             reports.addAll(breachLocation(en, loc, null, true));
         }
 
@@ -21366,7 +21366,7 @@ public class TWGameManager extends AbstractGameManager {
         // the same location
         // it's like an ammunition explosion---a secondary effect
         if (secondaryEffects && (eqType instanceof MiscType)
-                && (eqType.hasFlag(MiscType.F_HARJEL_II) || eqType.hasFlag(MiscType.F_HARJEL_III))
+                && (eqType.hasFlag(EquipmentFlag.F_HARJEL_II) || eqType.hasFlag(EquipmentFlag.F_HARJEL_III))
                 && !hitBefore) {
             r = new Report(9852);
             r.subject = en.getId();
@@ -21378,7 +21378,7 @@ public class TWGameManager extends AbstractGameManager {
         // If the item is the ECM suite of a Mek Stealth system
         // then it's destruction turns off the stealth.
         if (!hitBefore && (eqType instanceof MiscType)
-                && eqType.hasFlag(MiscType.F_ECM)
+                && eqType.hasFlag(EquipmentFlag.F_ECM)
                 && (mounted.getLinkedBy() != null)) {
             Mounted<?> stealth = mounted.getLinkedBy();
             r = new Report(6255);
@@ -21407,7 +21407,7 @@ public class TWGameManager extends AbstractGameManager {
         // recalculate
         // the bomb load out on a bomb bay critical.
         if (en.isPartOfFighterSquadron() && (mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                && mounted.getType().hasFlag(EquipmentFlag.F_BOMB_BAY)) {
             Entity squadron = game.getEntity(en.getTransportId());
             if (squadron instanceof FighterSquadron) {
                 ((FighterSquadron) squadron).computeSquadronBombLoadout();
@@ -21724,7 +21724,7 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     // A magnetic clamp system is destroyed by any torso critical.
                     Mounted<?> magClamp = pm.getMisc().stream().filter(m -> m.getType()
-                            .hasFlag(MiscType.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
+                            .hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)).findFirst().orElse(null);
                     if ((magClamp != null) && !magClamp.isHit()) {
                         magClamp.setHit(true);
                         r = new Report(6252);
@@ -22078,9 +22078,9 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     // also destroy any ECM or BAP in the location hit
                     for (MiscMounted misc : cf.getMisc()) {
-                        if ((misc.getType().hasFlag(MiscType.F_ECM)
-                                || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
-                                || misc.getType().hasFlag(MiscType.F_BAP))
+                        if ((misc.getType().hasFlag(EquipmentFlag.F_ECM)
+                                || misc.getType().hasFlag(EquipmentFlag.F_ANGEL_ECM)
+                                || misc.getType().hasFlag(EquipmentFlag.F_BAP))
                                 && misc.getLocation() == loc) {
                             misc.setHit(true);
                             // Taharqa: We should also damage the critical slot, or
@@ -22728,7 +22728,7 @@ public class TWGameManager extends AbstractGameManager {
                         r.subject = tank.getId();
                         reports.add(r);
                         tank.setCommanderHitPS(true);
-                    } else if (tank.hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)
+                    } else if (tank.hasWorkingMisc(EquipmentFlag.F_COMMAND_CONSOLE)
                             && !tank.isUsingConsoleCommander()) {
                         r = new Report(6607);
                         r.subject = tank.getId();
@@ -23910,7 +23910,7 @@ public class TWGameManager extends AbstractGameManager {
             CriticalSlot crit = en.getCritical(loc, i);
             if ((crit != null) && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
                     && (crit.getMount() != null)
-                    && crit.getMount().getType().hasFlag(MiscType.F_REACTIVE)) {
+                    && crit.getMount().getType().hasFlag(EquipmentFlag.F_REACTIVE)) {
                 locContainsReactiveArmor = true;
                 break;
             }
@@ -23951,7 +23951,7 @@ public class TWGameManager extends AbstractGameManager {
             if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                     && (slot.getMount() != null)) {
                 Mounted<?> eq = slot.getMount();
-                if (eq.getType().hasFlag(MiscType.F_REACTIVE) && (en.getArmor(loc) > 0)) {
+                if (eq.getType().hasFlag(EquipmentFlag.F_REACTIVE) && (en.getArmor(loc) > 0)) {
                     reactiveArmorCrit = true;
                 }
             }
@@ -23997,7 +23997,7 @@ public class TWGameManager extends AbstractGameManager {
                 // check for reactive armor exploding
                 if (reactiveArmorCrit) {
                     Mounted<?> mount = slot.getMount();
-                    if ((mount != null) && mount.getType().hasFlag(MiscType.F_REACTIVE)) {
+                    if ((mount != null) && mount.getType().hasFlag(EquipmentFlag.F_REACTIVE)) {
                         Roll diceRoll = Compute.rollD6(2);
                         r = new Report(6082);
                         r.subject = en.getId();
@@ -24693,12 +24693,12 @@ public class TWGameManager extends AbstractGameManager {
         // Special case: LAM bomb bays explode the bomb stored there, which may involve
         // going through a
         // launch weapon to the bomb ammo.
-        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(EquipmentFlag.F_BOMB_BAY)) {
             while (mounted.getLinked() != null) {
                 mounted = mounted.getLinked();
             }
             // Fuel tank explodes on 2d6 roll of 10+
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_FUEL)) {
+            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(EquipmentFlag.F_FUEL)) {
                 Report r = new Report(9120);
                 r.subject = en.getId();
                 int boomTarget = 10;
@@ -24831,7 +24831,7 @@ public class TWGameManager extends AbstractGameManager {
         // exploding RISC laser pulse module should cause no normal crits, just
         // automatically crit the first uncritted crit of the laser it's
         // attached to
-        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
             Mounted<?> laser = mounted.getLinked();
             if (en instanceof Mek) {
@@ -25538,7 +25538,7 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         // Check for jettisoning missiles
                     } else if (m.isBodyMounted() && m.isPendingDump()
-                            && m.getType().hasFlag(WeaponType.F_MISSILE)
+                            && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
                             && (m.getLinked() != null)
                             && (m.getLinked().getUsableShotsLeft() > 0)) {
                         m.setMissing(true);
@@ -26894,7 +26894,7 @@ public class TWGameManager extends AbstractGameManager {
             // Check for BA dumping body mounted missile launchers
             if ((e instanceof BattleArmor) && (!m.isMissing())
                     && m.isBodyMounted()
-                    && m.getType().hasFlag(WeaponType.F_MISSILE)
+                    && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
                     && (m.getLinked() != null)
                     && (m.getLinked().getUsableShotsLeft() > 0)
                     && (mode <= 0)) {
@@ -27104,8 +27104,8 @@ public class TWGameManager extends AbstractGameManager {
                     + " is a " + mWeap.getName() + " and does not use ammo.");
             return;
         }
-        if (mWeap.getType().hasFlag(WeaponType.F_ONESHOT)
-                && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        if (mWeap.getType().hasFlag(WeaponTypeFlag.F_ONESHOT)
+                && !mWeap.getType().hasFlag(WeaponTypeFlag.F_DOUBLE_ONESHOT)) {
             logger.error("Item #" + weaponId + " of entity " + e.getDisplayName()
                     + " is a " + mWeap.getName() + " and cannot use external ammo.");
             return;
@@ -27725,7 +27725,7 @@ public class TWGameManager extends AbstractGameManager {
                         newDamage += mount2.getExplosionDamage();
                     }
                 } else if ((mounted.getType() instanceof MiscType)
-                        && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                        && mounted.getType().hasFlag(EquipmentFlag.F_BOMB_BAY)) {
                     while (mounted.getLinked() != null) {
                         mounted = mounted.getLinked();
                     }
@@ -28216,7 +28216,7 @@ public class TWGameManager extends AbstractGameManager {
                             || (entity.getMovementMode() == EntityMovementMode.NAVAL)
                             || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
                             || (entity.getMovementMode() == EntityMovementMode.INF_UMU)
-                            || entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+                            || entity.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS)) {
                         continue; // under the bridge even at same level
                     }
 
@@ -30579,8 +30579,8 @@ public class TWGameManager extends AbstractGameManager {
                     || (entity.getMovementMode() == EntityMovementMode.WHEELED)
                     || ((entity.getMovementMode() == EntityMovementMode.HOVER)))
                     && entity.isImmobile() && (hex.terrainLevel(Terrains.WATER) > 0)
-                    && !onBridge && !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                    && !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL));
+                    && !onBridge && !(entity.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS))
+                    && !(entity.hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL));
         });
         while (sinkableTanks.hasNext()) {
             Entity e = sinkableTanks.next();
@@ -30869,7 +30869,7 @@ public class TWGameManager extends AbstractGameManager {
             modifier = Math.max(modifier - 1, 0);
         }
 
-        if (te.hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+        if (te.hasWorkingMisc(EquipmentFlag.F_ARMORED_MOTIVE_SYSTEM)) {
             modifier -= 2;
         }
 
@@ -31620,7 +31620,7 @@ public class TWGameManager extends AbstractGameManager {
             r.subject = e.getId();
 
             for (Mounted<?> m : e.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_SPIKES)
+                if (m.getType().hasFlag(EquipmentFlag.F_SPIKES)
                         && (m.getLocation() == loc)) {
                     m.setHit(true);
                 }

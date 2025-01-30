@@ -564,7 +564,7 @@ public class LobbyActions {
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity entity : entities) {
             for (Mounted<?> m : entity.getWeaponList()) {
-                if (((WeaponType) m.getType()).hasFlag(WeaponType.F_MG)) {
+                if (((WeaponType) m.getType()).hasFlag(WeaponTypeFlag.F_MG)) {
                     m.setRapidfire(burstOn);
                     updateCandidates.add(entity);
                 }

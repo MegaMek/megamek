@@ -37,9 +37,9 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_CAPITAL_MD;
         this.capital = true;
-        this.flags = F_MASS_DRIVER;    
+        this.flags = F_MASS_DRIVER.asEquipmentFlagSet();
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;

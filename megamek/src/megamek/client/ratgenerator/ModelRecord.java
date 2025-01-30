@@ -533,7 +533,7 @@ public class ModelRecord extends AbstractUnitRecord {
                 }
 
                 // Add the spotter role to all units which carry TAG
-                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponType.F_TAG)) {
+                if (unitType <= UnitType.AEROSPACEFIGHTER && eq.hasFlag(WeaponTypeFlag.F_TAG)) {
                     roles.add(MissionRole.SPOTTER);
                     losTech = true;
                     continue;
@@ -542,14 +542,14 @@ public class ModelRecord extends AbstractUnitRecord {
                 totalWeaponBV += eq.getBV(null) * unitData.getEquipmentQuantities().get(i);
 
                 // Check for C3 master units. These are bit-masked values.
-                if (eq.hasFlag(WeaponType.F_C3M)) {
+                if (eq.hasFlag(WeaponTypeFlag.F_C3M)) {
                     networkMask |= NETWORK_C3_MASTER;
                     if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
                     }
                     losTech = true;
                     continue;
-                } else if (eq.hasFlag(WeaponType.F_C3MBS)) {
+                } else if (eq.hasFlag(WeaponTypeFlag.F_C3MBS)) {
                     networkMask |= NETWORK_BOOSTED_MASTER;
                     if (unitData.getEquipmentQuantities().get(i) > 1) {
                         networkMask |= NETWORK_COMPANY_COMMAND;
@@ -613,7 +613,7 @@ public class ModelRecord extends AbstractUnitRecord {
                         ammoFactor = 0.4;
                     }
 
-                    if (eq.hasFlag(WeaponType.F_ONESHOT)) {
+                    if (eq.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
                         ammoFactor = 0.1;
                     }
 
@@ -639,54 +639,54 @@ public class ModelRecord extends AbstractUnitRecord {
                 // Various non-weapon equipment
             } else if (eq instanceof MiscType) {
 
-                if (eq.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) ||
-                        eq.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) ||
-                        eq.hasFlag(MiscType.F_LASER_HEAT_SINK) ||
-                        eq.hasFlag(MiscType.F_COMPACT_HEAT_SINK) ||
-                        eq.hasFlag(MiscType.F_ECM) ||
-                        eq.hasFlag(MiscType.F_ANGEL_ECM) ||
-                        eq.hasFlag(MiscType.F_BAP) ||
-                        eq.hasFlag(MiscType.F_BLOODHOUND) ||
-                        eq.hasFlag(MiscType.F_TARGCOMP) ||
-                        eq.hasFlag(MiscType.F_ARTEMIS) ||
-                        eq.hasFlag(MiscType.F_ARTEMIS_V) ||
-                        eq.hasFlag(MiscType.F_APOLLO) ||
-                        eq.hasFlag((MiscType.F_MASC))) {
+                if (eq.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK) ||
+                        eq.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) ||
+                        eq.hasFlag(EquipmentFlag.F_LASER_HEAT_SINK) ||
+                        eq.hasFlag(EquipmentFlag.F_COMPACT_HEAT_SINK) ||
+                        eq.hasFlag(EquipmentFlag.F_ECM) ||
+                        eq.hasFlag(EquipmentFlag.F_ANGEL_ECM) ||
+                        eq.hasFlag(EquipmentFlag.F_BAP) ||
+                        eq.hasFlag(EquipmentFlag.F_BLOODHOUND) ||
+                        eq.hasFlag(EquipmentFlag.F_TARGCOMP) ||
+                        eq.hasFlag(EquipmentFlag.F_ARTEMIS) ||
+                        eq.hasFlag(EquipmentFlag.F_ARTEMIS_V) ||
+                        eq.hasFlag(EquipmentFlag.F_APOLLO) ||
+                        eq.hasFlag((EquipmentFlag.F_MASC))) {
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_CLUB)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_CLUB)) {
                     shortRangeBV += unitData.getTons() * 0.3;
                     totalWeaponBV += unitData.getTons() * 0.3;
-                } else if (eq.hasFlag(MiscType.F_C3S)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_C3S)) {
                     networkMask |= NETWORK_C3_SLAVE;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_C3I)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_C3I)) {
                     networkMask |= NETWORK_C3I;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_C3SBS)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_C3SBS)) {
                     networkMask |= NETWORK_BOOSTED_SLAVE;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_NOVA)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_NOVA)) {
                     networkMask |= NETWORK_NOVA;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_AP_POD)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_AP_POD)) {
                     apRating++;
-                } else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)) {
                     magClamp = true;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_VIBROCLAW)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_VIBROCLAW)) {
                     apRating += 2;
-                } else if (eq.hasFlag(MiscType.F_PROTOMEK_MELEE)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_PROTOMEK_MELEE)) {
                     shortRangeBV += 2.5;
                     totalWeaponBV += 2.5;
-                } else if (eq.hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_DRONE_OPERATING_SYSTEM)) {
                     remoteDrone = true;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_SRCS) ||
-                        eq.hasFlag(MiscType.F_SASRCS)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_SRCS) ||
+                        eq.hasFlag(EquipmentFlag.F_SASRCS)) {
                     remoteDrone = true;
                     robotDrone = true;
                     losTech = true;
-                } else if (eq.hasFlag(MiscType.F_SPACE_ADAPTATION)) {
+                } else if (eq.hasFlag(EquipmentFlag.F_SPACE_ADAPTATION)) {
                     roles.add(MissionRole.MARINE);
                     // Save a bit of time, anything introduced after this date is assumed to be
                     // advanced

@@ -122,7 +122,7 @@ public class EntityListFile {
             }
 
             if ((mount.getType() instanceof WeaponType)
-                    && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)
+                    && (mount.getType()).hasFlag(WeaponTypeFlag.F_ONESHOT)
                     && (mount.getLinked() != null)) {
                 output.append("\" " + MULParser.ATTR_MUNITION + "=\"");
                 output.append(mount.getLinked().getType().getInternalName());
@@ -393,7 +393,7 @@ public class EntityListFile {
                     // and the ammunition shots of small SV weapons
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)
-                            && ((mount.getType()).hasFlag(WeaponType.F_ONESHOT)
+                            && ((mount.getType()).hasFlag(WeaponTypeFlag.F_ONESHOT)
                                     || (entity.isSupportVehicle() && (mount.getType() instanceof InfantryWeapon)))) {
                         thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),
@@ -1074,7 +1074,7 @@ public class EntityListFile {
 
             if (entity instanceof BattleArmor ba) {
                 for (Mounted<?> m : entity.getEquipment()) {
-                    if (m.getType().hasFlag(MiscType.F_BA_MEA)) {
+                    if (m.getType().hasFlag(EquipmentFlag.F_BA_MEA)) {
                         Mounted<?> manipulator = null;
                         if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                             manipulator = ba.getLeftManipulator();
@@ -1088,7 +1088,7 @@ public class EntityListFile {
                                     + manipulator.getType().getInternalName() + "\" ");
                         }
                         output.write("/>\n");
-                    } else if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    } else if (m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                         int mountIdx = entity.getEquipmentNum(m);
                         EquipmentType apType = null;
                         if (m.getLinked() != null) {

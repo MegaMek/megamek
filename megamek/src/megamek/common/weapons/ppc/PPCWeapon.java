@@ -13,10 +13,7 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.IGameOptions;
@@ -67,7 +64,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
                 damage = getDamage(range);
             }
             if ((capacitor != null) && (capacitor.getType() instanceof MiscType)
-                    && capacitor.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    && capacitor.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                 damage = (damage + 5) / 2;
             }
             if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {

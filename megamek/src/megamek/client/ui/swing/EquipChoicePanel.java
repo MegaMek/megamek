@@ -211,7 +211,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Setup AP mounts
-        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_AP_MOUNT)) {
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(EquipmentFlag.F_AP_MOUNT)) {
             setupAPMounts();
             panAPMounts.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
                     Messages.getString("CustomMekDialog.APMountPanelTitle"),
@@ -220,7 +220,7 @@ public class EquipChoicePanel extends JPanel {
             add(panAPMounts, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(MiscType.F_BA_MEA)) {
+        if ((entity instanceof BattleArmor) && entity.hasWorkingMisc(EquipmentFlag.F_BA_MEA)) {
             panMEAdaptors.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
                     Messages.getString("CustomMekDialog.MEAPanelTitle"),
                     TitledBorder.TOP, TitledBorder.DEFAULT_POSITION));
@@ -425,7 +425,7 @@ public class EquipChoicePanel extends JPanel {
         panRapidfireMGs.setLayout(gbl);
         for (Mounted<?> m : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
-            if (!wtype.hasFlag(WeaponType.F_MG)) {
+            if (!wtype.hasFlag(WeaponTypeFlag.F_MG)) {
                 continue;
             }
             RapidfireMGPanel rmp = new RapidfireMGPanel(m);
@@ -441,8 +441,8 @@ public class EquipChoicePanel extends JPanel {
 
         int row = 0;
         for (MiscMounted m : entity.getMisc()) {
-            if (!m.getType().hasFlag((MiscType.F_MINE)) &&
-                    !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
+            if (!m.getType().hasFlag((EquipmentFlag.F_MINE)) &&
+                    !m.getType().hasFlag((EquipmentFlag.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
             }
 
@@ -478,7 +478,7 @@ public class EquipChoicePanel extends JPanel {
         }
 
         for (Mounted<?> m : entity.getMisc()) {
-            if (!m.getType().hasFlag(MiscType.F_BA_MEA)) {
+            if (!m.getType().hasFlag(EquipmentFlag.F_BA_MEA)) {
                 continue;
             }
             Mounted<?> currentManip = null;
@@ -529,15 +529,15 @@ public class EquipChoicePanel extends JPanel {
 
             // Check to see if we've got a valid infantry weapon
             InfantryWeapon infWeap = (InfantryWeapon) eq;
-            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
-                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)) {
+            if (infWeap.hasFlag(WeaponTypeFlag.F_INFANTRY)
+                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)
+                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_SUPPORT)) {
                 apWeapTypes.add(infWeap);
             }
-            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
-                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
-                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
+            if (infWeap.hasFlag(WeaponTypeFlag.F_INFANTRY)
+                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(WeaponTypeFlag.F_INF_ARCHAIC)
                     && (infWeap.getCrew() < 2)) {
                 agWeapTypes.add(infWeap);
             }
@@ -547,13 +547,13 @@ public class EquipChoicePanel extends JPanel {
 
         ArrayList<Mounted<?>> armoredGloves = new ArrayList<>(2);
         for (Mounted<?> m : entity.getMisc()) {
-            if (!m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+            if (!m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT)) {
                 continue;
             }
             APWeaponChoicePanel apcp = null;
             // Armored gloves need to be treated slightly differently, since
             // 1 or 2 armored gloves allow 1 additional AP weapon
-            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_ARMORED_GLOVE)) {
                 armoredGloves.add(m);
             } else {
                 apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
@@ -665,13 +665,13 @@ public class EquipChoicePanel extends JPanel {
                 }
 
                 if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS)
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                        && !entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS)
+                        && !entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS_PROTO)) {
                     continue;
                 }
                 if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V)
-                        && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
+                        && !entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS_V)
+                        && !entity.hasWorkingMisc(EquipmentFlag.F_ARTEMIS_PROTO)) {
                     continue;
                 }
 
@@ -681,7 +681,7 @@ public class EquipChoicePanel extends JPanel {
                 }
 
                 // Only Protos can use Proto-specific ammo
-                if (atCheck.hasFlag(AmmoType.F_PROTOMEK)
+                if (atCheck.hasFlag(AmmoTypeFlag.F_PROTOMEK)
                         && !(entity instanceof ProtoMek)) {
                     continue;
                 }
@@ -689,8 +689,8 @@ public class EquipChoicePanel extends JPanel {
                 // When dealing with machine guns, Protos can only
                 // use proto-specific machine gun ammo
                 if ((entity instanceof ProtoMek)
-                        && atCheck.hasFlag(AmmoType.F_MG)
-                        && !atCheck.hasFlag(AmmoType.F_PROTOMEK)) {
+                        && atCheck.hasFlag(AmmoTypeFlag.F_MG)
+                        && !atCheck.hasFlag(AmmoTypeFlag.F_PROTOMEK)) {
                     continue;
                 }
 
@@ -698,10 +698,10 @@ public class EquipChoicePanel extends JPanel {
                 // All other ammo types need to match on rack size and tech.
                 if (bTechMatch
                         && (atCheck.getRackSize() == at.getRackSize())
-                        && (atCheck.hasFlag(AmmoType.F_BATTLEARMOR) == at
-                                .hasFlag(AmmoType.F_BATTLEARMOR))
-                        && (atCheck.hasFlag(AmmoType.F_ENCUMBERING) == at
-                                .hasFlag(AmmoType.F_ENCUMBERING))
+                        && (atCheck.hasFlag(AmmoTypeFlag.F_BATTLEARMOR) == at
+                                .hasFlag(AmmoTypeFlag.F_BATTLEARMOR))
+                        && (atCheck.hasFlag(AmmoTypeFlag.F_ENCUMBERING) == at
+                                .hasFlag(AmmoTypeFlag.F_ENCUMBERING))
                         && (atCheck.getTonnage(entity) == at.getTonnage(entity))) {
                     vTypes.add(atCheck);
                 }
@@ -1104,13 +1104,13 @@ public class EquipChoicePanel extends JPanel {
                 add(chDump, GBC.eol());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                        && curType.hasFlag(AmmoType.F_HOTLOAD)) {
+                        && curType.hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
                     add(chHotLoad, GBC.eol());
                 }
             } else if (clientgui.getClient().getGame().getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
-                    && curType.hasFlag(AmmoType.F_HOTLOAD)) {
+                    && curType.hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
                 add(labHotLoad, GBC.std());
                 add(chHotLoad, GBC.eol());
             }
@@ -1405,7 +1405,7 @@ public class EquipChoicePanel extends JPanel {
             int year = client.getGame().getOptions().intOption("year");
             for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
                 final EquipmentType et = e.nextElement();
-                if (et.hasFlag(MiscType.F_ARMOR_KIT)
+                if (et.hasFlag(EquipmentFlag.F_ARMOR_KIT)
                         && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech(),
                                 entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                     armorKits.add(et);

@@ -22,12 +22,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.MPCalculationSetting;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.QuadMek;
-import megamek.common.TripodMek;
+import megamek.common.*;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity
@@ -46,7 +41,7 @@ public class CachedEntityState {
     private Integer sprintMPWithoutMasc;
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
-    private Map<BigInteger, Boolean> hasWorkingMisc;
+    private Map<EquipmentFlag, Boolean> hasWorkingMisc;
     private Integer torsoJumpJets;
     private Integer jumpMPNoGravity;
     private Integer numBreachedLegs;
@@ -128,7 +123,7 @@ public class CachedEntityState {
         return jumpMPWithTerrain;
     }
 
-    public boolean hasWorkingMisc(BigInteger flag) {
+    public boolean hasWorkingMisc(EquipmentFlag flag) {
         if (!hasWorkingMisc.containsKey(flag)) {
             hasWorkingMisc.put(flag, backingEntity.hasWorkingMisc(flag));
         }
@@ -168,9 +163,9 @@ public class CachedEntityState {
      * Convenience property to determine if the backing entity is amphibious.
      */
     public boolean isAmphibious() {
-        return hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
-                hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        return hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ||
+                hasWorkingMisc(EquipmentFlag.F_AMPHIBIOUS) ||
+                hasWorkingMisc(EquipmentFlag.F_LIMITED_AMPHIBIOUS);
     }
 
     /**

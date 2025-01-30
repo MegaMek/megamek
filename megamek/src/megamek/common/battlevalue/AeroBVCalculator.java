@@ -140,7 +140,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
                 || (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE)) {
             cockpitMod = 0.95;
             modifier = " (" + aero.getCockpitTypeString() + ")";
-        } else if (entity.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+        } else if (entity.hasWorkingMisc(EquipmentFlag.F_DRONE_OPERATING_SYSTEM)) {
             cockpitMod = 0.95;
             modifier = " (Drone Op. Sys.)";
         }

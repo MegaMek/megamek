@@ -15,6 +15,8 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 
+import static megamek.common.WeaponTypeFlag.*;
+
 /**
  * @author Andrew Hunter
  * Created on Oct 19, 2004

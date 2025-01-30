@@ -89,9 +89,9 @@ public class WeaponQuirks extends AbstractOptions {
                                                 EquipmentType equipmentType) {
         String qName = quirk.getName();
         // There may be some non-WeaponType quirks, specifically melee weapons
-        if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(MiscType.F_CLUB)) {
+        if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(EquipmentFlag.F_CLUB)) {
             return true;
-        } else if (equipmentType.hasFlag(MiscType.F_CLUB)) {
+        } else if (equipmentType.hasFlag(EquipmentFlag.F_CLUB)) {
             return qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)

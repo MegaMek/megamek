@@ -58,7 +58,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static megamek.common.MiscType.F_CHAFF_POD;
+import static megamek.common.EquipmentFlag.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 public class MovementDisplay extends ActionPhaseDisplay {
@@ -806,14 +806,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Infantry and Tank - Fortify
         if (isInfantry
-                && ce.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                && ce.hasWorkingMisc(EquipmentFlag.F_TRENCH_CAPABLE)) {
             // Crews adrift in space or atmosphere can't do this
             if (ce instanceof EjectedCrew && (ce.isSpaceborne() || ce.isAirborne())) {
                 getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
             } else {
                 getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
             }
-        } else if (isTank && ce.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+        } else if (isTank && ce.hasWorkingMisc(EquipmentFlag.F_TRENCH_CAPABLE)) {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);

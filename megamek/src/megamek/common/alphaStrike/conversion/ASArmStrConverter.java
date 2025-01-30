@@ -112,7 +112,7 @@ final class ASArmStrConverter {
             // Modular armor is always "regular" armor
             int count = (int) entity.getEquipment().stream()
                     .filter(m -> m.getType() instanceof MiscType)
-                    .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
+                    .filter(m -> m.getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR))
                     .count();
             armorPoints += 10 * count;
             report.addLine("Modular Armor", "10 x " + count, "+ " + 10 * count);

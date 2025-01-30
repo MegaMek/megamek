@@ -19,14 +19,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
@@ -46,7 +39,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -54,7 +47,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if ((game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-            && weapon.hasModes()) || wtype.hasFlag(WeaponType.F_BOMBAST_LASER)) {
+            && weapon.hasModes()) || wtype.hasFlag(WeaponTypeFlag.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
         // during a swarm, all damage gets applied as one block to one location
@@ -83,7 +76,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        
+
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
@@ -94,7 +87,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) Math.ceil(toReturn);
     }

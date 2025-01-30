@@ -400,7 +400,7 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                     && !game.getPhase().isSetArtilleryAutohitHexes()
                     && Objects.equals(localPlayer(), selectedUnit.getOwner())
                     && (selectedWeapon.getType() instanceof WeaponType)
-                    && selectedWeapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                    && selectedWeapon.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                 return selectedWeapon;
             }
         }

@@ -13,15 +13,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestProtoMek;
@@ -198,7 +190,7 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
                         mount = t.addEquipment(etype, nLoc);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             mount.setFacing(defaultVGLFacing(nLoc, rearMount));
                         }
                     } else {

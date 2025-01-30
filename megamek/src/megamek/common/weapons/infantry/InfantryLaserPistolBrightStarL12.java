@@ -17,7 +17,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantryLaserPistolBrightStarL12 extends InfantryWeapon {
 
     private static final long serialVersionUID = 1L; // Update for each unique class
@@ -40,7 +39,7 @@ public class InfantryLaserPistolBrightStarL12 extends InfantryWeapon {
         rulesRefs = "Shrapnel #9";
         techAdvancement.setTechBase(TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E); 
+        techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_E});
         techAdvancement.setClanApproximate(false, false, true, false, false);
         techAdvancement.setProductionFactions(F_CLAN);

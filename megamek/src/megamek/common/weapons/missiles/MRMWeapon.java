@@ -19,12 +19,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MRMHandler;
@@ -57,7 +52,7 @@ public abstract class MRMWeapon extends MissileWeapon {
             return damage;
         }
         if (fcs != null && fcs.getType() instanceof MiscType
-                && fcs.getType().hasFlag(MiscType.F_APOLLO)) {
+                && fcs.getType().hasFlag(EquipmentFlag.F_APOLLO)) {
             damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
         } else {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize());

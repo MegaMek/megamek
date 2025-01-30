@@ -40,24 +40,24 @@ public class MiscMounted extends Mounted<MiscType> {
     public MiscMounted(Entity entity, MiscType type) {
         super(entity, type);
 
-        if (type.hasFlag(MiscType.F_MINE)) {
+        if (type.hasFlag(EquipmentFlag.F_MINE)) {
             setMineType(MINE_CONVENTIONAL);
             // Used to keep track of the # of mines
             setShotsLeft(1);
         }
-        if (type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
+        if (type.hasFlag(EquipmentFlag.F_VEHICLE_MINE_DISPENSER)) {
             setMineType(MINE_CONVENTIONAL);
             // Used to keep track of the # of mines
             setShotsLeft(2);
         }
-        if (type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
-            setShotsLeft(type.hasFlag(MiscType.F_BA_EQUIPMENT) ? 6 : 30);
+        if (type.hasFlag(EquipmentFlag.F_SENSOR_DISPENSER)) {
+            setShotsLeft(type.hasFlag(EquipmentFlag.F_BA_EQUIPMENT) ? 6 : 30);
         }
-        if (((type.isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
+        if (((type.isShield() || type.hasFlag(EquipmentFlag.F_MODULAR_ARMOR)))) {
             baseDamageAbsorptionRate = type.getBaseDamageAbsorptionRate();
             baseDamageCapacity = type.getBaseDamageCapacity();
         }
-        if (type.hasFlag(MiscType.F_MINESWEEPER)) {
+        if (type.hasFlag(EquipmentFlag.F_MINESWEEPER)) {
             setArmorValue(30);
         }
     }

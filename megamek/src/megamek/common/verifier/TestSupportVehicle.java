@@ -545,12 +545,12 @@ public class TestSupportVehicle extends TestEntity {
             }
 
             // Installing non-BAR armor on a support vehicle is advanced
-            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)
+            if (!armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)
                     && (techManager.getTechLevel().ordinal() < SimpleTechLevel.ADVANCED.ordinal())) {
                 continue;
             }
 
-            if (armor.hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
+            if (armor.hasFlag(EquipmentFlag.F_SUPPORT_TANK_EQUIPMENT) && techManager.isLegal(armor)) {
                 retVal.add(armor);
             }
         }
@@ -614,7 +614,7 @@ public class TestSupportVehicle extends TestEntity {
     public static double armorWeightPerPoint(Entity vee) {
         final ArmorType armor = ArmorType.forEntity(vee);
 
-        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+        if (armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
             return armor.getSVWeightPerPoint(vee.getArmorTechRating());
         } else {
             final double ppt = armor.getPointsPerTon(vee);
@@ -768,7 +768,7 @@ public class TestSupportVehicle extends TestEntity {
         weight *= STRUCTURE_TECH_MULTIPLIER[supportVee.getStructuralTechRating()];
 
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_CHASSIS_MODIFICATION)) {
                 ChassisModification mod = ChassisModification.getChassisMod(mounted.getType());
 
                 if (null != mod) {
@@ -791,8 +791,8 @@ public class TestSupportVehicle extends TestEntity {
 
     private double getWeightFireControl() {
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                    || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_BASIC_FIRECONTROL)
+                    || mounted.getType().hasFlag(EquipmentFlag.F_ADVANCED_FIRECONTROL)) {
                 return mounted.getTonnage();
             }
         }
@@ -864,19 +864,19 @@ public class TestSupportVehicle extends TestEntity {
 
             for (Mounted<?> mounted : supportVee.getWeaponList()) {
                 WeaponType weaponType = (WeaponType) mounted.getType();
-                if (weaponType.hasFlag(WeaponType.F_ENERGY) && !(weaponType instanceof CLChemicalLaserWeapon)
+                if (weaponType.hasFlag(WeaponTypeFlag.F_ENERGY) && !(weaponType instanceof CLChemicalLaserWeapon)
                         && !(weaponType instanceof VehicleFlamerWeapon)) {
                     weight += mounted.getTonnage();
                 }
 
                 if ((mounted.getLinkedBy() != null) && (mounted.getLinkedBy().getType() instanceof MiscType)
-                        && mounted.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                        && mounted.getLinkedBy().getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                     weight += mounted.getLinkedBy().getTonnage();
                 }
             }
 
             for (Mounted<?> mounted : supportVee.getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_CLUB)
+                if (mounted.getType().hasFlag(EquipmentFlag.F_CLUB)
                         && mounted.getType().hasSubType(MiscType.S_SPOT_WELDER)) {
                     weight += mounted.getTonnage();
                 }
@@ -891,9 +891,9 @@ public class TestSupportVehicle extends TestEntity {
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        final BigInteger exclude = MiscType.F_BASIC_FIRECONTROL.or(MiscType.F_ADVANCED_FIRECONTROL)
-                .or(MiscType.F_CHASSIS_MODIFICATION);
-        return !eq.hasFlag(exclude);
+        final var exclude = EquipmentFlag.F_BASIC_FIRECONTROL.asEquipmentFlagSet().or(EquipmentFlag.F_ADVANCED_FIRECONTROL)
+                .or(EquipmentFlag.F_CHASSIS_MODIFICATION);
+        return !eq.hasFlags(exclude);
     }
 
     @Override
@@ -933,8 +933,8 @@ public class TestSupportVehicle extends TestEntity {
     public String printWeightControls() {
         String fireCon = "";
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)
-                    || mounted.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_BASIC_FIRECONTROL)
+                    || mounted.getType().hasFlag(EquipmentFlag.F_ADVANCED_FIRECONTROL)) {
                 fireCon = StringUtil.makeLength(mounted.getName(), getPrintSize() - 5)
                         + TestEntity.makeWeightString(mounted.getTonnage(), usesKgStandard()) + "\n";
                 break;
@@ -1085,22 +1085,22 @@ public class TestSupportVehicle extends TestEntity {
         boolean sponson = false;
         boolean pintle = false;
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)
+            if (mounted.getType().hasFlag(EquipmentFlag.F_ARMORED_MOTIVE_SYSTEM)
                     && (getEntity() instanceof Aero || getEntity() instanceof VTOL)) {
                 buff.append("Armored Motive system and incompatible movement mode!\n\n");
                 correct = false;
-            } else if (mounted.getType().hasFlag(MiscType.F_LIFEBOAT)
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_LIFEBOAT)
                     && mounted.getType().hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)
                     && !SVType.NAVAL.equals(SVType.getVehicleType(supportVee))
-                    && !supportVee.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+                    && !supportVee.hasWorkingMisc(EquipmentFlag.F_AMPHIBIOUS)) {
                 buff.append(mounted.getName())
                         .append(" requires naval support vehicle or amphibious chassis modification.\n");
                 correct = false;
-            } else if (mounted.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_EXTERNAL_STORES_HARDPOINT)) {
                 hardPoints++;
-            } else if (mounted.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_SPONSON_TURRET)) {
                 sponson = true;
-            } else if (mounted.getType().hasFlag(MiscType.F_PINTLE_TURRET)) {
+            } else if (mounted.getType().hasFlag(EquipmentFlag.F_PINTLE_TURRET)) {
                 pintle = true;
             }
         }
@@ -1132,28 +1132,28 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         if (supportVee.isOmni()
-                && (supportVee.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
-                        || supportVee.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))
+                && (supportVee.hasWorkingMisc(EquipmentFlag.F_BASIC_FIRECONTROL)
+                        || supportVee.hasWorkingMisc(EquipmentFlag.F_ADVANCED_FIRECONTROL))
                 && (weaponWeight / 10.0 > supportVee.getBaseChassisFireConWeight())) {
             buff.append("Omni configuration exceeds weapon capacity of base chassis fire control system.\n");
             correct = false;
         }
         for (Mounted<?> mounted : supportVee.getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
-                    && !mounted.getType().hasFlag(MiscType.F_SUPPORT_TANK_EQUIPMENT)) {
+                    && !mounted.getType().hasFlag(EquipmentFlag.F_SUPPORT_TANK_EQUIPMENT)) {
                 buff.append(mounted.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if ((supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT)
                     && (((mounted.getType() instanceof WeaponType)
-                            && !mounted.getType().hasFlag(WeaponType.F_INFANTRY))
+                            && !mounted.getType().hasFlag(WeaponTypeFlag.F_INFANTRY))
                             || ((mounted.getType() instanceof MiscType)
-                                    && mounted.getType().hasFlag(MiscType.F_HEAVY_EQUIPMENT)))) {
+                                    && mounted.getType().hasFlag(EquipmentFlag.F_HEAVY_EQUIPMENT)))) {
                 buff.append("Small support vehicles cannot mount heavy weapons or equipment (")
                         .append(mounted.getName()).append(").\n");
                 correct = false;
             } else if ((mounted.getType() instanceof WeaponType)
                     && (supportVee.getWeightClass() != EntityWeightClass.WEIGHT_SMALL_SUPPORT)
-                    && !mounted.getType().hasFlag(WeaponType.F_TANK_WEAPON)) {
+                    && !mounted.getType().hasFlag(WeaponTypeFlag.F_TANK_WEAPON)) {
                 buff.append(mounted.getType().getName()).append(" cannot be used by support vehicles.\n");
                 correct = false;
             } else if (!TestTank.legalForMotiveType(mounted.getType(), supportVee.getMovementMode(), true)) {
@@ -1166,7 +1166,7 @@ public class TestSupportVehicle extends TestEntity {
             int count = 0;
 
             for (Mounted<?> misc : supportVee.getMisc()) {
-                if ((misc.getLocation() == loc) && misc.getType().hasFlag(MiscType.F_MANIPULATOR)) {
+                if ((misc.getLocation() == loc) && misc.getType().hasFlag(EquipmentFlag.F_MANIPULATOR)) {
                     count++;
                 }
             }
@@ -1221,10 +1221,10 @@ public class TestSupportVehicle extends TestEntity {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buffer) {
         boolean illegal = super.hasIllegalEquipmentCombinations(buffer);
         for (Mounted<?> mounted : supportVee.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)
-                    || mounted.getType().hasFlag(MiscType.F_AMPHIBIOUS)
-                    || mounted.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                    || mounted.getType().hasFlag(MiscType.F_SUBMERSIBLE)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_ARMORED_CHASSIS)
+                    || mounted.getType().hasFlag(EquipmentFlag.F_AMPHIBIOUS)
+                    || mounted.getType().hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)
+                    || mounted.getType().hasFlag(EquipmentFlag.F_SUBMERSIBLE)) {
                 for (int loc = supportVee.firstArmorIndex(); loc < supportVee.locations(); loc++) {
                     // Tanks have the body location first. Aero SVs have it last, but also have the
                     // squadron wings location.
@@ -1250,14 +1250,14 @@ public class TestSupportVehicle extends TestEntity {
     boolean hasIllegalChassisMods(StringBuffer buff) {
         boolean illegal = false;
         final Set<ChassisModification> chassisMods = supportVee.getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION))
+                .filter(m -> m.getType().hasFlag(EquipmentFlag.F_CHASSIS_MODIFICATION))
                 .map(m -> ChassisModification.getChassisMod(m.getType()))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
 
         if (!chassisMods.contains(ChassisModification.ARMORED)) {
             ArmorType armor = ArmorType.forEntity(supportVee);
 
-            if (!armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            if (!armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
                 buff.append("Advanced armor requires the Armored Chassis Mod.\n");
                 illegal = true;
             }
@@ -1355,11 +1355,11 @@ public class TestSupportVehicle extends TestEntity {
 
     private boolean isValidWeapon(Mounted<?> weapon) {
         if (supportVee.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            return weapon.getType().hasFlag(WeaponType.F_INFANTRY)
-                    && !weapon.getType().hasFlag(WeaponType.F_INFANTRY_ONLY);
+            return weapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
+                    && !weapon.getType().hasFlag(WeaponTypeFlag.F_INFANTRY_ONLY);
         }
 
-        return weapon.getType().hasFlag(WeaponType.F_TANK_WEAPON);
+        return weapon.getType().hasFlag(WeaponTypeFlag.F_TANK_WEAPON);
     }
 
     public boolean correctCriticals(StringBuffer buff) {
@@ -1447,7 +1447,7 @@ public class TestSupportVehicle extends TestEntity {
 
         boolean addedCargo = false;
         for (Mounted<?> mount : supportVee.getEquipment()) {
-            if ((mount.getType() instanceof MiscType mountType) && mountType.hasFlag(MiscType.F_CARGO)) {
+            if ((mount.getType() instanceof MiscType mountType) && mountType.hasFlag(EquipmentFlag.F_CARGO)) {
                 if (!addedCargo) {
                     buff.append(StringUtil.makeLength(mount.getName(), 30));
                     buff.append(mountType.getSupportVeeSlots(supportVee)).append("\n");
@@ -1460,7 +1460,7 @@ public class TestSupportVehicle extends TestEntity {
 
             if (!(mount.getType() instanceof AmmoType)
                     && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
-                    && !mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    && !mount.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
                 buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }
@@ -1622,13 +1622,13 @@ public class TestSupportVehicle extends TestEntity {
         for (Mounted<?> mounted : supportVee.getMisc()) {
             // Skip armor and jump jets
             if ((EquipmentType.getArmorType(mounted.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
-                    && !mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    && !mounted.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
                 slots += mounted.getType().getSupportVeeSlots(supportVee);
             }
         }
 
         // Jump jets take a single slot regardless of the number.
-        if (supportVee.hasWorkingMisc(MiscType.F_JUMP_JET)) {
+        if (supportVee.hasWorkingMisc(EquipmentFlag.F_JUMP_JET)) {
             slots++;
         }
 

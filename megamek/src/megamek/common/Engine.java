@@ -14,13 +14,16 @@
  */
 package megamek.common;
 
+import megamek.common.verifier.TestEntity;
+
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
- * 
+ *
  * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
@@ -332,7 +335,7 @@ public class Engine implements Serializable, ITechnology {
      * Returns the weight of the engine, rounded by roundWeight.
      *
      * @param roundWeight One of the rounding factors given in
-     *                    {@link megamek.common.verifier.TestEntity}.
+     *                    {@link TestEntity}.
      * @return the weight of the engine in tons.
      */
     public double getWeightEngine(Entity entity, RoundWeight roundWeight) {
@@ -464,6 +467,9 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
+    private static final List<Integer> ENGINE_TYPES = List.of(COMBUSTION_ENGINE, NORMAL_ENGINE, XL_ENGINE, XXL_ENGINE, FUEL_CELL,
+        LIGHT_ENGINE, COMPACT_ENGINE, FISSION, NONE, MAGLEV, STEAM, BATTERY, SOLAR, EXTERNAL);
+
     public static String getEngineTypeName(int engineType) {
         if ((engineType < 0) || (engineType >= TYPE_KEYS.length)) {
             return Messages.getString("Engine.invalid");
@@ -472,22 +478,10 @@ public class Engine implements Serializable, ITechnology {
     }
 
     public static Map<Integer, String> getAllEngineCodeName() {
-        Map<Integer, String> result = new HashMap();
-
-        result.put(COMBUSTION_ENGINE, getEngineTypeName(COMBUSTION_ENGINE));
-        result.put(NORMAL_ENGINE, getEngineTypeName(NORMAL_ENGINE));
-        result.put(XL_ENGINE, getEngineTypeName(XL_ENGINE));
-        result.put(XXL_ENGINE, getEngineTypeName(XXL_ENGINE));
-        result.put(FUEL_CELL, getEngineTypeName(FUEL_CELL));
-        result.put(LIGHT_ENGINE, getEngineTypeName(LIGHT_ENGINE));
-        result.put(COMPACT_ENGINE, getEngineTypeName(COMPACT_ENGINE));
-        result.put(FISSION, getEngineTypeName(FISSION));
-        result.put(NONE, getEngineTypeName(NONE));
-        result.put(MAGLEV, getEngineTypeName(MAGLEV));
-        result.put(STEAM, getEngineTypeName(STEAM));
-        result.put(BATTERY, getEngineTypeName(BATTERY));
-        result.put(SOLAR, getEngineTypeName(SOLAR));
-        result.put(EXTERNAL, getEngineTypeName(EXTERNAL));
+        Map<Integer, String> result = new HashMap<>();
+        for (var value : ENGINE_TYPES) {
+            result.put(value, getEngineTypeName(value));
+        }
 
         return result;
     }
@@ -640,15 +634,11 @@ public class Engine implements Serializable, ITechnology {
      */
     public int getWalkHeat(Entity e) {
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 3 : 4;
-            default:
-                return hasSCM ? 0 : 1;
-        }
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 3 : 4;
+            default -> hasSCM ? 0 : 1;
+        };
     }
 
     /**
@@ -656,15 +646,11 @@ public class Engine implements Serializable, ITechnology {
      */
     public int getRunHeat(Entity e) {
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 4 : 6;
-            default:
-                return hasSCM ? 0 : 2;
-        }
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 4 : 6;
+            default -> hasSCM ? 0 : 2;
+        };
     }
 
     /**
@@ -672,15 +658,11 @@ public class Engine implements Serializable, ITechnology {
      */
     public int getSprintHeat(Entity e) {
         boolean hasSCM = (e instanceof Mek) && e.hasWorkingSCM();
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-            case FUEL_CELL:
-                return 0;
-            case XXL_ENGINE:
-                return hasSCM ? 6 : 9;
-            default:
-                return hasSCM ? 0 : 3;
-        }
+        return switch (engineType) {
+            case COMBUSTION_ENGINE, FUEL_CELL -> 0;
+            case XXL_ENGINE -> hasSCM ? 6 : 9;
+            default -> hasSCM ? 0 : 3;
+        };
     }
 
     /**
@@ -709,36 +691,17 @@ public class Engine implements Serializable, ITechnology {
     }
 
     public int getBaseCost() {
-        int cost = 0;
-        switch (engineType) {
-            case COMBUSTION_ENGINE:
-                cost = 1250;
-                break;
-            case NORMAL_ENGINE:
-                cost = 5000;
-                break;
-            case XL_ENGINE:
-                cost = 20000;
-                break;
-            case XXL_ENGINE:
-                cost = 100000;
-                break;
-            case COMPACT_ENGINE:
-                cost = 10000;
-                break;
-            case LIGHT_ENGINE:
-                cost = 15000;
-                break;
-            case FUEL_CELL:
-                cost = 3500;
-                break;
-            case FISSION:
-                cost = 7500;
-                break;
-            case NONE:
-                cost = 0;
-                break;
-        }
+        int cost = switch (engineType) {
+            case COMBUSTION_ENGINE -> 1250;
+            case NORMAL_ENGINE -> 5000;
+            case XL_ENGINE -> 20000;
+            case XXL_ENGINE -> 100000;
+            case COMPACT_ENGINE -> 10000;
+            case LIGHT_ENGINE -> 15000;
+            case FUEL_CELL -> 3500;
+            case FISSION -> 7500;
+            default -> 0;
+        };
         if (hasFlag(LARGE_ENGINE)) {
             cost *= 2;
         }
@@ -754,26 +717,16 @@ public class Engine implements Serializable, ITechnology {
      * @return The type multiplier for cost
      */
     public static double getSVCostMultiplier(int etype) {
-        switch (etype) {
-            case STEAM:
-                return 0.8;
-            case BATTERY:
-                return 1.2;
-            case FUEL_CELL:
-                return 1.4;
-            case SOLAR:
-                return 1.6;
-            case MAGLEV:
-                return 2.5;
-            case FISSION:
-                return 3.0;
-            case NORMAL_ENGINE:
-                return 2.0;
-            case COMBUSTION_ENGINE:
-            case EXTERNAL:
-            default:
-                return 1.0;
-        }
+        return switch (etype) {
+            case STEAM -> 0.8;
+            case BATTERY -> 1.2;
+            case FUEL_CELL -> 1.4;
+            case SOLAR -> 1.6;
+            case MAGLEV -> 2.5;
+            case FISSION -> 3.0;
+            case NORMAL_ENGINE -> 2.0;
+            default -> 1.0;
+        };
     }
 
     private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)

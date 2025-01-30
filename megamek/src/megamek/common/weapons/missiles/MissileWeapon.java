@@ -19,17 +19,14 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
+import static megamek.common.WeaponTypeFlag.*;
 
 /**
  * @author Sebastian Brocks
@@ -74,11 +71,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
         }
         int clusterRoll = 7;
         if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
+            if (fcs.getType().hasFlag(EquipmentFlag.F_ARTEMIS)) {
                 clusterRoll = 9;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (fcs.getType().hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+            } else if (fcs.getType().hasFlag(EquipmentFlag.F_ARTEMIS_V)) {
                 clusterRoll = 11;
             }
         }

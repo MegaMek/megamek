@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-
 /**
  * @author Ben Grills
  */
@@ -39,7 +38,7 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 15;
         bv = 0.01;
-        tonnage = .001; 
+        tonnage = .001;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
         infantryDamage = 0.01;
         infantryRange = 0;

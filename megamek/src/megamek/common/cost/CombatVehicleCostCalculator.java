@@ -34,58 +34,58 @@ public class CombatVehicleCostCalculator {
         // Chassis cost for Support Vehicles
         if (tank.isSupportVehicle()) {
             double chassisCost = 2500 * SupportVeeStructure.getWeightStructure(tank);
-            if (tank.hasMisc(MiscType.F_AMPHIBIOUS)) {
+            if (tank.hasMisc(EquipmentFlag.F_AMPHIBIOUS)) {
                 chassisCost *= 1.25;
             }
-            if (tank.hasMisc(MiscType.F_ARMORED_CHASSIS)) {
+            if (tank.hasMisc(EquipmentFlag.F_ARMORED_CHASSIS)) {
                 chassisCost *= 2.0;
             }
-            if (tank.hasMisc(MiscType.F_BICYCLE)) {
+            if (tank.hasMisc(EquipmentFlag.F_BICYCLE)) {
                 chassisCost *= 0.75;
             }
-            if (tank.hasMisc(MiscType.F_CONVERTIBLE)) {
+            if (tank.hasMisc(EquipmentFlag.F_CONVERTIBLE)) {
                 chassisCost *= 1.1;
             }
-            if (tank.hasMisc(MiscType.F_DUNE_BUGGY)) {
+            if (tank.hasMisc(EquipmentFlag.F_DUNE_BUGGY)) {
                 chassisCost *= 1.25;
             }
-            if (tank.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            if (tank.hasMisc(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
                 chassisCost *= 1.75;
             }
-            if (tank.hasMisc(MiscType.F_EXTERNAL_POWER_PICKUP)) {
+            if (tank.hasMisc(EquipmentFlag.F_EXTERNAL_POWER_PICKUP)) {
                 chassisCost *= 1.1;
             }
-            if (tank.hasMisc(MiscType.F_HYDROFOIL)) {
+            if (tank.hasMisc(EquipmentFlag.F_HYDROFOIL)) {
                 chassisCost *= 1.1;
             }
-            if (tank.hasMisc(MiscType.F_MONOCYCLE)) {
+            if (tank.hasMisc(EquipmentFlag.F_MONOCYCLE)) {
                 chassisCost *= 1.3;
             }
-            if (tank.hasMisc(MiscType.F_OFF_ROAD)) {
+            if (tank.hasMisc(EquipmentFlag.F_OFF_ROAD)) {
                 chassisCost *= 1.2;
             }
-            if (tank.hasMisc(MiscType.F_PROP)) {
+            if (tank.hasMisc(EquipmentFlag.F_PROP)) {
                 chassisCost *= 0.75;
             }
-            if (tank.hasMisc(MiscType.F_SNOWMOBILE)) {
+            if (tank.hasMisc(EquipmentFlag.F_SNOWMOBILE)) {
                 chassisCost *= 1.3;
             }
-            if (tank.hasMisc(MiscType.F_STOL_CHASSIS)) {
+            if (tank.hasMisc(EquipmentFlag.F_STOL_CHASSIS)) {
                 chassisCost *= 1.5;
             }
-            if (tank.hasMisc(MiscType.F_SUBMERSIBLE)) {
+            if (tank.hasMisc(EquipmentFlag.F_SUBMERSIBLE)) {
                 chassisCost *= 3.5;
             }
-            if (tank.hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+            if (tank.hasMisc(EquipmentFlag.F_TRACTOR_MODIFICATION)) {
                 chassisCost *= 1.1;
             }
-            if (tank.hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+            if (tank.hasMisc(EquipmentFlag.F_TRAILER_MODIFICATION)) {
                 chassisCost *= 0.75;
             }
-            if (tank.hasMisc(MiscType.F_ULTRA_LIGHT)) {
+            if (tank.hasMisc(EquipmentFlag.F_ULTRA_LIGHT)) {
                 chassisCost *= 1.5;
             }
-            if (tank.hasMisc(MiscType.F_VSTOL_CHASSIS)) {
+            if (tank.hasMisc(EquipmentFlag.F_VSTOL_CHASSIS)) {
                 chassisCost *= 2;
             }
             costs[i++] = chassisCost;
@@ -111,7 +111,7 @@ public class CombatVehicleCostCalculator {
             }
         } else {
             ArmorType armor = ArmorType.forEntity(tank);
-            if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            if (armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
                 costs[i++] = tank.getTotalOArmor() * armor.getCost();
             } else {
                 costs[i++] = tank.getArmorWeight() * ArmorType.forEntity(tank).getCost();
@@ -151,7 +151,7 @@ public class CombatVehicleCostCalculator {
             if ((m.getLocation() == tank.getLocTurret()) || (m.getLocation() == tank.getLocTurret2())) {
                 turretWeight += m.getTonnage() / 10.0;
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                        && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                     turretWeight += m.getLinkedBy().getTonnage() / 10.0;
                 }
             }
@@ -238,13 +238,13 @@ public class CombatVehicleCostCalculator {
         costs[i++] = -multiplier;
 
         if (!tank.isSupportVehicle()) {
-            if (tank.hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                    || tank.hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            if (tank.hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL)
+                    || tank.hasWorkingMisc(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
 
             }
-            if (tank.hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+            if (tank.hasWorkingMisc(EquipmentFlag.F_OFF_ROAD)) {
                 cost *= 1.2;
                 costs[i] = -1.2;
             }

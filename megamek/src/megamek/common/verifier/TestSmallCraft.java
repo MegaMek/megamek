@@ -57,7 +57,7 @@ public class TestSmallCraft extends TestAero {
      */
     public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
         return ArmorType.allArmorTypes().stream()
-                .filter(at -> at.hasFlag(MiscType.F_SC_EQUIPMENT) && techManager.isLegal(at))
+                .filter(at -> at.hasFlag(EquipmentFlag.F_SC_EQUIPMENT) && techManager.isLegal(at))
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +102,7 @@ public class TestSmallCraft extends TestAero {
         final int arcs = sc.isSpheroid() ? 8 : 5;
         int[] weaponsPerArc = new int[arcs];
         double[] weaponTonnage = new double[arcs];
-        boolean hasNC3 = sc.hasWorkingMisc(MiscType.F_NAVAL_C3);
+        boolean hasNC3 = sc.hasWorkingMisc(EquipmentFlag.F_NAVAL_C3);
 
         for (Mounted<?> m : sc.getEquipment()) {
             if (usesWeaponSlot(sc, m.getType())) {
@@ -585,12 +585,12 @@ public class TestSmallCraft extends TestAero {
         Map<EquipmentType, Integer> leftAft = new HashMap<>();
         Map<EquipmentType, Integer> rightFwd = new HashMap<>();
         Map<EquipmentType, Integer> rightAft = new HashMap<>();
-        BigInteger typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
-                ? MiscType.F_DS_EQUIPMENT
-                : MiscType.F_SC_EQUIPMENT;
+        var typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                ? EquipmentFlag.F_DS_EQUIPMENT
+                : EquipmentFlag.F_SC_EQUIPMENT;
         for (Mounted<?> m : smallCraft.getEquipment()) {
             if (m.getType() instanceof MiscType) {
-                if (!m.getType().hasFlag(typeFlag) && !m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                if (!m.getType().hasFlag(typeFlag) && !m.getType().hasFlag(EquipmentFlag.F_SINGLE_HEX_ECM)) {
                     buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                     illegal = true;
                 }

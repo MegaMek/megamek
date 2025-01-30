@@ -389,26 +389,26 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static int equipmentCrewRequirements(Mounted<?> mounted) {
         if (mounted.getType() instanceof MiscType) {
-            if (mounted.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_MOBILE_FIELD_BASE)) {
                 return 5;
             }
-            if (mounted.getType().hasFlag(MiscType.F_MASH)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_MASH)) {
                 return 5 * (int) mounted.getSize();
             }
-            if (mounted.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_FIELD_KITCHEN)) {
                 return 3;
             }
-            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_COMMUNICATIONS)) {
                 return (int) mounted.getTonnage();
             }
-            if (mounted.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_MOBILE_HPG)) {
                 // Mobile HPG has crew requirement of 10; ground-mobile has requirement of 1.
-                return mounted.getType().hasFlag(MiscType.F_TANK_EQUIPMENT) ? 1 : 10;
+                return mounted.getType().hasFlag(EquipmentFlag.F_TANK_EQUIPMENT) ? 1 : 10;
             }
-            if (mounted.getType().hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_SMALL_COMM_SCANNER_SUITE)) {
                 return 6;
             }
-            if (mounted.getType().hasFlag(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_LARGE_COMM_SCANNER_SUITE)) {
                 return 12;
             }
         }
@@ -571,33 +571,33 @@ public abstract class TestEntity implements TestEntityOption {
         for (Mounted<?> m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             if (!includeMiscEquip(mt)
-                    || mt.hasFlag(MiscType.F_ENDO_STEEL)
-                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
-                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)
-                    || mt.hasFlag(MiscType.F_REINFORCED)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
-                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
-                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
-                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
-                    || mt.hasFlag(MiscType.F_REACTIVE)
-                    || mt.hasFlag(MiscType.F_REFLECTIVE)
-                    || mt.hasFlag(MiscType.F_HARDENED_ARMOR)
-                    || mt.hasFlag(MiscType.F_PRIMITIVE_ARMOR)
-                    || mt.hasFlag(MiscType.F_COMMERCIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_HEAVY_INDUSTRIAL_ARMOR)
-                    || mt.hasFlag(MiscType.F_ANTI_PENETRATIVE_ABLATIVE)
-                    || mt.hasFlag(MiscType.F_HEAT_DISSIPATING)
-                    || mt.hasFlag(MiscType.F_IMPACT_RESISTANT)
-                    || mt.hasFlag(MiscType.F_BALLISTIC_REINFORCED)
-                    || mt.hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
-                    || mt.hasFlag(MiscType.F_HEAT_SINK)
-                    || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_STEEL)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_STEEL_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_INDUSTRIAL_STRUCTURE)
+                    || mt.hasFlag(EquipmentFlag.F_REINFORCED)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(EquipmentFlag.F_LIGHT_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_HEAVY_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_REACTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_REFLECTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_HARDENED_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_PRIMITIVE_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_COMMERCIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_HEAVY_INDUSTRIAL_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_ANTI_PENETRATIVE_ABLATIVE)
+                    || mt.hasFlag(EquipmentFlag.F_HEAT_DISSIPATING)
+                    || mt.hasFlag(EquipmentFlag.F_IMPACT_RESISTANT)
+                    || mt.hasFlag(EquipmentFlag.F_BALLISTIC_REINFORCED)
+                    || mt.hasFlag(EquipmentFlag.F_ELECTRIC_DISCHARGE_ARMOR)
+                    || mt.hasFlag(EquipmentFlag.F_HEAT_SINK)
+                    || mt.hasFlag(EquipmentFlag.F_DOUBLE_HEAT_SINK)
+                    || mt.hasFlag(EquipmentFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
             weightSum += m.getTonnage();
@@ -621,18 +621,18 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getLocation() == Entity.LOC_NONE) {
                 continue;
             }
-            if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
-                    || mt.hasFlag(MiscType.F_ENDO_STEEL)
-                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
-                    || mt.hasFlag(MiscType.F_REINFORCED)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
-                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
-                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
-                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
-                    || mt.hasFlag(MiscType.F_REACTIVE)
-                    || mt.hasFlag(MiscType.F_REFLECTIVE)
-                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)) {
+            if (mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_STEEL)
+                    || mt.hasFlag(EquipmentFlag.F_ENDO_STEEL_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_REINFORCED)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_FIBROUS_PROTO)
+                    || mt.hasFlag(EquipmentFlag.F_LIGHT_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_HEAVY_FERRO)
+                    || mt.hasFlag(EquipmentFlag.F_REACTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_REFLECTIVE)
+                    || mt.hasFlag(EquipmentFlag.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(EquipmentFlag.F_INDUSTRIAL_STRUCTURE)) {
                 continue;
             }
 
@@ -764,38 +764,38 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public int calcMiscCrits(MiscType mt, double size) {
-        if (mt.hasFlag(MiscType.F_CLUB)
+        if (mt.hasFlag(EquipmentFlag.F_CLUB)
                 && (mt.hasSubType(MiscType.S_HATCHET)
                         || mt.hasSubType(MiscType.S_SWORD)
                         || mt.hasSubType(MiscType.S_CHAIN_WHIP))) {
             return (int) Math.ceil(getWeight() / 15.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_MACE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_MACE)) {
             return (int) Math.ceil(getWeight() / 10.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
             return 1 + (int) Math.ceil(getWeight() / 20.0);
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
             return 8;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_CHAINSAW)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_CHAINSAW)) {
             return 5;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_DUAL_SAW)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_DUAL_SAW)) {
             return 7;
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_BACKHOE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_CLUB) && mt.hasSubType(MiscType.S_BACKHOE)) {
             return 6;
-        } else if (mt.hasFlag(MiscType.F_MASC)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC")) {
                 return (int) Math.round(getWeight() / 20.0);
             } else if (mt.getInternalName().equals("CLMASC")) {
                 return (int) Math.round(getWeight() / 25.0);
             }
-        } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_TARGCOMP)) {
             double fTons = 0.0f;
             for (WeaponMounted mounted : getEntity().getWeaponList()) {
-                if (mounted.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                if (mounted.getType().hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
                     fTons += mounted.getTonnage();
                 }
             }
             for (MiscMounted mounted : getEntity().getMisc()) {
-               if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+               if (mounted.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
                     fTons += mounted.getTonnage();
                 }
             }
@@ -832,7 +832,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName())) {
             return 21;
-        } else if (mt.hasFlag(MiscType.F_ENDO_STEEL)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_ENDO_STEEL)) {
             if (isClan()
                     || mt.getInternalName()
                             .equals("Clan "
@@ -841,9 +841,9 @@ public abstract class TestEntity implements TestEntityOption {
                 return 7;
             }
             return 14;
-        } else if (mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_ENDO_STEEL_PROTO)) {
             return 16;
-        } else if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_ENDO_COMPOSITE)) {
             if (isClan()
                     || mt.getInternalName()
                             .equals("Clan "
@@ -852,12 +852,12 @@ public abstract class TestEntity implements TestEntityOption {
                 return 4;
             }
             return 7;
-        } else if (mt.hasFlag(MiscType.F_REACTIVE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_REACTIVE)) {
             if (isClanArmor()) {
                 return 7;
             }
             return 14;
-        } else if (mt.hasFlag(MiscType.F_REFLECTIVE)) {
+        } else if (mt.hasFlag(EquipmentFlag.F_REFLECTIVE)) {
             if (isClanArmor()) {
                 return 5;
             }
@@ -892,17 +892,17 @@ public abstract class TestEntity implements TestEntityOption {
         int heat = 0;
         for (Mounted<?> m : entity.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
-                    || wt.hasFlag(WeaponType.F_PPC)
-                    || wt.hasFlag(WeaponType.F_PLASMA)
-                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
-                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+            if ((wt.hasFlag(WeaponTypeFlag.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+                    || wt.hasFlag(WeaponTypeFlag.F_PPC)
+                    || wt.hasFlag(WeaponTypeFlag.F_PLASMA)
+                    || wt.hasFlag(WeaponTypeFlag.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponTypeFlag.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
+            if (wt.hasFlag(WeaponTypeFlag.F_LASER) && (m.getLinkedBy() != null)
                     && !m.getLinkedBy().isInoperable()
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                    && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR)) {
                 heat -= 1;
                 if (heat == 0) {
                     heat++;
@@ -910,14 +910,14 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof MiscType)
-                    && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    && m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                 heat += 5;
             }
         }
         for (Mounted<?> m : entity.getMisc()) {
             // Spot welders are treated as energy weapons on units that don't have a fusion
             // or fission engine
-            if (m.getType().hasFlag(MiscType.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
+            if (m.getType().hasFlag(EquipmentFlag.F_CLUB) && m.getType().hasSubType(MiscType.S_SPOT_WELDER)
                     && entity.hasEngine() && (entity.getEngine().isFusion()
                             || (entity.getEngine().getEngineType() == Engine.FISSION))) {
                 continue;
@@ -1425,95 +1425,95 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         for (Mounted<?> m : getEntity().getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
                 emergencyCoolantCount++;
             }
-            if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
             }
-            if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_MINESWEEPER)) {
                 minesweeperCount++;
             }
 
-            if (m.getType().hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
                 if (getEntity() instanceof ProtoMek) {
                     illegal = true;
                     buff.append("ProtoMek can't mount light fluid suction system\n");
                 }
             }
-            if (m.getType().hasFlag(MiscType.F_VOIDSIG)
-                    && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_VOIDSIG)
+                    && !getEntity().hasWorkingMisc(EquipmentFlag.F_ECM)) {
                 illegal = true;
                 buff.append("void signature system needs ECM suite\n");
             }
-            if (m.getType().hasFlag(MiscType.F_HARJEL_II)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_HARJEL_II)) {
                 hasHarjelII = true;
             }
-            if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_HARJEL_III)) {
                 hasHarjelIII = true;
             }
-            if (m.getType().hasFlag(MiscType.F_FUEL)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_FUEL)) {
                 hasExternalFuelTank = true;
             }
-            if ((m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !countedC3) {
+            if ((m.getType().hasFlag(EquipmentFlag.F_C3S) || m.getType().hasFlag(EquipmentFlag.F_C3SBS)) && !countedC3) {
                 networks++;
                 countedC3 = true;
             }
-            if (m.getType().hasFlag(MiscType.F_C3I) || m.getType().hasFlag(MiscType.F_NOVA)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_C3I) || m.getType().hasFlag(EquipmentFlag.F_NOVA)) {
                 networks++;
             }
             if (m.is(Sensor.NOVA) && (!getEntity().hasEngine() || !getEntity().getEngine().isFusion())) {
                 buff.append("Nova CEWS may only be used on units with a fusion engine\n");
                 illegal = true;
             }
-            if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
-                    || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_SRCS) || m.getType().hasFlag(EquipmentFlag.F_SASRCS)
+                    || m.getType().hasFlag(EquipmentFlag.F_CASPAR) || m.getType().hasFlag(EquipmentFlag.F_CASPARII)) {
                 robotics++;
             }
-            if (m.getType().hasFlag(MiscType.F_LIFTHOIST)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_LIFTHOIST)) {
                 liftHoists++;
             } else if ((m.getLocation() > 0)
-                    && ((m.getType().hasFlag(MiscType.F_CLUB) && !((MiscType) m.getType()).isShield())
-                            || m.getType().hasFlag(MiscType.F_BULLDOZER)
-                            || m.getType().hasFlag(MiscType.F_HAND_WEAPON))) {
+                    && ((m.getType().hasFlag(EquipmentFlag.F_CLUB) && !((MiscType) m.getType()).isShield())
+                            || m.getType().hasFlag(EquipmentFlag.F_BULLDOZER)
+                            || m.getType().hasFlag(EquipmentFlag.F_HAND_WEAPON))) {
                 physicalWeaponsByLocation.computeIfAbsent(m.getLocation(), ArrayList::new).add(m.getType());
-            } else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_LIGHT_BRIDGE_LAYER)
+                    || m.getType().hasFlag(EquipmentFlag.F_MEDIUM_BRIDGE_LAYER)
+                    || m.getType().hasFlag(EquipmentFlag.F_HEAVY_BRIDGE_LAYER)) {
                 bridgeLayersByLocation.merge(m.getLocation(), 1, Integer::sum);
             }
 
-            if (m.getType().hasFlag(MiscType.F_ARTEMIS)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_ARTEMIS)) {
                 artemisIV++;
-            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_ARTEMIS_V)) {
                 artemisV++;
-            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)) {
                 artemisP++;
-            } else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_APOLLO)) {
                 apollo++;
             }
 
-            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&
+            if (m.getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR) &&
                     ((m.getLinked() == null)
                             || (m.getLinked().getLocation() != m.getLocation())
                             || !(m.getLinked().getType() instanceof WeaponType)
-                            || !m.getLinked().getType().hasFlag(WeaponType.F_LASER))) {
+                            || !m.getLinked().getType().hasFlag(WeaponTypeFlag.F_LASER))) {
                 buff.append("Laser insulator requires a laser in the same location.\n");
                 illegal = true;
             }
-            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) &&
+            if (m.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE) &&
                     ((m.getLinked() == null)
                             || (m.getLinked().getLocation() != m.getLocation())
                             || !(m.getLinked().getType() instanceof WeaponType)
-                            || !m.getLinked().getType().hasFlag(WeaponType.F_LASER)
-                            || m.getLinked().getType().hasFlag(WeaponType.F_PULSE))) {
+                            || !m.getLinked().getType().hasFlag(WeaponTypeFlag.F_LASER)
+                            || m.getLinked().getType().hasFlag(WeaponTypeFlag.F_PULSE))) {
                 buff.append("RISC Laser Pulse Module requires a non-pulse laser in the same location.\n");
                 illegal = true;
             }
         }
         if ((networks > 0) && !countedC3) {
             for (Mounted<?> m : getEntity().getIndividualWeaponList()) {
-                if (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) {
+                if (m.getType().hasFlag(WeaponTypeFlag.F_C3M) || m.getType().hasFlag(WeaponTypeFlag.F_C3MBS)) {
                     networks++;
                 }
             }
@@ -1526,12 +1526,12 @@ public abstract class TestEntity implements TestEntityOption {
                         || (m.getType().getAmmoType() == AmmoType.T_IGAUSS_HEAVY)) {
                     buff.append("Heavy Gauss Rifles require a fusion or fission engine\n");
                     illegal = true;
-                } else if (m.getType().hasFlag(WeaponType.F_FLAMER)
+                } else if (m.getType().hasFlag(WeaponTypeFlag.F_FLAMER)
                         && (m.getType().getAmmoType() == AmmoType.T_NA)
                         && !(m.getType() instanceof BAFlamerWeapon)) {
                     buff.append("Standard flamers require a fusion or fission engine\n");
                     illegal = true;
-                } else if (m.getType().hasFlag(WeaponType.F_HYPER)) {
+                } else if (m.getType().hasFlag(WeaponTypeFlag.F_HYPER)) {
                     buff.append("RISC Hyper Lasers require a fusion or fission engine\n");
                     illegal = true;
                 }
@@ -1574,7 +1574,7 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Unit has multiple drone control systems.\n");
             illegal = true;
         }
-        if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+        if (getEntity().hasStealth() && !getEntity().hasWorkingMisc(EquipmentFlag.F_ECM)) {
             buff.append("Stealth armor requires an ECM generator.\n");
             illegal = true;
         }
@@ -1629,7 +1629,7 @@ public abstract class TestEntity implements TestEntityOption {
         // Find all locations with modular armor and map the number in that location to
         // the location index.
         Map<Integer, Long> modArmorByLocation = getEntity().getMisc().stream()
-                .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
+                .filter(m -> m.getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR))
                 .filter(m -> m.getLocation() != Entity.LOC_NONE)
                 .collect(Collectors.groupingBy(Mounted::getLocation, Collectors.counting()));
         for (Integer loc : modArmorByLocation.keySet()) {
@@ -1647,7 +1647,7 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal = true;
             }
             illegal |= checkIllegalArtemisApolloLinks(buff, artemisIV + artemisV + artemisP,
-                    "Artemis", w -> w.hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE));
+                    "Artemis", w -> w.hasFlag(WeaponTypeFlag.F_ARTEMIS_COMPATIBLE));
         }
         if (apollo > 0) {
             illegal |= checkIllegalArtemisApolloLinks(buff, apollo, "Apollo",

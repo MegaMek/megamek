@@ -16,7 +16,7 @@ package megamek.common.weapons.capitalweapons;
 import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.lasers.EnergyWeapon;
-
+import static megamek.common.WeaponTypeFlag.*;
 /**
  * @author Jay Lawson
  * @since Sep 2, 2004

@@ -556,7 +556,7 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case SAND:
-                if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
+                if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(EquipmentFlag.F_DUNE_BUGGY))
                         || (moveMode == EntityMovementMode.INF_JUMP) || (moveMode == EntityMovementMode.INF_LEG)
                         || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
                     return 1;

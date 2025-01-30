@@ -48,13 +48,13 @@ public final class PilotSPAHelper {
      */
     public static boolean isWeaponSpecialistValid(EquipmentType equipmentType, @Nullable GameOptions options) {
         boolean amsAsWeapon = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)
-                && (equipmentType.hasFlag(WeaponType.F_AMS));
+                && (equipmentType.hasFlag(WeaponTypeFlag.F_AMS));
 
         return (equipmentType instanceof WeaponType) && !(equipmentType instanceof BayWeapon)
-                && (!equipmentType.hasFlag(WeaponType.F_AMS) || amsAsWeapon)
+                && (!equipmentType.hasFlag(WeaponTypeFlag.F_AMS) || amsAsWeapon)
                 && !equipmentType.is("Screen Launcher")
-                && !equipmentType.hasFlag(WeaponType.F_C3M) && !equipmentType.hasFlag(WeaponType.F_C3MBS)
-                && !equipmentType.hasFlag(WeaponType.F_INFANTRY_ATTACK);
+                && !equipmentType.hasFlag(WeaponTypeFlag.F_C3M) && !equipmentType.hasFlag(WeaponTypeFlag.F_C3MBS)
+                && !equipmentType.hasFlag(WeaponTypeFlag.F_INFANTRY_ATTACK);
     }
 
     /**

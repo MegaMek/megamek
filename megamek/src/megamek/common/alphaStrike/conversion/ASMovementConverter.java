@@ -167,14 +167,14 @@ final class ASMovementConverter {
     private static boolean hasSupercharger(Entity entity) {
         return entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
-                .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_SUPERCHARGER)));
+                .anyMatch(m -> (m.hasFlag(EquipmentFlag.F_MASC) && m.hasSubType(MiscType.S_SUPERCHARGER)));
     }
 
     /** Returns true if the given entity has a Jet Booster, regardless of its state (convert as if undamaged). */
     private static boolean hasJetBooster(Entity entity) {
         return entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
-                .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && m.hasSubType(MiscType.S_JETBOOSTER)));
+                .anyMatch(m -> (m.hasFlag(EquipmentFlag.F_MASC) && m.hasSubType(MiscType.S_JETBOOSTER)));
     }
 
     /** Returns true if the given entity has a ProtoMek Myomer Booster. */
@@ -187,14 +187,14 @@ final class ASMovementConverter {
         return (entity instanceof Mek)
                 && entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
-                .anyMatch(m -> (m.hasFlag(MiscType.F_MASC) && !m.hasSubType(MiscType.S_SUPERCHARGER)));
+                .anyMatch(m -> (m.hasFlag(EquipmentFlag.F_MASC) && !m.hasSubType(MiscType.S_SUPERCHARGER)));
     }
 
     /** Returns true if the given entity has a movement reducing shield, regardless of its state (convert as if undamaged). */
     private static boolean hasMPReducingShield(Entity entity) {
         return entity.getMisc().stream()
                 .map(m -> (MiscType) m.getType())
-                .anyMatch(m -> (m.hasFlag(MiscType.F_CLUB)
+                .anyMatch(m -> (m.hasFlag(EquipmentFlag.F_CLUB)
                         && (m.hasSubType(MiscType.S_SHIELD_LARGE)
                         || m.hasSubType(MiscType.S_SHIELD_MEDIUM))));
     }

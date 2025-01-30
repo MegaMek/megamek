@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import static megamek.common.WeaponTypeFlag.*;
+
 /**
  * @author Jay Lawson
  * @since Sep 2, 2004

@@ -575,7 +575,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // We can stop looking when we find our first match.
             for (Mounted<?> mount : swarmer.getMisc()) {
                 EquipmentType equip = mount.getType();
-                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                if (equip.hasFlag(EquipmentFlag.F_MAGNET_CLAW)) {
                     rollTarget.addModifier(1, "swarmer has magnetic claws");
                     break;
                 }
@@ -803,7 +803,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
                 // If the swarmer has Assault claws, give a 1 modifier.
                 // We can stop looking when we find our first match.
-                if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
+                if (swarmer.hasWorkingMisc(EquipmentFlag.F_MAGNET_CLAW, -1)) {
                     rollTarget.addModifier(1, "swarmer has magnetic claws");
                 }
 
@@ -2137,7 +2137,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
                 } else if (step.getType() == MovePath.MoveStepType.FORTIFY) {
-                    if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                    if (!inf.hasWorkingMisc(EquipmentFlag.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");
                     }
@@ -2166,7 +2166,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (entity instanceof Tank) {
                 Tank tnk = (Tank) entity;
                 if (step.getType() == MovePath.MoveStepType.FORTIFY) {
-                    if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
+                    if (!tnk.hasWorkingMisc(EquipmentFlag.F_TRENCH_CAPABLE)) {
                         gameManager.sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");
                     }
@@ -2518,7 +2518,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             if (step.getType() == MovePath.MoveStepType.CHAFF) {
-                List<Mounted<?>> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
+                List<Mounted<?>> chaffDispensers = entity.getMiscEquipment(EquipmentFlag.F_CHAFF_POD)
                         .stream().filter(dispenser -> dispenser.isReady())
                         .collect(Collectors.toList());
                 if (chaffDispensers.size() > 0) {

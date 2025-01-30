@@ -14,11 +14,7 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileBayHandler;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.TeleMissileHandler;
-import megamek.common.weapons.Weapon;
+import megamek.common.weapons.*;
 import megamek.server.totalwarfare.TWGameManager;
 
 /**

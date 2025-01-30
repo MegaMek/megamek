@@ -780,7 +780,7 @@ public class SmallCraft extends Aero {
             return success;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
                 && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
@@ -830,8 +830,8 @@ public class SmallCraft extends Aero {
         if (!isShutDown()) {
             for (Mounted<?> m : getMisc()) {
                 EquipmentType type = m.getType();
-                if ((type instanceof MiscType) && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
-                    if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                if ((type instanceof MiscType) && type.hasFlag(EquipmentFlag.F_ECM) && !m.isInoperable()) {
+                    if (type.hasFlag(EquipmentFlag.F_SINGLE_HEX_ECM)) {
                         range += 1;
                     } else {
                         range += 2;

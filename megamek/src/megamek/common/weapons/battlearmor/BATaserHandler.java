@@ -19,13 +19,13 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import java.io.Serial;
-import java.util.Vector;
-
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.Serial;
+import java.util.Vector;
 
 public class BATaserHandler extends AmmoWeaponHandler {
     @Serial

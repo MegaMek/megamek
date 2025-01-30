@@ -20,7 +20,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-
+import static megamek.common.WeaponTypeFlag.*;
 /**
  * @author Sebastian Brocks
  */

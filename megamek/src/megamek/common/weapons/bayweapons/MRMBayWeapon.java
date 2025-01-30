@@ -46,7 +46,7 @@ public class MRMBayWeapon extends AmmoBayWeapon {
         this.toHitModifier = 1;
         this.atClass = CLASS_MRM;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               TWGameManager manager) {

@@ -13,7 +13,9 @@
  */
 package megamek.common.weapons.bayweapons;
 
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
@@ -56,7 +58,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)

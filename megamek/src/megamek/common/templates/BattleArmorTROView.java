@@ -18,15 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
+import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.InfantryAttack;
@@ -149,7 +141,7 @@ public class BattleArmorTROView extends TROView {
                     || (m.getType() == armor) || (m.getLocation() == BattleArmor.LOC_NONE)) {
                 continue;
             }
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)) {
                 continue;
             }
             row = new HashMap<>();

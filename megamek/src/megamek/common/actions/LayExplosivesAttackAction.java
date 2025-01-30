@@ -13,15 +13,7 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class LayExplosivesAttackAction extends AbstractAttackAction {
@@ -74,7 +66,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         }
         boolean ok = false;
         for (Mounted<?> m : ae.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_TOOLS)
+            if (m.getType().hasFlag(EquipmentFlag.F_TOOLS)
                     && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
                 ok = true;
                 break;

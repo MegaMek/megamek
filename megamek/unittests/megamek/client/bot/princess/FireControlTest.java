@@ -429,8 +429,8 @@ class FireControlTest {
         when(mockAmmoSRM5.getType()).thenReturn(mockAmmoTypeSRM5);
         when(mockAmmoSRM5.isAmmoUsable()).thenReturn(true);
         when(mockAmmoTypeLRM5.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
-        when(mockAmmoTypeLRM5.hasFlag(any(BigInteger.class))).thenReturn(false);
-        when(mockAmmoTypeLRM5.hasFlag(eq(AmmoType.F_MML_LRM))).thenReturn(true);
+        when(mockAmmoTypeLRM5.hasFlag(any(WeaponTypeFlag.class))).thenReturn(false);
+        when(mockAmmoTypeLRM5.hasFlag(eq(AmmoTypeFlag.F_MML_LRM))).thenReturn(true);
         when(mockAmmoTypeLRM5.getAmmoType()).thenReturn(AmmoType.T_MML);
         when(mockAmmoLRM5.getType()).thenReturn(mockAmmoTypeLRM5);
         when(mockAmmoLRM5.isAmmoUsable()).thenReturn(true);
@@ -439,7 +439,7 @@ class FireControlTest {
         when(mockAmmoInferno5.getType()).thenReturn(mockAmmoTypeInferno5);
         when(mockAmmoInferno5.isAmmoUsable()).thenReturn(true);
         when(mockAmmoTypeLrm5Frag.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_FRAGMENTATION));
-        when(mockAmmoTypeLrm5Frag.hasFlag(eq(AmmoType.F_MML_LRM))).thenReturn(true);
+        when(mockAmmoTypeLrm5Frag.hasFlag(eq(AmmoTypeFlag.F_MML_LRM))).thenReturn(true);
         when(mockAmmoTypeLrm5Frag.getAmmoType()).thenReturn(AmmoType.T_MML);
         when(mockAmmoLrm5Frag.getType()).thenReturn(mockAmmoTypeLrm5Frag);
         when(mockAmmoLrm5Frag.isAmmoUsable()).thenReturn(true);
@@ -521,7 +521,7 @@ class FireControlTest {
         when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_LRM);
         WeaponType mockEnergyWeaponType = mock(WeaponType.class);
         when(mockEnergyWeaponType.getAmmoType()).thenReturn(AmmoType.T_NA);
-        when(mockEnergyWeaponType.hasFlag(any())).thenReturn(false);
+        when(mockEnergyWeaponType.hasFlag(any(WeaponTypeFlag.class))).thenReturn(false);
         when(mockEnergyWeaponType.hasModeType(anyString())).thenReturn(false);
         mockPPC = mock(WeaponMounted.class);
         when(mockPPC.getType()).thenReturn(mockEnergyWeaponType);
@@ -1718,7 +1718,7 @@ class FireControlTest {
         when(mockWeaponType.getRanges(eq(mockWeapon), any(Mounted.class)))
                 .thenReturn(new int[] { 3, 6, 12, 18, 24 });
         when(mockWeaponType.getMinimumRange()).thenReturn(3);
-        when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(true);
+        when(mockWeaponType.hasFlag(eq(WeaponTypeFlag.F_DIRECT_FIRE))).thenReturn(true);
 
         final AmmoMounted mockAmmo = mock(AmmoMounted.class);
         when(mockWeapon.getLinked()).thenReturn((Mounted) mockAmmo);
@@ -1833,12 +1833,12 @@ class FireControlTest {
         expected.addModifier(FireControl.TH_TARGETING_COMP);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
                 mockShooterState, mockTarget, mockTargetState, mockWeapon, mockAmmo, mockGame));
-        when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(false);
+        when(mockWeaponType.hasFlag(eq(WeaponTypeFlag.F_DIRECT_FIRE))).thenReturn(false);
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
                 mockShooterState, mockTarget, mockTargetState, mockWeapon, mockAmmo, mockGame));
-        when(mockWeaponType.hasFlag(eq(WeaponType.F_DIRECT_FIRE))).thenReturn(false);
+        when(mockWeaponType.hasFlag(eq(WeaponTypeFlag.F_DIRECT_FIRE))).thenReturn(false);
         when(mockShooter.hasTargComp()).thenReturn(false);
 
         // Test ammo mods.
@@ -2151,7 +2151,7 @@ class FireControlTest {
         FiringPlan expected;
         when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         when(mockShooter.isOffBoard()).thenReturn(false);
-        when(mockShooter.getBombs(any(BigInteger.class))).thenReturn(emptyList());
+        when(mockShooter.getBombs(any(AmmoTypeFlag.class))).thenReturn(emptyList());
         when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         when(mockTarget.isOffBoard()).thenReturn(false);
         when(mockBoard.contains(eq(mockShooterCoords))).thenReturn(true);

@@ -20,7 +20,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantrySniperRifleLancelotMkV extends InfantryWeapon {
 
     /**

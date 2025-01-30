@@ -33,11 +33,7 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
-import megamek.common.Hex;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
+import megamek.common.*;
 
 /**
  * @author beerockxs
@@ -70,7 +66,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             buttonGroup.add(button);
         }
         int turretFacing = 0;
-        if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET) || turret.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
+        if (turret.getType().hasFlag(EquipmentFlag.F_SHOULDER_TURRET) || turret.getType().hasFlag(EquipmentFlag.F_QUAD_TURRET)) {
             if (turret.getLocation() == Mek.LOC_LT) {
                 for (Mounted<?> mount : mek.getEquipment()) {
                     if ((mount.getLocation() == Mek.LOC_LT) && mount.isMekTurretMounted()) {
@@ -86,7 +82,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-        } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
+        } else if (turret.getType().hasFlag(EquipmentFlag.F_HEAD_TURRET)) {
             for (Mounted<?> mount : mek.getEquipment()) {
                 if ((mount.getLocation() == Mek.LOC_HEAD) && mount.isMekTurretMounted()) {
                     turretFacing = mount.getFacing();
@@ -115,7 +111,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         panEast.add(facings.get(2), BorderLayout.SOUTH);
         // for shoulder turrets, we need to disable the appropriate facings
         // opposite of the shoulder the turret is mounted on
-        if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
+        if (turret.getType().hasFlag(EquipmentFlag.F_SHOULDER_TURRET)) {
             if (turret.getLocation() == Mek.LOC_LT) {
                 facings.get((frontFacing + 1) % 6).setEnabled(false);
                 facings.get((frontFacing + 2) % 6).setEnabled(false);

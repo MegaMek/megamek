@@ -17,7 +17,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
 
     private static final long serialVersionUID = 1L; // Update for each unique class
@@ -41,7 +40,7 @@ public class InfantryLaserRifleDarkLightCLLight extends InfantryWeapon {
 
         techAdvancement
                 .setTechBase(TECH_BASE_IS)
-                .setTechRating(RATING_E) 
+                .setTechRating(RATING_E)
                 .setAvailability(new int[]{RATING_X, RATING_E, RATING_E, RATING_D})
                 .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, true, false, false)

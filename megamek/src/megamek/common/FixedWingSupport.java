@@ -73,12 +73,12 @@ public class FixedWingSupport extends ConvFighter {
      */
     @Override
     public boolean hasBARArmor(int loc) {
-        return ArmorType.forEntity(this, loc).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR);
+        return ArmorType.forEntity(this, loc).hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR);
     }
 
     @Override
     public boolean hasArmoredChassis() {
-        return hasWorkingMisc(MiscType.F_ARMORED_CHASSIS);
+        return hasWorkingMisc(EquipmentFlag.F_ARMORED_CHASSIS);
     }
 
     @Override
@@ -108,16 +108,16 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public boolean isVSTOL() {
-        return hasWorkingMisc(MiscType.F_VSTOL_CHASSIS);
+        return hasWorkingMisc(EquipmentFlag.F_VSTOL_CHASSIS);
     }
 
     @Override
     public boolean isSTOL() {
-        return hasWorkingMisc(MiscType.F_STOL_CHASSIS);
+        return hasWorkingMisc(EquipmentFlag.F_STOL_CHASSIS);
     }
 
     public boolean hasPropChassisMod() {
-        return hasWorkingMisc(MiscType.F_PROP);
+        return hasWorkingMisc(EquipmentFlag.F_PROP);
     }
 
     /**
@@ -242,7 +242,7 @@ public class FixedWingSupport extends ConvFighter {
         // to be able to carry bombs.
         int bombpoints = 0;
         for (Mounted<?> misc : getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
+            if (misc.getType().hasFlag(EquipmentFlag.F_EXTERNAL_STORES_HARDPOINT)) {
                 bombpoints++;
             }
         }

@@ -22,7 +22,6 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RifleWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
-
 /**
  * @author Jason Tighe
  * @since Sep 25, 2004

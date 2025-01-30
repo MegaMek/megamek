@@ -380,7 +380,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // large range for the targeting phase and
         // 6 to 17 in the other phases as it will be
         // direct fire then
-        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+        if (wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
             boolean isADA = (ammoMounted != null
                     && ((AmmoType) ammoMounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (game.getPhase().isTargeting()) {
@@ -394,7 +394,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         // Override for the MML ammos
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_MML) {
-                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                if (atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
                     if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 4, 5, 10, 15, 20 };
                     } else {

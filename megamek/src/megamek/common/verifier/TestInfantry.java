@@ -19,15 +19,7 @@ import static megamek.client.ui.swing.calculationReport.CalculationReport.format
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.calculationReport.TextCalculationReport;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.EquipmentTypeLookup;
-import megamek.common.Infantry;
-import megamek.common.InfantryMount;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
@@ -193,7 +185,7 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
-        if (inf.countWorkingMisc(MiscType.F_ARMOR_KIT) > 1) {
+        if (inf.countWorkingMisc(EquipmentFlag.F_ARMOR_KIT) > 1) {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }

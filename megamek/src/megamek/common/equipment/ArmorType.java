@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 
 import megamek.common.*;
 
+import static megamek.common.EquipmentFlag.*;
+
 public class ArmorType extends MiscType {
 
     private static final double BASE_POINTS_PER_TON = 16.0;

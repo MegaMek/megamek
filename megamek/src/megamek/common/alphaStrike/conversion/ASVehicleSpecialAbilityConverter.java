@@ -43,7 +43,7 @@ public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter 
     @Override
     protected void processSEALandSOA(Mounted<?> misc) {
         MiscType miscType = (MiscType) misc.getType();
-        if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+        if (miscType.hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
             assign(misc, SEAL);
             if (hasSoaCapableEngine()) {
                 assign("SEAL and no ICE/Steam", SOA);

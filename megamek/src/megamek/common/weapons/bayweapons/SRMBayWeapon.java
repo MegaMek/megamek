@@ -45,12 +45,12 @@ public class SRMBayWeapon extends AmmoBayWeapon {
         this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_SRM;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SRM;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               TWGameManager manager) {

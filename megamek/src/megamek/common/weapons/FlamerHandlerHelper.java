@@ -21,11 +21,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Report;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.equipment.ArmorType;
 
 /**
@@ -33,7 +29,7 @@ import megamek.common.equipment.ArmorType;
  * @author NickAragua
  *
  */
-public class FlamerHandlerHelper {   
+public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
@@ -42,15 +38,15 @@ public class FlamerHandlerHelper {
         r.subject = subjectId;
         r.indent(2);
         int heatDamage = wtype.getDamage();
-        
+
         // ER flamers don't do as much heat damage
-        if (wtype.hasFlag(WeaponType.F_ER_FLAMER)) {
+        if (wtype.hasFlag(WeaponTypeFlag.F_ER_FLAMER)) {
             heatDamage = Math.max(1, heatDamage / 2);
         }
-        
+
         boolean heatDamageReducedByArmor = false;
         int actualDamage = heatDamage;
-        
+
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {
             // heat dissipating armor divides heat damage by 2
@@ -63,8 +59,8 @@ public class FlamerHandlerHelper {
                 heatDamageReducedByArmor = true;
             }
 
-        } 
-        
+        }
+
         if (heatDamageReducedByArmor) {
             entityTarget.heatFromExternal += actualDamage;
             r.add(actualDamage);
@@ -77,7 +73,7 @@ public class FlamerHandlerHelper {
             r.add(heatDamage);
             r.choose(true);
         }
-        
+
         vPhaseReport.addElement(r);
     }
 }

@@ -45,7 +45,7 @@ public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter
     protected void processMiscMounted(Mounted<?> misc) {
         super.processMiscMounted(misc);
 
-        if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+        if (misc.getType().hasFlag(EquipmentFlag.F_MAGNETIC_CLAMP)) {
             if (entity.getWeight() < 10) {
                 assign("Light PM with mag clamps", MCS);
             } else {

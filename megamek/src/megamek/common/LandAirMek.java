@@ -1082,7 +1082,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public boolean hasInfernoAmmo() {
         for (Mounted<?> m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BOMB_BAY) && m.getLinked() != null) {
+            if (m.getType().hasFlag(EquipmentFlag.F_BOMB_BAY) && m.getLinked() != null) {
                 Mounted<?> bomb = m.getLinked();
                 // We may have to go through a launcher to get to the ordnance
                 if (bomb.getLinked() != null) {
@@ -1117,7 +1117,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
 
     @Override
     public int getMaxIntBombPoints() {
-        return countWorkingMisc(MiscType.F_BOMB_BAY);
+        return countWorkingMisc(EquipmentFlag.F_BOMB_BAY);
     }
 
     /**
@@ -1443,8 +1443,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             return super.getWeaponArc(wn);
         }
         final Mounted<?> mounted = getEquipment(wn);
-        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
-                || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
+                || mounted.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         // We use Aero locations for weapon groups for fighter squadron
@@ -1508,7 +1508,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 }
         return rollHitLocation(table, side);
     }
-    
+
     @Override
     public HitData rollHitLocation(int table, int side) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
@@ -2039,7 +2039,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         for (CriticalSlot slot : crits[loc]) {
             if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) && slot.getMount2() == null
                     && slot.getMount().getType() instanceof MiscType
-                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                    && slot.getMount().getType().hasFlag(EquipmentFlag.F_BOMB_BAY)) {
                 bays++;
             }
         }
@@ -2070,7 +2070,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
                     && (slot.getMount().getType() instanceof MiscType)
-                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY) && (slot.getMount2() == null)) {
+                    && slot.getMount().getType().hasFlag(EquipmentFlag.F_BOMB_BAY) && (slot.getMount2() == null)) {
                 slot.setMount2(mounted);
                 slots--;
                 // Link the bay to the slot so we can find the bomb to explode
@@ -2095,10 +2095,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (mounted instanceof WeaponMounted) {
             totalWeaponList.add((WeaponMounted) mounted);
             weaponList.add((WeaponMounted) mounted);
-            if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
+            if (mounted.getType().hasFlag(WeaponTypeFlag.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 AmmoMounted m = (AmmoMounted) Mounted.createMounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
@@ -2130,12 +2130,12 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
-            boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+            boolean hiresLighted = hasWorkingMisc(EquipmentFlag.F_HIRES_IMAGER)
                     && game.getPlanetaryConditions().getLight().isDayOrDusk();
             return !isAirborne()
-                    || hasWorkingMisc(MiscType.F_RECON_CAMERA)
-                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
-                    || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+                    || hasWorkingMisc(EquipmentFlag.F_RECON_CAMERA)
+                    || hasWorkingMisc(EquipmentFlag.F_INFRARED_IMAGER)
+                    || hasWorkingMisc(EquipmentFlag.F_HYPERSPECTRAL_IMAGER)
                     || hiresLighted;
         } else {
             return super.canSpot();

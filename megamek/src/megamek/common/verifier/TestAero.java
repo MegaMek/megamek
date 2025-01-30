@@ -58,7 +58,7 @@ public class TestAero extends TestEntity {
     public static List<ArmorType> legalArmorsFor(ITechManager techManager) {
         List<ArmorType> retVal = new ArrayList<>();
         for (ArmorType armor : ArmorType.allArmorTypes()) {
-            if (armor.hasFlag(MiscType.F_FIGHTER_EQUIPMENT) && techManager.isLegal(armor)) {
+            if (armor.hasFlag(EquipmentFlag.F_FIGHTER_EQUIPMENT) && techManager.isLegal(armor)) {
                 retVal.add(armor);
             }
         }
@@ -217,7 +217,7 @@ public class TestAero extends TestEntity {
             }
         }
         // Blue shield particle field dampener takes one slot in each arc.
-        if (a.hasMisc(MiscType.F_BLUE_SHIELD)) {
+        if (a.hasMisc(EquipmentFlag.F_BLUE_SHIELD)) {
             for (int i = 0; i < availSpace.length; i++) {
                 availSpace[i]--;
             }
@@ -239,25 +239,25 @@ public class TestAero extends TestEntity {
             // Equipment that takes up a slot on fighters and small craft, but not large
             // craft.
             if (!en.hasETypeFlag(Entity.ETYPE_DROPSHIP) && !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
-                    && (eq.hasFlag(MiscType.F_BAP)
-                            || eq.hasFlag(MiscType.F_WATCHDOG)
-                            || eq.hasFlag(MiscType.F_ECM)
-                            || eq.hasFlag(MiscType.F_ANGEL_ECM)
-                            || eq.hasFlag(MiscType.F_EW_EQUIPMENT)
-                            || eq.hasFlag(MiscType.F_BOOBY_TRAP)
-                            || eq.hasFlag(MiscType.F_SENSOR_DISPENSER))) {
+                    && (eq.hasFlag(EquipmentFlag.F_BAP)
+                            || eq.hasFlag(EquipmentFlag.F_WATCHDOG)
+                            || eq.hasFlag(EquipmentFlag.F_ECM)
+                            || eq.hasFlag(EquipmentFlag.F_ANGEL_ECM)
+                            || eq.hasFlag(EquipmentFlag.F_EW_EQUIPMENT)
+                            || eq.hasFlag(EquipmentFlag.F_BOOBY_TRAP)
+                            || eq.hasFlag(EquipmentFlag.F_SENSOR_DISPENSER))) {
                 return true;
 
             }
             // Equipment that takes a slot on all aerospace units
-            return eq.hasFlag(MiscType.F_CHAFF_POD)
-                    || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
-                    || eq.hasFlag(MiscType.F_MOBILE_HPG)
-                    || eq.hasFlag(MiscType.F_RECON_CAMERA)
-                    || eq.hasFlag(MiscType.F_HIRES_IMAGER)
-                    || eq.hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
-                    || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
-                    || eq.hasFlag(MiscType.F_LOOKDOWN_RADAR);
+            return eq.hasFlag(EquipmentFlag.F_CHAFF_POD)
+                    || eq.hasFlag(EquipmentFlag.F_SPACE_MINE_DISPENSER)
+                    || eq.hasFlag(EquipmentFlag.F_MOBILE_HPG)
+                    || eq.hasFlag(EquipmentFlag.F_RECON_CAMERA)
+                    || eq.hasFlag(EquipmentFlag.F_HIRES_IMAGER)
+                    || eq.hasFlag(EquipmentFlag.F_HYPERSPECTRAL_IMAGER)
+                    || eq.hasFlag(EquipmentFlag.F_INFRARED_IMAGER)
+                    || eq.hasFlag(EquipmentFlag.F_LOOKDOWN_RADAR);
         }
         return false;
     }
@@ -391,7 +391,7 @@ public class TestAero extends TestEntity {
             double weight = 0;
             for (Mounted<?> m : aero.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_ENERGY) &&
+                if (wt.hasFlag(WeaponTypeFlag.F_ENERGY) &&
                         !(wt instanceof CLChemicalLaserWeapon) &&
                         !(wt instanceof VehicleFlamerWeapon)) {
                     weight += m.getTonnage();
@@ -399,7 +399,7 @@ public class TestAero extends TestEntity {
                 Mounted<?> linkedBy = m.getLinkedBy();
                 if ((linkedBy != null) &&
                         (linkedBy.getType() instanceof MiscType) &&
-                        linkedBy.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                        linkedBy.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                     weight += linkedBy.getTonnage();
                 }
             }
@@ -601,9 +601,9 @@ public class TestAero extends TestEntity {
                     && !canHaveSpecialMunitions) {
                 EquipmentType linkedType = m.getLinked().getType();
                 boolean hasArtemisFCS = m.getLinkedBy() != null
-                        && (m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS)
-                                || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_PROTO)
-                                || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_V));
+                        && (m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_ARTEMIS)
+                                || m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)
+                                || m.getLinkedBy().getType().hasFlag(EquipmentFlag.F_ARTEMIS_V));
                 if (linkedType instanceof AmmoType) {
                     AmmoType linkedAT = (AmmoType) linkedType;
                     // Check LBX's
@@ -634,11 +634,11 @@ public class TestAero extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_ALT_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+            if (m.getType().hasFlag(AmmoTypeFlag.F_SPACE_BOMB)
+                    || m.getType().hasFlag(AmmoTypeFlag.F_GROUND_BOMB)
+                    || m.getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB)
+                    || m.getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB)
+                    || m.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB)) {
                 numBombs++;
             } else {
                 numWeapons[m.getLocation()]++;
@@ -846,18 +846,18 @@ public class TestAero extends TestEntity {
             }
         } else if (eq instanceof MiscType) {
             // Weapon enhancements go in the same location as the weapon
-            if ((eq.hasFlag(MiscType.F_ARTEMIS)
-                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
-                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                    || eq.hasFlag(MiscType.F_APOLLO)
-                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
+            if ((eq.hasFlag(EquipmentFlag.F_ARTEMIS)
+                    || eq.hasFlag(EquipmentFlag.F_ARTEMIS_V)
+                    || eq.hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)
+                    || eq.hasFlag(EquipmentFlag.F_APOLLO)
+                    || eq.hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
+                    || eq.hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
                 if (location != Aero.LOC_FUSELAGE) {
                     buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                     return false;
                 }
-            } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
-                    || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
+            } else if ((eq.hasFlag(EquipmentFlag.F_BLUE_SHIELD) || eq.hasFlag(EquipmentFlag.F_LIFTHOIST)
+                    || (eq.hasFlag(EquipmentFlag.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }
@@ -867,8 +867,8 @@ public class TestAero extends TestEntity {
                 buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 return false;
             }
-            if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
-                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
+            if (!eq.hasFlag(WeaponTypeFlag.F_C3M) && !eq.hasFlag(WeaponTypeFlag.F_C3MBS)
+                    && !eq.hasFlag(WeaponTypeFlag.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
                 buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                 return false;
             }
@@ -889,19 +889,19 @@ public class TestAero extends TestEntity {
                     && !en.hasETypeFlag(Entity.ETYPE_DROPSHIP);
         }
 
-        if (weapon.hasFlag(WeaponType.F_ARTILLERY) && !weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
+        if (weapon.hasFlag(WeaponTypeFlag.F_ARTILLERY) && !weapon.hasFlag(WeaponTypeFlag.F_BA_WEAPON)) {
             return (weapon.getAmmoType() == AmmoType.T_ARROW_IV)
                     || en.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
-        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(WeaponType.F_MISSILE)))
+        if (weapon.isSubCapital() || (weapon.isCapital() && (weapon.hasFlag(WeaponTypeFlag.F_MISSILE)))
                 || (weapon.getAtClass() == WeaponType.CLASS_SCREEN)) {
             return en.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                     || en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
-        if (weapon.hasFlag(WeaponType.F_VGL)) {
+        if (weapon.hasFlag(WeaponTypeFlag.F_VGL)) {
             return !en.hasETypeFlag(Entity.ETYPE_JUMPSHIP);
         }
 
@@ -913,7 +913,7 @@ public class TestAero extends TestEntity {
             return en.usesWeaponBays();
         }
 
-        if (!weapon.hasFlag(WeaponType.F_AERO_WEAPON)) {
+        if (!weapon.hasFlag(WeaponTypeFlag.F_AERO_WEAPON)) {
             return false;
         }
 
@@ -938,12 +938,12 @@ public class TestAero extends TestEntity {
             return false;
         }
 
-        if (weapon.hasFlag(WeaponType.F_ENERGY)
-                || (weapon.hasFlag(WeaponType.F_PLASMA) && (weapon
+        if (weapon.hasFlag(WeaponTypeFlag.F_ENERGY)
+                || (weapon.hasFlag(WeaponTypeFlag.F_PLASMA) && (weapon
                         .getAmmoType() == AmmoType.T_PLASMA))) {
 
-            if (weapon.hasFlag(WeaponType.F_ENERGY)
-                    && weapon.hasFlag(WeaponType.F_PLASMA)
+            if (weapon.hasFlag(WeaponTypeFlag.F_ENERGY)
+                    && weapon.hasFlag(WeaponTypeFlag.F_PLASMA)
                     && (weapon.getAmmoType() == AmmoType.T_NA)) {
                 return false;
             }
@@ -1015,7 +1015,7 @@ public class TestAero extends TestEntity {
         double weightSum = super.getWeightMiscEquip();
         for (Mounted<?> m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
-            if (mt.hasFlag(MiscType.F_CARGO) && aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+            if (mt.hasFlag(EquipmentFlag.F_CARGO) && aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
                 // This equipment will get counted as a cargo bay later, for IBB compatibility.
                 weightSum -= m.getTonnage();
             }
@@ -1261,18 +1261,18 @@ public class TestAero extends TestEntity {
             return (eq instanceof WeaponType)
                     || (eq instanceof AmmoType)
                     || ((eq instanceof MiscType)
-                            && (eq.hasFlag(MiscType.F_ARTEMIS)
-                                    || eq.hasFlag(MiscType.F_ARTEMIS_PROTO)
-                                    || eq.hasFlag(MiscType.F_ARTEMIS_V)
-                                    || eq.hasFlag(MiscType.F_APOLLO)
-                                    || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
-                                    || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
-                                    || eq.hasFlag(MiscType.F_LASER_INSULATOR)));
+                            && (eq.hasFlag(EquipmentFlag.F_ARTEMIS)
+                                    || eq.hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)
+                                    || eq.hasFlag(EquipmentFlag.F_ARTEMIS_V)
+                                    || eq.hasFlag(EquipmentFlag.F_APOLLO)
+                                    || eq.hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
+                                    || eq.hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)
+                                    || eq.hasFlag(EquipmentFlag.F_LASER_INSULATOR)));
         } else if (eq instanceof MiscType) {
-            if (eq.hasFlag(MiscType.F_CASE)) {
+            if (eq.hasFlag(EquipmentFlag.F_CASE)) {
                 return eq.isClan();
             } else {
-                return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+                return !eq.hasFlag(EquipmentFlag.F_BLUE_SHIELD) && !eq.hasFlag(EquipmentFlag.F_LIFTHOIST);
             }
         } else {
             return !(eq instanceof AmmoType);

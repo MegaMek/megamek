@@ -272,7 +272,7 @@ public class MekFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent instanceof BattleArmor) {
-            if (ent.hasWorkingMisc(MiscType.F_HEAT_SENSOR)) {
+            if (ent.hasWorkingMisc(EquipmentFlag.F_HEAT_SENSOR)) {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_BA_HEAT));
                 ent.setNextSensor(ent.getSensors().lastElement());
             }
@@ -284,16 +284,16 @@ public class MekFileParser {
                 continue;
             }
             // link laser insulators
-            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
-                    || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+            if ((m.getType().hasFlag(EquipmentFlag.F_LASER_INSULATOR)
+                    || m.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE))) {
                 // We can link to a laser in the same location that isn't already linked.
                 Predicate<Mounted<?>> linkable = mount -> (mount.getLinkedBy() == null)
                         && (mount.getLocation() == m.getLocation())
                         && (mount.getType() instanceof WeaponType)
-                        && mount.getType().hasFlag(WeaponType.F_LASER);
+                        && mount.getType().hasFlag(WeaponTypeFlag.F_LASER);
                 // The laser pulse module is also restricted to non-pulse lasers, IS only
-                if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponType.F_PULSE)
+                if (m.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
+                    linkable = linkable.and(mount -> !mount.getType().hasFlag(WeaponTypeFlag.F_PULSE)
                             && !mount.getType().isClan());
                 }
 
@@ -319,7 +319,7 @@ public class MekFileParser {
                     throw new EntityLoadingException("Unable to match " + m.getName() + " to laser for "
                             + ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+            } else if ((m.getType().hasFlag(EquipmentFlag.F_DETACHABLE_WEAPON_PACK))) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     if (!mWeapon.isDWPMounted()) {
                         continue;
@@ -339,7 +339,7 @@ public class MekFileParser {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException("Unable to match DWP to weapon for " + ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_AP_MOUNT))) {
+            } else if ((m.getType().hasFlag(EquipmentFlag.F_AP_MOUNT))) {
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     // Can only link APM mounted weapons that aren't linked
                     if (!mWeapon.isAPMMounted()
@@ -353,14 +353,14 @@ public class MekFileParser {
                         break;
                     }
                 }
-            } else if (m.getType().hasFlag(MiscType.F_ARTEMIS)
-                    || m.getType().hasFlag(MiscType.F_ARTEMIS_V)
-                    || m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (m.getType().hasFlag(EquipmentFlag.F_ARTEMIS)
+                    || m.getType().hasFlag(EquipmentFlag.F_ARTEMIS_V)
+                    || m.getType().hasFlag(EquipmentFlag.F_ARTEMIS_PROTO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
 
-                    if (!mWeapon.getType().hasFlag(WeaponType.F_ARTEMIS_COMPATIBLE)) {
+                    if (!mWeapon.getType().hasFlag(WeaponTypeFlag.F_ARTEMIS_COMPATIBLE)) {
                         continue;
                     }
 
@@ -380,13 +380,13 @@ public class MekFileParser {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
-            } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
+            } else if ((m.getType().hasFlag(EquipmentFlag.F_STEALTH) || m.getType().hasFlag(EquipmentFlag.F_VOIDSIG))
                     && (ent instanceof Mek)) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted<?> mEquip : ent.getMisc()) {
                     MiscType mtype = (MiscType) mEquip.getType();
-                    if (mtype.hasFlag(MiscType.F_ECM)) {
+                    if (mtype.hasFlag(EquipmentFlag.F_ECM)) {
                         m.setLinked(mEquip);
                         break;
                     }
@@ -401,14 +401,14 @@ public class MekFileParser {
                 }
             } // End link-Stealth
               // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            else if (m.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
 
                 // link up to a weapon in the same location
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // Only PPCS are Valid
-                    if (!wtype.hasFlag(WeaponType.F_PPC)) {
+                    if (!wtype.hasFlag(WeaponTypeFlag.F_PPC)) {
                         continue;
                     }
 
@@ -435,7 +435,7 @@ public class MekFileParser {
             } // End link-PPC Capacitor
 
             // Link MRM Apollo fire-control systems to their missle racks.
-            else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
+            else if (m.getType().hasFlag(EquipmentFlag.F_APOLLO)) {
 
                 // link up to a weapon in the same location
                 for (Mounted<?> mWeapon : ent.getTotalWeaponList()) {
@@ -470,7 +470,7 @@ public class MekFileParser {
         // choose this sensor if added
         // WOR CEWS
         for (Mounted<?> m : ent.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BAP)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_BAP)) {
                 if (m.getType().getInternalName().equals(Sensor.BAP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
                     ent.setNextSensor(ent.getSensors().lastElement());
@@ -506,12 +506,12 @@ public class MekFileParser {
 
             if ((ent instanceof Mek)
                     && m.getType().hasFlag(
-                            MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                            EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
                 if (ent.hasTargComp()
                         || ((Mek) ent).hasTSM(true)
                         || (!ent.getMPBoosters().isNone() && !ent.hasWorkingMisc(
-                                MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
+                                EquipmentFlag.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible systems for " + ent.getShortName());
                 }
@@ -527,13 +527,13 @@ public class MekFileParser {
 
             }
 
-            if (m.getType().hasFlag(MiscType.F_HARJEL)
+            if (m.getType().hasFlag(EquipmentFlag.F_HARJEL)
                     && (m.getLocation() == Mek.LOC_HEAD)) {
                 throw new EntityLoadingException(
                         "Unable to load harjel in head for " + ent.getShortName());
             }
 
-            if (m.getType().hasFlag(MiscType.F_MASS)
+            if (m.getType().hasFlag(EquipmentFlag.F_MASS)
                     && ((m.getLocation() != Mek.LOC_HEAD) || ((((Mek) ent)
                             .getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
                             && (m
@@ -543,20 +543,20 @@ public class MekFileParser {
                                 + "!  Must be located in the same location as the cockpit.");
             }
 
-            if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
+            if (m.getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR)
                     && (((ent instanceof Mek) && (m.getLocation() == Mek.LOC_HEAD)) || ((ent instanceof VTOL) && (m
                             .getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException(
                         "Unable to load Modular Armor in Rotor/Head location for " + ent.getShortName());
             }
 
-            if (m.getType().hasFlag(MiscType.F_TALON)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_TALON)) {
                 if (ent instanceof Mek) {
                     if (!ent.locationIsLeg(m.getLocation())) {
                         throw new EntityLoadingException("Talons are only legal in the Legs for " + ent.getShortName());
                     }
                     for (int loc = 0; loc < ent.locations(); loc++) {
-                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(MiscType.F_TALON, -1, loc)) {
+                        if (ent.locationIsLeg(loc) && !ent.hasWorkingMisc(EquipmentFlag.F_TALON, -1, loc)) {
                             throw new EntityLoadingException("Talons must be in all legs for " + ent.getShortName());
                         }
                     }
@@ -572,7 +572,7 @@ public class MekFileParser {
         for (Mounted<?> m : ent.getMisc()) {
 
             // Link PPC Capacitor to PPC it its location.
-            if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+            if (m.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
                     && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
@@ -585,7 +585,7 @@ public class MekFileParser {
                             WeaponType bayWeapType = bayMountedWeapon.getType();
 
                             // Check for PPC that isn't crosslinked
-                            if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
+                            if (!bayWeapType.hasFlag(WeaponTypeFlag.F_PPC) ||
                                     (bayMountedWeapon.getCrossLinkedBy() != null)) {
                                 continue;
                             }
@@ -608,7 +608,7 @@ public class MekFileParser {
                     }
 
                     // Check for PPC that isn't crosslinked
-                    if (!wtype.hasFlag(WeaponType.F_PPC) ||
+                    if (!wtype.hasFlag(WeaponTypeFlag.F_PPC) ||
                             (mWeapon.getCrossLinkedBy() != null)) {
                         continue;
                     }
@@ -685,9 +685,9 @@ public class MekFileParser {
             // now, depending on equipment and chassis, BA might be able to do leg and swarm
             // attacks
             if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
-                int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
-                int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
-                int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                int tBasicManipulatorCount = ent.countWorkingMisc(EquipmentFlag.F_BASIC_MANIPULATOR);
+                int tArmoredGloveCount = ent.countWorkingMisc(EquipmentFlag.F_ARMORED_GLOVE);
+                int tBattleClawCount = ent.countWorkingMisc(EquipmentFlag.F_BATTLE_CLAW);
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
                 for (Mounted<?> m : ent.getWeaponList()) {
@@ -809,7 +809,7 @@ public class MekFileParser {
      */
     static void linkDumpers(Entity entity) {
         List<Mounted<?>> dumpers = entity.getMisc().stream()
-                .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER)).collect(Collectors.toList());
+                .filter(mounted -> mounted.getType().hasFlag(EquipmentFlag.F_DUMPER)).collect(Collectors.toList());
 
         List<Mounted<?>> cargos = entity.getMisc().stream()
                 .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO)).collect(Collectors.toList());
@@ -843,7 +843,7 @@ public class MekFileParser {
     static void linkMGAs(Entity entity) {
         List<Integer> usedMG = new ArrayList<>();
         for (WeaponMounted mga : entity.getWeaponList()) {
-            if (mga.getType().hasFlag(WeaponType.F_MGA)) {
+            if (mga.getType().hasFlag(WeaponTypeFlag.F_MGA)) {
                 // This may be called from MML after changing equipment location, so there
                 // may be old data that needs to be cleared
                 mga.clearBayWeapons();
@@ -854,7 +854,7 @@ public class MekFileParser {
                         WeaponType wtype = (WeaponType) slot.getMount().getType();
                         int eqNum = entity.getEquipmentNum(slot.getMount());
                         if (!usedMG.contains(eqNum)
-                                && wtype.hasFlag(WeaponType.F_MG)
+                                && wtype.hasFlag(WeaponTypeFlag.F_MG)
                                 && (((WeaponType) mga.getType()).getRackSize() == wtype.getRackSize())) {
                             mga.addWeaponToBay(eqNum);
                             usedMG.add(eqNum);

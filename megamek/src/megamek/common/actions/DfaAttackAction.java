@@ -65,7 +65,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
     /**
      * Checks if a death from above attack can hit the target, including movement
-     * 
+     *
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
@@ -176,7 +176,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
     /**
      * To-hit number for a death from above attack, assuming that movement has been
      * handled
-     * 
+     *
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId,
@@ -404,27 +404,27 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
             if (entity instanceof BipedMek) {
 
-                return (entity.hasWorkingMisc(MiscType.F_TALON, -1,
+                return (entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1,
                         Mek.LOC_RLEG)
                         && entity.hasWorkingSystem(
                                 Mek.ACTUATOR_FOOT, Mek.LOC_RLEG))
-                        || (entity.hasWorkingMisc(MiscType.F_TALON, -1,
+                        || (entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1,
                                 Mek.LOC_LLEG)
                                 && entity.hasWorkingSystem(
                                         Mek.ACTUATOR_FOOT, Mek.LOC_LLEG));
             }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_RLEG) && entity
+            return (entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1, Mek.LOC_RLEG) && entity
                     .hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RLEG))
-                    || (entity.hasWorkingMisc(MiscType.F_TALON, -1,
+                    || (entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1,
                             Mek.LOC_LLEG)
                             && entity.hasWorkingSystem(
                                     Mek.ACTUATOR_FOOT, Mek.LOC_LLEG))
-                    || ((entity.hasWorkingMisc(MiscType.F_TALON, -1,
+                    || ((entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1,
                             Mek.LOC_RARM))
                             && (entity.hasWorkingSystem(
                                     Mek.ACTUATOR_FOOT, Mek.LOC_RARM)
                                     || (entity
-                                            .hasWorkingMisc(MiscType.F_TALON, -1, Mek.LOC_LARM)
+                                            .hasWorkingMisc(EquipmentFlag.F_TALON, -1, Mek.LOC_LARM)
                                             && entity
                                                     .hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LARM))));
         }

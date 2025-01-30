@@ -71,6 +71,8 @@ import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 
+import static megamek.common.WeaponTypeFlag.*;
+
 // TODO add XML support back in.
 
 /**
@@ -85,140 +87,6 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-
-    // marks any weapon affected by a targeting computer
-    public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_FLAMER = BigInteger.valueOf(1).shiftLeft(1);
-    // Glaze armor
-    public static final BigInteger F_LASER = BigInteger.valueOf(1).shiftLeft(2);
-    public static final BigInteger F_PPC = BigInteger.valueOf(1).shiftLeft(3);
-    // for weapons that target Automatically (AMS)
-    public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4);
-    // can not start fires
-    public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5);
-    // must be only weapon attacking
-    public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7);
-    public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(8);
-    // MGL for rapid fire setup
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9);
-    // Inferno weapon
-    public static final BigInteger F_INFERNO = BigInteger.valueOf(1).shiftLeft(10);
-    // Infantry caliber weapon, damage based on # of men shooting
-    public static final BigInteger F_INFANTRY = BigInteger.valueOf(1).shiftLeft(11);
-    // use missile rules for # of hits
-    public static final BigInteger F_MISSILE_HITS = BigInteger.valueOf(1).shiftLeft(13);
-    public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14);
-    public static final BigInteger F_ARTILLERY = BigInteger.valueOf(1).shiftLeft(15);
-
-    // for Gunnery/Ballistic
-    public static final BigInteger F_BALLISTIC = BigInteger.valueOf(1).shiftLeft(16);
-    // for Gunnery/Energy
-    public static final BigInteger F_ENERGY = BigInteger.valueOf(1).shiftLeft(17);
-    // for Gunnery/Missile
-    public static final BigInteger F_MISSILE = BigInteger.valueOf(1).shiftLeft(18);
-
-    // fires
-    public static final BigInteger F_PLASMA = BigInteger.valueOf(1).shiftLeft(19);
-    public static final BigInteger F_INCENDIARY_NEEDLES = BigInteger.valueOf(1).shiftLeft(20);
-
-    // War of 3039 prototypes
-    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21);
-    // Variable heat, heat is listed in dice, not points
-    public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22);
-    // AMS
-    public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23);
-
-    // may only target Infantry
-    public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25);
-
-    public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26);
-    // C3 Master with Target Acquisition gear
-    public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27);
-
-    // Plasma Rifle
-    public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28);
-    // fire Extinguisher
-    public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29);
-    public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30);
-    // Full Damage vs. Infantry
-    public static final BigInteger F_BURST_FIRE = BigInteger.valueOf(1).shiftLeft(31);
-    // Machine Gun Array
-    public static final BigInteger F_MGA = BigInteger.valueOf(1).shiftLeft(32);
-    public static final BigInteger F_NO_AIM = BigInteger.valueOf(1).shiftLeft(33);
-    public static final BigInteger F_BOMBAST_LASER = BigInteger.valueOf(1).shiftLeft(34);
-    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(35);
-    public static final BigInteger F_B_POD = BigInteger.valueOf(1).shiftLeft(36);
-    public static final BigInteger F_TASER = BigInteger.valueOf(1).shiftLeft(37);
-
-    // Anti-ship missiles
-    public static final BigInteger F_ANTI_SHIP = BigInteger.valueOf(1).shiftLeft(38);
-    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(39);
-    public static final BigInteger F_M_POD = BigInteger.valueOf(1).shiftLeft(40);
-    public static final BigInteger F_DIVE_BOMB = BigInteger.valueOf(1).shiftLeft(41);
-    public static final BigInteger F_ALT_BOMB = BigInteger.valueOf(1).shiftLeft(42);
-
-    // Currently only used by MML
-    public static final BigInteger F_BA_WEAPON = BigInteger.valueOf(1).shiftLeft(43);
-    public static final BigInteger F_MEK_WEAPON = BigInteger.valueOf(1).shiftLeft(44);
-    public static final BigInteger F_AERO_WEAPON = BigInteger.valueOf(1).shiftLeft(45);
-    public static final BigInteger F_PROTO_WEAPON = BigInteger.valueOf(1).shiftLeft(46);
-    public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
-
-    public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
-    public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);
-    public static final BigInteger F_INF_AA = BigInteger.valueOf(1).shiftLeft(50);
-    public static final BigInteger F_INF_NONPENETRATING = BigInteger.valueOf(1).shiftLeft(51);
-    public static final BigInteger F_INF_POINT_BLANK = BigInteger.valueOf(1).shiftLeft(52);
-    public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
-    public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
-    public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
-
-    // TODO Add game rules IO pg 84
-    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(63);
-
-    // C3 Master Booster System
-    public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
-
-    // Naval Mass Drivers
-    public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
-
-    public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
-
-    public static final BigInteger F_MEK_MORTAR = BigInteger.valueOf(1).shiftLeft(60);
-
-    // Weapon required to make a bomb type function
-    public static final BigInteger F_BOMB_WEAPON = BigInteger.valueOf(1).shiftLeft(61);
-
-    public static final BigInteger F_BA_INDIVIDUAL = BigInteger.valueOf(1).shiftLeft(62);
-    // Next one's out of order. See F_INF_CLIMBINGCLAWS
-
-    // AMS and Point Defense Bays - Have to work differently from code using the
-    // F_AMS flag
-    public static final BigInteger F_PDBAY = BigInteger.valueOf(1).shiftLeft(64);
-    public static final BigInteger F_AMSBAY = BigInteger.valueOf(1).shiftLeft(65);
-
-    // Thunderbolt and similar large missiles, for use with AMS resolution
-    public static final BigInteger F_LARGEMISSILE = BigInteger.valueOf(1).shiftLeft(66);
-
-    // Hyper-Laser
-    public static final BigInteger F_HYPER = BigInteger.valueOf(1).shiftLeft(67);
-
-    // Fusillade works like a one-shot weapon but has a second round.
-    public static final BigInteger F_DOUBLE_ONESHOT = BigInteger.valueOf(1).shiftLeft(68);
-    // ER flamers do half damage in heat mode
-    public static final BigInteger F_ER_FLAMER = BigInteger.valueOf(1).shiftLeft(69);
-    /** Missile weapon that can be linked to an Artemis fire control system */
-    public static final BigInteger F_ARTEMIS_COMPATIBLE = BigInteger.valueOf(1).shiftLeft(70);
-
-    /**
-     * This flag is used by mortar-type weapons that allow indirect fire without a
-     * spotter and/or with LOS.
-     */
-    public static final BigInteger F_MORTARTYPE_INDIRECT = BigInteger.valueOf(1).shiftLeft(71);
-
-    // Used for TSEMP Weapons.
-    public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
-    public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(72);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
@@ -499,7 +367,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
             AmmoType ammoType = (AmmoType) ammo.getType();
-            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
                 sRange = 7;
                 mRange = 14;
@@ -513,7 +381,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
-                if (ammoType.hasFlag(AmmoType.F_MML_LRM)) {
+                if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
                     minRange = 4;
                     sRange = 5;
                     mRange = 10;
@@ -550,7 +418,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 8;
             }
         }
-        if (hasFlag(WeaponType.F_PDBAY)) {
+        if (hasFlag(WeaponTypeFlag.F_PDBAY)) {
             if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
                 sRange = 1;
             } else {
@@ -634,7 +502,7 @@ public class WeaponType extends EquipmentType {
         }
         if (getAmmoType() == AmmoType.T_MML) {
             AmmoType ammoType = ammo.getType();
-            if (ammoType.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+            if (ammoType.hasFlag(AmmoTypeFlag.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 return RANGE_LONG;
             } else {
                 return RANGE_SHORT;

@@ -45,12 +45,12 @@ public class MMLBayWeapon extends AmmoBayWeapon {
         this.flags = flags.or(F_MISSILE);
         this.atClass = CLASS_MML;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_MML;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, TWGameManager manager) {

@@ -1512,8 +1512,8 @@ public class MapMenu extends JPopupMenu {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_BOMB)));
                 }
 
-                if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)
-                        || hasWeaponFlag(WeaponType.F_ALT_BOMB)) {
+                if (hasWeaponFlag(WeaponTypeFlag.F_DIVE_BOMB)
+                        || hasWeaponFlag(WeaponTypeFlag.F_ALT_BOMB)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_AERO_BOMB)));
                 }
 
@@ -1612,7 +1612,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(BigInteger weaponFlag) {
+    private boolean hasWeaponFlag(WeaponTypeFlag weaponFlag) {
         if (myEntity.getWeaponList().isEmpty()) {
             return false;
         }
@@ -1691,9 +1691,9 @@ public class MapMenu extends JPopupMenu {
 
     private JMenuItem createRotateTurretJMenuItem(final Mek mek, final Mounted<?> turret) {
         String turretString;
-        if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
+        if (turret.getType().hasFlag(EquipmentFlag.F_SHOULDER_TURRET)) {
             turretString = "Rotate Shoulder Turret (" + mek.getLocationAbbr(turret.getLocation()) + ")";
-        } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
+        } else if (turret.getType().hasFlag(EquipmentFlag.F_HEAD_TURRET)) {
             turretString = "Rotate Head Turret";
         } else {
             turretString = "Rotate Quad Turret";
@@ -1750,9 +1750,9 @@ public class MapMenu extends JPopupMenu {
         menu.setText("Turret Rotation");
         if (myEntity instanceof Mek) {
             for (Mounted<?> mount : myEntity.getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
-                        || mount.getType().hasFlag(MiscType.F_HEAD_TURRET)
-                        || mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
+                if (mount.getType().hasFlag(EquipmentFlag.F_SHOULDER_TURRET)
+                        || mount.getType().hasFlag(EquipmentFlag.F_HEAD_TURRET)
+                        || mount.getType().hasFlag(EquipmentFlag.F_QUAD_TURRET)) {
                     menu.add(createRotateTurretJMenuItem((Mek) myEntity, mount));
                 }
             }

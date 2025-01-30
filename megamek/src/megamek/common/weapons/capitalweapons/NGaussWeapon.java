@@ -23,7 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 import java.io.Serial;
-
+import static megamek.common.WeaponTypeFlag.*;
 /**
  * Naval Gauss Weapon superclass
  * @author Jay Lawson

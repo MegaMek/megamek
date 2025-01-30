@@ -571,7 +571,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
                 for (WeaponMounted wep : entity.getWeaponList()) {
                     WeaponType w = wep.getType();
                     int nDistance = 0;
-                    if (w.hasFlag(WeaponType.F_ARTILLERY)) {
+                    if (w.hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                         if (w instanceof ArtilleryBayWeapon) {
                             // Artillery bays can mix and match, so limit the bay
                             // to the shortest range of the weapons in it
@@ -1089,7 +1089,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
     private void setStealth(Entity e, boolean stealthed) {
         int newStealth = (stealthed) ? 1 : 0;
         EquipmentMode newMode = (stealthed) ? EquipmentMode.getMode("On") : EquipmentMode.getMode("Off");
-        for (MiscMounted m : e.getMiscEquipment(MiscType.F_STEALTH)) {
+        for (MiscMounted m : e.getMiscEquipment(EquipmentFlag.F_STEALTH)) {
             if (m.curMode() == newMode) {
                 continue;
             }
@@ -1147,7 +1147,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
             final boolean entityEligibleForOffBoard = !space && (e.getAltitude() == 0) && !(e instanceof GunEmplacement)
                     && e.getWeaponList().stream()
                             .map(mounted -> (WeaponType) mounted.getType())
-                            .anyMatch(wtype -> wtype.hasFlag(WeaponType.F_ARTILLERY)
+                            .anyMatch(wtype -> wtype.hasFlag(WeaponTypeFlag.F_ARTILLERY)
                                     || (wtype instanceof CapitalMissileBayWeapon));
             eligibleForOffBoard &= entityEligibleForOffBoard;
         }
@@ -1211,7 +1211,7 @@ public class CustomMekDialog extends AbstractButtonDialog implements ActionListe
         }
         // Also need to consider melee weapons
         for (Mounted<?> m : entity.getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_CLUB)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_CLUB)) {
                 h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
             }
         }

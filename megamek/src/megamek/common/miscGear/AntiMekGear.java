@@ -22,6 +22,8 @@ import megamek.common.EquipmentTypeLookup;
 import megamek.common.MiscType;
 import megamek.common.SimpleTechLevel;
 
+import static megamek.common.EquipmentFlag.F_INF_EQUIPMENT;
+
 public class AntiMekGear extends MiscType {
 
     public AntiMekGear() {

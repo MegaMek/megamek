@@ -16,6 +16,7 @@ package megamek.common.weapons.other;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.CLIATMWeapon;
 
@@ -31,8 +32,8 @@ public class CLFussilade extends CLIATMWeapon {
         this.name = "Fusillade Launcher";
         setInternalName("Fusillade");
         addLookupName("Fussilade");
-        flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
-                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
+        flags = flags.or(WeaponTypeFlag.F_PROTO_WEAPON).or(WeaponTypeFlag.F_MISSILE)
+                .or(WeaponTypeFlag.F_ONESHOT).or(WeaponTypeFlag.F_DOUBLE_ONESHOT)
                 .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MEK_WEAPON)
                 .andNot(F_TANK_WEAPON);
         rackSize = 3;

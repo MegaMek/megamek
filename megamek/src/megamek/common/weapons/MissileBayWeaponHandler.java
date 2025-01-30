@@ -15,20 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
@@ -177,7 +164,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
     // Check for Thunderbolt. We'll use this for single AMS resolution
     @Override
     protected boolean isTbolt() {
-        return wtype.hasFlag(WeaponType.F_LARGEMISSILE);
+        return wtype.hasFlag(WeaponTypeFlag.F_LARGEMISSILE);
     }
 
     /**
@@ -216,7 +203,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS))
+                        EquipmentFlag.F_ARTEMIS))
                 && atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
             if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
@@ -228,7 +215,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS_V))
+                        EquipmentFlag.F_ARTEMIS_V))
                 && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
@@ -250,7 +237,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML
-                && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+                && !atype.hasFlag(AmmoTypeFlag.F_MML_LRM)) {
             current_av = 2 * current_av;
             if (range > WeaponType.RANGE_SHORT) {
                 current_av = 0;

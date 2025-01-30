@@ -19,10 +19,7 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -101,7 +98,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         report.addLine("--- Heat Damage (HT):", "");
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
-            if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
+            if ((weaponType.hasFlag(WeaponTypeFlag.F_FLAMER) || weaponType.hasFlag(WeaponTypeFlag.F_PLASMA))
                     && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
                 if (finalSDamage.damage < 1) {
                     report.addLine("Insufficient S damage", "No HT", "");

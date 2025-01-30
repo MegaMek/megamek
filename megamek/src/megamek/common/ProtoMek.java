@@ -350,9 +350,9 @@ public class ProtoMek extends Entity {
 
     @Override
     public void newRound(int roundNumber) {
-        if (hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
+        if (hasWorkingMisc(EquipmentFlag.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
             for (Mounted<?> misc : getMisc()) {
-                if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
+                if (misc.getType().hasFlag(EquipmentFlag.F_ELECTRIC_DISCHARGE_ARMOR)
                         && misc.curMode().equals("charging")) {
                     if (edpChargeTurns == 6) {
                         setEDPCharged(true);
@@ -388,7 +388,7 @@ public class ProtoMek extends Entity {
                 jump = jump / 2;
                 break;
         }
-        if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+        if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING)) {
             Atmosphere atmo = Atmosphere.STANDARD;
             if (game != null) {
                 atmo = game.getPlanetaryConditions().getAtmosphere();
@@ -563,7 +563,7 @@ public class ProtoMek extends Entity {
      * @see Mounted#isOperable()
      */
     public boolean hasMyomerBooster() {
-        return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(MiscType.F_MASC));
+        return getMisc().stream().filter(Mounted::isOperable).anyMatch(m -> m.getType().hasFlag(EquipmentFlag.F_MASC));
     }
 
     @Override
@@ -571,7 +571,7 @@ public class ProtoMek extends Entity {
         final Mounted<?> mounted = getEquipment(wn);
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
-        } else if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+        } else if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             // VGLs base arc on their facing
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         } else {
@@ -1117,7 +1117,7 @@ public class ProtoMek extends Entity {
     }
 
     public boolean isEDPCharged() {
-        return hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && edpCharged;
+        return hasWorkingMisc(EquipmentFlag.F_ELECTRIC_DISCHARGE_ARMOR) && edpCharged;
     }
 
     public void setEDPCharged(boolean charged) {
@@ -1126,7 +1126,7 @@ public class ProtoMek extends Entity {
 
     public boolean isEDPCharging() {
         return getMisc().stream()
-            .filter(m -> m.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR))
+            .filter(m -> m.getType().hasFlag(EquipmentFlag.F_ELECTRIC_DISCHARGE_ARMOR))
             .anyMatch(m -> m.curMode().equals("charging"));
     }
 
@@ -1314,7 +1314,7 @@ public class ProtoMek extends Entity {
     public int getJumpType() {
         jumpType = JUMP_NONE;
         for (Mounted<?> m : miscList) {
-            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+            if (m.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
                 if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else {

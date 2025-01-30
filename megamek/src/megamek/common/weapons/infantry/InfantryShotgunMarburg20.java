@@ -20,7 +20,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantryShotgunMarburg20 extends InfantryWeapon {
 
    private static final long serialVersionUID = -3164871600230559641L;

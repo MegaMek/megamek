@@ -19,6 +19,7 @@
 package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.EquipmentFlag.*;
 import static megamek.common.MiscType.*;
 import static megamek.common.alphaStrike.ASUnitType.BA;
 import static megamek.common.alphaStrike.ASUnitType.BM;

@@ -20,14 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.EquipmentType;
-import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.ProtoMek;
+import megamek.common.*;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestProtoMek;
 
@@ -71,12 +64,12 @@ public class ProtoMekTROView extends TROView {
         setModelData("engineMass", NumberFormat.getInstance().format(testproto.getWeightEngine() * 1000));
         setModelData("walkMP", proto.getWalkMP());
         setModelData("runMP", proto.getRunMPasString());
-        final List<Mounted<?>> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_UMU))
+        final List<Mounted<?>> umu = proto.getMisc().stream().filter(m -> m.getType().hasFlag(EquipmentFlag.F_UMU))
                 .collect(Collectors.toList());
         if (umu.isEmpty()) {
             setModelData("jumpMP", proto.getOriginalJumpMP());
             setModelData("jumpMass",
-                    Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_JUMP_JET))
+                    Math.round(1000 * proto.getMisc().stream().filter(m -> m.getType().hasFlag(EquipmentFlag.F_JUMP_JET))
                             .mapToDouble(Mounted::getTonnage).sum()));
         } else {
             setModelData("umuMP", umu.size());
@@ -130,7 +123,7 @@ public class ProtoMekTROView extends TROView {
                 continue;
             }
             if ((m.getType() instanceof MiscType)
-                    && (m.getType().hasFlag(MiscType.F_JUMP_JET) || m.getType().hasFlag(MiscType.F_UMU))) {
+                    && (m.getType().hasFlag(EquipmentFlag.F_JUMP_JET) || m.getType().hasFlag(EquipmentFlag.F_UMU))) {
                 continue;
             }
             final String loc = formatLocationTableEntry(entity, m);

@@ -64,7 +64,7 @@ public class BattleArmorCostCalculator {
         long manipulatorCost = 0;
         for (Mounted<?> mounted : battleArmor.getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
-                    && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+                    && mounted.getType().hasFlag(EquipmentFlag.F_BA_MANIPULATOR)) {
                 long itemCost = (long) mounted.getCost();
                 manipulatorCost += itemCost;
             }

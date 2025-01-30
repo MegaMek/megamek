@@ -26,11 +26,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.MoveStep;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
 
@@ -259,13 +255,13 @@ public class SBFStepSprite extends Sprite {
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
         subscriptStringBuf.append(toHitData.getValue());
 
-        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(EquipmentFlag.F_JET_BOOSTER)) {
             subscriptStringBuf.append(" S");
             subscriptStringBuf.append(step.getTargetNumberSupercharger());
             subscriptStringBuf.append('+');
         }
 
-        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(EquipmentFlag.F_JET_BOOSTER)) {
             if (step.isUsingSupercharger()) {
                 subscriptStringBuf.append(" M");
             } else {
@@ -275,7 +271,7 @@ public class SBFStepSprite extends Sprite {
             subscriptStringBuf.append('+');
         }
 
-        if (subscriptStringBuf.length() != 0) {
+        if (!subscriptStringBuf.isEmpty()) {
             // draw it below the main string.
             int subscriptY = stepPos.y + 39 + (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
             String subscriptString = subscriptStringBuf.toString();

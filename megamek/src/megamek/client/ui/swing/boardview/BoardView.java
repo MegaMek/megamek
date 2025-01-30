@@ -1446,7 +1446,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         if (!((selectedWeapon.getType() instanceof WeaponType) && selectedWeapon
-                .getType().hasFlag(WeaponType.F_ARTILLERY))) {
+                .getType().hasFlag(WeaponTypeFlag.F_ARTILLERY))) {
             return null; // not artillery
         }
 

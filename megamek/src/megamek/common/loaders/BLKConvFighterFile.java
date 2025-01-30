@@ -213,7 +213,7 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
                         Mounted<?> mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));

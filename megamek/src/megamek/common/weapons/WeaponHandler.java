@@ -318,8 +318,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
 
                 // Set up differences between point defense and AMS bays
-                boolean isAMSBay = counter.getType().hasFlag(WeaponType.F_AMSBAY);
-                boolean isPDBay = counter.getType().hasFlag(WeaponType.F_PDBAY);
+                boolean isAMSBay = counter.getType().hasFlag(WeaponTypeFlag.F_AMSBAY);
+                boolean isPDBay = counter.getType().hasFlag(WeaponTypeFlag.F_PDBAY);
 
                 // Point defense bays can only fire at one attack per round
                 if (isPDBay) {
@@ -342,7 +342,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         pdOverheated = true;
                         break;
                     }
-                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    if (counter.getType().hasFlag(WeaponTypeFlag.F_HEATASDICE)) {
                         int heatDice = Compute.d6(bayW
                                 .getCurrentHeat());
                         pdEnt.heatBuildup += heatDice;
@@ -1882,7 +1882,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void useAmmo() {
-        if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
+        if (wtype.hasFlag(WeaponTypeFlag.F_DOUBLE_ONESHOT)) {
             ArrayList<Mounted<?>> chain = new ArrayList<>();
             for (Mounted<?> current = weapon.getLinked(); current != null; current = current.getLinked()) {
                 chain.add(current);
@@ -1899,7 +1899,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     weapon.setFired(true);
                 }
             }
-        } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+        } else if (wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
             weapon.setFired(true);
         }
 
@@ -2017,7 +2017,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         weapon = ae.getWeapon(waa.getWeaponId());
         wtype = weapon.getType();
 
-        if (!wtype.hasFlag(WeaponType.F_ENERGY)) {
+        if (!wtype.hasFlag(WeaponTypeFlag.F_ENERGY)) {
             return nDamage;
         }
 

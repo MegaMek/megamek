@@ -117,7 +117,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
+        if (null != stype && stype.hasFlag(WeaponTypeFlag.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
             try {
                 infantry.addEquipment(ptype, Infantry.LOC_INFANTRY);
@@ -131,7 +131,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName);
-            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+            if ((null == kit) || !(kit.hasFlag(EquipmentFlag.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
             infantry.setArmorKit(kit);
@@ -182,7 +182,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         // Update some internals if there's an armor kit
         infantry.getMisc().stream()
-                .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .filter(misc -> misc.getType().hasFlag(EquipmentFlag.F_ARMOR_KIT))
                 .findFirst()
                 .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
 

@@ -59,7 +59,7 @@ public final class FilteredUnitListTool {
      *
      * <code>
      * passesFilter = entity.isSupportVehicle() &&
-     * entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+     * entity.hasWorkingMisc(EquipmentFlag.F_AMPHIBIOUS);
      * </code>
      *
      * Note that the MekSummary contains Alpha Strike values and can be filtered

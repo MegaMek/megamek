@@ -777,7 +777,7 @@ public interface IAero {
         if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
                 && (hex.terrainLevel(Terrains.WATER) > 0)
                 && (this instanceof Aero)
-                && !((Entity) this).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+                && !((Entity) this).hasWorkingMisc(EquipmentFlag.F_FLOTATION_HULL)) {
             return "cannot land on water";
         }
 

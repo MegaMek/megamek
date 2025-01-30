@@ -216,7 +216,7 @@ public class TripodMek extends Mek {
         // on analogy with biped and quad Meks.
         if (getMovementMode().isTracked()) {
             for (Mounted<?> m : getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
                     }
@@ -493,7 +493,7 @@ public class TripodMek extends Mek {
             Mounted<?> m = cs.getMount();
             EquipmentType type = m.getType();
             if ((type instanceof MiscType)
-                    && type.hasFlag(MiscType.F_HAND_WEAPON)
+                    && type.hasFlag(EquipmentFlag.F_HAND_WEAPON)
                     && type.hasSubType(MiscType.S_CLAW)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
             }
@@ -566,7 +566,7 @@ public class TripodMek extends Mek {
         for (Mounted<?> m : getEquipment()) {
             if ((m.getLocation() == loc) && !m.isDestroyed() && !m.isBreached()
                     && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_CLUB)
+                    && m.getType().hasFlag(EquipmentFlag.F_CLUB)
                     && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
                     && !m.curMode().equals("extended")) {
                 return true;
@@ -674,7 +674,7 @@ public class TripodMek extends Mek {
 
         for (Mounted<?> m : getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB)
+            if ((type instanceof MiscType) && type.hasFlag(EquipmentFlag.F_CLUB)
                     && (type.hasSubType(size))) {
                 // ok so we have a shield of certain size. no which arm is it.
                 if (m.getLocation() == Mek.LOC_RARM) {
@@ -895,14 +895,14 @@ public class TripodMek extends Mek {
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getLocation() == location)
                     && mounted.getType().hasFlag(
-                            MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                            EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                     && !mounted.isDestroyed() && !mounted.isBreached()
                     && !mounted.isMissing()) {
                 hasAES = true;
             } // AES is destroyed their for it cannot be used.
             else if ((mounted.getLocation() == location)
                     && mounted.getType().hasFlag(
-                            MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                            EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                 return false;
             }
         }
@@ -924,7 +924,7 @@ public class TripodMek extends Mek {
                     || (mounted.getLocation() == Mek.LOC_RLEG)
                     || (mounted.getLocation() == Mek.LOC_CLEG)) {
                 if (((MiscType) mounted.getType())
-                        .hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                        .hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                         && !mounted.isDestroyed()
                         && !mounted.isBreached()
                         && !mounted.isMissing()) {
@@ -937,7 +937,7 @@ public class TripodMek extends Mek {
                     }
                 } // AES is destroyed their for it cannot be used.
                 else if (((MiscType) mounted.getType())
-                        .hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                        .hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                     return false;
                 }
             }

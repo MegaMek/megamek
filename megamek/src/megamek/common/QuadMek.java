@@ -99,7 +99,7 @@ public class QuadMek extends Mek {
         // destroyed.
         if (movementMode == EntityMovementMode.TRACKED) {
             for (Mounted<?> m : getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_TRACKS)) {
                     if (m.isHit() || isLocationBad(m.getLocation())) {
                         legsDestroyed++;
                     }
@@ -247,11 +247,11 @@ public class QuadMek extends Mek {
 
         // B-Pods need to be special-cased, the have 360 firing arc
         if ((mounted.getType() instanceof WeaponType) &&
-                mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+                mounted.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
             return Compute.ARC_360;
         }
         // VGLs base arc on their facing
-        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+        if (mounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
         // rear mounted?
@@ -890,7 +890,7 @@ public class QuadMek extends Mek {
         for (Mounted<?> mounted : getMisc()) {
             if (IntStream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
                     .anyMatch(i -> (mounted.getLocation() == i))) {
-                if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                if (mounted.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)
                         && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mek.LOC_LLEG) {
                         rearLeftLeg = true;
@@ -901,7 +901,7 @@ public class QuadMek extends Mek {
                     } else {
                         frontLeftLeg = true;
                     }
-                } else if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                } else if (mounted.getType().hasFlag(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
                     // AES is destroyed, so it cannot be used.
                     return false;
                 }

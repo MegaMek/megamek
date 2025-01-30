@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.Mounted;
 import megamek.common.ProtoMek;
 import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.equipment.ArmorType;
 
 public class ProtoMekCostCalculator {
@@ -74,7 +75,7 @@ public class ProtoMekCostCalculator {
         // weapon heat, so we just calculate the cost that way.
         int sinks = 0;
         for (Mounted<?> mount : protoMek.getWeaponList()) {
-            if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
+            if (mount.getType().hasFlag(WeaponTypeFlag.F_ENERGY)) {
                 WeaponType wtype = (WeaponType) mount.getType();
                 sinks += wtype.getHeat();
             }

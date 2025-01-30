@@ -23,14 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import megamek.client.bot.princess.CardinalEdge;
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Hex;
-import megamek.common.MiscType;
-import megamek.common.Terrains;
+import megamek.common.*;
 import megamek.common.util.BoardUtilities;
 
 /**
@@ -79,12 +72,12 @@ public class BoardClusterTracker {
                 case INF_LEG:
                     return Foot;
                 case TRACKED:
-                    return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? TrackedAmphi : Tracked;
-                // technically MiscType.F_AMPHIBIOUS and MiscType.F_LIMITED_AMPHIBIOUS apply
+                    return entity.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ? TrackedAmphi : Tracked;
+                // technically EquipmentFlag.F_AMPHIBIOUS and EquipmentFlag.F_LIMITED_AMPHIBIOUS apply
                 // here too, but are not implemented in general
                 case INF_MOTORIZED:
                 case WHEELED:
-                    return entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ? WheeledAmphi : Wheeled;
+                    return entity.hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ? WheeledAmphi : Wheeled;
                 case HOVER:
                     return Hover;
                 case BIPED_SWIM:

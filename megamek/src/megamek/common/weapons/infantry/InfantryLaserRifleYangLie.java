@@ -17,7 +17,6 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
 public class InfantryLaserRifleYangLie extends InfantryWeapon {
 
     private static final long serialVersionUID = 1L; // Update for each unique class

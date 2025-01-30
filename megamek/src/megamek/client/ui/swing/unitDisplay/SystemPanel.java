@@ -277,7 +277,7 @@ class SystemPanel extends PicMap
             return null;
         }
         if ((cs.getMount().getType() instanceof MiscType)
-                && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                && cs.getMount().getType().hasFlag(EquipmentFlag.F_BOMB_BAY)) {
             Mounted<?> m = cs.getMount();
             while (m.getLinked() != null) {
                 m = m.getLinked();
@@ -505,7 +505,7 @@ class SystemPanel extends PicMap
                         // Can only charge a capacitor if the weapon has not been fired.
                         if ((m.getType() instanceof MiscType)
                                 && (m.getLinked() != null)
-                                && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                                && m.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
                                 && (nMode == 1)) {
                             clientgui.systemMessage(Messages.getString("MekDisplay.CapacitorCharging"));
@@ -580,7 +580,7 @@ class SystemPanel extends PicMap
                 // Check for BA dumping SRM launchers
                 if ((en instanceof BattleArmor) && (!m.isMissing())
                         && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
+                        && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     boolean isDumping = !m.isPendingDump();
@@ -778,7 +778,7 @@ class SystemPanel extends PicMap
                         && (en instanceof BattleArmor)
                         && (m.getType() instanceof WeaponType)
                         && !m.isMissing() && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
+                        && m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);
@@ -793,12 +793,12 @@ class SystemPanel extends PicMap
                     }
                     if (!m.isInoperable()
                             && (m.getType() instanceof MiscType)
-                            && m.getType().hasFlag(MiscType.F_STEALTH)
+                            && m.getType().hasFlag(EquipmentFlag.F_STEALTH)
                             && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     } // if the maxtech eccm option is not set then the ECM
                       // should not show anything.
-                    if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_ECM)
+                    if ((m.getType() instanceof MiscType) && m.getType().hasFlag(EquipmentFlag.F_ECM)
                             && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
                                     || client.getGame().getOptions()
                                             .booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {

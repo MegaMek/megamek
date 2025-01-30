@@ -13,7 +13,8 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.*;
+import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks

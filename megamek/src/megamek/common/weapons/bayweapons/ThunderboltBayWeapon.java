@@ -45,12 +45,12 @@ public class ThunderboltBayWeapon extends AmmoBayWeapon {
         this.flags = flags.or(F_MISSILE).or(F_LARGEMISSILE);
         this.atClass = CLASS_THUNDERBOLT;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_LRM;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, TWGameManager manager) {

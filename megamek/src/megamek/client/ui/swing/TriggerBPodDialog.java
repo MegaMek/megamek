@@ -39,15 +39,7 @@ import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mek;
-import megamek.common.Mounted;
-import megamek.common.QuadMek;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.TriggerBPodAction;
 
 /**
@@ -142,12 +134,11 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         for (Mounted<?> mount : entity.getWeaponList()) {
 
             // Is this an Anti-BA Pod?
-            if (mount.getType().hasFlag(WeaponType.F_B_POD)) {
+            if (mount.getType().hasFlag(WeaponTypeFlag.F_B_POD)) {
                 // Create a checkbox for the pod, and add it to the panel.
-                StringBuffer message = new StringBuffer();
-                message.append(entity.getLocationName(mount.getLocation()))
-                        .append(' ').append(mount.getName());
-                JCheckBox pod = new JCheckBox(message.toString());
+                String message = entity.getLocationName(mount.getLocation()) +
+                    ' ' + mount.getName();
+                JCheckBox pod = new JCheckBox(message);
                 panPods.add(pod);
 
                 // Can the entity fire the pod?

@@ -349,10 +349,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         }
         // all communications equipment mounteds need to have the same mode at all times
         if ((getType() instanceof MiscType)
-                && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                && getType().hasFlag(EquipmentFlag.F_COMMUNICATIONS)) {
             for (Mounted<?> m : entity.getMisc()) {
                 if (!m.equals(this)
-                        && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                        && m.getType().hasFlag(EquipmentFlag.F_COMMUNICATIONS)) {
                     m.setMode(newMode);
                 }
             }
@@ -442,7 +442,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(" (PT)");
         }
         // Append the facing for VGLs
-        if (getType().hasFlag(WeaponType.F_VGL)) {
+        if (getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");
@@ -520,7 +520,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return The weight of the equipment in this mount
      */
     public double getTonnage(RoundWeight defaultRounding) {
-        if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_DUMPER)) {
+        if ((getType() instanceof MiscType) && getType().hasFlag(EquipmentFlag.F_DUMPER)) {
             Mounted<?> cargo = getLinked();
             if (cargo != null) {
                 return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
@@ -601,7 +601,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if (destroyed && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if (destroyed && getType().hasFlag(EquipmentFlag.F_RADICAL_HEATSINK)) {
             if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
@@ -663,7 +663,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if (hit && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if (hit && getType().hasFlag(EquipmentFlag.F_RADICAL_HEATSINK)) {
             if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
@@ -915,12 +915,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             if ((link == null) || !(link.getType() instanceof AmmoType)) {
                 return;
             }
-            if (link.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+            if (link.getType().hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
                 link.hotloaded = hotload;
             }
         }
         if (getType() instanceof AmmoType) {
-            if (getType().hasFlag(AmmoType.F_HOTLOAD)) {
+            if (getType().hasFlag(AmmoTypeFlag.F_HOTLOAD)) {
                 hotloaded = hotload;
             }
         }
@@ -931,7 +931,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean isWorkingCapacitor(Mounted<?> m) {
         return !m.isDestroyed()
                 && m.getType() instanceof MiscType
-                && ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
+                && ((MiscType) m.getType()).hasFlag(EquipmentFlag.F_PPC_CAPACITOR);
     }
 
     /**
@@ -1134,7 +1134,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     public boolean isSplitable() {
         return (((getType() instanceof WeaponType) && ((WeaponType) getType()).isSplitable())
                 || ((getType() instanceof MiscType) && getType()
-                        .hasFlag(MiscType.F_SPLITABLE)));
+                        .hasFlag(EquipmentFlag.F_SPLITABLE)));
     }
 
     public void setSplit(boolean b) {
@@ -1143,27 +1143,27 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public int getExplosionDamage() {
         if (type instanceof MiscType mtype) {
-            if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if (mtype.hasFlag(EquipmentFlag.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null)
                         && !linked.isFired()) {
                     return 15;
                 }
             }
-            if (mtype.hasFlag(MiscType.F_FUEL)) {
+            if (mtype.hasFlag(EquipmentFlag.F_FUEL)) {
                 return 20;
             }
-            if (mtype.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            if (mtype.hasFlag(EquipmentFlag.F_BLUE_SHIELD)) {
                 return 5;
             }
-            if (mtype.hasFlag(MiscType.F_JUMP_JET) && mtype.hasSubType(MiscType.S_PROTOTYPE)
+            if (mtype.hasFlag(EquipmentFlag.F_JUMP_JET) && mtype.hasSubType(MiscType.S_PROTOTYPE)
                     && mtype.hasSubType(MiscType.S_IMPROVED)) {
                 return 10;
             }
-            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            if (mtype.hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
 
-            if (mtype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            if (mtype.hasFlag(EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM)) {
                 return 5;
             }
             return 0;
@@ -1295,8 +1295,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * @return True if
      */
     public boolean isGroundBomb() {
-        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
-                getType().hasFlag(AmmoType.F_GROUND_BOMB);
+        return getType().hasFlag(WeaponTypeFlag.F_DIVE_BOMB) || getType().hasFlag(WeaponTypeFlag.F_ALT_BOMB) ||
+                getType().hasFlag(AmmoTypeFlag.F_GROUND_BOMB);
     }
 
     public void setInternalBomb(boolean internal) {
@@ -1384,9 +1384,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 && (((AmmoType) getType()).getAmmoType() != AmmoType.T_COOLANT_POD)) {
             armoredComponent = false;
         } else if ((getType() instanceof MiscType)
-                && (getType().hasFlag(MiscType.F_SPIKES)
-                        || getType().hasFlag(MiscType.F_REACTIVE)
-                        || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType())
+                && (getType().hasFlag(EquipmentFlag.F_SPIKES)
+                        || getType().hasFlag(EquipmentFlag.F_REACTIVE)
+                        || getType().hasFlag(EquipmentFlag.F_MODULAR_ARMOR) || ((MiscType) getType())
                                 .isShield())) {
             armoredComponent = false;
         } else {

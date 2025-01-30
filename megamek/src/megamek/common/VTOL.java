@@ -636,7 +636,7 @@ public class VTOL extends Tank implements IBomber {
             mp--;
         }
 
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+        if (hasWorkingMisc(EquipmentFlag.F_DUNE_BUGGY)) {
             mp--;
         }
 
@@ -655,7 +655,7 @@ public class VTOL extends Tank implements IBomber {
     public MPBoosters getMPBoosters(boolean onlyArmed) {
         for (Mounted<?> m : getEquipment()) {
             if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)) {
+                    && m.getType().hasFlag(EquipmentFlag.F_MASC)) {
                 return MPBoosters.VTOL_JET_BOOSTER;
             }
         }

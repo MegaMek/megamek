@@ -15,14 +15,13 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.totalwarfare.TWGameManager;
-
 /**
  * @author Sebastian Brocks
  * @since Sep 24, 2004
@@ -41,7 +40,7 @@ public abstract class InfantryWeapon extends Weapon {
     public InfantryWeapon() {
         super();
         damage = DAMAGE_VARIABLE;
-        flags = flags.or(F_INFANTRY);
+        flags = flags.or(WeaponTypeFlag.F_INFANTRY);
         ammoType = AmmoType.T_NA;
         shortRange = 0;
         mediumRange = 0;
@@ -288,9 +287,9 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     public boolean isFlameBased() {
-        return hasFlag(WeaponType.F_FLAMER)
-                || hasFlag(WeaponType.F_INFERNO)
-                || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
-                || hasFlag(WeaponType.F_PLASMA);
+        return hasFlag(WeaponTypeFlag.F_FLAMER)
+                || hasFlag(WeaponTypeFlag.F_INFERNO)
+                || hasFlag(WeaponTypeFlag.F_INCENDIARY_NEEDLES)
+                || hasFlag(WeaponTypeFlag.F_PLASMA);
     }
 }

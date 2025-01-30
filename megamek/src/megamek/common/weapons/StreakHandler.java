@@ -139,7 +139,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
         if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
-            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+            if (wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)) {
                 weapon.setFired(true);
             }
             setDone();

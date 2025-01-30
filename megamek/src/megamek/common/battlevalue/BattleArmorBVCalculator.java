@@ -104,13 +104,13 @@ public class BattleArmorBVCalculator extends BVCalculator {
     private boolean isAnyBattleClaw(Mounted<?> mounted) {
         EquipmentType type = mounted.getType();
         return (type instanceof MiscType)
-                && (type.hasFlag(MiscType.F_VIBROCLAW) || type.hasFlag(MiscType.F_MAGNET_CLAW));
+                && (type.hasFlag(EquipmentFlag.F_VIBROCLAW) || type.hasFlag(EquipmentFlag.F_MAGNET_CLAW));
     }
 
     Predicate<Mounted<?>> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
             && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
 
-    Predicate<Mounted<?>> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
+    Predicate<Mounted<?>> supportFilter = m -> !m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY)
             && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
 
     Predicate<Mounted<?>> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
@@ -118,7 +118,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
             && (isAnyBattleClaw(m));
 
     Predicate<Mounted<?>> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
-            && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
+            && !m.getType().hasFlag(WeaponTypeFlag.F_INFANTRY) && !m.getType().hasFlag(WeaponTypeFlag.F_MISSILE)
             && !m.isBodyMounted()
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));
 
@@ -246,8 +246,8 @@ public class BattleArmorBVCalculator extends BVCalculator {
             modifierList.add("AP");
         }
         for (Mounted<?> mounted : battleArmor.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_ECM)) {
-                if (mounted.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+            if (mounted.getType().hasFlag(EquipmentFlag.F_ECM)) {
+                if (mounted.getType().hasFlag(EquipmentFlag.F_ANGEL_ECM)) {
                     bonus += 2;
                     modifierList.add("Angel ECM");
                 } else {
@@ -264,7 +264,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
         }
         double amsBonus = 0;
         for (Mounted<?> weapon : battleArmor.getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
+            if (weapon.getType().hasFlag(WeaponTypeFlag.F_AMS)) {
                 if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
                     amsBonus += weapon.getType().getBV(battleArmor);
                 } else {

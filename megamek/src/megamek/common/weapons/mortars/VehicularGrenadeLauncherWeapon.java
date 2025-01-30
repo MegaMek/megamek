@@ -28,6 +28,8 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VGLWeaponHandler;
 import megamek.server.totalwarfare.TWGameManager;
 
+import static megamek.common.WeaponTypeFlag.*;
+
 /**
  * @author Sebastian Brocks
  * @since Sep 24, 2004

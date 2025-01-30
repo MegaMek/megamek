@@ -14,7 +14,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-
 /**
  * @author Ben Grills
  * @since Sep 7, 2005
@@ -31,7 +30,7 @@ public class InfantryArchaicWhipWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 18;
         bv = 0.05;
-        tonnage = .00035; 
+        tonnage = .00035;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.05;
         infantryRange = 0;

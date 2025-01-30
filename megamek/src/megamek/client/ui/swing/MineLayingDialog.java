@@ -31,10 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
+import megamek.common.*;
 
 /**
  * A dialog displayed to the player when they want to lay mines with their BA
@@ -73,8 +70,8 @@ public class MineLayingDialog extends JDialog implements ActionListener {
 
             // Is this a Mine that can be layed?
             EquipmentType type = mount.getType();
-            if ((type.hasFlag(MiscType.F_MINE) ||
-                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) &&
+            if ((type.hasFlag(EquipmentFlag.F_MINE) ||
+                    type.hasFlag(EquipmentFlag.F_VEHICLE_MINE_DISPENSER)) &&
                     mount.canFire()) {
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))

@@ -877,14 +877,14 @@ public final class UnitToolTip {
      * special Infantry attacks (Swarm Attacks and the like).
      */
     private static boolean isNotTTRelevant(WeaponType wtype) {
-        return wtype.hasFlag(WeaponType.F_C3M) || wtype.hasFlag(WeaponType.F_C3MBS) || wtype instanceof InfantryAttack;
+        return wtype.hasFlag(WeaponTypeFlag.F_C3M) || wtype.hasFlag(WeaponTypeFlag.F_C3MBS) || wtype instanceof InfantryAttack;
     }
 
     /**
      * @return True if the given MiscType should be excluded from the tooltip. True for everything except clubs.
      */
     private static boolean isNotTTRelevant(MiscType wtype) {
-        return !wtype.hasFlag(MiscType.F_CLUB);
+        return !wtype.hasFlag(EquipmentFlag.F_CLUB);
     }
 
     private static final String RAPIDFIRE = "|RF|";
@@ -1011,7 +1011,7 @@ public final class UnitToolTip {
 
                 WeaponType wpT = ((WeaponType) curWp.getType());
 
-                if (!wpT.hasFlag(WeaponType.F_AMS)
+                if (!wpT.hasFlag(WeaponTypeFlag.F_AMS)
                     || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)) {
                     currentWp.range = rangeString;
                 }
@@ -1023,7 +1023,7 @@ public final class UnitToolTip {
                 // Check wpInfos for dual entries to avoid displaying ammo twice for
                 // non/rapid-fire
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
-                    && (!wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_BA_INDIVIDUAL))
+                    && (!wtype.hasFlag(WeaponTypeFlag.F_ONESHOT) || wtype.hasFlag(WeaponTypeFlag.F_BA_INDIVIDUAL))
                     && (wtype.getAmmoType() != AmmoType.T_INFANTRY)) {
                     String msg_ammo = Messages.getString("BoardView1.Tooltip.Ammo");
 
@@ -1936,7 +1936,7 @@ public final class UnitToolTip {
             if (entity instanceof Mek) {
                 if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
                     for (Mounted<?> m : entity.getMisc()) {
-                        if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                        if (m.getType().hasFlag(EquipmentFlag.F_TRACKS)) {
                             if (m.isHit() || entity.isLocationBad(m.getLocation())) {
                                 legsDestroyed++;
                             }
@@ -1972,19 +1972,19 @@ public final class UnitToolTip {
 
             if ((entity instanceof Mek) || (entity instanceof Tank)) {
                 for (Mounted<?> mounted : entity.getMisc()) {
-                    if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    if (mounted.getType().hasFlag(EquipmentFlag.F_JUMP_JET)) {
                         jumpJet++;
                         if (mounted.isDestroyed() || mounted.isBreached()) {
                             jumpJetDistroyed++;
                         }
                     }
-                    if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+                    if (mounted.getType().hasFlag(EquipmentFlag.F_JUMP_BOOSTER)) {
                         jumpBooster++;
                         if (mounted.isDestroyed() || mounted.isBreached()) {
                             jumpBoosterDistroyed++;
                         }
                     }
-                    if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                    if (mounted.getType().hasFlag(EquipmentFlag.F_PARTIAL_WING)) {
                         int eNum = entity.getEquipmentNum(mounted);
                         paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_RT);
                         paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mek.LOC_LT);

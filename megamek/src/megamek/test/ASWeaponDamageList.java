@@ -18,8 +18,10 @@
  */
 package megamek.test;
 
+import megamek.common.EquipmentFlag;
 import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -40,7 +42,7 @@ public class ASWeaponDamageList {
                 wpLine.add(etype.getName());
                 wpLine.add(etype.getInternalName());
                 wpLine.add(etype.isClan()? "-Clan-" : "-IS-");
-                double mult = etype.hasFlag(WeaponType.F_ONESHOT) ? 0.1 : 1;
+                double mult = etype.hasFlag(WeaponTypeFlag.F_ONESHOT) ? 0.1 : 1;
                 double s = mult * ((WeaponType)etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);
                 String sT = s == 0 ? "--" : "" + s;
                 double m = mult * ((WeaponType)etype).getBattleForceDamage(AlphaStrikeElement.MEDIUM_RANGE, null);
@@ -53,7 +55,7 @@ public class ASWeaponDamageList {
                 wpLine.add(mT);
                 wpLine.add(lT);
                 wpLine.add(exT);
-                
+
                 System.out.println(String.join("\t", wpLine));
             }
         }

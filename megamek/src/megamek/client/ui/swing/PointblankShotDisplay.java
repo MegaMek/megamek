@@ -542,7 +542,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         }
 
         WeaponAttackAction waa;
-        if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+        if (!(mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(currentEntity, target.getTargetType(),
@@ -605,8 +605,8 @@ public class PointblankShotDisplay extends FiringDisplay {
         // otherwise, display firing info for the next weapon
         clientgui.getUnitDisplay().wPan.displayMek(ce());
         Mounted<?> nextMounted = ce().getEquipment(nextWeapon);
-        if (!mounted.getType().hasFlag(WeaponType.F_VGL) && (nextMounted != null)
-                && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
+        if (!mounted.getType().hasFlag(WeaponTypeFlag.F_VGL) && (nextMounted != null)
+                && nextMounted.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             clientgui.getUnitDisplay().wPan.setPrevTarget(target);
         }
         clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
@@ -625,7 +625,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted<?> weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target
-        if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
+        if ((weapon != null) && weapon.getType().hasFlag(WeaponTypeFlag.F_VGL)) {
             int facing;
             if (ce().isSecondaryArcWeapon(weaponId)) {
                 facing = ce().getSecondaryFacing();
@@ -698,14 +698,14 @@ public class PointblankShotDisplay extends FiringDisplay {
             WeaponMounted m = ce().getWeapon(weaponId);
             // If we have a Centurion Weapon System selected, we may need to
             // update ranges.
-            if (m.getType().hasFlag(WeaponType.F_CWS)) {
+            if (m.getType().hasFlag(WeaponTypeFlag.F_CWS)) {
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
             }
 
             if (m.isUsedThisRound()) {
                 clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+            } else if ((m.getType().hasFlag(WeaponTypeFlag.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {

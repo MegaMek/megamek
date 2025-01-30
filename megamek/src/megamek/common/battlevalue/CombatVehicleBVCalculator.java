@@ -78,13 +78,13 @@ public class CombatVehicleBVCalculator extends BVCalculator {
 
         if (!entity.isSupportVehicle()) {
             for (Mounted<?> m : entity.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_FULLY_AMPHIBIOUS)) {
+                if (m.getType().hasFlag(EquipmentFlag.F_FULLY_AMPHIBIOUS)) {
                     typeModifier += 0.2;
-                } else if (m.getType().hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
-                        || m.getType().hasFlag(MiscType.F_DUNE_BUGGY)
-                        || m.getType().hasFlag(MiscType.F_FLOTATION_HULL)
-                        || m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                        || m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+                } else if (m.getType().hasFlag(EquipmentFlag.F_LIMITED_AMPHIBIOUS)
+                        || m.getType().hasFlag(EquipmentFlag.F_DUNE_BUGGY)
+                        || m.getType().hasFlag(EquipmentFlag.F_FLOTATION_HULL)
+                        || m.getType().hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)
+                        || m.getType().hasFlag(EquipmentFlag.F_ARMORED_MOTIVE_SYSTEM)) {
                     typeModifier += 0.1;
                 }
             }

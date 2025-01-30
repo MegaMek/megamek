@@ -361,7 +361,7 @@ public class TeamLoadOutGenerator {
         }
 
         // Nukes are not allowed... unless they are!
-        legal &= (!aType.hasFlag(AmmoType.F_NUCLEAR)
+        legal &= (!aType.hasFlag(AmmoTypeFlag.F_NUCLEAR)
                 || gameOptions.booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES));
 
         return legal;
@@ -737,8 +737,8 @@ public class TeamLoadOutGenerator {
     }
 
     private static boolean insertArtemisImperatives(Entity e, MunitionTree mt, String ammoClass) {
-        boolean artemis = !(e.getMiscEquipment(MiscType.F_ARTEMIS).isEmpty()
-                && e.getMiscEquipment(MiscType.F_ARTEMIS_V).isEmpty());
+        boolean artemis = !(e.getMiscEquipment(EquipmentFlag.F_ARTEMIS).isEmpty()
+                && e.getMiscEquipment(EquipmentFlag.F_ARTEMIS_V).isEmpty());
 
         if (artemis) {
             for (AmmoMounted bin : e.getAmmo()) {

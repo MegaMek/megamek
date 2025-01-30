@@ -460,12 +460,12 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         if (areAllUnitTypesSelected()) {
             return true;
         } else {
-            return (btnUnitTypeMek.isSelected() && eq.hasFlag(WeaponType.F_MEK_WEAPON))
-                || (btnUnitTypeVee.isSelected() && eq.hasFlag(WeaponType.F_TANK_WEAPON))
-                || (btnUnitTypePM.isSelected() && eq.hasFlag(WeaponType.F_PROTO_WEAPON))
-                || (btnUnitTypeBA.isSelected() && eq.hasFlag(WeaponType.F_BA_WEAPON))
-                || (btnUnitTypeCI.isSelected() && eq.hasFlag(WeaponType.F_INFANTRY))
-                || (btnUnitTypeAero.isSelected() && eq.hasFlag(WeaponType.F_AERO_WEAPON));
+            return (btnUnitTypeMek.isSelected() && eq.hasFlag(WeaponTypeFlag.F_MEK_WEAPON))
+                || (btnUnitTypeVee.isSelected() && eq.hasFlag(WeaponTypeFlag.F_TANK_WEAPON))
+                || (btnUnitTypePM.isSelected() && eq.hasFlag(WeaponTypeFlag.F_PROTO_WEAPON))
+                || (btnUnitTypeBA.isSelected() && eq.hasFlag(WeaponTypeFlag.F_BA_WEAPON))
+                || (btnUnitTypeCI.isSelected() && eq.hasFlag(WeaponTypeFlag.F_INFANTRY))
+                || (btnUnitTypeAero.isSelected() && eq.hasFlag(WeaponTypeFlag.F_AERO_WEAPON));
         }
     }
 
@@ -473,12 +473,12 @@ class WeaponSearchTab extends JPanel implements KeyListener, DocumentListener, F
         if (areAllUnitTypesSelected()) {
             return true;
         } else {
-            return (btnUnitTypeMek.isSelected() && eq.hasFlag(MiscType.F_MEK_EQUIPMENT))
-                || (btnUnitTypeVee.isSelected() && eq.hasFlag(MiscType.F_TANK_EQUIPMENT))
-                || (btnUnitTypePM.isSelected() && eq.hasFlag(MiscType.F_PROTOMEK_EQUIPMENT))
-                || (btnUnitTypeBA.isSelected() && eq.hasFlag(MiscType.F_BA_EQUIPMENT))
-                || (btnUnitTypeCI.isSelected() && eq.hasFlag(MiscType.F_INF_EQUIPMENT))
-                || (btnUnitTypeAero.isSelected() && eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT));
+            return (btnUnitTypeMek.isSelected() && eq.hasFlag(EquipmentFlag.F_MEK_EQUIPMENT))
+                || (btnUnitTypeVee.isSelected() && eq.hasFlag(EquipmentFlag.F_TANK_EQUIPMENT))
+                || (btnUnitTypePM.isSelected() && eq.hasFlag(EquipmentFlag.F_PROTOMEK_EQUIPMENT))
+                || (btnUnitTypeBA.isSelected() && eq.hasFlag(EquipmentFlag.F_BA_EQUIPMENT))
+                || (btnUnitTypeCI.isSelected() && eq.hasFlag(EquipmentFlag.F_INF_EQUIPMENT))
+                || (btnUnitTypeAero.isSelected() && eq.hasFlag(EquipmentFlag.F_FIGHTER_EQUIPMENT));
         }
     }
 

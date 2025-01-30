@@ -238,7 +238,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         if (te != null) {
             for (Mounted<?> mount : te.getMisc()) {
                 EquipmentType equip = mount.getType();
-                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
+                if (equip.hasFlag(EquipmentFlag.F_MAGNET_CLAW)) {
                     toHit.addModifier(1, "defender has magnetic claws");
                     break;
                 }

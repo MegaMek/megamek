@@ -20,8 +20,8 @@ package megamek.common.alphaStrike.conversion;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
-import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
-import static megamek.common.MiscType.F_RADICAL_HEATSINK;
+import static megamek.common.EquipmentFlag.F_EMERGENCY_COOLANT_SYSTEM;
+import static megamek.common.EquipmentFlag.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
 import static megamek.common.alphaStrike.AlphaStrikeElement.MEDIUM_RANGE;
@@ -232,7 +232,7 @@ public class ASDamageConverter {
      * Returns the damage value to be used for the given weapon at the given range.
      * Overridden for special
      * treatment and possibly ignoring some weapons.
-     * 
+     *
      * @param weapon The weapon Mounted
      * @param range  The range value (not bracket)
      * @return the damage to be used
@@ -383,17 +383,17 @@ public class ASDamageConverter {
         double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
         // Oneshot or Fusillade
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
+        if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
             damageModifier *= .1;
         }
 
         // Targeting Computer
-        if (hasTargetingComputer && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+        if (hasTargetingComputer && weaponType.hasFlag(WeaponTypeFlag.F_DIRECT_FIRE)) {
             damageModifier *= 1.10;
         }
 
         // Actuator Enhancement System
-        if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation())
+        if (entity.hasWorkingMisc(EquipmentFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, weapon.getLocation())
                 && ((weapon.getLocation() == Mek.LOC_LARM) || (weapon.getLocation() == Mek.LOC_RARM))) {
             damageModifier *= 1.05;
         }
@@ -409,7 +409,7 @@ public class ASDamageConverter {
         for (Mounted<?> weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.getAmmoType() != AmmoType.T_NA)
-                    && !weaponType.hasFlag(WeaponType.F_ONESHOT)
+                    && !weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)
                     && (!(entity instanceof BattleArmor) || weaponType instanceof MissileWeapon)) {
                 weaponCount.merge(weaponType, 1, Integer::sum);
             }
@@ -443,19 +443,19 @@ public class ASDamageConverter {
     }
 
     protected void assignSpecialAbilities(Mounted<?> weapon, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_TAG)) {
-            if (weaponType.hasFlag(WeaponType.F_C3MBS)) {
+        if (weaponType.hasFlag(WeaponTypeFlag.F_TAG)) {
+            if (weaponType.hasFlag(WeaponTypeFlag.F_C3MBS)) {
                 assignToLocations(weapon, C3BSM, 1);
                 assignToLocations(weapon, MHQ, 6);
-            } else if (weaponType.hasFlag(WeaponType.F_C3M)) {
+            } else if (weaponType.hasFlag(WeaponTypeFlag.F_C3M)) {
                 assignToLocations(weapon, C3M, 1);
                 assignToLocations(weapon, MHQ, 5);
             }
             assignToLocations(weapon, (weaponType.getShortRange() < 5) ? LTAG : TAG);
         }
 
-        if (weaponType.hasFlag(WeaponType.F_TSEMP) || weaponType.hasFlag(WeaponType.F_CWS)) {
-            assignToLocations(weapon, weaponType.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP, 1);
+        if (weaponType.hasFlag(WeaponTypeFlag.F_TSEMP) || weaponType.hasFlag(WeaponTypeFlag.F_CWS)) {
+            assignToLocations(weapon, weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT) ? TSEMPO : TSEMP, 1);
         }
 
         if (weaponType.getAtClass() == WeaponType.CLASS_TELE_MISSILE) {
@@ -486,7 +486,7 @@ public class ASDamageConverter {
         if (weaponType.getInternalName().equals("ISAPDS")
                 || weaponType.getInternalName().equals("ISBAAPDS")) {
             assignToLocations(weapon, RAMS);
-        } else if (weaponType.hasFlag(WeaponType.F_AMS)) {
+        } else if (weaponType.hasFlag(WeaponTypeFlag.F_AMS)) {
             assignToLocations(weapon, AMS);
         }
     }
@@ -990,13 +990,13 @@ public class ASDamageConverter {
             totalHeat += weaponHeat(mount, onlyRear, onlyLongRange);
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_STEALTH, -1)
-                || entity.hasWorkingMisc(MiscType.F_VOIDSIG, -1)
-                || entity.hasWorkingMisc(MiscType.F_NULLSIG, -1)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_STEALTH, -1)
+                || entity.hasWorkingMisc(EquipmentFlag.F_VOIDSIG, -1)
+                || entity.hasWorkingMisc(EquipmentFlag.F_NULLSIG, -1)) {
             totalHeat += 10;
         }
 
-        if (entity.hasWorkingMisc(MiscType.F_CHAMELEON_SHIELD, -1)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_CHAMELEON_SHIELD, -1)) {
             totalHeat += 6;
         }
 
@@ -1005,7 +1005,7 @@ public class ASDamageConverter {
 
     protected int weaponHeat(Mounted<?> weapon, boolean onlyRear, boolean onlyLongRange) {
         WeaponType weaponType = (WeaponType) weapon.getType();
-        if (weaponType.hasFlag(WeaponType.F_ONESHOT)
+        if (weaponType.hasFlag(WeaponTypeFlag.F_ONESHOT)
                 || (onlyRear && !weapon.isRearMounted())
                 || (!onlyRear && weapon.isRearMounted())
                 || (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {
@@ -1056,7 +1056,7 @@ public class ASDamageConverter {
         if (coolantPodCount > 0) {
             heatCapacity += (int) coolantPodCount;
         }
-        if (entity.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_PARTIAL_WING)) {
             heatCapacity += 3;
         }
         if (entity.hasMisc(F_RADICAL_HEATSINK)) {

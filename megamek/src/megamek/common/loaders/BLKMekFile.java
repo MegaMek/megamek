@@ -98,7 +98,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mek.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], MiscType.F_HEAT_SINK);
+        mek.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], EquipmentFlag.F_HEAT_SINK);
 
         if (dataFile.exists("internal_type")) {
             mek.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
@@ -276,7 +276,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                                 rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
                                 turretMounted);
                         mount.setOmniPodMounted(isOmniMounted);
-                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             // vehicular grenade launchers need to have their
                             // facing set
                             if (facing == -1) {

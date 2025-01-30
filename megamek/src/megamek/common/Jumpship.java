@@ -1059,7 +1059,7 @@ public class Jumpship extends Aero {
             return false;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponTypeFlag.F_ONESHOT)
                 && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             return true;

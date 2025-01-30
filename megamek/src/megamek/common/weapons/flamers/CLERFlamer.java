@@ -15,6 +15,7 @@ package megamek.common.weapons.flamers;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.WeaponTypeFlag;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
@@ -30,7 +31,7 @@ public class CLERFlamer extends FlamerWeapon {
         setInternalName("CLERFlamer");
         addLookupName("CL ER Flamer");
         sortingName = "Flamer ER";
-        flags = flags.or(WeaponType.F_ER_FLAMER);
+        flags = flags.or(WeaponTypeFlag.F_ER_FLAMER);
         heat = 4;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

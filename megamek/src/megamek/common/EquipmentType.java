@@ -161,8 +161,8 @@ public class EquipmentType implements ITechnology {
 
     protected TechAdvancement techAdvancement = new TechAdvancement();
 
-    protected BigInteger flags = BigInteger.ZERO;
-
+//    protected BigInteger flags = BigInteger.ZERO;
+    protected EquipmentFlagBitSet flags = new EquipmentFlagBitSet();
     protected long subType = 0;
 
     protected double bv = 0; // battle value point system
@@ -201,7 +201,10 @@ public class EquipmentType implements ITechnology {
         // default constructor
     }
 
-    public void setFlags(BigInteger inF) {
+//    public void setFlags(BigInteger inF) {
+//        flags = inF;
+//    }
+    public void setFlags(EquipmentFlagBitSet inF) {
         flags = inF;
     }
 
@@ -415,7 +418,7 @@ public class EquipmentType implements ITechnology {
 
         // special case: RISC laser pulse module are only explosive when the
         // laser they're linked to is working
-        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(EquipmentFlag.F_RISC_LASER_PULSE_MODULE)) {
             if ((mounted.getLinked() == null) || mounted.getLinked().isInoperable()) {
                 return false;
             }
@@ -458,7 +461,7 @@ public class EquipmentType implements ITechnology {
         // special case. Blue Shield Particle Field Damper only explodes when
         // switched on
         if ((mounted.getType() instanceof MiscType)
-                && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted
+                && (mounted.getType().hasFlag(EquipmentFlag.F_BLUE_SHIELD) && mounted
                         .curMode().equals("Off"))) {
             return false;
         }
@@ -472,14 +475,14 @@ public class EquipmentType implements ITechnology {
                 return true;
             }
             if ((mounted.getType() instanceof MiscType)
-                    && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && mounted.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
                     && (mounted.getLinked() != null)) {
                 return true;
             }
 
         }
         if ((mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                && mounted.getType().hasFlag(EquipmentFlag.F_PPC_CAPACITOR)
                 && !mounted.curMode().equals("Charge")) {
             return false;
         }
@@ -506,12 +509,32 @@ public class EquipmentType implements ITechnology {
         return toHitModifier;
     }
 
-    public BigInteger getFlags() {
+    public EquipmentFlagBitSet getFlags() {
         return flags;
     }
 
-    public boolean hasFlag(BigInteger flag) {
-        return !(flags.and(flag)).equals(BigInteger.ZERO);
+    public boolean hasFlag(EquipmentFlag flag) {
+        return flags.get(flag.getFlagPosition());
+    }
+
+    public boolean doesNotHasFlags(EquipmentFlagBitSet flagSet) {
+        return !flags.intersects(flagSet);
+    }
+
+    public boolean hasFlags(EquipmentFlagBitSet flagSet) {
+        return flags.intersects(flagSet);
+    }
+
+    public boolean hasFlag(AmmoTypeFlag flag) {
+        return flags.get(flag.getFlagPosition());
+    }
+
+    public boolean hasFlag(int flag) {
+        return flags.get(flag);
+    }
+
+    public boolean hasFlag(WeaponTypeFlag flag) {
+        return flags.isSet(flag);
     }
 
     public double getBV(Entity entity) {

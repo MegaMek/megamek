@@ -49,7 +49,7 @@ public class ProtoMekClampMount extends BattleArmorHandles {
 
     @Override
     public boolean canLoad(Entity unit) {
-        return (carriedUnit == Entity.NONE) && unit.isProtoMek() && unit.hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP)
+        return (carriedUnit == Entity.NONE) && unit.isProtoMek() && unit.hasWorkingMisc(EquipmentFlag.F_MAGNETIC_CLAMP)
                 && (!rear || unit.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY);
     }
 

@@ -27,7 +27,7 @@ import megamek.common.AmmoType;
 /**
  * @author Dave Nawton
  */
- 
+
 public class InfantryPistolSMGGHTSpec7aWeapon extends InfantryWeapon {
 
 	private static final long serialVersionUID = -3164871600230559641L;

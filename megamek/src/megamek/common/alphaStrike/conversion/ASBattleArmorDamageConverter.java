@@ -116,11 +116,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         report.addLine("--- Short Range Damage:", "");
         double sDamage = assembleFrontDamage(SHORT_RANGE);
 
-        if (entity.hasMisc(MiscType.F_ARMORED_GLOVE)) {
+        if (entity.hasMisc(EquipmentFlag.F_ARMORED_GLOVE)) {
             sDamage += ARMORED_GLOVE_DAMAGE;
             report.addLine("Armored Glove(s)",
                     "+ " + formatForReport(ARMORED_GLOVE_DAMAGE), "= " + formatForReport(sDamage));
-        } else if (entity.hasMisc(MiscType.F_AP_MOUNT)) {
+        } else if (entity.hasMisc(EquipmentFlag.F_AP_MOUNT)) {
             sDamage += AP_MOUNT_DAMAGE;
             report.addLine("APM",
                     "+ " + formatForReport(AP_MOUNT_DAMAGE), "= " + formatForReport(sDamage));
@@ -134,7 +134,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
 
         sDamage += assembleSquadSupportDamage(SHORT_RANGE);
 
-        int vibroclaws = entity.countWorkingMisc(MiscType.F_VIBROCLAW);
+        int vibroclaws = entity.countWorkingMisc(EquipmentFlag.F_VIBROCLAW);
         sDamage += 0.1 * vibroclaws;
         if (vibroclaws > 0) {
             report.addLine("Vibroclaws", "+ 0." + vibroclaws, "= " + formatForReport(sDamage));

@@ -28,6 +28,8 @@ import megamek.server.totalwarfare.TWGameManager;
 
 import java.io.Serial;
 
+import static megamek.common.WeaponTypeFlag.F_ALT_BOMB;
+
 /**
  * @author Jay Lawson
  */

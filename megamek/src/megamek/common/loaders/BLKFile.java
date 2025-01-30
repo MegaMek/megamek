@@ -248,7 +248,7 @@ public class BLKFile {
                 }
 
                 // The stealth armor mount is added when the armor type is set
-                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_STEALTH)) {
+                if ((etype instanceof MiscType) && etype.hasFlag(EquipmentFlag.F_STEALTH)) {
                     continue;
                 }
 
@@ -259,7 +259,7 @@ public class BLKFile {
                                 isTurreted, isPintleTurreted, isOmniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
-                                && etype.hasFlag(WeaponType.F_VGL)) {
+                                && etype.hasFlag(WeaponTypeFlag.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultVGLFacing(nLoc, false));
                             } else {
@@ -792,7 +792,7 @@ public class BLKFile {
                     blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
                     blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating", armor.getTechRating());
-                    if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+                    if (armor.hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
                         blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
                     }
                 }
@@ -898,7 +898,7 @@ public class BLKFile {
         for (int i = 0; i < numLocs; i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
-        if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+        if (!t.hasPatchworkArmor() && ArmorType.forEntity(t).hasFlag(EquipmentFlag.F_SUPPORT_VEE_BAR_ARMOR)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
 

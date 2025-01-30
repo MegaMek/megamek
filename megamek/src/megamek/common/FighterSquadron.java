@@ -378,7 +378,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                 String key = mounted.getType().getInternalName() + ":" + loc;
                 if (null == groups.get(key)) {
                     groups.put(key, mounted.getNWeapons());
-                } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+                } else if (!mounted.getType().hasFlag(WeaponTypeFlag.F_SPACE_BOMB)) {
                     groups.put(key, groups.get(key) + mounted.getNWeapons());
                 }
             }
@@ -574,7 +574,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         // add the space bomb attack
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace() && !getBombs(AmmoType.F_SPACE_BOMB).isEmpty()) {
+                && game.getBoard().inSpace() && !getBombs(AmmoTypeFlag.F_SPACE_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
@@ -582,14 +582,14 @@ public class FighterSquadron extends AeroSpaceFighter {
             }
         }
 
-        if (!game.getBoard().inSpace() && !getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
+        if (!game.getBoard().inSpace() && !getBombs(AmmoTypeFlag.F_GROUND_BOMB).isEmpty()) {
             try {
                 addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (Exception ignored) {
 
             }
 
-            for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
+            for (int i = 0; i < Math.min(10, getBombs(AmmoTypeFlag.F_GROUND_BOMB).size()); i++) {
                 try {
                     addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
                 } catch (Exception ignored) {

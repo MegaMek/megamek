@@ -46,7 +46,7 @@ public class RLBayWeapon extends AmmoBayWeapon {
         this.toHitModifier = 1;
         this.atClass = CLASS_ROCKET_LAUNCHER;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               TWGameManager manager) {

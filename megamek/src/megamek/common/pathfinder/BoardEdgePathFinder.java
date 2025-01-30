@@ -31,7 +31,7 @@ import megamek.common.annotations.Nullable;
  * given a movement type from a particular hex to the specified board edge
  *
  * Note: This class is largely obsolete now, only used for its static methods
- * 
+ *
  * @author NickAragua
  */
 public class BoardEdgePathFinder {
@@ -66,7 +66,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Figures out the "opposite" edge for the given entity.
-     * 
+     *
      * @param entity Entity to evaluate
      * @return the Board.START_ constant representing the "opposite" edge
      */
@@ -124,7 +124,7 @@ public class BoardEdgePathFinder {
      * Helper function to set the entity to an appropriate facing given the
      * destination region
      * Changes the actual entity's facing.
-     * 
+     *
      * @param entity            The entity
      * @param destinationRegion The region
      */
@@ -155,7 +155,7 @@ public class BoardEdgePathFinder {
      * Helper function to directly the entity to an appropriate facing given the
      * destination region
      * Changes the actual entity's facing.
-     * 
+     *
      * @param entity            The entity
      * @param destinationRegion The region
      */
@@ -170,7 +170,7 @@ public class BoardEdgePathFinder {
      * technically lead to an edge,
      * but we cut the path generation short when it reaches another path that
      * already goes to that edge.
-     * 
+     *
      * @param entity
      * @return
      */
@@ -210,7 +210,7 @@ public class BoardEdgePathFinder {
      * The resulting path has all the steps of the starting path, a turn to get the
      * unit to face in the direction of the second path,
      * and the rest of the second path starting from the intersection.
-     * 
+     *
      * @param startingPath The beginning path
      * @param endingPath   The end path
      * @return Combined path
@@ -259,7 +259,7 @@ public class BoardEdgePathFinder {
      * Helper function that, given a unit facing and a move step, adds turns to the
      * given path until the facing of the path matches
      * the facing of the step.
-     * 
+     *
      * @param initialPath
      * @param intersectionStep
      */
@@ -305,7 +305,7 @@ public class BoardEdgePathFinder {
      * building or bridge collapse), or some other terrain change
      * either directly or by connecting to a path that goes through this set of
      * coordinates.
-     * 
+     *
      * @param coords
      */
     public void invalidatePaths(Coords coords) {
@@ -338,7 +338,7 @@ public class BoardEdgePathFinder {
      * Mostly ignores movement cost
      * "opposite" is defined as the cardinal edge furthest from the entity's current
      * location
-     * 
+     *
      * @param entity The entity for which to calculate the path
      * @return A legal move path from the entity's current location to the
      *         "opposite" edge (over several turns)
@@ -361,7 +361,7 @@ public class BoardEdgePathFinder {
      * in a cardinal edge)
      * Completely ignores movement risk
      * Mostly ignores movement cost
-     * 
+     *
      * @param entity            The entity for which to calculate the path
      * @param destinationRegion The destination edge
      * @return A legal move path from the entity's current location to the edge
@@ -418,7 +418,7 @@ public class BoardEdgePathFinder {
     /**
      * Gets the currently stored longest non-edge path from the given entity's
      * current position
-     * 
+     *
      * @param coords The coordinates to check
      * @return A move path or null if these coordinates haven't been evaluated.
      */
@@ -429,7 +429,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that gets us a cached path for the given set of coordinates
      * if they have a path cached
-     * 
+     *
      * @param coords            Coordinates to check
      * @param destinationRegion Where we're going
      * @return True or false
@@ -441,7 +441,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that tells us if the given set of coordinates have a path
      * cached already
-     * 
+     *
      * @param coords            Coordinates to check
      * @param destinationRegion Where we're going
      * @return True or false
@@ -453,7 +453,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Worker function that caches a path that gets to the destination region
-     * 
+     *
      * @param path              The path to cache
      * @param destinationRegion The region of the board to which the path moves
      */
@@ -500,7 +500,7 @@ public class BoardEdgePathFinder {
      * Function that generates all possible "legal" moves resulting from the given
      * path
      * and updates the set of visited coordinates so we don't visit them again.
-     * 
+     *
      * @param parentPath    The path for which to generate child nodes
      * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
@@ -593,9 +593,9 @@ public class BoardEdgePathFinder {
                 && !entity.hasETypeFlag(Entity.ETYPE_QUADVEE);
         boolean isHovercraft = entity.getMovementMode() == EntityMovementMode.HOVER;
         boolean isWheeled = entity.getMovementMode() == EntityMovementMode.WHEELED;
-        boolean isAmphibious = movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_AMPHIBIOUS) ||
-                movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
-                movePath.getCachedEntityState().hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        boolean isAmphibious = movePath.getCachedEntityState().hasWorkingMisc(EquipmentFlag.F_AMPHIBIOUS) ||
+                movePath.getCachedEntityState().hasWorkingMisc(EquipmentFlag.F_FULLY_AMPHIBIOUS) ||
+                movePath.getCachedEntityState().hasWorkingMisc(EquipmentFlag.F_LIMITED_AMPHIBIOUS);
         boolean destHexHasRoad = destHex.containsTerrain(Terrains.ROAD);
 
         // this indicates that we are stepping off a bridge
@@ -685,7 +685,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that calculates the effective elevation for a unit standing
      * there.
-     * 
+     *
      * @param hex    The hex to check
      * @param entity The entity to check
      * @return The effective elevation
@@ -697,7 +697,7 @@ public class BoardEdgePathFinder {
     /**
      * Helper function that calculates the effective elevation for a unit standing
      * there.
-     * 
+     *
      * @param hex          The hex to check
      * @param entity       The entity to check
      * @param useBridgeTop Whether we're going on top of a bridge or under it
@@ -735,7 +735,7 @@ public class BoardEdgePathFinder {
 
     /**
      * Determines if the given move path ends on the given board edge
-     * 
+     *
      * @param movePath          The move path to check.
      * @param destinationRegion The edge to check for.
      * @return True or false.
@@ -761,7 +761,7 @@ public class BoardEdgePathFinder {
      * Comparator implementation useful in comparing how much closer a given path is
      * to the internal
      * "destination edge" than the other.
-     * 
+     *
      * @author NickAragua
      *
      */
@@ -770,7 +770,7 @@ public class BoardEdgePathFinder {
 
         /**
          * Constructor - initializes the destination edge.
-         * 
+         *
          * @param targetRegion Destination edge
          */
         public SortByDistanceToEdge(int targetRegion) {

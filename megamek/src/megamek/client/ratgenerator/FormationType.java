@@ -1188,7 +1188,7 @@ public class FormationType {
      * Tests whether a list of units qualifies for the formation type. Note that
      * unit roles are
      * not available for all units.
-     * 
+     *
      * @param units A list of units to test
      * @return Whether the list of units meets the qualifications for this
      *         formation.
@@ -1263,7 +1263,7 @@ public class FormationType {
      * Tests whether a list of units qualifies for the formation type. Note that
      * unit roles are
      * not available for all units.
-     * 
+     *
      * @param units A list of units to test
      * @return Whether the list of units meets the qualifications for this
      *         formation.
@@ -1964,7 +1964,7 @@ public class FormationType {
                 ms -> ms.getEquipmentNames().stream().map(EquipmentType::get)
                         .anyMatch(et -> et instanceof TAGWeapon ||
                                 (et instanceof MiscType &&
-                                        (et.hasFlag(MiscType.F_BAP) || et.hasFlag(MiscType.F_ECM)))),
+                                        (et.hasFlag(EquipmentFlag.F_BAP) || et.hasFlag(EquipmentFlag.F_ECM)))),
                 "Probe, ECM, TAG"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,

@@ -459,13 +459,13 @@ class StepSprite extends Sprite {
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
         subscriptStringBuf.append(toHitData.getValue());
 
-        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(EquipmentFlag.F_JET_BOOSTER)) {
             subscriptStringBuf.append(" S");
             subscriptStringBuf.append(step.getTargetNumberSupercharger());
             subscriptStringBuf.append('+');
         }
 
-        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(EquipmentFlag.F_JET_BOOSTER)) {
             if (step.isUsingSupercharger()) {
                 subscriptStringBuf.append(" M");
             } else {

@@ -85,7 +85,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         }
 
         double talonMultiplier = 1;
-        if (entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
+        if (entity.hasWorkingMisc(EquipmentFlag.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, legLoc)) {
             talonMultiplier += 0.5;
         }
 

@@ -14,7 +14,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-
 /**
  * @author Ben Grills
  * @since Sep 7, 2005
@@ -33,7 +32,7 @@ public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0.04;
-        tonnage = .006; 
+        tonnage = .006;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;

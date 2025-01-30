@@ -23,13 +23,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 import java.util.HashMap;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.LandAirMek;
-import megamek.common.MPCalculationSetting;
-import megamek.common.Mek;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.QuadVee;
+import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
@@ -84,7 +78,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
         if (entity instanceof LandAirMek) {
             LandAirMek lam = (LandAirMek) entity;
-            double bombs = entity.countWorkingMisc(MiscType.F_BOMB_BAY);
+            double bombs = entity.countWorkingMisc(EquipmentFlag.F_BOMB_BAY);
             int bombValue = ASConverter.roundUp(bombs / 5);
             if (bombValue > 0) {
                 assign("LAM with Bombs", BOMB, bombValue);
@@ -121,7 +115,7 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     protected void processSEALandSOA(Mounted<?> misc) {
         if (mek.isIndustrial()) {
             MiscType miscType = (MiscType) misc.getType();
-            if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            if (miscType.hasFlag(EquipmentFlag.F_ENVIRONMENTAL_SEALING)) {
                 assign(misc, SEAL);
                 if (hasSoaCapableEngine()) {
                     assign("SEAL and no ICE", SOA);

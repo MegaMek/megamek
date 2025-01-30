@@ -33,6 +33,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A very "basic" path ranker
@@ -208,18 +209,11 @@ public class BasicPathRanker extends PathRanker {
         return super.getMovePathSuccessProbability(movePath);
     }
 
-    private double calculateFallMod(double successProbability, StringBuilder formula) {
+    private double calculateFallMod(double successProbability) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
         double fallMod = pilotingFailure * (pilotingFailure == 1 ? -UNIT_DESTRUCTION_FACTOR : fallShame);
-
-        formula.append("fall mod [")
-                .append(LOG_DECIMAL.format(fallMod))
-                .append(" = ")
-                .append(LOG_DECIMAL.format(pilotingFailure))
-                .append(" * ")
-                .append(LOG_DECIMAL.format(fallShame))
-                .append("]");
+        logger.trace("fall mod [-{} = {} * {}]", fallMod, pilotingFailure, fallShame);
         return fallMod;
     }
 
@@ -683,7 +677,7 @@ public class BasicPathRanker extends PathRanker {
         return rankedPath;
     }
 
-    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken, StringBuilder formula) {
+    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
@@ -1349,7 +1343,6 @@ public class BasicPathRanker extends PathRanker {
      * @param modifier    Modifier, based on unit type and terrain type
      * @param bogPossible whether the unit can actually get bogged own in this
      *                    terrain type, or just calculating
-     * @param logMsg      Ref to StringBuilder used for logging.
      * @return double Factor to multiply by terrain hazards.
      */
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill,

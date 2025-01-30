@@ -22,18 +22,15 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
-import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.Level;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.text.NumberFormat;
 import java.util.*;
 
 import static megamek.client.ui.SharedUtility.predictLeapDamage;
@@ -321,7 +318,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Returns the probability of success of a move path
      */
-    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+    protected double getMovePathSuccessProbability(MovePath movePath) {
         // introduced a caching mechanism, as the success probability was being
         // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {

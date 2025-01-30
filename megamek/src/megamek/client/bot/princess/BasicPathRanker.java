@@ -23,7 +23,6 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -57,14 +56,14 @@ public class BasicPathRanker extends PathRanker {
 
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
-    private Map<Integer, Double> bestDamageByEnemies;
+    private final Map<Integer, Double> bestDamageByEnemies;
 
     protected int blackIce = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
-        logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
+        logger.debug("Using {} behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
     FireControl getFireControl(Entity entity) {
@@ -199,24 +198,11 @@ public class BasicPathRanker extends PathRanker {
         return super.getPSRList(path);
     }
 
-    @Override
-    public double getMovePathSuccessProbability(MovePath movePath,
-            StringBuilder msg) {
-        return super.getMovePathSuccessProbability(movePath, msg);
-    }
-
-    private double calculateFallMod(double successProbability, StringBuilder formula) {
+    private double calculateFallMod(double successProbability) {
         double pilotingFailure = (1 - successProbability);
         double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
         double fallMod = pilotingFailure * (pilotingFailure == 1 ? -UNIT_DESTRUCTION_FACTOR : fallShame);
-
-        formula.append("fall mod [")
-                .append(LOG_DECIMAL.format(fallMod))
-                .append(" = ")
-                .append(LOG_DECIMAL.format(pilotingFailure))
-                .append(" * ")
-                .append(LOG_DECIMAL.format(fallShame))
-                .append("]");
+        logger.trace("fall mod [{} = {} * {}]", fallMod, pilotingFailure, fallShame);
         return fallMod;
     }
 
@@ -365,7 +351,10 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from a target, the lower this path ranks (weighted by
     // Hyper Aggression.
-    protected double calculateAggressionMod(Entity movingUnit, MovePath path, Game game, StringBuilder formula) {
+    protected double calculateAggressionMod(Entity movingUnit, MovePath path, double maximumDamageDone, Game game) {
+        if (maximumDamageDone <= 0) {
+            return 0;
+        }
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
 
         if ((distToEnemy == 0) && !(movingUnit instanceof Infantry)) {
@@ -374,18 +363,14 @@ public class BasicPathRanker extends PathRanker {
 
         double aggression = getOwner().getBehaviorSettings().getHyperAggressionValue();
         double aggressionMod = distToEnemy * aggression;
-
-        formula.append(" - aggressionMod [")
-                .append(LOG_DECIMAL.format(aggressionMod)).append(" = ")
-                .append(LOG_DECIMAL.format(distToEnemy)).append(" * ")
-                .append(LOG_DECIMAL.format(aggression)).append("]");
+        logger.trace("aggression mod [ -{} = {} * {}]", aggressionMod, distToEnemy, aggression);
         return aggressionMod;
     }
 
     // Lower this path ranking if I am moving away from my friends (weighted by Herd Mentality).
-    protected double calculateHerdingMod(Coords friendsCoords, MovePath path, StringBuilder formula) {
+    protected double calculateHerdingMod(Coords friendsCoords, MovePath path) {
         if (friendsCoords == null) {
-            formula.append(" - herdingMod [0 no friends]");
+            logger.trace(" herdingMod [-0 no friends]");
             return 0;
         }
 
@@ -393,18 +378,19 @@ public class BasicPathRanker extends PathRanker {
         double herding = getOwner().getBehaviorSettings().getHerdMentalityValue();
         double herdingMod = finalDistance * herding;
 
-        formula.append(" - herdingMod [")
-            .append(LOG_DECIMAL.format(herdingMod)).append(" = ")
-            .append(LOG_DECIMAL.format(finalDistance)).append(" * ")
-            .append(LOG_DECIMAL.format(herding))
-            .append("]");
+        logger.trace("herding mod [-{} = {} * {}]", herdingMod, finalDistance, herding);
         return herdingMod;
     }
 
-    // todo account for damaged locations and face those away from enemy.
-    private double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
-            StringBuilder formula) {
+    private double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
+        int facingDiff = getFacingDiff(movingUnit, game, path);
+        double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
+        logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
+        return facingMod;
+    }
 
+    // todo account for damaged locations and face those away from enemy.
+    private int getFacingDiff(Entity movingUnit, Game game, final MovePath path) {
         Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game, false);
         Coords toFace = closest == null ? game.getBoard().getCenter() : closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
@@ -422,28 +408,20 @@ public class BasicPathRanker extends PathRanker {
         } else {
             facingDiff = 3;
         }
-
-        double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
-        formula.append(" - facingMod [").append(LOG_DECIMAL.format(facingMod))
-                .append(" = max(")
-                .append(LOG_INT.format(0)).append(", ")
-                .append(LOG_INT.format(50)).append(" * {")
-                .append(LOG_INT.format(facingDiff)).append(" - ")
-                .append(LOG_INT.format(1)).append("})]");
-        return facingMod;
+        return facingDiff;
     }
 
     /**
      * If intentionally attempting to reach some board edge, favor paths that take
      * me closer to it.
      */
-    protected double calculateSelfPreservationMod(Entity movingUnit, MovePath path, Game game, StringBuilder formula) {
+    protected double calculateSelfPreservationMod(Entity movingUnit, MovePath path, Game game) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
 
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(movingUnit), game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
-            double selfPreservationMod = 0;
+            double selfPreservationMod;
 
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
@@ -454,14 +432,10 @@ public class BasicPathRanker extends PathRanker {
                 selfPreservationMod = -ARRIVED_AT_DESTINATION_FACTOR;
             }
 
-            formula.append(" - selfPreservationMod [")
-                    .append(LOG_DECIMAL.format(selfPreservationMod))
-                    .append(" = ").append(LOG_DECIMAL.format(newDistanceToHome))
-                    .append(" * ")
-                    .append(LOG_DECIMAL.format(selfPreservation)).append("]");
+            logger.trace("self preservation mod [-{} = {} * {}]", selfPreservationMod, newDistanceToHome, selfPreservation);
             return selfPreservationMod;
         }
-
+        logger.trace("self preservation mod [0] - not moving nor forced to withdraw");
         return 0.0;
     }
 
@@ -482,7 +456,6 @@ public class BasicPathRanker extends PathRanker {
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance, List<Entity> enemies,
             Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
-        StringBuilder formula = new StringBuilder("Calculation: {");
 
         if (blackIce == -1) {
             blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
@@ -494,11 +467,11 @@ public class BasicPathRanker extends PathRanker {
         MovePath pathCopy = path.clone();
 
         // Worry about failed piloting rolls (weighted by Fall Shame).
-        double successProbability = getMovePathSuccessProbability(pathCopy, formula);
-        double utility = -calculateFallMod(successProbability, formula);
+        double successProbability = getMovePathSuccessProbability(pathCopy);
+        var fallMod = calculateFallMod(successProbability);
 
         // Worry about how badly we can damage ourselves on this path!
-        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy, formula);
+        double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
 
@@ -566,7 +539,7 @@ public class BasicPathRanker extends PathRanker {
             expectedDamageTaken += friendlyArtilleryDamage;
         }
 
-        calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
+        damageEstimate = calcDamageToStrategicTargets(pathCopy, game, getOwner().getFireControlState(), damageEstimate);
 
         // If I cannot kick because I am a clan unit and "No physical attacks for the
         // clans"
@@ -579,77 +552,117 @@ public class BasicPathRanker extends PathRanker {
         // I can kick a different target than I shoot, so add physical to
         // total damage after I've looked at all enemies
 
-        utility += getBraveryMod(successProbability, damageEstimate, expectedDamageTaken, formula);
+        var braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
 
+        var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
         // the only critters not subject to aggression and herding mods are
         // airborne aeros on ground maps, as they move incredibly fast
-        if (!path.getEntity().isAirborneAeroOnGroundMap()) {
-            // The further I am from a target, the lower this path ranks
-            // (weighted by Aggression slider).
-            utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
+        // The further I am from a target, the lower this path ranks
+        // (weighted by Aggression slider).
+        var aggressionMod = isNotAirborne ?
+            calculateAggressionMod(movingUnit, pathCopy, damageEstimate.getMaximumDamageEstimate(), game) : 0;
+        // The further I am from my teammates, the lower this path
+        // ranks (weighted by Herd Mentality).
+        var herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
 
-            // The further I am from my teammates, the lower this path
-            // ranks (weighted by Herd Mentality).
-            utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
-        }
+
         // Movement is good, it gives defense and extends a player power in the game.
-        utility += calculateMovementMod(pathCopy, game, formula);
+        var movementMod = calculateMovementMod(pathCopy, game);
 
         // Try to face the enemy.
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);
-        if (facingMod == -10000) {
-            return new RankedPath(facingMod, pathCopy, formula.toString());
+        double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
+        var formula = new StringBuilder(256);
+        if (facingMod <= -10000) {
+            return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
         }
-        utility -= facingMod;
 
         // If I need to flee the board, I want to get closer to my home edge.
-        utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game, formula);
-
+        var selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
+        var offBoardMod = calculateOffBoardMod(pathCopy);
         // if we're an aircraft, we want to de-value paths that will force us off the
         // board
         // on the subsequent turn.
-        utility -= utility * calculateOffBoardMod(pathCopy);
+        double utility = -fallMod;
+        utility += braveryMod;
+        utility -= aggressionMod;
+        utility -= herdingMod;
+        utility += movementMod;
+        utility -= facingMod;
+        utility -= selfPreservationMod;
+        utility -= utility* utility*offBoardMod;
+
+        formula.append("Calculation: {fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
+            .append(LOG_DECIMAL.format(1 - successProbability))
+            .append(" * ")
+            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getFallShameValue()))
+            .append("] + braveryMod [")
+            .append(LOG_DECIMAL.format(braveryMod))
+            .append(" = ")
+            .append(LOG_PERCENT.format(successProbability))
+            .append(" * ((")
+            .append(LOG_DECIMAL.format(damageEstimate.getMaximumDamageEstimate()))
+            .append(" * ")
+            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getBraveryValue()))
+            .append(") - ")
+            .append(LOG_DECIMAL.format(expectedDamageTaken))
+            .append(")] - aggressionMod [")
+            .append(LOG_DECIMAL.format(aggressionMod))
+            .append(" = ")
+            .append(LOG_DECIMAL.format(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)))
+            .append(" * ")
+            .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHyperAggressionValue()))
+            .append("] - herdingMod [");
+        if (friendsCoords != null) {
+            formula.append(LOG_DECIMAL.format(herdingMod))
+                .append(" = ")
+                .append(LOG_DECIMAL.format(friendsCoords.distance(path.getFinalCoords())))
+                .append(" * ")
+                .append(LOG_DECIMAL.format(getOwner().getBehaviorSettings().getHerdMentalityValue()));
+        } else {
+            formula.append("0 no friends");
+        }
+        formula
+            .append("] + movementMod [")
+            .append(movementMod)
+            .append("] - facingMod [")
+            .append(LOG_DECIMAL.format(facingMod))
+            .append(" = max(0, 50 * {")
+            .append(getFacingDiff(movingUnit, game, pathCopy))
+            .append(" - 1})]");
+
+        logger.trace("utility [{} = fallMod({}) - offBoard*utility({}) - selfPreservation({}) - facingMod({}) + bravery({}) + movement({}) - aggression({}) - herding({})]", utility, fallMod,
+            utility * offBoardMod, selfPreservationMod, facingMod, braveryMod, movementMod, aggressionMod, herdingMod);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         return rankedPath;
     }
 
-    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken, StringBuilder formula) {
+    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
         double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
         double braveryMod = (successProbability * maximumDamageDone * braveryValue) - expectedDamageTaken;
-        formula.append(" + braveryMod [")
-            .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
-            .append(LOG_PERCENT.format(successProbability))
-            .append(" * ((")
-            .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-            .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-            .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
+        logger.trace("bravery mod [{} = {} * (({} * {}) - {})]", braveryMod, successProbability, maximumDamageDone,
+                braveryValue, expectedDamageTaken);
         return braveryMod;
     }
 
-    private double calculateMovementMod(MovePath pathCopy, Game game, StringBuilder formula) {
+    private double calculateMovementMod(MovePath pathCopy, Game game) {
         var hexMoved = (double) pathCopy.getHexesMoved();
         var distanceMoved = pathCopy.getDistanceTravelled();
         var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
         var tmmValue = tmm.getValue();
         if (tmmValue == 0 || ((hexMoved + distanceMoved) == 0)) {
-            formula.append(" + movementMod [0]");
+            logger.trace("movement mod [0]");
             return 0;
         }
         var movementFactor = tmmValue * (hexMoved * distanceMoved) / (hexMoved + distanceMoved);
 
-        formula.append(" + movementMod [")
-            .append(LOG_DECIMAL.format(movementFactor))
-            .append(" = tmm [").append(tmm).append("] * (distance[")
-            .append(LOG_DECIMAL.format(distanceMoved)).append("] * hexMoved[")
-            .append(LOG_DECIMAL.format(hexMoved)).append("]) / (distance[")
-            .append(LOG_DECIMAL.format(distanceMoved)).append("] + hexMoved[")
-            .append(LOG_DECIMAL.format(hexMoved)).append("])]");
+        logger.trace("movement mod [{} = {} * ({} * {}) / ({} + {})]", movementFactor, tmmValue, hexMoved, distanceMoved,
+                hexMoved, distanceMoved);
         return movementFactor;
     }
 
@@ -695,7 +708,7 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected void calcDamageToStrategicTargets(MovePath path, Game game,
+    protected FiringPhysicalDamage calcDamageToStrategicTargets(MovePath path, Game game,
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
@@ -720,7 +733,7 @@ public class BasicPathRanker extends PathRanker {
                 damageStructure.firingDamage = myDamagePotential;
             }
 
-            if (path.getEntity() instanceof Mek) {
+            if (path.getEntity().isMek()) {
                 PhysicalInfo myKick = new PhysicalInfo(
                         path.getEntity(), new EntityState(path), target,
                         null,
@@ -733,6 +746,7 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
         }
+        return damageStructure;
     }
 
     /**

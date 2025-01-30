@@ -121,7 +121,7 @@ public class TWUtilityAIRepository {
             persistDataToUserData();
             deleteUserTempFiles();
         } catch (IOException e) {
-            logger.error(e, "Could not load data from file: {}", zipInput);
+            logger.error(e, "Could not load data from file");
         }
     }
 
@@ -390,7 +390,7 @@ public class TWUtilityAIRepository {
             try (MappingIterator<T> it = mapper.readerFor(clazz).readValues(file)) {
                 return it.readAll();
             } catch (IOException e) {
-                logger.error(e, "Could not load file: " + file, file);
+                logger.error(e, "Could not load file");
             }
         } else if (file.isDirectory()) {
             return objectsFromDirectory(file, clazz);

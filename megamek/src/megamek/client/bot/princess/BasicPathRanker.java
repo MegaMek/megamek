@@ -623,7 +623,8 @@ public class BasicPathRanker extends PathRanker {
             // ranks (weighted by Herd Mentality).
             utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
         }
-
+        // Movement is good, it gives defense and extends a player power in the game.
+        utility += calculateMovementMod(pathCopy, game, formula);
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);
         if (facingMod == -10000) {
@@ -927,7 +928,7 @@ public class BasicPathRanker extends PathRanker {
             HAZARDS.add(Terrains.PAVEMENT);
         }
 
-        var hazardTerrains = hex.getTerrainTypesSet();
+        var hazardTerrains = new HashSet<>(hex.getTerrainTypesSet());
         hazardTerrains.retainAll(HAZARDS);
         return hazardTerrains;
     }

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="megamek.client.ui.swing.ai.editor.AiProfileEditor">
+  <grid id="27dc6" binding="uAiEditorPanel" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="881" height="613"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <splitpane id="53087">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="54d5f" layout-manager="GridBagLayout">
+            <constraints>
+              <splitpane position="left"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="54664" class="javax.swing.JTree" binding="repositoryViewer" custom-create="true">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="233" height="50"/>
+                  </grid>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="5ecb7" class="javax.swing.JButton" binding="saveProfileButton">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Save"/>
+                </properties>
+              </component>
+              <component id="e2fc8" class="javax.swing.JButton" binding="saveDseButton">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Save"/>
+                </properties>
+              </component>
+              <component id="7b919" class="javax.swing.JButton" binding="saveConsiderationButton">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="Save"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="761c5" layout-manager="GridBagLayout">
+            <constraints>
+              <splitpane position="right"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <tabbedpane id="63ff1" binding="mainEditorTabbedPane">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="d6b04" binding="profileTabPane" layout-manager="GridBagLayout">
+                    <constraints>
+                      <tabbedpane title-resource-bundle="megamek/common/options/messages" title-key="aiEditor.profile"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <scrollpane id="27a1b" binding="profileScrollPane">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <doubleBuffered value="false"/>
+                          <wheelScrollingEnabled value="true"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <component id="779a9" class="javax.swing.JTable" binding="profileDecisionTable" custom-create="true">
+                            <constraints/>
+                            <properties>
+                              <columnSelectionAllowed value="false"/>
+                              <dragEnabled value="true"/>
+                              <fillsViewportHeight value="true"/>
+                              <inheritsPopupMenu value="true"/>
+                              <minimumSize width="150" height="32"/>
+                              <preferredScrollableViewportSize width="150" height="32"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
+                      <grid id="ee5b9" layout-manager="GridBagLayout">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="e9c41" class="javax.swing.JTextField" binding="profileNameTextField">
+                            <constraints>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <gridbag weightx="1.0" weighty="1.0"/>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="2f344" class="javax.swing.JTextField" binding="descriptionTextField">
+                            <constraints>
+                              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                              <gridbag weightx="1.0" weighty="1.0"/>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="34747" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <gridbag weightx="0.0" weighty="1.0"/>
+                            </constraints>
+                            <properties>
+                              <text resource-bundle="megamek/common/options/messages" key="aiEditor.profile.name"/>
+                            </properties>
+                          </component>
+                          <component id="d5be7" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <gridbag weightx="0.0" weighty="1.0"/>
+                            </constraints>
+                            <properties>
+                              <text resource-bundle="megamek/common/options/messages" key="AiEditor.description"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                      <toolbar id="69541" binding="profileTools">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                            <preferred-size width="-1" height="20"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="0.0"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children/>
+                      </toolbar>
+                    </children>
+                  </grid>
+                  <grid id="acf23" binding="dseTabPane" layout-manager="GridBagLayout">
+                    <constraints>
+                      <tabbedpane title-resource-bundle="megamek/common/options/messages" title-key="aiEditor.tab.dse"/>
+                    </constraints>
+                    <properties>
+                      <name value=""/>
+                    </properties>
+                    <border type="none"/>
+                    <children>
+                      <scrollpane id="4dd9f">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <horizontalScrollBarPolicy value="31"/>
+                          <wheelScrollingEnabled value="true"/>
+                        </properties>
+                        <border type="none"/>
+                        <children>
+                          <grid id="52c8c" binding="dsePane" custom-create="true" layout-manager="GridBagLayout">
+                            <constraints/>
+                            <properties>
+                              <minimumSize width="600" height="400"/>
+                              <preferredSize width="2147483647" height="2147483647"/>
+                            </properties>
+                            <border type="none"/>
+                            <children/>
+                          </grid>
+                        </children>
+                      </scrollpane>
+                    </children>
+                  </grid>
+                  <grid id="e40f0" binding="considerationTabPane" layout-manager="GridBagLayout">
+                    <constraints>
+                      <tabbedpane title-resource-bundle="megamek/common/options/messages" title-key="aiEditor.tab.consideration"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <scrollpane id="42b48">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <grid id="b6cb8" binding="considerationEditorPanel" layout-manager="GridBagLayout">
+                            <constraints/>
+                            <properties/>
+                            <border type="none"/>
+                            <children/>
+                          </grid>
+                        </children>
+                      </scrollpane>
+                    </children>
+                  </grid>
+                </children>
+              </tabbedpane>
+            </children>
+          </grid>
+        </children>
+      </splitpane>
+    </children>
+  </grid>
+</form>

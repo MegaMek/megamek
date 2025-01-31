@@ -45,7 +45,13 @@ public enum ChatCommands {
     IGNORE_TARGET("ig", "princessName: ig: unitId", "Ignore Target - Will not fire on the entity with this ID."),
     SHOW_DISHONORED("di", "princessName: di", "Show Dishonored - Show the players on the dishonored enemies list."),
     CLEAR_IGNORED_TARGETS("cl", "princessName: cl", "Clear Ignored Target - Clears the list of ignored targets."),
-    BLOOD_FEUD("bf", "princessName: bf: playerId", "Blood Feud - Adds player to the dishonored enemies list.");
+    BLOOD_FEUD("bf", "princessName: bf: playerId", "Blood Feud - Adds player to the dishonored enemies list."),
+    ADD_WAYPOINT("aw", "princessName: aw: unitID hexNumber ", "Add Waypoint - Add a waypoint destination to the princess's entity."),
+    REMOVE_WAYPOINT("rw", "princessName: rw: unitID", "Remove Last Waypoint for unit - Remove last waypoint added to the entity list of waypoints."),
+    CLEAR_WAYPOINT("cw", "princessName: cw: unitID", "Clear Units Waypoints - Remove all waypoints for unit."),
+    CLEAR_ALL_WAYPOINTS("nw", "princessName: nw", "Clear All Waypoints - Remove all waypoints for this princess."),
+    SET_WAYPOINT("sw", "princessName: sw: unitID hexNumber [hexNumber...]", "Set Waypoint - Set a waypoint to the entity, removing all other waypoints it had."),;
+
     private final String abbreviation;
     private final String syntax;
     private final String description;

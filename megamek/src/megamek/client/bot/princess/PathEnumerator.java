@@ -96,9 +96,8 @@ public class PathEnumerator {
             return returnSet;
         }
         for (Integer id : getUnitPotentialLocations().keySet()) {
-            if (groundOnly
-                    && getGame().getEntity(id) != null
-                    && getGame().getEntity(id).isAero()) {
+            var entity = getGame().getEntity(id);
+            if (groundOnly && entity != null && entity.isAero()) {
                 continue;
             }
 
@@ -265,19 +264,19 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                         MoveStepType.FORWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(game, mover));
+                lpf.run(new MovePath(game, mover, owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null)));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(getGame(), mover));
+                lpf.run(new MovePath(getGame(), mover, owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null)));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add all moves that involve the entity remaining prone
                 PronePathFinder ppf = new PronePathFinder();
-                ppf.run(new MovePath(getGame(), mover));
+                ppf.run(new MovePath(getGame(), mover, owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null)));
                 paths.addAll(ppf.getPronePaths());
 
                 // add jumping moves
@@ -285,7 +284,7 @@ public class PathEnumerator {
                     ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
                             MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run((new MovePath(game, mover)).addStep(MoveStepType.START_JUMP));
+                    spf.run((new MovePath(game, mover, owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null))).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -358,9 +357,14 @@ public class PathEnumerator {
         // the opposite edge
         switch (getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
-            case MoveToDestination:
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover),
-                        true);
+                    true);
+                break;
+            case MoveToDestination:
+                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                if (destinations.isEmpty()) {
+                    destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
+                }
                 break;
             case MoveToContact:
 
@@ -368,6 +372,7 @@ public class PathEnumerator {
                 // location
                 // we've seen for finding targets
                 List<Coords> enemyHotSpots = owner.getEnemyHotSpots();
+                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
                 if (enemyHotSpots != null && !enemyHotSpots.isEmpty()) {
                     destinations.addAll(enemyHotSpots);
                 } else {
@@ -386,7 +391,7 @@ public class PathEnumerator {
                     if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
                         continue;
                     }
-
+                    getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
                     destinations.add(target.getPosition());
                     // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());

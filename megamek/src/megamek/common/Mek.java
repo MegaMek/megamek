@@ -318,6 +318,9 @@ public abstract class Mek extends Entity {
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
 
+    private transient Boolean cacheHasIndustrialTSM = null;
+
+
     // QuadVees, LAMs, and tracked 'Meks can change movement mode.
     protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
@@ -885,9 +888,16 @@ public abstract class Mek extends Entity {
      * @return
      */
     public boolean hasIndustrialTSM() {
+        if (cacheHasIndustrialTSM == null) {
+            cacheHasIndustrialTSM = calculateHasIndustrialTSM();
+        }
+        return cacheHasIndustrialTSM;
+    }
+
+    private boolean calculateHasIndustrialTSM() {
         for (Mounted<?> m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+                && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
                 return true;
             }
         }

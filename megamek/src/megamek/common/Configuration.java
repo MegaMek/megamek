@@ -126,7 +126,8 @@ public final class Configuration {
     private static final String DEFAULT_DIR_NAME_IMG_UNIVERSE = "universe";
     private static final String DEFAULT_DIR_ORBITAL_BOMBARDMENT = "orbital_bombardment";
     private static final String DEFAULT_DIR_NUKE = "nuke";
-
+    public static final String DEFAULT_DIR_AI = "ai";
+    public static final String DEFAULT_DIR_TW_AI = "tw";
     private Configuration() {
     }
 
@@ -355,6 +356,29 @@ public final class Configuration {
         return new File(hexesDir(), DEFAULT_DIR_NUKE);
     }
 
+    /**
+     * Return the ai directory, which is relative to the data directory.
+     * @return {@link File} containing the path to the ai directory.
+     */
+    public static File aiDir() {
+        return new File(dataDir(), DEFAULT_DIR_AI);
+    }
+
+    /**
+     * Return the ai directory, which is relative to the data directory.
+     * @return {@link File} containing the path to the ai directory.
+     */
+    public static File twAiDir() {
+        return new File(aiDir(), DEFAULT_DIR_TW_AI);
+    }
+
+    /**
+     * Return the userdata ai tw directory, which is relative to the data directory.
+     * @return {@link File} containing the path to the ai directory.
+     */
+    public static File userDataAiTwDir() {
+        return new File(Configuration.userdataDir(), DEFAULT_DIR_AI + File.separator + DEFAULT_DIR_TW_AI);
+    }
     /**
      * Get the fluff images directory, which is relative to the images
      * directory.

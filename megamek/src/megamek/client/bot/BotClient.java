@@ -437,6 +437,7 @@ public abstract class BotClient extends Client {
                 case PREFIRING:
                     break;
                 case FIRING:
+                    postMovementProcessing();
                     initFiring();
                     break;
                 case PHYSICAL:
@@ -453,8 +454,8 @@ public abstract class BotClient extends Client {
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
                 case TARGETING_REPORT:
-                case INITIATIVE_REPORT:
                 case MOVEMENT_REPORT:
+                case INITIATIVE_REPORT:
                 case OFFBOARD_REPORT:
                 case FIRING_REPORT:
                 case PHYSICAL_REPORT:
@@ -472,6 +473,8 @@ public abstract class BotClient extends Client {
             logger.error(t, "changePhase");
         }
     }
+
+    protected abstract void postMovementProcessing();
 
     private void runEndGame() {
         // Make a list of the player's living units.
@@ -541,10 +544,15 @@ public abstract class BotClient extends Client {
                 try {
                     Thread.sleep(Compute.randomInt(1000) + 500);
                 } catch (InterruptedException e) {
-                    logger.error(e, "calculateMyTune");
+                    logger.error(e, "calculateMyTurn");
                 }
             }
         }
+    }
+
+    protected void resetCurrentTurnReferences() {
+        currentTurnEnemyEntities = null;
+        currentTurnFriendlyEntities = null;
     }
 
     /**
@@ -552,9 +560,7 @@ public abstract class BotClient extends Client {
      */
     private synchronized boolean calculateMyTurnWorker() {
         // clear out transient data
-        currentTurnEnemyEntities = null;
-        currentTurnFriendlyEntities = null;
-
+        resetCurrentTurnReferences();
         try {
             if (game.getPhase().isMovement()) {
                 MovePath mp;

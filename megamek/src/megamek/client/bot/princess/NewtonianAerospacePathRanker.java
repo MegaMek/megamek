@@ -106,9 +106,9 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      * Guesses a number of things about an enemy that has not yet moved
      */
     @Override
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
-                                                  boolean useExtremeRange,
-                                                  boolean useLOSRange) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
+                                                         boolean useExtremeRange,
+                                                         boolean useLOSRange) {
         EntityEvaluationResponse returnResponse =
                     new EntityEvaluationResponse();
 
@@ -153,7 +153,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
 
         // my estimated damage is my max damage at the
         returnResponse.addToMyEstimatedDamage(
-                    getMaxDamageAtRange(getFireControl(path.getEntity()),
+                    getMaxDamageAtRange(
                                         path.getEntity(),
                                         range,
                                         useExtremeRange,
@@ -163,7 +163,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
         double enemyDamageDiscount = Compute.oddsAbove(enemy.getCrew().getGunnery() + sensorShadowMod) / 100;
         //in general if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(
-                getMaxDamageAtRange(getFireControl(enemy),
+                getMaxDamageAtRange(
                                     enemy,
                                     range,
                                     useExtremeRange,
@@ -284,7 +284,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker {
      * Worker function that determines if a given enemy entity should be evaluated as if it has moved.
      */
     @Override
-    protected boolean evaluateAsMoved(Entity enemy) {
+    public boolean evaluateAsMoved(Entity enemy) {
         return !enemy.isSelectableThisTurn() || enemy.isImmobile();
     }
 }

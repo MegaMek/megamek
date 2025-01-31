@@ -165,6 +165,12 @@ public class MMLogger extends ExtendedLoggerWrapper {
         exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
     }
 
+
+    @Override
+    public void debug(final String message, final Object p0, final Object p1, final Object p2) {
+        logIfEnabled(FQCN, Level.DEBUG, null, message, p0, p1, p2);
+    }
+
     /**
      * Error Level Logging w/ Exception
      *
@@ -199,6 +205,40 @@ public class MMLogger extends ExtendedLoggerWrapper {
     public void error(Throwable exception, String message, String title) {
         error(exception, message);
 
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
+    }
+
+    /**
+     * Formatted Error Level Logging w/ Exception w/ Dialog.
+     *
+     * @param message Message to write to the log file AND be displayed in the
+     *                error pane.
+     * @param title   Title of the error message box.
+     */
+    public void formattedErrorDialog(Throwable e, String title, String message, Object... args) {
+        message = String.format(message, args);
+        error(e, message);
+        Sentry.captureException(e);
+        try {
+            JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ignored) {
+            // if the message dialog crashes, we don't really care
+        }
+    }
+
+    /**
+     * Formatted Error Level Logging w/o Exception w/ Dialog.
+     *
+     * @param message Message to write to the log file AND be displayed in the
+     *                error pane.
+     * @param title   Title of the error message box.
+     */
+    public void formattedErrorDialog(String title, String message, Object... args) {
+        message = String.format(message, args);
         try {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         } catch (Exception ignored) {

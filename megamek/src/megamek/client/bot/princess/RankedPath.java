@@ -45,7 +45,7 @@ public class RankedPath implements Comparable<RankedPath> {
         return path;
     }
 
-    double getRank() {
+    public double getRank() {
         return rank;
     }
 
@@ -66,6 +66,13 @@ public class RankedPath implements Comparable<RankedPath> {
         this.reason = reason;
     }
 
+    public RankedPath(double r, MovePath p, String reason, double damage) {
+        rank = r;
+        path = p;
+        this.reason = reason;
+        expectedDamage = damage;
+    }
+
     @Override
     public int compareTo(RankedPath p) {
         if (rank < p.rank) {
@@ -78,6 +85,12 @@ public class RankedPath implements Comparable<RankedPath> {
             return -1;
         }
         if (p.path.getHexesMoved() < path.getHexesMoved()) {
+            return 1;
+        }
+        if (path.hasWaypoint() && !p.path.hasWaypoint()) {
+            return -1;
+        }
+        if (p.path.hasWaypoint() && !path.hasWaypoint()) {
             return 1;
         }
         if (expectedDamage < p.expectedDamage) {

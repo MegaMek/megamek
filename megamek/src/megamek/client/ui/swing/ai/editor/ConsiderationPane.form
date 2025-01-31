@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="megamek.client.ui.swing.ai.editor.ConsiderationPane">
+  <grid id="27dc6" binding="considerationPane" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="1828" height="1818"/>
+    </constraints>
+    <properties>
+      <autoscrolls value="false"/>
+      <maximumSize width="800" height="600"/>
+      <minimumSize width="800" height="300"/>
+      <preferredSize width="800" height="600"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="60860" binding="topThingsPane" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="6" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="7d71a" class="javax.swing.JComboBox" binding="considerationComboBox" custom-create="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="e5796" class="javax.swing.JTextField" binding="considerationName">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <grid id="920fd" binding="curveContainer" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="6" vsize-policy="2" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="400" height="300"/>
+                <preferred-size width="400" height="300"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </grid>
+          <component id="16e61" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="66" height="17"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text resource-bundle="megamek/common/options/messages" key="aiEditor.curve"/>
+            </properties>
+          </component>
+          <component id="4be67" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <labelFor value="e5796"/>
+              <text resource-bundle="megamek/common/options/messages" key="aiEditor.name"/>
+            </properties>
+          </component>
+          <component id="28050" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <labelFor value="7d71a"/>
+              <text resource-bundle="megamek/common/options/messages" key="aiEditor.considerationType"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="ebfe6" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="megamek/common/options/messages" key="aiEditor.parameters"/>
+        </properties>
+      </component>
+      <component id="e2722" class="javax.swing.JTable" binding="parametersTable" custom-create="true">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <fillsViewportHeight value="false"/>
+          <preferredScrollableViewportSize width="100" height="50"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

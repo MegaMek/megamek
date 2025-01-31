@@ -19,15 +19,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import org.apache.logging.log4j.Level;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
@@ -41,12 +32,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.DisengageAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.AimingMode;
@@ -65,6 +51,14 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
+import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger logger = MMLogger.create(Princess.class);
@@ -129,7 +123,7 @@ public class Princess extends BotClient {
     private boolean initialized = false;
 
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
-    private HashMap<PathRankerType, IPathRanker> pathRankers;
+    protected HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
     private UnitBehavior unitBehaviorTracker;
     private FireControlState fireControlState;
@@ -202,7 +196,6 @@ public class Princess extends BotClient {
 
         // Set up enhanced targeting
         resetEnhancedTargeting(true);
-
         // Start-up precognition now, so that it can instantiate its game instance,
         // and it will stay up-to date.
         precognition = new Precognition(this);
@@ -231,12 +224,11 @@ public class Princess extends BotClient {
      */
     IPathRanker getPathRanker(Entity entity) {
         if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            return pathRankers.get(PathRankerType.Infantry);
+            return getPathRanker(PathRankerType.Infantry);
         } else if (entity.isAero() && game.useVectorMove()) {
-            return pathRankers.get(PathRankerType.NewtonianAerospace);
+            return getPathRanker(PathRankerType.NewtonianAerospace);
         }
-
-        return pathRankers.get(PathRankerType.Basic);
+        return getPathRanker(PathRankerType.Basic);
     }
 
     IPathRanker getPathRanker(PathRankerType pathRankerType) {
@@ -304,7 +296,7 @@ public class Princess extends BotClient {
         }
     }
 
-    boolean getForcedWithdrawal() {
+    public boolean getForcedWithdrawal() {
         return getBehaviorSettings().isForcedWithdrawal();
     }
 
@@ -322,7 +314,7 @@ public class Princess extends BotClient {
         return pathRankerState;
     }
 
-    Precognition getPrecognition() {
+    public Precognition getPrecognition() {
         return precognition;
     }
 
@@ -1960,7 +1952,7 @@ public class Princess extends BotClient {
     /**
      * Gets an entity eligible to fire from a list contained in the fire control state.
      */
-    Entity getEntityToFire(FireControlState fireControlState) {
+    public Entity getEntityToFire(FireControlState fireControlState) {
         if (fireControlState.getOrderedFiringEntities().isEmpty()) {
             initFiringEntities(fireControlState);
         }
@@ -2076,6 +2068,22 @@ public class Princess extends BotClient {
         }
 
         return movingEntity;
+    }
+
+    protected void postMovementProcessing(){
+        for (var entity : getEntitiesOwned()) {
+            if (entity.getPosition() == null) {
+                continue;
+            }
+            var waypoint = getUnitBehaviorTracker().getWaypointForEntity(entity);
+            if (waypoint.isPresent()) {
+                var wp = waypoint.get();
+                if (wp.distance(entity.getPosition()) <= 3) {
+                    logger.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    getUnitBehaviorTracker().removeHeadWaypoint(entity);
+                }
+            }
+        }
     }
 
     @Override
@@ -2276,12 +2284,15 @@ public class Princess extends BotClient {
 
                 // If we want to flee, but cannot, eject the crew.
                 if (isImmobilized(entity) && entity.isEjectionPossible()) {
-                    msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
-                    logger.info(msg);
-                    sendChat(msg, Level.ERROR);
-                    final MovePath mp = new MovePath(game, entity);
-                    mp.addStep(MoveStepType.EJECT);
-                    return mp;
+                    // if crew will die in the current conditions, do not eject!
+                    if (game.getPlanetaryConditions().whyDoomed(new EjectedCrew(entity), game) == null) {
+                        msg = entity.getDisplayName() + " is immobile. Abandoning unit.";
+                        logger.info(msg);
+                        sendChat(msg, Level.ERROR);
+                        final MovePath mp = new MovePath(game, entity);
+                        mp.addStep(MoveStepType.EJECT);
+                        return mp;
+                    }
                 }
             }
 
@@ -2717,15 +2728,12 @@ public class Princess extends BotClient {
         pathRankers = new HashMap<>();
 
         BasicPathRanker basicPathRanker = new BasicPathRanker(this);
-        basicPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Basic, basicPathRanker);
 
         InfantryPathRanker infantryPathRanker = new InfantryPathRanker(this);
-        infantryPathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.Infantry, infantryPathRanker);
 
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
-        newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
     }
 

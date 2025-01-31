@@ -48,8 +48,8 @@ public class ManeuverType {
     /**
      * determines whether the maneuver can be performed
      */
-    public static boolean canPerform(int type, int velocity, int altitude, 
-                                     int ceiling, boolean isVTOL, int distance, 
+    public static boolean canPerform(int type, int velocity, int altitude,
+                                     int ceiling, boolean isVTOL, int distance,
                                      Game game, MovePath mp) {
 
         // We can only perform one maneuver in a turn (important for side-slip)
@@ -58,7 +58,7 @@ public class ManeuverType {
                 return false;
             }
         }
-        
+
         // Side slip is the only maneuver that doesn't have to be at the start
         if ((distance > 0) && (type != MAN_SIDE_SLIP_LEFT)
                 && (type != MAN_SIDE_SLIP_RIGHT)) {
@@ -84,7 +84,7 @@ public class ManeuverType {
                     // If we're on a ground map, we need to make sure we can move
                     //  all 16 hexes
                     if (game.getBoard().getType() == Board.T_GROUND) {
-                        MovePath tmpMp = mp.clone();                    
+                        MovePath tmpMp = mp.clone();
                         for (int i = 0; i < 8; i++) {
                             if (type == MAN_SIDE_SLIP_LEFT) {
                                 tmpMp.addStep(MoveStepType.LATERAL_LEFT, true, true, type);
@@ -94,7 +94,7 @@ public class ManeuverType {
                         }
                         for (int i = 0; i < 8; i++) {
                             tmpMp.addStep(MoveStepType.FORWARDS, true, true, type);
-                        }                    
+                        }
                         return tmpMp.getLastStep().isLegal(tmpMp);
                     } else {
                         return true;
@@ -134,13 +134,13 @@ public class ManeuverType {
     }
 
     /**
-     * Returns the Control Roll modifier for a particular maneuver.  
-     * 
+     * Returns the Control Roll modifier for a particular maneuver.
+     *
      * @param type       The type of maneuver performed
-     * @param isVSTOLCF  Flag that determines whether the maneuvering unit is 
+     * @param isVSTOLCF  Flag that determines whether the maneuvering unit is
      *                   a conventional fighter with VSTOl, which has effects
      *                   for side-slips
-     *                   
+     *
      * @return The control roll modifier
      */
     public static int getMod(int type, boolean isVSTOLCF) {

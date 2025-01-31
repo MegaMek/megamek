@@ -976,7 +976,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateFleeButton() {
         boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
-        boolean fleeStart = !hasLastStep &&
+        boolean fleeStart = !hasLastStep && ce() != null &&
             ce().canFlee(ce().getPosition());
         boolean fleeEnd = hasLastStep
             && (cmd.getMpUsed() < cmd.getMaxMP())

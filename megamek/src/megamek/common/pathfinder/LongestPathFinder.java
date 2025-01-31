@@ -184,15 +184,16 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
-                    logger.error(
-                            "Top Move Path uses more MPs than Move Path Candidate.",
-                            new IllegalStateException());
+                    logger.error("Top Move Path uses more MPs than Move Path Candidate.", new IllegalStateException());
                     return null;
                 } else {
                     if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
                         return null; // topMP path is longer and uses less or same mp.
                     }
                     if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
+
+
+
                         // we want to preserve both forward and backward movements
                         // that end in the same spot with the same cost.
                         MoveStep topStep = topMP.getLastStep();
@@ -202,13 +203,33 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         if (!(topMP.getEntity() instanceof Infantry) && topBackwards != mpCandBackwars) {
                             break;
                         }
+
+                        // 2b) Then *also* compare distance to the desired destination:
+                        // If we want to favor whichever is closer to `desiredDestination`,
+                        // we measure from each path's final position:
+                        if (mpCandidate.hasWaypoint()
+                            && topMP.getFinalCoords() != null
+                            && mpCandidate.getFinalCoords() != null) {
+                            double topDist = topMP.getFinalCoords().distance(mpCandidate.getWaypoint());
+                            double candDist = mpCandidate.getFinalCoords().distance(mpCandidate.getWaypoint());
+
+                            // if the candidate is strictly closer, prefer it:
+                            if (candDist < topDist) {
+                                // break out of loop so we add candidate to `v`
+                                break;
+                            } else {
+                                // candidate is not better, discard it
+                                return null;
+                            }
+                        }
+
                         return null;
                     }
 
                     if (topMpUsed == mpCMpUsed) {
                         // mpCandidate is not strictly better than topMp so we won't use it.
                         return null;
-                    } else if (topMpUsed < mpCMpUsed) {
+                    } else {
                         // topMP travels less but also uses less movement points so we should keep it
                         // and add mpCandidate to the list of optimal longest paths.
                         break;

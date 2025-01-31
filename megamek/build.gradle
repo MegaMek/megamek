@@ -9,7 +9,6 @@ plugins {
     id 'jacoco'
     id 'java'
     id 'org.ec4j.editorconfig' version '0.1.0'
-
 }
 
 java {
@@ -34,6 +33,10 @@ sourceSets {
             srcDirs = ['testresources']
         }
     }
+}
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {

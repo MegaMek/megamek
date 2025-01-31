@@ -156,9 +156,13 @@ public class Terrains implements Serializable {
     public static final int DEPLOYMENT_ZONE = 57;
 
     public static final int HAZARDOUS_LIQUID = 58;
-    // Wind blown hazardous liquid implements MapPack Alien Worlds' Wind Blown Hazardous Liquid rules
+    // Wind blown hazardous is for MapPack Alien Worlds' Wind Blown Hazardous Liquid rules
+    // Wind blown (MP: Alien Rules) isn't implemented
+    // Water flow (TO:AR 47 for Hazardous Pools rules) isn't implemented
     public static final int HAZARDOUS_LIQUID_LVL_NORMAL = 0;
     public static final int HAZARDOUS_LIQUID_LVL_WIND_BLOWN = 1;
+    public static final int HAZARDOUS_LIQUID_LVL_FLOWS = 2;
+    public static final int HAZARDOUS_LIQUID_LVL_FLOWS_AND_WIND_BLOWN = 3;
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -405,7 +409,16 @@ public class Terrains implements Serializable {
             case DEPLOYMENT_ZONE:
                 return "Deployment Zone";
             case HAZARDOUS_LIQUID:
-                    return "Hazardous Liquid";
+                switch (level) {
+                    case HAZARDOUS_LIQUID_LVL_WIND_BLOWN:
+                        return "Hazardous Liquid (Wind Blown)";
+                    case HAZARDOUS_LIQUID_LVL_FLOWS:
+                        return "Hazardous Liquid (Flows)";
+                    case HAZARDOUS_LIQUID_LVL_FLOWS_AND_WIND_BLOWN:
+                        return "Hazardous Liquid (Flows and Wind Blown)";
+                    default:
+                        return "Hazardous Liquid";
+                }
             default:
                 return null;
         }

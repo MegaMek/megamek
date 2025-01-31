@@ -167,6 +167,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private int symbolsDisplayMode = GUIP.getMinimapSymbolsDisplayMode();
     private boolean drawSensorRangeOnMiniMap = GUIP.getDrawSensorRangeOnMiniMap();
     private boolean drawFacingArrowsOnMiniMap = GUIP.getDrawFacingArrowsOnMiniMap();
+    private boolean paintBorders = GUIP.paintBorders();
     private Coords firstLOS;
     private Coords secondLOS;
 
@@ -561,7 +562,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         } else if (h.containsTerrain(SKY)) {
                             paintLowAtmoSkyCoord(gg, j, k);
                         } else {
-                            paintCoord(gg, j, k, zoom > 1);
+                            paintCoord(gg, j, k, paintBorders && zoom > 1);
                         }
                     }
                     addRoadElements(h, j, k);
@@ -1030,7 +1031,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
         boolean stratOpsSymbols = GUIP.getMmSymbol();
-        boolean drawFacingArrows = GUIP.getDrawFacingArrowsOnMiniMap();
 
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
@@ -1138,7 +1138,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
-        if (drawFacingArrows) {
+        if (drawFacingArrowsOnMiniMap) {
             // draw facing arrow
             var facing = entity.getFacing();
             if (facing > -1) {
@@ -1545,6 +1545,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         initializeMap();
     }
 
+    private void setPaintBordersDisplay(boolean state) {
+        paintBorders = state;
+        GUIP.setPaintBorders(state);
+        initializeMap();
+    }
+
     private void setSymbolsDisplay(int i) {
         symbolsDisplayMode = i;
         GUIP.setMiniMapSymbolsDisplayMode(i);
@@ -1784,6 +1790,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             });
             toggleDrawFacing.setSelected(drawFacingArrowsOnMiniMap);
             symbolsMenu.add(toggleDrawFacing);
+
+            JCheckBoxMenuItem togglePaintBorders = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleDrawHexBorder"));
+            togglePaintBorders.addActionListener(l -> {
+                setPaintBordersDisplay(!paintBorders);
+            });
+            togglePaintBorders.setSelected(drawFacingArrowsOnMiniMap);
+            symbolsMenu.add(togglePaintBorders);
 
             popup.add(symbolsMenu);
             popup.show(me.getComponent(), me.getX(), me.getY());

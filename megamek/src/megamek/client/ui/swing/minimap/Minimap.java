@@ -20,9 +20,8 @@
  */
 package megamek.client.ui.swing.minimap;
 
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_BASERECT;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.*;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.FACING_ARROW;
 import static megamek.common.Terrains.*;
 
 import java.awt.*;
@@ -69,12 +68,12 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
@@ -134,6 +133,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final String ACTION_HEIGHT_TOTAL = "HEIGHT_TOTAL";
     private static final String ACTION_SYMBOLS_NO = "SYMBOLS_NO";
     private static final String ACTION_SYMBOLS_SHOW = "SYMBOLS_SHOW";
+    private static final String ACTION_FACING_ARROWS_SHOW = "FACING_ARROWS_SHOW";
+    private static final String ACTION_SENSORS_SHOW = "SENSORS_SHOW";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
@@ -164,7 +165,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private int zoom = GUIP.getMinimapZoom();
     private int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
     private int symbolsDisplayMode = GUIP.getMinimapSymbolsDisplayMode();
-
+    private boolean drawSensorRangeOnMiniMap = GUIP.getDrawSensorRangeOnMiniMap();
+    private boolean drawFacingArrowsOnMiniMap = GUIP.getDrawFacingArrowsOnMiniMap();
     private Coords firstLOS;
     private Coords secondLOS;
 
@@ -592,7 +594,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
 
             drawDeploymentZone(g);
-
+            // In case the flag SHOW SYMBOLS is set, it will draw the units and other stuff
             if (symbolsDisplayMode == SHOW_SYMBOLS) {
                 if (null != game) {
                     // draw declared fire
@@ -606,6 +608,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     for (Entity e : game.getEntitiesVector()) {
                         if (e.getPosition() != null) {
                             paintUnit(g, e);
+                        }
+                    }
+
+                    if (drawSensorRangeOnMiniMap) {
+                        for (Entity e : game.getEntitiesVector()) {
+                            if (e.getPosition() != null) {
+                                paintSensor(g, e);
+                            }
                         }
                     }
                 }
@@ -998,8 +1008,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private void paintUnit(Graphics g, Entity entity) {
         int x = entity.getPosition().getX();
         int y = entity.getPosition().getY();
-        int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
-        int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
+        int baseX = coordsXToPixel(x);
+        int baseY = coordsYtoPixel(y, x);
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
             // This unit is visible only as a sensor Return
@@ -1020,6 +1030,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
         boolean stratOpsSymbols = GUIP.getMmSymbol();
+        boolean drawFacingArrows = GUIP.getDrawFacingArrowsOnMiniMap();
 
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
@@ -1094,7 +1105,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     FontMetrics currentMetrics = getFontMetrics(font);
                     int stringWidth = currentMetrics.stringWidth(s);
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
-                    g2.fill(gv.getOutline((int) STRAT_CX - stringWidth / 2,
+                    g2.fill(gv.getOutline((int) STRAT_CX - (float) stringWidth / 2,
                             (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
                 }
             } else if (entity instanceof MekWarrior) {
@@ -1125,6 +1136,19 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.setStroke(new BasicStroke(innerBorderWidth / 2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
         }
+        g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+
+        if (drawFacingArrows) {
+            // draw facing arrow
+            var facing = entity.getFacing();
+            if (facing > -1) {
+                g2.setColor(Color.BLACK);
+                g2.rotate(Math.toRadians(facing * 60));
+                g2.draw(FACING_ARROW);
+                g.setColor(iconColor);
+                g2.fill(FACING_ARROW);
+            }
+        }
 
         g2.setTransform(saveTransform);
 
@@ -1135,11 +1159,92 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;
             Color color = GUIP.getUnitSelectedColor();
             g2.setColor(color.darker());
-            g2.setStroke(new BasicStroke(unitSize / 5 + 1));
+            g2.setStroke(new BasicStroke((float) unitSize / 5 + 1));
             g2.drawOval(baseX - rad, baseY - rad, rad * 2, rad * 2);
         }
 
         g2.setStroke(saveStroke);
+    }
+
+
+    /** Draws the symbol for a single entity. Checks visibility in double blind. */
+    private void paintSensor(Graphics g, Entity entity) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+            // This unit is visible only as a sensor Return, we dont know the range of its sensor yet
+            return;
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), game, entity)) {
+            // This unit is not visible, don't draw it
+            return;
+        }
+
+        int maxSensorRange = 0;
+        int minSensorRange = 0;
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+            int bracket = Compute.getSensorRangeBracket(entity, null, null);
+            int range = Compute.getSensorRangeByBracket(game, entity, null, null);
+
+            maxSensorRange = bracket * range;
+            minSensorRange = Math.max((bracket - 1) * range, 0);
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
+                minSensorRange = 0;
+            }
+        }
+
+
+        // Choose player or team color depending on preferences
+        Color iconColor = entity.getOwner().getColour().getColour(false);
+        if (GUIP.getTeamColoring() && (client != null)) {
+            boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
+            boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
+            if (isLocalPlayer) {
+                iconColor = GUIP.getMyUnitColor();
+            } else if (isLocalTeam) {
+                iconColor = GUIP.getAllyUnitColor();
+            } else {
+                iconColor = GUIP.getEnemyUnitColor();
+            }
+        }
+        Graphics2D g2 = (Graphics2D) g;
+        Stroke saveStroke = g2.getStroke();
+
+        g2.setStroke(new BasicStroke(2));
+        Color iconColorSemiTransparent = new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 200);
+        g2.setColor(iconColorSemiTransparent);
+
+        var origin = entity.getPosition();
+        for (var sensorRange : List.of(minSensorRange, maxSensorRange)) {
+            if (sensorRange <= 0) {
+                continue;
+            }
+
+            int xo;
+            int yo;
+            var sensor = new Path2D.Double();
+
+            var internalOrExternal = (sensorRange == minSensorRange) && (maxSensorRange != 0) ? -1 : 1;
+            for (int i = 0; i < 6; i++) {
+                var movingCoord = origin.translated(i, sensorRange + internalOrExternal);
+                xo = coordsXToPixel(movingCoord.getX());
+                yo = coordsYtoPixel(movingCoord.getY(), movingCoord.getX());
+                if (i == 0) {
+                    sensor.moveTo(xo, yo);
+                } else {
+                    sensor.lineTo(xo, yo);
+                }
+            }
+            sensor.closePath();
+            g2.draw(sensor);
+        }
+        g2.setStroke(saveStroke);
+    }
+
+    private int coordsYtoPixel(int y, int x) {
+        return (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin;
+    }
+
+    private int coordsXToPixel(int x) {
+        return x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom];
     }
 
     /** Draws the road elements previously assembles into the roadHexes list. */
@@ -1428,6 +1533,18 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
+    private void setSensorRangeDisplay(boolean state) {
+        drawSensorRangeOnMiniMap = state;
+        GUIP.setDrawSensorRangeOnMiniMap(state);
+        initializeMap();
+    }
+
+    private void setFacingArrowsDisplay(boolean state) {
+        drawFacingArrowsOnMiniMap = state;
+        GUIP.setDrawFacingArrowsOnMiniMap(state);
+        initializeMap();
+    }
+
     private void setSymbolsDisplay(int i) {
         symbolsDisplayMode = i;
         GUIP.setMiniMapSymbolsDisplayMode(i);
@@ -1590,6 +1707,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
     };
 
+
+
     MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent me) {
@@ -1624,31 +1743,49 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             String msg_zoomout = Messages.getString("Minimap.menu.ZoomOut");
             zoomMenu.add(menuItem(msg_zoomout, ACTION_ZOOM_OUT, zoom != MIM_ZOOM, listener, false));
             popup.add(zoomMenu);
+
             String msg_showheight = Messages.getString("Minimap.menu.ShowHeight");
             JMenu heightMenu = new JMenu(msg_showheight);
-            String msg_showheightnone = Messages.getString("Minimap.menu.ShowHeightNone");
-            heightMenu.add(menuItem(msg_showheightnone, ACTION_HEIGHT_NONE, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
-                    heightDisplayMode == SHOW_NO_HEIGHT));
-            String msg_showheightground = Messages.getString("Minimap.menu.ShowHeightGround");
-            heightMenu.add(menuItem(msg_showheightground, ACTION_HEIGHT_GROUND, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
-                    heightDisplayMode == SHOW_GROUND_HEIGHT));
-            String msg_showheightbuilding = Messages.getString("Minimap.menu.ShowHeightBuilding");
-            heightMenu.add(menuItem(msg_showheightbuilding, ACTION_HEIGHT_BUILDING, zoom >= MIM_ZOOM_FOR_HEIGHT,
-                    listener, heightDisplayMode == SHOW_BUILDING_HEIGHT));
-            String msg_showheighttotal = Messages.getString("Minimap.menu.ShowHeightTotal");
-            heightMenu.add(menuItem(msg_showheighttotal, ACTION_HEIGHT_TOTAL, zoom >= MIM_ZOOM_FOR_HEIGHT, listener,
-                    heightDisplayMode == SHOW_TOTAL_HEIGHT));
-            popup.add(heightMenu);
-            String msg_showsymbols = Messages.getString("Minimap.menu.ShowSymbols");
-            JMenu symbolsMenu = new JMenu(msg_showsymbols);
-            String msg_showsymbolsnosymbols = Messages.getString("Minimap.menu.ShowSymbolsNoSymbols");
-            symbolsMenu.add(menuItem(msg_showsymbolsnosymbols, ACTION_SYMBOLS_NO, true, listener,
-                    symbolsDisplayMode == SHOW_NO_SYMBOLS));
-            String msg_showsymbolssymbols = Messages.getString("Minimap.menu.ShowSymbolsSymbols");
-            symbolsMenu.add(menuItem(msg_showsymbolssymbols, ACTION_SYMBOLS_SHOW, true, listener,
-                    symbolsDisplayMode == SHOW_SYMBOLS));
-            popup.add(symbolsMenu);
 
+            String msg_showheightnone = Messages.getString("Minimap.menu.ShowHeightNone");
+            heightMenu.add(menuItem(msg_showheightnone, ACTION_HEIGHT_NONE, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode == SHOW_NO_HEIGHT));
+
+            String msg_showheightground = Messages.getString("Minimap.menu.ShowHeightGround");
+            heightMenu.add(menuItem(msg_showheightground, ACTION_HEIGHT_GROUND, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode == SHOW_GROUND_HEIGHT));
+
+            String msg_showheightbuilding = Messages.getString("Minimap.menu.ShowHeightBuilding");
+            heightMenu.add(menuItem(msg_showheightbuilding, ACTION_HEIGHT_BUILDING, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode == SHOW_BUILDING_HEIGHT));
+
+            String msg_showheighttotal = Messages.getString("Minimap.menu.ShowHeightTotal");
+            heightMenu.add(menuItem(msg_showheighttotal, ACTION_HEIGHT_TOTAL, zoom >= MIM_ZOOM_FOR_HEIGHT, listener, heightDisplayMode == SHOW_TOTAL_HEIGHT));
+
+            popup.add(heightMenu);
+
+            String lblShowSymbols = Messages.getString("Minimap.menu.ShowSymbols");
+            JMenu symbolsMenu = new JMenu(lblShowSymbols);
+
+            String lblShowSymbolsNoSymbols = Messages.getString("Minimap.menu.ShowSymbolsNoSymbols");
+            symbolsMenu.add(menuItem(lblShowSymbolsNoSymbols, ACTION_SYMBOLS_NO, true, listener, symbolsDisplayMode == SHOW_NO_SYMBOLS));
+
+            String lblShowSymbolsSymbols = Messages.getString("Minimap.menu.ShowSymbolsSymbols");
+            symbolsMenu.add(menuItem(lblShowSymbolsSymbols, ACTION_SYMBOLS_SHOW, true, listener, symbolsDisplayMode == SHOW_SYMBOLS));;
+
+            JCheckBoxMenuItem toggleDrawSensor = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleShowSensorRange"));
+            toggleDrawSensor.addActionListener(l -> {
+                setSensorRangeDisplay(!drawSensorRangeOnMiniMap);
+            });
+            toggleDrawSensor.setSelected(drawSensorRangeOnMiniMap);
+            symbolsMenu.add(toggleDrawSensor);
+
+
+            JCheckBoxMenuItem toggleDrawFacing = new JCheckBoxMenuItem(Messages.getString("Minimap.menu.ToggleDrawFacingArrows"));
+            toggleDrawFacing.addActionListener(l -> {
+                setFacingArrowsDisplay(!drawFacingArrowsOnMiniMap);
+            });
+            toggleDrawFacing.setSelected(drawFacingArrowsOnMiniMap);
+            symbolsMenu.add(toggleDrawFacing);
+
+            popup.add(symbolsMenu);
             popup.show(me.getComponent(), me.getX(), me.getY());
         }
 

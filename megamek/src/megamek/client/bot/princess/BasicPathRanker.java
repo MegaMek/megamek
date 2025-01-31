@@ -838,31 +838,7 @@ public class BasicPathRanker extends PathRanker {
     private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step,
             boolean jumpLanding, MovePath movePath, Board board) {
         logger.trace("Checking Hex ({}) for hazards.", hex.getCoords());
-        final List<Integer> HAZARDS = new ArrayList<>(Arrays.asList(Terrains.FIRE,
-                Terrains.MAGMA,
-                Terrains.ICE,
-                Terrains.WATER,
-                Terrains.BUILDING,
-                Terrains.BRIDGE,
-                Terrains.BLACK_ICE,
-                Terrains.SNOW,
-                Terrains.SWAMP,
-                Terrains.MUD,
-                Terrains.TUNDRA));
-
-        // Black Ice can appear if the conditions are favorable
-        if (blackIce > 0) {
-            HAZARDS.add(Terrains.PAVEMENT);
-        }
-
-        int[] terrainTypes = hex.getTerrainTypes();
-        Set<Integer> hazards = new HashSet<>();
-        for (int type : terrainTypes) {
-            if (HAZARDS.contains(type)) {
-                hazards.add(type);
-            }
-        }
-
+        Set<Integer> hazards = getHazardTerrainIds(hex);
         // No hazards were found, so nothing to worry about.
         if (hazards.isEmpty()) {
             logger.trace("No hazards found.");
@@ -919,6 +895,35 @@ public class BasicPathRanker extends PathRanker {
         logger.trace("Total Hazard = {}", hazardValue);
 
         return hazardValue;
+    }
+
+    private static final Set<Integer> HAZARDS = new HashSet<>(Arrays.asList(Terrains.FIRE,
+        Terrains.MAGMA,
+        Terrains.ICE,
+        Terrains.WATER,
+        Terrains.BUILDING,
+        Terrains.BRIDGE,
+        Terrains.BLACK_ICE,
+        Terrains.SNOW,
+        Terrains.SWAMP,
+        Terrains.MUD,
+        Terrains.TUNDRA));
+    private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
+    static {
+        HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
+        HAZARDS_WITH_BLACK_ICE.add(Terrains.PAVEMENT);
+    }
+
+    private Set<Integer> getHazardTerrainIds(Hex hex) {
+        var hazards = hex.getTerrainTypesSet();
+        // Black Ice can appear if the conditions are favorable
+        if (blackIce > 0) {
+            hazards.retainAll(HAZARDS_WITH_BLACK_ICE);
+        } else {
+            hazards.retainAll(HAZARDS);
+        }
+
+        return hazards;
     }
 
     // Building collapse and basements are handled in PathRanker.validatePaths.

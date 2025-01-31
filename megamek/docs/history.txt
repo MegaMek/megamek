@@ -55,6 +55,12 @@ MEGAMEK VERSION HISTORY:
 + PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
 + Fix #3837: illegal stacking in buildings after skid and failed accidental charge
 + Fix #6421: NullPointerException in LobbyMekCellFormatter.java
++ PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
++ Fix #3837: illegal stacking in buildings after skid and failed accidental charge
++ fix #6421: fix npe issue
++ PR #6459: feature: quick and simple hazard check for hex
++ Fix #6451: Bot command display hotkey text and description missing in key bind menu
++ Fix #6464: defaultminimap renemad to default, fixed error when persisting selected theme
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

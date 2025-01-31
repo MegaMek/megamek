@@ -2070,7 +2070,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
             }
 
-            minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme());
+            minimapTheme.setSelectedItem(CLIENT_PREFERENCES.getMinimapTheme().getName());
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());

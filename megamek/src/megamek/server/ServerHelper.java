@@ -515,6 +515,17 @@ public class ServerHelper {
     }
 
     /**
+     * Check for movement into hazardous liquid and apply damage.
+     */
+    public static void checkEnteringHazardousLiquid(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
+
+            if (hex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (elevation <= 0)) {
+                int depth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
+                gameManager.doHazardousLiquidDamage(entity, false, depth);
+            }
+    }
+
+    /**
      * Check for black ice when moving into pavement hex.
      */
     public static boolean checkEnteringBlackIce(TWGameManager gameManager, Coords curPos, Hex curHex,

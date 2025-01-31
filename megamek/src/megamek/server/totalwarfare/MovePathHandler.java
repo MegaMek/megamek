@@ -292,6 +292,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             tookMagmaDamageAtStart = true;
         }
 
+        // check for starting in hazardous liquid
+        if ((getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.HAZARDOUS_LIQUID))
+                && (entity.getElevation() <= 0)) {
+            int depth = getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.WATER) ? getGame().getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) : 0;
+            gameManager.doHazardousLiquidDamage(entity, false, depth);
+        }
+
         // set acceleration used to default
         if (entity.isAero()) {
             ((IAero) entity).setAccLast(false);
@@ -758,6 +767,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
                         gameManager.getMainPhaseReport(), gameManager);
                 ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
+                ServerHelper.checkEnteringHazardousLiquid(curHex, entity.getElevation(), entity, gameManager);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -2509,11 +2519,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for breaking magma crust unless we are jumping over the hex
+            // Let's check for hazardous liquid damage too
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
                 if (!curPos.equals(lastPos)) {
                     ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false,
                             gameManager.getMainPhaseReport(), gameManager);
                     ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, gameManager);
+                    ServerHelper.checkEnteringHazardousLiquid(curHex, step.getElevation(), entity, gameManager);
                 }
             }
 

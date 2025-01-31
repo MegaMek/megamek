@@ -14,11 +14,12 @@
 package megamek.common;
 
 /**
+ * Set of flags that can be used to determine special equipment properties
+ * and behaviors.
+ * Every type of equipment has its own flag.
  * @author Luana Coppio
  */
 public enum MiscTypeFlag implements IndexedFlag {
-
-    // equipment flags (okay, like every type of equipment has its own flag)
     F_HEAT_SINK(0),
     F_DOUBLE_HEAT_SINK(1),
     F_JUMP_JET(2),
@@ -79,24 +80,17 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_PARTIAL_WING(57),
     F_FERRO_LAMELLOR(58),
     F_ARTEMIS_V(59),
-    // TODO: Implement me, so far only construction data
-    F_TRACKS(60),
-    // TODO: Implement me, so far only construction data
-    F_MASS(61),
-    // TODO: Implement me, so far only construction data
-    F_CARGO(62),
-    // TODO: Implement me, so far only construction data
-    F_DUMPER(63),
-    // TODO: Implement me, so far only construction data
-    F_MASH(64),
+    F_TRACKS(60), // TODO: Implement me, so far only construction data
+    F_MASS(61), // TODO: Implement me, so far only construction data
+    F_CARGO(62), // TODO: Implement me, so far only construction data
+    F_DUMPER(63), // TODO: Implement me, so far only construction data
+    F_MASH(64), // TODO: Implement me, so far only construction data
     F_BA_EQUIPMENT(65),
     F_MEK_EQUIPMENT(66),
     F_TANK_EQUIPMENT(67),
     F_FIGHTER_EQUIPMENT(68),
     F_SUPPORT_TANK_EQUIPMENT(69),
     F_PROTOMEK_EQUIPMENT(70),
-
-    // Moved the unit types to the top of the list.
     F_ARMORED_GLOVE(71),
     F_BASIC_MANIPULATOR(72),
     F_BATTLE_CLAW(73),
@@ -130,13 +124,10 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_MOBILE_HPG(101),
     F_FIELD_KITCHEN(102),
     F_MOBILE_FIELD_BASE(103),
-    // TODO: add game rules for the following imagers/radars, construction data
-    // only
-    F_HIRES_IMAGER(104),
-    F_HYPERSPECTRAL_IMAGER(105),
-    F_INFRARED_IMAGER(106),
-    F_LOOKDOWN_RADAR(107),
-
+    F_HIRES_IMAGER(104), // TODO: add game rules for the following imagers/radars, construction data only
+    F_HYPERSPECTRAL_IMAGER(105), // TODO: add game rules for the following imagers/radars, construction data only
+    F_INFRARED_IMAGER(106), // TODO: add game rules for the following imagers/radars, construction data only
+    F_LOOKDOWN_RADAR(107), // TODO: add game rules for the following imagers/radars, construction data only
     F_COMMAND_CONSOLE(108),
     F_VSTOL_CHASSIS(109),
     F_STOL_CHASSIS(110),
@@ -215,12 +206,8 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_FLUID_SUCTION_SYSTEM(183),
     F_HYDROFOIL(184),
     F_SUBMERSIBLE(185),
-
-    // Flag for BattleArmor Modular Equipment Adaptor
-    F_BA_MEA(186),
-
-    // Flag for Infantry Equipment
-    F_INF_EQUIPMENT(187),
+    F_BA_MEA(186), // Flag for BattleArmor Modular Equipment Adaptor
+    F_INF_EQUIPMENT(187), // Flag for Infantry Equipment
     F_SCM(188),
     F_VIRAL_JAMMER_HOMING(189),
     F_VIRAL_JAMMER_DECOY(190),
@@ -230,18 +217,12 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_EMERGENCY_COOLANT_SYSTEM(194),
     F_BADC(195),
     F_REUSABLE(196),
-
     F_BLOODHOUND(197),
     F_ARMOR_KIT(198),
-
-    // Flags for Large Craft Systems
-    F_STORAGE_BATTERY(199),
+    F_STORAGE_BATTERY(199), // Flags for Large Craft Systems
     F_LIGHT_SAIL(200),
-
-    // Prototype Stuff
-    F_ARTEMIS_PROTO(201),
+    F_ARTEMIS_PROTO(201), // Prototype Stuff
     F_CASEP(202),
-
     F_VEEDC(203),
     F_SC_EQUIPMENT(204),
     F_DS_EQUIPMENT(205),
@@ -251,10 +232,8 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_CAPITAL_ARMOR(209),
     F_FERRO_CARBIDE(210),
     F_IMP_FERRO(211),
-    // Not usable by small support vehicles
-    F_HEAVY_EQUIPMENT(212),
-    // Drone Equipment for Large Craft
-    F_SRCS(213),
+    F_HEAVY_EQUIPMENT(212), // Not usable by small support vehicles
+    F_SRCS(213), // Drone Equipment for Large Craft
     F_SASRCS(214),
     F_CASPAR(215),
     F_CASPARII(216),
@@ -267,8 +246,7 @@ public enum MiscTypeFlag implements IndexedFlag {
     F_EXTERNAL_POWER_PICKUP(223),
     F_RAM_PLATE(224),
     F_PROTOTYPE(225),
-    // Fortify Equipment
-    F_TRENCH_CAPABLE(226),
+    F_TRENCH_CAPABLE(226), // Fortify Equipment
     F_SUPPORT_VEE_BAR_ARMOR(227);
 
     private final int flagIndex;

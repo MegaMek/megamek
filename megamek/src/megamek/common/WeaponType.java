@@ -157,7 +157,6 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_DIVE_BOMB = WeaponTypeFlag.F_DIVE_BOMB;
     public static final WeaponTypeFlag F_ALT_BOMB = WeaponTypeFlag.F_ALT_BOMB;
 
-    // Currently only used by MML
     public static final WeaponTypeFlag F_BA_WEAPON = WeaponTypeFlag.F_BA_WEAPON;
     public static final WeaponTypeFlag F_MEK_WEAPON = WeaponTypeFlag.F_MEK_WEAPON;
     public static final WeaponTypeFlag F_AERO_WEAPON = WeaponTypeFlag.F_AERO_WEAPON;

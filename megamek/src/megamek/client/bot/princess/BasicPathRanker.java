@@ -1116,7 +1116,7 @@ public class BasicPathRanker extends PathRanker {
                 (Mek.LOC_CT == loc) ||
                 (ProtoMek.LOC_HEAD == loc) ||
                 (ProtoMek.LOC_TORSO == loc) ||
-                !(movingUnit.isMek() && !(movingUnit.isProtoMek()))
+                (!movingUnit.isMek() && !movingUnit.isProtoMek())
             ) {
                 logger.trace("Location {} breached and critical (1000).", loc);
                 return UNIT_DESTRUCTION_FACTOR;

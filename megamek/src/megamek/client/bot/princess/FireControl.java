@@ -163,6 +163,7 @@ public class FireControl {
     static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
             "stops swarming");
     static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range");
+    static final TargetRollModifier TH_OUT_OF_VISUAL = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of visual targeting range");
     static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
     static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
@@ -303,6 +304,11 @@ public class FireControl {
         final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
+        }
+
+        final int maxVisRange = game.getPlanetaryConditions().getVisualRange(shooter, shooter.isUsingSearchlight());
+        if (distance > maxVisRange) {
+            return new ToHitData(TH_OUT_OF_VISUAL);
         }
 
         final ToHitData toHitData = new ToHitData();

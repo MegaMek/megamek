@@ -246,6 +246,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox mmSymbol = new JCheckBox(Messages.getString("CommonSettingsDialog.mmSymbol"));
     private final JCheckBox drawFacingArrowsOnMiniMap = new JCheckBox(Messages.getString("CommonSettingsDialog.drawFacingArrowsOnMiniMap"));
     private final JCheckBox drawSensorRangeOnMiniMap = new JCheckBox(Messages.getString("CommonSettingsDialog.drawSensorRangeOnMiniMap"));
+    private final JCheckBox paintBordersOnMiniMap = new JCheckBox(Messages.getString("CommonSettingsDialog.paintBordersOnMiniMap"));
     private final JCheckBox entityOwnerColor = new JCheckBox(
             Messages.getString("CommonSettingsDialog.entityOwnerColor"));
     private final JCheckBox teamColoring = new JCheckBox(Messages.getString("CommonSettingsDialog.teamColoring"));
@@ -506,6 +507,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private boolean savedMmSymbol;
     private boolean savedDrawFacingArrowsOnMiniMap;
     private boolean savedDrawSensorRangeOnMiniMap;
+    private boolean savedPaintBorders;
     private boolean savedTeamColoring;
     private boolean savedDockOnLeft;
     private boolean savedDockMultipleOnYAxis;
@@ -1665,6 +1667,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                         Configuration.gameSummaryImagesMMDir())));
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
+        comps.add(checkboxEntry(paintBordersOnMiniMap, null));
         return createSettingsPanel(comps);
     }
 
@@ -2057,6 +2060,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             mmSymbol.setSelected(GUIP.getMmSymbol());
             drawFacingArrowsOnMiniMap.setSelected(GUIP.getDrawFacingArrowsOnMiniMap());
             drawSensorRangeOnMiniMap.setSelected(GUIP.getDrawSensorRangeOnMiniMap());
+            paintBordersOnMiniMap.setSelected(GUIP.paintBorders());
             levelhighlight.setSelected(GUIP.getLevelHighlight());
             shadowMap.setSelected(GUIP.getShadowMap());
             hexInclines.setSelected(GUIP.getHexInclines());
@@ -2149,6 +2153,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedMmSymbol = GUIP.getMmSymbol();
             savedDrawFacingArrowsOnMiniMap = GUIP.getDrawFacingArrowsOnMiniMap();
             savedDrawSensorRangeOnMiniMap = GUIP.getDrawSensorRangeOnMiniMap();
+            savedPaintBorders = GUIP.paintBorders();
             savedTeamColoring = GUIP.getTeamColoring();
             savedDockOnLeft = GUIP.getDockOnLeft();
             savedDockMultipleOnYAxis = GUIP.getDockMultipleOnYAxis();
@@ -2191,6 +2196,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setMmSymbol(savedMmSymbol);
         GUIP.setDrawSensorRangeOnMiniMap(savedDrawSensorRangeOnMiniMap);
         GUIP.setDrawFacingArrowsOnMiniMap(savedDrawFacingArrowsOnMiniMap);
+        GUIP.setPaintBorders(savedPaintBorders);
         GUIP.setTeamColoring(savedTeamColoring);
         GUIP.setDockOnLeft(savedDockOnLeft);
         GUIP.setDockMultipleOnYAxis(savedDockMultipleOnYAxis);
@@ -2443,6 +2449,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
         GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         GUIP.setDrawSensorRangeOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
+        GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
@@ -2926,6 +2933,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         } else if (source.equals(drawSensorRangeOnMiniMap)) {
             GUIP.setDrawFacingArrowsOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
+        } else if (source.equals(paintBordersOnMiniMap)) {
+            GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
         }
     }
 

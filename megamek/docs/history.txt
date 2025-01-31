@@ -66,6 +66,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6469: Fix: removes a double call for next-unit
 + PR #6470: Fix: minimap summary npe fix
 + PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
++ PR #6474: makes Princess move way more than she otherwise would on no-contact
 
 
 0.50.02 (2024-12-30 2130 UTC)

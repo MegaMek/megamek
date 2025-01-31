@@ -2849,7 +2849,7 @@ public class FireControl {
             cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
             cloneWAA.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
             cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
-            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).cannotSucceed()) {
+            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
                 logger.warn(shooter.getDisplayName() + " tried to load "
                     + currentWeapon.getName() + " with ammo " +
                     mountedAmmo.getDesc() + " but this would have caused it to miss; skipping.");

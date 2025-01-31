@@ -141,7 +141,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
     // Copy constructor, hopefully with enough info to generate same to-hit data.
     public WeaponAttackAction(final WeaponAttackAction other) {
-        super(other.getEntityId(), other.getTargetId(), other.getWeaponId());
+        this(other.getEntityId(), other.getTargetType(), other.getTargetId(), other.getWeaponId());
 
         aimedLocation = other.aimedLocation;
         aimMode = other.aimMode;
@@ -164,13 +164,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         weaponId = other.weaponId;
         this.bombPayloads.put("internal", Arrays.copyOf(other.bombPayloads.get("internal"), BombType.B_NUM));
         this.bombPayloads.put("external", Arrays.copyOf(other.bombPayloads.get("external"), BombType.B_NUM));
-
-        /**
-         * allECMInfo comes from owner's precognition,
-         * false evenIfAlreadyFired should be false,
-         * ammoId,
-         * ammoCarrier
-         */
     }
 
     public int getWeaponId() {

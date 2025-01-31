@@ -899,6 +899,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private boolean hasFleeZone = false;
     private HexArea fleeZone = HexArea.EMPTY_AREA;
+    private transient Boolean cacheHasNoModularArmor = null;
 
     /**
      * Generates a new, blank, entity.
@@ -6447,6 +6448,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         isJumpingNow = false;
         convertingNow = false;
         damageThisRound = 0;
+        cacheHasNoModularArmor = null;
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
         }
@@ -12131,7 +12133,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasModularArmor() {
-        return hasModularArmor(-1);
+        if (cacheHasNoModularArmor == null || cacheHasNoModularArmor) {
+            cacheHasNoModularArmor = hasModularArmor(-1);
+        }
+        return cacheHasNoModularArmor;
     }
 
     public boolean hasModularArmor(int loc) {

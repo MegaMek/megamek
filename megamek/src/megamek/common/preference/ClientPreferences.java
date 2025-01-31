@@ -361,6 +361,9 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     public void setMinimapTheme(String theme) {
+        if (theme == null) {
+            return;
+        }
         store.setValue(MINIMAP_THEME, theme);
     }
 

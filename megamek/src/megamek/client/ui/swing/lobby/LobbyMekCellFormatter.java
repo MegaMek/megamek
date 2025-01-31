@@ -86,6 +86,7 @@ class LobbyMekCellFormatter {
 
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
+
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
@@ -128,7 +129,7 @@ class LobbyMekCellFormatter {
         }
 
         // Critical (Red) Warnings
-        if ((entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
+        if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
@@ -563,7 +564,7 @@ class LobbyMekCellFormatter {
         }
 
         // Critical (Red) Warnings
-        if ((entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
+        if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)

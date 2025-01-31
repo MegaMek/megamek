@@ -60,10 +60,12 @@ public class Terrains implements Serializable {
     public static final int SMOKE = 20; // 1: light smoke 2: heavy smoke 3:light
     // LI smoke 4: Heavy LI smoke
     public static final int GEYSER = 21; // 1: dormant 2: active 3: magma vent
+
+
+
     // unimplemented
     // Bug Storm
     // Extreme Depths
-    // Hazardous Liquid Pools
     // Rail
     // Dirt Roads, Gravel Roads
     // Water Flow
@@ -153,6 +155,11 @@ public class Terrains implements Serializable {
 
     public static final int DEPLOYMENT_ZONE = 57;
 
+    public static final int HAZARDOUS_LIQUID = 58;
+    // Wind blown hazardous liquid implements MapPack Alien Worlds' Wind Blown Hazardous Liquid rules
+    public static final int HAZARDOUS_LIQUID_LVL_NORMAL = 0;
+    public static final int HAZARDOUS_LIQUID_LVL_WIND_BLOWN = 1;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -165,7 +172,7 @@ public class Terrains implements Serializable {
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
-            "deployment_zone" };
+            "deployment_zone", "hazardous_liquid" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -397,6 +404,8 @@ public class Terrains implements Serializable {
                 }
             case DEPLOYMENT_ZONE:
                 return "Deployment Zone";
+            case HAZARDOUS_LIQUID:
+                    return "Hazardous Liquid";
             default:
                 return null;
         }

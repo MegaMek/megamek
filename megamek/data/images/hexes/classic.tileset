@@ -25,6 +25,8 @@ include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
 
+include "StandardIncludes/StandardHazardousLiquid.tileinc"
+
 super * "water:0" "" "boring/blue_water_1.gif"
 
 super * "fortified:1" "" "boring/sandbags.gif"

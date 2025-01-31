@@ -52,6 +52,7 @@ import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -237,12 +238,20 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * game and boardview object will be used to display additional information.
      */
     public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme) {
+       return getMinimapImage(game, bv, zoom, null, minimapTheme);
+    }
+
+    /**
+     * Returns a minimap image of the given board at the given zoom index. The
+     * game and boardview object will be used to display additional information.
+     */
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
-            Minimap tempMM = new Minimap(null, game, bv, null, minimapTheme);
+            Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme);
             tempMM.zoom = zoom;
             tempMM.initializeMap();
             tempMM.drawMap(true);
@@ -269,6 +278,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         bv = bview;
         dialog = dlg;
         clientGui = cg;
+
         if (clientGui != null && clientGui.getClient() instanceof Client castClient) {
             client = castClient;
         }
@@ -286,7 +296,59 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * are not null).
      */
     private void initializeListeners() {
-        game.addGameListener(gameListener);
+        game.addGameListener(new GameListenerAdapter() {
+            @Override
+            public void gamePhaseChange(GamePhaseChangeEvent e) {
+                if (GUIP.getGameSummaryMinimap()
+                    && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
+                    || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
+                    || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
+                    || e.getOldPhase().isPhysical())) {
+
+                    File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
+                        + e.getOldPhase() + ".png");
+                    try {
+                        ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null), "png", imgFile);
+                    } catch (Exception ex) {
+                        logger.error(ex, "");
+                    }
+                }
+                refreshMap();
+            }
+
+            @Override
+            public void gameTurnChange(GameTurnChangeEvent e) {
+                refreshMap();
+            }
+
+            @Override
+            public void gameBoardNew(GameBoardNewEvent e) {
+                Board b = e.getOldBoard();
+                if (b != null) {
+                    b.removeBoardListener(boardListener);
+                }
+                b = e.getNewBoard();
+                if (b != null) {
+                    b.addBoardListener(boardListener);
+                }
+                board = b;
+                initializeMap();
+            }
+
+            @Override
+            public void gameBoardChanged(GameBoardChangeEvent e) {
+                refreshMap();
+            }
+
+            @Override
+            public void gameNewAction(GameNewActionEvent e) {
+                refreshMap();
+            }
+        });
         board.addBoardListener(boardListener);
         if (bv != null) {
             bv.addBoardViewListener(boardViewListener);
@@ -306,6 +368,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             dialog.addComponentListener(componentListener);
             dialog.addComponentListener(componentListener);
         }
+    }
+
+    private @Nullable Player getLocalPlayer() {
+        if (client != null && client.getLocalPlayer() != null) {
+            return client.getLocalPlayer();
+        }
+        if (clientGui != null && clientGui.getClient() != null && clientGui.getClient().getLocalPlayer() != null) {
+            return clientGui.getClient().getLocalPlayer();
+        }
+        return null;
     }
 
     @Override
@@ -640,7 +712,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if ((null != client) && (null != game) && game.getPhase().isDeployment() && (bv != null)
                 && (bv.getDeployingEntity() != null) && (dialog != null)) {
             GameTurn turn = game.getTurn();
-            if ((turn != null) && (turn.playerId() == client.getLocalPlayer().getId())) {
+            if (getLocalPlayer() == null) {
+                return;
+            }
+            if ((turn != null) && (turn.playerId() == getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
 
                 for (int j = 0; j < board.getWidth(); j++) {
@@ -935,8 +1010,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
-            if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                    && (waa.getEntity(game).getOwner().getId() != client.getLocalPlayer().getId())) {
+            if ((getLocalPlayer() == null) ||( (attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
+                    && (waa.getEntity(game).getOwner().getId() != getLocalPlayer().getId()))) {
                 return;
             }
         }
@@ -1012,7 +1087,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         int baseX = coordsXToPixel(x);
         int baseY = coordsYtoPixel(y, x);
 
-        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(getLocalPlayer(), entity)) {
             // This unit is visible only as a sensor Return
             String sensorReturn = "?";
             Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]);
@@ -1022,7 +1097,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g.setColor(Color.RED);
             g.drawString(sensorReturn, baseX - width, baseY + height);
             return;
-        } else if (!EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), game, entity)) {
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity)) {
             // This unit is not visible, don't draw it
             return;
         }
@@ -1035,8 +1110,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
-            boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
+            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam() == getLocalPlayer().getTeam());
+            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
             } else if (isLocalTeam) {
@@ -1169,10 +1244,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     /** Draws the symbol for a single entity. Checks visibility in double blind. */
     private void paintSensor(Graphics g, Entity entity) {
-        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(getLocalPlayer(), entity)) {
             // This unit is visible only as a sensor Return, we dont know the range of its sensor yet
             return;
-        } else if (!EntityVisibilityUtils.detectedOrHasVisual(client.getLocalPlayer(), game, entity)) {
+        } else if (!EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity)) {
             // This unit is not visible, don't draw it
             return;
         }
@@ -1195,8 +1270,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
         if (GUIP.getTeamColoring() && (client != null)) {
-            boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
-            boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
+            boolean isLocalTeam = (getLocalPlayer() != null) && (entity.getOwner().getTeam() == getLocalPlayer().getTeam());
+            boolean isLocalPlayer = entity.getOwner().equals(getLocalPlayer());
             if (isLocalPlayer) {
                 iconColor = GUIP.getMyUnitColor();
             } else if (isLocalTeam) {
@@ -1592,60 +1667,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             } else {
                 dirty[x / 10][y / 10] = true;
             }
-        }
-    };
-
-    private final GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIP.getGameSummaryMinimap()
-                    && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
-                            || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
-                            || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
-                            || e.getOldPhase().isPhysical())) {
-
-                File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-                        + e.getOldPhase() + ".png");
-                try {
-                    ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, null), "png", imgFile);
-                } catch (Exception ex) {
-                    logger.error(ex, "");
-                }
-            }
-            refreshMap();
-        }
-
-        @Override
-        public void gameTurnChange(GameTurnChangeEvent e) {
-            refreshMap();
-        }
-
-        @Override
-        public void gameBoardNew(GameBoardNewEvent e) {
-            Board b = e.getOldBoard();
-            if (b != null) {
-                b.removeBoardListener(boardListener);
-            }
-            b = e.getNewBoard();
-            if (b != null) {
-                b.addBoardListener(boardListener);
-            }
-            board = b;
-            initializeMap();
-        }
-
-        @Override
-        public void gameBoardChanged(GameBoardChangeEvent e) {
-            refreshMap();
-        }
-
-        @Override
-        public void gameNewAction(GameNewActionEvent e) {
-            refreshMap();
         }
     };
 

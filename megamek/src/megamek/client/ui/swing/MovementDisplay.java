@@ -4686,9 +4686,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
         final IGameOptions opts = clientgui.getClient().getGame().getOptions();
-        if (actionCmd.equals(MoveCommand.MOVE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
-        } else if (actionCmd.equals(
+        if (actionCmd.equals(
                 MoveCommand.MOVE_FORWARD_INI.getCmd())) {
             selectNextPlayer();
         } else if (actionCmd.equals(MoveCommand.MOVE_CANCEL.getCmd())) {

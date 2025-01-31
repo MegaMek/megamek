@@ -78,7 +78,6 @@ class SharedUtilityTest {
     @Test
     void testPredictLeapDamageBipedLeap3AvgPilot() {
         TargetRoll data = generateLeapRoll(bipedMek, 3);
-        StringBuilder msg = new StringBuilder();
 
         // Rough math:
         // Chance of Pilot Skill 5 pilot to successfully Leap down 3 levels:
@@ -93,7 +92,7 @@ class SharedUtilityTest {
         // * (1 - 0.083)
         // Approximately 188 damage expected.
         double expectedDamage = 188.0;
-        double predictedDamage = predictLeapDamage(bipedMek, data, msg);
+        double predictedDamage = predictLeapDamage(bipedMek, data);
 
         assertEquals(expectedDamage, predictedDamage, 1.0);
     }
@@ -101,7 +100,6 @@ class SharedUtilityTest {
     @Test
     void testPredictLeapDamageQuadLeap3AvgPilot() {
         TargetRoll data = generateLeapRoll(quadMek, 3);
-        StringBuilder msg = new StringBuilder();
 
         // Rough math:
         // Chance of Pilot Skill 5 pilot to successfully Leap down 3 levels:
@@ -116,7 +114,7 @@ class SharedUtilityTest {
         // * (1 - 0.277)
         // Approximately 298 damage expected.
         double expectedDamage = 298.0;
-        double predictedDamage = predictLeapDamage(quadMek, data, msg);
+        double predictedDamage = predictLeapDamage(quadMek, data);
 
         assertEquals(expectedDamage, predictedDamage, 1.0);
     }
@@ -124,10 +122,9 @@ class SharedUtilityTest {
     @Test
     void testPredictLeapFallDamageBipedLeap3AvgPilot() {
         TargetRoll data = generateLeapFallRoll(bipedMek, 3);
-        StringBuilder msg = new StringBuilder();
 
         double expectedDamage = 12.0;
-        double predictedDamage = predictLeapFallDamage(bipedMek, data, msg);
+        double predictedDamage = predictLeapFallDamage(bipedMek, data);
 
         assertEquals(expectedDamage, predictedDamage, 1.0);
     }
@@ -135,10 +132,9 @@ class SharedUtilityTest {
     @Test
     void testPredictLeapFallDamageQuadLeap3AvgPilot() {
         TargetRoll data = generateLeapFallRoll(quadMek, 3);
-        StringBuilder msg = new StringBuilder();
 
         double expectedDamage = 10.0;
-        double predictedDamage = predictLeapFallDamage(quadMek, data, msg);
+        double predictedDamage = predictLeapFallDamage(quadMek, data);
 
         assertEquals(expectedDamage, predictedDamage, 1.0);
     }

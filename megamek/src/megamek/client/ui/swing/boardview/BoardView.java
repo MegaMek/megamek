@@ -5201,7 +5201,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
-    FovHighlightingAndDarkening getFovHighlighting() {
+    public FovHighlightingAndDarkening getFovHighlighting() {
         return fovHighlightingAndDarkening;
     }
 

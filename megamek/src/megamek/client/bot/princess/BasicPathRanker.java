@@ -571,7 +571,7 @@ public class BasicPathRanker extends PathRanker {
 
 
         // Movement is good, it gives defense and extends a player power in the game.
-        var movementMod = calculateMovementMod(pathCopy, game);
+        var movementMod = calculateMovementMod(pathCopy, game, enemies);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
@@ -654,19 +654,17 @@ public class BasicPathRanker extends PathRanker {
         return braveryMod;
     }
 
-    private double calculateMovementMod(MovePath pathCopy, Game game) {
-        var hexMoved = (double) pathCopy.getHexesMoved();
+    // Only forces unit to move if there are no units around
+    private double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
+        if (!enemies.isEmpty() || !getOwner().getEnemyHotSpots().isEmpty()) {
+            return 0.0;
+        }
         var distanceMoved = pathCopy.getDistanceTravelled();
         var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
+        double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
         var tmmValue = tmm.getValue();
-        if (tmmValue == 0 || ((hexMoved + distanceMoved) == 0)) {
-            logger.trace("movement mod [0]");
-            return 0;
-        }
-        var movementFactor = tmmValue * (hexMoved * distanceMoved) / (hexMoved + distanceMoved);
-
-        logger.trace("movement mod [{} = {} * ({} * {}) / ({} + {})]", movementFactor, tmmValue, hexMoved, distanceMoved,
-                hexMoved, distanceMoved);
+        var movementFactor = tmmValue * selfPreservation;
+        logger.trace("movement mod [{} = {} * {})]", movementFactor, tmmValue, selfPreservation);
         return movementFactor;
     }
 

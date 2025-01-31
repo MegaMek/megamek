@@ -23,7 +23,6 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
 
-import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -711,7 +710,7 @@ public class TestAdvancedAerospace extends TestAero {
         Map<EquipmentType, Integer> rightBroad = new HashMap<>();
         Map<Integer, Integer> massDriversPerArc = new HashMap<>();
 
-        BigInteger typeFlag = MiscType.F_JS_EQUIPMENT;
+        var typeFlag = MiscType.F_JS_EQUIPMENT;
         if (vessel.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
             typeFlag = MiscType.F_WS_EQUIPMENT;
         } else if (vessel.hasETypeFlag(Entity.ETYPE_SPACE_STATION)) {

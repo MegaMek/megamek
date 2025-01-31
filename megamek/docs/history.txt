@@ -60,7 +60,8 @@ MEGAMEK VERSION HISTORY:
 + fix #6421: fix npe issue
 + PR #6459: feature: quick and simple hazard check for hex
 + Fix #6451: Bot command display hotkey text and description missing in key bind menu
-+ Fix #6464: defaultminimap renemad to default, fixed error when persisting selected theme
++ Fix #6464: defaultminimap renamed to default, fixed error when persisting selected theme
++ PR #6462: Convert from StringBuilder to Logger
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

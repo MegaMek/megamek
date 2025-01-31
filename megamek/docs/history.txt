@@ -63,6 +63,10 @@ MEGAMEK VERSION HISTORY:
 + Fix #6464: defaultminimap renamed to default, fixed error when persisting selected theme
 + PR #6462: Convert from StringBuilder to Logger
 + PR #6468: Fix NPE clicking on board with no unit selected
++ PR #6469: Fix: removes a double call for next-unit
++ PR #6470: Fix: minimap summary npe fix
++ PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
+
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

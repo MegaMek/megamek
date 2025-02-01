@@ -124,7 +124,8 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-
+    private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
+    private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -148,6 +149,9 @@ public class BehaviorSettings implements Serializable {
         copy.setHerdMentalityIndex(getHerdMentalityIndex());
         copy.setHyperAggressionIndex(getHyperAggressionIndex());
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
+        copy.setAntiCrowding(getAntiCrowding());
+        copy.setFavorHigherTMM(getFavorHigherTMM());
+
         for (final String t : getStrategicBuildingTargets()) {
             copy.addStrategicTarget(t);
         }
@@ -628,6 +632,30 @@ public class BehaviorSettings implements Serializable {
         this.hyperAggressionIndex = validateIndex(hyperAggressionIndex);
     }
 
+    public int getAntiCrowding() {
+        return antiCrowding;
+    }
+
+    public void setAntiCrowding(int antiCrowding) {
+        this.antiCrowding = validateIndex(antiCrowding);
+    }
+
+    public void setAntiCrowding(String antiCrowding) {
+        this.antiCrowding = validateIndex(Integer.parseInt(antiCrowding));
+    }
+
+    public int getFavorHigherTMM() {
+        return favorHigherTMM;
+    }
+
+    public void setFavorHigherTMM(int favorHigherTMM) {
+        this.favorHigherTMM = validateIndex(favorHigherTMM);
+    }
+
+    public void setFavorHigherTMM(String favorHigherTMM) {
+        this.favorHigherTMM = validateIndex(Integer.parseInt(favorHigherTMM));
+    }
+
     /**
      * How close to I want to get to my enemies?
      *
@@ -728,6 +756,10 @@ public class BehaviorSettings implements Serializable {
                 setHerdMentalityIndex(child.getTextContent());
             } else if ("braveryIndex".equalsIgnoreCase(child.getNodeName())) {
                 setBraveryIndex(child.getTextContent());
+            } else if ("antiCrowding".equalsIgnoreCase(child.getNodeName())) {
+                setAntiCrowding(child.getTextContent());
+            } else if ("favorHigherTMM".equalsIgnoreCase(child.getNodeName())) {
+                setFavorHigherTMM(child.getTextContent());
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -806,6 +838,14 @@ public class BehaviorSettings implements Serializable {
             braveryNode.setTextContent("" + getBraveryIndex());
             behavior.appendChild(braveryNode);
 
+            final Element antiCrowdingNode = doc.createElement("antiCrowding");
+            antiCrowdingNode.setTextContent("" + getAntiCrowding());
+            behavior.appendChild(antiCrowdingNode);
+
+            final Element favorHigherTMMNode = doc.createElement("favorHigherTMM");
+            favorHigherTMMNode.setTextContent("" + getFavorHigherTMM());
+            behavior.appendChild(favorHigherTMMNode);
+
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -852,6 +892,8 @@ public class BehaviorSettings implements Serializable {
         out.append("\n\t Bravery: ").append(getBraveryIndex()).append(":").append(getBraveryValue(getBraveryIndex()));
         out.append("\n\t Herd Mentality: ").append(getHerdMentalityIndex()).append(":")
                 .append(getHerdMentalityValue(getHerdMentalityIndex()));
+        out.append("\n\t AntiCrowding: ").append(getAntiCrowding()).append(":").append(getAntiCrowding());
+        out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM()).append(":").append(getFavorHigherTMM());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
@@ -893,6 +935,10 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (selfPreservationIndex != that.selfPreservationIndex) {
             return false;
+        } else if (antiCrowding != that.antiCrowding) {
+            return false;
+        } else if (favorHigherTMM != that.favorHigherTMM) {
+            return false;
         } else if (!description.equals(that.description)) {
             return false;
         } else if (destinationEdge != that.destinationEdge) {
@@ -919,6 +965,8 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + selfPreservationIndex;
         result = 31 * result + fallShameIndex;
         result = 31 * result + hyperAggressionIndex;
+        result = 31 * result + antiCrowding;
+        result = 31 * result + favorHigherTMM;
         result = 31 * result + destinationEdge.hashCode();
         result = 31 * result + retreatEdge.hashCode();
         result = 31 * result + strategicBuildingTargets.hashCode();

@@ -113,6 +113,9 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+    private TipSlider favorHigherTMMSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+
     private TipButton savePreset = new TipButton(Messages.getString("BotConfigDialog.save"));
     private TipButton saveNewPreset = new TipButton(Messages.getString("BotConfigDialog.saveNew"));
 
@@ -327,6 +330,18 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Messages.getString("BotConfigDialog.fallShameToolTip"),
                 Messages.getString("BotConfigDialog.fallShameSliderTitle")));
 
+
+        panContent.add(buildSlider(antiCrowdingSlidebar, Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
+            Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
+            Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
+            Messages.getString("BotConfigDialog.antiCrowdingTitle")));
+
+        panContent.add(buildSlider(favorHigherTMMSlidebar, Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
+            Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
+            Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
+            Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
+
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -441,6 +456,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
+        antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
+        favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
     }
 
     private void updateDialogFields() {
@@ -487,7 +504,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                         || chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue()
                         || chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue()
                         || chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue()
-                        || chosenPreset.getBraveryIndex() != braverySlidebar.getValue());
+                        || chosenPreset.getBraveryIndex() != braverySlidebar.getValue()
+                        || chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue()
+                        || chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue()
+        );
     }
 
     private JPanel buildSlider(JSlider thisSlider, String minMsgProperty,
@@ -657,6 +677,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         newBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
+        newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+        newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -692,6 +714,9 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
+        tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
+        tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
                 tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());

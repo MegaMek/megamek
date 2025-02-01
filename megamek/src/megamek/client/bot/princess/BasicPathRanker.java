@@ -567,6 +567,7 @@ public class BasicPathRanker extends PathRanker {
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
 
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies);
 
         // Movement is good, it gives defense and extends a player power in the game.
         double movementMod = calculateMovementMod(pathCopy, game, enemies);
@@ -589,6 +590,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= aggressionMod;
         utility -= herdingMod;
         utility += movementMod;
+        utility -= crowdingTolerance;
         utility -= facingMod;
         utility -= selfPreservationMod;
         utility -= utility * offBoardMod;
@@ -654,16 +656,60 @@ public class BasicPathRanker extends PathRanker {
 
     // Only forces unit to move if there are no units around
     private double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
-        if (!enemies.isEmpty() || !getOwner().getEnemyHotSpots().isEmpty()) {
+        var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
+        boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
+        boolean disabledFavorHigherTMM = favorHigherTMM == 0;
+        if (noEnemiesInSight || !disabledFavorHigherTMM) {
+            var distanceMoved = pathCopy.getDistanceTravelled();
+            var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
+            double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
+            var tmmValue = tmm.getValue();
+            var movementFactor = tmmValue * (selfPreservation + favorHigherTMM);
+            logger.trace("movement mod [{} = {} * {})]", movementFactor, tmmValue, selfPreservation);
+            return movementFactor;
+        }
+        return 0.0;
+    }
+
+    private double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies) {
+        var self = movePath.getEntity();
+        if (!(self instanceof Mek) && !(self instanceof Tank)) {
             return 0.0;
         }
-        var distanceMoved = pathCopy.getDistanceTravelled();
-        var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
-        double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
-        var tmmValue = tmm.getValue();
-        var movementFactor = tmmValue * selfPreservation;
-        logger.trace("movement mod [{} = {} * {})]", movementFactor, tmmValue, selfPreservation);
-        return movementFactor;
+
+        var antiCrowding = getOwner().getBehaviorSettings().getAntiCrowding();
+        if (antiCrowding == 0) {
+            return 0;
+        }
+
+        var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
+
+        // when index = 10 I want the distance to be 1
+        // when the index is 0 I want the distance to be 5
+        // so I want the distance to be 5 - index / 2
+        final double herdingDistance = 5.0 - (double) antiCrowding / 2;
+        final double closingDistance = self.getMaxWeaponRange() * 0.6;
+
+        var crowdingFriends = getOwner().getFriendEntities().stream()
+            .filter(e -> e instanceof Mek || e instanceof Tank)
+            .filter(Entity::isDeployed)
+            .map(Entity::getPosition)
+            .filter(Objects::nonNull)
+            .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+            .count();
+
+        var crowdingEnemies = enemies.stream()
+            .filter(e -> e instanceof Mek || e instanceof Tank)
+            .filter(Entity::isDeployed)
+            .map(Entity::getPosition)
+            .filter(Objects::nonNull)
+            .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
+            .count();
+
+        double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
+        double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
+
+        return friendsCrowdingTolerance + enemiesCrowdingTolerance;
     }
 
     /**

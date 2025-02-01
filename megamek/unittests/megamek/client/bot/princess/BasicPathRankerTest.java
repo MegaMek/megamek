@@ -1600,12 +1600,11 @@ class BasicPathRankerTest {
         assertEquals(83.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
     }
 
-
+    /**
+     * The tests from most the hazard-testing-related-tests could
+     * probably be broken down into individual tests - and put here.
+     */
     @Nested
-        /**
-         * The tests from most the hazard-testing-related-tests could
-         * probably be broken down into individual tests - and put here.
-         */
     class hazardTests {
         BasicPathRanker testRanker;
         List<Coords> testCoords;

@@ -70,6 +70,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6478: fix: a couple of signs in the wrong place on the scoring equation
 + PR #6477: Fix 5590: princess firing on 13s due to intervening trees, etc
 + PR #6479: fix: removes an argument and early exit from hyperaggression
++ PR #6481: Fix 5590 part 2: stop Princess choosing zero damage attacks completely
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

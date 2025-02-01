@@ -67,6 +67,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6470: Fix: minimap summary npe fix
 + PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
 + PR #6474: makes Princess move way more than she otherwise would on no-contact
++ PR #6478: fix: a couple of signs in the wrong place on the scoring equation
 
 
 0.50.02 (2024-12-30 2130 UTC)

@@ -31186,7 +31186,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param eruption
      * @return true if the unit should be damaged by dangerous grund (magma, hazardous liquid pool)
      */
-    private boolean isEffectedByHazardousGround(Entity en, boolean eruption) {
+    private boolean isUnitEffectedByHazardousGround(Entity en, boolean eruption) {
         if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
                 || (en.getMovementMode() == EntityMovementMode.HOVER)
                 || ((en.getMovementMode() == EntityMovementMode.WIGE)
@@ -31206,7 +31206,7 @@ public class TWGameManager extends AbstractGameManager {
      *                 of an eruption
      */
     public void doMagmaDamage(Entity en, boolean eruption) {
-        if (!isEffectedByHazardousGround(en, eruption)) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
             return;
         }
 
@@ -31244,7 +31244,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param depth    How deep is the hazardous liquid?
      */
     public void doHazardousLiquidDamage(Entity en, boolean eruption, int depth) {
-        if (!isEffectedByHazardousGround(en, eruption)) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
             return;
         }
 

@@ -1337,7 +1337,7 @@ public class BasicPathRanker extends PathRanker {
 
         // After all that math let's make sure we do at least 1 damage
         // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
-        dmg = Math.max(dmg, 0.666);
+        dmg = Math.max(dmg, 2.0/3.0);
 
         if (step.isProne() || (hex.containsTerrain(Terrains.WATER) && hex.terrainLevel(Terrains.WATER) > 1)) {
             exposedArmor = movingUnit.getTotalArmor();

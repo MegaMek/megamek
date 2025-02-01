@@ -13,12 +13,7 @@
  */
 package megamek.common.actions;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -142,6 +137,33 @@ public class WeaponAttackAction extends AbstractAttackAction {
         this.weaponId = weaponId;
         this.bombPayloads.put("internal", new int[BombType.B_NUM]);
         this.bombPayloads.put("external", new int[BombType.B_NUM]);
+    }
+
+    // Copy constructor, hopefully with enough info to generate same to-hit data.
+    public WeaponAttackAction(final WeaponAttackAction other) {
+        this(other.getEntityId(), other.getTargetType(), other.getTargetId(), other.getWeaponId());
+
+        aimedLocation = other.aimedLocation;
+        aimMode = other.aimMode;
+        ammoCarrier = other.ammoCarrier;
+        ammoId = other.ammoId;
+        ammoMunitionType = other.ammoMunitionType;
+        isHomingShot = other.isHomingShot;
+        isPointblankShot = other.isPointblankShot;
+        isStrafing = other.isStrafing;
+        isStrafingFirstShot = other.isStrafingFirstShot;
+        launchVelocity = other.launchVelocity;
+        nemesisConfused = other.nemesisConfused;
+        oldTargetId = other.oldTargetId;
+        oldTargetType = other.oldTargetType;
+        originalTargetId = other.originalTargetId;
+        originalTargetType = other.originalTargetType;
+        otherAttackInfo = other.otherAttackInfo;
+        swarmingMissiles = other.swarmingMissiles;
+        swarmMissiles = other.swarmMissiles;
+        weaponId = other.weaponId;
+        this.bombPayloads.put("internal", Arrays.copyOf(other.bombPayloads.get("internal"), BombType.B_NUM));
+        this.bombPayloads.put("external", Arrays.copyOf(other.bombPayloads.get("external"), BombType.B_NUM));
     }
 
     public int getWeaponId() {

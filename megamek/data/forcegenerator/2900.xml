@@ -1549,7 +1549,6 @@
 			</model>
 			<model name='COM-2D'>
 				<roles>recon</roles>
-				<deployedWith>Commando</deployedWith>
 				<availability>LA:8,MERC:8,CSJ:8,CGS:8,Periphery:8,Periphery.R:8+,HL:8,Periphery.Deep:2+</availability>
 			</model>
 		</chassis>
@@ -2262,7 +2261,7 @@
 			</model>
 		</chassis>
 		<chassis name='Firestarter' unitType='Mek'>
-			<availability>IS:5,FS:4,LA:7,FWL:5,DC:5,CC:4,MERC:5,CS:2-,Periphery:6,NIOPS:3,HL:5,Periphery.Deep:6+</availability>
+			<availability>IS:5,FS:4,LA:7,CC:4,CS:2-,Periphery:6,NIOPS:3,HL:5,Periphery.Deep:6+</availability>
 			<model name='FS9-H'>
                 <roles>anti_infantry,recon</roles>
 				<deployedWith>Vulcan</deployedWith>
@@ -2923,7 +2922,7 @@
 			</model>
 		</chassis>
 		<chassis name='Hermes' unitType='Mek'>
-			<availability>FWL:5+,DC:2+,CC:3+,CS:3,CGB:5,CB:5,CLAN:3,CHH:5,NIOPS:3</availability>
+			<availability>FWL:5+,DC:2+,CC:3+,CS:3,CLAN:3,CGB:5,CB:5,CHH:5,NIOPS:3</availability>
 			<model name='HER-1A'>
 				<roles>recon</roles>
 				<availability>FWL:8,DC:8,CC:8</availability>
@@ -4635,13 +4634,13 @@
 			</model>
 		</chassis>
 		<chassis name='Panther' unitType='Mek'>
-			<availability>FS:2+,FS.RR:5+,FS.DMM:5+,LA:1+,DC:8+,CC:2+,MERC:3,CS:2-,Periphery:3,Periphery.DD:5,Periphery.OS:5,HL:1,NIOPS:2,BAN:1</availability>
+			<availability>FS:2+,FS.RR:5+,FS.DMM:5+,LA:1+,DC:8+,CC:2+,MERC:3+,CS:2-,Periphery:3,Periphery.DD:5,Periphery.OS:5,HL:1,NIOPS:2,BAN:1</availability>
 			<model name='PNT-8Z'>
 				<availability>DC:1-,CS:8,Periphery:2-,Periphery.DD:4-,Periphery.OS:4-,HL:8,Periphery.Deep:8,PIR:5</availability>
 			</model>
 			<model name='PNT-9R'>
 				<roles>fire_support</roles>
-				<availability>IS:8,CS:0,Periphery:5+,HL:4+,Periphery.Deep:2+</availability>
+				<availability>IS:8,CS:0,TC:5,OA:6,MOC:4,Periphery.DD:4,HL:4+,Periphery.Deep:2+</availability>
 			</model>
 		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>
@@ -5389,10 +5388,10 @@
 			</model>
 		</chassis>
 		<chassis name='Sling' unitType='Mek'>
-			<availability>CLAN:1,CSJ:2</availability>
+			<availability>CLAN:1,CSJ:2,BAN:1</availability>
 			<model name='SL-1G'>
 				<roles>spotter</roles>
-				<availability>General:8</availability>
+				<availability>CLAN:8,BAN:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Snowden Mining Station' unitType='Space Station'>
@@ -5457,7 +5456,7 @@
 			</model>
 		</chassis>
 		<chassis name='Spider' unitType='Mek'>
-			<availability>IS:1+,FS:3+,LA:2+,FWL:4+,DC:4+,CC:2+,MERC:1+,CS:1,CLAN:1-,Periphery:1+,Periphery.MW:2+,Periphery.ME:2+,NIOPS:4,Periphery.Deep:0,PIR:2+</availability>
+			<availability>IS:2+,FS:3+,FWL:4+,DC:4+,MERC:1+,CS:1,CLAN:1-,Periphery:1+,Periphery.MW:2+,Periphery.ME:2+,NIOPS:4,Periphery.Deep:0,PIR:2+</availability>
 			<model name='SDR-5D'>
 				<roles>anti_infantry</roles>
 				<availability>FS:8-</availability>
@@ -5679,7 +5678,7 @@
 			</model>
 		</chassis>
 		<chassis name='Thorn' unitType='Mek'>
-			<availability>CS:7,CLAN:4,CSA:2,NIOPS:6,CCO:2</availability>
+			<availability>CS:7,CLAN:4,CSA:2,CCO:2,NIOPS:6</availability>
 			<model name='THE-N'>
 				<availability>CS:8,CLAN:6,NIOPS:8,BAN:6</availability>
 			</model>
@@ -5930,10 +5929,10 @@
 			</model>
 		</chassis>
         <chassis name="Trooper" unitType="Mek">
-            <availability>Periphery.CM:2-,Periphery.MW:2-,Periphery.ME:2-,Periphery.Deep:3,PIR:2-</availability>
+            <availability>MOC:1-,Periphery.CM:2-,Periphery.MW:2-,Periphery.ME:2-,Periphery.Deep:3,PIR:2-</availability>
             <model name="TP-1R">
                 <roles>anti_infantry</roles>
-                <availability>Periphery.CM:8,Periphery.MW:8,Periphery.ME:8,Periphery.Deep:8,PIR:8</availability>
+                <availability>MOC:8,Periphery.CM:8,Periphery.MW:8,Periphery.ME:8,Periphery.Deep:8,PIR:8</availability>
             </model>
         </chassis>
         <chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
@@ -6037,7 +6036,7 @@
 			</model>
 		</chassis>
 		<chassis name='UrbanMech' unitType='Mek'>
-			<availability>IS:3-,CC:4,CS:4-,CLAN:1-,Periphery:4-,HL:1,NIOPS:4-,Periphery.Deep:3,PIR:2</availability>
+			<availability>IS:3-,CC:4,CS:4-,CLAN:1-,Periphery:4-,NIOPS:4-,HL:1,Periphery.Deep:3,PIR:2</availability>
 			<model name='UM-R60'>
 				<roles>urban</roles>
 				<availability>IS:8,CC:7,Periphery:8,HL:8,NIOPS:8,Periphery.Deep:8,PIR:8</availability>
@@ -6048,10 +6047,10 @@
 			</model>
 		</chassis>
 		<chassis name='Valkyrie' unitType='Mek'>
-			<availability>FS:6+,MERC:2+</availability>
+			<availability>FS:6+,MERC:2+,TC:2+</availability>
 			<model name='VLK-QA'>
 				<roles>recon,fire_support</roles>
-				<availability>FS:8,MERC:8</availability>
+				<availability>FS:8,MERC:8,TC:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Vampire' unitType='Dropship'>
@@ -6236,14 +6235,14 @@
 			<availability>IS:1+,CS:2</availability>
 			<model name='WSP-105'>
                 <roles>recon,specops</roles>
-				<availability>IS:8</availability>
+				<availability>IS:8,CS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Wasp' unitType='Mek'>
 			<availability>IS:8,LA:9,DC:9,CC:9,CS:3-,Periphery:6,CIR:3,NIOPS:4-,HL:4,Periphery.Deep:5</availability>
             <model name="WSP-1">
                 <roles>recon</roles>
-                <availability>Periphery:2-,HL:4-,Periphery.Deep:8</availability>
+                <availability>Periphery:2-,TC:1-,HL:4-,Periphery.Deep:8</availability>
             </model>
 			<model name='WSP-1A'>
 				<roles>recon</roles>
@@ -6251,15 +6250,15 @@
 			</model>
 			<model name='WSP-1D'>
 				<roles>recon</roles>
-				<availability>FS:7+</availability>
+				<availability>FS:7+,Periphery.HR:2+,Periphery.OS:2+</availability>
 			</model>
 			<model name='WSP-1K'>
 				<roles>recon</roles>
-				<availability>DC:4+</availability>
+				<availability>DC:4+,Periphery.DD:2+,Periphery.OS:2+</availability>
 			</model>
 			<model name='WSP-1L'>
 				<roles>recon</roles>
-				<availability>CC:5+</availability>
+				<availability>CC:5+,Periphery.CM:2+,Periphery.HR:2+</availability>
 			</model>
 		</chassis>
 		<chassis name='Water Elemental Mining Suit' unitType='BattleArmor'>

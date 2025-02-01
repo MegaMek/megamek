@@ -2117,7 +2117,8 @@ public class FireControl {
                         continue;
                     }
                 }
-                if (bestShoot.getProbabilityToHit() > toHitThreshold) {
+                // Attack should have a chance to hit, and expect to do non-zero damage; otherwise skip it
+                if (bestShoot.getProbabilityToHit() > toHitThreshold && bestShoot.getExpectedDamage() > 0.0) {
                     myPlan.add(bestShoot);
                     continue;
                 }
@@ -2844,6 +2845,7 @@ public class FireControl {
             final AmmoMounted suggestedAmmo = info.getAmmo();
             final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
 
+            // if we didn't find preferred ammo after all, continue
             if (mountedAmmo == null) {
                 continue;
             }
@@ -2854,20 +2856,29 @@ public class FireControl {
             cloneWAA.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
             cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
             if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
-                logger.warn(shooter.getDisplayName() + " tried to load "
-                    + currentWeapon.getName() + " with ammo " +
-                    mountedAmmo.getDesc() + " but this would have caused it to miss; skipping.");
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.CauseMiss",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
                 continue;
             }
 
             // if we found preferred ammo but can't apply it to the weapon, log it and
             // continue.
             if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                logger.warn(shooter.getDisplayName() + " tried to load "
-                        + currentWeapon.getName() + " with ammo " +
-                        mountedAmmo.getDesc() + " but failed somehow.");
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.FailureToLoad",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
                 continue;
-                // if we didn't find preferred ammo after all, continue
             }
 
             // If everything looks okay, replace the old WAA with the updated copy

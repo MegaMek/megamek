@@ -432,7 +432,7 @@ public class WeaponFireInfo {
 
             // Handle woods blocking cluster shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)) {
-                // SRMs, LB-X, Flak AC, AC-2 derivatives,
+                // SRMs, LB-X, Flak AC, AC-2 derivatives, MGs, smaller LRMs,
                 // and Silver Bullet Gauss are among the weapons
                 // that lose all effectiveness if this rule is
                 // on and the target is in woods/jungle.
@@ -442,12 +442,19 @@ public class WeaponFireInfo {
                         Terrains.WOODS, Terrains.JUNGLE
                     )
                 ) {
+                    int woodsLevel = 2 * Math.max(
+                        game.getBoard().getHex(target.getPosition()).terrainLevel(Terrains.WOODS),
+                        game.getBoard().getHex(target.getPosition()).terrainLevel(Terrains.JUNGLE)
+                    );
                     boolean blockedByWoods = (
                         weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
                     );
+                    blockedByWoods |= weapon.getType().getRackSize() <= woodsLevel
+                        || weapon.getType().getDamage() <= woodsLevel;
                     blockedByWoods |= preferredAmmo.getType().getMunitionType().contains(
                         AmmoType.Munitions.M_CLUSTER
                     );
+
                     if (blockedByWoods) {
                         return 0D;
                     }

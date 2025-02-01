@@ -17,11 +17,11 @@ package megamek.client.ui.swing.ai.editor;
 
 import megamek.ai.utility.Decision;
 import megamek.ai.utility.NamedObject;
-import megamek.client.bot.queen.ai.utility.tw.TWUtilityAIRepository;
-import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
-import megamek.client.bot.queen.ai.utility.tw.decision.TWDecision;
-import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
-import megamek.client.bot.queen.ai.utility.tw.profile.TWProfile;
+import megamek.client.bot.caspar.ai.utility.tw.TWUtilityAIRepository;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecision;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.caspar.ai.utility.tw.profile.TWProfile;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.CommonMenuBar;
@@ -263,7 +263,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             try {
                 persistProfile();
             } catch (IllegalArgumentException ex) {
-                logger.formattedErrorDialog("Error saving profile",
+                logger.errorDialog("Error saving profile",
                     "One or more fields are empty or invalid in the Profile tab. Please correct the errors and try again.");
             }
         });
@@ -271,7 +271,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             try {
                 persistDecisionScoreEvaluator();
             } catch (IllegalArgumentException ex) {
-                logger.formattedErrorDialog("Error saving decision score evaluator",
+                logger.errorDialog("Error saving decision score evaluator",
                     "One or more fields are empty or invalid in the Decision Score Evaluator tab. Please correct the errors and try again.");
             }
         });
@@ -279,7 +279,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             try {
                 persistConsideration();
             } catch (IllegalArgumentException ex) {
-                logger.formattedErrorDialog("Error saving consideration",
+                logger.errorDialog("Error saving consideration",
                     "One or more fields are empty or invalid in the Consideration tab. Please correct the errors and try again.");
             }
         });
@@ -531,7 +531,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             }
             return true;
         } catch (IllegalArgumentException ex) {
-            logger.formattedErrorDialog(Messages.getString("aiEditor.save.error.title"),
+            logger.errorDialog(Messages.getString("aiEditor.save.error.title"),
                 Messages.getString("aiEditor.save.error.message") + ": " + ex.getMessage());
         }
         return false;
@@ -634,7 +634,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                     try {
                         sharedData.exportAiData(fileToSave);
                     } catch (Exception ex) {
-                        logger.formattedErrorDialog(Messages.getString("aiEditor.export.error.title"),
+                        logger.errorDialog(Messages.getString("aiEditor.export.error.title"),
                             Messages.getString("aiEditor.export.error.message"));
                     }
                 }
@@ -651,7 +651,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
                     try {
                         sharedData.importAiData(fileToLoad);
                     } catch (Exception ex) {
-                        logger.formattedErrorDialog(Messages.getString("aiEditor.import.error.title"),
+                        logger.errorDialog(Messages.getString("aiEditor.import.error.title"),
                             Messages.getString("aiEditor.import.error.message"));
                     }
                 }

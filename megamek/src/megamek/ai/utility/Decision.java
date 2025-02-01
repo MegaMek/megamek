@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import megamek.client.bot.queen.ai.utility.tw.decision.TWDecision;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecision;
 
 import java.util.StringJoiner;
 

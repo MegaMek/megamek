@@ -18,13 +18,13 @@
  */
 package megamek;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 /**
  * This is used for versioning, and to track the current Version the suite is
@@ -240,7 +240,7 @@ public final class Version implements Comparable<Version>, Serializable {
             final String nullOrBlank = ((text == null) ? "a null string" : "a blank string");
             final String message = String.format(MMLoggingConstants.VERSION_ERROR_CANNOT_PARSE_VERSION_FROM_STRING,
                     nullOrBlank);
-            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -249,7 +249,7 @@ public final class Version implements Comparable<Version>, Serializable {
 
         if ((snapshotSplit.length > 2) || (versionSplit.length < 3)) {
             final String message = String.format(MMLoggingConstants.VERSION_ILLEGAL_VERSION_FORMAT, text);
-            logger.fatal(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatalDialog(message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -257,7 +257,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setRelease(Integer.parseInt(versionSplit[0]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_RELEASE, text);
-            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -265,7 +265,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setMajor(Integer.parseInt(versionSplit[1]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MAJOR, text);
-            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 
@@ -273,7 +273,7 @@ public final class Version implements Comparable<Version>, Serializable {
             setMinor(Integer.parseInt(versionSplit[2]));
         } catch (Exception e) {
             final String message = String.format(MMLoggingConstants.VERSION_FAILED_TO_PARSE_MINOR, text);
-            logger.fatal(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
+            logger.fatalDialog(e, message, MMLoggingConstants.VERSION_PARSE_FAILURE);
             return;
         }
 

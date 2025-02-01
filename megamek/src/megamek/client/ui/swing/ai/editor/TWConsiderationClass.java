@@ -15,9 +15,8 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import megamek.ai.utility.Consideration;
-import megamek.client.bot.queen.ai.utility.tw.considerations.*;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.*;
 
 public enum TWConsiderationClass {
 
@@ -37,6 +36,7 @@ public enum TWConsiderationClass {
     TargetUnitsArmor(TargetUnitsArmor.class),
     MyUnitRoleIs(MyUnitRoleIs.class),
     TargetWithinRange(TargetWithinRange.class),
+    TurnsToEncounter(TurnsToEncounter.class),
     TargetWithinOptimalRange(TargetWithinOptimalRange.class);
 
     private final Class<? extends Consideration<?,?>> considerationClass;

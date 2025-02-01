@@ -15,8 +15,8 @@
 
 package megamek.client.ui.swing.ai.editor;
 
-import megamek.client.bot.queen.ai.utility.tw.considerations.TWConsideration;
-import megamek.client.bot.queen.ai.utility.tw.decision.TWDecisionScoreEvaluator;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionScoreEvaluator;
 import megamek.client.ui.Messages;
 import megamek.logging.MMLogger;
 

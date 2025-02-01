@@ -14,7 +14,7 @@
 package megamek.ai.utility;
 
 import com.fasterxml.jackson.annotation.*;
-import megamek.client.bot.queen.ai.utility.tw.considerations.*;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.*;
 
 import java.util.Collections;
 import java.util.Map;
@@ -43,10 +43,11 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
     @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
     @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
-    @JsonSubTypes.Type(value = MyUnitIsGettingAwayFromDanger.class, name = "MyUnitIsGettingAwayFromDanger")
+    @JsonSubTypes.Type(value = MyUnitIsGettingAwayFromDanger.class, name = "MyUnitIsGettingAwayFromDanger"),
+    @JsonSubTypes.Type(value = TurnsToEncounter.class, name = "TurnsToEncounter")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements NamedObject {
+public abstract class Consideration<IN_GAME_OBJECT, TARGETABLE>  implements NamedObject {
     @JsonProperty("name")
     private String name;
     @JsonProperty("curve")
@@ -102,7 +103,8 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
                 throw new IllegalArgumentException("Unknown parameter: " + entry.getKey());
             }
             if (clazz.isEnum() && entry.getValue() instanceof String value) {
-                var enumValues = ((Class<? extends Enum>) clazz).getEnumConstants();
+                // noinspection unchecked
+                var enumValues = ((Class<? extends Enum<?>>) clazz).getEnumConstants();
                 for (var anEnum : enumValues) {
                     if (anEnum.toString().equalsIgnoreCase(value)) {
                         parameters.put(entry.getKey(), anEnum);

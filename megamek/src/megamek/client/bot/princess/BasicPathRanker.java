@@ -889,7 +889,7 @@ public class BasicPathRanker extends PathRanker {
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding) / 3.0;
                     break;
                 case Terrains.HAZARDOUS_LIQUID:
-                    hazardValue += calcHazardousLiquidHazard(hex, endHex, jumpLanding, movingUnit, step);
+                    hazardValue += calcHazardousLiquidHazard(hex, endHex, movingUnit, step);
                     break;
             }
         }
@@ -1295,7 +1295,7 @@ public class BasicPathRanker extends PathRanker {
         return Math.round(hazardValue * psrFactor);
     }
 
-    private double calcHazardousLiquidHazard(Hex hex, boolean endHex, boolean jumpLanding, Entity movingUnit, MoveStep step) {
+    private double calcHazardousLiquidHazard(Hex hex, boolean endHex, Entity movingUnit, MoveStep step) {
         logger.trace("Calculating hazardous liquid hazard.");
         int unitDamageLevel = movingUnit.getDamageLevel();
         double dmg;

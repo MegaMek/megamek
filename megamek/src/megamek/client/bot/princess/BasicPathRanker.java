@@ -1317,7 +1317,6 @@ public class BasicPathRanker extends PathRanker {
         }
 
         double hazardValue = 0;
-        double psrFactor = 1.0;
 
         // Expected Damage for Hazardous Liquid
         // 2/6 chance 0 damage

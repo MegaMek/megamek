@@ -47,12 +47,6 @@ public enum AmmoTypeFlag implements EquipmentFlag {
 
     F_NUCLEAR, // Nuclear missile
     F_SANTA_ANNA, // Nuke Santa Anna Missile
-    F_PEACEMAKER; // Nuke Peacemaker Missile
-
-
-    @Override
-    public int getFlagIndex() {
-        return this.ordinal();
-    }
+    F_PEACEMAKER, // Nuke Peacemaker Missile
 
 }

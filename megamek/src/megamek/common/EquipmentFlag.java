@@ -24,10 +24,9 @@ package megamek.common;
 public interface EquipmentFlag {
     /**
      * Returns the index of the flag in the bitset
-     * - Future improvements, return ordinal instead of arbitrary index
      * @return the index of the flag in the bitset
      */
-    int getFlagIndex();
+    int ordinal();
 
     /**
      * Converts this flag to an {@link EquipmentBitSet}.

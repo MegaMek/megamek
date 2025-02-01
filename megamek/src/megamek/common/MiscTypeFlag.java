@@ -298,12 +298,4 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_HYPERSPECTRAL_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
     F_INFRARED_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
     F_LOOKDOWN_RADAR, // TODO: add game rules for the following imagers/radars, construction data only
-    ;
-
-    @Override
-    public int getFlagIndex() {
-        return this.ordinal();
-    }
-
-
 }

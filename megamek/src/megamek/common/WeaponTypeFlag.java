@@ -112,11 +112,4 @@ public enum WeaponTypeFlag implements EquipmentFlag {
     F_INF_NONPENETRATING,
     F_INF_POINT_BLANK,
     F_INF_SUPPORT,
-    ;
-
-    @Override
-    public int getFlagIndex() {
-        return this.ordinal();
-    }
-
 }

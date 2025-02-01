@@ -50,7 +50,7 @@ public class EquipmentBitSet {
      * @return true if the flag is set in the EquipmentBitSet
      */
     public boolean get(EquipmentFlag flag) {
-        return bitSet.get(flag.getFlagIndex());
+        return bitSet.get(flag.ordinal());
     }
 
     public boolean contains(EquipmentBitSet other) {
@@ -64,7 +64,7 @@ public class EquipmentBitSet {
      * @param flag the flag to clear
      */
     public void clear(EquipmentFlag flag) {
-        bitSet.clear(flag.getFlagIndex());
+        bitSet.clear(flag.ordinal());
     }
 
     /**
@@ -79,7 +79,7 @@ public class EquipmentBitSet {
      * @param flag the flag to set
      */
     public void set(EquipmentFlag flag) {
-        bitSet.set(flag.getFlagIndex());
+        bitSet.set(flag.ordinal());
     }
 
 

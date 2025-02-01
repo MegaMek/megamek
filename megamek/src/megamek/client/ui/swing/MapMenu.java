@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.math.BigInteger;
 import java.util.*;
 
 import javax.swing.*;
@@ -1612,7 +1611,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(BigInteger weaponFlag) {
+    private boolean hasWeaponFlag(EquipmentFlag weaponFlag) {
         if (myEntity.getWeaponList().isEmpty()) {
             return false;
         }

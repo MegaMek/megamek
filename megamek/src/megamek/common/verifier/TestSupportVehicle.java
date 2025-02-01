@@ -20,7 +20,6 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -887,13 +886,14 @@ public class TestSupportVehicle extends TestEntity {
         return 0.0;
     }
 
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet().or(MiscType.F_ADVANCED_FIRECONTROL)
+                .or(MiscType.F_CHASSIS_MODIFICATION);
+
     @Override
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        final BigInteger exclude = MiscType.F_BASIC_FIRECONTROL.or(MiscType.F_ADVANCED_FIRECONTROL)
-                .or(MiscType.F_CHASSIS_MODIFICATION);
-        return !eq.hasFlag(exclude);
+        return !eq.hasFlag(EXCLUDE);
     }
 
     @Override

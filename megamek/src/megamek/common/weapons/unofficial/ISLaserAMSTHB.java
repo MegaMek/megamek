@@ -48,7 +48,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         // affected
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).andNot(F_PROTO_WEAPON)
                 .or(F_AUTO_TARGET).or(F_HEATASDICE).or(F_AMS).or(F_ENERGY)
-                .and(F_DIRECT_FIRE.not());
+                .andNot(F_DIRECT_FIRE);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 300000;

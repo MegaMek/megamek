@@ -68,7 +68,8 @@ MEGAMEK VERSION HISTORY:
 + PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
 + PR #6474: makes Princess move way more than she otherwise would on no-contact
 + PR #6478: fix: a couple of signs in the wrong place on the scoring equation
-+ PR #6477 Fix 5590: princess firing on 13s due to intervening trees, etc
++ PR #6477: Fix 5590: princess firing on 13s due to intervening trees, etc
++ PR #6479: fix: removes an argument and early exit from hyperaggression
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

@@ -18,39 +18,41 @@ package megamek.common;
  * special properties
  * @author Luana Coppio
  */
-public enum AmmoTypeFlag implements IndexedFlag {
-    F_MG(0), // Machinegun ammo
-    F_BATTLEARMOR(1), // only used by BA squads
-    F_PROTOMEK(2), // only used by ProtoMeks
-    F_HOTLOAD(3), // Ammo can be hotloaded
-    F_ENCUMBERING(4), // Encumbering ammo - if loaded on a BA it cant jump or make anti-mek attacks until dumped
-    F_AR10_WHITE_SHARK(6), // White shark type
-    F_AR10_KILLER_WHALE(7), // Killer Whale type
-    F_AR10_BARRACUDA(8), // barracuda type
-    F_NUCLEAR(9), // Nuclear missile
-    F_SANTA_ANNA(14), // Nuke Santa Anna Missile
-    F_PEACEMAKER(15), // Nuke Peacemaker Missile
-    F_TELE_MISSILE(10), // Tele-Missile
-    F_CAP_MISSILE(11), // Other Capital-Missile
-    F_SPACE_BOMB(12), // defines that the ammo can be used to space bomb
-    F_GROUND_BOMB(13), // the ammo can be used to ground bomb
-    F_MML_LRM(5), // LRM type
-    F_MML_SRM(14), // SRM type
-    F_OTHER_BOMB(16), // For tag, rl pods, missiles and the like
-    F_CRUISE_MISSILE(17), // Used by MHQ for loading ammo bins
-    F_SCREEN(18), // Used by MHQ for loading ammo bins
-    F_INTERNAL_BOMB(19); // Used for Internal Bomb Bay bombs; to differentiate them from other bombs
+public enum AmmoTypeFlag implements EquipmentFlag {
 
-    private final int flagIndex;
+    F_BATTLEARMOR, // only used by BA squads
+    F_PROTOMEK, // only used by ProtoMeks
 
-    AmmoTypeFlag(int flagIndex) {
-        assert flagIndex >= 0;
-        this.flagIndex = flagIndex;
-    }
+    F_ENCUMBERING, // Encumbering ammo - if loaded on a BA it cant jump or make anti-mek attacks until dumped
+
+    F_MG, // Machinegun ammo
+    F_MML_LRM, // LRM type
+    F_MML_SRM, // SRM type
+
+    F_HOTLOAD, // Ammo can be hotloaded
+
+    F_SCREEN, // Used by MHQ for loading ammo bins
+
+    F_INTERNAL_BOMB, // Used for Internal Bomb Bay bombs; to differentiate them from other bombs
+    F_GROUND_BOMB, // the ammo can be used to ground bomb
+    F_OTHER_BOMB, // For tag, rl pods, missiles and the like
+    F_SPACE_BOMB, // defines that the ammo can be used to space bomb
+
+    F_AR10_BARRACUDA, // barracuda type
+    F_AR10_KILLER_WHALE, // Killer Whale type
+    F_AR10_WHITE_SHARK, // White shark type
+    F_CAP_MISSILE, // Other Capital-Missile
+    F_CRUISE_MISSILE, // Used by MHQ for loading ammo bins
+    F_TELE_MISSILE, // Tele-Missile
+
+    F_NUCLEAR, // Nuclear missile
+    F_SANTA_ANNA, // Nuke Santa Anna Missile
+    F_PEACEMAKER; // Nuke Peacemaker Missile
+
 
     @Override
     public int getFlagIndex() {
-        return flagIndex;
+        return this.ordinal();
     }
 
 }

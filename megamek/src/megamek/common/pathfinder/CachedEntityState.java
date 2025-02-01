@@ -40,7 +40,7 @@ public class CachedEntityState {
     private Integer sprintMPWithoutMasc;
     private Integer jumpMP;
     private Integer jumpMPWithTerrain;
-    private Map<IndexedFlag, Boolean> hasWorkingMisc;
+    private Map<EquipmentFlag, Boolean> hasWorkingMisc;
     private Integer torsoJumpJets;
     private Integer jumpMPNoGravity;
     private Integer numBreachedLegs;
@@ -122,7 +122,7 @@ public class CachedEntityState {
         return jumpMPWithTerrain;
     }
 
-    public boolean hasWorkingMisc(IndexedFlag flag) {
+    public boolean hasWorkingMisc(EquipmentFlag flag) {
         if (!hasWorkingMisc.containsKey(flag)) {
             hasWorkingMisc.put(flag, backingEntity.hasWorkingMisc(flag));
         }

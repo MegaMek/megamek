@@ -19,246 +19,290 @@ package megamek.common;
  * Every type of equipment has its own flag.
  * @author Luana Coppio
  */
-public enum MiscTypeFlag implements IndexedFlag {
-    F_HEAT_SINK(0),
-    F_DOUBLE_HEAT_SINK(1),
-    F_JUMP_JET(2),
-    F_CASE(3),
-    F_MASC(4),
-    F_TSM(5),
-    F_LASER_HEAT_SINK(6),
-    F_C3S(7),
-    F_C3I(8),
-    F_ARTEMIS(9),
-    F_TARGCOMP(10),
-    F_ANGEL_ECM(11),
-    F_BOARDING_CLAW(12),
-    F_VACUUM_PROTECTION(13),
-    F_MAGNET_CLAW(14),
-    F_FIRE_RESISTANT(15),
-    F_STEALTH(16),
-    F_MINE(17),
-    F_TOOLS(18),
-    F_MAGNETIC_CLAMP(19),
-    F_PARAFOIL(20),
-    F_FERRO_FIBROUS(21),
-    F_ENDO_STEEL(22),
-    F_AP_POD(23),
-    F_SEARCHLIGHT(24),
-    F_CLUB(25),
-    F_HAND_WEAPON(26),
-    F_COWL(27),
-    F_JUMP_BOOSTER(28),
-    F_HARJEL(29),
-    F_UMU(30),
-    F_BA_VTOL(31),
-    F_SPIKES(32),
-    F_COMMUNICATIONS(33),
-    F_PPC_CAPACITOR(34),
-    F_REFLECTIVE(35),
-    F_REACTIVE(36),
-    F_CASEII(37),
-    F_LIFTHOIST(38),
-    F_ENVIRONMENTAL_SEALING(39),
-    F_ARMORED_CHASSIS(40),
-    F_TRACTOR_MODIFICATION(41),
-    F_ACTUATOR_ENHANCEMENT_SYSTEM(42),
-    F_ECM(43),
-    F_BAP(44),
-    F_MODULAR_ARMOR(45),
-    F_TALON(46),
-    F_VISUAL_CAMO(47),
-    F_APOLLO(48),
-    F_INDUSTRIAL_TSM(49),
-    F_NULLSIG(50),
-    F_VOIDSIG(51),
-    F_CHAMELEON_SHIELD(52),
-    F_VIBROCLAW(53),
-    F_SINGLE_HEX_ECM(54),
-    F_EJECTION_SEAT(55),
-    F_SALVAGE_ARM(56),
-    F_PARTIAL_WING(57),
-    F_FERRO_LAMELLOR(58),
-    F_ARTEMIS_V(59),
-    F_TRACKS(60), // TODO: Implement me, so far only construction data
-    F_MASS(61), // TODO: Implement me, so far only construction data
-    F_CARGO(62), // TODO: Implement me, so far only construction data
-    F_DUMPER(63), // TODO: Implement me, so far only construction data
-    F_MASH(64), // TODO: Implement me, so far only construction data
-    F_BA_EQUIPMENT(65),
-    F_MEK_EQUIPMENT(66),
-    F_TANK_EQUIPMENT(67),
-    F_FIGHTER_EQUIPMENT(68),
-    F_SUPPORT_TANK_EQUIPMENT(69),
-    F_PROTOMEK_EQUIPMENT(70),
-    F_ARMORED_GLOVE(71),
-    F_BASIC_MANIPULATOR(72),
-    F_BATTLE_CLAW(73),
-    F_AP_MOUNT(74),
-    F_MAST_MOUNT(75),
-    F_FUEL(76),
-    F_BLUE_SHIELD(77),
-    F_BASIC_FIRECONTROL(78),
-    F_ADVANCED_FIRECONTROL(79),
-    F_ENDO_COMPOSITE(80),
-    F_LASER_INSULATOR(81),
-    F_LIQUID_CARGO(82),
-    F_WATCHDOG(83),
-    F_EW_EQUIPMENT(84),
-    F_CCM(85),
-    F_HITCH(86),
-    F_FLOTATION_HULL(87),
-    F_LIMITED_AMPHIBIOUS(88),
-    F_FULLY_AMPHIBIOUS(89),
-    F_DUNE_BUGGY(90),
-    F_SHOULDER_TURRET(91),
-    F_HEAD_TURRET(92),
-    F_QUAD_TURRET(93),
-    F_SPACE_ADAPTATION(94),
-    F_CUTTING_TORCH(95),
-    F_OFF_ROAD(96),
-    F_C3SBS(97),
-    F_VTOL_EQUIPMENT(98),
-    F_NAVAL_C3(99),
-    F_MINESWEEPER(100),
-    F_MOBILE_HPG(101),
-    F_FIELD_KITCHEN(102),
-    F_MOBILE_FIELD_BASE(103),
-    F_HIRES_IMAGER(104), // TODO: add game rules for the following imagers/radars, construction data only
-    F_HYPERSPECTRAL_IMAGER(105), // TODO: add game rules for the following imagers/radars, construction data only
-    F_INFRARED_IMAGER(106), // TODO: add game rules for the following imagers/radars, construction data only
-    F_LOOKDOWN_RADAR(107), // TODO: add game rules for the following imagers/radars, construction data only
-    F_COMMAND_CONSOLE(108),
-    F_VSTOL_CHASSIS(109),
-    F_STOL_CHASSIS(110),
-    F_SPONSON_TURRET(111),
-    F_ARMORED_MOTIVE_SYSTEM(112),
-    F_CHASSIS_MODIFICATION(113),
-    F_CHAFF_POD(114),
-    F_DRONE_CARRIER_CONTROL(115),
-    F_VARIABLE_SIZE(116),
-    F_BA_MISSION_EQUIPMENT(117),
-    F_JET_BOOSTER(118),
-    F_SENSOR_DISPENSER(119),
-    F_DRONE_OPERATING_SYSTEM(120),
-    F_RECON_CAMERA(121),
-    F_COMBAT_VEHICLE_ESCAPE_POD(122),
-    F_DETACHABLE_WEAPON_PACK(123),
-    F_HEAT_SENSOR(124),
-    F_EXTENDED_LIFESUPPORT(125),
-    F_SPRAYER(126),
-    F_ELECTRIC_DISCHARGE_ARMOR(127),
-    F_MECHANICAL_JUMP_BOOSTER(128),
-    F_TRAILER_MODIFICATION(129),
-    F_LARGE_COMM_SCANNER_SUITE(130),
-    F_SMALL_COMM_SCANNER_SUITE(131),
-    F_LIGHT_BRIDGE_LAYER(132),
-    F_MEDIUM_BRIDGE_LAYER(133),
-    F_HEAVY_BRIDGE_LAYER(134),
-    F_BA_SEARCHLIGHT(135),
-    F_BOOBY_TRAP(136),
-    F_SPLITABLE(137),
-    F_REFUELING_DROGUE(138),
-    F_BULLDOZER(139),
-    F_EXTERNAL_STORES_HARDPOINT(140),
-    F_COMPACT_HEAT_SINK(141),
-    F_MANIPULATOR(142),
-    F_CARGOLIFTER(143),
-    F_PINTLE_TURRET(144),
-    F_IS_DOUBLE_HEAT_SINK_PROTOTYPE(145),
-    F_NAVAL_TUG_ADAPTOR(146),
-    F_AMPHIBIOUS(147),
-    F_PROP(148),
-    F_ULTRA_LIGHT(149),
-    F_SPACE_MINE_DISPENSER(150),
-    F_VEHICLE_MINE_DISPENSER(151),
-    F_LIGHT_FERRO(152),
-    F_HEAVY_FERRO(153),
-    F_FERRO_FIBROUS_PROTO(154),
-    F_REINFORCED(155),
-    F_COMPOSITE(156),
-    F_INDUSTRIAL_STRUCTURE(157),
-    F_ENDO_STEEL_PROTO(158),
-    F_INDUSTRIAL_ARMOR(159),
-    F_HEAVY_INDUSTRIAL_ARMOR(160),
-    F_PRIMITIVE_ARMOR(161),
-    F_HARDENED_ARMOR(162),
-    F_COMMERCIAL_ARMOR(163),
-    F_C3EM(164),
-    F_ANTI_PENETRATIVE_ABLATIVE(165),
-    F_HEAT_DISSIPATING(166),
-    F_IMPACT_RESISTANT(167),
-    F_BALLISTIC_REINFORCED(168),
-    F_HARJEL_II(169),
-    F_HARJEL_III(170),
-    F_RADICAL_HEATSINK(171),
-    F_BA_MANIPULATOR(172),
-    F_NOVA(173),
-    F_BOMB_BAY(174),
-    F_LIGHT_FLUID_SUCTION_SYSTEM(175),
-    F_MONOCYCLE(176),
-    F_BICYCLE(177),
-    F_CONVERTIBLE(178),
-    F_BATTLEMEK_NIU(179),
-    F_SNOWMOBILE(180),
-    F_LADDER(181),
-    F_LIFEBOAT(182),
-    F_FLUID_SUCTION_SYSTEM(183),
-    F_HYDROFOIL(184),
-    F_SUBMERSIBLE(185),
-    F_BA_MEA(186), // Flag for BattleArmor Modular Equipment Adaptor
-    F_INF_EQUIPMENT(187), // Flag for Infantry Equipment
-    F_SCM(188),
-    F_VIRAL_JAMMER_HOMING(189),
-    F_VIRAL_JAMMER_DECOY(190),
-    F_DRONE_CONTROL_CONSOLE(191),
-    F_RISC_LASER_PULSE_MODULE(192),
-    F_REMOTE_DRONE_COMMAND_CONSOLE(193),
-    F_EMERGENCY_COOLANT_SYSTEM(194),
-    F_BADC(195),
-    F_REUSABLE(196),
-    F_BLOODHOUND(197),
-    F_ARMOR_KIT(198),
-    F_STORAGE_BATTERY(199), // Flags for Large Craft Systems
-    F_LIGHT_SAIL(200),
-    F_ARTEMIS_PROTO(201), // Prototype Stuff
-    F_CASEP(202),
-    F_VEEDC(203),
-    F_SC_EQUIPMENT(204),
-    F_DS_EQUIPMENT(205),
-    F_JS_EQUIPMENT(206),
-    F_WS_EQUIPMENT(207),
-    F_SS_EQUIPMENT(208),
-    F_CAPITAL_ARMOR(209),
-    F_FERRO_CARBIDE(210),
-    F_IMP_FERRO(211),
-    F_HEAVY_EQUIPMENT(212), // Not usable by small support vehicles
-    F_SRCS(213), // Drone Equipment for Large Craft
-    F_SASRCS(214),
-    F_CASPAR(215),
-    F_CASPARII(216),
-    F_ATAC(217),
-    F_DTAC(218),
-    F_SDS_DESTRUCT(219),
-    F_SDS_JAMMER(220),
-    F_LF_STORAGE_BATTERY(221),
-    F_PROTOMEK_MELEE(222),
-    F_EXTERNAL_POWER_PICKUP(223),
-    F_RAM_PLATE(224),
-    F_PROTOTYPE(225),
-    F_TRENCH_CAPABLE(226), // Fortify Equipment
-    F_SUPPORT_VEE_BAR_ARMOR(227);
+public enum MiscTypeFlag implements EquipmentFlag {
+    // Heat sink family
+    F_HEAT_SINK,
+    F_DOUBLE_HEAT_SINK,
+    F_LASER_HEAT_SINK,
+    F_COMPACT_HEAT_SINK,
+    F_IS_DOUBLE_HEAT_SINK_PROTOTYPE,
+    F_RADICAL_HEATSINK,
+    F_LASER_INSULATOR,
+    F_HEAT_DISSIPATING,
 
-    private final int flagIndex;
+    // Limit which type of unit can install the equipment
+    F_BA_EQUIPMENT,
+    F_MEK_EQUIPMENT,
+    F_TANK_EQUIPMENT,
+    F_FIGHTER_EQUIPMENT,
+    F_SUPPORT_TANK_EQUIPMENT,
+    F_PROTOMEK_EQUIPMENT,
 
-    MiscTypeFlag(int flagIndex) {
-        assert flagIndex >= 0;
-        this.flagIndex = flagIndex;
-    }
+    F_JUMP_JET,
+    F_JUMP_BOOSTER,
+    F_MECHANICAL_JUMP_BOOSTER,
+
+    F_CASE,
+    F_CASEII,
+    F_CASEP,
+
+    F_MASC,
+    F_TSM,
+    F_INDUSTRIAL_TSM,
+
+    F_C3S,
+    F_C3I,
+    F_C3EM,
+    F_C3SBS,
+    F_NAVAL_C3,
+
+    F_ARTEMIS,
+    F_TARGCOMP,
+    F_ARTEMIS_V,
+
+    F_BATTLEMEK_NIU,
+
+    F_SEARCHLIGHT,
+    F_BA_SEARCHLIGHT,
+
+    F_ANGEL_ECM,
+    F_ECM,
+    F_WATCHDOG,
+    F_EW_EQUIPMENT,
+    F_CCM,
+    F_SINGLE_HEX_ECM,
+
+    F_MAGNETIC_CLAMP,
+    F_BOARDING_CLAW,
+    F_MAGNET_CLAW,
+    F_BA_MANIPULATOR,
+    F_ARMORED_GLOVE,
+    F_BASIC_MANIPULATOR,
+    F_BATTLE_CLAW,
+
+    F_PROTOMEK_MELEE,
+
+    F_BOOBY_TRAP,
+    F_MINE,
+    F_SPACE_MINE_DISPENSER,
+    F_VEHICLE_MINE_DISPENSER,
+    F_MINESWEEPER,
+
+    F_AP_POD,
+    F_CLUB,
+    F_HAND_WEAPON,
+    F_COWL,
+    F_BA_VTOL,
+    F_UMU,
+    F_TALON,
+    F_SPIKES,
+    F_COMMUNICATIONS,
+
+    F_PPC_CAPACITOR,
+
+    F_ENVIRONMENTAL_SEALING,
+    F_ARMORED_CHASSIS,
+    F_TRACTOR_MODIFICATION,
+    F_ACTUATOR_ENHANCEMENT_SYSTEM,
+
+    F_BAP,
+    F_VISUAL_CAMO,
+    F_APOLLO,
+
+    F_NULLSIG,
+    F_VOIDSIG,
+    F_LIFTHOIST,
+    F_CHAMELEON_SHIELD,
+    F_VIBROCLAW,
+
+    F_EJECTION_SEAT,
+    F_SALVAGE_ARM,
+    F_PARTIAL_WING,
+
+    F_TRACKS, // TODO: Implement me, so far only construction data
+    F_MASS, // TODO: Implement me, so far only construction data
+    F_CARGO, // TODO: Implement me, so far only construction data
+    F_DUMPER, // TODO: Implement me, so far only construction data
+    F_MASH, // TODO: Implement me, so far only construction data
+
+
+    F_AP_MOUNT,
+    F_MAST_MOUNT,
+    F_FUEL,
+    F_BLUE_SHIELD,
+    F_BASIC_FIRECONTROL,
+    F_ADVANCED_FIRECONTROL,
+    F_LIQUID_CARGO,
+    F_HITCH,
+    F_FLOTATION_HULL,
+    F_LIMITED_AMPHIBIOUS,
+    F_FULLY_AMPHIBIOUS,
+    F_DUNE_BUGGY,
+    F_SPACE_ADAPTATION,
+    F_VACUUM_PROTECTION,
+    F_CUTTING_TORCH,
+    F_OFF_ROAD,
+    F_VTOL_EQUIPMENT,
+
+
+    F_MOBILE_HPG,
+    F_MOBILE_FIELD_BASE,
+    F_COMMAND_CONSOLE,
+    F_VSTOL_CHASSIS,
+    F_STOL_CHASSIS,
+    F_ARMORED_MOTIVE_SYSTEM,
+    F_CHASSIS_MODIFICATION,
+    F_CHAFF_POD,
+    F_DRONE_CARRIER_CONTROL,
+    F_BA_MISSION_EQUIPMENT,
+    F_JET_BOOSTER,
+    F_SENSOR_DISPENSER,
+    F_DRONE_OPERATING_SYSTEM,
+    F_RECON_CAMERA,
+    F_COMBAT_VEHICLE_ESCAPE_POD,
+    F_DETACHABLE_WEAPON_PACK,
+    F_SPRAYER,
+    F_EXTENDED_LIFESUPPORT,
+
+    F_SHOULDER_TURRET,
+    F_HEAD_TURRET,
+    F_QUAD_TURRET,
+    F_PINTLE_TURRET,
+    F_SPONSON_TURRET,
+
+    F_TRAILER_MODIFICATION,
+    F_LARGE_COMM_SCANNER_SUITE,
+    F_SMALL_COMM_SCANNER_SUITE,
+
+    F_LIGHT_BRIDGE_LAYER,
+    F_MEDIUM_BRIDGE_LAYER,
+    F_HEAVY_BRIDGE_LAYER,
+
+    F_REFUELING_DROGUE,
+    F_BULLDOZER,
+    F_EXTERNAL_STORES_HARDPOINT,
+    F_MANIPULATOR,
+    F_CARGOLIFTER,
+    F_NAVAL_TUG_ADAPTOR,
+    F_AMPHIBIOUS,
+    F_PROP,
+    F_PARAFOIL,
+    F_LIGHT_SAIL,
+    F_ULTRA_LIGHT,
+
+
+    F_ELECTRIC_DISCHARGE_ARMOR,
+    F_ENDO_STEEL,
+    F_FERRO_FIBROUS,
+    F_LIGHT_FERRO,
+    F_HEAVY_FERRO,
+    F_FERRO_FIBROUS_PROTO,
+    F_REINFORCED,
+    F_COMPOSITE,
+    F_INDUSTRIAL_STRUCTURE,
+    F_ENDO_STEEL_PROTO,
+    F_INDUSTRIAL_ARMOR,
+    F_HEAVY_INDUSTRIAL_ARMOR,
+    F_PRIMITIVE_ARMOR,
+    F_HARDENED_ARMOR,
+    F_COMMERCIAL_ARMOR,
+    F_IMPACT_RESISTANT,
+    F_BALLISTIC_REINFORCED,
+    F_ANTI_PENETRATIVE_ABLATIVE,
+    F_FIRE_RESISTANT,
+    F_STEALTH,
+    F_MODULAR_ARMOR,
+    F_FERRO_LAMELLOR,
+    F_ENDO_COMPOSITE,
+    F_REFLECTIVE,
+    F_REACTIVE,
+
+    F_HARJEL,
+    F_HARJEL_II,
+    F_HARJEL_III,
+
+    F_NOVA,
+    F_BOMB_BAY,
+
+    F_MONOCYCLE,
+    F_BICYCLE,
+    F_CONVERTIBLE,
+
+    F_SNOWMOBILE,
+
+    F_LADDER,
+    F_LIFEBOAT,
+    F_HYDROFOIL,
+    F_SUBMERSIBLE,
+    F_HEAT_SENSOR,
+
+
+    F_BA_MEA, // Flag for BattleArmor Modular Equipment Adaptor
+    F_INF_EQUIPMENT, // Flag for Infantry Equipment
+
+    F_SCM,
+
+    F_VIRAL_JAMMER_HOMING,
+    F_VIRAL_JAMMER_DECOY,
+    F_DRONE_CONTROL_CONSOLE,
+    F_RISC_LASER_PULSE_MODULE,
+    F_REMOTE_DRONE_COMMAND_CONSOLE,
+    F_EMERGENCY_COOLANT_SYSTEM,
+    F_BADC,
+    F_REUSABLE,
+    F_BLOODHOUND,
+    F_ARMOR_KIT,
+
+    F_ARTEMIS_PROTO, // Prototype Stuff
+    F_STORAGE_BATTERY, // Flags for Large Craft Systems
+
+    F_VEEDC,
+    F_SC_EQUIPMENT,
+    F_DS_EQUIPMENT,
+    F_JS_EQUIPMENT,
+    F_WS_EQUIPMENT,
+    F_SS_EQUIPMENT,
+    F_CAPITAL_ARMOR,
+
+    F_FERRO_CARBIDE,
+    F_IMP_FERRO,
+    F_HEAVY_EQUIPMENT, // Not usable by small support vehicles
+    F_SRCS, // Drone Equipment for Large Craft
+    F_SASRCS,
+
+    F_CASPAR,
+    F_CASPARII,
+
+    F_ATAC,
+    F_DTAC,
+    F_SDS_DESTRUCT,
+    F_SDS_JAMMER,
+    F_LF_STORAGE_BATTERY,
+
+    F_TRENCH_CAPABLE, // Fortify Equipment
+    F_EXTERNAL_POWER_PICKUP,
+    F_PROTOTYPE,
+    F_TOOLS,
+    F_FLUID_SUCTION_SYSTEM,
+    F_LIGHT_FLUID_SUCTION_SYSTEM,
+    F_RAM_PLATE,
+    F_SUPPORT_VEE_BAR_ARMOR,
+    F_FIELD_KITCHEN,
+
+
+    F_SPLITABLE, // Marks the equipament as something that can be split betwen multiple crit slots
+    F_VARIABLE_SIZE, // marks the equipment as being something with a size that can be changed at will
+
+    // Satellite Equipment
+    F_HIRES_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
+    F_HYPERSPECTRAL_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
+    F_INFRARED_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
+    F_LOOKDOWN_RADAR, // TODO: add game rules for the following imagers/radars, construction data only
+    ;
 
     @Override
     public int getFlagIndex() {
-        return flagIndex;
+        return this.ordinal();
     }
 
 

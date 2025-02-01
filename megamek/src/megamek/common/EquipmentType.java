@@ -509,7 +509,7 @@ public class EquipmentType implements ITechnology {
         return flags;
     }
 
-    public boolean hasFlag(IndexedFlag flag) {
+    public boolean hasFlag(EquipmentFlag flag) {
         return flags.get(flag);
     }
 

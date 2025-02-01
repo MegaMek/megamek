@@ -584,7 +584,7 @@ public class TestSmallCraft extends TestAero {
         Map<EquipmentType, Integer> leftAft = new HashMap<>();
         Map<EquipmentType, Integer> rightFwd = new HashMap<>();
         Map<EquipmentType, Integer> rightAft = new HashMap<>();
-        var typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+        MiscTypeFlag typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 ? MiscType.F_DS_EQUIPMENT
                 : MiscType.F_SC_EQUIPMENT;
         for (Mounted<?> m : smallCraft.getEquipment()) {

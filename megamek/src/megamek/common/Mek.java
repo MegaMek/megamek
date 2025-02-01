@@ -1391,7 +1391,7 @@ public abstract class Mek extends Entity {
      * Adds heat sinks to the engine. Uses clan/normal depending on the
      * currently set techLevel
      */
-    public void addEngineSinks(int totalSinks, IndexedFlag heatSinkFlag) {
+    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag) {
         addEngineSinks(totalSinks, heatSinkFlag, isClan());
     }
 
@@ -1399,7 +1399,7 @@ public abstract class Mek extends Entity {
      * Adds heat sinks to the engine. Adds either the engine capacity, or the
      * entire number of heat sinks, whichever is less
      */
-    public void addEngineSinks(int totalSinks, IndexedFlag heatSinkFlag,
+    public void addEngineSinks(int totalSinks, EquipmentFlag heatSinkFlag,
             boolean clan) {
         if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
             addEngineSinks(totalSinks, clan ? EquipmentTypeLookup.CLAN_DOUBLE_HS

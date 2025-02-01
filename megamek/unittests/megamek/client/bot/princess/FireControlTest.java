@@ -428,7 +428,7 @@ class FireControlTest {
         when(mockAmmoSRM5.getType()).thenReturn(mockAmmoTypeSRM5);
         when(mockAmmoSRM5.isAmmoUsable()).thenReturn(true);
         when(mockAmmoTypeLRM5.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
-        when(mockAmmoTypeLRM5.hasFlag(any(IndexedFlag.class))).thenReturn(false);
+        when(mockAmmoTypeLRM5.hasFlag(any(EquipmentFlag.class))).thenReturn(false);
         when(mockAmmoTypeLRM5.hasFlag(eq(AmmoType.F_MML_LRM))).thenReturn(true);
         when(mockAmmoTypeLRM5.getAmmoType()).thenReturn(AmmoType.T_MML);
         when(mockAmmoLRM5.getType()).thenReturn(mockAmmoTypeLRM5);
@@ -520,7 +520,7 @@ class FireControlTest {
         when(mockWeaponType.getAmmoType()).thenReturn(AmmoType.T_LRM);
         WeaponType mockEnergyWeaponType = mock(WeaponType.class);
         when(mockEnergyWeaponType.getAmmoType()).thenReturn(AmmoType.T_NA);
-        when(mockEnergyWeaponType.hasFlag(any(IndexedFlag.class))).thenReturn(false);
+        when(mockEnergyWeaponType.hasFlag(any(EquipmentFlag.class))).thenReturn(false);
         when(mockEnergyWeaponType.hasModeType(anyString())).thenReturn(false);
         mockPPC = mock(WeaponMounted.class);
         when(mockPPC.getType()).thenReturn(mockEnergyWeaponType);
@@ -2150,7 +2150,7 @@ class FireControlTest {
         FiringPlan expected;
         when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
         when(mockShooter.isOffBoard()).thenReturn(false);
-        when(mockShooter.getBombs(any(IndexedFlag.class))).thenReturn(emptyList());
+        when(mockShooter.getBombs(any(EquipmentFlag.class))).thenReturn(emptyList());
         when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         when(mockTarget.isOffBoard()).thenReturn(false);
         when(mockBoard.contains(eq(mockShooterCoords))).thenReturn(true);

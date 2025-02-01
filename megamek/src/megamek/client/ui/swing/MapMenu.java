@@ -1611,7 +1611,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(IndexedFlag weaponFlag) {
+    private boolean hasWeaponFlag(EquipmentFlag weaponFlag) {
         if (myEntity.getWeaponList().isEmpty()) {
             return false;
         }

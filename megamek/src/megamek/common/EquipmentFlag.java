@@ -21,7 +21,7 @@ package megamek.common;
  * multiple flags can be composed into an {@link EquipmentBitSet}.
  * @author Luana Coppio
  */
-public interface IndexedFlag {
+public interface EquipmentFlag {
     /**
      * Returns the index of the flag in the bitset
      * - Future improvements, return ordinal instead of arbitrary index

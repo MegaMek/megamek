@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.common;
 
 import java.util.BitSet;
@@ -16,7 +29,11 @@ public class EquipmentBitSet {
      * Default constructor.
      */
     public EquipmentBitSet() {
-        this.bitSet = new BitSet(MiscTypeFlag.values().length + AmmoTypeFlag.values().length + WeaponTypeFlag.values().length);
+        // This value is currently a bit above the double of what we need, but it's a power of 2, and it's a good
+        // starting point since it will give a lot of runaway for new types of equipments, ammo and weapons to be added
+        // Whenever we surpass this number, the bitset will increase on its own as needed, so its more of a performance
+        // matter than a limitation.
+        this.bitSet = new BitSet(512);
     }
 
     /**
@@ -32,7 +49,7 @@ public class EquipmentBitSet {
      * @param flag the flag to check
      * @return true if the flag is set in the EquipmentBitSet
      */
-    public boolean get(IndexedFlag flag) {
+    public boolean get(EquipmentFlag flag) {
         return bitSet.get(flag.getFlagIndex());
     }
 
@@ -46,7 +63,7 @@ public class EquipmentBitSet {
      * Clears the flag in the EquipmentBitSet.
      * @param flag the flag to clear
      */
-    public void clear(IndexedFlag flag) {
+    public void clear(EquipmentFlag flag) {
         bitSet.clear(flag.getFlagIndex());
     }
 
@@ -61,7 +78,7 @@ public class EquipmentBitSet {
      * Sets the flag in the EquipmentBitSet.
      * @param flag the flag to set
      */
-    public void set(IndexedFlag flag) {
+    public void set(EquipmentFlag flag) {
         bitSet.set(flag.getFlagIndex());
     }
 
@@ -71,7 +88,7 @@ public class EquipmentBitSet {
      * @param flag the flag to set
      * @return a copy of this EquipmentBitSet with the flag set
      */
-    public EquipmentBitSet or(IndexedFlag flag) {
+    public EquipmentBitSet or(EquipmentFlag flag) {
         var newBitSet = new EquipmentBitSet(this);
         newBitSet.set(flag);
         return newBitSet;
@@ -82,7 +99,7 @@ public class EquipmentBitSet {
      * @param flag the flag to clear
      * @return a copy of this EquipmentBitSet with the flag cleared
      */
-    public EquipmentBitSet andNot(IndexedFlag flag) {
+    public EquipmentBitSet andNot(EquipmentFlag flag) {
         var newBitSet = new EquipmentBitSet(this);
         newBitSet.clear(flag);
         return newBitSet;
@@ -100,7 +117,7 @@ public class EquipmentBitSet {
      * @param flag the flag to check
      * @return a new empty EquipmentBitSet and the flag set if it is set in this EquipmentBitSet
      */
-    public EquipmentBitSet and(IndexedFlag flag) {
+    public EquipmentBitSet and(EquipmentFlag flag) {
         var newBitSet = new EquipmentBitSet();
         if (this.get(flag)) {
             newBitSet.set(flag);
@@ -117,9 +134,11 @@ public class EquipmentBitSet {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        EquipmentBitSet that = (EquipmentBitSet) o;
-        return Objects.equals(bitSet, that.bitSet);
+        if (o instanceof EquipmentBitSet that) {
+            return Objects.equals(bitSet, that.bitSet);
+        }
+
+        return false;
     }
 
     @Override

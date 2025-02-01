@@ -1362,10 +1362,8 @@ public class BasicPathRanker extends PathRanker {
         }
         hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
 
-        // Multiply total hazard value by the chance of getting stuck for 1 or more
-        // additional turns
-        logger.trace("Total hazard = {}", hazardValue * psrFactor);
-        return Math.round(hazardValue * psrFactor);
+        logger.trace("Total hazard = {}", hazardValue);
+        return Math.round(hazardValue);
     }
 
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill, int modifier) {

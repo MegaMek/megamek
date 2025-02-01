@@ -31181,6 +31181,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Airborne ground units aren't effected by dangerous terrain, unless it's an erupton
+     * @param en
+     * @param eruption
+     * @return true if the unit should be damaged by dangerous grund (magma, hazardous liquid pool)
+     */
+    private boolean isEffectedByHazardousGround(Entity en, boolean eruption) {
+        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
+                || (en.getMovementMode() == EntityMovementMode.HOVER)
+                || ((en.getMovementMode() == EntityMovementMode.WIGE)
+                    && (en.getOriginalWalkMP() > 0) && !eruption))
+            && !en.isImmobile()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * do damage from magma
      *
      * @param en       the affected <code>Entity</code>
@@ -31189,13 +31206,10 @@ public class TWGameManager extends AbstractGameManager {
      *                 of an eruption
      */
     public void doMagmaDamage(Entity en, boolean eruption) {
-        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
-                || (en.getMovementMode() == EntityMovementMode.HOVER)
-                || ((en.getMovementMode() == EntityMovementMode.WIGE)
-                        && (en.getOriginalWalkMP() > 0) && !eruption))
-                && !en.isImmobile()) {
+        if (!isEffectedByHazardousGround(en, eruption)) {
             return;
         }
+
         Report r;
         boolean isMek = en instanceof Mek;
         if (isMek) {
@@ -31221,20 +31235,16 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * do damage from magma
+     * do damage from hazardous liquids
      *
      * @param en       the affected <code>Entity</code>
      * @param eruption <code>boolean</code> indicating whether or not this is
      *                 because
-     *                 of an eruption
+     *                 of an eruption (geyser)
      * @param depth    How deep is the hazardous liquid?
      */
     public void doHazardousLiquidDamage(Entity en, boolean eruption, int depth) {
-        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
-            || (en.getMovementMode() == EntityMovementMode.HOVER)
-            || ((en.getMovementMode() == EntityMovementMode.WIGE)
-            && (en.getOriginalWalkMP() > 0) && !eruption))
-            && !en.isImmobile()) {
+        if (!isEffectedByHazardousGround(en, eruption)) {
             return;
         }
 

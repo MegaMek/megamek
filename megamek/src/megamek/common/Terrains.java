@@ -60,9 +60,6 @@ public class Terrains implements Serializable {
     public static final int SMOKE = 20; // 1: light smoke 2: heavy smoke 3:light
     // LI smoke 4: Heavy LI smoke
     public static final int GEYSER = 21; // 1: dormant 2: active 3: magma vent
-
-
-
     // unimplemented
     // Bug Storm
     // Extreme Depths

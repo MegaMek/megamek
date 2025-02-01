@@ -2844,6 +2844,10 @@ public class FireControl {
             final AmmoMounted suggestedAmmo = info.getAmmo();
             final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
 
+            if (mountedAmmo == null) {
+                continue;
+            }
+
             // If the selected ammo would cause the shot to miss, skip loading it.
             final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
             cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
@@ -2858,15 +2862,14 @@ public class FireControl {
 
             // if we found preferred ammo but can't apply it to the weapon, log it and
             // continue.
-            if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
+            if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
                 logger.warn(shooter.getDisplayName() + " tried to load "
                         + currentWeapon.getName() + " with ammo " +
                         mountedAmmo.getDesc() + " but failed somehow.");
                 continue;
                 // if we didn't find preferred ammo after all, continue
-            } else if (mountedAmmo == null) {
-                continue;
             }
+
             // If everything looks okay, replace the old WAA with the updated copy
             info.setAction(cloneWAA);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),

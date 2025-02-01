@@ -445,10 +445,8 @@ public class WeaponFireInfo {
                     boolean blockedByWoods = (
                         weapon.getType().getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
                     );
-                    blockedByWoods |= (preferredAmmo != null &&
-                        preferredAmmo.getType().getMunitionType().contains(
-                            AmmoType.Munitions.M_CLUSTER
-                        )
+                    blockedByWoods |= preferredAmmo.getType().getMunitionType().contains(
+                        AmmoType.Munitions.M_CLUSTER
                     );
                     if (blockedByWoods) {
                         return 0D;

@@ -1439,6 +1439,78 @@ class BasicPathRankerTest {
         when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
 
+        // Test walking through 3 hexes of shallow hazardous liquid.
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockHexTwo.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockHexThree.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockHexTwo.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        assertEquals(450.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexTwo.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockHexThree.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockHexTwo.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(false);
+
+        // Test walking through 3 hexes of deep hazardous liquid - this should be extremely dangerous for our test unit!.
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockHexTwo.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockHexThree.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockHexTwo.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        assertEquals(9000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexTwo.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockHexThree.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);
+        when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockHexTwo.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockHexThree.containsTerrain(Terrains.WATER)).thenReturn(false);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(false);
+
+        // Test the stupidity of going prone in shallow hazardous liquid.
+        // Now that hazard is inversely related to remaining armor, this is a _BIG_
+        // number
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockFinalStep.isProne()).thenReturn(true);
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);;
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        assertEquals(3000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockFinalStep.isProne()).thenReturn(false);
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(0);;
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(false);
+
         // Test walking through 2 hexes of fire.
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS, Terrains.FIRE)));
@@ -1597,6 +1669,107 @@ class BasicPathRankerTest {
 
         when(mockTank.getDamageLevel()).thenReturn(2);
         assertEquals(83.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+    }
+
+    @Test
+    void testHazardousLiquidHazard() {
+        final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
+
+        final List<Coords> testCoords = setupCoords("10,7", "10,8", "10,9", "10,10");
+        final Coords testCoordsThree = testCoords.get(2);
+
+        final List<Hex> testHexes = setupHexes(testCoords);
+        final Hex mockFinalHex = testHexes.get(3);
+
+        final Vector<MoveStep> stepVector = setupMoveStepVector(testCoords);
+
+        final MovePath mockPath = setupPath(stepVector);
+
+        final Entity mockUnit = mock(BipedMek.class);
+        when(mockUnit.locations()).thenReturn(8);
+        when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+        final Game mockGame = setupGame(testCoords, testHexes);
+
+        final Crew mockCrew = mock(Crew.class);
+        when(mockUnit.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getPiloting()).thenReturn(5);
+
+        final Building mockBuilding = mock(Building.class);
+        when(mockGame.getBoard().getBuildingAt(eq(testCoordsThree))).thenReturn(mockBuilding);
+        when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
+
+        // Test jumping onto Magma Crust.
+        when(mockPath.isJumping()).thenReturn(true);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
+        when(mockFinalHex.depth()).thenReturn(1);
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.HAZARDOUS_LIQUID, Terrains.WATER)));
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockFinalHex.containsTerrain(Terrains.WATER)).thenReturn(true);
+        when(mockFinalHex.terrainLevel(Terrains.HAZARDOUS_LIQUID)).thenReturn(1);
+        assertEquals(63.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+
+        // Test damaged 'mek walking hazard (more dangerous in deeper liquid)
+        when(mockCrew.getPiloting()).thenReturn(5);
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(2);
+        when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(1);
+        // Moderate damage means moderate hazard
+        when(mockUnit.getDamageLevel()).thenReturn(Entity.DMG_MODERATE);
+        assertEquals(750.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(2);
+
+        assertEquals(3000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        // Crippled should be very high hazard
+
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockFinalHex.depth()).thenReturn(1);
+
+        when(mockUnit.getDamageLevel()).thenReturn(Entity.DMG_CRIPPLED);
+        assertEquals(750.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
+        when(mockFinalHex.depth()).thenReturn(2);
+
+        assertEquals(3000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+
+        when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(1);
+        when(mockFinalHex.depth()).thenReturn(1);
+
+        // If this is an industrial Mek this is twice as dangerous!
+        when(mockUnit.isIndustrialMek()).thenReturn(true);
+        when(mockUnit.hasEnvironmentalSealing()).thenReturn(false);
+        assertEquals(1500, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        //If it has environmental sealing though it should be normal
+        when(mockUnit.hasEnvironmentalSealing()).thenReturn(true);
+        assertEquals(750.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        when(mockUnit.isIndustrialMek()).thenReturn(false);
+        when(mockUnit.hasEnvironmentalSealing()).thenReturn(false);
+
+        // Check damaged Hover ending on Hazardous Liquid
+        // Ramps up quickly with damage state!
+        final Entity mockTank = mock(Tank.class);
+        when(mockTank.locations()).thenReturn(5);
+        when(mockTank.getArmor(anyInt())).thenReturn(10);
+        when(mockTank.getCrew()).thenReturn(mockCrew);
+        when(mockCrew.getPiloting()).thenReturn(5);
+        when(mockPath.isJumping()).thenReturn(false);
+        when(mockTank.getMovementMode()).thenReturn(EntityMovementMode.HOVER);
+        when(mockTank.getHeatCapacity()).thenReturn(Entity.DOES_NOT_TRACK_HEAT);
+
+        when(mockTank.getDamageLevel()).thenReturn(0);
+        assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+
+        when(mockTank.getDamageLevel()).thenReturn(1);
+        assertEquals(250.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
+
+        when(mockTank.getDamageLevel()).thenReturn(2);
+        assertEquals(500.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
     }
 
     @Test

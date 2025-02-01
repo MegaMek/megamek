@@ -26,6 +26,7 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -887,6 +888,9 @@ public class BasicPathRanker extends PathRanker {
                     // 1 in 3 chance to hit Black Ice on any given Pavement hex
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding) / 3.0;
                     break;
+                case Terrains.HAZARDOUS_LIQUID:
+                    hazardValue += calcHazardousLiquidHazard(hex, endHex, jumpLanding, movingUnit, step);
+                    break;
             }
         }
 
@@ -905,7 +909,8 @@ public class BasicPathRanker extends PathRanker {
         Terrains.SNOW,
         Terrains.SWAMP,
         Terrains.MUD,
-        Terrains.TUNDRA));
+        Terrains.TUNDRA,
+        Terrains.HAZARDOUS_LIQUID));
     private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
     static {
         HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
@@ -1281,6 +1286,79 @@ public class BasicPathRanker extends PathRanker {
                     .mapToInt(movingUnit::getArmor).sum();
             dmg = 28;
             logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        }
+        hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
+
+        // Multiply total hazard value by the chance of getting stuck for 1 or more
+        // additional turns
+        logger.trace("Total hazard = {}", hazardValue * psrFactor);
+        return Math.round(hazardValue * psrFactor);
+    }
+
+    private double calcHazardousLiquidHazard(Hex hex, boolean endHex, boolean jumpLanding, Entity movingUnit, MoveStep step) {
+        logger.trace("Calculating hazardous liquid hazard.");
+        int unitDamageLevel = movingUnit.getDamageLevel();
+        double dmg;
+
+        // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
+        // losing mobility.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+            || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            if (!endHex) {
+                logger.trace("Hovering/VTOL while traversing hazardous liquids (0).");
+                return 0;
+            } else {
+                // Estimate chance of being disabled or immobilized over open lava; this is
+                // fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
+                // UNIT_DESTRUCTION_FACTOR
+                dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
+                logger.trace("Ending hover/VTOL movement over lava ({}).", dmg);
+                return dmg;
+            }
+        }
+
+        double hazardValue = 0;
+        double psrFactor = 1.0;
+
+        // Expected Damage for Hazardous Liquid
+        // 2/6 chance 0 damage
+        // 1/6 chance 1d6/2 : 1.75 damage
+        // 1/6 chance 1d6 : 3.5 damage
+        // 1/6 chance 1d6 + 2 : 5.5 damage
+        // 1/6 chance 2d6 : 7 damage
+        // Total: 2.958333...
+        // Let's use 3
+
+        // Factor in potential to suffer fatal damage.
+        // Dependent on expected average damage / exposed remaining armor *
+        // UNIT_DESTRUCTION_FACTOR
+        int exposedArmor;
+        dmg = 3.0;
+        dmg *= HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit);
+        dmg = (int) (Math.floor(dmg / HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit)));
+
+        // After all that math let's make sure we do at least 1 damage
+        // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
+        dmg = Math.max(dmg, 0.666);
+
+        if (step.isProne() || (hex.containsTerrain(Terrains.WATER) && hex.terrainLevel(Terrains.WATER) > 1)) {
+            exposedArmor = movingUnit.getTotalArmor();
+            logger.trace("Fully Submerged damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof BipedMek) {
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof TripodMek) {
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG)
+                .mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof QuadMek){
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
+                .mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else {
+            exposedArmor = movingUnit.getTotalArmor();
+            logger.trace("Fully Submerged non-mek damage = {}, exposed armor = {}", dmg, exposedArmor);
         }
         hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
 

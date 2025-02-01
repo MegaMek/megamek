@@ -81,25 +81,8 @@ public class HazardousLiquidPoolUtil {
 
         //Calculate damage per TO:AR p. 47 "HAZARDOUS LIQUID POOLS TABLE"
         int totalDamage =  Math.floorDiv(Compute.d6(hazardousLiquidClass.numberOfDice), hazardousLiquidClass.divisor) + hazardousLiquidClass.staticExtraDamage;
-
-        // IndustrialMechs and Support Vehicles take Double Damage
-        // unless they have environmental sealing
-        if ((entity.isIndustrialMek() || entity.isSupportVehicle()
-            && (!entity.hasEnvironmentalSealing()))) {
-            totalDamage *= 2;
-        }
-
-
-        // If infantry have XCT training and appropriate gear they take 1/3 damage
-        // Otherwise they take double damage.
-        // BA take damage as normal.
-        if (entity.isInfantry() && !entity.isBattleArmor() && entity instanceof Infantry inf) {
-            if (inf.hasSpecialization(Infantry.XCT) && inf.getArmorKit() != null && inf.getArmorKit().hasSubType(MiscType.S_TOXIC_ATMO)) {
-                totalDamage /= 3;
-            } else {
-                totalDamage *= 2;
-            }
-        }
+        totalDamage *= getHazardousLiquidPoolDamageMultiplierForUnsealed(entity);
+        totalDamage = (int) (Math.floor(totalDamage / getHazardousLiquidPoolDamageDivisorForInfantry(entity)));
 
         // After all that math let's make sure we do at least 1 damage.
         totalDamage = Math.max(totalDamage, 1);
@@ -112,5 +95,39 @@ public class HazardousLiquidPoolUtil {
         }
 
         return reports;
+    }
+
+    /**
+     * Support vehicles and industrial meks without environmental sealing take double damage
+     * @param entity
+     * @return
+     */
+    public static int getHazardousLiquidPoolDamageMultiplierForUnsealed(Entity entity) {
+        // IndustrialMeks and Support Vehicles take Double Damage
+        // unless they have environmental sealing
+        if ((entity.isIndustrialMek() || entity.isSupportVehicle())
+            && (!entity.hasEnvironmentalSealing())) {
+            return 2;
+        }
+        return 1;
+    }
+
+    /**
+     * Infantry units take more or less damage depending on if they have XCT training and the appropriate gear
+     * @param entity
+     * @return
+     */
+    public static double getHazardousLiquidPoolDamageDivisorForInfantry(Entity entity) {
+        // If infantry have XCT training and appropriate gear they take 1/3 damage
+        // Otherwise they take double damage.
+        // BA take damage as normal.
+        if (entity.isInfantry() && !entity.isBattleArmor() && entity instanceof Infantry inf) {
+            if (inf.hasSpecialization(Infantry.XCT) && inf.getArmorKit() != null && inf.getArmorKit().hasSubType(MiscType.S_TOXIC_ATMO)) {
+                return 3.0;
+            } else {
+                return .5;
+            }
+        }
+        return 1;
     }
 }

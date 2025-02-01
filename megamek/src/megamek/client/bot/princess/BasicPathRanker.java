@@ -355,10 +355,8 @@ public class BasicPathRanker extends PathRanker {
 
     // The further I am from a target, the lower this path ranks (weighted by
     // Hyper Aggression.
-    protected double calculateAggressionMod(Entity movingUnit, MovePath path, double maximumDamageDone, Game game) {
-        if (maximumDamageDone <= 0) {
-            return 0;
-        }
+    protected double calculateAggressionMod(Entity movingUnit, MovePath path, Game game) {
+
         double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
 
         if ((distToEnemy == 0) && !(movingUnit instanceof Infantry)) {
@@ -564,7 +562,7 @@ public class BasicPathRanker extends PathRanker {
         // The further I am from a target, the lower this path ranks
         // (weighted by Aggression slider).
         double aggressionMod = isNotAirborne ?
-            calculateAggressionMod(movingUnit, pathCopy, damageEstimate.getMaximumDamageEstimate(), game) : 0;
+            calculateAggressionMod(movingUnit, pathCopy, game) : 0;
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;

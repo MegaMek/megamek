@@ -23,6 +23,7 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -41,7 +42,6 @@ import java.util.stream.Stream;
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
-    private static final Logger log = LogManager.getLogger(BasicPathRanker.class);
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -384,7 +384,7 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
-    private double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
+    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
         int facingDiff = getFacingDiff(movingUnit, game, path);
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
@@ -566,15 +566,16 @@ public class BasicPathRanker extends PathRanker {
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
-
-        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies);
+        var formula = new StringBuilder(512);
+        formula.append("Calculation: {");
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, formula);
 
         // Movement is good, it gives defense and extends a player power in the game.
-        double movementMod = calculateMovementMod(pathCopy, game, enemies);
+        double movementMod = calculateMovementMod(pathCopy, game, enemies, formula);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
-        var formula = new StringBuilder(256);
+
         if (facingMod <= -10000) {
             return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
         }
@@ -642,7 +643,7 @@ public class BasicPathRanker extends PathRanker {
         return rankedPath;
     }
 
-    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
+    protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
@@ -655,40 +656,40 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // Only forces unit to move if there are no units around
-    private double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
+    protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
         var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
         boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
         boolean disabledFavorHigherTMM = favorHigherTMM == 0;
         if (noEnemiesInSight || !disabledFavorHigherTMM) {
-            var distanceMoved = pathCopy.getDistanceTravelled();
-            var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
+            var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             var tmmValue = tmm.getValue();
             var movementFactor = tmmValue * (selfPreservation + favorHigherTMM);
-            logger.trace("movement mod [{} = {} * {})]", movementFactor, tmmValue, selfPreservation);
+            formula.append("+ movementMod [").append(movementFactor).append(" = ").append(tmmValue).append(" * (")
+                .append(selfPreservation).append(" + ").append(favorHigherTMM).append(")]");
+            logger.trace("movement mod [{} = {} * ({} + {})]", movementFactor, tmmValue, selfPreservation, favorHigherTMM);
             return movementFactor;
         }
         return 0.0;
     }
 
-    private double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies) {
+    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, StringBuilder formula) {
         var self = movePath.getEntity();
+        formula.append(" - crowdingTolerance ");
         if (!(self instanceof Mek) && !(self instanceof Tank)) {
+            formula.append("[0 not a Mek or Tank]}");
             return 0.0;
         }
 
         var antiCrowding = getOwner().getBehaviorSettings().getAntiCrowding();
         if (antiCrowding == 0) {
+            formula.append("[0 antiCrowding is disabled]}");
             return 0;
         }
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
-
-        // when index = 10 I want the distance to be 1
-        // when the index is 0 I want the distance to be 5
-        // so I want the distance to be 5 - index / 2
-        final double herdingDistance = 5.0 - (double) antiCrowding / 2;
-        final double closingDistance = self.getMaxWeaponRange() * 0.6;
+        final double herdingDistance = Math.ceil(antiCrowding * 1.3);
+        final double closingDistance = Math.ceil(Math.max(3.0, self.getMaxWeaponRange() * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities().stream()
             .filter(e -> e instanceof Mek || e instanceof Tank)
@@ -708,7 +709,9 @@ public class BasicPathRanker extends PathRanker {
 
         double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
         double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
-
+        formula.append("[").append(friendsCrowdingTolerance + enemiesCrowdingTolerance).append(" = (")
+            .append(antiCrowdingFactor).append(" * ").append(crowdingFriends).append(" friends) + (")
+            .append(antiCrowdingFactor).append(" * ").append(crowdingEnemies).append(" enemies)]");
         return friendsCrowdingTolerance + enemiesCrowdingTolerance;
     }
 

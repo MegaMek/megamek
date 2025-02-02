@@ -78,6 +78,8 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
@@ -87,7 +89,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private final static MMLogger logger = MMLogger.create(BotConfigDialog.class);
 
     private static final String OK_ACTION = "Ok_Action";
-
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
@@ -102,6 +104,14 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(
             Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
+
+    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(
+        Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+
+    private MMToggleButton experimentalCheck = new TipMMToggleButton(
+        Messages.getString("BotConfigDialog.experimentalCheck"));
+
+
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
     private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
@@ -341,6 +351,16 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
             Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
 
+        iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
+        iAmAPirateCheck.addActionListener(this);
+        panContent.add(iAmAPirateCheck);
+
+        experimentalCheck.setToolTipText(Messages.getString("BotConfigDialog.experimentalCheckToolTip"));
+        experimentalCheck.addActionListener(this);
+
+        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(experimentalCheck);
+        }
 
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
@@ -458,6 +478,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
         antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
         favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
+        iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
+        experimentalCheck.setSelected(princessBehavior.isExperimental());
     }
 
     private void updateDialogFields() {
@@ -507,6 +529,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                         || chosenPreset.getBraveryIndex() != braverySlidebar.getValue()
                         || chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue()
                         || chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue()
+                        || chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected()
+                        || chosenPreset.isExperimental() != experimentalCheck.isSelected()
         );
     }
 
@@ -625,7 +649,6 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         } else if (e.getSource() == saveNewPreset) {
             saveAsNewPreset();
-
         }
     }
 
@@ -679,6 +702,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
         newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
         newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
+        newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        newBehavior.setExperimental(experimentalCheck.isSelected());
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -716,6 +741,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
         tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
         tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+        tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        tempBehavior.setExperimental(experimentalCheck.isSelected());
 
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {

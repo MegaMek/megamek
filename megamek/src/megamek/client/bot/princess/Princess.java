@@ -169,13 +169,14 @@ public class Princess extends BotClient {
     // Limits types of units Princess will target and attack with enhanced targeting
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
-
+    private SwarmContext swarmContext;
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
     // Controls whether Princess will use enhanced targeting on targets that have partial cover
     private boolean allowCoverEnhancedTargeting;
-
+    private EnemyTracker enemyTracker;
+    private CoverageValidator coverageValidator;
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -234,6 +235,8 @@ public class Princess extends BotClient {
             return pathRankers.get(PathRankerType.Infantry);
         } else if (entity.isAero() && game.useVectorMove()) {
             return pathRankers.get(PathRankerType.NewtonianAerospace);
+        } else if (behaviorSettings.isExperimental()) {
+            return pathRankers.get(PathRankerType.Utility);
         }
 
         return pathRankers.get(PathRankerType.Basic);
@@ -396,6 +399,8 @@ public class Princess extends BotClient {
                 entity.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER) ||
                 entity.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return fireControls.get(FireControlType.MultiTarget);
+        } else if (behaviorSettings.isExperimental()) {
+            return fireControls.get(FireControlType.Utility);
         }
 
         return fireControls.get(FireControlType.Basic);
@@ -2662,7 +2667,6 @@ public class Princess extends BotClient {
             pathRankerState = new PathRankerState();
             unitBehaviorTracker = new UnitBehavior();
             boardClusterTracker = new BoardClusterTracker();
-
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
@@ -2673,6 +2677,7 @@ public class Princess extends BotClient {
                     for (final Entity entity : game.getEntitiesVector(coords, true)) {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
+
                             sendChat("Building in Hex " + coords.toFriendlyString()
                                     + " designated target due to Gun Emplacement.", Level.INFO);
                         }
@@ -2683,12 +2688,24 @@ public class Princess extends BotClient {
             // Set up heat mapping
             initEnemyHeatMaps();
             initFriendlyHeatMap();
-
+            initExperimentalFeatures();
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
 
         }
+    }
+
+    /**
+     * Initialize the experimental features.
+     */
+    private void initExperimentalFeatures() {
+        this.enemyTracker = new EnemyTracker(this);
+        this.coverageValidator = new CoverageValidator(this);
+        this.swarmContext = new SwarmContext(this);
+        int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
+        this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
+
     }
 
     /**
@@ -2705,6 +2722,9 @@ public class Princess extends BotClient {
 
         MultiTargetFireControl multiTargetFireControl = new MultiTargetFireControl(this);
         fireControls.put(FireControlType.MultiTarget, multiTargetFireControl);
+
+        UtilityFireControl utilityFireControl = new UtilityFireControl(this);
+        fireControls.put(FireControlType.Utility, utilityFireControl);
     }
 
     /**
@@ -2727,6 +2747,10 @@ public class Princess extends BotClient {
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+
+        UtilityPathRanker utilityPathRanker = new UtilityPathRanker(this);
+        utilityPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.Utility, utilityPathRanker);
     }
 
     /**
@@ -2953,6 +2977,33 @@ public class Princess extends BotClient {
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
+        updateExperimentalFeatures();
+    }
+
+    private void updateExperimentalFeatures() {
+        if (getBehaviorSettings().isExperimental()) {
+            updateSwarmContext();
+            updateEnemyTracker();
+        }
+    }
+
+    private void updateEnemyTracker() {
+        if (enemyTracker != null) {
+            enemyTracker.updateEnemyPositions();
+        }
+    }
+
+    private void updateSwarmContext() {
+        if (swarmContext == null) {
+            return;
+        }
+        swarmContext.resetEnemyTargets();
+        swarmContext.resetPositionDensity();
+        for (var entity : getEntitiesOwned()) {
+            if (entity.isDeployed()) {
+                swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
+            }
+        }
     }
 
     @Override
@@ -3496,5 +3547,17 @@ public class Princess extends BotClient {
     public void receiveEntityUpdate(final Packet packet) {
         super.receiveEntityUpdate(packet);
         updateEntityState((Entity) packet.getObject(1));
+    }
+
+    public SwarmContext getSwarmContext() {
+        return swarmContext;
+    }
+
+    public EnemyTracker getEnemyTracker() {
+        return enemyTracker;
+    }
+
+    public CoverageValidator getCoverageValidator() {
+        return coverageValidator;
     }
 }

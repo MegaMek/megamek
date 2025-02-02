@@ -70,6 +70,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+    public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -114,6 +115,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
         setLocale(store.getString(LOCALE));
@@ -350,6 +352,14 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setStartSearchlightsOn(boolean value) {
         store.setValue(START_SEARCHLIGHTS_ON, value);
+    }
+
+    public void setEnableExperimentalBotFeatures(boolean value) {
+        store.setValue(ENABLE_EXPERIMENTAL_BOT_FEATURES, value);
+    }
+
+    public boolean getEnableExperimentalBotFeatures() {
+        return store.getBoolean(ENABLE_EXPERIMENTAL_BOT_FEATURES);
     }
 
     public void setStrategicViewTheme(String theme) {

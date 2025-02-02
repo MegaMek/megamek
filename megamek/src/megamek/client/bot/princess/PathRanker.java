@@ -56,7 +56,8 @@ public abstract class PathRanker implements IPathRanker {
     public enum PathRankerType {
         Basic,
         Infantry,
-        NewtonianAerospace
+        NewtonianAerospace,
+        Utility
     }
 
     private final Princess owner;

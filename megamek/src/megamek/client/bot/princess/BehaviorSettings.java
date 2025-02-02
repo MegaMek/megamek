@@ -19,20 +19,19 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -126,6 +125,8 @@ public class BehaviorSettings implements Serializable {
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
     private int antiCrowding = 0; // How much do I want to avoid crowding my teammates?
     private int favorHigherTMM = 0; // How much do I want to favor moving in my turn?
+    private boolean iAmAPirate = false; // Am I a pirate?
+    private boolean experimental = false; // running experimental features?
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     // endregion Variable Declarations
 
@@ -151,7 +152,8 @@ public class BehaviorSettings implements Serializable {
         copy.setSelfPreservationIndex(getSelfPreservationIndex());
         copy.setAntiCrowding(getAntiCrowding());
         copy.setFavorHigherTMM(getFavorHigherTMM());
-
+        copy.setIAmAPirate(iAmAPirate());
+        copy.setExperimental(isExperimental());
         for (final String t : getStrategicBuildingTargets()) {
             copy.addStrategicTarget(t);
         }
@@ -163,6 +165,47 @@ public class BehaviorSettings implements Serializable {
         }
 
         return copy;
+    }
+
+    /**
+     * @return TRUE if I am running experimental features.
+     */
+    public boolean isExperimental() {
+        return experimental;
+    }
+
+    /**
+     * @param experimental Set TRUE if I am running experimental features.
+     */
+    public void setExperimental(boolean experimental) {
+        this.experimental = experimental;
+    }
+    /**
+     * @param experimental Set TRUE if I am running experimental features.
+     */
+    public void setExperimental(String experimental) {
+        this.experimental = Boolean.parseBoolean(experimental);
+    }
+
+    /**
+     * @return TRUE if I am a bloody pirate.
+     */
+     public boolean iAmAPirate() {
+        return iAmAPirate;
+    }
+
+    /**
+     * @param iAmAPirate Set TRUE if I am a bloody pirate.
+     */
+    public void setIAmAPirate(boolean iAmAPirate) {
+        this.iAmAPirate = iAmAPirate;
+    }
+
+    /**
+     * @param iAmAPirate Set TRUE if I am a bloody pirate.
+     */
+    public void setIAmAPirate(String iAmAPirate) {
+        this.iAmAPirate = Boolean.parseBoolean(iAmAPirate);
     }
 
     /**
@@ -760,6 +803,10 @@ public class BehaviorSettings implements Serializable {
                 setAntiCrowding(child.getTextContent());
             } else if ("favorHigherTMM".equalsIgnoreCase(child.getNodeName())) {
                 setFavorHigherTMM(child.getTextContent());
+            } else if ("iAmAPirate".equalsIgnoreCase(child.getNodeName())) {
+                setIAmAPirate(child.getTextContent());
+            } else if ("experimental".equalsIgnoreCase(child.getNodeName())) {
+                setExperimental(child.getTextContent());
             } else if ("strategicTargets".equalsIgnoreCase(child.getNodeName())) {
                 final NodeList targets = child.getChildNodes();
                 for (int j = 0; j < targets.getLength(); j++) {
@@ -846,6 +893,14 @@ public class BehaviorSettings implements Serializable {
             favorHigherTMMNode.setTextContent("" + getFavorHigherTMM());
             behavior.appendChild(favorHigherTMMNode);
 
+            final Element iAmAPirateNode = doc.createElement("iAmAPirate");
+            iAmAPirateNode.setTextContent("" + iAmAPirate());
+            behavior.appendChild(iAmAPirateNode);
+
+            final Element experimentalNode = doc.createElement("experimental");
+            experimentalNode.setTextContent("" + isExperimental());
+            behavior.appendChild(experimentalNode);
+
             final Element targetsNode = doc.createElement("strategicBuildingTargets");
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
@@ -894,6 +949,8 @@ public class BehaviorSettings implements Serializable {
                 .append(getHerdMentalityValue(getHerdMentalityIndex()));
         out.append("\n\t AntiCrowding: ").append(getAntiCrowding()).append(":").append(getAntiCrowding());
         out.append("\n\t FavorHigherTMM: ").append(getFavorHigherTMM()).append(":").append(getFavorHigherTMM());
+        out.append("\n\t I am a Pirate: ").append(iAmAPirate());
+        out.append("\n\t Experimental: ").append(isExperimental());
         out.append("\n\t Targets:");
         out.append("\n\t\t Priority Coords: ");
         for (final String t : getStrategicBuildingTargets()) {
@@ -951,6 +1008,10 @@ public class BehaviorSettings implements Serializable {
             return false;
         } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
             return false;
+        } else if (iAmAPirate != that.iAmAPirate) {
+            return false;
+        } else if (experimental != that.experimental) {
+            return false;
         } else {
             return true;
         }
@@ -974,6 +1035,8 @@ public class BehaviorSettings implements Serializable {
         result = 31 * result + ignoredUnitTargets.hashCode();
         result = 31 * result + herdMentalityIndex;
         result = 31 * result + braveryIndex;
+        result = 31 * result + (iAmAPirate ? 1 : 0);
+        result = 31 * result + (experimental ? 1 : 0);
         return result;
     }
 }

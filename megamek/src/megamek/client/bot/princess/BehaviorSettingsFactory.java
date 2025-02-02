@@ -420,22 +420,65 @@ public class BehaviorSettingsFactory {
 
     private BehaviorSettings buildRuthlessBehavior() {
         try {
-            BehaviorSettings escapeBehavior = new BehaviorSettings();
-            escapeBehavior.setDescription(RUTHLESS_BEHAVIOR_DESCRIPTION);
-            escapeBehavior.setDestinationEdge(CardinalEdge.NONE);
-            escapeBehavior.setRetreatEdge(CardinalEdge.NEAREST);
-            escapeBehavior.setForcedWithdrawal(true);
-            escapeBehavior.setAutoFlee(false);
-            escapeBehavior.setFallShameIndex(6);
-            escapeBehavior.setHyperAggressionIndex(9);
-            escapeBehavior.setSelfPreservationIndex(10);
-            escapeBehavior.setHerdMentalityIndex(1);
-            escapeBehavior.setBraveryIndex(7);
-            escapeBehavior.setAntiCrowding(10);
-            escapeBehavior.setFavorHigherTMM(8);
-            return escapeBehavior;
+            BehaviorSettings ruthlessBehavior = new BehaviorSettings();
+            ruthlessBehavior.setDescription(RUTHLESS_BEHAVIOR_DESCRIPTION);
+            ruthlessBehavior.setDestinationEdge(CardinalEdge.NONE);
+            ruthlessBehavior.setRetreatEdge(CardinalEdge.NEAREST);
+            ruthlessBehavior.setForcedWithdrawal(true);
+            ruthlessBehavior.setAutoFlee(false);
+            ruthlessBehavior.setFallShameIndex(6);
+            ruthlessBehavior.setHyperAggressionIndex(9);
+            ruthlessBehavior.setSelfPreservationIndex(10);
+            ruthlessBehavior.setHerdMentalityIndex(1);
+            ruthlessBehavior.setBraveryIndex(7);
+            ruthlessBehavior.setAntiCrowding(10);
+            ruthlessBehavior.setFavorHigherTMM(8);
+            return ruthlessBehavior;
         } catch (Exception e) {
             logger.error(e, "Ruthless Behavior Exception");
+            return null;
+        }
+    }
+
+
+    /**
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: True <br>
+     * Auto Flee: True <br>
+     * Fall Shame: 7 <br>
+     * Hyper Aggression: 3 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 2 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
+     * Strategic Targets: None
+     */
+    // Used by MekHQ
+    public final BehaviorSettings PIRATE_BEHAVIOR = buildRuthlessBehavior();
+    public static final String PIRATE_BEHAVIOR_DESCRIPTION = "PIRATE";
+
+    private BehaviorSettings buildPirateBehavior() {
+        try {
+            BehaviorSettings pirateBehavior = new BehaviorSettings();
+            pirateBehavior.setDescription(PIRATE_BEHAVIOR_DESCRIPTION);
+            pirateBehavior.setDestinationEdge(CardinalEdge.NONE);
+            pirateBehavior.setRetreatEdge(CardinalEdge.NEAREST);
+            pirateBehavior.setForcedWithdrawal(true);
+            pirateBehavior.setAutoFlee(false);
+            pirateBehavior.setFallShameIndex(3);
+            pirateBehavior.setHyperAggressionIndex(10);
+            pirateBehavior.setSelfPreservationIndex(6);
+            pirateBehavior.setHerdMentalityIndex(9);
+            pirateBehavior.setBraveryIndex(10);
+            pirateBehavior.setAntiCrowding(5);
+            pirateBehavior.setFavorHigherTMM(5);
+            pirateBehavior.setIAmAPirate(true);
+            return pirateBehavior;
+        } catch (Exception e) {
+            logger.error(e, "Pirate Behavior Exception");
             return null;
         }
     }

@@ -64,10 +64,9 @@ cargobay:2.0:1:1
 </armor>
 
 <Body Equipment>
-MASH Operation Theater
+MASH Equipment:SIZE:2
 Paramedic Equipment
 ISOffRoadChassis
-MASH Core Component
 </Body Equipment>
 
 <Front Equipment>

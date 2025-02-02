@@ -1113,7 +1113,7 @@ public final class UIUtil {
      * its width and adding HTML tags.
      */
     public static String formatSideTooltip(String text) {
-        return "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return "<html><p width=" + scaleForGUI(TOOLTIP_WIDTH) + " style='padding:5'>" + text + "</html>";
     }
 
     /**

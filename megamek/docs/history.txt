@@ -1,6 +1,6 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.03-SNAPSHOT
+0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 
 + PR #6335: cleanup duplicate boards
 + PR #6328: Building type enum

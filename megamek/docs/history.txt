@@ -71,6 +71,10 @@ MEGAMEK VERSION HISTORY:
 + PR #6477: Fix 5590: princess firing on 13s due to intervening trees, etc
 + PR #6479: fix: removes an argument and early exit from hyperaggression
 + PR #6481: Fix 5590 part 2: stop Princess choosing zero damage attacks completely
++ PR #6488: Fix MML #1705 - update drone remote systems unit availability
++ PR #6487: Update MASH equipment to use size values
++ PR #6485: Fix: fixes html tags showing on tooltips
++ PR #6484: Fix: stop dropShadow from being calculated for force display tree
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

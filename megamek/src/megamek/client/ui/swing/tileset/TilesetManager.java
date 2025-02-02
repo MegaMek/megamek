@@ -540,8 +540,15 @@ public class TilesetManager implements IPreferenceChangeListener {
      * Loads a preview image of the unit into the BufferedPanel.
      */
     public Image loadPreviewImage(Entity entity, Camouflage camouflage) {
+        return loadPreviewImage(entity, camouflage, true);
+    }
+
+    /**
+     * Loads a preview image of the unit into the BufferedPanel.
+     */
+    public Image loadPreviewImage(Entity entity, Camouflage camouflage, boolean withShadows) {
         Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
-        EntityImage entityImage = EntityImage.createIcon(base, camouflage, entity);
+        EntityImage entityImage = EntityImage.createIcon(base, camouflage, entity, withShadows);
         entityImage.loadFacings();
         return entityImage.getFacing(entity.getFacing());
     }

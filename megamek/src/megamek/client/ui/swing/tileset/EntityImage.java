@@ -162,48 +162,54 @@ public class EntityImage {
     private final boolean isTank;
     private final int unitHeight;
     private final int unitElevation;
+    private final boolean withShadows;
 
     public static EntityImage createIcon(Image base, Camouflage camouflage, Entity entity) {
-        return createIcon(base, null, camouflage, entity, -1, true);
+        return createIcon(base, null, camouflage, entity, -1, true, true);
+    }
+
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Entity entity, boolean withShadows) {
+        return createIcon(base, null, camouflage, entity, -1, true, withShadows);
     }
 
     public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Entity entity) {
-        return createIcon(base, null, camouflage, entity, -1, true);
+        return createIcon(base, null, camouflage, entity, -1, true, true);
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
             Entity entity, int secondaryPos) {
-        return createIcon(base, wreck, camouflage, entity, secondaryPos, false);
+        return createIcon(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview) {
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         if (entity instanceof FighterSquadron) {
-            return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview);
+            return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         } else {
-            return new EntityImage(base, wreck, camouflage, entity, secondaryPos, preview);
+            return new EntityImage(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         }
     }
 
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        this(base, null, camouflage, entity, -1, true);
+        this(base, null, camouflage, entity, -1, true, true);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
             Entity entity, int secondaryPos) {
-        this(base, wreck, camouflage, entity, secondaryPos, false);
+        this(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview) {
-        this(base, wreck, camouflage, null, entity, secondaryPos, preview);
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+        this(base, wreck, camouflage, null, entity, secondaryPos, preview, withShadows);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-            Entity entity, int secondaryPos, boolean preview) {
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         this.base = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
+        this.withShadows = withShadows;
         this.dmgLevel = calculateDamageLevel(entity);
         // hack: gun emplacements are pretty beefy but have weight 0
         this.weight = entity instanceof GunEmplacement ? SMOKE_THREE + 1 : entity.getWeight();
@@ -286,7 +292,7 @@ public class EntityImage {
 
             // Generate rotated images for the unit and for a wreck
             fImage = rotateImage(fImage, i);
-            if (GUIP.getShadowMap() && isSingleHex) {
+            if (GUIP.getShadowMap() && isSingleHex && withShadows) {
                 facings[i] = applyDropShadow(fImage);
             } else {
                 facings[i] = fImage;

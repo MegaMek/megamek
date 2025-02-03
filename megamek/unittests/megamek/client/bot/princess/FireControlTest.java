@@ -536,6 +536,7 @@ class FireControlTest {
         shooterWeapons.add(mockPPC);
         mockPPCFireInfo = mock(WeaponFireInfo.class);
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.5);
+        when(mockPPCFireInfo.getExpectedDamage()).thenReturn(5.0);
         doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
                 any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockPPC),
                 isNull(),
@@ -571,6 +572,7 @@ class FireControlTest {
         shooterWeapons.add(mockLRM5);
         mockLRMFireInfo = mock(WeaponFireInfo.class);
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        when(mockLRMFireInfo.getExpectedDamage()).thenReturn(2.0);
         doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
                 any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5),
                 any(AmmoMounted.class),

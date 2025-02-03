@@ -1,0 +1,59 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-01-29
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Mob
+</Name>
+
+<Model>
+(Huge)
+</Model>
+
+<year>
+2400
+</year>
+
+<originalBuildYear>
+2400
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Fictional
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+6
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Rifle (Makeshift)
+</Primary>
+
+<Secondary>
+InfantryMiniGrenadeInferno
+</Secondary>
+

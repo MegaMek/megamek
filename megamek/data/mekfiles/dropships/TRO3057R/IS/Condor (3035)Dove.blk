@@ -122,16 +122,7 @@ Medium Laser
 </Aft Equipment>
 
 <Hull Equipment>
-MASH Core Component
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
+MASH Equipment:SIZE:10
 </Hull Equipment>
 
 <structural_integrity>

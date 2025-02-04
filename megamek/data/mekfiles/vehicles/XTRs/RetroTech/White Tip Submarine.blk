@@ -89,7 +89,7 @@ IS Ammo LRTorpedo-10
 IS Ammo LRTorpedo-10
 Communications Equipment (7 ton)
 FieldKitchen
-MASH Core Component
+MASH Equipment:SIZE:1
 </Body Equipment>
 
 <Front Equipment>

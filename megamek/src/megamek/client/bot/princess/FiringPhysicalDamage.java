@@ -1,20 +1,20 @@
 package megamek.client.bot.princess;
 
-public record FiringPhysicalDamage(double firingDamage, double physicalDamage, double takenDamage) {
+public class FiringPhysicalDamage {
+    public double firingDamage;
+    public double physicalDamage;
+    public double takenDamage;
+
     public FiringPhysicalDamage() {
-        this(0, 0, 0);
+        firingDamage = 0;
+        physicalDamage = 0;
+        takenDamage = 0;
     }
 
-    public FiringPhysicalDamage withFiringDamage(double firingDamage) {
-        return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
-    }
-
-    public FiringPhysicalDamage withPhysicalDamage(double physicalDamage) {
-        return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
-    }
-
-    public FiringPhysicalDamage withTakenDamage(double takenDamage) {
-        return new FiringPhysicalDamage(firingDamage, physicalDamage, takenDamage);
+    public FiringPhysicalDamage(double firingDamage, double physicalDamage, double takenDamage) {
+        this.firingDamage = firingDamage;
+        this.physicalDamage = physicalDamage;
+        this.takenDamage = takenDamage;
     }
 
     public double getMaximumDamageEstimate() {

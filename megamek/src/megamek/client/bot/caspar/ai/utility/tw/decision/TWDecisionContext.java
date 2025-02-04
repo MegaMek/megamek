@@ -124,7 +124,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     }
 
     public double getExpectedDamage() {
-        return cacheDamage().takenDamage();
+        return cacheDamage().takenDamage;
     }
 
     public double getTotalDamage() {
@@ -132,11 +132,11 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     }
 
     public double getFiringDamage() {
-        return cacheDamage().firingDamage();
+        return cacheDamage().firingDamage;
     }
 
     public double getPhysicalDamage() {
-        return cacheDamage().physicalDamage();
+        return cacheDamage().physicalDamage;
     }
 
     private FiringPhysicalDamage cacheDamage() {

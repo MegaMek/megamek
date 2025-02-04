@@ -23,7 +23,6 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -63,13 +62,8 @@ public class BasicPathRanker extends PathRanker {
     protected int blackIce = -1;
 
     public BasicPathRanker(Princess owningPrincess) {
-        this(owningPrincess, owningPrincess.getPrecognition().getPathEnumerator());
-    }
-
-    public BasicPathRanker(Princess owningPrincess, PathEnumerator pathEnumerator) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
-        this.pathEnumerator = pathEnumerator;
         logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
@@ -102,9 +96,9 @@ public class BasicPathRanker extends PathRanker {
                 && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
-    double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange,
+    double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange,
             boolean useLOSRange) {
-        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
+        return FireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
     }
 
     boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
@@ -173,7 +167,7 @@ public class BasicPathRanker extends PathRanker {
 
         if (isInMyLoS(enemy, leftBounds, rightBounds)) {
             returnResponse.addToMyEstimatedDamage(
-                    getMaxDamageAtRange(getFireControl(path.getEntity()),
+                    getMaxDamageAtRange(
                             path.getEntity(),
                             range,
                             useExtremeRange,
@@ -182,7 +176,7 @@ public class BasicPathRanker extends PathRanker {
 
         // in general if an enemy can end its position in range, it can hit me
         returnResponse.addToEstimatedEnemyDamage(
-                getMaxDamageAtRange(getFireControl(enemy),
+                getMaxDamageAtRange(
                         enemy,
                         range,
                         useExtremeRange,
@@ -551,11 +545,11 @@ public class BasicPathRanker extends PathRanker {
             // however, just because we're ignoring them doesn't mean they won't shoot at
             // us.
             if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
-                if (damageEstimate.firingDamage() < eval.getMyEstimatedDamage()) {
-                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedDamage());
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
                 }
-                if (damageEstimate.physicalDamage() < eval.getMyEstimatedPhysicalDamage()) {
-                    damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedPhysicalDamage());
+                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
                 }
             }
 
@@ -585,7 +579,7 @@ public class BasicPathRanker extends PathRanker {
         // is enabled, set maximum physical damage for this path to zero.
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
                 && path.getEntity().getCrew().isClanPilot()) {
-            damageEstimate = damageEstimate.withPhysicalDamage(0);
+            damageEstimate.physicalDamage = 0;
         }
 
         // I can kick a different target than I shoot, so add physical to
@@ -766,8 +760,8 @@ public class BasicPathRanker extends PathRanker {
             FiringPlan myFiringPlan = getFireControl(path.getEntity()).determineBestFiringPlan(guess);
 
             double myDamagePotential = myFiringPlan.getUtility();
-            if (myDamagePotential > damageStructure.firingDamage()) {
-                damageStructure = damageStructure.withFiringDamage(myDamagePotential);
+            if (myDamagePotential > damageStructure.firingDamage) {
+                damageStructure.firingDamage = myDamagePotential;
             }
 
             if (path.getEntity() instanceof Mek) {
@@ -778,8 +772,8 @@ public class BasicPathRanker extends PathRanker {
                         true);
                 double expectedKickDamage = myKick.getExpectedDamageOnHit() *
                         myKick.getProbabilityToHit();
-                if (expectedKickDamage > damageStructure.physicalDamage()) {
-                    damageStructure = damageStructure.withPhysicalDamage(expectedKickDamage);
+                if (expectedKickDamage > damageStructure.physicalDamage) {
+                    damageStructure.physicalDamage = expectedKickDamage;
                 }
             }
         }

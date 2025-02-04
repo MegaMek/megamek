@@ -214,9 +214,7 @@ public class ConsiderationPane extends JPanel {
         return bundle.getString(key);
     }
 
-    /**
-     * @noinspection ALL
-     */
+
     private void $$$loadLabelText$$$(JLabel component, String text) {
         StringBuffer result = new StringBuffer();
         boolean haveMnemonic = false;
@@ -241,9 +239,7 @@ public class ConsiderationPane extends JPanel {
         }
     }
 
-    /**
-     * @noinspection ALL
-     */
+
     public JComponent $$$getRootComponent$$$() {
         return considerationPane;
     }

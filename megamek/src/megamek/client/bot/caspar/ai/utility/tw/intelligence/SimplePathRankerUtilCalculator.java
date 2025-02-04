@@ -55,7 +55,7 @@ public class SimplePathRankerUtilCalculator implements PathRankerUtilCalculator 
             EntityEvaluationResponse eval = evaluateEnemy(enemy, path, pathCopy, extremeRange, losRange);
 
             if (!owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
-                damageEstimate = updateDamageEstimate(damageEstimate, eval);
+                updateDamageEstimate(damageEstimate, eval);
             }
 
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
@@ -66,11 +66,10 @@ public class SimplePathRankerUtilCalculator implements PathRankerUtilCalculator 
         damageEstimate = calcDamageToStrategicTargets(pathCopy, game, owner.getFireControlState(), damageEstimate);
 
         if (shouldDisablePhysicalDamage(path)) {
-            damageEstimate = damageEstimate.withPhysicalDamage(0);
+            damageEstimate.physicalDamage = 0;
         }
 
-        return new FiringPhysicalDamage().withTakenDamage(expectedDamageTaken).withFiringDamage(damageEstimate.firingDamage())
-            .withPhysicalDamage(damageEstimate.physicalDamage());
+        return new FiringPhysicalDamage(damageEstimate.firingDamage, damageEstimate.physicalDamage, expectedDamageTaken);
     }
 
     private boolean shouldSkipEnemy(Entity enemy) {
@@ -86,14 +85,13 @@ public class SimplePathRankerUtilCalculator implements PathRankerUtilCalculator 
         }
     }
 
-    private FiringPhysicalDamage updateDamageEstimate(FiringPhysicalDamage damageEstimate, EntityEvaluationResponse eval) {
-        if (damageEstimate.firingDamage() < eval.getMyEstimatedDamage()) {
-            damageEstimate = damageEstimate.withFiringDamage(eval.getMyEstimatedDamage());
+    private void updateDamageEstimate(FiringPhysicalDamage damageEstimate, EntityEvaluationResponse eval) {
+        if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+            damageEstimate.firingDamage = eval.getMyEstimatedDamage();
         }
-        if (damageEstimate.physicalDamage() < eval.getMyEstimatedPhysicalDamage()) {
-            damageEstimate = damageEstimate.withPhysicalDamage(eval.getMyEstimatedPhysicalDamage());
+        if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+            damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
         }
-        return damageEstimate;
     }
 
     private double calculateFriendlyArtilleryDamage(MovePath path) {

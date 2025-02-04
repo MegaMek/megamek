@@ -379,7 +379,7 @@ public abstract class PathRanker implements IPathRanker {
      * @param path
      * @return
      */
-    protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
+    public double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
 
         List<TargetRoll> pilotingRolls = getPSRList(path);

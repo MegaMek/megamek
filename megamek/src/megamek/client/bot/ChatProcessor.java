@@ -423,7 +423,7 @@ public class ChatProcessor {
             }
 
             String hex = arguments[0];
-            if (!StringUtil.isPositiveInteger(hex) && (hex.length() % 2 == 1)) {
+            if (!StringUtil.isPositiveInteger(hex) || (hex.length() % 2 == 1)) {
                 msg = "Invalid hex number: " + hex;
                 logger.warn(msg + "\n" + chatEvent.getMessage());
                 princess.sendChat(msg);

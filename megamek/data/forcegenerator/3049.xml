@@ -3569,7 +3569,7 @@
                 <roles>urban</roles>
                 <availability>TC:5-</availability>
             </model>
-            <model name="(Laser)">
+            <model name='(Laser)'>
                 <availability>TC:5+</availability>
             </model>
             <model name='(MG)'>
@@ -3589,7 +3589,7 @@
                 <roles>urban</roles>
                 <availability>TC:5-</availability>
             </model>
-            <model name="(Laser)">
+            <model name='(Laser)'>
                 <availability>TC:5+</availability>
             </model>
             <model name='(MG)'>

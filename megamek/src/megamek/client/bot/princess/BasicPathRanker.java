@@ -942,7 +942,7 @@ public class BasicPathRanker extends PathRanker {
     }
 
     private Set<Integer> getHazardTerrainIds(Hex hex) {
-        var hazards = hex.getTerrainTypesSet();
+        var hazards = new HashSet<Integer>(hex.getTerrainTypesSet());
         // Black Ice can appear if the conditions are favorable
         if (blackIce > 0) {
             hazards.retainAll(HAZARDS_WITH_BLACK_ICE);

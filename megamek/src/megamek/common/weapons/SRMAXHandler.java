@@ -27,6 +27,8 @@ import megamek.server.totalwarfare.TWGameManager;
 
 import java.io.Serial;
 
+import static megamek.common.weapons.DamageType.ACID;
+
 /**
  * @author Sebastian Brocks
  */
@@ -38,7 +40,7 @@ public class SRMAXHandler extends SRMHandler {
         super(t, w, g, m);
         sSalvoType = " acid-head missile(s) ";
         nSalvoBonus = -2;
-        damageType = DamageType.ACID;
-        generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
+        damageType = ACID;
+        generalDamageType = HitData.DAMAGE_AX;
     }
 }

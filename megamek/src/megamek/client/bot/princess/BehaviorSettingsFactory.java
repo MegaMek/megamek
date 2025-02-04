@@ -99,6 +99,9 @@ public class BehaviorSettingsFactory {
         if (!behaviorMap.containsKey(RUTHLESS_BEHAVIOR.getDescription())) {
             addBehavior(RUTHLESS_BEHAVIOR);
         }
+        if (!behaviorMap.containsKey(PIRATE_BEHAVIOR.getDescription())) {
+            addBehavior(PIRATE_BEHAVIOR);
+        }
     }
 
     /**
@@ -457,7 +460,7 @@ public class BehaviorSettingsFactory {
      * Strategic Targets: None
      */
     // Used by MekHQ
-    public final BehaviorSettings PIRATE_BEHAVIOR = buildRuthlessBehavior();
+    public final BehaviorSettings PIRATE_BEHAVIOR = buildPirateBehavior();
     public static final String PIRATE_BEHAVIOR_DESCRIPTION = "PIRATE";
 
     private BehaviorSettings buildPirateBehavior() {

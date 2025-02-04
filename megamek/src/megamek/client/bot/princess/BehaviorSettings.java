@@ -188,7 +188,7 @@ public class BehaviorSettings implements Serializable {
     }
 
     /**
-     * @return TRUE if I am a bloody pirate.
+     * @return TRUE if I am a bloody pirate. Ignores the dishonored enemies list and just attacks.
      */
      public boolean iAmAPirate() {
         return iAmAPirate;

@@ -340,16 +340,19 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Messages.getString("BotConfigDialog.fallShameToolTip"),
                 Messages.getString("BotConfigDialog.fallShameSliderTitle")));
 
+        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(buildSlider(antiCrowdingSlidebar, Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
+                Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
+                Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
+                Messages.getString("BotConfigDialog.antiCrowdingTitle")));
+            panContent.add(Box.createVerticalStrut(7));
 
-        panContent.add(buildSlider(antiCrowdingSlidebar, Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
-            Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
-            Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
-            Messages.getString("BotConfigDialog.antiCrowdingTitle")));
-
-        panContent.add(buildSlider(favorHigherTMMSlidebar, Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
-            Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
-            Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
-            Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
+            panContent.add(buildSlider(favorHigherTMMSlidebar, Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
+                Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
+                Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
+                Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
+            panContent.add(Box.createVerticalStrut(7));
+        }
 
         iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
         iAmAPirateCheck.addActionListener(this);

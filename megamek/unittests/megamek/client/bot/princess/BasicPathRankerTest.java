@@ -519,7 +519,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -539,7 +539,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -560,7 +560,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0)
                 + " - " + LOG_INT.format(1) + "})]");
@@ -590,7 +590,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50)
                 + " * {" + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -613,7 +613,7 @@ class BasicPathRankerTest {
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
-                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -647,7 +647,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -671,7 +671,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -700,7 +700,7 @@ class BasicPathRankerTest {
                 + " = " + LOG_DECIMAL.format(2) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - " + "herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -720,7 +720,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(22) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -743,7 +743,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(10) + " = "
                 + LOG_DECIMAL.format(10) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -761,7 +761,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(20) + " = "
                 + LOG_DECIMAL.format(20) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -776,7 +776,7 @@ class BasicPathRankerTest {
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
-                + "] - herdingMod [0 no friends] + movementMod [0.0] - facingMod ["
+                + "] - herdingMod [0 no friends] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -796,7 +796,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -813,7 +813,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -832,7 +832,7 @@ class BasicPathRankerTest {
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12)
                 + " * " + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -857,7 +857,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(1) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -877,7 +877,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(2) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -895,7 +895,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
                 + LOG_INT.format(0) + ", " + "" + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(3) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -918,7 +918,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);

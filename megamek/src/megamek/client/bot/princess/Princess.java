@@ -177,6 +177,7 @@ public class Princess extends BotClient {
     private boolean allowCoverEnhancedTargeting;
     private EnemyTracker enemyTracker;
     private CoverageValidator coverageValidator;
+    private SwarmCenterManager swarmCenterManager;
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -363,6 +364,9 @@ public class Princess extends BotClient {
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
         setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
+        if (behaviorSettings.iAmAPirate() && honorUtil instanceof HonorUtil honorUtilCast) {
+            honorUtilCast.setIAmAPirate(behaviorSettings.iAmAPirate());
+        }
         if (getFallBack()) {
             return;
         }
@@ -399,8 +403,6 @@ public class Princess extends BotClient {
                 entity.hasAbility(OptionsConstants.GUNNERY_MULTI_TASKER) ||
                 entity.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return fireControls.get(FireControlType.MultiTarget);
-        } else if (behaviorSettings.isExperimental()) {
-            return fireControls.get(FireControlType.Utility);
         }
 
         return fireControls.get(FireControlType.Basic);
@@ -2093,6 +2095,7 @@ public class Princess extends BotClient {
             }
             return path;
         } catch (Exception ignored) {
+            logger.error(ignored, "Error while calculating movement");
             return null;
         }
     }
@@ -2593,7 +2596,8 @@ public class Princess extends BotClient {
             initialize();
             checkMorale();
             unitBehaviorTracker.clear();
-
+            this.swarmContext.assignClusters(getFriendEntities());
+            this.enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
@@ -2661,12 +2665,18 @@ public class Princess extends BotClient {
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
-
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
             unitBehaviorTracker = new UnitBehavior();
             boardClusterTracker = new BoardClusterTracker();
+
+            // Set up heat mapping
+            initFriendlyHeatMap();
+            initEnemyHeatMaps();
+            initExperimentalFeatures();
+
+
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
             while (buildings.hasMoreElements()) {
@@ -2685,10 +2695,6 @@ public class Princess extends BotClient {
                 }
             }
 
-            // Set up heat mapping
-            initEnemyHeatMaps();
-            initFriendlyHeatMap();
-            initExperimentalFeatures();
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
@@ -2702,10 +2708,10 @@ public class Princess extends BotClient {
     private void initExperimentalFeatures() {
         this.enemyTracker = new EnemyTracker(this);
         this.coverageValidator = new CoverageValidator(this);
-        this.swarmContext = new SwarmContext(this);
+        this.swarmContext = new SwarmContext();
+        this.swarmCenterManager = new SwarmCenterManager(this);
         int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
         this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
-
     }
 
     /**
@@ -2722,9 +2728,6 @@ public class Princess extends BotClient {
 
         MultiTargetFireControl multiTargetFireControl = new MultiTargetFireControl(this);
         fireControls.put(FireControlType.MultiTarget, multiTargetFireControl);
-
-        UtilityFireControl utilityFireControl = new UtilityFireControl(this);
-        fireControls.put(FireControlType.Utility, utilityFireControl);
     }
 
     /**
@@ -2983,22 +2986,20 @@ public class Princess extends BotClient {
     private void updateExperimentalFeatures() {
         if (getBehaviorSettings().isExperimental()) {
             updateSwarmContext();
-            updateEnemyTracker();
-        }
-    }
-
-    private void updateEnemyTracker() {
-        if (enemyTracker != null) {
-            enemyTracker.updateEnemyPositions();
         }
     }
 
     private void updateSwarmContext() {
-        if (swarmContext == null) {
+        if (swarmContext == null || enemyTracker == null || coverageValidator == null || swarmCenterManager == null) {
             return;
         }
+
+        swarmContext.setCurrentCenter(swarmCenterManager.calculateCenter());
+        enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
+        swarmContext.assignClusters(getFriendEntities());
         swarmContext.resetEnemyTargets();
         swarmContext.resetPositionDensity();
+
         for (var entity : getEntitiesOwned()) {
             if (entity.isDeployed()) {
                 swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
@@ -3461,7 +3462,7 @@ public class Princess extends BotClient {
      * @return
      */
     public Coords getFriendlyHotSpot (Coords testPosition) {
-        return friendlyHeatMap.getHotSpot(testPosition, true);
+        return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
     }
 
     /**
@@ -3559,5 +3560,9 @@ public class Princess extends BotClient {
 
     public CoverageValidator getCoverageValidator() {
         return coverageValidator;
+    }
+
+    public SwarmCenterManager getSwarmCenterManager() {
+        return swarmCenterManager;
     }
 }

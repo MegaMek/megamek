@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
@@ -57,6 +58,22 @@ public class Coords implements Serializable {
     public Coords(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    /** Constructs a new coordinate pair at Coords(x, y). Note: Coords are immutable. */
+    public Coords(Coords other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    public static Coords average(List<Coords> positions) {
+        int x = 0;
+        int y = 0;
+        for (Coords pos : positions) {
+            x += pos.x;
+            y += pos.y;
+        }
+        return new Coords(x / positions.size(), y / positions.size());
     }
 
     /**
@@ -563,5 +580,24 @@ public class Coords implements Serializable {
      */
     public boolean between(Coords s, Coords e) {
         return (s.distance(e) == s.distance(this) + this.distance(e));
+    }
+
+    /**
+     * @return CubeCoords representation of this Coords
+     */
+    public CubeCoords toCube() {
+        int offset = -1;
+        int q = x;
+        int r = y - (int) ((x + offset * (x & 1)) / 2.0);
+        int s = -q - r;
+        return new CubeCoords(q, r, s);
+    }
+
+    public Coords subtract(Coords centroid) {
+        return new Coords(x - centroid.x, y - centroid.y);
+    }
+
+    public Coords add(Coords centroid) {
+        return new Coords(x + centroid.x, y + centroid.y);
     }
 }

@@ -567,11 +567,9 @@ public class BasicPathRanker extends PathRanker {
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
         var formula = new StringBuilder(512);
-        formula.append("Calculation: {");
-        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, formula);
-
+        var movementModFormula = new StringBuilder(64);
         // Movement is good, it gives defense and extends a player power in the game.
-        double movementMod = calculateMovementMod(pathCopy, game, enemies, formula);
+        double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
 
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
@@ -579,7 +577,8 @@ public class BasicPathRanker extends PathRanker {
         if (facingMod <= -10000) {
             return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
         }
-
+        var crowdingToleranceFormula = new StringBuilder(64);
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, crowdingToleranceFormula);
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
         double offBoardMod = calculateOffBoardMod(pathCopy);
@@ -626,17 +625,21 @@ public class BasicPathRanker extends PathRanker {
         } else {
             formula.append("0 no friends");
         }
-        formula
-            .append("] + movementMod [")
-            .append(movementMod)
-            .append("] - facingMod [")
+        formula.append("]");
+        if (movementMod != 0.0) {
+            formula.append(" + ").append(movementModFormula);
+        }
+        if (crowdingTolerance != 0.0) {
+            formula.append(" - ").append(crowdingToleranceFormula);
+        }
+
+        formula.append(" - facingMod [")
             .append(LOG_DECIMAL.format(facingMod))
             .append(" = max(0, 50 * {")
             .append(getFacingDiff(movingUnit, game, pathCopy))
             .append(" - 1})]");
 
-        logger.trace("utility [{} = - fallMod({}) - offBoard*utility({}) - selfPreservation({}) - facingMod({}) + bravery({}) + movement({}) - aggression({}) - herding({})]",
-            utility, fallMod, utility * offBoardMod, selfPreservationMod, facingMod, braveryMod, movementMod, aggressionMod, herdingMod);
+        logger.trace("{}", formula);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
@@ -665,7 +668,7 @@ public class BasicPathRanker extends PathRanker {
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             var tmmValue = tmm.getValue();
             var movementFactor = tmmValue * (selfPreservation + favorHigherTMM);
-            formula.append("+ movementMod [").append(movementFactor).append(" = ").append(tmmValue).append(" * (")
+            formula.append("movementMod [").append(movementFactor).append(" = ").append(tmmValue).append(" * (")
                 .append(selfPreservation).append(" + ").append(favorHigherTMM).append(")]");
             logger.trace("movement mod [{} = {} * ({} + {})]", movementFactor, tmmValue, selfPreservation, favorHigherTMM);
             return movementFactor;
@@ -675,7 +678,7 @@ public class BasicPathRanker extends PathRanker {
 
     protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, StringBuilder formula) {
         var self = movePath.getEntity();
-        formula.append(" - crowdingTolerance ");
+        formula.append(" crowdingTolerance ");
         if (!(self instanceof Mek) && !(self instanceof Tank)) {
             formula.append("[0 not a Mek or Tank]}");
             return 0.0;

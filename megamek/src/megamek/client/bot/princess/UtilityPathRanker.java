@@ -26,16 +26,27 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import static megamek.client.bot.princess.EnemyTracker.hitChance;
 
 public class UtilityPathRanker extends BasicPathRanker {
-    private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
+    private final static MMLogger logger = MMLogger.create(UtilityPathRanker.class);
+
+    private static final double COVERAGE_RATIO = 0.6;
+
 
     public UtilityPathRanker(Princess owningPrincess) {
         super(owningPrincess);
     }
 
 
+    @Override
+    protected @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
+        return getOwner().getSwarmContext().getCurrentCenter();
+    }
     /**
      * Returns the best path of a list of ranked paths.
      *
@@ -145,10 +156,7 @@ public class UtilityPathRanker extends BasicPathRanker {
             damageEstimate.physicalDamage = 0;
         }
 
-        // I can kick a different target than I shoot, so add physical to
-        // total damage after I've looked at all enemies
-
-        double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
+//        double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
 
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
         // the only critters not subject to aggression and herding mods are
@@ -159,20 +167,14 @@ public class UtilityPathRanker extends BasicPathRanker {
             calculateAggressionMod(movingUnit, pathCopy, maxRange, game) : 1.0;
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
-        var formula = new StringBuilder(512);
-        formula.append("Calculation: {");
 
         double fallMod = calculateFallMod(successProbability);
 
-        double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy, formula) : 1.0;
-
-        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, maxRange, formula);
-
         // Movement is good, it gives defense and extends a player power in the game.
-        double movementMod = calculateMovementMod(pathCopy, game, enemies, formula);
+        double movementMod = calculateMovementMod(pathCopy, game, enemies);
 
         // Try to face the enemy.
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, formula);
+        double facingMod = calculateFacingMod(movingUnit, pathCopy);
 
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
@@ -182,32 +184,31 @@ public class UtilityPathRanker extends BasicPathRanker {
         // Include in utility calculation:
         double strategicMod = calculateStrategicGoalMod(pathCopy);
         double formationMod = calculateFormationModifier(path);
-        double threatResponseMod = calculateThreatResponse(path, friendsCoords);
-        var fallBackMod = executeThreatResponse(path, movingUnit, (Entity) findClosestEnemy(movingUnit, path.getFinalCoords(), game));
+        double exposurePenalty = calculateExposurePenalty(movingUnit, pathCopy, enemies);
 
-        double utility = fallMod;
-        utility *= braveryMod;
+        double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.get(0)) ? 0.5 : 1.0;
+        double utility = 1.0;
+        utility *= fallMod;
         utility *= formationMod;
-        utility *= threatResponseMod;
-        utility *= fallBackMod;
         utility *= aggressionMod;
-        utility *= herdingMod;
         utility *= movementMod;
-        utility *= crowdingTolerance;
         utility *= facingMod;
         utility *= selfPreservationMod;
         utility *= strategicMod;
-        double modificationFactor = 1.0 - (1.0 / 12.0);
+        utility *= exposurePenalty;
+        utility *= fallBack;
+
+        double modificationFactor = 1.0 - (1.0 / 13.0);
         double makeUpValue = (1 - utility) * modificationFactor;
         double finalScore = utility + (makeUpValue * utility);
 
         utility = clamp01(finalScore);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy,
-            "utility [" + utility + "= fallMod(" + fallMod + ") * braveryMod(" + braveryMod+ ") * formationMod("+ formationMod +
-                ") * threatResponseMod(" + threatResponseMod + ") * fallBackMod("+ fallBackMod +") * aggressionMod(" + aggressionMod +
-                ") * herdingMod(" + herdingMod +") * movementMod("+ movementMod +") * crowdingTolerance("+crowdingTolerance+
-                ") * facingMod("+ facingMod +") * selfPreservationMod("+selfPreservationMod+") * strategicMod("+strategicMod+")]"
+            "utility [" + utility + "= fallMod(" + fallMod + ") * formationMod("+ formationMod +
+                ") * movementMod("+ movementMod + ") * aggressionMod(" + aggressionMod + ") * fallBack(" + fallBack +
+                ") * facingMod("+ facingMod +") * selfPreservationMod("+selfPreservationMod+") * strategicMod("+strategicMod+
+                ") * exposurePenalty("+exposurePenalty+")]"
         );
 
         logger.info(rankedPath.getReason());
@@ -223,21 +224,33 @@ public class UtilityPathRanker extends BasicPathRanker {
         }
     }
 
+    /**
+     * When playing Double Blind, we want to move towards strategic goals.
+     * @param path The path to evaluate
+     * @return score from 1 to 0
+     */
     private double calculateStrategicGoalMod(MovePath path) {
-        if (UnitBehavior.BehaviorType.Engaged.equals(getOwner().getUnitBehaviorTracker().getBehaviorType(path.getEntity(), getOwner()))) {
+        if (!getOwner().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return 1.0;
         }
 
+        // Existing strategic goal calculation
         double maxGoalUtility = 0.0;
-        double halfQuadrantDiagonal = getOwner().getSwarmContext().getQuadrantDiagonal() / 2.0;
         for (Coords goal : getOwner().getSwarmContext().getStrategicGoalsOnCoordsQuadrant(path.getFinalCoords())) {
             double distance = path.getFinalCoords().distance(goal);
-            double utility = (halfQuadrantDiagonal / (distance + 1.0)); // Higher utility closer to the goal
+            double utility = (10.0 / (distance + 1.0));
             maxGoalUtility = Math.max(maxGoalUtility, utility);
         }
         return clamp01(maxGoalUtility);
     }
 
+    /**
+     * Calculates bravery modifier of the unit
+     * @param successProbability The probability of success of the move
+     * @param damageEstimate The estimated damage that the unit can do
+     * @param expectedDamageTaken The expected damage that the unit will take
+     * @return The bravery modifier score
+     */
     @Override
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
@@ -245,86 +258,18 @@ public class UtilityPathRanker extends BasicPathRanker {
         return clamp01(1.1 - braveryFactor + (successProbability * (maximumDamageDone / Math.max(1.0, expectedDamageTaken))) * braveryFactor);
     }
 
-    @Override
-    protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
+    /**
+     * Calculates the TMM score of the unit
+     * @param pathCopy The path to evaluate
+     * @param game The game
+     * @param enemies The list of enemies
+     * @return The TMM score
+     */
+    protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
         var tmmFactor = getOwner().getBehaviorSettings().getFavorHigherTMM() / 10.0;
         var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
         var tmmValue = MathUtility.clamp(tmm.getValue() / 8.0, 0.0, 1.0);
-        return clamp01((1.1 - tmmFactor) + (tmmValue / 8.0) * tmmFactor);
-    }
-
-    protected double calculateHerdingMod(Coords friendsCoords, MovePath path, StringBuilder formula) {
-        if (friendsCoords == null) {
-            formula.append(" herdingMod [1.0 no friends]");
-            logger.trace(" herdingMod [1.0 no friends]");
-            return 1.0;
-        }
-        double herdingFactor = getOwner().getBehaviorSettings().getHerdMentalityIndex() / 10.0;
-        double herdingDistance = 5 + (herdingFactor * 10);
-        double finalDistance = getOwner().getFriendEntities().stream()
-            .map(friend -> friend.getPosition().distance(path.getFinalCoords()))
-            .filter(distance -> distance <= herdingDistance)
-            .mapToDouble(distance -> distance)
-            .average().orElse(0.0);
-
-        double startingDistance = getOwner().getFriendEntities().stream()
-            .map(friend -> friend.getPosition().distance(path.getEntity().getPosition()))
-            .filter(distance -> distance <= herdingDistance)
-            .mapToDouble(distance -> distance)
-            .average().orElse(0.0);
-
-        double desiredDistance = 3 + (1 - herdingFactor) * 3; // Desired distance between 3 and 6
-        double deltaDistance = finalDistance - startingDistance;
-
-        double distanceFactor = 1.0 - Math.min(Math.max((deltaDistance - desiredDistance) / desiredDistance, 0.0), 1.0);
-
-        Coords finalPos = path.getFinalCoords();
-
-        double densityMod = clamp01(1 - getOwner().getSwarmContext().getPositionDensity(finalPos, 3) / 4.0);
-        double herdingMod = (1.1 - herdingFactor) + (herdingFactor * distanceFactor) * densityMod;
-
-        formula.append(" * DensityMod(").append(densityMod).append(")");
-
-
-        formula.append(" herdingMod [").append(LOG_DECIMAL.format(herdingMod)).append(" = (1.0 - ")
-            .append(LOG_DECIMAL.format(herdingFactor)).append(") + (")
-            .append(LOG_DECIMAL.format(herdingFactor)).append(" * ")
-            .append(LOG_DECIMAL.format(distanceFactor)).append(")]");
-        logger.trace("herding mod [{} = (1.0 - {}) + ({} * {})]", herdingMod, herdingFactor, herdingFactor, distanceFactor);
-        return clamp01(herdingMod);
-    }
-
-    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange, StringBuilder formula) {
-        var self = movePath.getEntity();
-
-        if (!(self instanceof Mek) && !(self instanceof Tank)) {
-
-            return 1.0;
-        }
-        int antiCrowdingIndex = getOwner().getBehaviorSettings().getAntiCrowding();
-        double factor = getOwner().getBehaviorSettings().getAntiCrowding() / 10.0;
-
-        final double herdingDistance = Math.ceil(factor * 13) + 3;
-        final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
-
-        var crowdingFriends = getOwner().getFriendEntities().stream()
-            .filter(e -> e instanceof Mek || e instanceof Tank)
-            .filter(Entity::isDeployed)
-            .map(Entity::getPosition)
-            .filter(Objects::nonNull)
-            .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
-            .count();
-
-        var crowdingEnemies = enemies.stream()
-            .filter(e -> e instanceof Mek || e instanceof Tank)
-            .filter(Entity::isDeployed)
-            .map(Entity::getPosition)
-            .filter(Objects::nonNull)
-            .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
-            .count();
-
-        double crowdFactor = (crowdingFriends + crowdingEnemies) / (13.0 - antiCrowdingIndex);
-        return clamp01((1.1 - factor) + (crowdFactor * factor));
+        return tmmValue * tmmFactor;
     }
 
     protected double calculateFallMod(double successProbability) {
@@ -332,117 +277,75 @@ public class UtilityPathRanker extends BasicPathRanker {
         return clamp01((1 - fallShameFactor) + successProbability * fallShameFactor);
     }
 
-    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path, StringBuilder formula) {
-        int facingDiff = getFacingDiff(movingUnit, game, path);
-        double facingMod = (3 - facingDiff)/ 3.0;
-        formula.append(" - facingMod [").append(facingMod).append(" = (3 - ").append(facingDiff).append(")/ 3.0]");
-        logger.trace("facing mod [{} = (3 - {})/ 3.0]", facingMod, facingDiff);
+    private int getFacingDiff(MovePath path) {
+        List<Entity> threats = getOwner().getEnemyTracker().getPriorityTargets(path.getFinalCoords(), 5);
+        if (threats.isEmpty()) {
+            return 1;
+        }
+        Coords position = Coords.average(threats.stream().map(Entity::getPosition).toList());
+        // Calculate optimal facing direction
+        int bestFacing = calculateOptimalFacing(path, position);
+
+        int currentFacing = path.getFinalFacing();
+        int facingDiff = Math.abs(currentFacing - bestFacing);
+        facingDiff = Math.min(facingDiff, 6 - facingDiff); // Account for hex directions
+
+        // Heavy penalty for exposing rear
+        if (isRearExposed(path.getFinalCoords(), currentFacing, threats)) {
+            facingDiff = 6;
+        }
+
+        return facingDiff;
+    }
+
+    private boolean isRearExposed(Coords position, int facing, List<Entity> threats) {
+        int rearArc = (facing + 3) % 6;
+        return threats.stream()
+                .anyMatch(e -> position.direction(e.getPosition()) == rearArc);
+    }
+
+    private int calculateOptimalFacing(MovePath movePath, Coords position) {
+        return movePath.getFinalCoords().direction(position);
+    }
+
+    protected double calculateFacingMod(Entity movingUnit, final MovePath path) {
+        int facingDiff = getFacingDiff(path);
+        var facingMod = 1 / Math.pow(10, facingDiff);
+
+        logger.trace("facing mod [{} = 1 / (10 ^ {})", facingMod, facingDiff);
         return clamp01(facingMod);
     }
 
+    private double calculateFormationModifier(MovePath path) {
+        SwarmContext.SwarmCluster cluster = getOwner().getSwarmContext().getClusterFor(path.getEntity());
 
-    private static final double COVERAGE_RATIO = 0.6;
+        double lineMod = calculateLineFormationMod(path, cluster);
+        double coverageMod = calculateCoverageModifier(path);
+        double spacingMod = calculateOptimalSpacingMod(path, cluster);
 
-    public double calculateFormationModifier(MovePath path) {
-        Coords newPosition = path.getFinalCoords();
-        var allies = getOwner().getFriendEntities();
-
-        // 1. Cover fire range check
-        boolean inCoverRange = allies.stream()
-            .anyMatch(a -> a.getPosition().distance(newPosition) <=
-                a.getMaxWeaponRange() * COVERAGE_RATIO);
-
-        // 2. Border avoidance
-        double borderDistance = calculateBorderDistance(newPosition);
-
-        // 3. Flanking positions
-        double flankingBonus = calculateFlankingModifier(path);
-
-        return (inCoverRange ? 1.2 : 0.8) *
-            (1.0 + borderDistance * 0.1) *
-            (1.0 + flankingBonus);
+        return clamp01(lineMod * coverageMod * spacingMod);
     }
 
-    private double calculateFlankingModifier(MovePath path) {
-        double maxBonus = 0.0;
+    private double calculateCoverageModifier(MovePath path) {
+        long coveringAllies = getOwner().getFriendEntities().stream()
+                .filter(a -> a.getPosition().distance(path.getFinalCoords()) <=
+                        a.getMaxWeaponRange() * COVERAGE_RATIO)
+                .count();
 
-        for (Entity enemy : getOwner().getEnemyTracker().getPriorityTargets(path.getFinalCoords())) {
-            Coords enemyPos = enemy.getPosition();
-            Coords idealFlank = calculateIdealFlankPosition(enemyPos, path.getFinalCoords());
-
-            double distanceToIdeal = path.getFinalCoords().distance(idealFlank);
-            double angleBonus = calculateAngleBonus(enemyPos, path.getFinalCoords());
-
-            maxBonus = Math.max(maxBonus, (1.0 / (distanceToIdeal + 1)) * angleBonus);
-        }
-
-        return 1.0 + (maxBonus * 0.5);
+        return 0.8 + (coveringAllies * 0.1);
     }
 
-    private double calculateAngleBonus(Coords enemyPos, Coords finalCoords) {
-        int angle = enemyPos.direction(finalCoords);
-        return switch (angle) {
-            case 0, 3 -> 1.0;
-            case 1, 2, 4, 5 -> 0.5;
-            default -> 0.0;
-        };
-    }
+    private double calculateOptimalSpacingMod(MovePath path, SwarmContext.SwarmCluster cluster) {
+        double avgDistance = cluster.members.stream()
+                .filter(m -> m != path.getEntity())
+                .mapToDouble(m -> m.getPosition().distance(path.getFinalCoords()))
+                .average()
+                .orElse(0);
 
-
-    private double calculateThreatResponse(MovePath path, Coords allyCenter) {
-        var swarmCenter = allyCenter == null ? path.getFinalCoords() : allyCenter;
-        List<Entity> priorityTargets = getOwner().getEnemyTracker().getPriorityTargets(swarmCenter);
-        double threatModifier = 1.0;
-        var self = path.getEntity();
-        for (Entity threat : priorityTargets) {
-            double distanceToThreat = path.getFinalCoords().distance(threat.getPosition());
-            threatModifier *= switch (self.getRole()) {
-                case MISSILE_BOAT, SNIPER, SCOUT -> 1.0 + (distanceToThreat * 0.05);
-                case JUGGERNAUT, BRAWLER -> 1.0 + (1.0 / (distanceToThreat + 1));
-                default -> 1.0;
-            };
-        }
-
-        return threatModifier;
-    }
-
-
-    private double calculateBorderDistance(Coords position) {
-        // Calculate distance to nearest map edge
-        var mapHeight = getOwner().getBoard().getHeight();
-        var mapWidth = getOwner().getBoard().getWidth();
-        return Math.min(
-            position.getX(),
-            Math.min(
-                position.getY(),
-                Math.min(
-                    mapWidth - position.getX(),
-                    mapHeight - position.getY()
-                )
-            )
-        );
-    }
-
-    // todo account for damaged locations and face those away from enemy.
-    private int getFacingDiff(Entity movingUnit, Game game, final MovePath path) {
-        Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game, false);
-        Coords toFace = closest == null ? game.getBoard().getCenter() : closest.getPosition();
-        int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
-        int currentFacing = path.getFinalFacing();
-        int facingDiff;
-
-        if (currentFacing == desiredFacing) {
-            facingDiff = 0;
-        } else if ((currentFacing == ((desiredFacing + 1) % 6))
-            || (currentFacing == ((desiredFacing + 5) % 6))) {
-            facingDiff = 1;
-        } else if ((currentFacing == ((desiredFacing + 2) % 6))
-            || (currentFacing == ((desiredFacing + 4) % 6))) {
-            facingDiff = 2;
-        } else {
-            facingDiff = 3;
-        }
-        return facingDiff;
+        // Ideal spacing between 3-5 hexes
+        if (avgDistance < 3) return 0.8;
+        if (avgDistance > 5) return 0.9;
+        return 1.0;
     }
 
     protected double calculateAggressionMod(Entity movingUnit, MovePath path, double maxRange, Game game) {
@@ -486,45 +389,132 @@ public class UtilityPathRanker extends BasicPathRanker {
         return clamp01(1.0);
     }
 
-
-    private double executeThreatResponse(MovePath movePath, Entity unit, Entity threat) {
-        if (shouldFallBack(movePath, unit, threat)) {
-            // Find fallback position that maintains coverage
-//            MovePath fallbackPath = findCoveredFallback(unit);
-
-            // Update swarm context
-//            getOwner().getSwarmContext().markFallbackPosition(fallbackPath.getFinalCoords());
-
-            // Execute path
-//            return performPathPostProcessing(fallbackPath);
-            var selfPreservationFactor = getOwner().getBehaviorSettings().getSelfPreservationIndex() / 10.0;
-            return 1.4 - selfPreservationFactor;
+    private double calculateExposurePenalty(Entity unit, MovePath movePath, List<Entity> enemies) {
+        if (unit.getRole() == UnitRole.AMBUSHER || unit.getRole() == UnitRole.SCOUT || unit.getRole() == UnitRole.MISSILE_BOAT || unit.getRole() == UnitRole.SNIPER) { // SCOUT/FLANKER
+            long threateningEnemies = enemies.stream()
+                    .filter(Entity::isDone) // Only consider enemies that have moved
+                    .filter(e -> hitChance(getOwner().getGame(), e, unit) > 0.33)
+                    .count();
+            long somewhatThreateningEnemies = enemies.stream()
+                    .filter(e -> !e.isDone()) // Only consider enemies that have moved
+                    .filter(e -> hitChance(getOwner().getGame(), e, unit) > 0.5)
+                    .count();
+            if (getOwner().getCoverageValidator().validateUnitCoverage(unit, movePath.getFinalCoords())) {
+                double exposureScore = 1 + (threateningEnemies * 0.3 + somewhatThreateningEnemies * 0.15);
+                return 1.0 / exposureScore;
+            } else {
+                double exposureScore = 1 + (threateningEnemies * 0.5 + somewhatThreateningEnemies * 0.25);
+                return 1.0 / exposureScore;
+            }
         }
         return 1.0;
     }
 
     private boolean shouldFallBack(MovePath movePath, Entity unit, Entity threat) {
-        return !getOwner().getCoverageValidator().isPositionCovered(unit) && !getOwner().getCoverageValidator().validateUnitCoverage(unit, movePath.getFinalCoords());
+        return getOwner().getCoverageValidator().isPositionExposed(unit)
+                && !getOwner().getCoverageValidator().validateUnitCoverage(unit, movePath.getFinalCoords())
+                && getOwner().getCoverageValidator().isPositionExposed(threat);
     }
 
-//    private MovePath findCoveredFallback(Entity unit) {
-//        return getPossiblePaths(unit).stream()
-//            .filter(path -> formationManager.isPositionCovered(path.getFinalCoords()))
-//            .max(Comparator.comparingDouble(path ->
-//                path.getFinalCoords().distance(getNearestThreat().getPosition())
-//            ))
-//            .orElseGet(() -> new MovePath(game, unit));
-//    }
-
-    private Coords calculateIdealFlankPosition(Coords enemyPos, Coords currentPos) {
-        // Calculate position 90 degrees from swarm center
-        int direction = currentPos.direction(enemyPos);
-        return enemyPos.translated((direction + 4) % 6, 5); // Hex grid translation
+    private Coords calculatePrimaryThreatPosition(SwarmContext.SwarmCluster cluster) {
+        List<Entity> threats = getOwner().getEnemyTracker().getPriorityTargets(cluster.centroid, 5);
+        var positions = threats.stream()
+                .map(Entity::getPosition)
+                .toList();
+        return Coords.average(positions);
     }
 
     static double clamp01(double value) {
         return Math.min(1.0, Math.max(0.0, value));
     }
 
+    private double calculateLineFormationMod(MovePath path, SwarmContext.SwarmCluster cluster) {
+        // 1. Get combat parameters
+        Entity unit = path.getEntity();
+        Coords currentPos = unit.getPosition();
+        Coords newPos = path.getFinalCoords();
+        double maxRange = unit.getMaxWeaponRange();
+        double optimalRange = maxRange * 0.6;
 
+        // 2. Calculate threat parameters
+        Coords primaryThreat = calculatePrimaryThreatPosition(cluster);
+        int threatDirection = cluster.centroid.direction(primaryThreat);
+
+        // 3. Determine ideal firing line position
+        Coords idealPosition = calculateLinePosition(
+                cluster.centroid,
+                threatDirection,
+                cluster.members.indexOf(unit),
+                optimalRange
+        );
+
+        // 4. Calculate position quality components
+        double rangeQuality = calculateRangeQuality(newPos, primaryThreat, optimalRange, maxRange);
+        double formationQuality = calculateFormationQuality(newPos, idealPosition);
+        double forwardBias = calculateForwardBias(currentPos, newPos, primaryThreat);
+        double borderPenalty = calculateBorderPenalty(newPos);
+
+        // 5. Combine modifiers with weights
+        double positionQuality = (rangeQuality * 0.5) +
+                (formationQuality * 0.3) +
+                (forwardBias * 0.2) -
+                borderPenalty;
+
+        return clamp01(positionQuality);
+    }
+
+    private Coords calculateLinePosition(Coords centroid, int threatDirection, int unitIndex, double optimalRange) {
+        // 1. Calculate base position in threat direction
+        Coords basePosition = centroid.translated(threatDirection, (int) Math.round(optimalRange));
+
+        // 2. Calculate lateral offset (staggered line formation)
+        int lateralDirection = (unitIndex % 2 == 0) ?
+                (threatDirection + 2) % 6 : // Right flank
+                (threatDirection + 4) % 6;  // Left flank
+
+        // 3. Apply lateral offset based on unit index
+        int lateralDistance = unitIndex + 2;
+        return basePosition.translated(lateralDirection, lateralDistance);
+    }
+
+    private double calculateRangeQuality(Coords newPos, Coords threatPos, double optimalRange, double maxRange) {
+        double distance = newPos.distance(threatPos);
+
+        // Quadratic penalty outside optimal range
+        if (distance > optimalRange) {
+            double overRange = distance - optimalRange;
+            return Math.max(0, 1 - Math.pow(overRange / (maxRange - optimalRange), 2));
+        }
+        // Bonus for being in optimal range
+        return 1 + (1 - (distance / optimalRange));
+    }
+
+    private double calculateFormationQuality(Coords newPos, Coords idealPos) {
+        double distance = newPos.distance(idealPos);
+        return 1.0 / (1.0 + distance * 0.5); // Gentle falloff
+    }
+
+    private double calculateForwardBias(Coords currentPos, Coords newPos, Coords threatPos) {
+        double currentDistance = currentPos.distance(threatPos);
+        double newDistance = newPos.distance(threatPos);
+
+        // Reward moving closer to threat, penalize retreating
+        return clamp01(1.5 - (newDistance / currentDistance));
+    }
+
+    private double calculateBorderPenalty(Coords position) {
+        int boardWidth = getOwner().getBoard().getWidth();
+        int boardHeight = getOwner().getBoard().getHeight();
+        int borderDistance = Math.min(
+                position.getX(),
+                Math.min(
+                        position.getY(),
+                        Math.min(
+                                boardWidth - position.getX(),
+                                boardHeight - position.getY()
+                        )
+                )
+        );
+        return borderDistance < 5 ? (5 - borderDistance) * 0.2 : 0;
+    }
 }

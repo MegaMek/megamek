@@ -310,6 +310,7 @@ task assembleDist(overwrite: true) {
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+    jvmArgs = mmJvmOptions
 }
 
 jacocoTestReport {
@@ -397,6 +398,16 @@ task unitFileMigrationTool(type: JavaExec, dependsOn: jar) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.UnitFileMigrationTool'
+}
+
+task testAi(type: JavaExec, dependsOn: jar) {
+    description = 'Test AI'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.QuickGameRunner'
+    args(project.hasProperty("testAiArgs") ? project.property("testAiArgs").split(' ') : "")
+
+    jvmArgs = mmJvmOptions
 }
 
 tasks.withType(Checkstyle) {

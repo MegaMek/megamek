@@ -204,8 +204,7 @@ public class FireControl {
     public enum FireControlType {
         Basic,
         Infantry,
-        MultiTarget,
-        Utility
+        MultiTarget
     }
 
     protected final Princess owner;

@@ -56,7 +56,7 @@ public class HonorUtil implements IHonorUtil {
 
     @Override
     public boolean isEnemyDishonored(int playerId) {
-        return dishonoredEnemies.contains(playerId) || iAmAPirate();
+        return dishonoredEnemies.contains(playerId) || iAmAPirate(); // pirates have no honor to give in order to give
     }
 
     @Override
@@ -72,5 +72,9 @@ public class HonorUtil implements IHonorUtil {
     @Override
     public boolean iAmAPirate() {
         return iAmAPirate;
+    }
+
+    public void setIAmAPirate(boolean iAmAPirate) {
+        this.iAmAPirate = iAmAPirate;
     }
 }

@@ -2449,6 +2449,7 @@
 		<chassis name='Flea' unitType='Mek'>
 			<availability>FWL:4-,Periphery.MW:2,Periphery.ME:2,PIR:4-</availability>
 			<model name='FLE-15'>
+                <roles>anti_infantry</roles>
 				<availability>FWL:8,Periphery.MW:6,Periphery.ME:6,PIR:8</availability>
 			</model>
 			<model name='FLE-4'>
@@ -3513,7 +3514,7 @@
 			<availability>IS:2+,FS.RR:5+,FS.DMM:5+,FWL:1+,DC:7+,CS:1,Periphery:3+,Periphery.DD:5+,Periphery.OS:5+,HL:1+</availability>
             <model name='JR7-A'>
                 <roles>raider</roles>
-                <availability>PIR:4,Periphery.DD:2+,Periphery.Deep:2+</availability>
+                <availability>Periphery.DD:2+,Periphery.Deep:2+,PIR:4</availability>
             </model>
             <model name='JR7-D'>
 				<roles>raider</roles>
@@ -3900,7 +3901,7 @@
 			</model>
             <model name='LCT-3V'>
                 <roles>recon</roles>
-                <availability>IS:4,LA:5,CC:3,MERC:3,CS:6</availability>
+                <availability>IS:4,LA:5,CC:3,MERC:3,CS:6,PIR:4</availability>
             </model>
 		</chassis>
 		<chassis name='Loki (Hellbringer)' unitType='Mek' omni='Clan'>
@@ -4931,7 +4932,7 @@
             </model>
 			<model name='PNT-9R'>
 				<roles>fire_support</roles>
-				<availability>IS:8,DC.ALAG:2,CS:0,TC:5,OA:6,MOC:4,Periphery.DD:4,HL:4+,Periphery.Deep:2+</availability>
+				<availability>IS:8,DC.ALAG:2,CS:0,TC:5,OA:6,MOC:4,Periphery.DD:4,HL:4+,Periphery.Deep:2+,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>
@@ -5985,6 +5986,13 @@
 				<availability>CGS:2</availability>
 			</model>
 		</chassis>
+        <chassis name='SuburbanMech' unitType='Mek'>
+            <availability>FS:3-,FS.CMM:5-</availability>
+            <model name='UM-R90'>
+                <roles>urban</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sulla' unitType='AeroSpaceFighter' omni='Clan'>
 			<availability>CSA:6</availability>
 			<model name='A'>

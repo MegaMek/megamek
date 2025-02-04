@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3019-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -16,7 +13,7 @@
 		</faction>
 		<faction key='BH' />
 		<faction key='CC'>
-            <pctSL>0,0,0,4</pctSL>
+            <pctSL>0,0,0,2</pctSL>
 			<salvage pct='5'>FWL:4,FS:10,TC:1</salvage>
 		</faction>
 		<faction key='NC'>
@@ -2618,6 +2615,7 @@
 		<chassis name='Flea' unitType='Mek'>
 			<availability>FWL:3-,MERC.WD:4,Periphery.MW:2,Periphery.ME:2,PIR:3-</availability>
 			<model name='FLE-15'>
+                <roles>anti_infantry</roles>
 				<availability>FWL:8,MERC.WD:3,Periphery.MW:6,Periphery.ME:6,PIR:8</availability>
 			</model>
 			<model name='FLE-4'>
@@ -4111,7 +4109,7 @@
 			</model>
 			<model name='LCT-3V'>
 				<roles>recon</roles>
-				<availability>IS:4,FS:5,LA:5,MERC:3,CS:6</availability>
+				<availability>IS:4,FS:5,LA:5,MERC:3,CS:6,PIR:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Loki (Hellbringer)' unitType='Mek' omni='Clan'>
@@ -5169,7 +5167,7 @@
             </model>
 			<model name='PNT-9R'>
 				<roles>fire_support</roles>
-				<availability>IS:8,DC.ALAG:2,CS:0,TC:5,OA:6,MOC:4,Periphery.DD:4,HL:4+,Periphery.Deep:2+</availability>
+				<availability>IS:8,DC.ALAG:2,CS:0,TC:5,OA:6,MOC:4,Periphery.DD:4,HL:4+,Periphery.Deep:2+,PIR:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Partisan Heavy Tank' unitType='Tank'>
@@ -6281,6 +6279,13 @@
                 <availability>LA:3:3023,FS:3:3023</availability>
             </model>
 		</chassis>
+        <chassis name='SuburbanMech' unitType='Mek'>
+            <availability>FS:3-,FS.CMM:5-</availability>
+            <model name='UM-R90'>
+                <roles>urban</roles>
+                <availability>FS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Sulla' unitType='AeroSpaceFighter' omni='Clan'>
 			<availability>CSA:8,CLAN:6,BAN:5,CGB:8</availability>
 			<model name='A'>
@@ -7115,6 +7120,12 @@
 				<availability>DC:2</availability>
 			</model>
 		</chassis>
+        <chassis name='Wolfhound' unitType='Mek'>
+            <availability>LA:1+,MERC.KH:2+</availability>
+            <model name='WLF-1'>
+                <availability>LA:8,MERC.KH:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Wolverine' unitType='Mek'>
 			<availability>HL:3,IS:7,Periphery.Deep:5,FS:8,Periphery:5,CS:5-,FWL:10,NIOPS:5-,MH:4</availability>
 			<model name='WVR-6D'>

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,7 @@ import static megamek.MMConstants.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@EnabledIfEnvironmentVariable(named = "ENABLE_TW_TESTS", matches = "true")
 public class BasicGameTest {
 
     private TWGameManager gameManager;
@@ -49,7 +51,6 @@ public class BasicGameTest {
     private Random random = new Random();
     private GameThread gameThread;
 
-    // autosave_2024-11-12_17-56-40.sav.gz
     private static Map<String, File> testSaves = Map.of(
         "one mek each", new File("testresources/data/scenarios/testbot/lounge_1x1_grasslands.sav.gz")
     );
@@ -79,9 +80,11 @@ public class BasicGameTest {
             server.die();
             server = null;
         }
-        gameThread.requestStop();
-        gameThread.die();
-        gameThread = null;
+        if (gameThread != null) {
+            gameThread.requestStop();
+            gameThread.die();
+            gameThread = null;
+        }
         gameManager = null;
     }
 

@@ -175,14 +175,6 @@ class GameThread extends Thread implements CloseClientListener {
         if (!server.loadGame(saveFile)) {
             throw new RuntimeException("Failed to load game");
         }
-        var gameOptions = server.getGame().getOptions();
-
-
-        Vector<IBasicOption> changed = new Vector<>();
-        var option = gameOptions.getOption(OptionsConstants.BASE_RNG_TYPE);
-        option.setValue(MMRandom.R_SEEDED);
-        changed.add(option);
-        sendAction(() -> watcher.sendGameOptions("", changed));
     }
 
     @Override

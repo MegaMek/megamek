@@ -7850,4 +7850,27 @@ public class Compute {
         logger.debug(msg);
         return newPoint;
     }
+
+    public static boolean canPointBlankShot(Entity attacker, Entity target) {
+        if (!attacker.isHidden() || !attacker.isEnemyOf(target)) {
+            // PBS attacker has to be hidden and an enemy of the PBS target
+            return false;
+        }
+        
+        if (!target.isAerospace()){
+            // The simpler path: mainly worried about distance
+            if (attacker.getPosition().distance(target.getPosition()) != 1) {
+                // PBS attacker has to be exactly 1 hex away from target
+                return false;
+            }
+        } else {
+            // More complex; may need to worry about a flight path, and Infantry ranges
+            if (attacker.isInfantry() && attacker.getMaxWeaponRange(true) <= 1) {
+                // Infantry attacker needs long-range weapons that can hit an aircraft
+                return false;
+            }
+        }
+
+        return true;
+    }
 } // End public class Compute

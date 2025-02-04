@@ -41,6 +41,16 @@ public class ParametersTableModel extends AbstractTableModel {
         }
     }
 
+    public void setParameters(Map<String, Object> parameters) {
+        hashRows.clear();
+        rowValues.clear();
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            hashRows.put(entry.getKey(), entry.getValue());
+            rowValues.add(new Row(entry.getKey(), entry.getValue()));
+        }
+        fireTableDataChanged();
+    }
+
     public void addRow(String parameterName, Object value) {
         if (hashRows.containsKey(parameterName)) {
             logger.formattedErrorDialog("Parameter already exists",

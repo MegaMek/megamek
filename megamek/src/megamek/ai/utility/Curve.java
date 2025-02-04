@@ -36,6 +36,8 @@ import java.awt.*;
 public interface Curve {
     double evaluate(double x);
 
+    Curve copy();
+
     default void drawAxes(Graphics g, int width, int height) {
         // Draw axis labels (0 to 1 with 0.05 increments)
         int padding = 10; // Padding for text from the axis lines

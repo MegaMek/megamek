@@ -67,7 +67,7 @@
             </constraints>
             <properties>
               <labelFor value="7d71a"/>
-              <text resource-bundle="megamek/common/options/messages" key="aiEditor.type"/>
+              <text resource-bundle="megamek/common/options/messages" key="aiEditor.considerationType"/>
             </properties>
           </component>
           <component id="cec06" class="javax.swing.JButton" binding="hideButton" default-binding="true">
@@ -101,35 +101,15 @@
           <text resource-bundle="megamek/common/options/messages" key="aiEditor.parameters"/>
         </properties>
       </component>
-      <component id="85386" class="javax.swing.JButton" binding="newParameterButton" default-binding="true">
+      <component id="e2722" class="javax.swing.JTable" binding="parametersTable" custom-create="true">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text resource-bundle="megamek/common/options/messages" key="aiEditor.new.parameter"/>
+          <fillsViewportHeight value="false"/>
+          <preferredScrollableViewportSize width="100" height="50"/>
         </properties>
       </component>
-      <scrollpane id="c908">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="e2722" class="javax.swing.JTable" binding="parametersTable" custom-create="true">
-            <constraints/>
-            <properties>
-              <fillsViewportHeight value="false"/>
-              <preferredScrollableViewportSize width="100" height="75"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
-      <hspacer id="88711">
-        <constraints>
-          <grid row="2" column="3" row-span="1" col-span="3" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
     </children>
   </grid>
 </form>

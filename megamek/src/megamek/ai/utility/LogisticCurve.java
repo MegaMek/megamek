@@ -44,6 +44,11 @@ public class LogisticCurve implements Curve {
         this.c = c;
     }
 
+    @Override
+    public LogisticCurve copy() {
+        return new LogisticCurve(m, b, k, c);
+    }
+
     public double evaluate(double x) {
         return clamp01(m * (1 / (1 + Math.exp(-k * (x - b)))) + c);
     }
@@ -86,7 +91,7 @@ public class LogisticCurve implements Curve {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", LogisticCurve.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", LogisticCurve.class.getSimpleName() + " [", "]")
             .add("m=" + m)
             .add("b=" + b)
             .add("k=" + k)

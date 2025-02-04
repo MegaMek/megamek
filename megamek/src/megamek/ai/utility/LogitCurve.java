@@ -43,6 +43,11 @@ public class LogitCurve implements Curve {
         this.c = c;
     }
 
+    @Override
+    public LogitCurve copy() {
+        return new LogitCurve(m, b, k, c);
+    }
+
     public double evaluate(double x) {
         if (x <= c) {
            x = c + 0.0001;
@@ -91,7 +96,7 @@ public class LogitCurve implements Curve {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", LogitCurve.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", LogitCurve.class.getSimpleName() + " [", "]")
             .add("m=" + m)
             .add("b=" + b)
             .add("k=" + k)

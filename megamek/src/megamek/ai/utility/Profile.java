@@ -36,15 +36,15 @@ public class Profile <A,B> implements NamedObject {
     private final String name;
     @JsonProperty("description")
     private String description;
-    @JsonProperty("decisionScoreEvaluator")
-    private final List<DecisionScoreEvaluator<A, B>> decisionScoreEvaluator;
+    @JsonProperty("decisions")
+    private final List<Decision<A, B>> decisions;
 
     @JsonCreator
-    public Profile(int id, String name, String description, List<DecisionScoreEvaluator<A, B>> decisionScoreEvaluator) {
+    public Profile(int id, String name, String description, List<Decision<A, B>> decisions) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.decisionScoreEvaluator = decisionScoreEvaluator;
+        this.decisions = decisions;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Profile <A,B> implements NamedObject {
         return id;
     }
 
-    public List<DecisionScoreEvaluator<A, B>> getDecisionScoreEvaluator() {
-        return decisionScoreEvaluator;
+    public List<Decision<A, B>> getDecisions() {
+        return decisions;
     }
 }

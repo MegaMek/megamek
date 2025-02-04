@@ -35,4 +35,5 @@ public class MyUnitArmor extends TWConsideration {
         var currentUnit = context.getCurrentUnit().orElseThrow();
         return clamp01(currentUnit.getArmorRemainingPercent());
     }
+
 }

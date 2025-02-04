@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="megamek.client.ui.swing.ai.editor.DecisionScoreEvaluatorPane">
-  <grid id="27dc6" binding="decisionScoreEvaluatorPane" layout-manager="GridBagLayout">
+  <grid id="27dc6" binding="decisionScoreEvaluatorPane" layout-manager="GridLayoutManager" row-count="9" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="800" height="1051"/>
+      <xy x="20" y="20" width="804" height="1051"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -12,7 +13,6 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
@@ -21,7 +21,6 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
@@ -30,14 +29,12 @@
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
       </component>
       <scrollpane id="e934c">
         <constraints>
           <grid row="7" column="0" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties>
           <horizontalScrollBarPolicy value="31"/>
@@ -47,7 +44,8 @@
         </properties>
         <border type="none"/>
         <children>
-          <grid id="5bca6" binding="considerationsPane" layout-manager="GridBagLayout">
+          <grid id="5bca6" binding="considerationsPane" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties>
               <maximumSize width="800" height="2147483647"/>
@@ -61,7 +59,6 @@
       <component id="6d5ac" class="javax.swing.JLabel">
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <labelFor value="e934c"/>
@@ -71,7 +68,6 @@
       <component id="85e7" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <labelFor value="c202"/>
@@ -81,7 +77,6 @@
       <component id="51bfb" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <labelFor value="3546d"/>
@@ -91,7 +86,6 @@
       <component id="6cab0" class="javax.swing.JLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <labelFor value="21c8d"/>

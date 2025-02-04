@@ -96,7 +96,7 @@ public class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject{
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Decision.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Decision.class.getSimpleName() + " [", "]")
             .add("action=" + action)
             .add("weight=" + weight)
             .add("score=" + score)

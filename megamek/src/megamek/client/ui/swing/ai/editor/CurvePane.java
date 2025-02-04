@@ -31,12 +31,19 @@ public class CurvePane extends JPanel {
     private JSpinner cParamSpinner;
     private JPanel curveGraph;
     private JPanel basePane;
-    private HoverStateModel hoverStateModel;
+
+    private final AtomicReference<Curve> selectedCurve = new AtomicReference<>();
 
     public CurvePane() {
         $$$setupUI$$$();
         setLayout(new BorderLayout());
         add(basePane, BorderLayout.CENTER);
+    }
+
+    public void setCurve(Curve curve) {
+        curveTypeComboBox.setSelectedItem(DefaultCurve.fromCurve(curve));
+        selectedCurve.set(curve.copy());
+        updateCurveDataUI();
     }
 
     public void setHoverStateModel(HoverStateModel model) {
@@ -190,39 +197,12 @@ public class CurvePane extends JPanel {
 
     private void createUIComponents() {
         curveTypeComboBox = new JComboBox<>(DefaultCurve.values());
-        AtomicReference<Curve> selectedCurve = new AtomicReference<>();
+
         curveTypeComboBox.addActionListener(e1 -> {
             if (curveTypeComboBox.getSelectedItem() != null) {
-                var curve = ((DefaultCurve) curveTypeComboBox.getSelectedItem()).getCurve();
-                selectedCurve.set(curve);
-                curveGraph.repaint();
-
-                if (curve instanceof LinearCurve) {
-                    bParamSpinner.setValue(((LinearCurve) curve).getB());
-                    mParamSpinner.setValue(((LinearCurve) curve).getM());
-                    kParamSpinner.setEnabled(false);
-                    cParamSpinner.setEnabled(false);
-                } else if (curve instanceof ParabolicCurve) {
-                    bParamSpinner.setValue(((ParabolicCurve) curve).getB());
-                    mParamSpinner.setValue(((ParabolicCurve) curve).getM());
-                    kParamSpinner.setEnabled(true);
-                    kParamSpinner.setValue(((ParabolicCurve) curve).getK());
-                    cParamSpinner.setEnabled(false);
-                } else if (curve instanceof LogitCurve) {
-                    bParamSpinner.setValue(((LogitCurve) curve).getB());
-                    mParamSpinner.setValue(((LogitCurve) curve).getM());
-                    kParamSpinner.setEnabled(true);
-                    kParamSpinner.setValue(((LogitCurve) curve).getK());
-                    cParamSpinner.setEnabled(true);
-                    cParamSpinner.setValue(((LogitCurve) curve).getC());
-                } else if (curve instanceof LogisticCurve) {
-                    bParamSpinner.setValue(((LogisticCurve) curve).getB());
-                    mParamSpinner.setValue(((LogisticCurve) curve).getM());
-                    kParamSpinner.setEnabled(true);
-                    kParamSpinner.setValue(((LogisticCurve) curve).getK());
-                    cParamSpinner.setEnabled(true);
-                    cParamSpinner.setValue(((LogisticCurve) curve).getC());
-                }
+                var curve = ((DefaultCurve) curveTypeComboBox.getSelectedItem()).getCurve().copy();
+                selectedCurve.set(curve.copy());
+                updateCurveDataUI();
             }
         });
 
@@ -258,5 +238,36 @@ public class CurvePane extends JPanel {
             }
             curveGraph.repaint();
         });
+    }
+
+    private void updateCurveDataUI() {
+        curveGraph.repaint();
+        var curve = selectedCurve.get();
+        if (curve instanceof LinearCurve) {
+            bParamSpinner.setValue(((LinearCurve) curve).getB());
+            mParamSpinner.setValue(((LinearCurve) curve).getM());
+            kParamSpinner.setEnabled(false);
+            cParamSpinner.setEnabled(false);
+        } else if (curve instanceof ParabolicCurve) {
+            bParamSpinner.setValue(((ParabolicCurve) curve).getB());
+            mParamSpinner.setValue(((ParabolicCurve) curve).getM());
+            kParamSpinner.setEnabled(true);
+            kParamSpinner.setValue(((ParabolicCurve) curve).getK());
+            cParamSpinner.setEnabled(false);
+        } else if (curve instanceof LogitCurve) {
+            bParamSpinner.setValue(((LogitCurve) curve).getB());
+            mParamSpinner.setValue(((LogitCurve) curve).getM());
+            kParamSpinner.setEnabled(true);
+            kParamSpinner.setValue(((LogitCurve) curve).getK());
+            cParamSpinner.setEnabled(true);
+            cParamSpinner.setValue(((LogitCurve) curve).getC());
+        } else if (curve instanceof LogisticCurve) {
+            bParamSpinner.setValue(((LogisticCurve) curve).getB());
+            mParamSpinner.setValue(((LogisticCurve) curve).getM());
+            kParamSpinner.setEnabled(true);
+            kParamSpinner.setValue(((LogisticCurve) curve).getK());
+            cParamSpinner.setEnabled(true);
+            cParamSpinner.setValue(((LogisticCurve) curve).getC());
+        }
     }
 }

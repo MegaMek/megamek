@@ -39,4 +39,9 @@ public abstract class TWConsideration extends Consideration<Entity, Entity> {
     public TWConsideration(String name, Curve curve, Map<String, Object> parameters) {
         super(name, curve, parameters);
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

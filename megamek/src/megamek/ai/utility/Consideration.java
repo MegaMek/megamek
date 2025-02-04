@@ -118,7 +118,7 @@ public abstract class Consideration<IN_GAME_OBJECT,TARGETABLE>  implements Named
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Consideration.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", Consideration.class.getSimpleName() + " [", "]")
             .add("name='" + name + "'")
             .add("curve=" + curve)
             .add("parameters=" + parameters)

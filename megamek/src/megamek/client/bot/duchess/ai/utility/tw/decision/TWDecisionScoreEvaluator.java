@@ -36,4 +36,9 @@ public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Ent
     public TWDecisionScoreEvaluator(String name, String description, String notes, List<Consideration<Entity, Entity>> considerations) {
         super(name, description, notes, considerations);
     }
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

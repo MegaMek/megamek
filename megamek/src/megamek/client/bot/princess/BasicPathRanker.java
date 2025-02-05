@@ -1326,18 +1326,18 @@ public class BasicPathRanker extends PathRanker {
         // 1/6 chance 2d6 : 7 damage
         // Total: 2.958333...
         // Let's use 3
+        final double AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL = 3.0;
+        dmg = (AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
+            / (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
+
+        // After all that math let's make sure we do at least 1 damage
+        // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
+        dmg = Math.max(dmg, 2.0/3.0);
 
         // Factor in potential to suffer fatal damage.
         // Dependent on expected average damage / exposed remaining armor *
         // UNIT_DESTRUCTION_FACTOR
         int exposedArmor;
-        dmg = 3.0;
-        dmg *= HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit);
-        dmg = (int) (Math.floor(dmg / HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit)));
-
-        // After all that math let's make sure we do at least 1 damage
-        // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
-        dmg = Math.max(dmg, 2.0/3.0);
 
         if (step.isProne() || (hex.containsTerrain(Terrains.WATER) && hex.terrainLevel(Terrains.WATER) > 1)) {
             exposedArmor = movingUnit.getTotalArmor();

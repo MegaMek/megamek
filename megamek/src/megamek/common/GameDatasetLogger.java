@@ -26,7 +26,6 @@ import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
-import java.util.Enumeration;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -65,10 +64,6 @@ public class GameDatasetLogger {
 
     protected void initialize() {
         append("# Log file opened " + LocalDateTime.now());
-    }
-
-    public File getLogFile() {
-        return logfile;
     }
 
     public void append(PlanetaryConditions planetaryConditions, boolean withHeader) {
@@ -352,6 +347,9 @@ public class GameDatasetLogger {
     }
 
     private GameDatasetLogger append(String toLog) {
+        if (!PreferenceManager.getClientPreferences().dataLoggingEnabled()) {
+            return this;
+        }
         if (writer == null) {
             return this;
         }

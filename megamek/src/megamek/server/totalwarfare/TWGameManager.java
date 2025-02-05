@@ -31746,6 +31746,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
+        datasetLogger.append(game, true);
     }
 
     /**

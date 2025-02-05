@@ -100,7 +100,7 @@ public class InfantryPathRanker extends BasicPathRanker {
         // If an infantry unit is not in range to do damage,
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
         // that's not going to end well.
-        var aggressionMod = calculateAggressionMod(movingUnit, pathCopy, maximumDamageDone, game);
+        var aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
 
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).

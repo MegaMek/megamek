@@ -60,6 +60,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
+import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.AreaEffectHelper;
@@ -4687,6 +4688,7 @@ public class TWGameManager extends AbstractGameManager {
             // otherwise, magma crust won't have a chance to break
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, mainPhaseReport, this);
             ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
+            ServerHelper.checkEnteringHazardousLiquid(nextHex, nextElevation, entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -8904,6 +8906,7 @@ public class TWGameManager extends AbstractGameManager {
 
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, displacementReport, this);
         ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
+        ServerHelper.checkEnteringHazardousLiquid(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
         if (violation == null) {
@@ -31180,6 +31183,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Airborne ground units aren't effected by dangerous terrain, unless it's an erupton
+     * @param en
+     * @param eruption
+     * @return true if the unit should be damaged by dangerous grund (magma, hazardous liquid pool)
+     */
+    private boolean isUnitEffectedByHazardousGround(Entity en, boolean eruption) {
+        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
+                || (en.getMovementMode() == EntityMovementMode.HOVER)
+                || ((en.getMovementMode() == EntityMovementMode.WIGE)
+                    && (en.getOriginalWalkMP() > 0) && !eruption))
+            && !en.isImmobile()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * do damage from magma
      *
      * @param en       the affected <code>Entity</code>
@@ -31188,13 +31208,10 @@ public class TWGameManager extends AbstractGameManager {
      *                 of an eruption
      */
     public void doMagmaDamage(Entity en, boolean eruption) {
-        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
-                || (en.getMovementMode() == EntityMovementMode.HOVER)
-                || ((en.getMovementMode() == EntityMovementMode.WIGE)
-                        && (en.getOriginalWalkMP() > 0) && !eruption))
-                && !en.isImmobile()) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
             return;
         }
+
         Report r;
         boolean isMek = en instanceof Mek;
         if (isMek) {
@@ -31215,6 +31232,26 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             addReport(destroyEntity(en, "fell into magma", false, false));
+        }
+        addNewLines();
+    }
+
+    /**
+     * do damage from hazardous liquids
+     *
+     * @param en       the affected <code>Entity</code>
+     * @param eruption <code>boolean</code> indicating whether or not this is
+     *                 because
+     *                 of an eruption (geyser)
+     * @param depth    How deep is the hazardous liquid?
+     */
+    public void doHazardousLiquidDamage(Entity en, boolean eruption, int depth) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
+            return;
+        }
+
+        for (Report report : HazardousLiquidPoolUtil.getHazardousLiquidDamage(en, eruption, depth, this)) {
+            addReport(report);
         }
         addNewLines();
     }

@@ -87,6 +87,8 @@ super 8 "sand:*" "" "saxarba/base/base_sand_8.png"
 super 9 "sand:*" "" "saxarba/base/base_sand_9.png"
 super 10 "sand:*" "" "saxarba/base/base_sand_10.png"
 
+include "StandardIncludes/StandardHazardousLiquid.tileinc"
+
 #MARS THEME WATER
 super * "water:0" "mars" "saxarba/theme_mars/water_anim_mars_0.gif"
 

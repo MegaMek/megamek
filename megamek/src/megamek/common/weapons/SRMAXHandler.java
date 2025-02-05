@@ -44,3 +44,4 @@ public class SRMAXHandler extends SRMHandler {
         generalDamageType = HitData.DAMAGE_AX;
     }
 }
+//Rules for AX Warheads are found in Tactical Operations: Advanced Units and Equipment (6th Printing), pg. 179

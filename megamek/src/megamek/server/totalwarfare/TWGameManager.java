@@ -18930,7 +18930,7 @@ public class TWGameManager extends AbstractGameManager {
                         && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
-                                || (hit.getGeneralDamageType() == HitData.DAMAGE_AX)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_AX) //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);

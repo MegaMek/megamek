@@ -23,6 +23,7 @@ import megamek.client.bot.princess.PathRanker;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -346,6 +347,16 @@ public class SharedUtility {
                         .getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
             // check for sideslip
             if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -599,6 +610,11 @@ public class SharedUtility {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaCrustJumpLanding"));
             } else if ((level == 2) && (lastElevation == 0)) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
+            }
+
+            if ((hex.containsTerrain(Terrains.HAZARDOUS_LIQUID)) && (lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
             }
         }
 

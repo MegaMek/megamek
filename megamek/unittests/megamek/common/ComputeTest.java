@@ -230,8 +230,8 @@ class ComputeTest {
         Coords attackerCoords = new Coords(0,0);
         attacker.setPosition(attackerCoords);
         attacker.setHidden(true);
-        Mounted<?> bin1 = attacker.addEquipment(mockAC5AmmoType, Infantry.LOC_FIELD_GUNS);
-        Mounted<?> wpn1 = attacker.addEquipment(mockAC5, Infantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5AmmoType, Infantry.LOC_FIELD_GUNS);
+        attacker.addEquipment(mockAC5, Infantry.LOC_FIELD_GUNS);
 
         target.setOwnerId(player2.getId());
         target.setId(2);

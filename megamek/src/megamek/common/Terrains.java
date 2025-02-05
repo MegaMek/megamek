@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
 
 public class Terrains implements Serializable {
@@ -63,7 +64,6 @@ public class Terrains implements Serializable {
     // unimplemented
     // Bug Storm
     // Extreme Depths
-    // Hazardous Liquid Pools
     // Rail
     // Dirt Roads, Gravel Roads
     // Water Flow
@@ -153,6 +153,8 @@ public class Terrains implements Serializable {
 
     public static final int DEPLOYMENT_ZONE = 57;
 
+    public static final int HAZARDOUS_LIQUID = 58;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -165,7 +167,7 @@ public class Terrains implements Serializable {
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
-            "deployment_zone" };
+            "deployment_zone", "hazardous_liquid" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -397,6 +399,18 @@ public class Terrains implements Serializable {
                 }
             case DEPLOYMENT_ZONE:
                 return "Deployment Zone";
+            case HAZARDOUS_LIQUID:
+                HazardousLiquidPoolType hazardousLiquidPoolType = HazardousLiquidPoolType.getType(level);
+                switch (hazardousLiquidPoolType) {
+                    case WIND_BLOWN:
+                        return "Hazardous Liquid (Wind Blown)";
+                    case FLOWS:
+                        return "Hazardous Liquid (Flows)";
+                    case FLOWS_AND_WIND_BLOWN:
+                        return "Hazardous Liquid (Flows and Wind Blown)";
+                    default:
+                        return "Hazardous Liquid";
+                }
             default:
                 return null;
         }

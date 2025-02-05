@@ -51,7 +51,7 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
     implementation 'org.freemarker:freemarker:2.3.33'
     implementation 'org.commonmark:commonmark:0.22.0'
-    implementation 'com.squareup:gifencoder:0.9.0'
+    implementation 'com.squareup:gifencoder:0.10.1'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 

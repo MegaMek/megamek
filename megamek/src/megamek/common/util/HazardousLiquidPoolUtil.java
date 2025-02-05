@@ -32,6 +32,16 @@ import java.util.Vector;
  */
 public class HazardousLiquidPoolUtil {
 
+    // Average Damage for Hazardous Liquid
+    // 2/6 chance 0 damage
+    // 1/6 chance 1d6/2 : 1.75 damage
+    // 1/6 chance 1d6 : 3.5 damage
+    // 1/6 chance 1d6 + 2 : 5.5 damage
+    // 1/6 chance 2d6 : 7 damage
+    // Total: 2.958333...
+    // Let's use 3
+    public static final double AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL = 3.0;
+
     private enum HazardousLiquidClass {
         CLASS_0(0, 0, 1),
         CLASS_1(1, 0, 2),

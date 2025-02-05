@@ -1318,16 +1318,8 @@ public class BasicPathRanker extends PathRanker {
 
         double hazardValue = 0;
 
-        // Expected Damage for Hazardous Liquid
-        // 2/6 chance 0 damage
-        // 1/6 chance 1d6/2 : 1.75 damage
-        // 1/6 chance 1d6 : 3.5 damage
-        // 1/6 chance 1d6 + 2 : 5.5 damage
-        // 1/6 chance 2d6 : 7 damage
-        // Total: 2.958333...
-        // Let's use 3
-        final double AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL = 3.0;
-        dmg = (AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
+
+        dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
             / (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
 
         // After all that math let's make sure we do at least 1 damage

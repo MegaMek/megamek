@@ -354,8 +354,12 @@ public class FireControl {
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
+        LosEffects los = LosEffects.calculateLOS(game, shooter, target);
+
+        // We want to check the target hex _and_ the intervening hexes for woods, smoke, etc.
         final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
-        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
+        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS) +
+            ((los.thruWoods()) ? los.getLightWoods() + los.getHeavyWoods() + los.getUltraWoods() : 0);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
         }
@@ -363,7 +367,9 @@ public class FireControl {
             toHitData.addModifier(woodsLevel, TH_WOODS);
         }
 
-        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        // final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE) +
+            los.getLightSmoke() + los.getHeavySmoke();
         if (1 <= smokeLevel) {
             // Smoke level doesn't necessarily correspond to the to-hit modifier
             // even levels are light smoke, odd are heavy smoke
@@ -2111,7 +2117,8 @@ public class FireControl {
                         continue;
                     }
                 }
-                if (bestShoot.getProbabilityToHit() > toHitThreshold) {
+                // Attack should have a chance to hit, and expect to do non-zero damage; otherwise skip it
+                if (bestShoot.getProbabilityToHit() > toHitThreshold && bestShoot.getExpectedDamage() > 0.0) {
                     myPlan.add(bestShoot);
                     continue;
                 }
@@ -2837,22 +2844,45 @@ public class FireControl {
 
             final AmmoMounted suggestedAmmo = info.getAmmo();
             final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
-            // if we found preferred ammo but can't apply it to the weapon, log it and
-            // continue.
-            if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                logger.warn(shooter.getDisplayName() + " tried to load "
-                        + currentWeapon.getName() + " with ammo " +
-                        mountedAmmo.getDesc() + " but failed somehow.");
-                continue;
-                // if we didn't find preferred ammo after all, continue
-            } else if (mountedAmmo == null) {
+
+            // if we didn't find preferred ammo after all, continue
+            if (mountedAmmo == null) {
                 continue;
             }
-            final WeaponAttackAction action = info.getAction();
-            action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
-            action.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
-            action.setAmmoCarrier(mountedAmmo.getEntity().getId());
-            info.setAction(action);
+
+            // If the selected ammo would cause the shot to miss, skip loading it.
+            final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
+            cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            cloneWAA.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
+            cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
+            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.CauseMiss",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            // if we found preferred ammo but can't apply it to the weapon, log it and
+            // continue.
+            if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.FailureToLoad",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            // If everything looks okay, replace the old WAA with the updated copy
+            info.setAction(cloneWAA);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                     shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
         }

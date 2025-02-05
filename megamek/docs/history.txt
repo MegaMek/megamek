@@ -1,6 +1,8 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.03-SNAPSHOT
+0.50.04-SNAPSHOT
+
+0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 
 + PR #6335: cleanup duplicate boards
 + PR #6328: Building type enum
@@ -55,6 +57,26 @@ MEGAMEK VERSION HISTORY:
 + PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
 + Fix #3837: illegal stacking in buildings after skid and failed accidental charge
 + Fix #6421: NullPointerException in LobbyMekCellFormatter.java
++ PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
++ Fix #3837: illegal stacking in buildings after skid and failed accidental charge
++ fix #6421: fix npe issue
++ PR #6459: feature: quick and simple hazard check for hex
++ Fix #6451: Bot command display hotkey text and description missing in key bind menu
++ Fix #6464: defaultminimap renamed to default, fixed error when persisting selected theme
++ PR #6462: Convert from StringBuilder to Logger
++ PR #6468: Fix NPE clicking on board with no unit selected
++ PR #6469: Fix: removes a double call for next-unit
++ PR #6470: Fix: minimap summary npe fix
++ PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
++ PR #6474: makes Princess move way more than she otherwise would on no-contact
++ PR #6478: fix: a couple of signs in the wrong place on the scoring equation
++ PR #6477: Fix 5590: princess firing on 13s due to intervening trees, etc
++ PR #6479: fix: removes an argument and early exit from hyperaggression
++ PR #6481: Fix 5590 part 2: stop Princess choosing zero damage attacks completely
++ PR #6488: Fix MML #1705 - update drone remote systems unit availability
++ PR #6487: Update MASH equipment to use size values
++ PR #6485: Fix: fixes html tags showing on tooltips
++ PR #6484: Fix: stop dropShadow from being calculated for force display tree
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

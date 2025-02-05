@@ -19,16 +19,17 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
+import megamek.client.bot.princess.PathRanker;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
-import static java.util.List.of;
 
 public class SharedUtility {
-
+    private final static MMLogger logger = MMLogger.create(SharedUtility.class);
     private static int CRIT_VALUE = 100;
 
     public static String doPSRCheck(MovePath md) {
@@ -935,8 +936,7 @@ public class SharedUtility {
         return retVal;
     }
 
-    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets,
-            @Nullable String chosenDisplayName) {
+    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets, @Nullable String chosenDisplayName) {
         if ((chosenDisplayName == null) || (targets == null)) {
             return null;
         } else {
@@ -944,16 +944,13 @@ public class SharedUtility {
         }
     }
 
-    public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data, StringBuilder msg) {
+    public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data) {
         // Rough guess based on normal pilots
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
         int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue();
         double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
             * (fallHeight + 1);
-        msg.append("\nPredicting expected Leap fall damage:")
-            .append(String.format("\n\tFall height: %d", fallHeight))
-            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%')
-            .append(String.format("\n\tExpected total damage from fall: %.2f", fallDamage * (1 - odds) ));
+        logger.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
         return fallDamage * (1 - odds);
     }
 
@@ -964,30 +961,24 @@ public class SharedUtility {
      * 2. risk of falling; mod is distance leaped.
      * @param movingEntity
      * @param data
-     * @param msg
      * @return
      */
-    public static double predictLeapDamage(Entity movingEntity, TargetRoll data, StringBuilder msg) {
+    public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
         int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
         double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
         int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue() / 2;
         double legDamage = fallHeight * (legMultiplier);
-        msg.append("\nPredicting expected Leap damage:")
-            .append(String.format("\n\tFall height: %d", fallHeight))
-            .append(String.format("\n\tChance of taking damage: %.2f", ((1-odds)*100d))).append('%');
-
+        logger.trace("Predicting Leap damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
         int[] legLocations = {BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM};
 
         // Add required crits; say the effective leg "damage" from a crit is 20 for now.
         legDamage += legMultiplier * CRIT_VALUE;
-        msg.append(
-            String.format("\n\tAdding %d leg critical chances as %d additional damage", legMultiplier, legMultiplier * CRIT_VALUE)
-        );
+        logger.trace("Adding {} leg critical chances as {} additional damage", legMultiplier, legMultiplier * CRIT_VALUE);
 
         // Add additional crits for each leg that would take internal damage
         for (int i=0;i<legMultiplier; i++) {
             if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
-                msg.append("\n\tAdditional critical due to internal structure damage...");
+                logger.trace("Adding additional critical for leg {} due to internal structure damage", i);
                 legDamage += CRIT_VALUE;
             }
         }

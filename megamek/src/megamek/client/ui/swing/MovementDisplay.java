@@ -975,6 +975,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private void updateFleeButton() {
+        if (ce() == null) {
+            return;
+        }
         boolean hasLastStep = (cmd != null) && (cmd.getLastStep() != null);
         boolean fleeStart = !hasLastStep &&
             ce().canFlee(ce().getPosition());
@@ -4665,6 +4668,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     @Override
     public synchronized void actionPerformed(ActionEvent ev) {
         final Entity ce = ce();
+        final String actionCmd = ev.getActionCommand();
+        if (actionCmd.equals(MoveCommand.MOVE_NEXT.getCmd())) {
+            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
+        }
 
         if (ce == null) {
             return;
@@ -4678,11 +4685,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // odd...
             return;
         }
-        final String actionCmd = ev.getActionCommand();
         final IGameOptions opts = clientgui.getClient().getGame().getOptions();
-        if (actionCmd.equals(MoveCommand.MOVE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
-        } else if (actionCmd.equals(
+        if (actionCmd.equals(
                 MoveCommand.MOVE_FORWARD_INI.getCmd())) {
             selectNextPlayer();
         } else if (actionCmd.equals(MoveCommand.MOVE_CANCEL.getCmd())) {

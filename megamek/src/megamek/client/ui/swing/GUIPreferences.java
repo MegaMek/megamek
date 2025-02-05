@@ -288,6 +288,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_SYMBOLS_DISPLAY_MODE = "MinimapSymbolsDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDisplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDisplayNonReportPhase";
+    public static final String MINI_MAP_SHOW_SENSOR_RANGE = "MinimapShowSensorRange";
+    public static final String MINI_MAP_SHOW_FACING_ARROW = "MinimapShowFacingArrow";
+    public static final String MINI_MAP_PAINT_BORDERS = "MinimapPaintBorders";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -681,6 +684,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_ENABLED, true);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, 0);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, 1);
+        store.setDefault(MINI_MAP_SHOW_SENSOR_RANGE, true);
+        store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
+        store.setDefault(MINI_MAP_PAINT_BORDERS, true);
+
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
         store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);
 
@@ -3434,5 +3441,29 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public File[] getMinimapThemes() {
         // List all .theme files inside the minimap themes folder
         return Configuration.minimapThemesDir().listFiles((dir, name) -> name.endsWith(".theme"));
+    }
+
+    public boolean getDrawFacingArrowsOnMiniMap() {
+        return getBoolean(MINI_MAP_SHOW_SENSOR_RANGE);
+    }
+
+    public boolean getDrawSensorRangeOnMiniMap() {
+        return getBoolean(MINI_MAP_SHOW_FACING_ARROW);
+    }
+
+    public void setDrawFacingArrowsOnMiniMap(boolean state) {
+        store.setValue(MINI_MAP_SHOW_SENSOR_RANGE, state);
+    }
+
+    public void setDrawSensorRangeOnMiniMap(boolean state) {
+        store.setValue(MINI_MAP_SHOW_FACING_ARROW, state);
+    }
+
+    public boolean paintBorders() {
+        return getBoolean(MINI_MAP_PAINT_BORDERS);
+    }
+
+    public void setPaintBorders(boolean state) {
+        store.setValue(MINI_MAP_PAINT_BORDERS, state);
     }
 }

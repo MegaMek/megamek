@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.utilities;
 
 import com.squareup.gifencoder.GifEncoder;
@@ -16,8 +29,18 @@ import java.util.concurrent.TimeUnit;
 
 import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
+/**
+ * GifWriter
+ * Utility class to create a gif from a series of images of a game summary.
+ * @author Luana Coppio
+ */
 public class GifWriter {
 
+    /**
+     * Creates a gif from a series of images of a game summary.
+     * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the /logs/gameSummary/minimap folder
+     * @throws IOException if an I/O error occurs
+     */
     public static void createGifFromGameSummary(String gameSummary) throws IOException {
         new GifWriter().run(gameSummary);
     }

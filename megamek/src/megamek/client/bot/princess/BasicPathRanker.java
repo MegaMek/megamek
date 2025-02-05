@@ -1316,9 +1316,6 @@ public class BasicPathRanker extends PathRanker {
             }
         }
 
-        double hazardValue = 0;
-
-
         dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
             / (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
 
@@ -1330,7 +1327,7 @@ public class BasicPathRanker extends PathRanker {
         // Dependent on expected average damage / exposed remaining armor *
         // UNIT_DESTRUCTION_FACTOR
         int exposedArmor;
-
+        double hazardValue = 0;
         if (step.isProne() || (hex.containsTerrain(Terrains.WATER) && hex.terrainLevel(Terrains.WATER) > 1)) {
             exposedArmor = movingUnit.getTotalArmor();
             logger.trace("Fully Submerged damage = {}, exposed armor = {}", dmg, exposedArmor);

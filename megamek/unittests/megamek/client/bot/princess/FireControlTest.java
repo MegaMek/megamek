@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.common.planetaryconditions.Atmosphere;
+import megamek.common.planetaryconditions.PlanetaryConditions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -200,6 +202,10 @@ class FireControlTest {
         when(mockShooter.getHeat()).thenReturn(0);
         mockShooterState = mock(EntityState.class);
         mockShooterCoords = new Coords(0, 0);
+        when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        // internal height values are 0-indexed, so meks are 1, not 2, here
+        when(mockShooter.getHeight()).thenReturn(1);
+        when(mockShooter.relHeight()).thenReturn(1);
         when(mockShooterState.getPosition()).thenReturn(mockShooterCoords);
         mockShooterMoveMod = new ToHitData();
 
@@ -234,7 +240,16 @@ class FireControlTest {
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGame.getBoard()).thenReturn(mockBoard);
 
+        // Base planetary conditions
+        PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+        planetaryConditions.setAtmosphere(Atmosphere.STANDARD);
+        when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
+
         mockTarget = mock(BipedMek.class);
+        when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
+        // internal height values are 0-indexed, so meks are 1, not 2, here
+        when(mockTarget.getHeight()).thenReturn(1);
+        when(mockTarget.relHeight()).thenReturn(1);
         when(mockTarget.getDisplayName()).thenReturn("mock target");
         when(mockTarget.getId()).thenReturn(MOCK_TARGET_ID);
         when(mockTarget.isMilitary()).thenReturn(true);
@@ -521,6 +536,7 @@ class FireControlTest {
         shooterWeapons.add(mockPPC);
         mockPPCFireInfo = mock(WeaponFireInfo.class);
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.5);
+        when(mockPPCFireInfo.getExpectedDamage()).thenReturn(5.0);
         doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
                 any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockPPC),
                 isNull(),
@@ -556,6 +572,7 @@ class FireControlTest {
         shooterWeapons.add(mockLRM5);
         mockLRMFireInfo = mock(WeaponFireInfo.class);
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
+        when(mockLRMFireInfo.getExpectedDamage()).thenReturn(2.0);
         doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(any(Entity.class),
                 any(EntityState.class), any(Targetable.class), any(EntityState.class), eq(mockLRM5),
                 any(AmmoMounted.class),
@@ -1064,6 +1081,7 @@ class FireControlTest {
                 .thenReturn(false);
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
         when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
+        when(mockHex.terrainLevel(Terrains.SMOKE)).thenReturn(Terrain.LEVEL_NONE);
         when(mockPrincess.getMaxWeaponRange(any(Entity.class), anyBoolean())).thenReturn(21);
         ToHitData expected = new ToHitData();
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(
@@ -1228,16 +1246,46 @@ class FireControlTest {
         when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Stand the target in light woods.
+        //  1. change coords to adjacent
+        mockShooterCoords = new Coords(0, 0);
+        when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        mockTargetCoords = new Coords(1, 0);
+        when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
+
+        // 2. change terrain info
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(1);
+        when(mockHex.terrainLevel(Terrains.FOLIAGE_ELEV)).thenReturn(2);
+
         expected = new ToHitData();
         expected.addModifier(1, FireControl.TH_WOODS);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                 mockShooterState,
                 mockTarget,
                 mockTargetState,
-                10,
+                1,
                 mockGame));
+
+        // Stand the target farther away in light woods
+        mockShooterCoords = new Coords(0, 0);
+        when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        mockTargetCoords = new Coords(0, 2);
+        when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
+
+        expected = new ToHitData();
+        expected.addModifier(2, FireControl.TH_WOODS);
+        assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
+            mockShooterState,
+            mockTarget,
+            mockTargetState,
+            2,
+            mockGame));
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
+
+        // Revert positions and foliage
+        mockShooterCoords = new Coords(0, 0);
+        when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        mockTargetCoords = new Coords(1, 0);
+        when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
 
         // Stand the target in heavy woods.
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(2);
@@ -1247,33 +1295,45 @@ class FireControlTest {
                 mockShooterState,
                 mockTarget,
                 mockTargetState,
-                10,
+                1,
                 mockGame));
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in super heavy woods.
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(3);
+        when(mockHex.terrainLevel(Terrains.FOLIAGE_ELEV)).thenReturn(3);
         expected = new ToHitData();
         expected.addModifier(3, FireControl.TH_WOODS);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                 mockShooterState,
                 mockTarget,
                 mockTargetState,
-                10,
+                1,
                 mockGame));
         when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in jungle.
         when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(2);
+        when(mockHex.terrainLevel(Terrains.FOLIAGE_ELEV)).thenReturn(2);
         expected = new ToHitData();
         expected.addModifier(2, FireControl.TH_WOODS);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
                 mockShooterState,
                 mockTarget,
                 mockTargetState,
-                10,
+                1,
                 mockGame));
+
+        // 3. reset coords and terrain
+        mockShooterCoords = new Coords(0, 0);
+        when(mockShooter.getPosition()).thenReturn(mockShooterCoords);
+        when(mockShooterState.getPosition()).thenReturn(mockShooterCoords);
+        mockTargetCoords = new Coords(10, 0);
+        when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
+        when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
+
         when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
+        when(mockHex.terrainLevel(Terrains.FOLIAGE_ELEV)).thenReturn(Terrain.LEVEL_NONE);
 
         // Give the shooter the anti-air quirk but fire on a ground target.
         when(mockShooter.hasQuirk(eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(true);

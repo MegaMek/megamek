@@ -36,13 +36,7 @@ import static org.mockito.Mockito.when;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -157,7 +151,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
-        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
     }
 
@@ -176,7 +170,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(testRollList).when(testRanker).getPSRList(eq(mockPath));
 
-        double actual = testRanker.getMovePathSuccessProbability(mockPath, new StringBuilder());
+        double actual = testRanker.getMovePathSuccessProbability(mockPath);
         assertEquals(0.346, actual, TOLERANCE);
     }
 
@@ -408,7 +402,7 @@ class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(1.0)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         doReturn(5)
                 .when(testRanker)
                 .distanceToClosestEdge(any(Coords.class), any(Game.class));
@@ -521,11 +515,11 @@ class BasicPathRankerTest {
                 + " * " + LOG_DECIMAL.format(500) + "] + braveryMod ["
                 + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
                 + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + LOG_DECIMAL.format(40) + ")] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -535,17 +529,17 @@ class BasicPathRankerTest {
         // Change the move path success probability.
         doReturn(0.5)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         expected = new RankedPath(-318.125, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(250) + " = " + LOG_DECIMAL.format(0.5) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
                 + LOG_DECIMAL.format(-23.12) + " = " + LOG_PERCENT.format(0.5)
                 + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
-                + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + ") - " + LOG_DECIMAL.format(40) + ")] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -556,17 +550,17 @@ class BasicPathRankerTest {
         }
         doReturn(0.75)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
         expected = new RankedPath(-184.6875, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(125) + " = " + LOG_DECIMAL.format(0.25) + " * "
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
                 + LOG_DECIMAL.format(-14.69) + " = " + LOG_PERCENT.format(0.75)
                 + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
-                + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + ") - " + LOG_DECIMAL.format(40) + ")] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0)
                 + " - " + LOG_INT.format(1) + "})]");
@@ -577,7 +571,7 @@ class BasicPathRankerTest {
         }
         doReturn(1.0)
                 .when(testRanker)
-                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
+                .getMovePathSuccessProbability(any(MovePath.class));
 
         // Change the damage to enemy mek 1.
         evalForMockEnemyMek = new EntityEvaluationResponse();
@@ -592,11 +586,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod ["
                 + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
                 + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + LOG_DECIMAL.format(40) + ")] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50)
                 + " * {" + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -616,10 +610,10 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-16)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(16)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
-                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod ["
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -649,11 +643,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-16.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(50)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -673,11 +667,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(3.75)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(30)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -702,11 +696,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + " + "braveryMod ["
                 + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
                 + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                + LOG_DECIMAL.format(40) + "] - " + "aggressionMod [" + LOG_DECIMAL.format(5)
+                + LOG_DECIMAL.format(40) + ")] - " + "aggressionMod [" + LOG_DECIMAL.format(5)
                 + " = " + LOG_DECIMAL.format(2) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - " + "herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -722,11 +716,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(55) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(55) + " = "
                 + LOG_DECIMAL.format(22) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -745,11 +739,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(10) + " = "
                 + LOG_DECIMAL.format(10) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -763,11 +757,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(20) + " = "
                 + LOG_DECIMAL.format(20) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -780,9 +774,9 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
-                + "] - herdingMod [0 no friends] + movementMod [0] - facingMod ["
+                + "] - herdingMod [0 no friends] + movementMod [0.0] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -798,11 +792,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -815,11 +809,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -835,10 +829,10 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12)
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12)
                 + " * " + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -859,14 +853,16 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(1) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
+        System.out.println(expected);
+        System.out.println(actual);
         assertRankedPathEquals(expected, actual);
         if (baseRank != actual.getRank()) {
             fail("Being 1 hex off facing should make no difference in rank.");
@@ -877,11 +873,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(2) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -895,11 +891,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
                 + LOG_INT.format(0) + ", " + "" + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(3) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -918,11 +914,11 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(500) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
-                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1329,6 +1325,7 @@ class BasicPathRankerTest {
         when(mockBA.getCrew()).thenReturn(mockCrew);
         when(mockBA.getHeatCapacity()).thenReturn(999);
         when(mockBA.isFireResistant()).thenReturn(true);
+        when(mockBA.isBattleArmor()).thenReturn(true);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.BUILDING, Terrains.FIRE });
         assertEquals(0, testRanker.checkPathForHazards(mockPath, mockBA, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1338,9 +1335,10 @@ class BasicPathRankerTest {
         when(mockProto.locations()).thenReturn(6);
         when(mockProto.getArmor(anyInt())).thenReturn(5);
         when(mockProto.getCrew()).thenReturn(mockCrew);
+        when(mockProto.isProtoMek()).thenReturn(true);
         when(mockProto.getHeatCapacity()).thenReturn(999);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         assertEquals(167.0, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1348,7 +1346,7 @@ class BasicPathRankerTest {
 
         // Test waking a ProtoMek through a fire.
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.FIRE, Terrains.WOODS });
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS, Terrains.FIRE)));
         assertEquals(50.0, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
@@ -1357,8 +1355,10 @@ class BasicPathRankerTest {
         when(mockInfantry.locations()).thenReturn(2);
         when(mockInfantry.getArmor(anyInt())).thenReturn(0);
         when(mockInfantry.getCrew()).thenReturn(mockCrew);
+        when(mockInfantry.isConventionalInfantry()).thenReturn(true);
+        when(mockInfantry.isInfantry()).thenReturn(true);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
         when(mockHexThree.depth()).thenReturn(1);
         assertEquals(1000, testRanker.checkPathForHazards(mockPath, mockInfantry, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
@@ -1370,13 +1370,13 @@ class BasicPathRankerTest {
         when(mockTank.getArmor(anyInt())).thenReturn(10);
         when(mockTank.getCrew()).thenReturn(mockCrew);
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.BUILDING, Terrains.FIRE });
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BUILDING, Terrains.FIRE)));
         assertEquals(26.2859, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
         // Test walking through a building.
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.BUILDING });
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BUILDING)));
         assertEquals(1.285, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
@@ -1385,6 +1385,10 @@ class BasicPathRankerTest {
         when(mockHexTwo.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
         when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
+
         when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(1);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
@@ -1397,9 +1401,9 @@ class BasicPathRankerTest {
         when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(0);
         assertEquals(2000, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockUnit.getArmor(Mek.LOC_RARM)).thenReturn(10);
-        when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockHexTwo.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockHexThree.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
@@ -1409,16 +1413,16 @@ class BasicPathRankerTest {
 
         // Test walking over 3 hexes of magma crust.
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexTwo.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         when(mockHexTwo.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         assertEquals(361.500, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockHexTwo.terrainLevel(Terrains.MAGMA)).thenReturn(0);
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(0);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
@@ -1428,24 +1432,25 @@ class BasicPathRankerTest {
         // number
         when(mockPath.isJumping()).thenReturn(false);
         when(mockFinalStep.isProne()).thenReturn(true);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         assertEquals(56010.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalStep.isProne()).thenReturn(false);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[0]);
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
 
         // Test walking through 2 hexes of fire.
         when(mockPath.isJumping()).thenReturn(false);
-        when(mockHexTwo.getTerrainTypes()).thenReturn(new int[] { Terrains.WOODS, Terrains.FIRE });
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[] { Terrains.WOODS, Terrains.FIRE });
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS, Terrains.FIRE)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS, Terrains.FIRE)));
         assertEquals(4.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockHexTwo.getTerrainTypes()).thenReturn(new int[0]);
-        when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
+        when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
+        when(mockHexThree.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(0)));
 
         // Test jumping.
         when(mockPath.isJumping()).thenReturn(true);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.ICE, Terrains.WATER });
+
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ICE, Terrains.WATER)));
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(2);
         when(mockFinalHex.depth()).thenReturn(2);
         when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(0);
@@ -1453,15 +1458,17 @@ class BasicPathRankerTest {
         when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(10);
         when(mockFinalHex.terrainLevel(Terrains.WATER)).thenReturn(0);
         when(mockFinalHex.depth()).thenReturn(0);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
         assertEquals(3134.5, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(2);
         assertEquals(6264.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(0);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.WOODS, Terrains.FIRE });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS, Terrains.FIRE)));
         assertEquals(5.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.WOODS });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.WOODS)));
+
+
         assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test a movement type that doesn't worry about ground terrain.
@@ -1502,7 +1509,7 @@ class BasicPathRankerTest {
         when(mockUnit.getArmor(eq(Mek.LOC_LLEG))).thenReturn(24);
         when(mockUnit.getArmor(eq(Mek.LOC_RLEG))).thenReturn(24);
         when(mockFinalHex.depth()).thenReturn(0);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MAGMA });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MAGMA)));
         // Only 50% chance to break through Crust, but must make PSR to avoid getting
         // bogged down.
         when(mockFinalHex.terrainLevel(Terrains.MAGMA)).thenReturn(1);
@@ -1626,7 +1633,7 @@ class BasicPathRankerTest {
         // to total destruction.
         when(mockPath.isJumping()).thenReturn(true);
         when(mockFinalHex.depth()).thenReturn(0);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.SWAMP });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.SWAMP)));
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(1);
         assertEquals(35.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
         when(mockFinalHex.terrainLevel(Terrains.SWAMP)).thenReturn(2);
@@ -1691,6 +1698,7 @@ class BasicPathRankerTest {
         when(mockUnit.locations()).thenReturn(8);
         when(mockUnit.getArmor(anyInt())).thenReturn(10);
         when(mockUnit.getHeight()).thenReturn(2);
+        when(mockUnit.isMek()).thenReturn(true);
 
         final Game mockGame = setupGame(testCoords, testHexes);
 
@@ -1706,7 +1714,7 @@ class BasicPathRankerTest {
         // down here. Small hazard to Meks due to PSR malus
         when(mockPath.isJumping()).thenReturn(false);
         when(mockFinalHex.depth()).thenReturn(0);
-        when(mockFinalHex.getTerrainTypes()).thenReturn(new int[] { Terrains.MUD });
+        when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.MUD)));
         assertEquals(2.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
 
         // Test non-hover vehicle hazard
@@ -1756,7 +1764,7 @@ class BasicPathRankerTest {
         when(mockCrew.getPiloting()).thenReturn(5);
 
         // Test visible black ice hazard value
-        when(mockPenultimateHex.getTerrainTypes()).thenReturn(new int[] { Terrains.BLACK_ICE });
+        when(mockPenultimateHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.BLACK_ICE)));
         assertEquals(12.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
     }
 

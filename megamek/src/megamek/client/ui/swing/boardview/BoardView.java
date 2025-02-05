@@ -1900,7 +1900,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     largestLevelDiff = levelDiff;
                 }
             }
-            imgHeight += HEX_ELEV * scale * largestLevelDiff;
+            imgHeight += (int) (HEX_ELEV * scale * largestLevelDiff);
         }
         // If the base image isn't ready, we should signal a repaint and stop
         if ((imgWidth < 0) || (imgHeight < 0)) {
@@ -5201,7 +5201,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
-    FovHighlightingAndDarkening getFovHighlighting() {
+    public FovHighlightingAndDarkening getFovHighlighting() {
         return fovHighlightingAndDarkening;
     }
 

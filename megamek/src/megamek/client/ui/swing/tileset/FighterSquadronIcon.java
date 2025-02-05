@@ -107,8 +107,8 @@ public class FighterSquadronIcon extends EntityImage {
      */
     private final int positionHash;
 
-    public FighterSquadronIcon(Image base, Image wreck, Camouflage camouflage, Entity entity, int secondaryPos, boolean preview) {
-        super(base, wreck, camouflage, entity, secondaryPos, preview);
+    public FighterSquadronIcon(Image base, Image wreck, Camouflage camouflage, Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+        super(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         if (entity instanceof FighterSquadron) {
             squadron = (FighterSquadron) entity;
         } else {

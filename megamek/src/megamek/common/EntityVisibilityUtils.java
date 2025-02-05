@@ -18,6 +18,7 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -62,21 +63,32 @@ public class EntityVisibilityUtils {
      *
      * @return
      */
-    public static boolean onlyDetectedBySensors(Player localPlayer, Entity entity) {
-        boolean sensors = (entity.getGame().getOptions().booleanOption(
-                OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || entity.getGame().getOptions()
-                        .booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
-        boolean sensorsDetectAll = entity.getGame().getOptions().booleanOption(
-                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
-        boolean doubleBlind = entity.getGame().getOptions().booleanOption(
-                OptionsConstants.ADVANCED_DOUBLE_BLIND);
+    public static boolean onlyDetectedBySensors(@Nullable Player localPlayer, Entity entity) {
+        boolean usesAdvancedTacOpsSensors = entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS);
+        boolean usesAdvancedStratOpsSensors = entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS);
+
+        boolean usesSensors = usesAdvancedTacOpsSensors || usesAdvancedStratOpsSensors;
+
+        boolean sensorsDetectAll = entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
+        boolean doubleBlind = entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+
+        if (!doubleBlind) {
+            return false;
+        }
+
+        if (localPlayer == null) {
+            return true;
+        }
+
         boolean hasVisual = entity.hasSeenEntity(localPlayer);
         boolean hasDetected = entity.hasDetectedEntity(localPlayer);
-
-        if (sensors && doubleBlind && !sensorsDetectAll
-                && !EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity)
-                && hasDetected && !hasVisual) {
+        boolean doesNotTrackThisEntitiesVisibilityInfo = !EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
+        if (usesSensors
+            && !sensorsDetectAll
+            && doesNotTrackThisEntitiesVisibilityInfo
+            && hasDetected
+            && !hasVisual)
+        {
             return true;
         } else {
             return false;

@@ -140,8 +140,8 @@ public abstract class PathRanker implements IPathRanker {
                 return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true),
                         game, maxRange, fallTolerance, enemies, friends);
             }
-        } catch (Exception ignored) {
-            logger.error(ignored, ignored.getMessage());
+        } catch (Exception exception) {
+            logger.error(exception, exception.getMessage());
             return returnPaths;
         }
 
@@ -175,62 +175,58 @@ public abstract class PathRanker implements IPathRanker {
                 continue;
             }
 
-            StringBuilder msg = new StringBuilder("Validating Path: ").append(path);
-
-            try {
-                // if we are an aero unit on the ground map, we want to discard paths that keep
-                // us at altitude 1 with no bombs
-                if (isAirborneAeroOnGroundMap) {
-                    // if we have no bombs, we want to make sure our altitude is above 1
-                    // if we do have bombs, we may consider altitude bombing (in the future)
-                    if (path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty()
-                            && (path.getFinalAltitude() < 2)) {
-                        msg.append("\n\tNo bombs but at altitude 1. No way.");
-                        continue;
-                    }
-                }
-
-                Coords finalCoords = path.getFinalCoords();
-
-                // Make sure I'm trying to get/stay in range of a target.
-                // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
-                // also skip this part if I'm attempting to retreat, as engagement is not the
-                // point here
-                if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
-                    Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
-                            inRange);
-                    if (!StringUtility.isNullOrBlank(validation)) {
-                        msg.append("\n\t").append(validation);
-                        continue;
-                    }
-                }
-
-                // Don't move on/through buildings that will not support our weight.
-                if (willBuildingCollapse(path, game)) {
-                    msg.append("\n\tINVALID: Building in path will collapse.");
+            logger.trace("Validating path {}", path);
+            // if we are an aero unit on the ground map, we want to discard paths that keep
+            // us at altitude 1 with no bombs
+            if (isAirborneAeroOnGroundMap) {
+                // if we have no bombs, we want to make sure our altitude is above 1
+                // if we do have bombs, we may consider altitude bombing (in the future)
+                if (path.getEntity().getBombs(BombType.F_GROUND_BOMB).isEmpty()
+                        && (path.getFinalAltitude() < 2)) {
+                    logger.trace("INVALID: No bombs but at altitude 1. No way.");
                     continue;
                 }
-
-                // Skip any path where I am too likely to fail my piloting roll.
-                double chance = getMovePathSuccessProbability(path, msg);
-                if (chance < fallTolerance) {
-                    msg.append("\n\tINVALID: Too likely to fall on my face.");
-                    continue;
-                }
-
-                // first crack at logic involving unjamming RACs: just do it
-                if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
-                    msg.append("\n\tINADVISABLE: Want to unjam autocannon but path involves running or jumping");
-                    continue;
-                }
-
-                // If all the above checks have passed, this is a valid path.
-                msg.append("\n\tVALID.");
-                returnPaths.add(path);
-            } finally {
-                logger.debug(msg.toString());
             }
+
+            Coords finalCoords = path.getFinalCoords();
+
+            // Make sure I'm trying to get/stay in range of a target.
+            // Skip this part if I'm an aero on the ground map, as it's kind of irrelevant
+            // also skip this part if I'm attempting to retreat, as engagement is not the
+            // point here
+            if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
+                Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
+                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+                        inRange);
+                if (!validation) {
+                    logger.trace("Invalid range to target.");
+                    continue;
+                }
+            }
+
+            // Don't move on/through buildings that will not support our weight.
+            if (willBuildingCollapse(path, game)) {
+                logger.trace("INVALID: Building in path will collapse.");
+                continue;
+            }
+
+            // Skip any path where I am too likely to fail my piloting roll.
+            double chance = getMovePathSuccessProbability(path);
+            if (chance < fallTolerance) {
+                logger.trace("INVALID: Too likely to fall on my face.");
+                continue;
+            }
+
+            // first crack at logic involving unjamming RACs: just do it
+            if (needToUnjamRAC && ((path.getMpUsed() > walkMP) || path.isJumping())) {
+                logger.trace("INADVISABLE: Want to unjam autocannon but path involves running or jumping");
+                continue;
+            }
+
+            // If all the above checks have passed, this is a valid path.
+            logger.trace("VALID");
+            returnPaths.add(path);
+
         }
 
         // If we've eliminated all valid paths, let's try to pick out a long range path
@@ -319,7 +315,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Returns the probability of success of a move path
      */
-    protected double getMovePathSuccessProbability(MovePath movePath, StringBuilder msg) {
+    protected double getMovePathSuccessProbability(MovePath movePath) {
         // introduced a caching mechanism, as the success probability was being
         // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
@@ -329,7 +325,8 @@ public abstract class PathRanker implements IPathRanker {
         MovePath pathCopy = movePath.clone();
         List<TargetRoll> pilotingRolls = getPSRList(pathCopy);
         double successProbability = 1.0;
-        msg.append("\n\tCalculating Move Path Success");
+        logger.trace("Calculating Move Path Success for {}", pathCopy);
+
         for (TargetRoll roll : pilotingRolls) {
             // Skip the getting up check. That's handled when checking for being immobile.
             if (roll.getDesc().toLowerCase().contains("getting up")) {
@@ -339,37 +336,31 @@ public abstract class PathRanker implements IPathRanker {
             }
             boolean naturalAptPilot = movePath.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
             if (naturalAptPilot) {
-                msg.append("\n\t\tPilot has Natural Aptitude Piloting");
+                logger.trace("Pilot has Natural Aptitude Piloting");
             }
 
-            msg.append("\n\t\tRoll ").append(roll.getDesc()).append(' ').append(roll.getValue());
             double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100d;
-            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(')');
+            logger.trace("Odds above {} = {}", roll.getValue(), odds);
             successProbability *= odds;
         }
 
         // Account for MASC
         if (pathCopy.hasActiveMASC()) {
-            msg.append("\n\t\tMASC ");
             int target = pathCopy.getEntity().getMASCTarget();
-            msg.append(target);
             // TODO : Does Natural Aptitude Piloting apply to this? I assume not.
             double odds = Compute.oddsAbove(target) / 100d;
-            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(')');
+            logger.trace("MASC target {}, odds = {}", target, odds);
             successProbability *= odds;
         }
         // Account for Supercharger
         if (pathCopy.hasActiveSupercharger()) {
-            msg.append("\n\t\tSupercharger ");
             int target = pathCopy.getEntity().getSuperchargerTarget();
-            msg.append(target);
             // todo Does Natural Aptitude Piloting apply to this? I assume not.
             double odds = Compute.oddsAbove(target) / 100d;
-            msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
+            logger.trace("Supercharger target {}, odds = {}", target, odds);
             successProbability *= odds;
         }
-        msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
-
+        logger.trace("Success probability = {}", successProbability);
         getPathRankerState().getPathSuccessProbabilities().put(movePath.getKey(), successProbability);
 
         return successProbability;
@@ -383,10 +374,9 @@ public abstract class PathRanker implements IPathRanker {
      *
      * @param movingEntity
      * @param path
-     * @param msg
      * @return
      */
-    protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path, StringBuilder msg) {
+    protected double calculateMovePathPSRDamage(Entity movingEntity, MovePath path) {
         double damage = 0.0;
 
         List<TargetRoll> pilotingRolls = getPSRList(path);
@@ -396,11 +386,11 @@ public abstract class PathRanker implements IPathRanker {
             if (
                 description.contains(Messages.getString("TacOps.leaping.leg_damage"))
             ) {
-                damage += predictLeapDamage(movingEntity, roll, msg);
+                damage += predictLeapDamage(movingEntity, roll);
             } else if (
                 description.contains(Messages.getString("TacOps.leaping.fall_damage"))
             ) {
-                damage += predictLeapFallDamage(movingEntity, roll, msg);
+                damage += predictLeapFallDamage(movingEntity, roll);
             }
         }
 
@@ -452,10 +442,10 @@ public abstract class PathRanker implements IPathRanker {
         return distance;
     }
 
-    private String validRange(Coords finalCoords, Targetable target, int startingTargetDistance,
+    private boolean validRange(Coords finalCoords, Targetable target, int startingTargetDistance,
             int maxRange, boolean inRange) {
         if (target == null) {
-            return null;
+            return false;
         }
 
         // If I am not currently in range, discard any path that takes me further away
@@ -463,15 +453,17 @@ public abstract class PathRanker implements IPathRanker {
         int finalDistanceToTarget = finalCoords.distance(target.getPosition());
         if (!inRange) {
             if (finalDistanceToTarget > startingTargetDistance) {
-                return "INVALID: Not in range and moving further away.";
+                logger.trace("INVALID: Not in range and moving further away.");
+                return false;
             }
         } else { // If I am in range, discard any path that takes me out of range.
             if (finalDistanceToTarget > maxRange) {
-                return "INVALID: In range and moving out of range.";
+                logger.trace("INVALID: In range and moving out of range.");
+                return false;
             }
         }
 
-        return null;
+        return true;
     }
 
     /**

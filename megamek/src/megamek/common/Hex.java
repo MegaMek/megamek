@@ -122,6 +122,13 @@ public class Hex implements Serializable {
     }
 
     /**
+     * @return A HashSet that contains an id for each terrain present in this hex.
+     */
+    public Set<Integer> getTerrainTypesSet() {
+        return new HashSet<>(terrains.keySet());
+    }
+
+    /**
      * Resets the theme to what was specified in the board file.
      */
     public void resetTheme() {

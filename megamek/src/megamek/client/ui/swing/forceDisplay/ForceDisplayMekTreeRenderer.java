@@ -89,7 +89,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
                 Camouflage camo = entity.getCamouflageOrElseOwners();
-                Image image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo);
+                Image image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo, false);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }

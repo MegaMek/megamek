@@ -44,6 +44,7 @@ import megamek.server.SmokeCloud;
 class MovePathHandler extends AbstractTWRuleHandler {
     private static final MMLogger logger = MMLogger.create(MovePathHandler.class);
 
+
     private final Entity entity;
     private final MovePath md;
     private final Map<UnitTargetPair, LosEffects> losCache;

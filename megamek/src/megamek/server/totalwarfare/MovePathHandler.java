@@ -292,6 +292,15 @@ class MovePathHandler extends AbstractTWRuleHandler {
             tookMagmaDamageAtStart = true;
         }
 
+        // check for starting in hazardous liquid
+        if ((getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.HAZARDOUS_LIQUID))
+                && (entity.getElevation() <= 0)) {
+            int depth = getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.WATER) ? getGame().getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) : 0;
+            gameManager.doHazardousLiquidDamage(entity, false, depth);
+        }
+
         // set acceleration used to default
         if (entity.isAero()) {
             ((IAero) entity).setAccLast(false);
@@ -758,6 +767,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
                         gameManager.getMainPhaseReport(), gameManager);
                 ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
+                ServerHelper.checkEnteringHazardousLiquid(curHex, entity.getElevation(), entity, gameManager);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -1568,7 +1578,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
                             if (!getGame().getBoard().contains(curPos)) {
-                                curPos = curPos.translated(step.getFacing(), -1); //Return its position to on-map so it can be targeted this turn
+                                curPos = nudgeOntoBoard(curPos, step.getFacing());
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                                 return;
@@ -2509,11 +2519,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for breaking magma crust unless we are jumping over the hex
+            // Let's check for hazardous liquid damage too
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
                 if (!curPos.equals(lastPos)) {
                     ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false,
                             gameManager.getMainPhaseReport(), gameManager);
                     ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, gameManager);
+                    ServerHelper.checkEnteringHazardousLiquid(curHex, step.getElevation(), entity, gameManager);
                 }
             }
 
@@ -3439,5 +3451,54 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+    }
+
+    /**
+     * When something is improperly moved off board, like after a failed aero maneuver, we should move it back onto
+     * the board so exceptions don't get thrown.
+     * @param position entity's current position
+     * @param facing entity's current facing
+     * @return new coords that are on the board
+     */
+    private Coords nudgeOntoBoard(Coords position, int facing) {
+        Coords newPosition = position;
+
+        Game game = getGame();
+        Board board = game.getBoard();
+
+        // When nudging horizontally, let's try to use the facing so we wind up in a more accurate position -
+        // Unless the facing is north/south, then let's just pick a facing and nudge it back onto the board
+
+        // If we're to the left of the board, nudge right until we're on the board
+        while (newPosition.getX() < 0) {
+            if (facing == 4 || facing == 1) {
+                newPosition = newPosition.translated(1);
+            } else {
+                newPosition = newPosition.translated(2);
+            }
+        }
+
+        // If we're to the right of the board, nudge left until we're on the board
+        while (newPosition.getX() > (board.getWidth()-1)) {
+            if (facing == 2 || facing == 5) {
+                newPosition = newPosition.translated(5);
+            } else {
+                newPosition = newPosition.translated(4);
+            }
+        }
+
+
+        // If we're above the board, nudge down until we're on the board
+        while (newPosition.getY() < 0) {
+            newPosition = newPosition.translated(3);
+        }
+
+        // If we're below the board, nudge up until we're on the board
+        // Note that Height is 1-indexed, so we need to make it 0-indexed.
+        while (newPosition.getY() > (board.getHeight()-1) ) {
+            newPosition = newPosition.translated(0);
+        }
+
+        return newPosition;
     }
 }

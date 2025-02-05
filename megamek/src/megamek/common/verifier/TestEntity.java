@@ -1491,6 +1491,15 @@ public abstract class TestEntity implements TestEntityOption {
                 artemisP++;
             } else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
                 apollo++;
+            } else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                if (m.getLinked() == null) {
+                    buff
+                        .append(m.getType().getName())
+                        .append(" in ")
+                        .append(getEntity().getLocationAbbr(m.getLocation()))
+                        .append(" has no linked PPC\n");
+                    illegal = true;
+                }
             }
 
             if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&

@@ -61,115 +61,109 @@ public class BotLogger {
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
-            logfile = new File(LOG_DIR + File.separator + filename + LocalDateTime.now() + ".tsv");
+            logfile = new File(LOG_DIR + File.separator + filename + "_" + LocalDateTime.now() + ".tsv");
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {
-            logger.error("", ex);
+            logger.error("Failure to initialize BotLogger, no log will be persisted", ex);
             writer = null;
         }
     }
 
     protected void initialize() {
-        append("# Log file opened " + LocalDateTime.now());
+        append("# BotLogger file created at " + LocalDateTime.now());
     }
 
     public void append(Game game, EntityAction entityAction, boolean withHeader) {
         try {
-            if (entityAction instanceof AbstractAttackAction abstractAttackAction) {
-                append(game, abstractAttackAction, withHeader);
+            if (entityAction instanceof AbstractAttackAction attackAction) {
+                String currentRound = game.getCurrentRound() + "";
+                String entityId = "-1";
+                String playerId = "-1";
+                String type;
+                String role = UnitRole.NONE.name();
+                String coords = "-1\t-1";
+                String facing = "-1";
+                String targetPlayerId = "-1";
+                String targetId = "-1";
+                String targetType = "UNKNOWN";
+                String targetRole = UnitRole.NONE.name();
+                String targetCoords = "-1\t-1";
+                String targetFacing = "-1";
+                String aimingLoc = "-1";
+                String aimingMode = AimingMode.NONE.name();
+                String weaponId = "-1";
+                String ammoId = "-1";
+                String ata = "0";
+                String atg = "0";
+                String gtg = "0";
+                String gta = "0";
+                String toHit = "0";
+                String turnsToHit = "0";
+                String spotterId = "-1";
+                var attacker = attackAction.getEntity(game);
+                if (attacker != null) {
+                    entityId = attacker.getId() + "";
+                    playerId = attacker.getOwner().getId() + "";
+                    type = attacker.getClass().getSimpleName();
+                    role = attacker.getRole() == null ? UnitRole.NONE.name() : attacker.getRole().name();
+                    coords = attacker.getPosition() != null ? attacker.getPosition().getX() + "\t" + attacker.getPosition().getY() : "-1\t-1";
+                    facing = attacker.getFacing() + "";
+                } else {
+                    type = "UNKNOWN";
+                }
+                var target = attackAction.getTarget(game);
+                if (target != null ) {
+                    targetId = target.getId() + "";
+                    targetType = target.getClass().getSimpleName();
+                    targetCoords = target.getPosition() != null ? target.getPosition().getX() + "\t" + target.getPosition().getY() : "-1\t-1";
+                    if (target instanceof Entity entity) {
+                        targetPlayerId = entity.getOwner().getId() + "";
+                        targetRole = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
+                        targetFacing = entity.getFacing() + "";
+                    }
+                }
+                if (attackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
+                    if (!artilleryAttackAction.getSpotterIds().isEmpty()) {
+                        spotterId = artilleryAttackAction.getSpotterIds().get(0) + "";
+                    }
+                    turnsToHit = artilleryAttackAction.getTurnsTilHit() + "";
+                    toHit = LOG_DECIMAL.format(artilleryAttackAction.toHit(game).getValue());
+                    ammoId = artilleryAttackAction.getAmmoId() + "";
+
+                } else if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
+                    toHit = LOG_DECIMAL.format(weaponAttackAction.toHit(game).getValue());
+                    aimingLoc = weaponAttackAction.getAimedLocation() + "";
+                    aimingMode = weaponAttackAction.getAimingMode().name();
+                    ammoId = weaponAttackAction.getAmmoId() + "";
+                    ata = weaponAttackAction.isAirToAir(game) ? "1" : "0";
+                    atg = weaponAttackAction.isAirToGround(game) ? "1" : "0";
+                    gta = weaponAttackAction.isGroundToAir(game) ? "1" : "0";
+                    gtg = (!weaponAttackAction.isAirToAir(game) && !weaponAttackAction.isGroundToAir(game)
+                        && !weaponAttackAction.isAirToGround(game)) ? "1" : "0";
+                    weaponId = weaponAttackAction.getWeaponId() + "";
+                }
+                if (withHeader) {
+                    append(
+                        String.join(
+                            "\t",
+                            "ROUND", "PLAYER_ID", "ENTITY_ID", "TYPE", "ROLE", "X", "Y", "FACING",
+                            "TARGET_PLAYER_ID", "TARGET_ID", "TARGET_TYPE", "TARGET_ROLE", "TARGET_X", "TARGET_Y", "TARGET_FACING",
+                            "AIMING_LOC", "AIMING_MODE", "WEAPON_ID", "AMMO_ID", "ATA", "ATG", "GTG", "GTA", "TO_HIT", "TURNS_TO_HIT", "SPOTTER_ID"
+                        )
+                    );
+                }
+                append(
+                    String.join(
+                        "\t",
+                        currentRound, playerId, entityId, type, role, coords, facing, targetPlayerId, targetId, targetType, targetRole, targetCoords, targetFacing,
+                        aimingLoc, aimingMode, weaponId, ammoId, ata, atg, gtg, gta, toHit, turnsToHit, spotterId)
+                );
             }
         } catch (Exception ex) {
             logger.error(ex, "Error logging entity action");
         }
-    }
 
-    private void append(Game game, AbstractAttackAction attackAction, boolean withHeader) {
-        if (attackAction == null) {
-            return;
-        }
-        String currentRound = game.getCurrentRound() + "";
-        String entityId = "-1";
-        String playerId = "-1";
-        String type;
-        String role = UnitRole.NONE.name();
-        String coords = "-1\t-1";
-        String facing = "-1";
-        String targetPlayerId = "-1";
-        String targetId = "-1";
-        String targetType = "UNKNOWN";
-        String targetRole = UnitRole.NONE.name();
-        String targetCoords = "-1\t-1";
-        String targetFacing = "-1";
-        String aimingLoc = "-1";
-        String aimingMode = AimingMode.NONE.name();
-        String weaponId = "-1";
-        String ammoId = "-1";
-        String ata = "0";
-        String atg = "0";
-        String gtg = "0";
-        String gta = "0";
-        String toHit = "0";
-        String turnsToHit = "0";
-        String spotterId = "-1";
-        var attacker = attackAction.getEntity(game);
-        if (attacker != null) {
-            entityId = attacker.getId() + "";
-            playerId = attacker.getOwner().getId() + "";
-            type = attacker.getClass().getSimpleName();
-            role = attacker.getRole() == null ? UnitRole.NONE.name() : attacker.getRole().name();
-            coords = attacker.getPosition() != null ? attacker.getPosition().getX() + "\t" + attacker.getPosition().getY() : "-1\t-1";
-            facing = attacker.getFacing() + "";
-        } else {
-            type = "UNKNOWN";
-        }
-        var target = attackAction.getTarget(game);
-        if (target != null ) {
-            targetId = target.getId() + "";
-            targetType = target.getClass().getSimpleName();
-            targetCoords = target.getPosition() != null ? target.getPosition().getX() + "\t" + target.getPosition().getY() : "-1\t-1";
-            if (target instanceof Entity entity) {
-                targetPlayerId = entity.getOwner().getId() + "";
-                targetRole = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
-                targetFacing = entity.getFacing() + "";
-            }
-        }
-        if (attackAction instanceof ArtilleryAttackAction artilleryAttackAction) {
-            if (!artilleryAttackAction.getSpotterIds().isEmpty()) {
-                spotterId = artilleryAttackAction.getSpotterIds().get(0) + "";
-            }
-            turnsToHit = artilleryAttackAction.getTurnsTilHit() + "";
-            toHit = LOG_DECIMAL.format(artilleryAttackAction.toHit(game).getValue());
-            ammoId = artilleryAttackAction.getAmmoId() + "";
-
-        } else if (attackAction instanceof WeaponAttackAction weaponAttackAction) {
-            toHit = LOG_DECIMAL.format(weaponAttackAction.toHit(game).getValue());
-            aimingLoc = weaponAttackAction.getAimedLocation() + "";
-            aimingMode = weaponAttackAction.getAimingMode().name();
-            ammoId = weaponAttackAction.getAmmoId() + "";
-            ata = weaponAttackAction.isAirToAir(game) ? "1" : "0";
-            atg = weaponAttackAction.isAirToGround(game) ? "1" : "0";
-            gta = weaponAttackAction.isGroundToAir(game) ? "1" : "0";
-            gtg = (!weaponAttackAction.isAirToAir(game) && !weaponAttackAction.isGroundToAir(game)
-                && !weaponAttackAction.isAirToGround(game)) ? "1" : "0";
-            weaponId = weaponAttackAction.getWeaponId() + "";
-        }
-        if (withHeader) {
-            append(
-                String.join(
-                    "\t",
-                    "ROUND", "PLAYER_ID", "ENTITY_ID", "TYPE", "ROLE", "X", "Y", "FACING",
-                    "TARGET_PLAYER_ID", "TARGET_ID", "TARGET_TYPE", "TARGET_ROLE", "TARGET_X", "TARGET_Y", "TARGET_FACING",
-                    "AIMING_LOC", "AIMING_MODE", "WEAPON_ID", "AMMO_ID", "ATA", "ATG", "GTG", "GTA", "TO_HIT", "TURNS_TO_HIT", "SPOTTER_ID"
-                )
-            );
-        }
-        append(
-            String.join(
-                "\t",
-                currentRound, playerId, entityId, type, role, coords, facing, targetPlayerId, targetId, targetType, targetRole, targetCoords, targetFacing,
-                aimingLoc, aimingMode, weaponId, ammoId, ata, atg, gtg, gta, toHit, turnsToHit, spotterId)
-        );
     }
 
     /**

@@ -37,28 +37,28 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
-    implementation 'com.formdev:flatlaf:3.5.1'
-    implementation 'com.formdev:flatlaf-extras:3.5.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2'
+    implementation 'com.formdev:flatlaf:3.5.4'
+    implementation 'com.formdev:flatlaf-extras:3.5.4'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-    implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
+    implementation 'org.apache.commons:commons-collections4:4.5.0-M3'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
-    implementation 'org.apache.commons:commons-text:1.12.0'
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
-    implementation 'org.freemarker:freemarker:2.3.33'
-    implementation 'org.commonmark:commonmark:0.22.0'
+    implementation 'org.apache.commons:commons-text:1.13.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+    implementation 'org.freemarker:freemarker:2.3.34'
+    implementation 'org.commonmark:commonmark:0.24.0'
     implementation 'com.squareup:gifencoder:0.10.1'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
-    testImplementation 'org.mockito:mockito-core:5.13.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.mockito:mockito-core:5.15.2'
 }
 
 application {
@@ -87,9 +87,9 @@ ext {
 }
 
 checkstyle {
-    toolVersion '10.18.1'
-    configFile file("config/checkstyle/checkstyle.xml")
-    ignoreFailures false
+    toolVersion = '10.18.1'
+    configFile = file("config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
 }
 
 run {
@@ -254,7 +254,7 @@ distributions {
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
             }
-            duplicatesStrategy 'exclude'
+            duplicatesStrategy = 'exclude'
         }
     }
 }
@@ -270,7 +270,7 @@ launch4j {
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
     copyright = '2024 MegaMek Development Team.'
-    trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
+    trademarks = 'MechWarrior, BattleMech, `Mech and AeroTech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
     jreMinVersion = '17'
     dontWrapJar = true
@@ -298,13 +298,13 @@ distZip {
 }
 
 distTar {
-    description = 'Creates a gziped tar ball for distribution'
+    description = 'Creates a gzipped tar ball for distribution'
     dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
-// The distribution plugin adds the distro packages to the assemble task, which causes the build task
+// The distribution plugin adds the distribution packages to the assemble task, which causes the build task
 // to run all the packaging tasks.
 task assemble(overwrite: true) {
     dependsOn jar

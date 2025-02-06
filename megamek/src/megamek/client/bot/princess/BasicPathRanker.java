@@ -889,6 +889,8 @@ public class BasicPathRanker extends PathRanker {
                 case Terrains.HAZARDOUS_LIQUID:
                     hazardValue += calcHazardousLiquidHazard(hex, endHex, movingUnit, step);
                     break;
+                case Terrains.ULTRA_SUBLEVEL:
+                    hazardValue += calcUltraSublevelHazard(endHex, movingUnit);
             }
         }
 
@@ -908,7 +910,8 @@ public class BasicPathRanker extends PathRanker {
         Terrains.SWAMP,
         Terrains.MUD,
         Terrains.TUNDRA,
-        Terrains.HAZARDOUS_LIQUID));
+        Terrains.HAZARDOUS_LIQUID,
+        Terrains.ULTRA_SUBLEVEL));
     private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
     static {
         HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
@@ -1350,6 +1353,32 @@ public class BasicPathRanker extends PathRanker {
 
         logger.trace("Total hazard = {}", hazardValue);
         return Math.round(hazardValue);
+    }
+
+    private double calcUltraSublevelHazard(boolean endHex, Entity movingUnit) {
+        logger.trace("Calculating ultra sublevel hazard.");
+        int unitDamageLevel = movingUnit.getDamageLevel();
+        double dmg;
+
+        // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
+        // losing mobility.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+            || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            if (!endHex) {
+                logger.trace("Hovering/VTOL while traversing ultra sublevel (0).");
+                return 0;
+            } else if (movingUnit.getElevation() > 0) {  //elevation of 0 is on the ground (not airborne), which would be destroyed
+                // Estimate chance of being disabled or immobilized over ultra sublevel; this is
+                // fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
+                // UNIT_DESTRUCTION_FACTOR
+                dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
+                logger.trace("Ending hover/VTOL movement over ultra sublevel ({}).", dmg);
+                return dmg;
+            }
+        }
+        logger.trace(String.format("Ground unit instant destruction from ultra sublevel (%s).", UNIT_DESTRUCTION_FACTOR));
+        return UNIT_DESTRUCTION_FACTOR;
     }
 
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill, int modifier) {

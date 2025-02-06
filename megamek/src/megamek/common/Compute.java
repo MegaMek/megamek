@@ -7851,12 +7851,19 @@ public class Compute {
         return newPoint;
     }
 
+    /**
+     * Lightweight helper to determine if a given unit can take a Pointblank shot on another
+     *
+     * @param attacker  Prospective Pointblank Shot shooter
+     * @param target    Prospective Pointblank Shot target
+     * @return          boolean true if shot can be taken legally; false otherwise
+     */
     public static boolean canPointBlankShot(Entity attacker, Entity target) {
         if (!attacker.isHidden() || !attacker.isEnemyOf(target)) {
             // PBS attacker has to be hidden and an enemy of the PBS target
             return false;
         }
-        
+
         if (!target.isAerospace()){
             // The simpler path: mainly worried about distance
             if (attacker.getPosition().distance(target.getPosition()) != 1) {
@@ -7865,12 +7872,46 @@ public class Compute {
             }
         } else {
             // More complex; may need to worry about a flight path, and Infantry ranges
-            if (attacker.isInfantry() && attacker.getMaxWeaponRange(true) <= 1) {
-                // Infantry attacker needs long-range weapons that can hit an aircraft
-                return false;
+            if (attacker.isInfantry()){
+                if (attacker.getMaxWeaponRange(true) <= 1) {
+                    // Infantry attacker needs long-range weapons that can hit an aircraft
+                    return false;
+                } else {
+                    boolean hasFieldGuns = ((Infantry) attacker).hasActiveFieldWeapon();
+                    boolean hasInfantrayAA = attacker.getEquipment().stream().anyMatch(
+                        eq -> eq instanceof WeaponMounted
+                            && ((WeaponMounted) eq).getType().hasFlag(WeaponType.F_INF_AA)
+                    );
+                    // Either allows infantry PBS on Aerospace.
+                    return (hasFieldGuns || hasInfantrayAA);
+                }
             }
         }
 
         return true;
+    }
+
+    /**
+     * Lightweight helper for some step evaluation.  No side effects.
+     *
+     * @param detector  Entity that will detect a hidden unit
+     * @param distance  int Distance from detector to hidden entity
+     * @param endStep   boolean whether this detection is occuring at the last step of a move path
+     * @return true if detector can detect a unit in this situation
+     */
+    public static boolean canDetectHidden(Entity detector, int distance, boolean endStep) {
+        if (detector.isAerospace()) {
+            // Errata says Aerospace flying over hidden units detect them
+            // (https://bg.battletech.com/forums/index.php?topic=84054.0)
+            if (distance == 0) {
+                return true;
+            }
+        } else if ((distance == 1) && endStep) {
+            // Ending movement adjacent to a hidden unit also reveals it.
+            return true;
+        }
+        // Active Probe detection happens is handled in detectHiddenUnits
+        // Anything not explicitly detected is not detected.
+        return false;
     }
 } // End public class Compute

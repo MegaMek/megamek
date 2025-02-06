@@ -98,7 +98,7 @@ class ComputeTest {
     }
 
     AeroSpaceFighter createASF(String chassis, String model, String crewName) {
-        // Create a real Infantry unit with some mocked fields
+        // Create a real AeroSpaceFighter unit with some mocked fields
         AeroSpaceFighter mockAeroSpaceFighter = new AeroSpaceFighter();
         mockAeroSpaceFighter.setGame(game);
         mockAeroSpaceFighter.setChassis(chassis);
@@ -144,7 +144,7 @@ class ComputeTest {
 
     @Test
     void noPointBlankShotMek2MekHiddenDifferentOwnerTooFar() {
-        // Basic test: Can't PBS except when at exactly 1 distance from target
+        // Basic test: Can't PBS except when at exactly 1 distance from ground target
         Mek attacker = createMek("Attacker", "ATK-1", "Alice");
         Mek target = createMek("Target", "TGT-2", "Bob");
 
@@ -222,7 +222,7 @@ class ComputeTest {
     @Test
     void canPointBlankShotAAInf2AeroHiddenDifferentOwner() throws LocationFullException {
         // Basic test: AA-capable Infantry can fire on aircraft directly overhead!
-        Infantry attacker = createInfantry("Attacker Guys", "with pewpews", "Alice");
+        Infantry attacker = createInfantry("Attacker Guys", "with AA pewpews", "Alice");
         AeroSpaceFighter target = createASF("Target ASF", "TGA-2", "Bob");
 
         attacker.setOwnerId(player1.getId());

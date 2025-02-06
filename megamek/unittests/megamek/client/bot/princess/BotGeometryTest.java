@@ -45,37 +45,39 @@ class BotGeometryTest {
         resultingCoords = testCoords.allAtDistance(1);
 
         List<Coords> expectedCoords = new ArrayList<>();
-        expectedCoords.add(new Coords(1, -1));
-        expectedCoords.add(new Coords(1, 0));
+        // Clockwise around center from dir 0
         expectedCoords.add(new Coords(0, -1));
+        expectedCoords.add(new Coords(1, 0));
+        expectedCoords.add(new Coords(1, 1));
         expectedCoords.add(new Coords(0, 1));
+        expectedCoords.add(new Coords(-1, 1));
         expectedCoords.add(new Coords(-1, 0));
-        expectedCoords.add(new Coords(-1, -1));
 
         assertEquals(6, resultingCoords.size());
         for (Coords expectedCoord : expectedCoords) {
-            assertTrue(resultingCoords.contains(expectedCoord));
+            assertTrue(resultingCoords.contains(expectedCoord), expectedCoord.toString());
         }
 
         // for a radius 2 donut we expect to see 12 hexes.
         resultingCoords = testCoords.allAtDistance(2);
 
         expectedCoords = new ArrayList<>();
-        expectedCoords.add(new Coords(-2, 0));
+        // Clockwise around center from dir 0
         expectedCoords.add(new Coords(0, -2));
-        expectedCoords.add(new Coords(1, 1));
-        expectedCoords.add(new Coords(-2, 1));
-        expectedCoords.add(new Coords(1, -2));
-        expectedCoords.add(new Coords(-2, -1));
-        expectedCoords.add(new Coords(2, 1));
-        expectedCoords.add(new Coords(-1, -2));
+        expectedCoords.add(new Coords(1, -1));
         expectedCoords.add(new Coords(2, -1));
         expectedCoords.add(new Coords(2, 0));
+        expectedCoords.add(new Coords(2, 1));
+        expectedCoords.add(new Coords(1, 2));
         expectedCoords.add(new Coords(0, 2));
-        expectedCoords.add(new Coords(-1, 1));
+        expectedCoords.add(new Coords(-1, 2));
+        expectedCoords.add(new Coords(-2, 1));
+        expectedCoords.add(new Coords(-2, 0));
+        expectedCoords.add(new Coords(-2, -1));
+        expectedCoords.add(new Coords(-1, -1));
         assertEquals(12, resultingCoords.size());
         for (Coords expectedCoord : expectedCoords) {
-            assertTrue(resultingCoords.contains(expectedCoord));
+            assertTrue(resultingCoords.contains(expectedCoord), expectedCoord.toString());
         }
     }
 }

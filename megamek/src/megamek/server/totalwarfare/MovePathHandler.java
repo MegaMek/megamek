@@ -1311,6 +1311,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             mpUsed = step.getMpUsed();
                             break;
                         }
+                    } else if (Compute.canDetectHidden(entity, dist, md.isEndStep(step))) {
+                        // There are a variety of other ways to detect a hidden unit.
+                        // Reveal the detected unit and add the report to the movement report.
+                        e.setHidden(false);
+                        gameManager.entityUpdate(e.getId());
+                        r = new Report(9960);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        r.add(e.getPosition().getBoardNum());
+                        addReport(r);
                     }
                 }
             }
@@ -2655,7 +2665,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for revealed minefields;
             // unless we get errata about it, we assume that the check is done
             // every time we enter a new hex
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
+            // Also perform per-step Hidden Unit checks if TacOps Advanced Active Probe is enabled.
+            // Aerospace BAP hidden unit detection also occurs here (with or without the above option)
+            if ((getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) || entity.isAerospace())
                     && !lastPos.equals(curPos)) {
                 if (ServerHelper.detectMinefields(getGame(), entity, curPos, gameManager.getMainPhaseReport(), gameManager)
                         ||

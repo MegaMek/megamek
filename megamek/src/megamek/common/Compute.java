@@ -4867,8 +4867,7 @@ public class Compute {
             return false;
         }
 
-        if (attacker instanceof Aero) {
-            Aero aero = (Aero) attacker;
+        if (attacker instanceof Aero aero) {
             // Account for sensor damage
             if (aero.isAeroSensorDestroyed()) {
                 return false;

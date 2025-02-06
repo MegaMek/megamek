@@ -43,6 +43,7 @@ dependencies {
     implementation 'com.formdev:flatlaf-extras:3.5.4'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.21'
+    implementation 'commons-io:commons-io:2.18.0'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
     implementation 'org.apache.commons:commons-collections4:4.5.0-M3'
     implementation 'org.apache.commons:commons-lang3:3.17.0'

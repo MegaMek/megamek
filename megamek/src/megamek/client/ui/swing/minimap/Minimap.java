@@ -52,7 +52,6 @@ import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
 import megamek.client.Client;
-import megamek.client.IClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -68,6 +67,7 @@ import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
@@ -317,12 +317,24 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         logger.error(ex, "");
                     }
                 }
+                if (e.getNewPhase() == GamePhase.END_REPORT) {
+                    moveTracks.removeIf(line -> line.round() + 2 < game.getCurrentRound());
+                }
                 refreshMap();
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 refreshMap();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                var movePath = e.getMovePath();
+                if (movePath != null && !movePath.isEmpty()) {
+                    addMovePath(new ArrayList<>(movePath), e.getOldEntity());
+                    refreshMap();
+                }
             }
 
             @Override
@@ -572,7 +584,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     drawMap();
                 } else {
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(16);
                     } catch (InterruptedException ie) {
                         // should never happen
                     }
@@ -583,6 +595,22 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         }
     };
+
+    private final List<Line> moveTracks = new ArrayList<>();
+    private record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
+    private final Color MOVE_TRACK_COLOR = new Color(0, 0, 0, 128);
+
+    private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
+        Coords previousCoords = entity.getPosition();
+        for (var unitLocation : unitLocations) {
+            var coords = unitLocation.getCoords();
+            moveTracks.add(new Line(previousCoords.getX(), previousCoords.getY(),
+                coords.getX(), coords.getY(),
+                MOVE_TRACK_COLOR,
+                game.getCurrentRound()));
+            previousCoords = coords;
+        }
+    }
 
     /** Call this to schedule a minimap redraw. */
     public void refreshMap() {
@@ -670,6 +698,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             // In case the flag SHOW SYMBOLS is set, it will draw the units and other stuff
             if (symbolsDisplayMode == SHOW_SYMBOLS) {
                 if (null != game) {
+                    for (Line line : moveTracks) {
+                        paintMoveTrack(g, line);
+                    }
+
                     // draw declared fire
                     for (EntityAction action : game.getActionsVector()) {
                         if (action instanceof AttackAction) {
@@ -991,6 +1023,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g.setColor(new Color(c / factor, c / factor, c, alpha)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
+    }
+
+    private void paintMoveTrack(Graphics g, Line line) {
+        int baseX1 = (line.x1 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+        int baseY1 = (((2 * line.y1) + 1 + (line.x1 % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        int baseX2 = (line.x2 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+        int baseY2 = (((2 * line.y2) + 1 + (line.x2 % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        g.setColor(line.color);
+        ((Graphics2D) g).setStroke(new BasicStroke(3));
+        g.drawLine(baseX1, baseY1, baseX2, baseY2);
     }
 
     /**

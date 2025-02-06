@@ -65,7 +65,6 @@ import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
 import megamek.common.MapSettings;
@@ -221,6 +220,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField userDir;
     private JTextField mmlPath;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
+    private final JCheckBox datasetLogging = new JCheckBox(Messages.getString("CommonSettingsDialog.datasetLogging"));
+
     private JTextField gameLogFilename;
     private JTextField autoResolveLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
@@ -1898,6 +1899,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 "This changes the BV/PV displayed in the unit selection list. It does not change the pilot/gunnery of the mek once selected. Request restart of Megamek."));
         comps.add(checkboxEntry(generateNames, null));
         addLineSpacer(comps);
+        comps.add(checkboxEntry(datasetLogging, null));
         comps.add(checkboxEntry(keepGameLog, null));
 
         gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
@@ -2027,6 +2029,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             maxPathfinderTime.setText(Integer.toString(CLIENT_PREFERENCES.getMaxPathfinderTime()));
 
             keepGameLog.setSelected(CLIENT_PREFERENCES.keepGameLog());
+            datasetLogging.setSelected(CLIENT_PREFERENCES.dataLoggingEnabled());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CLIENT_PREFERENCES.getGameLogFilename());
             autoResolveLogFilename.setEnabled(keepGameLog.isSelected());
@@ -2523,6 +2526,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setGetFocus(getFocus.isSelected());
 
         CLIENT_PREFERENCES.setKeepGameLog(keepGameLog.isSelected());
+        CLIENT_PREFERENCES.setDataLogging(datasetLogging.isSelected());
         CLIENT_PREFERENCES.setGameLogFilename(gameLogFilename.getText());
         CLIENT_PREFERENCES.setAutoResolveGameLogFilename(autoResolveLogFilename.getText());
         CLIENT_PREFERENCES.setUserDir(userDir.getText());

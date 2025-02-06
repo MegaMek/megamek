@@ -24,6 +24,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -33,6 +35,7 @@ public class RankedPath implements Comparable<RankedPath> {
     private MovePath path;
     private double rank;
     private String reason;
+    private final transient Map<String, Double> scores = new HashMap<>();
 
     // the expected damage resulting from the calculation of this ranked path
     private double expectedDamage;
@@ -45,7 +48,7 @@ public class RankedPath implements Comparable<RankedPath> {
         return path;
     }
 
-    double getRank() {
+    public double getRank() {
         return rank;
     }
 
@@ -55,6 +58,10 @@ public class RankedPath implements Comparable<RankedPath> {
 
     void setExpectedDamage(double damage) {
         expectedDamage = damage;
+    }
+
+    public Map<String, Double> getScores() {
+        return scores;
     }
 
     public RankedPath() {

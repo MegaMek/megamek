@@ -18916,7 +18916,8 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (ferroLamellorArmor
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
-                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor((((double) damage) * 4) / 5);
                     if (damage <= 0) {
@@ -18932,6 +18933,7 @@ public class TWGameManager extends AbstractGameManager {
                         && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_AX) //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);

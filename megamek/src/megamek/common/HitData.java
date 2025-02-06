@@ -30,6 +30,7 @@ public class HitData {
     public static final int DAMAGE_ARMOR_PIERCING = -6;
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
     public static final int DAMAGE_IGNORES_DMG_REDUCTION = -8;
+    public static final int DAMAGE_AX = -9;
 
     private int location;
     private boolean rear;
@@ -56,13 +57,13 @@ public class HitData {
      * Keeps track of the Entity originating this hit, if any
      */
     private int attackerId = Entity.NONE;
-    
+
     /**
-     * Does this HitData represent the first hit in a series of hits (ie, 
+     * Does this HitData represent the first hit in a series of hits (ie,
      * cluster weapons).
      */
     private boolean firstHit = true;
-    
+
     private boolean ignoreInfantryDoubleDamage = false;
 
 

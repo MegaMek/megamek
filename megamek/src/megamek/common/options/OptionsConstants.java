@@ -274,9 +274,9 @@ public class OptionsConstants {
     public static final String BASE_TURN_TIMER_FIRING = "turn_timer_firing";
     public static final String BASE_TURN_TIMER_PHYSICAL = "turn_timer_physical";
     public static final String BASE_TURN_TIMER_ALLOW_EXTENSION = "turn_timer_allow_extension";
-    public static final String BASE_SKIP_INELIGABLE_MOVEMENT = "skip_ineligable_movement";
-    public static final String BASE_SKIP_INELIGABLE_FIRING = "skip_ineligable_firing";
-    public static final String BASE_SKIP_INELIGABLE_PHYSICAL = "skip_ineligable_physical";
+    public static final String BASE_SKIP_INELIGIBLE_MOVEMENT = "skip_ineligable_movement";
+    public static final String BASE_SKIP_INELIGIBLE_FIRING = "skip_ineligable_firing";
+    public static final String BASE_SKIP_INELIGIBLE_PHYSICAL = "skip_ineligable_physical";
     public static final String BASE_PUSH_OFF_BOARD = "push_off_board";
     public static final String BASE_TEAM_INITIATIVE = "team_initiative";
     public static final String BASE_AUTOSAVE_MSG = "autosave_msg";
@@ -289,7 +289,7 @@ public class OptionsConstants {
     public static final String BASE_DUMPING_FROM_ROUND = "dumping_from_round";
     public static final String BASE_SET_ARTY_PLAYER_HOMEEDGE = "set_arty_player_homeedge";
     public static final String BASE_SET_DEFAULT_TEAM_1 = "set_default_team_1";
-    public static final String BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0 = "set_player_deployment_to_player0";
+    public static final String BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0 = "set_player_deployment_to_player0";
     public static final String BASE_RESTRICT_GAME_COMMANDS = "restrict_game_commands";
     public static final String BASE_DISABLE_LOCAL_SAVE = "disable_local_save";
     public static final String BASE_BRIDGECF = "bridgeCF";

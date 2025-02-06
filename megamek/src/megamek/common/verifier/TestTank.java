@@ -391,7 +391,7 @@ public class TestTank extends TestEntity {
         if (!correctCriticals(buff)) {
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -667,7 +667,7 @@ public class TestTank extends TestEntity {
         // total)
         boolean infantryBayCounted = false;
         for (Transporter transport : tank.getTransports()) {
-            if (transport instanceof TroopSpace) {
+            if (transport instanceof InfantryCompartment) {
                 buff.append(StringUtil.makeLength("Troop Space", 30));
                 buff.append("1\n");
                 infantryBayCounted = true;

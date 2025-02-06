@@ -65,7 +65,7 @@ public class TurnTimer {
         display.add(remaining);
         display.add(progressBar);
 
-        BasicGameOptions options = client.getGame().getOptions();
+        var options = client.getGame().getOptions();
         allowExtension = options.getOption(OptionsConstants.BASE_TURN_TIMER_ALLOW_EXTENSION).booleanValue();
 
         listener = new ActionListener() {
@@ -130,7 +130,7 @@ public class TurnTimer {
 
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, IClient client) {
         // check if there should be a turn timer running
-        BasicGameOptions options = client.getGame().getOptions();
+        var options = client.getGame().getOptions();
         GamePhase phase = client.getGame().getPhase();
 
         int timerLimit = 0;

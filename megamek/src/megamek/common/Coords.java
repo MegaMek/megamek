@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * MegaMek - Copyright (C) 2020 - The MegaMek Team  
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
@@ -31,9 +32,9 @@ import megamek.common.annotations.Nullable;
  *       0
  *     _____
  *  5 /     \ 1
- *-x /       \ +x 
- *   \       / 
- *  4 \_____/ 2 
+ *-x /       \ +x
+ *   \       /
+ *  4 \_____/ 2
  *       3
  *      +y
  */
@@ -46,7 +47,7 @@ public class Coords implements Serializable {
 
     @XmlElement(name="x")
     private final int x;
-    
+
     @XmlElement(name="y")
     private final int y;
 
@@ -57,6 +58,22 @@ public class Coords implements Serializable {
     public Coords(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    /** Constructs a new coordinate pair at Coords(x, y). Note: Coords are immutable. */
+    public Coords(Coords other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    public static Coords average(List<Coords> positions) {
+        int x = 0;
+        int y = 0;
+        for (Coords pos : positions) {
+            x += pos.x;
+            y += pos.y;
+        }
+        return new Coords(x / positions.size(), y / positions.size());
     }
 
     /**
@@ -79,9 +96,9 @@ public class Coords implements Serializable {
     public Coords translated(String dir) {
         int intDir = 0;
 
-        try {
+        if (Character.isDigit(dir.charAt(0))) {
             intDir = Integer.parseInt(dir);
-        } catch (NumberFormatException nfe) {
+        } else {
             if (dir.equalsIgnoreCase("N")) {
                 intDir = 0;
             } else if (dir.equalsIgnoreCase("NE")) {
@@ -99,7 +116,7 @@ public class Coords implements Serializable {
 
         return translated(intDir);
     }
-    
+
     // The instance methods xInDir etc. make for convenient calls
     // while the static xInDir etc. can be called to avoid Coords construction
 
@@ -111,12 +128,14 @@ public class Coords implements Serializable {
     /** Returns the x value of the Coords the given distance in the direction dir. */
     public static int xInDir(int x, int y, int dir, int distance) {
         switch (dir) {
-            case 1:
-            case 2:
+            case 1: // NE
+            case 2: // SE
                 return x + distance;
-            case 4:
-            case 5:
+            case 4: // NW
+            case 5: // SW
                 return x - distance;
+            case 0: // North
+            case 3: // South
             default:
                 return x;
         }
@@ -142,17 +161,16 @@ public class Coords implements Serializable {
                 return y + distance;
         }
     }
-    
+
     /** Returns the x value of the adjacent Coords in the direction dir. */
     public int xInDir(int dir) {
         return Coords.xInDir(x, y, dir, 1);
     }
-
     /** Returns the x value of the Coords the given distance in the direction dir. */
     public int xInDir(int dir, int distance) {
         return Coords.xInDir(x, y, dir, distance);
     }
-    
+
     /** Returns the y value of the adjacent Coords in the direction dir. */
     public int yInDir(int dir) {
         return Coords.yInDir(x, y, dir, 1);
@@ -160,7 +178,7 @@ public class Coords implements Serializable {
 
     /** Returns the y value of the Coords the given distance in the direction dir. */
     public int yInDir(int dir, int distance) {
-        return Coords.yInDir(x, y, dir, distance);    
+        return Coords.yInDir(x, y, dir, distance);
     }
 
     /**
@@ -175,24 +193,24 @@ public class Coords implements Serializable {
     /**
      * Returns the direction in which another coordinate lies; 0 if the
      * coordinates are equal.
-     * 
+     *
      * @param d the destination coordinate.
      */
     public int direction(Coords d) {
         return (int) Math.round(radian(d) / HEXSIDE) % 6;
     }
-    
+
     /**
-     * Returns an approximate direction in which another coordinate lies; 
+     * Returns an approximate direction in which another coordinate lies;
      * 0 if the coordinates are equal
      */
     public int approximateDirection(Coords second, int initialDirection, int previousDirection) {
         if (this.equals(second)) {
             return 0;
         }
-        
+
         int direction = initialDirection;
-        
+
         HexLine startLine = new HexLine(this, direction);
         int directionIncrement = 0;
         int pointJudgement = startLine.judgePoint(second);
@@ -212,14 +230,14 @@ public class Coords implements Serializable {
         } else if (pointJudgement > 0) {
             directionIncrement = 1;
         }
-        
+
         int newDirection = (initialDirection + directionIncrement) % 6;
         if (newDirection == previousDirection) {
             return newDirection;
         } else {
             return approximateDirection(second, newDirection, initialDirection);
         }
-        
+
         // draw hexline in "direction".
         // if dest is on hexline (judgePoint == 0), destDir = "direction"
         // if judgepoint < 0, repeat with hexline in (direction - 1) % 6
@@ -228,7 +246,7 @@ public class Coords implements Serializable {
 
     /**
      * Returns the radian direction of another Coords.
-     * 
+     *
      * @param d the destination coordinate.
      */
     public double radian(Coords d) {
@@ -318,7 +336,7 @@ public class Coords implements Serializable {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = Objects.hash(x, y); 
+            hash = Objects.hash(x, y);
         }
         return hash;
     }
@@ -337,7 +355,7 @@ public class Coords implements Serializable {
      * three hexes, sides first, add the first one that intersects and continue
      * from there. Based off of some of the formulas at Amit's game programming
      * site. (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
-     * 
+     *
      * Note: this function can return Coordinates that are not on the board.
      *
      * @param src Starting point.
@@ -485,44 +503,51 @@ public class Coords implements Serializable {
     }
 
     /**
-     * Returns a list of all adjacent coordinates (distance = 1), 
+     * Returns a list of all adjacent coordinates (distance = 1),
      * regardless of whether they're on the board or not.
      */
     public ArrayList<Coords> allAdjacent() {
         return (allAtDistance(1));
     }
-    
+
     /**
-     * Returns a list of all coordinates at the given distance dist 
+     * Returns a list of all coordinates at the given distance (dist - 1)
+     * and anything less than dist as well.
+     */
+    public ArrayList<Coords> allLessThanDistance(int dist) {
+        return allAtDistanceOrLess(dist - 1);
+    }
+
+    /**
+     * Returns a list of all coordinates at the given distance dist
      * and anything less than dist as well.
      */
     public ArrayList<Coords> allAtDistanceOrLess(int dist) {
         ArrayList<Coords> retval = new ArrayList<>();
-        
-        for (int radius = 0; radius < dist; radius++) {
+
+        for (int radius = 0; radius <= dist; radius++) {
             retval.addAll(allAtDistance(radius));
         }
-        
+
         return retval;
     }
-    
+
     /**
-     * Returns a list of all coordinates at the given distance dist, 
-     * regardless of whether they're on the board or not. Returns an 
+     * Returns a list of all coordinates at the given distance dist,
+     * regardless of whether they're on the board or not. Returns an
      * empty Set for dist &lt; 0 and the calling Coords itself for dist == 0.
      */
-    public ArrayList<Coords> allAtDistance(int dist) { 
+    public ArrayList<Coords> allAtDistance(int dist) {
         ArrayList<Coords> retval = new ArrayList<>();
-        
+
         if (dist == 0) {
             retval.add(this);
         } else if (dist > 0) {
             // algorithm outline: travel to the southwest a number of hexes equal to the radius
-            // then, "draw" the hex sides in sequence, moving north first to draw the west side, 
-            // then rotating clockwise and moving northeast to draw the northwest side and so on, 
+            // then, "draw" the hex sides in sequence, moving north first to draw the west side,
+            // then rotating clockwise and moving northeast to draw the northwest side and so on,
             // until we circle around. The length of a hex side is equivalent to the radius
             Coords currentHex = translated(4, dist);
-
             for (int direction = 0; direction < 6; direction++) {
                 for (int translation = 0; translation < dist; translation++) {
                     currentHex = currentHex.translated(direction);
@@ -532,13 +557,21 @@ public class Coords implements Serializable {
         }
         return retval;
     }
-    
+
     /**
      * this makes the coordinates 1 based instead of 0 based to match the tiles
      * diaplayed on the grid.
      */
     public String toFriendlyString() {
         return "(" + (x + 1) + ", " + (y + 1) + ")";
+    }
+
+    /**
+     * Returns the coordinates in TSV format for logging purposes
+     * @return the coordinates in TSV format `x`\t`y`
+     */
+    public String toTSV() {
+        return x + "\t" + y;
     }
 
     public int getX() {
@@ -555,5 +588,24 @@ public class Coords implements Serializable {
      */
     public boolean between(Coords s, Coords e) {
         return (s.distance(e) == s.distance(this) + this.distance(e));
+    }
+
+    /**
+     * @return CubeCoords representation of this Coords
+     */
+    public CubeCoords toCube() {
+        int offset = -1;
+        int q = x;
+        int r = y - (int) ((x + offset * (x & 1)) / 2.0);
+        int s = -q - r;
+        return new CubeCoords(q, r, s);
+    }
+
+    public Coords subtract(Coords centroid) {
+        return new Coords(x - centroid.x, y - centroid.y);
+    }
+
+    public Coords add(Coords centroid) {
+        return new Coords(x + centroid.x, y + centroid.y);
     }
 }

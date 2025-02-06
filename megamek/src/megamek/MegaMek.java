@@ -20,10 +20,8 @@
  */
 package megamek;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputFilter;
+import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -37,8 +35,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
@@ -54,6 +51,7 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
+import megamek.utilities.GifWriter;
 import megamek.utilities.RATGeneratorEditor;
 
 /**
@@ -87,6 +85,8 @@ public class MegaMek {
             options.setRelease(SuiteConstants.VERSION.toString());
         });
 
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             final String name = t.getClass().getName();
@@ -109,6 +109,9 @@ public class MegaMek {
                     parser.help()));
             System.exit(1);
         }
+
+        // log jvm parameters
+        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 
@@ -134,7 +137,10 @@ public class MegaMek {
             startQuickLoad(restArgs);
             return;
         }
-
+        if (parser.writeGif()) {
+            startGifWriter(restArgs);
+            return;
+        }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
         } else {
@@ -341,6 +347,14 @@ public class MegaMek {
             mmg.start(false);
             mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
         });
+    }
+
+    private static void startGifWriter(String... args) {
+        try {
+            GifWriter.createGifFromGameSummary(args[0]);
+        } catch (Exception e) {
+            logger.error(e, "Error creating gif");
+        }
     }
 
     /**

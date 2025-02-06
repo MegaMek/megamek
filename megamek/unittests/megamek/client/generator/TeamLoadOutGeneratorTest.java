@@ -19,6 +19,7 @@
 package megamek.client.generator;
 
 import megamek.client.Client;
+import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
 import megamek.common.AmmoType.Munitions;
@@ -28,15 +29,13 @@ import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import org.apache.commons.collections4.IteratorUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -431,20 +430,20 @@ class TeamLoadOutGeneratorTest {
         tlg.updateOptionValues();
 
         // Should not be available to anyone
-        assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
-        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Should be available to everyone
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECHLEVEL)).thenReturn("Advanced");
         tlg.updateOptionValues();
-        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
-        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -454,30 +453,30 @@ class TeamLoadOutGeneratorTest {
         AmmoType mType = AmmoType.getMunitionsFor(aType.getAmmoType()).stream()
                 .filter(m -> m.getSubMunitionName().contains("ADA")).findFirst().orElse(null);
         // Should be available by default in 3151, including to Clans (using MixTech)
-        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
-        assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "IS", "IS", false));
         // Check mixed-tech and regular Clan tech, which should match IS at this point
-        assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
-        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", false));
 
         // Set year back to 3025
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3025);
         tlg.updateOptionValues();
-        assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
 
         // Move up to 3070. Because of game settings and lack of "Common" year, ADA
         // becomes available
         // everywhere (at least in the IS) immediately after its inception.
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3070);
         tlg.updateOptionValues();
-        assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
-        assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
+        Assertions.assertTrue(tlg.checkLegality(mType, "CC", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "FS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "IS", "IS", false));
+        Assertions.assertFalse(tlg.checkLegality(mType, "CLAN", "CL", true));
     }
 
     @Test
@@ -596,5 +595,101 @@ class TeamLoadOutGeneratorTest {
         tlg.clampAmmoShots(mockMek, 1.5f);
         assertEquals(8, bin1.getUsableShotsLeft());
         assertEquals(8, bin2.getUsableShotsLeft());
+    }
+
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
+     */
+    @Test
+    void testGenerateExternalOrdnanceCAP3SWEraPirates() {
+        // Game setup
+        int year = 2875;
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+        // Bomber info
+        int bombUnits = 20;
+        boolean airOnly = true;
+        boolean isPirate = true;
+        int quality = ForceDescriptor.RATING_5;
+        String faction = "PIR";
+        String techBase = "IS";
+        boolean mixedTech = false;
+        int[] generatedBombs = tlg.generateExternalOrdnance(
+            bombUnits,
+            airOnly,
+            isPirate,
+            quality,
+            year,
+            faction,
+            techBase,
+            mixedTech
+        );
+        int[] expected = new int[BombType.B_NUM];
+        expected[BombType.B_RLP] = bombUnits;
+        assertArrayEquals(expected, generatedBombs);
+    }
+
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
+     */
+    @Test
+    void testGenerateExternalOrdnanceCAPPostCIEraPirates() {
+        // Game setup
+        int year = 3075;
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+        // Bomber info
+        int bombUnits = 20;
+        boolean airOnly = true;
+        boolean isPirate = true;
+        int quality = ForceDescriptor.RATING_5;
+        String faction = "PIR";
+        String techBase = "IS";
+        boolean mixedTech = false;
+        int[] generatedBombs = tlg.generateExternalOrdnance(
+            bombUnits,
+            airOnly,
+            isPirate,
+            quality,
+            year,
+            faction,
+            techBase,
+            mixedTech
+        );
+        // Should always get some regular rocket launchers
+        assertTrue(generatedBombs[BombType.B_RL] > 0);
+        // Should not use RL-Ps when RLs are available
+        assertEquals(0, generatedBombs[BombType.B_RLP]);
+    }
+
+    /**
+     * We expect CAP Pirate flights in the 3SW era to mount ordnance only RL-P pods.
+     */
+    @Test
+    void testGenerateExternalOrdnanceCAP2800Clan() {
+        // Game setup
+        int year = 2800;
+        when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(year);
+        TeamLoadOutGenerator tlg = new TeamLoadOutGenerator(game);
+        // Bomber info
+        int bombUnits = 20;
+        boolean airOnly = true;
+        boolean isPirate = false;
+        int quality = ForceDescriptor.RATING_1;
+        String faction = "CSJ";
+        String techBase = "CL";
+        boolean mixedTech = false;
+        int[] generatedBombs = tlg.generateExternalOrdnance(
+            bombUnits,
+            airOnly,
+            isPirate,
+            quality,
+            year,
+            faction,
+            techBase,
+            mixedTech
+        );
+        // Pre-2823, Clan units can take RL-P bombs
+        assertTrue(generatedBombs[BombType.B_RLP] > 0);
     }
 }

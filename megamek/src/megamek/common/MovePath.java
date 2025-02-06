@@ -26,6 +26,8 @@ import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Holds movement path for an entity.
@@ -982,6 +984,19 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * returns if the unit had any altitude above 0 during the movement path
+     */
+    public boolean isAirborne() {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            if (step.getAltitude() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * get final altitude
      */
     public int getFinalAltitude() {
@@ -1221,6 +1236,21 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * Returns the linear distance between the first and last hexes in the path.
+     */
+    public int getDistanceTravelled() {
+        var currentEntityPosition = getEntity().getPosition();
+        if (currentEntityPosition == null) {
+            return 0;
+        }
+        var finalCoords = getFinalCoords();
+        if (finalCoords == null) {
+            return 0;
+        }
+        return currentEntityPosition.distance(finalCoords);
+    }
+
+    /**
      * Returns true if the entity is jumping or if it's a flying lam.
      */
     public boolean isJumping() {
@@ -1341,10 +1371,10 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // for aero units move must use up all their velocity
-        if (getEntity().isAero()) {
-            IAero a = (IAero) getEntity();
+        // but only if it is actually IAero, because anything could return isAero() == true but not implement IAero
+        if (getEntity().isAero() && getEntity() instanceof IAero aero) {
             if (getLastStep() == null) {
-                if ((a.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
+                if ((aero.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
                     return false;
                 }
             } else {
@@ -1359,7 +1389,6 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() == null) {
             return true;
         }
-
         if (getLastStep().getType() == MoveStepType.CHARGE) {
             return getSecondLastStep().isLegal(this);
         }
@@ -2002,5 +2031,57 @@ public class MovePath implements Cloneable, Serializable {
         long marker3 = marker2 - marker1;
 
         return finPath;
+    }
+
+    /**
+     *
+     * @return maximum movement based on the current movement type
+     *   include sprint if available
+     */
+    public int getMaxMP() {
+        int maxMP;
+
+        if (contains(MoveStepType.START_JUMP) || contains(MoveStepType.DFA)) {
+            maxMP = getEntity().getJumpMP();
+        } else if (contains(MoveStepType.BACKWARDS)) {
+            maxMP = getEntity().getWalkMP();
+        } else {
+            if ((getLastStep() != null) &&
+                getLastStep().canUseSprint(game)) {
+                maxMP = getEntity().getSprintMP();
+            } else {
+                maxMP = getEntity().getRunMP();
+            }
+        }
+
+        return maxMP;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (!(object instanceof MovePath movePath)) return false;
+
+        return new EqualsBuilder()
+            .append(entity, movePath.entity)
+            .append(careful, movePath.careful)
+            .append(gravityConcern, movePath.gravityConcern)
+            .append(gravity, movePath.gravity)
+            .append(steps, movePath.steps)
+            .append(containedStepTypes, movePath.containedStepTypes)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+            .append(entity)
+            .append(steps)
+            .append(containedStepTypes)
+            .append(careful)
+            .append(gravityConcern)
+            .append(gravity)
+            .toHashCode();
     }
 }

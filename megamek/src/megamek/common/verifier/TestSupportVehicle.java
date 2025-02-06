@@ -20,7 +20,6 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -887,13 +886,14 @@ public class TestSupportVehicle extends TestEntity {
         return 0.0;
     }
 
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet().or(MiscType.F_ADVANCED_FIRECONTROL)
+                .or(MiscType.F_CHASSIS_MODIFICATION);
+
     @Override
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        final BigInteger exclude = MiscType.F_BASIC_FIRECONTROL.or(MiscType.F_ADVANCED_FIRECONTROL)
-                .or(MiscType.F_CHASSIS_MODIFICATION);
-        return !eq.hasFlag(exclude);
+        return !eq.hasFlag(EXCLUDE);
     }
 
     @Override
@@ -992,7 +992,7 @@ public class TestSupportVehicle extends TestEntity {
             return true;
         }
 
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
             correct = false;
@@ -1015,7 +1015,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (occupiedSlotCount() > totalSlotCount()) {
+        if (!ignoreSlotCount() && (occupiedSlotCount() > totalSlotCount())) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(occupiedSlotCount() - totalSlotCount()));
             buff.append(" slot(s) too many.\n");
@@ -1210,7 +1210,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
 
@@ -1512,7 +1512,7 @@ public class TestSupportVehicle extends TestEntity {
 
         boolean troopSpaceFound = false;
         for (Transporter transport : supportVee.getTransports()) {
-            if ((transport instanceof TroopSpace) && !troopSpaceFound) {
+            if ((transport instanceof InfantryCompartment) && !troopSpaceFound) {
                 buff.append(StringUtil.makeLength("Troop Space", 30));
                 buff.append("1\n");
                 troopSpaceFound = true;
@@ -1702,7 +1702,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     /**
-     * Each distinct bay requires a slot, regardless of size. All {@link TroopSpace}
+     * Each distinct bay requires a slot, regardless of size. All {@link InfantryCompartment}
      * is treated as a single bay.
      *
      * @return The number of slots required by transporters.
@@ -1714,7 +1714,7 @@ public class TestSupportVehicle extends TestEntity {
         for (Transporter transporter : supportVee.getTransports()) {
             if ((transporter instanceof Bay transportBay) && !transportBay.isQuarters()) {
                 slots++;
-            } else if ((transporter instanceof TroopSpace) && !foundTroopSpace) {
+            } else if ((transporter instanceof InfantryCompartment) && !foundTroopSpace) {
                 slots++;
                 foundTroopSpace = true;
             }

@@ -142,6 +142,40 @@ public final class UIUtil {
     }
 
     /**
+     * Returns an anchor with opening and closing tag and the
+     * content in between.
+     * Used for internal navigation in a document
+     *
+     * @param anchorId the name of the anchor
+     * @param content  the text to go in the span
+     * @return the complete anchor block
+     */
+    public static String anchor(String anchorId, String content) {
+        return "<a name=\"" + anchorId + "\">" + content + "</a>";
+    }
+
+    /**
+     * Wraps the content in a link for an internal anchor.
+     *
+     * @param anchorId the name of the anchor
+     * @param content the text to go in the link
+     * @return the complete link block
+     */
+    public static String link(String anchorId, String content) {
+        return "<a href='#" + anchorId + "'>" + content + "</a>";
+    }
+
+    /**
+     * Returns a hr element, which is usually represented as a line across the page.
+     *
+     * @return an hr element
+     */
+    public static String divider() {
+        return "<hr/>";
+    }
+
+
+    /**
      * Returns a div of the given CSS class with opening and closing tag and the
      * content in between.
      * The class should be defined in the header styles block, e.g. as
@@ -1079,7 +1113,7 @@ public final class UIUtil {
      * its width and adding HTML tags.
      */
     public static String formatSideTooltip(String text) {
-        return "<P WIDTH=" + scaleForGUI(TOOLTIP_WIDTH) + " style=padding:5>" + text;
+        return "<html><p width=" + scaleForGUI(TOOLTIP_WIDTH) + " style='padding:5'>" + text + "</html>";
     }
 
     /**

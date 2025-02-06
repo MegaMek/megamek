@@ -90,6 +90,8 @@ public enum KeyCommandBind {
     TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
+    PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
     // Toggles isometric view on/off
@@ -120,7 +122,8 @@ public enum KeyCommandBind {
     SENSOR_RANGE(true, "sensorRange", VK_C),
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
-    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK);
+    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
+    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);
 
     /** The command associated with this binding. */
     public String cmd;

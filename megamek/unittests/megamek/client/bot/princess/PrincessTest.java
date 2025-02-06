@@ -89,10 +89,16 @@ class PrincessTest {
         assertEquals(-2, mockPrincess.calculateAdjustment("--"));
 
         // Test an adjustment with some bad characters.
-        assertEquals(1, mockPrincess.calculateAdjustment("+4"));
+        assertEquals(1, mockPrincess.calculateAdjustment("+p"));
 
-        // Test an adjustment with nothing but bad characters.
-        assertEquals(0, mockPrincess.calculateAdjustment("5"));
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(5, mockPrincess.calculateAdjustment("5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(-5, mockPrincess.calculateAdjustment("-5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(22, mockPrincess.calculateAdjustment("+22"));
 
         // Test an empty ticks argument.
         assertEquals(0, mockPrincess.calculateAdjustment(""));
@@ -406,7 +412,6 @@ class PrincessTest {
 
         // Unit is capable of fleeing.
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.canFlee()).thenReturn(true);
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
@@ -420,6 +425,7 @@ class PrincessTest {
         when(mockPrincess.getHomeEdge(any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Game mockGame = mock(Game.class);
         when(mockPrincess.getGame()).thenReturn(mockGame);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
 
         // In its current state, the entity does not need to flee the board.
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
@@ -448,11 +454,11 @@ class PrincessTest {
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // Make the unit incapable of fleeing.
-        when(mockMek.canFlee()).thenReturn(false);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // The unit can flee, but is no longer on the board edge.
-        when(mockMek.canFlee()).thenReturn(true);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
         when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class),
                 any(Game.class))).thenReturn(1);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));

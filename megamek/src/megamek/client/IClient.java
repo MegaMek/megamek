@@ -169,4 +169,6 @@ public interface IClient {
     void sendDone(boolean done);
 
     void sendChat(String message);
+
+    void sendPause();
 }

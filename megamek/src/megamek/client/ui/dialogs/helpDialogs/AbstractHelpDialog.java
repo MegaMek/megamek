@@ -18,12 +18,17 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
-import java.awt.Container;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
@@ -61,9 +66,52 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        JEditorPane pane = new JEditorPane();
+        var pane = new JEditorPane();
+        var scrollPane = new JScrollPane(pane);
+
+        pane.setContentType("text/html");
         pane.setName("helpPane");
         pane.setEditable(false);
+        pane.addHyperlinkListener(pe -> {
+            if (HyperlinkEvent.EventType.ACTIVATED == pe.getEventType()) {
+                String reference = pe.getDescription();
+                if (reference != null && reference.startsWith("#")) {
+                    reference = reference.substring(1);
+                    String finalReference = reference;
+                    SwingUtilities.invokeLater(() -> pane.scrollToReference(finalReference));
+                }
+            }
+        });
+
+
+        // Add mouse motion listener to show tooltips for links.
+        pane.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int pos = pane.viewToModel2D(e.getPoint());
+                if (pos >= 0 && pane.getDocument() instanceof HTMLDocument doc) {
+                    var elem = doc.getCharacterElement(pos);
+                    if (elem != null) {
+                        // The Element’s attributes may point us to a <SPAN> tag
+                        var attrs = elem.getAttributes();
+                        Object attrsAttribute = attrs.getAttribute(HTML.Tag.A);
+
+                        if (attrsAttribute instanceof AttributeSet nAttrs) {
+                            // Try retrieving your custom data-value attribute.
+                            // "data-value" isn’t part of the standard HTML.Attribute enum,
+                            // so we can use HTML.getAttributeKey("data-value").
+                            String dataValue = (String) nAttrs.getAttribute(HTML.getAttributeKey("data-value"));
+
+                            if (dataValue != null) {
+                                // We found our custom attribute, so show it in the tooltip
+                                pane.setToolTipText(dataValue);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         final File helpFile = new File(getHelpFilePath());
 
@@ -77,6 +125,6 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             logger.error(e, "createCenterPane");
         }
 
-        return new JScrollPane(pane);
+        return scrollPane;
     }
 }

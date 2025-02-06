@@ -29,7 +29,7 @@ import megamek.common.pathfinder.BoardClusterTracker.MovementType;
  * An extension of the MovePath class that stores information about terrain that
  * needs
  * to be destroyed in order to move along the specified route.
- * 
+ *
  * @author NickAragua
  */
 public class BulldozerMovePath extends MovePath {
@@ -41,6 +41,7 @@ public class BulldozerMovePath extends MovePath {
     Map<Coords, Integer> additionalCosts = new HashMap<>();
     List<Coords> coordsToLevel = new ArrayList<>();
     double maxPointBlankDamage = -1;
+    Coords destination = null;
 
     public BulldozerMovePath(Game game, Entity entity) {
         super(game, entity);
@@ -174,6 +175,7 @@ public class BulldozerMovePath extends MovePath {
         copy.additionalCosts = new HashMap<>(additionalCosts);
         copy.coordsToLevel = new ArrayList<>(coordsToLevel);
         copy.maxPointBlankDamage = maxPointBlankDamage;
+        copy.destination = (destination == null) ? destination : new Coords(destination.getX(), destination.getY());
         return copy;
     }
 
@@ -288,6 +290,14 @@ public class BulldozerMovePath extends MovePath {
         return coordsToLevel;
     }
 
+    public Coords getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Coords d) {
+        destination = d;
+    }
+
     @Override
     public String toString() {
         return super.toString() + " Leveling Cost: " + getLevelingCost() + " Additional Cost: " + getAdditionalCost();
@@ -297,7 +307,7 @@ public class BulldozerMovePath extends MovePath {
      * Comparator implementation useful in comparing two bulldozer move paths by
      * how many MP it'll take to accomplish that path, including time wasted
      * leveling any obstacles
-     * 
+     *
      * @author NickAragua
      *
      */

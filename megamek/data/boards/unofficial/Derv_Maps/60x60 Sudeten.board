@@ -1,8 +1,9 @@
 size 60 60
 tag "GrassTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
-tag "Woods (Auto)"
 tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 -1 "" "grass"
 hex 0201 -1 "" "grass"
 hex 0301 -1 "" "grass"

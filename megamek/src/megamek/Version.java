@@ -284,10 +284,10 @@ public final class Version implements Comparable<Version>, Serializable {
     @Override
     public String toString() {
         return String.format(
-                "%d.%d.%d%s",
-                getRelease(),
-                getMajor(),
-                getMinor(),
-                (isSnapshot() ? "-SNAPSHOT" : ""));
+            "%d.%02d.%02d%s",
+            getRelease(),
+            getMajor(),
+            getMinor(),
+            (isSnapshot() ? "-SNAPSHOT" : ""));
     }
 }

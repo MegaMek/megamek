@@ -23,7 +23,7 @@ import java.util.Vector;
 
 public class SBFRuleOptions extends BasicGameOptions {
 
-    /** Detection and recon rules aka "double blind", IO BF p.195 */
+    /** Detection and recon rules aka "double-blind", IO BF p.195 */
     public static final String BASE_RECON = "base_recon";
 
     /** When using detection and recon rules, players on a team share their vision */
@@ -61,10 +61,10 @@ public class SBFRuleOptions extends BasicGameOptions {
     public static final String INIT_BATTLEFIELD_INT = "init_battlefield_int";
 
     /** Banking initiative, IO BF p.223 IS AN SCA */
-//    public static final String INIT_BANKING = "init_banking";
+    public static final String INIT_BANKING = "init_banking";
 
     /** Forcing initiative, IO BF p.223 */
-//    public static final String INIT_FORCING = "init_forcing";
+    public static final String INIT_FORCING = "init_forcing";
 
     @Override
     public synchronized void initialize() {

@@ -1,9 +1,11 @@
 size 55 55
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"
 tag "MediumForest (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "water:1" ""
 hex 0201 0 "water:1" ""

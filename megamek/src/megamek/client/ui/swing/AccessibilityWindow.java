@@ -266,7 +266,7 @@ public class AccessibilityWindow extends JDialog {
         }
 
         @Override
-        public void gameVictory(GameVictoryEvent e) {
+        public void gameVictory(PostGameResolution e) {
             systemEvent("Game Victory! (unneeded.)");
         }
     };

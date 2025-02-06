@@ -25,7 +25,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -116,7 +116,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     // in MM they probably shouldn't need to be touched. They are used to keep track
     // of
     // whether a modular mount is in use or not for a particular trooper.
-    private boolean[] missingForTrooper = { false, false, false, false, false, false };
+    private final boolean[] missingForTrooper = { false, false, false, false, false, false };
 
     /**
      * Armor value, used for applicable equipment types like minesweepers.
@@ -168,7 +168,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     private boolean armoredComponent = false;
 
     // called shots status, sort of like another mode
-    private CalledShot called = new CalledShot();
+    private final CalledShot called = new CalledShot();
 
     /**
      * Flag that keeps track of whether this <code>Mounted</code> is mounted as
@@ -229,7 +229,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getModesCount() {
-        return getType().getModesCount();
+        return getType().getModesCount(this);
     }
 
     protected EquipmentMode getMode(int mode) {
@@ -244,9 +244,9 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         return getType().hasModeType(mode);
     }
 
-    public void adaptToGameOptions(GameOptions options) {
-        if (getType() instanceof Weapon) {
-            ((Weapon) getType()).adaptToGameOptions(options);
+    public void adaptToGameOptions(IGameOptions options) {
+        if (getType() instanceof Weapon weapon) {
+            weapon.adaptToGameOptions(options);
         }
     }
 
@@ -363,9 +363,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Can the switch from the current mode to the new mode happen instantly?
      *
-     * @param newMode
-     *                - integer for the new mode
-     * @return
+     * @param newMode - integer that represents the new mode
+     * @return true if the new mode can be switched instantly
      */
     public boolean canInstantSwitch(int newMode) {
         String newModeName = type.getMode(newMode).getName();
@@ -597,13 +596,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * cannot be used in the current phase anymore. If it still can, use setHit
      * instead
      *
-     * @param destroyed
+     * @param destroyed set this object as detroyed
      * @see #setHit(boolean)
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if ((destroyed == true)
-                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if (destroyed && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
@@ -660,13 +658,12 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * stuff that was hit in a phase can still be used in that phase, if that's
      * not desired, use setDestroyed instead
      *
-     * @param hit
+     * @param hit sets the object as hit
      * @see #setDestroyed(boolean)
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if ((hit == true)
-                && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+        if (hit && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
             if (entity != null) {
                 entity.setHasDamagedRHS(true);
             }
@@ -845,7 +842,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Sets the size of variable-sized equipment.
      *
-     * @param size
+     * @param size of the quipment
      * @see #getSize()
      */
     public void setSize(double size) {
@@ -909,7 +906,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     /**
      * Sets the hotloading parameter for this weapons ammo.
      *
-     * @param hotload
+     * @param hotload set the ammo loaded as hotloaded or not
      */
     public void setHotLoad(boolean hotload) {
 
@@ -1145,8 +1142,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public int getExplosionDamage() {
-        if (type instanceof MiscType) {
-            MiscType mtype = (MiscType) type;
+        if (type instanceof MiscType mtype) {
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && (linked != null)
                         && !linked.isFired()) {
@@ -1251,10 +1247,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
                 return true;
             }
         }
-        if (isDWPMounted && (getLinkedBy() != null)) {
-            return true;
-        }
-        return false;
+        return isDWPMounted && (getLinkedBy() != null);
     }
 
     /**
@@ -1414,7 +1407,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * options, as it will not check game options for quirks. Use
      * Mounted#hasQuirk instead
      *
-     * @return
+     * @return the list of quirks
      */
     public WeaponQuirks getQuirks() {
         return quirks;
@@ -1659,22 +1652,21 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public String getMissingTrooperString() {
-        StringBuffer missings = new StringBuffer();
+        StringBuilder missingTroopers = new StringBuilder();
         for (int i = 0; i < missingForTrooper.length; i++) {
-            missings.append(missingForTrooper[i]).append("::");
+            missingTroopers.append(missingForTrooper[i]).append("::");
         }
-        return missings.toString();
+        return missingTroopers.toString();
     }
 
     /**
      * Returns true if this Mounted is ammunition in homing mode.
      */
     public boolean isHomingAmmoInHomingMode() {
-        if (!(getType() instanceof AmmoType)) {
+        if (!(getType() instanceof AmmoType ammoType)) {
             return false;
         }
 
-        AmmoType ammoType = (AmmoType) getType();
         return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) &&
                 curMode().equals("Homing");
     }

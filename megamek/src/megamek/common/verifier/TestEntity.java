@@ -32,6 +32,7 @@ import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.battlearmor.BAFlamerWeapon;
@@ -246,7 +247,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public boolean showIncorrectIntroYear() {
-        return options.showIncorrectIntroYear();
+        return !ignoreEquipmentIntroYear() && options.showIncorrectIntroYear();
     }
 
     @Override
@@ -256,7 +257,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     @Override
     public boolean skip() {
-        return options.skip();
+        return !skipBuildValidation() && options.skip();
     }
 
     @Override
@@ -788,16 +789,14 @@ public abstract class TestEntity implements TestEntityOption {
             }
         } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
             double fTons = 0.0f;
-            for (Mounted<?> mo : getEntity().getWeaponList()) {
-                WeaponType wt = (WeaponType) mo.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += mo.getTonnage();
+            for (WeaponMounted mounted : getEntity().getWeaponList()) {
+                if (mounted.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
-            for (Mounted<?> mo : getEntity().getMisc()) {
-                MiscType mt2 = (MiscType) mo.getType();
-                if (mt2.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mo.getTonnage();
+            for (MiscMounted mounted : getEntity().getMisc()) {
+               if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
             double weight = 0.0f;
@@ -1492,6 +1491,15 @@ public abstract class TestEntity implements TestEntityOption {
                 artemisP++;
             } else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
                 apollo++;
+            } else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                if (m.getLinked() == null) {
+                    buff
+                        .append(m.getType().getName())
+                        .append(" in ")
+                        .append(getEntity().getLocationAbbr(m.getLocation()))
+                        .append(" has no linked PPC\n");
+                    illegal = true;
+                }
             }
 
             if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&
@@ -1809,4 +1817,25 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return slotCount;
     }
+
+    boolean ignoreSlotCount() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.NOT_ENOUGH_SLOT_COUNT);
+    }
+
+    boolean ignoreEquipmentIntroYear() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR);
+    }
+
+    boolean allowOverweightConstruction() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.UNIT_OVERWEIGHT);
+    }
+
+    boolean skipBuildValidation() {
+        var entity = getEntity();
+        return entity.getInvalidSourceBuildReasons().contains(Entity.InvalidSourceBuildReason.INVALID_OR_OUTDATED_BUILD);
+    }
+
 } // End class TestEntity

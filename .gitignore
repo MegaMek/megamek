@@ -1,3 +1,4 @@
+/tmp/
 /.metadata
 /.recommenders/
 /RemoteSystemsTempFiles/
@@ -94,7 +95,8 @@ megamek/userdata/**
 /megamek/apidocs/
 #End MegaMek Other Outputs
 
-/megamek/docs/mm-revision.txt
 /megamek/MegaMek.l4j.ini
 OfficialUnitList.txt
 equipment.txt
+.github/copilot-instructions.md
+*.iml

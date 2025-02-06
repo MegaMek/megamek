@@ -1,9 +1,10 @@
 size 35 45
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Ocean (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "water:5" ""
 hex 0201 0 "water:5" ""

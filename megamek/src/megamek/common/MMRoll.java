@@ -280,6 +280,27 @@ public class MMRoll extends Roll {
 
         // Output second results.
         Roll.output(roll2);
+    }
 
+    @Override
+    public int[] getIntValues() {
+
+        // if we are only keeping a subset then total will be different
+        if (keep != -1 && all.size() >= keep) {
+            all.sort(Collections.reverseOrder());
+            var values = new int[keep];
+            for (int i = 0; i < keep; i++) {
+                values[i] = all.get(i);
+            }
+            return values;
+        } else if (!all.isEmpty()) {
+            var values = new int[all.size()];
+            for (int i = 0; i < all.size(); i++) {
+                values[i] = all.get(i);
+            }
+            return values;
+        }
+
+        return new int[0];
     }
 }

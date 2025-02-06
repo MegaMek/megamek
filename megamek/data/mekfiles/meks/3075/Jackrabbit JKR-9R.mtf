@@ -1,52 +1,57 @@
+generator:MegaMek Suite 0.50.02-SNAPSHOT on 2024-12-30
 chassis:Jackrabbit
 model:JKR-9R 'Joker'
 mul id:1657
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2768
+techbase:Inner Sphere
+era:2768
 source:TRO: 3075
-Rules Level:2
+rules level:2
 role:Striker
 
-Mass:25
-Engine:150 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+quirk:bad_rep_is
+quirk:easy_maintain
+quirk:bad_rep_clan
 
-Heat Sinks:11 Single
-Walk MP:6
-Jump MP:0
+mass:25
+engine:150 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Armor:Ferro-Fibrous
-LA Armor:8
-RA Armor:8
-LT Armor:8
-RT Armor:8
-CT Armor:13
-HD Armor:8
-LL Armor:9
-RL Armor:9
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
+heat sinks:11 Single
+walk mp:6
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:8
+RT armor:8
+CT armor:13
+HD armor:8
+LL armor:9
+RL armor:9
+RTL armor:3
+RTR armor:3
+RTC armor:3
 
 Weapons:2
-Large Laser, Right Arm
 Streak SRM 2, Left Arm
+Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 ISStreakSRM2
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -55,22 +60,22 @@ Upper Arm Actuator
 Lower Arm Actuator
 Large Laser
 Large Laser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Heat Sink
 IS Streak SRM 2 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,11 +85,11 @@ Ferro-Fibrous
 Right Torso:
 Heat Sink
 Heat Sink
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -125,7 +130,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,7 +144,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

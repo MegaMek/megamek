@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -182,42 +181,42 @@ public class AmmoType extends EquipmentType {
     public static final Set<Integer> ALLOWED_BY_TYPE = Set.of(ALLOWED_BY_TYPE_ARRAY);
 
     // ammo flags
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
-    public static final BigInteger F_PROTOMEK = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
-    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
+    public static final AmmoTypeFlag F_MG = AmmoTypeFlag.F_MG;
+    public static final AmmoTypeFlag F_BATTLEARMOR = AmmoTypeFlag.F_BATTLEARMOR; // only used by BA squads
+    public static final AmmoTypeFlag F_PROTOMEK = AmmoTypeFlag.F_PROTOMEK; // only used by ProtoMeks
+    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOTLOAD; // Ammo can be hotloaded
 
     // BA can't jump or make anti-mek until dumped
-    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
+    public static final AmmoTypeFlag F_ENCUMBERING = AmmoTypeFlag.F_ENCUMBERING;
 
-    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
-    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
-    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
-    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda type
-    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear missile
-    public static final BigInteger F_SANTA_ANNA = BigInteger.valueOf(1).shiftLeft(14); // Santa Anna Missile
-    public static final BigInteger F_PEACEMAKER = BigInteger.valueOf(1).shiftLeft(15); // Peacemaker Missile
-    public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
-    public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Other Capital-Missile
-    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can be used to space bomb
+    public static final AmmoTypeFlag F_MML_LRM = AmmoTypeFlag.F_MML_LRM; // LRM type
+    public static final AmmoTypeFlag F_AR10_WHITE_SHARK = AmmoTypeFlag.F_AR10_WHITE_SHARK; // White shark type
+    public static final AmmoTypeFlag F_AR10_KILLER_WHALE = AmmoTypeFlag.F_AR10_KILLER_WHALE; // Killer Whale type
+    public static final AmmoTypeFlag F_AR10_BARRACUDA = AmmoTypeFlag.F_AR10_BARRACUDA; // barracuda type
+    public static final AmmoTypeFlag F_NUCLEAR = AmmoTypeFlag.F_NUCLEAR; // Nuclear missile
+    public static final AmmoTypeFlag F_SANTA_ANNA = AmmoTypeFlag.F_SANTA_ANNA; // Santa Anna Missile
+    public static final AmmoTypeFlag F_PEACEMAKER = AmmoTypeFlag.F_PEACEMAKER; // Peacemaker Missile
+    public static final AmmoTypeFlag F_TELE_MISSILE = AmmoTypeFlag.F_TELE_MISSILE; // Tele-Missile
+    public static final AmmoTypeFlag F_CAP_MISSILE = AmmoTypeFlag.F_CAP_MISSILE; // Other Capital-Missile
+    public static final AmmoTypeFlag F_SPACE_BOMB = AmmoTypeFlag.F_SPACE_BOMB; // can be used to space bomb
 
     // can be used to ground bomb
-    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13);
-    public static final BigInteger F_MML_SRM = BigInteger.valueOf(1).shiftLeft(14); // SRM type
+    public static final AmmoTypeFlag F_GROUND_BOMB = AmmoTypeFlag.F_GROUND_BOMB;
+    public static final AmmoTypeFlag F_MML_SRM = AmmoTypeFlag.F_MML_SRM; // SRM type
 
     // Numbers 14-15 out of order. See nuclear missiles, above
 
     // For tag, rl pods, missiles and the like
-    public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1).shiftLeft(16);
+    public static final AmmoTypeFlag F_OTHER_BOMB = AmmoTypeFlag.F_OTHER_BOMB;
 
     // Used by MHQ for loading ammo bins
-    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(17);
+    public static final AmmoTypeFlag F_CRUISE_MISSILE = AmmoTypeFlag.F_CRUISE_MISSILE;
 
     // Used by MHQ for loading ammo bins
-    public static final BigInteger F_SCREEN = BigInteger.valueOf(1).shiftLeft(18);
+    public static final AmmoTypeFlag F_SCREEN = AmmoTypeFlag.F_SCREEN;
 
     // Used for Internal Bomb Bay bombs; to differentiate them from
-    public static final BigInteger F_INTERNAL_BOMB = BigInteger.valueOf(1).shiftLeft(19);
+    public static final AmmoTypeFlag F_INTERNAL_BOMB = AmmoTypeFlag.F_INTERNAL_BOMB;
 
     // ammo munitions, used for custom load outs
     // N.B. We use EnumSet<Munitions> allow "incendiary"
@@ -338,6 +337,17 @@ public class AmmoType extends EquipmentType {
         // kind of refactoring
         M_FAE
     }
+
+    public static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
+    public static final EnumSet<AmmoType.Munitions> FLARE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_FLARE);
+    public static final EnumSet<AmmoType.Munitions> MINE_MUNITIONS = EnumSet.of(
+        AmmoType.Munitions.M_THUNDER,
+        AmmoType.Munitions.M_THUNDER_ACTIVE,
+        AmmoType.Munitions.M_THUNDER_AUGMENTED,
+        AmmoType.Munitions.M_THUNDER_INFERNO,
+        AmmoType.Munitions.M_THUNDER_VIBRABOMB,
+        AmmoType.Munitions.M_FASCAM
+    );
 
     private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<>(NUM_TYPES);
 
@@ -482,6 +492,10 @@ public class AmmoType extends EquipmentType {
 
     public int getAmmoType() {
         return ammoType;
+    }
+
+    public int getToHitModifier() {
+        return toHitModifier;
     }
 
     /**
@@ -4395,7 +4409,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
                 .setISAdvancement(2590, 2595, 3040, 2840, 3035)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, false, true)
+                .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_FS);
         return ammo;
     }

@@ -1,10 +1,13 @@
 size 40 40
 option exit_roads_to_pavement false
 tag "LunarTheme (Auto)"
-tag "Roads (Auto)"
 tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Lava (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "LowHills (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 1 "" "lunar"
 hex 0201 1 "" "lunar"
 hex 0301 1 "" "lunar"

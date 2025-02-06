@@ -46,7 +46,6 @@ public final class Player extends TurnOrdered {
     public static final int TEAM_NONE = 0;
     public static final int TEAM_UNASSIGNED = -1;
     public static final String[] TEAM_NAMES = {"No Team", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5"};
-
     private transient IGame game;
 
     private String name;
@@ -335,7 +334,7 @@ public final class Player extends TurnOrdered {
         return gameMaster || observer;
     }
 
-    /** set the {@link #observer} flag. Observers have no units ad no team */
+    /** set the {@link #observer} flag. Observers have no units add no team */
     public void setObserver(boolean observer) {
         this.observer = observer;
     }
@@ -650,6 +649,11 @@ public final class Player extends TurnOrdered {
 
     public String getColorForPlayer() {
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() + "</font></B>";
+    }
+
+    public String getColoredPlayerNameWithTeam() {
+        return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() +
+            " (" + TEAM_NAMES[team] + ")</font></B>";
     }
 
     /**

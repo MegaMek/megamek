@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
 
 public class Terrains implements Serializable {
@@ -42,7 +43,11 @@ public class Terrains implements Serializable {
 
     // Terrain modifications
     public static final int PAVEMENT = 12;
-    public static final int ROAD = 13;
+    public static final int ROAD = 13; // 1: normal 2: alley 3: dirt 4: gravel
+
+    public static final int ROAD_LVL_DIRT = 3;
+    public static final int ROAD_LVL_GRAVEL = 4;
+
     public static final int SWAMP = 14; // 1: normal 2: just became quicksand 3:
                                         // quicksand
     public static final int MUD = 15;
@@ -59,7 +64,6 @@ public class Terrains implements Serializable {
     // unimplemented
     // Bug Storm
     // Extreme Depths
-    // Hazardous Liquid Pools
     // Rail
     // Dirt Roads, Gravel Roads
     // Water Flow
@@ -146,8 +150,10 @@ public class Terrains implements Serializable {
 
     // This is for low atmosphere maps to indicate that an empty hex is to be drawn as sky, not grassland
     public static final int SKY = 56;
-    
+
     public static final int DEPLOYMENT_ZONE = 57;
+
+    public static final int HAZARDOUS_LIQUID = 58;
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -161,7 +167,7 @@ public class Terrains implements Serializable {
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
-            "deployment_zone" };
+            "deployment_zone", "hazardous_liquid" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -393,6 +399,18 @@ public class Terrains implements Serializable {
                 }
             case DEPLOYMENT_ZONE:
                 return "Deployment Zone";
+            case HAZARDOUS_LIQUID:
+                HazardousLiquidPoolType hazardousLiquidPoolType = HazardousLiquidPoolType.getType(level);
+                switch (hazardousLiquidPoolType) {
+                    case WIND_BLOWN:
+                        return "Hazardous Liquid (Wind Blown)";
+                    case FLOWS:
+                        return "Hazardous Liquid (Flows)";
+                    case FLOWS_AND_WIND_BLOWN:
+                        return "Hazardous Liquid (Flows and Wind Blown)";
+                    default:
+                        return "Hazardous Liquid";
+                }
             default:
                 return null;
         }
@@ -449,6 +467,12 @@ public class Terrains implements Serializable {
             case PAVEMENT:
                 return 200;
             case ROAD:
+                if (level == 3) {
+                    return 20;
+                }
+                if (level == 4) {
+                    return 50;
+                }
                 return 150;
             case ICE:
             case BLACK_ICE:
@@ -540,6 +564,15 @@ public class Terrains implements Serializable {
                 return 2;
             case BUILDING:
                 return terrainLevel + 1;
+            case ROAD:
+                switch (terrainLevel) {
+                    case ROAD_LVL_DIRT:
+                        return 2;
+                    case ROAD_LVL_GRAVEL:
+                        return 1;
+                    default:
+                        return 0;
+                }
             case SNOW:
                 return (terrainLevel == 2) ? 1 : 0;
             case ICE:
@@ -548,5 +581,18 @@ public class Terrains implements Serializable {
             default:
                 return 0;
         }
+    }
+
+
+    /**
+     * Returns true if the terrain is a base terrain type, excluding "Clear"
+     * @param terrainType
+     * @return
+     */
+    public static boolean isBaseTerrain(int terrainType){
+        return terrainType == WOODS || terrainType == WATER || terrainType == ROUGH
+            || terrainType == RUBBLE || terrainType == JUNGLE || terrainType == SAND
+            || terrainType == TUNDRA || terrainType == MAGMA || terrainType == FIELDS
+            || terrainType == INDUSTRIAL || terrainType == SPACE || terrainType == BUILDING;
     }
 }

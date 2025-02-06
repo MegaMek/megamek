@@ -734,6 +734,7 @@ public class Infantry extends Entity {
         if (loc == LOC_INFANTRY) {
             activeTroopers = Math.max(val, 0);
             damageFieldWeapons();
+            restoreUncrewedFieldWeapons();
         }
     }
 
@@ -893,6 +894,22 @@ public class Infantry extends Entity {
             totalCrewNeeded += requiredCrewForFieldWeapon((WeaponType) weapon.getType());
             weapon.setHit(totalCrewNeeded > activeTroopers);
             weapon.setDestroyed(totalCrewNeeded > activeTroopers);
+        }
+    }
+
+    /**
+     * Field guns that are hit (uncrewed) will be set
+     * to not hit if they have the appropriate number
+     * of active troopers. Field guns that are destroyed
+     * will not be un-hit.
+     */
+    public void restoreUncrewedFieldWeapons() {
+        int totalCrewNeeded = 0;
+        for (Mounted<?> weapon : originalFieldWeapons()) {
+            totalCrewNeeded += requiredCrewForFieldWeapon((WeaponType) weapon.getType());
+            if (activeTroopers >= totalCrewNeeded && !weapon.isDestroyed()) {
+                weapon.setHit(false);
+            }
         }
     }
 
@@ -1621,7 +1638,7 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         if ((game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
             return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED

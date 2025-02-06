@@ -29,7 +29,7 @@ import java.util.Vector;
  * @see Game#end(int, int)
  * @see GameListener
  */
-public class GameVictoryEvent extends GameEvent {
+public class GameVictoryEvent extends GameEvent implements PostGameResolution {
     private static final long serialVersionUID = -8470655646019563063L;
 
     /**
@@ -73,6 +73,7 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * @return an enumeration of all the entities in the game.
      */
+    @Override
     public Enumeration<Entity> getEntities() {
         return entities.elements();
     }
@@ -80,6 +81,7 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * @return the entity with the given id number, if any.
      */
+    @Override
     public Entity getEntity(int id) {
         return entityIds.get(id);
     }
@@ -88,6 +90,7 @@ public class GameVictoryEvent extends GameEvent {
      * @return an enumeration of salvageable entities.
      */
     // TODO: Correctly implement "Captured" Entities
+    @Override
     public Enumeration<Entity> getGraveyardEntities() {
         Vector<Entity> graveyard = new Vector<>();
 
@@ -105,6 +108,7 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * @return an enumeration of wrecked entities.
      */
+    @Override
     public Enumeration<Entity> getWreckedEntities() {
         Vector<Entity> wrecks = new Vector<>();
         for (Entity entity : vOutOfGame) {
@@ -121,6 +125,7 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * Returns an enumeration of entities that have retreated
      */
+    @Override
     public Enumeration<Entity> getRetreatedEntities() {
         Vector<Entity> sanctuary = new Vector<>();
 
@@ -137,6 +142,7 @@ public class GameVictoryEvent extends GameEvent {
     /**
      * Returns an enumeration of entities that were utterly destroyed
      */
+    @Override
     public Enumeration<Entity> getDevastatedEntities() {
         Vector<Entity> smithereens = new Vector<>();
 

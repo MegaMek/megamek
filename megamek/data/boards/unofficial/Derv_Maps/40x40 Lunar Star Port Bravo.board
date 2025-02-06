@@ -1,6 +1,7 @@
 size 40 40
 tag "LunarTheme (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 hex 0101 0 "" "lunar"
 hex 0201 0 "" "lunar"
 hex 0301 0 "" "lunar"

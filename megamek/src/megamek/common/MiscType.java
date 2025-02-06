@@ -14,9 +14,10 @@
  */
 package megamek.common;
 
-import java.math.BigInteger;
 import java.text.NumberFormat;
 
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.miscGear.AntiMekGear;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
@@ -32,257 +33,257 @@ import megamek.common.weapons.ppc.ISSnubNosePPC;
 public class MiscType extends EquipmentType {
 
     // equipment flags (okay, like every type of equipment has its own flag)
-    public static final BigInteger F_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_DOUBLE_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(1);
-    public static final BigInteger F_JUMP_JET = BigInteger.valueOf(1).shiftLeft(2);
-    public static final BigInteger F_CASE = BigInteger.valueOf(1).shiftLeft(3);
-    public static final BigInteger F_MASC = BigInteger.valueOf(1).shiftLeft(4);
-    public static final BigInteger F_TSM = BigInteger.valueOf(1).shiftLeft(5);
-    public static final BigInteger F_LASER_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(6);
-    public static final BigInteger F_C3S = BigInteger.valueOf(1).shiftLeft(7);
-    public static final BigInteger F_C3I = BigInteger.valueOf(1).shiftLeft(8);
-    public static final BigInteger F_ARTEMIS = BigInteger.valueOf(1).shiftLeft(9);
-    public static final BigInteger F_TARGCOMP = BigInteger.valueOf(1).shiftLeft(10);
-    public static final BigInteger F_ANGEL_ECM = BigInteger.valueOf(1).shiftLeft(11);
-    public static final BigInteger F_BOARDING_CLAW = BigInteger.valueOf(1).shiftLeft(12);
-    public static final BigInteger F_VACUUM_PROTECTION = BigInteger.valueOf(1).shiftLeft(13);
-    public static final BigInteger F_MAGNET_CLAW = BigInteger.valueOf(1).shiftLeft(14);
-    public static final BigInteger F_FIRE_RESISTANT = BigInteger.valueOf(1).shiftLeft(15);
-    public static final BigInteger F_STEALTH = BigInteger.valueOf(1).shiftLeft(16);
-    public static final BigInteger F_MINE = BigInteger.valueOf(1).shiftLeft(17);
-    public static final BigInteger F_TOOLS = BigInteger.valueOf(1).shiftLeft(18);
-    public static final BigInteger F_MAGNETIC_CLAMP = BigInteger.valueOf(1).shiftLeft(19);
-    public static final BigInteger F_PARAFOIL = BigInteger.valueOf(1).shiftLeft(20);
-    public static final BigInteger F_FERRO_FIBROUS = BigInteger.valueOf(1).shiftLeft(21);
-    public static final BigInteger F_ENDO_STEEL = BigInteger.valueOf(1).shiftLeft(22);
-    public static final BigInteger F_AP_POD = BigInteger.valueOf(1).shiftLeft(23);
-    public static final BigInteger F_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(24);
-    public static final BigInteger F_CLUB = BigInteger.valueOf(1).shiftLeft(25);
-    public static final BigInteger F_HAND_WEAPON = BigInteger.valueOf(1).shiftLeft(26);
-    public static final BigInteger F_COWL = BigInteger.valueOf(1).shiftLeft(27);
-    public static final BigInteger F_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(28);
-    public static final BigInteger F_HARJEL = BigInteger.valueOf(1).shiftLeft(29);
-    public static final BigInteger F_UMU = BigInteger.valueOf(1).shiftLeft(30);
-    public static final BigInteger F_BA_VTOL = BigInteger.valueOf(1).shiftLeft(31);
-    public static final BigInteger F_SPIKES = BigInteger.valueOf(1).shiftLeft(32);
-    public static final BigInteger F_COMMUNICATIONS = BigInteger.valueOf(1).shiftLeft(33);
-    public static final BigInteger F_PPC_CAPACITOR = BigInteger.valueOf(1).shiftLeft(34);
-    public static final BigInteger F_REFLECTIVE = BigInteger.valueOf(1).shiftLeft(35);
-    public static final BigInteger F_REACTIVE = BigInteger.valueOf(1).shiftLeft(36);
-    public static final BigInteger F_CASEII = BigInteger.valueOf(1).shiftLeft(37);
-    public static final BigInteger F_LIFTHOIST = BigInteger.valueOf(1).shiftLeft(38);
-    public static final BigInteger F_ENVIRONMENTAL_SEALING = BigInteger.valueOf(1).shiftLeft(39);
-    public static final BigInteger F_ARMORED_CHASSIS = BigInteger.valueOf(1).shiftLeft(40);
-    public static final BigInteger F_TRACTOR_MODIFICATION = BigInteger.valueOf(1).shiftLeft(41);
-    public static final BigInteger F_ACTUATOR_ENHANCEMENT_SYSTEM = BigInteger.valueOf(1).shiftLeft(42);
-    public static final BigInteger F_ECM = BigInteger.valueOf(1).shiftLeft(43);
-    public static final BigInteger F_BAP = BigInteger.valueOf(1).shiftLeft(44);
-    public static final BigInteger F_MODULAR_ARMOR = BigInteger.valueOf(1).shiftLeft(45);
-    public static final BigInteger F_TALON = BigInteger.valueOf(1).shiftLeft(46);
-    public static final BigInteger F_VISUAL_CAMO = BigInteger.valueOf(1).shiftLeft(47);
-    public static final BigInteger F_APOLLO = BigInteger.valueOf(1).shiftLeft(48);
-    public static final BigInteger F_INDUSTRIAL_TSM = BigInteger.valueOf(1).shiftLeft(49);
-    public static final BigInteger F_NULLSIG = BigInteger.valueOf(1).shiftLeft(50);
-    public static final BigInteger F_VOIDSIG = BigInteger.valueOf(1).shiftLeft(51);
-    public static final BigInteger F_CHAMELEON_SHIELD = BigInteger.valueOf(1).shiftLeft(52);
-    public static final BigInteger F_VIBROCLAW = BigInteger.valueOf(1).shiftLeft(53);
-    public static final BigInteger F_SINGLE_HEX_ECM = BigInteger.valueOf(1).shiftLeft(54);
-    public static final BigInteger F_EJECTION_SEAT = BigInteger.valueOf(1).shiftLeft(55);
-    public static final BigInteger F_SALVAGE_ARM = BigInteger.valueOf(1).shiftLeft(56);
-    public static final BigInteger F_PARTIAL_WING = BigInteger.valueOf(1).shiftLeft(57);
-    public static final BigInteger F_FERRO_LAMELLOR = BigInteger.valueOf(1).shiftLeft(58);
-    public static final BigInteger F_ARTEMIS_V = BigInteger.valueOf(1).shiftLeft(59);
+    public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
+    public static final MiscTypeFlag F_DOUBLE_HEAT_SINK = MiscTypeFlag.F_DOUBLE_HEAT_SINK;
+    public static final MiscTypeFlag F_JUMP_JET = MiscTypeFlag.F_JUMP_JET;
+    public static final MiscTypeFlag F_CASE = MiscTypeFlag.F_CASE;
+    public static final MiscTypeFlag F_MASC = MiscTypeFlag.F_MASC;
+    public static final MiscTypeFlag F_TSM = MiscTypeFlag.F_TSM;
+    public static final MiscTypeFlag F_LASER_HEAT_SINK = MiscTypeFlag.F_LASER_HEAT_SINK;
+    public static final MiscTypeFlag F_C3S = MiscTypeFlag.F_C3S;
+    public static final MiscTypeFlag F_C3I = MiscTypeFlag.F_C3I;
+    public static final MiscTypeFlag F_ARTEMIS = MiscTypeFlag.F_ARTEMIS;
+    public static final MiscTypeFlag F_TARGCOMP = MiscTypeFlag.F_TARGCOMP;
+    public static final MiscTypeFlag F_ANGEL_ECM = MiscTypeFlag.F_ANGEL_ECM;
+    public static final MiscTypeFlag F_BOARDING_CLAW = MiscTypeFlag.F_BOARDING_CLAW;
+    public static final MiscTypeFlag F_VACUUM_PROTECTION = MiscTypeFlag.F_VACUUM_PROTECTION;
+    public static final MiscTypeFlag F_MAGNET_CLAW = MiscTypeFlag.F_MAGNET_CLAW;
+    public static final MiscTypeFlag F_FIRE_RESISTANT = MiscTypeFlag.F_FIRE_RESISTANT;
+    public static final MiscTypeFlag F_STEALTH = MiscTypeFlag.F_STEALTH;
+    public static final MiscTypeFlag F_MINE = MiscTypeFlag.F_MINE;
+    public static final MiscTypeFlag F_TOOLS = MiscTypeFlag.F_TOOLS;
+    public static final MiscTypeFlag F_MAGNETIC_CLAMP = MiscTypeFlag.F_MAGNETIC_CLAMP;
+    public static final MiscTypeFlag F_PARAFOIL = MiscTypeFlag.F_PARAFOIL;
+    public static final MiscTypeFlag F_FERRO_FIBROUS = MiscTypeFlag.F_FERRO_FIBROUS;
+    public static final MiscTypeFlag F_ENDO_STEEL = MiscTypeFlag.F_ENDO_STEEL;
+    public static final MiscTypeFlag F_AP_POD = MiscTypeFlag.F_AP_POD;
+    public static final MiscTypeFlag F_SEARCHLIGHT = MiscTypeFlag.F_SEARCHLIGHT;
+    public static final MiscTypeFlag F_CLUB = MiscTypeFlag.F_CLUB;
+    public static final MiscTypeFlag F_HAND_WEAPON = MiscTypeFlag.F_HAND_WEAPON;
+    public static final MiscTypeFlag F_COWL = MiscTypeFlag.F_COWL;
+    public static final MiscTypeFlag F_JUMP_BOOSTER = MiscTypeFlag.F_JUMP_BOOSTER;
+    public static final MiscTypeFlag F_HARJEL = MiscTypeFlag.F_HARJEL;
+    public static final MiscTypeFlag F_UMU = MiscTypeFlag.F_UMU;
+    public static final MiscTypeFlag F_BA_VTOL = MiscTypeFlag.F_BA_VTOL;
+    public static final MiscTypeFlag F_SPIKES = MiscTypeFlag.F_SPIKES;
+    public static final MiscTypeFlag F_COMMUNICATIONS = MiscTypeFlag.F_COMMUNICATIONS;
+    public static final MiscTypeFlag F_PPC_CAPACITOR = MiscTypeFlag.F_PPC_CAPACITOR;
+    public static final MiscTypeFlag F_REFLECTIVE = MiscTypeFlag.F_REFLECTIVE;
+    public static final MiscTypeFlag F_REACTIVE = MiscTypeFlag.F_REACTIVE;
+    public static final MiscTypeFlag F_CASEII = MiscTypeFlag.F_CASEII;
+    public static final MiscTypeFlag F_LIFTHOIST = MiscTypeFlag.F_LIFTHOIST;
+    public static final MiscTypeFlag F_ENVIRONMENTAL_SEALING = MiscTypeFlag.F_ENVIRONMENTAL_SEALING;
+    public static final MiscTypeFlag F_ARMORED_CHASSIS = MiscTypeFlag.F_ARMORED_CHASSIS;
+    public static final MiscTypeFlag F_TRACTOR_MODIFICATION = MiscTypeFlag.F_TRACTOR_MODIFICATION;
+    public static final MiscTypeFlag F_ACTUATOR_ENHANCEMENT_SYSTEM = MiscTypeFlag.F_ACTUATOR_ENHANCEMENT_SYSTEM;
+    public static final MiscTypeFlag F_ECM = MiscTypeFlag.F_ECM;
+    public static final MiscTypeFlag F_BAP = MiscTypeFlag.F_BAP;
+    public static final MiscTypeFlag F_MODULAR_ARMOR = MiscTypeFlag.F_MODULAR_ARMOR;
+    public static final MiscTypeFlag F_TALON = MiscTypeFlag.F_TALON;
+    public static final MiscTypeFlag F_VISUAL_CAMO = MiscTypeFlag.F_VISUAL_CAMO;
+    public static final MiscTypeFlag F_APOLLO = MiscTypeFlag.F_APOLLO;
+    public static final MiscTypeFlag F_INDUSTRIAL_TSM = MiscTypeFlag.F_INDUSTRIAL_TSM;
+    public static final MiscTypeFlag F_NULLSIG = MiscTypeFlag.F_NULLSIG;
+    public static final MiscTypeFlag F_VOIDSIG = MiscTypeFlag.F_VOIDSIG;
+    public static final MiscTypeFlag F_CHAMELEON_SHIELD = MiscTypeFlag.F_CHAMELEON_SHIELD;
+    public static final MiscTypeFlag F_VIBROCLAW = MiscTypeFlag.F_VIBROCLAW;
+    public static final MiscTypeFlag F_SINGLE_HEX_ECM = MiscTypeFlag.F_SINGLE_HEX_ECM;
+    public static final MiscTypeFlag F_EJECTION_SEAT = MiscTypeFlag.F_EJECTION_SEAT;
+    public static final MiscTypeFlag F_SALVAGE_ARM = MiscTypeFlag.F_SALVAGE_ARM;
+    public static final MiscTypeFlag F_PARTIAL_WING = MiscTypeFlag.F_PARTIAL_WING;
+    public static final MiscTypeFlag F_FERRO_LAMELLOR = MiscTypeFlag.F_FERRO_LAMELLOR;
+    public static final MiscTypeFlag F_ARTEMIS_V = MiscTypeFlag.F_ARTEMIS_V;
     // TODO: Implement me, so far only construction data
-    public static final BigInteger F_TRACKS = BigInteger.valueOf(1).shiftLeft(60);
+    public static final MiscTypeFlag F_TRACKS = MiscTypeFlag.F_TRACKS;
     // TODO: Implement me, so far only construction data
-    public static final BigInteger F_MASS = BigInteger.valueOf(1).shiftLeft(61);
+    public static final MiscTypeFlag F_MASS = MiscTypeFlag.F_MASS;
     // TODO: Implement me, so far only construction data
-    public static final BigInteger F_CARGO = BigInteger.valueOf(1).shiftLeft(62);
+    public static final MiscTypeFlag F_CARGO = MiscTypeFlag.F_CARGO;
     // TODO: Implement me, so far only construction data
-    public static final BigInteger F_DUMPER = BigInteger.valueOf(1).shiftLeft(63);
+    public static final MiscTypeFlag F_DUMPER = MiscTypeFlag.F_DUMPER;
     // TODO: Implement me, so far only construction data
-    public static final BigInteger F_MASH = BigInteger.valueOf(1).shiftLeft(64);
-    public static final BigInteger F_BA_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(65);
-    public static final BigInteger F_MEK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(66);
-    public static final BigInteger F_TANK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(67);
-    public static final BigInteger F_FIGHTER_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(68);
-    public static final BigInteger F_SUPPORT_TANK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(69);
-    public static final BigInteger F_PROTOMEK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(70);
+    public static final MiscTypeFlag F_MASH = MiscTypeFlag.F_MASH;
+    public static final MiscTypeFlag F_BA_EQUIPMENT = MiscTypeFlag.F_BA_EQUIPMENT;
+    public static final MiscTypeFlag F_MEK_EQUIPMENT = MiscTypeFlag.F_MEK_EQUIPMENT;
+    public static final MiscTypeFlag F_TANK_EQUIPMENT = MiscTypeFlag.F_TANK_EQUIPMENT;
+    public static final MiscTypeFlag F_FIGHTER_EQUIPMENT = MiscTypeFlag.F_FIGHTER_EQUIPMENT;
+    public static final MiscTypeFlag F_SUPPORT_TANK_EQUIPMENT = MiscTypeFlag.F_SUPPORT_TANK_EQUIPMENT;
+    public static final MiscTypeFlag F_PROTOMEK_EQUIPMENT = MiscTypeFlag.F_PROTOMEK_EQUIPMENT;
 
     // Moved the unit types to the top of the list.
-    public static final BigInteger F_ARMORED_GLOVE = BigInteger.valueOf(1).shiftLeft(71);
-    public static final BigInteger F_BASIC_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(72);
-    public static final BigInteger F_BATTLE_CLAW = BigInteger.valueOf(1).shiftLeft(73);
-    public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
-    public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(75);
-    public static final BigInteger F_FUEL = BigInteger.valueOf(1).shiftLeft(76);
-    public static final BigInteger F_BLUE_SHIELD = BigInteger.valueOf(1).shiftLeft(77);
-    public static final BigInteger F_BASIC_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(78);
-    public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
-    public static final BigInteger F_ENDO_COMPOSITE = BigInteger.valueOf(1).shiftLeft(80);
-    public static final BigInteger F_LASER_INSULATOR = BigInteger.valueOf(1).shiftLeft(81);
-    public static final BigInteger F_LIQUID_CARGO = BigInteger.valueOf(1).shiftLeft(82);
-    public static final BigInteger F_WATCHDOG = BigInteger.valueOf(1).shiftLeft(83);
-    public static final BigInteger F_EW_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(84);
-    public static final BigInteger F_CCM = BigInteger.valueOf(1).shiftLeft(85);
-    public static final BigInteger F_HITCH = BigInteger.valueOf(1).shiftLeft(86);
-    public static final BigInteger F_FLOTATION_HULL = BigInteger.valueOf(1).shiftLeft(87);
-    public static final BigInteger F_LIMITED_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(88);
-    public static final BigInteger F_FULLY_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(89);
-    public static final BigInteger F_DUNE_BUGGY = BigInteger.valueOf(1).shiftLeft(90);
-    public static final BigInteger F_SHOULDER_TURRET = BigInteger.valueOf(1).shiftLeft(91);
-    public static final BigInteger F_HEAD_TURRET = BigInteger.valueOf(1).shiftLeft(92);
-    public static final BigInteger F_QUAD_TURRET = BigInteger.valueOf(1).shiftLeft(93);
-    public static final BigInteger F_SPACE_ADAPTATION = BigInteger.valueOf(1).shiftLeft(94);
-    public static final BigInteger F_CUTTING_TORCH = BigInteger.valueOf(1).shiftLeft(95);
-    public static final BigInteger F_OFF_ROAD = BigInteger.valueOf(1).shiftLeft(96);
-    public static final BigInteger F_C3SBS = BigInteger.valueOf(1).shiftLeft(97);
-    public static final BigInteger F_VTOL_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(98);
-    public static final BigInteger F_NAVAL_C3 = BigInteger.valueOf(1).shiftLeft(99);
-    public static final BigInteger F_MINESWEEPER = BigInteger.valueOf(1).shiftLeft(100);
-    public static final BigInteger F_MOBILE_HPG = BigInteger.valueOf(1).shiftLeft(101);
-    public static final BigInteger F_FIELD_KITCHEN = BigInteger.valueOf(1).shiftLeft(102);
-    public static final BigInteger F_MOBILE_FIELD_BASE = BigInteger.valueOf(1).shiftLeft(103);
+    public static final MiscTypeFlag F_ARMORED_GLOVE = MiscTypeFlag.F_ARMORED_GLOVE;
+    public static final MiscTypeFlag F_BASIC_MANIPULATOR = MiscTypeFlag.F_BASIC_MANIPULATOR;
+    public static final MiscTypeFlag F_BATTLE_CLAW = MiscTypeFlag.F_BATTLE_CLAW;
+    public static final MiscTypeFlag F_AP_MOUNT = MiscTypeFlag.F_AP_MOUNT;
+    public static final MiscTypeFlag F_MAST_MOUNT = MiscTypeFlag.F_MAST_MOUNT;
+    public static final MiscTypeFlag F_FUEL = MiscTypeFlag.F_FUEL;
+    public static final MiscTypeFlag F_BLUE_SHIELD = MiscTypeFlag.F_BLUE_SHIELD;
+    public static final MiscTypeFlag F_BASIC_FIRECONTROL = MiscTypeFlag.F_BASIC_FIRECONTROL;
+    public static final MiscTypeFlag F_ADVANCED_FIRECONTROL = MiscTypeFlag.F_ADVANCED_FIRECONTROL;
+    public static final MiscTypeFlag F_ENDO_COMPOSITE = MiscTypeFlag.F_ENDO_COMPOSITE;
+    public static final MiscTypeFlag F_LASER_INSULATOR = MiscTypeFlag.F_LASER_INSULATOR;
+    public static final MiscTypeFlag F_LIQUID_CARGO = MiscTypeFlag.F_LIQUID_CARGO;
+    public static final MiscTypeFlag F_WATCHDOG = MiscTypeFlag.F_WATCHDOG;
+    public static final MiscTypeFlag F_EW_EQUIPMENT = MiscTypeFlag.F_EW_EQUIPMENT;
+    public static final MiscTypeFlag F_CCM = MiscTypeFlag.F_CCM;
+    public static final MiscTypeFlag F_HITCH = MiscTypeFlag.F_HITCH;
+    public static final MiscTypeFlag F_FLOTATION_HULL = MiscTypeFlag.F_FLOTATION_HULL;
+    public static final MiscTypeFlag F_LIMITED_AMPHIBIOUS = MiscTypeFlag.F_LIMITED_AMPHIBIOUS;
+    public static final MiscTypeFlag F_FULLY_AMPHIBIOUS = MiscTypeFlag.F_FULLY_AMPHIBIOUS;
+    public static final MiscTypeFlag F_DUNE_BUGGY = MiscTypeFlag.F_DUNE_BUGGY;
+    public static final MiscTypeFlag F_SHOULDER_TURRET = MiscTypeFlag.F_SHOULDER_TURRET;
+    public static final MiscTypeFlag F_HEAD_TURRET = MiscTypeFlag.F_HEAD_TURRET;
+    public static final MiscTypeFlag F_QUAD_TURRET = MiscTypeFlag.F_QUAD_TURRET;
+    public static final MiscTypeFlag F_SPACE_ADAPTATION = MiscTypeFlag.F_SPACE_ADAPTATION;
+    public static final MiscTypeFlag F_CUTTING_TORCH = MiscTypeFlag.F_CUTTING_TORCH;
+    public static final MiscTypeFlag F_OFF_ROAD = MiscTypeFlag.F_OFF_ROAD;
+    public static final MiscTypeFlag F_C3SBS = MiscTypeFlag.F_C3SBS;
+    public static final MiscTypeFlag F_VTOL_EQUIPMENT = MiscTypeFlag.F_VTOL_EQUIPMENT;
+    public static final MiscTypeFlag F_NAVAL_C3 = MiscTypeFlag.F_NAVAL_C3;
+    public static final MiscTypeFlag F_MINESWEEPER = MiscTypeFlag.F_MINESWEEPER;
+    public static final MiscTypeFlag F_MOBILE_HPG = MiscTypeFlag.F_MOBILE_HPG;
+    public static final MiscTypeFlag F_FIELD_KITCHEN = MiscTypeFlag.F_FIELD_KITCHEN;
+    public static final MiscTypeFlag F_MOBILE_FIELD_BASE = MiscTypeFlag.F_MOBILE_FIELD_BASE;
     // TODO: add game rules for the following imagers/radars, construction data
     // only
-    public static final BigInteger F_HIRES_IMAGER = BigInteger.valueOf(1).shiftLeft(104);
-    public static final BigInteger F_HYPERSPECTRAL_IMAGER = BigInteger.valueOf(1).shiftLeft(105);
-    public static final BigInteger F_INFRARED_IMAGER = BigInteger.valueOf(1).shiftLeft(106);
-    public static final BigInteger F_LOOKDOWN_RADAR = BigInteger.valueOf(1).shiftLeft(107);
+    public static final MiscTypeFlag F_HIRES_IMAGER = MiscTypeFlag.F_HIRES_IMAGER;
+    public static final MiscTypeFlag F_HYPERSPECTRAL_IMAGER = MiscTypeFlag.F_HYPERSPECTRAL_IMAGER;
+    public static final MiscTypeFlag F_INFRARED_IMAGER = MiscTypeFlag.F_INFRARED_IMAGER;
+    public static final MiscTypeFlag F_LOOKDOWN_RADAR = MiscTypeFlag.F_LOOKDOWN_RADAR;
 
-    public static final BigInteger F_COMMAND_CONSOLE = BigInteger.valueOf(1).shiftLeft(108);
-    public static final BigInteger F_VSTOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(109);
-    public static final BigInteger F_STOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(110);
-    public static final BigInteger F_SPONSON_TURRET = BigInteger.valueOf(1).shiftLeft(111);
-    public static final BigInteger F_ARMORED_MOTIVE_SYSTEM = BigInteger.valueOf(1).shiftLeft(112);
-    public static final BigInteger F_CHASSIS_MODIFICATION = BigInteger.valueOf(1).shiftLeft(113);
-    public static final BigInteger F_CHAFF_POD = BigInteger.valueOf(1).shiftLeft(114);
-    public static final BigInteger F_DRONE_CARRIER_CONTROL = BigInteger.valueOf(1).shiftLeft(115);
-    public static final BigInteger F_VARIABLE_SIZE = BigInteger.valueOf(1).shiftLeft(116);
-    public static final BigInteger F_BA_MISSION_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(117);
-    public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
-    public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
-    public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
-    public static final BigInteger F_RECON_CAMERA = BigInteger.valueOf(1).shiftLeft(121);
-    public static final BigInteger F_COMBAT_VEHICLE_ESCAPE_POD = BigInteger.valueOf(1).shiftLeft(122);
-    public static final BigInteger F_DETACHABLE_WEAPON_PACK = BigInteger.valueOf(1).shiftLeft(123);
-    public static final BigInteger F_HEAT_SENSOR = BigInteger.valueOf(1).shiftLeft(124);
-    public static final BigInteger F_EXTENDED_LIFESUPPORT = BigInteger.valueOf(1).shiftLeft(125);
-    public static final BigInteger F_SPRAYER = BigInteger.valueOf(1).shiftLeft(126);
-    public static final BigInteger F_ELECTRIC_DISCHARGE_ARMOR = BigInteger.valueOf(1).shiftLeft(127);
-    public static final BigInteger F_MECHANICAL_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(128);
-    public static final BigInteger F_TRAILER_MODIFICATION = BigInteger.valueOf(1).shiftLeft(129);
-    public static final BigInteger F_LARGE_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(130);
-    public static final BigInteger F_SMALL_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(131);
-    public static final BigInteger F_LIGHT_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(132);
-    public static final BigInteger F_MEDIUM_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(133);
-    public static final BigInteger F_HEAVY_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(134);
-    public static final BigInteger F_BA_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(135);
-    public static final BigInteger F_BOOBY_TRAP = BigInteger.valueOf(1).shiftLeft(136);
-    public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(137);
-    public static final BigInteger F_REFUELING_DROGUE = BigInteger.valueOf(1).shiftLeft(138);
-    public static final BigInteger F_BULLDOZER = BigInteger.valueOf(1).shiftLeft(139);
-    public static final BigInteger F_EXTERNAL_STORES_HARDPOINT = BigInteger.valueOf(1).shiftLeft(140);
-    public static final BigInteger F_COMPACT_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(141);
-    public static final BigInteger F_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(142);
-    public static final BigInteger F_CARGOLIFTER = BigInteger.valueOf(1).shiftLeft(143);
-    public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
-    public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
-    public static final BigInteger F_NAVAL_TUG_ADAPTOR = BigInteger.valueOf(1).shiftLeft(146);
-    public static final BigInteger F_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(147);
-    public static final BigInteger F_PROP = BigInteger.valueOf(1).shiftLeft(148);
-    public static final BigInteger F_ULTRA_LIGHT = BigInteger.valueOf(1).shiftLeft(149);
-    public static final BigInteger F_SPACE_MINE_DISPENSER = BigInteger.valueOf(1).shiftLeft(150);
-    public static final BigInteger F_VEHICLE_MINE_DISPENSER = BigInteger.valueOf(1).shiftLeft(151);
-    public static final BigInteger F_LIGHT_FERRO = BigInteger.valueOf(1).shiftLeft(152);
-    public static final BigInteger F_HEAVY_FERRO = BigInteger.valueOf(1).shiftLeft(153);
-    public static final BigInteger F_FERRO_FIBROUS_PROTO = BigInteger.valueOf(1).shiftLeft(154);
-    public static final BigInteger F_REINFORCED = BigInteger.valueOf(1).shiftLeft(155);
-    public static final BigInteger F_COMPOSITE = BigInteger.valueOf(1).shiftLeft(156);
-    public static final BigInteger F_INDUSTRIAL_STRUCTURE = BigInteger.valueOf(1).shiftLeft(157);
-    public static final BigInteger F_ENDO_STEEL_PROTO = BigInteger.valueOf(1).shiftLeft(158);
-    public static final BigInteger F_INDUSTRIAL_ARMOR = BigInteger.valueOf(1).shiftLeft(159);
-    public static final BigInteger F_HEAVY_INDUSTRIAL_ARMOR = BigInteger.valueOf(1).shiftLeft(160);
-    public static final BigInteger F_PRIMITIVE_ARMOR = BigInteger.valueOf(1).shiftLeft(161);
-    public static final BigInteger F_HARDENED_ARMOR = BigInteger.valueOf(1).shiftLeft(162);
-    public static final BigInteger F_COMMERCIAL_ARMOR = BigInteger.valueOf(1).shiftLeft(163);
-    public static final BigInteger F_C3EM = BigInteger.valueOf(1).shiftLeft(164);
-    public static final BigInteger F_ANTI_PENETRATIVE_ABLATIVE = BigInteger.valueOf(1).shiftLeft(165);
-    public static final BigInteger F_HEAT_DISSIPATING = BigInteger.valueOf(1).shiftLeft(166);
-    public static final BigInteger F_IMPACT_RESISTANT = BigInteger.valueOf(1).shiftLeft(167);
-    public static final BigInteger F_BALLISTIC_REINFORCED = BigInteger.valueOf(1).shiftLeft(168);
-    public static final BigInteger F_HARJEL_II = BigInteger.valueOf(1).shiftLeft(169);
-    public static final BigInteger F_HARJEL_III = BigInteger.valueOf(1).shiftLeft(170);
-    public static final BigInteger F_RADICAL_HEATSINK = BigInteger.valueOf(1).shiftLeft(171);
-    public static final BigInteger F_BA_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(172);
-    public static final BigInteger F_NOVA = BigInteger.valueOf(1).shiftLeft(173);
-    public static final BigInteger F_BOMB_BAY = BigInteger.valueOf(1).shiftLeft(174);
-    public static final BigInteger F_LIGHT_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1).shiftLeft(175);
-    public static final BigInteger F_MONOCYCLE = BigInteger.valueOf(1).shiftLeft(176);
-    public static final BigInteger F_BICYCLE = BigInteger.valueOf(1).shiftLeft(177);
-    public static final BigInteger F_CONVERTIBLE = BigInteger.valueOf(1).shiftLeft(178);
-    public static final BigInteger F_BATTLEMEK_NIU = BigInteger.valueOf(1).shiftLeft(179);
-    public static final BigInteger F_SNOWMOBILE = BigInteger.valueOf(1).shiftLeft(180);
-    public static final BigInteger F_LADDER = BigInteger.valueOf(1).shiftLeft(181);
-    public static final BigInteger F_LIFEBOAT = BigInteger.valueOf(1).shiftLeft(182);
-    public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1).shiftLeft(183);
-    public static final BigInteger F_HYDROFOIL = BigInteger.valueOf(1).shiftLeft(184);
-    public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1).shiftLeft(185);
+    public static final MiscTypeFlag F_COMMAND_CONSOLE = MiscTypeFlag.F_COMMAND_CONSOLE;
+    public static final MiscTypeFlag F_VSTOL_CHASSIS = MiscTypeFlag.F_VSTOL_CHASSIS;
+    public static final MiscTypeFlag F_STOL_CHASSIS = MiscTypeFlag.F_STOL_CHASSIS;
+    public static final MiscTypeFlag F_SPONSON_TURRET = MiscTypeFlag.F_SPONSON_TURRET;
+    public static final MiscTypeFlag F_ARMORED_MOTIVE_SYSTEM = MiscTypeFlag.F_ARMORED_MOTIVE_SYSTEM;
+    public static final MiscTypeFlag F_CHASSIS_MODIFICATION = MiscTypeFlag.F_CHASSIS_MODIFICATION;
+    public static final MiscTypeFlag F_CHAFF_POD = MiscTypeFlag.F_CHAFF_POD;
+    public static final MiscTypeFlag F_DRONE_CARRIER_CONTROL = MiscTypeFlag.F_DRONE_CARRIER_CONTROL;
+    public static final MiscTypeFlag F_VARIABLE_SIZE = MiscTypeFlag.F_VARIABLE_SIZE;
+    public static final MiscTypeFlag F_BA_MISSION_EQUIPMENT = MiscTypeFlag.F_BA_MISSION_EQUIPMENT;
+    public static final MiscTypeFlag F_JET_BOOSTER = MiscTypeFlag.F_JET_BOOSTER;
+    public static final MiscTypeFlag F_SENSOR_DISPENSER = MiscTypeFlag.F_SENSOR_DISPENSER;
+    public static final MiscTypeFlag F_DRONE_OPERATING_SYSTEM = MiscTypeFlag.F_DRONE_OPERATING_SYSTEM;
+    public static final MiscTypeFlag F_RECON_CAMERA = MiscTypeFlag.F_RECON_CAMERA;
+    public static final MiscTypeFlag F_COMBAT_VEHICLE_ESCAPE_POD = MiscTypeFlag.F_COMBAT_VEHICLE_ESCAPE_POD;
+    public static final MiscTypeFlag F_DETACHABLE_WEAPON_PACK = MiscTypeFlag.F_DETACHABLE_WEAPON_PACK;
+    public static final MiscTypeFlag F_HEAT_SENSOR = MiscTypeFlag.F_HEAT_SENSOR;
+    public static final MiscTypeFlag F_EXTENDED_LIFESUPPORT = MiscTypeFlag.F_EXTENDED_LIFESUPPORT;
+    public static final MiscTypeFlag F_SPRAYER = MiscTypeFlag.F_SPRAYER;
+    public static final MiscTypeFlag F_ELECTRIC_DISCHARGE_ARMOR = MiscTypeFlag.F_ELECTRIC_DISCHARGE_ARMOR;
+    public static final MiscTypeFlag F_MECHANICAL_JUMP_BOOSTER = MiscTypeFlag.F_MECHANICAL_JUMP_BOOSTER;
+    public static final MiscTypeFlag F_TRAILER_MODIFICATION = MiscTypeFlag.F_TRAILER_MODIFICATION;
+    public static final MiscTypeFlag F_LARGE_COMM_SCANNER_SUITE = MiscTypeFlag.F_LARGE_COMM_SCANNER_SUITE;
+    public static final MiscTypeFlag F_SMALL_COMM_SCANNER_SUITE = MiscTypeFlag.F_SMALL_COMM_SCANNER_SUITE;
+    public static final MiscTypeFlag F_LIGHT_BRIDGE_LAYER = MiscTypeFlag.F_LIGHT_BRIDGE_LAYER;
+    public static final MiscTypeFlag F_MEDIUM_BRIDGE_LAYER = MiscTypeFlag.F_MEDIUM_BRIDGE_LAYER;
+    public static final MiscTypeFlag F_HEAVY_BRIDGE_LAYER = MiscTypeFlag.F_HEAVY_BRIDGE_LAYER;
+    public static final MiscTypeFlag F_BA_SEARCHLIGHT = MiscTypeFlag.F_BA_SEARCHLIGHT;
+    public static final MiscTypeFlag F_BOOBY_TRAP = MiscTypeFlag.F_BOOBY_TRAP;
+    public static final MiscTypeFlag F_SPLITABLE = MiscTypeFlag.F_SPLITABLE;
+    public static final MiscTypeFlag F_REFUELING_DROGUE = MiscTypeFlag.F_REFUELING_DROGUE;
+    public static final MiscTypeFlag F_BULLDOZER = MiscTypeFlag.F_BULLDOZER;
+    public static final MiscTypeFlag F_EXTERNAL_STORES_HARDPOINT = MiscTypeFlag.F_EXTERNAL_STORES_HARDPOINT;
+    public static final MiscTypeFlag F_COMPACT_HEAT_SINK = MiscTypeFlag.F_COMPACT_HEAT_SINK;
+    public static final MiscTypeFlag F_MANIPULATOR = MiscTypeFlag.F_MANIPULATOR;
+    public static final MiscTypeFlag F_CARGOLIFTER = MiscTypeFlag.F_CARGOLIFTER;
+    public static final MiscTypeFlag F_PINTLE_TURRET = MiscTypeFlag.F_PINTLE_TURRET;
+    public static final MiscTypeFlag F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = MiscTypeFlag.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE;
+    public static final MiscTypeFlag F_NAVAL_TUG_ADAPTOR = MiscTypeFlag.F_NAVAL_TUG_ADAPTOR;
+    public static final MiscTypeFlag F_AMPHIBIOUS = MiscTypeFlag.F_AMPHIBIOUS;
+    public static final MiscTypeFlag F_PROP = MiscTypeFlag.F_PROP;
+    public static final MiscTypeFlag F_ULTRA_LIGHT = MiscTypeFlag.F_ULTRA_LIGHT;
+    public static final MiscTypeFlag F_SPACE_MINE_DISPENSER = MiscTypeFlag.F_SPACE_MINE_DISPENSER;
+    public static final MiscTypeFlag F_VEHICLE_MINE_DISPENSER = MiscTypeFlag.F_VEHICLE_MINE_DISPENSER;
+    public static final MiscTypeFlag F_LIGHT_FERRO = MiscTypeFlag.F_LIGHT_FERRO;
+    public static final MiscTypeFlag F_HEAVY_FERRO = MiscTypeFlag.F_HEAVY_FERRO;
+    public static final MiscTypeFlag F_FERRO_FIBROUS_PROTO = MiscTypeFlag.F_FERRO_FIBROUS_PROTO;
+    public static final MiscTypeFlag F_REINFORCED = MiscTypeFlag.F_REINFORCED;
+    public static final MiscTypeFlag F_COMPOSITE = MiscTypeFlag.F_COMPOSITE;
+    public static final MiscTypeFlag F_INDUSTRIAL_STRUCTURE = MiscTypeFlag.F_INDUSTRIAL_STRUCTURE;
+    public static final MiscTypeFlag F_ENDO_STEEL_PROTO = MiscTypeFlag.F_ENDO_STEEL_PROTO;
+    public static final MiscTypeFlag F_INDUSTRIAL_ARMOR = MiscTypeFlag.F_INDUSTRIAL_ARMOR;
+    public static final MiscTypeFlag F_HEAVY_INDUSTRIAL_ARMOR = MiscTypeFlag.F_HEAVY_INDUSTRIAL_ARMOR;
+    public static final MiscTypeFlag F_PRIMITIVE_ARMOR = MiscTypeFlag.F_PRIMITIVE_ARMOR;
+    public static final MiscTypeFlag F_HARDENED_ARMOR = MiscTypeFlag.F_HARDENED_ARMOR;
+    public static final MiscTypeFlag F_COMMERCIAL_ARMOR = MiscTypeFlag.F_COMMERCIAL_ARMOR;
+    public static final MiscTypeFlag F_C3EM = MiscTypeFlag.F_C3EM;
+    public static final MiscTypeFlag F_ANTI_PENETRATIVE_ABLATIVE = MiscTypeFlag.F_ANTI_PENETRATIVE_ABLATIVE;
+    public static final MiscTypeFlag F_HEAT_DISSIPATING = MiscTypeFlag.F_HEAT_DISSIPATING;
+    public static final MiscTypeFlag F_IMPACT_RESISTANT = MiscTypeFlag.F_IMPACT_RESISTANT;
+    public static final MiscTypeFlag F_BALLISTIC_REINFORCED = MiscTypeFlag.F_BALLISTIC_REINFORCED;
+    public static final MiscTypeFlag F_HARJEL_II = MiscTypeFlag.F_HARJEL_II;
+    public static final MiscTypeFlag F_HARJEL_III = MiscTypeFlag.F_HARJEL_III;
+    public static final MiscTypeFlag F_RADICAL_HEATSINK = MiscTypeFlag.F_RADICAL_HEATSINK;
+    public static final MiscTypeFlag F_BA_MANIPULATOR = MiscTypeFlag.F_BA_MANIPULATOR;
+    public static final MiscTypeFlag F_NOVA = MiscTypeFlag.F_NOVA;
+    public static final MiscTypeFlag F_BOMB_BAY = MiscTypeFlag.F_BOMB_BAY;
+    public static final MiscTypeFlag F_LIGHT_FLUID_SUCTION_SYSTEM = MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM;
+    public static final MiscTypeFlag F_MONOCYCLE = MiscTypeFlag.F_MONOCYCLE;
+    public static final MiscTypeFlag F_BICYCLE = MiscTypeFlag.F_BICYCLE;
+    public static final MiscTypeFlag F_CONVERTIBLE = MiscTypeFlag.F_CONVERTIBLE;
+    public static final MiscTypeFlag F_BATTLEMEK_NIU = MiscTypeFlag.F_BATTLEMEK_NIU;
+    public static final MiscTypeFlag F_SNOWMOBILE = MiscTypeFlag.F_SNOWMOBILE;
+    public static final MiscTypeFlag F_LADDER = MiscTypeFlag.F_LADDER;
+    public static final MiscTypeFlag F_LIFEBOAT = MiscTypeFlag.F_LIFEBOAT;
+    public static final MiscTypeFlag F_FLUID_SUCTION_SYSTEM = MiscTypeFlag.F_FLUID_SUCTION_SYSTEM;
+    public static final MiscTypeFlag F_HYDROFOIL = MiscTypeFlag.F_HYDROFOIL;
+    public static final MiscTypeFlag F_SUBMERSIBLE = MiscTypeFlag.F_SUBMERSIBLE;
 
     // Flag for BattleArmor Modular Equipment Adaptor
-    public static final BigInteger F_BA_MEA = BigInteger.valueOf(1).shiftLeft(186);
+    public static final MiscTypeFlag F_BA_MEA = MiscTypeFlag.F_BA_MEA;
 
     // Flag for Infantry Equipment
-    public static final BigInteger F_INF_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(187);
-    public static final BigInteger F_SCM = BigInteger.valueOf(1).shiftLeft(188);
-    public static final BigInteger F_VIRAL_JAMMER_HOMING = BigInteger.valueOf(1).shiftLeft(189);
-    public static final BigInteger F_VIRAL_JAMMER_DECOY = BigInteger.valueOf(1).shiftLeft(190);
-    public static final BigInteger F_DRONE_CONTROL_CONSOLE = BigInteger.valueOf(1).shiftLeft(191);
-    public static final BigInteger F_RISC_LASER_PULSE_MODULE = BigInteger.valueOf(1).shiftLeft(192);
-    public static final BigInteger F_REMOTE_DRONE_COMMAND_CONSOLE = BigInteger.valueOf(1).shiftLeft(193);
-    public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger.valueOf(1).shiftLeft(194);
-    public static final BigInteger F_BADC = BigInteger.valueOf(1).shiftLeft(195);
-    public static final BigInteger F_REUSABLE = BigInteger.valueOf(1).shiftLeft(196);
+    public static final MiscTypeFlag F_INF_EQUIPMENT = MiscTypeFlag.F_INF_EQUIPMENT;
+    public static final MiscTypeFlag F_SCM = MiscTypeFlag.F_SCM;
+    public static final MiscTypeFlag F_VIRAL_JAMMER_HOMING = MiscTypeFlag.F_VIRAL_JAMMER_HOMING;
+    public static final MiscTypeFlag F_VIRAL_JAMMER_DECOY = MiscTypeFlag.F_VIRAL_JAMMER_DECOY;
+    public static final MiscTypeFlag F_DRONE_CONTROL_CONSOLE = MiscTypeFlag.F_DRONE_CONTROL_CONSOLE;
+    public static final MiscTypeFlag F_RISC_LASER_PULSE_MODULE = MiscTypeFlag.F_RISC_LASER_PULSE_MODULE;
+    public static final MiscTypeFlag F_REMOTE_DRONE_COMMAND_CONSOLE = MiscTypeFlag.F_REMOTE_DRONE_COMMAND_CONSOLE;
+    public static final MiscTypeFlag F_EMERGENCY_COOLANT_SYSTEM = MiscTypeFlag.F_EMERGENCY_COOLANT_SYSTEM;
+    public static final MiscTypeFlag F_BADC = MiscTypeFlag.F_BADC;
+    public static final MiscTypeFlag F_REUSABLE = MiscTypeFlag.F_REUSABLE;
 
-    public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1).shiftLeft(197);
-    public static final BigInteger F_ARMOR_KIT = BigInteger.valueOf(1).shiftLeft(198);
+    public static final MiscTypeFlag F_BLOODHOUND = MiscTypeFlag.F_BLOODHOUND;
+    public static final MiscTypeFlag F_ARMOR_KIT = MiscTypeFlag.F_ARMOR_KIT;
 
     // Flags for Large Craft Systems
-    public static final BigInteger F_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
-    public static final BigInteger F_LIGHT_SAIL = BigInteger.valueOf(1).shiftLeft(200);
+    public static final MiscTypeFlag F_STORAGE_BATTERY = MiscTypeFlag.F_STORAGE_BATTERY;
+    public static final MiscTypeFlag F_LIGHT_SAIL = MiscTypeFlag.F_LIGHT_SAIL;
 
     // Prototype Stuff
-    public static final BigInteger F_ARTEMIS_PROTO = BigInteger.valueOf(1).shiftLeft(201);
-    public static final BigInteger F_CASEP = BigInteger.valueOf(1).shiftLeft(202);
+    public static final MiscTypeFlag F_ARTEMIS_PROTO = MiscTypeFlag.F_ARTEMIS_PROTO;
+    public static final MiscTypeFlag F_CASEP = MiscTypeFlag.F_CASEP;
 
-    public static final BigInteger F_VEEDC = BigInteger.valueOf(1).shiftLeft(203);
-    public static final BigInteger F_SC_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(204);
-    public static final BigInteger F_DS_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(205);
-    public static final BigInteger F_JS_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(206);
-    public static final BigInteger F_WS_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(207);
-    public static final BigInteger F_SS_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(208);
-    public static final BigInteger F_CAPITAL_ARMOR = BigInteger.valueOf(1).shiftLeft(209);
-    public static final BigInteger F_FERRO_CARBIDE = BigInteger.valueOf(1).shiftLeft(210);
-    public static final BigInteger F_IMP_FERRO = BigInteger.valueOf(1).shiftLeft(211);
+    public static final MiscTypeFlag F_VEEDC = MiscTypeFlag.F_VEEDC;
+    public static final MiscTypeFlag F_SC_EQUIPMENT = MiscTypeFlag.F_SC_EQUIPMENT;
+    public static final MiscTypeFlag F_DS_EQUIPMENT = MiscTypeFlag.F_DS_EQUIPMENT;
+    public static final MiscTypeFlag F_JS_EQUIPMENT = MiscTypeFlag.F_JS_EQUIPMENT;
+    public static final MiscTypeFlag F_WS_EQUIPMENT = MiscTypeFlag.F_WS_EQUIPMENT;
+    public static final MiscTypeFlag F_SS_EQUIPMENT = MiscTypeFlag.F_SS_EQUIPMENT;
+    public static final MiscTypeFlag F_CAPITAL_ARMOR = MiscTypeFlag.F_CAPITAL_ARMOR;
+    public static final MiscTypeFlag F_FERRO_CARBIDE = MiscTypeFlag.F_FERRO_CARBIDE;
+    public static final MiscTypeFlag F_IMP_FERRO = MiscTypeFlag.F_IMP_FERRO;
     // Not usable by small support vehicles
-    public static final BigInteger F_HEAVY_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(212);
+    public static final MiscTypeFlag F_HEAVY_EQUIPMENT = MiscTypeFlag.F_HEAVY_EQUIPMENT;
     // Drone Equipment for Large Craft
-    public static final BigInteger F_SRCS = BigInteger.valueOf(1).shiftLeft(213);
-    public static final BigInteger F_SASRCS = BigInteger.valueOf(1).shiftLeft(214);
-    public static final BigInteger F_CASPAR = BigInteger.valueOf(1).shiftLeft(215);
-    public static final BigInteger F_CASPARII = BigInteger.valueOf(1).shiftLeft(216);
-    public static final BigInteger F_ATAC = BigInteger.valueOf(1).shiftLeft(217);
-    public static final BigInteger F_DTAC = BigInteger.valueOf(1).shiftLeft(218);
-    public static final BigInteger F_SDS_DESTRUCT = BigInteger.valueOf(1).shiftLeft(219);
-    public static final BigInteger F_SDS_JAMMER = BigInteger.valueOf(1).shiftLeft(220);
-    public static final BigInteger F_LF_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(221);
-    public static final BigInteger F_PROTOMEK_MELEE = BigInteger.valueOf(1).shiftLeft(222);
-    public static final BigInteger F_EXTERNAL_POWER_PICKUP = BigInteger.valueOf(1).shiftLeft(223);
-    public static final BigInteger F_RAM_PLATE = BigInteger.valueOf(1).shiftLeft(224);
-    public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
+    public static final MiscTypeFlag F_SRCS = MiscTypeFlag.F_SRCS;
+    public static final MiscTypeFlag F_SASRCS = MiscTypeFlag.F_SASRCS;
+    public static final MiscTypeFlag F_CASPAR = MiscTypeFlag.F_CASPAR;
+    public static final MiscTypeFlag F_CASPARII = MiscTypeFlag.F_CASPARII;
+    public static final MiscTypeFlag F_ATAC = MiscTypeFlag.F_ATAC;
+    public static final MiscTypeFlag F_DTAC = MiscTypeFlag.F_DTAC;
+    public static final MiscTypeFlag F_SDS_DESTRUCT = MiscTypeFlag.F_SDS_DESTRUCT;
+    public static final MiscTypeFlag F_SDS_JAMMER = MiscTypeFlag.F_SDS_JAMMER;
+    public static final MiscTypeFlag F_LF_STORAGE_BATTERY = MiscTypeFlag.F_LF_STORAGE_BATTERY;
+    public static final MiscTypeFlag F_PROTOMEK_MELEE = MiscTypeFlag.F_PROTOMEK_MELEE;
+    public static final MiscTypeFlag F_EXTERNAL_POWER_PICKUP = MiscTypeFlag.F_EXTERNAL_POWER_PICKUP;
+    public static final MiscTypeFlag F_RAM_PLATE = MiscTypeFlag.F_RAM_PLATE;
+    public static final MiscTypeFlag F_PROTOTYPE = MiscTypeFlag.F_PROTOTYPE;
     // Fortify Equipment
-    public static final BigInteger F_TRENCH_CAPABLE = BigInteger.valueOf(1).shiftLeft(226);
-    public static final BigInteger F_SUPPORT_VEE_BAR_ARMOR = BigInteger.valueOf(1).shiftLeft(227);
+    public static final MiscTypeFlag F_TRENCH_CAPABLE = MiscTypeFlag.F_TRENCH_CAPABLE;
+    public static final MiscTypeFlag F_SUPPORT_VEE_BAR_ARMOR = MiscTypeFlag.F_SUPPORT_VEE_BAR_ARMOR;
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
@@ -962,10 +963,9 @@ public class MiscType extends EquipmentType {
                     }
                 }
 
-                for (Mounted<?> mo : entity.getMisc()) {
-                    MiscType mt = (MiscType) mo.getType();
-                    if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                        fTons += mo.getTonnage();
+                for (MiscMounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                        fTons += mounted.getTonnage();
                     }
                 }
                 if (getInternalName().equals("ISTargeting Computer")) {
@@ -1110,17 +1110,15 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
-            for (Mounted<?> m : entity.getWeaponList()) {
-                WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+            for (WeaponMounted m : entity.getWeaponList()) {
+                if (m.getType().hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     fTons += m.getTonnage();
                 }
             }
 
-            for (Mounted<?> mo : entity.getMisc()) {
-                MiscType mt = (MiscType) mo.getType();
-                if (mt.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    fTons += mo.getTonnage();
+            for (MiscMounted mounted : entity.getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    fTons += mounted.getTonnage();
                 }
             }
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
@@ -4283,8 +4281,8 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Direct Neural Interface Cockpit Modification";
         misc.setInternalName("BABattleMechNIU");
-        misc.tonnage = 0.0;
-        misc.criticals = 0;
+        misc.tonnage = 0.100;
+        misc.criticals = 2;
         misc.cost = 500000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MEK_EQUIPMENT).or(F_BATTLEMEK_NIU).or(F_BA_EQUIPMENT);
@@ -4318,10 +4316,9 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tankslots = 1;
         misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL).or(F_VARIABLE_SIZE)
-                .or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
-                .or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.rulesRefs = "305, TO";
+                .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_WS_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "117, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -4346,9 +4343,8 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 1;
         misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_FIGHTER_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_DS_EQUIPMENT)
-                .or(F_JS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.rulesRefs = "306, TO";
+                .or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.rulesRefs = "118, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -7130,6 +7126,7 @@ public class MiscType extends EquipmentType {
         misc.name = "MASH Equipment";
         misc.setInternalName(misc.name);
         misc.addLookupName("MASH Core Component");
+        misc.addLookupName("MASH Operation Theater");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;

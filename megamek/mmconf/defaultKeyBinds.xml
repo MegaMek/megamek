@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <KeyBindings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="keyBindingSchema.xsd">
+             xsi:noNamespaceSchemaLocation="keyBindingSchema.xsd">
     <KeyBind>
         <command>scrollN</command> <!-- W -->
         <keyCode>87</keyCode>
@@ -75,6 +75,20 @@
         <command>fire</command> <!-- F -->
         <keyCode>70</keyCode>
         <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>pause</command> <!-- Ctrl+Shift-P -->
+        <keyCode>80</keyCode>
+        <modifier>192</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>unpause</command> <!-- Ctrl+Alt-P -->
+        <keyCode>80</keyCode>
+        <modifier>640</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -488,6 +502,13 @@
         <command>extendTurnTimer</command> <!-- Ctrl-F4 -->
         <keyCode>115</keyCode>
         <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+        <command>toggleBotCommandsDisplay</command> <!-- Ctrl+Shift-G -->
+        <keyCode>71</keyCode>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

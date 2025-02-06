@@ -28,11 +28,7 @@ import java.awt.geom.Point2D;
 
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Compute;
-import megamek.common.CrewType;
-import megamek.common.Facing;
-import megamek.common.MovePath;
-import megamek.common.VTOL;
+import megamek.common.*;
 
 /**
  * Sprite for displaying information about movement modifier that can be
@@ -64,7 +60,10 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
         int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
-                mp.getEntity() instanceof VTOL,
+                mp.getEntity() instanceof VTOL
+                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN)
+                    || (mp.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT),
                 boardView.game).getValue();
         //Add evasion bonus for 'Mek with dual cockpit
         if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)

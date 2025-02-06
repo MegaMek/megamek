@@ -163,6 +163,7 @@ public class FireControl {
     static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
             "stops swarming");
     static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range");
+    static final TargetRollModifier TH_OUT_OF_VISUAL = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of visual targeting range");
     static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
     static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
@@ -256,16 +257,16 @@ public class FireControl {
      *
      * @param hexesMoved The number of hexes the target unit moved.
      * @param jumping    Set TRUE if the target jumped.
-     * @param vtol       Set TRUE if the target is a {@link VTOL}.
+     * @param airborneNonAerospace       Set TRUE if the target is a {@link VTOL} or other airborne, non-aerospace unit.
      * @param game       The current {@link Game}
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
     protected ToHitData getTargetMovementModifier(final int hexesMoved,
             final boolean jumping,
-            final boolean vtol,
+            final boolean airborneNonAerospace,
             final Game game) {
-        return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
+        return Compute.getTargetMovementModifier(hexesMoved, jumping, airborneNonAerospace, game);
     }
 
     /**
@@ -303,6 +304,11 @@ public class FireControl {
         final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
+        }
+
+        final int maxVisRange = game.getPlanetaryConditions().getVisualRange(shooter, shooter.isUsingSearchlight());
+        if (distance > maxVisRange) {
+            return new ToHitData(TH_OUT_OF_VISUAL);
         }
 
         final ToHitData toHitData = new ToHitData();
@@ -348,8 +354,12 @@ public class FireControl {
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
+        LosEffects los = LosEffects.calculateLOS(game, shooter, target);
+
+        // We want to check the target hex _and_ the intervening hexes for woods, smoke, etc.
         final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
-        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
+        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS) +
+            ((los.thruWoods()) ? los.getLightWoods() + los.getHeavyWoods() + los.getUltraWoods() : 0);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
         }
@@ -357,7 +367,9 @@ public class FireControl {
             toHitData.addModifier(woodsLevel, TH_WOODS);
         }
 
-        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        // final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE) +
+            los.getLightSmoke() + los.getHeavySmoke();
         if (1 <= smokeLevel) {
             // Smoke level doesn't necessarily correspond to the to-hit modifier
             // even levels are light smoke, odd are heavy smoke
@@ -902,8 +914,8 @@ public class FireControl {
         toHit.append(getDamageWeaponMods(shooter, weapon));
 
         // weapon mods
-        if (0 != weaponType.getToHitModifier()) {
-            toHit.addModifier(weaponType.getToHitModifier(), TH_WEAPON_MOD);
+        if (0 != weaponType.getToHitModifier(weapon)) {
+            toHit.addModifier(weaponType.getToHitModifier(weapon), TH_WEAPON_MOD);
         }
 
         // Target size.
@@ -1374,7 +1386,7 @@ public class FireControl {
             return 0;
         }
 
-        final int id = ((Entity) target).getId();
+        final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
             return PRIORITY_TARGET_UTILITY;
         }
@@ -1544,31 +1556,6 @@ public class FireControl {
                                                                                                                // that
                                                                                                                // does 0
                                                                                                                // damage)).
-    }
-
-    /**
-     * calculates the 'utility' of a physical action.
-     *
-     * @param physicalInfo The {@link PhysicalInfo} to be calculated.
-     */
-    void calculateUtility(final PhysicalInfo physicalInfo) {
-        // If we can't hit, there's no point.
-        if (0.0 >= physicalInfo.getProbabilityToHit()) {
-            physicalInfo.setUtility(-10000);
-            return;
-        }
-
-        double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
-        utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
-        utility += KILL_UTILITY * physicalInfo.getKillProbability();
-        utility *= calcTargetPotentialDamageMultiplier(physicalInfo.getTarget());
-        utility -= (physicalInfo.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-        utility += calcCommandUtility(physicalInfo.getTarget());
-        utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
-        utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
-        utility -= calcCivilianTargetDisutility(physicalInfo.getTarget());
-
-        physicalInfo.setUtility(utility);
     }
 
     /**
@@ -1978,7 +1965,7 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter
      *         is capable of dropping bombs.
      */
-    private FiringPlan getDiveBombPlan(final Entity shooter,
+    protected FiringPlan getDiveBombPlan(final Entity shooter,
             final MovePath flightPath,
             final Targetable target,
             final Game game,
@@ -2130,7 +2117,8 @@ public class FireControl {
                         continue;
                     }
                 }
-                if (bestShoot.getProbabilityToHit() > toHitThreshold) {
+                // Attack should have a chance to hit, and expect to do non-zero damage; otherwise skip it
+                if (bestShoot.getProbabilityToHit() > toHitThreshold && bestShoot.getExpectedDamage() > 0.0) {
                     myPlan.add(bestShoot);
                     continue;
                 }
@@ -2705,19 +2693,17 @@ public class FireControl {
 
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
-
             if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
                 logger.info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
 
+            final int playerId = enemy.getOwnerId();
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getId());
-
-            // Skip retreating enemies so long as they haven't fired on me while retreating.
-            final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
-            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getId(), playerId,
-                    owner.getForcedWithdrawal())) {
-                logger.info(enemy.getDisplayName() + " is broken - ignoring");
+            final boolean isEnemyBroken = honorUtil.isEnemyBroken(enemy.getId(), playerId, owner.getForcedWithdrawal());
+            // Only skip retreating enemies that are not priority targets so long as they haven't fired on me while retreating.
+            if (!priorityTarget && isEnemyBroken) {
+                logger.info(enemy.getDisplayName() + " is broken and not priority - ignoring");
                 continue;
             }
 
@@ -2727,7 +2713,8 @@ public class FireControl {
                     ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
+            if ((bestPlan == null)
+                || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }
         }
@@ -2857,22 +2844,45 @@ public class FireControl {
 
             final AmmoMounted suggestedAmmo = info.getAmmo();
             final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
-            // if we found preferred ammo but can't apply it to the weapon, log it and
-            // continue.
-            if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                logger.warn(shooter.getDisplayName() + " tried to load "
-                        + currentWeapon.getName() + " with ammo " +
-                        mountedAmmo.getDesc() + " but failed somehow.");
-                continue;
-                // if we didn't find preferred ammo after all, continue
-            } else if (mountedAmmo == null) {
+
+            // if we didn't find preferred ammo after all, continue
+            if (mountedAmmo == null) {
                 continue;
             }
-            final WeaponAttackAction action = info.getAction();
-            action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
-            action.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
-            action.setAmmoCarrier(mountedAmmo.getEntity().getId());
-            info.setAction(action);
+
+            // If the selected ammo would cause the shot to miss, skip loading it.
+            final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
+            cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            cloneWAA.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
+            cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
+            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.CauseMiss",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            // if we found preferred ammo but can't apply it to the weapon, log it and
+            // continue.
+            if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.FailureToLoad",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            // If everything looks okay, replace the old WAA with the updated copy
+            info.setAction(cloneWAA);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                     shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
         }
@@ -3475,7 +3485,7 @@ public class FireControl {
                 if (!(weaponType instanceof MMLWeapon)) {
                     // Naively assume that easier-hitting is better
                     if (returnAmmo != null) {
-                        AmmoType returnAmmoType = (AmmoType) (returnAmmo.getType());
+                        AmmoType returnAmmoType = returnAmmo.getType();
                         returnAmmo = ((ammoType.getToHitModifier() > returnAmmoType.getToHitModifier()) ? ammo
                                 : returnAmmo);
                     } else {
@@ -3559,6 +3569,9 @@ public class FireControl {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
+            }
+            if (weaponDamage == WeaponType.DAMAGE_ARTILLERY){
+                weaponDamage = 1; //Set it to something
             }
 
             if (weaponDamage > maxJammedDamage) {

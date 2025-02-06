@@ -926,7 +926,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Player p = new Player(1, "Observer");
         game.addPlayer(1, p);
         game.setOptions(clientGui.getClient().getGame().getOptions());
-        list.stream().forEach(en -> {
+        list.forEach(en -> {
             en.setOwner(p);
             // If we don't set the id, the first unit will be left at -1, which in most
             // cases is interpreted

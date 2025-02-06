@@ -14,7 +14,6 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -498,7 +497,7 @@ public class TestSmallCraft extends TestAero {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
@@ -522,7 +521,7 @@ public class TestSmallCraft extends TestAero {
         correct &= correctHeatSinks(buff);
         correct &= correctCrew(buff);
         correct &= correctCriticals(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -585,7 +584,7 @@ public class TestSmallCraft extends TestAero {
         Map<EquipmentType, Integer> leftAft = new HashMap<>();
         Map<EquipmentType, Integer> rightFwd = new HashMap<>();
         Map<EquipmentType, Integer> rightAft = new HashMap<>();
-        BigInteger typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+        MiscTypeFlag typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 ? MiscType.F_DS_EQUIPMENT
                 : MiscType.F_SC_EQUIPMENT;
         for (Mounted<?> m : smallCraft.getEquipment()) {
@@ -684,7 +683,7 @@ public class TestSmallCraft extends TestAero {
 
     /**
      * Checks that the unit meets minimum crew and quarters requirements.
-     * 
+     *
      * @param buffer Where to write messages explaining failures.
      * @return true if the crew data is valid.
      */

@@ -1,10 +1,12 @@
 size 35 35
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
 tag "HeavyUrban (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "bldg_elev:5;pavement:1;building:4:12;bldg_cf:200" ""
 hex 0201 0 "bldg_elev:5;pavement:1;building:4:62;bldg_cf:200" ""
 hex 0301 0 "bldg_elev:5;pavement:1;building:4:28;bldg_cf:200" ""

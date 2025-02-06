@@ -13,10 +13,10 @@
  */
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
@@ -50,11 +50,19 @@ public class GameLog {
             }
             logfile = new File(LOG_DIR + File.separator + filename);
             writer = new BufferedWriter(new FileWriter(logfile));
-            append("Log file opened " + LocalDate.now());
+            initialize();
         } catch (Exception ex) {
             logger.error("", ex);
             writer = null;
         }
+    }
+
+    protected void initialize() {
+        append("Log file opened " + LocalDateTime.now());
+    }
+
+    public File getLogFile() {
+        return logfile;
     }
 
     public void append(String toLog) {
@@ -65,6 +73,19 @@ public class GameLog {
         try {
             writer.write("<pre>" + toLog + "</pre>");
             writer.newLine();
+            writer.flush();
+        } catch (Exception ex) {
+            logger.error("", ex);
+            writer = null;
+        }
+    }
+
+    public void appendRaw(String toLog) {
+        if (writer == null) {
+            return;
+        }
+        try {
+            writer.write(toLog);
             writer.flush();
         } catch (Exception ex) {
             logger.error("", ex);

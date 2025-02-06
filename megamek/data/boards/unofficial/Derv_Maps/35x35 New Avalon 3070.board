@@ -1,11 +1,14 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Roads (Auto)"
-tag "DesertTheme (Auto)"
 tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
 tag "Flat (Auto)"
+tag "MultipleTheme (Auto)"
+tag "DesertTheme (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "bldg_elev:6:26;building:2:12;bldg_cf:200:26" "desert"
 hex 0201 0 "bldg_elev:6:26;building:2:60;bldg_cf:200:26" "desert"
 hex 0301 0 "" "desert"

@@ -1,9 +1,10 @@
 size 16 17
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "Flat (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 0 "bldg_elev:2;bldg_basement_type:1;building:2:8;bldg_cf:40" ""
 hex 0201 0 "woods:1;foliage_elev:2" ""

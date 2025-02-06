@@ -20,6 +20,7 @@
 package megamek.server.victory;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
 

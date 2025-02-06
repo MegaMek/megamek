@@ -498,7 +498,14 @@ public class Dropship extends SmallCraft {
     @Override
 
     public void setPosition(Coords position) {
+        // When a Dropship changes from being 1 hex to 7 getOccupiedCoords will return
+        // its changed secondary hexes. Instead, let's grab the cached ones for this to
+        // make sure we properly set out new positions.
         HashSet<Coords> oldPositions = getOccupiedCoords();
+        if (game != null) {
+            oldPositions = game.getEntityPositions(this);
+        }
+
         super.setPosition(position, false);
         if ((getAltitude() == 0) && (null != game) && !game.getBoard().inSpace() && (position != null)) {
             secondaryPositions.put(0, position);
@@ -766,4 +773,5 @@ public class Dropship extends SmallCraft {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(6.5266 + 0.2497*Math.log(getWeight())));
     }
+
 }

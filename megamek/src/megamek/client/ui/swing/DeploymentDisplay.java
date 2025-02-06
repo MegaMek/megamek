@@ -131,6 +131,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
         butDone.setEnabled(false);
+
         setupButtonPanel();
     }
 
@@ -533,8 +534,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 }
 
+                // entity.isAero will check if a unit is a LAM in Fighter mode
                 if ((entity instanceof IAero aero)
-                        && (!(entity instanceof LandAirMek lam) || (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) {
+                        && (entity.isAero())) {
                     entity.setAltitude(finalElevation);
                     if (finalElevation == 0) {
                         aero.land();

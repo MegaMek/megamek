@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,23 +23,15 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.client.Client;
+import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.commands.ClientCommandPanel;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -54,6 +46,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
 import megamek.logging.MMLogger;
+import megamek.server.commands.*;
 
 /**
  * Context menu for the board.
@@ -209,23 +202,6 @@ public class MapMenu extends JPopupMenu {
                 }
 
             }
-
-            // Traitor Command
-            JMenuItem item = new JMenuItem(Messages.getString("MovementDisplay.Traitor"));
-            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_TRAITOR.getCmd());
-            item.addActionListener(evt -> {
-                try {
-                    if (currentPanel instanceof MovementDisplay) {
-                        ((MovementDisplay) currentPanel).actionPerformed(evt);
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex, "");
-                }
-            });
-
-            if (game.getPhase().isMovement()) {
-                add(item);
-            }
         }
 
         menu = touchOffExplosivesMenu();
@@ -239,7 +215,14 @@ public class MapMenu extends JPopupMenu {
             this.add(menu);
             itemCount++;
         }
+        menu = createPleaToRoyaltyMenu();
+        if (menu.getItemCount() > 0) {
+            this.addSeparator();
+            this.add(menu);
+            itemCount++;
+        }
 
+        this.addSeparator();
         menu = createGamemasterMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
@@ -253,17 +236,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.targetMenuItem")
                 + t.getDisplayName());
 
-        String targetCode;
-
-        if (t instanceof Entity) {
-            targetCode = "E|" + ((Entity) t).getId();
-        } else if (t instanceof BuildingTarget) {
-            targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        } else if (t instanceof MinefieldTarget) {
-            targetCode = "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
-        } else {
-            targetCode = "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
-        }
+        String targetCode = getTargetCode(t);
 
         item.setActionCommand(targetCode);
         item.addActionListener(evt -> {
@@ -277,6 +250,21 @@ public class MapMenu extends JPopupMenu {
             }
         });
         return item;
+    }
+
+    private static String getTargetCode(Targetable t) {
+        String targetCode;
+
+        if (t instanceof Entity) {
+            targetCode = "E|" + ((Entity) t).getId();
+        } else if (t instanceof BuildingTarget) {
+            targetCode = "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+        } else if (t instanceof MinefieldTarget) {
+            targetCode = "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
+        } else {
+            targetCode = "H|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
+        }
+        return targetCode;
     }
 
     private @Nullable JMenuItem createChargeMenuItem() {
@@ -421,31 +409,294 @@ public class MapMenu extends JPopupMenu {
     }
 
     /**
+     * Creates various menus related to giving commands to allied bots
+     *
+     * @return JMenu
+     */
+    private JMenu createPleaToRoyaltyMenu() {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.title"));
+        var isGM = client.getLocalPlayer().isGameMaster();
+        for (var player : client.getGame().getPlayersList()) {
+            var isEnemy = player.isEnemyOf(client.getLocalPlayer());
+            var playerIsBot = player.isBot();
+            if (playerIsBot && (!isEnemy || isGM)) {
+                menu.add(createBotCommands(player));
+            }
+        }
+        return menu;
+    }
+
+    private JMenu createBotCommands(Player bot) {
+        JMenu menu = new JMenu(bot.getName() + " (" + Player.TEAM_NAMES[bot.getTeam()] + ")");
+
+        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
+        JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
+        JMenu ignoreTargetMenu= new JMenu(Messages.getString("Bot.commands.ignore"));
+        JMenu fleeMenu = createFleeMenu(bot);
+        JMenu behaviorMenu = createBehaviorMenu(bot);
+
+        targetHexMenu.add(createTargetHexMenuItem(bot));
+        menu.add(targetHexMenu);
+
+        for (Entity entity : client.getGame().getEntitiesVector(coords)) {
+            prioritizeTargetUnitMenu.add(createPrioritizeTargetUnitMenu(bot, entity));
+            ignoreTargetMenu.add(createIgnoreTargetUnitMenu(bot, entity));
+        }
+
+        if (prioritizeTargetUnitMenu.getItemCount() > 0) {
+            menu.add(prioritizeTargetUnitMenu);
+        }
+
+        if (ignoreTargetMenu.getItemCount() > 0) {
+            menu.add(ignoreTargetMenu);
+        }
+
+        menu.addSeparator();
+        menu.add(behaviorMenu);
+        menu.add(fleeMenu);
+        return menu;
+    }
+
+    JMenu createBehaviorMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.behavior"));
+        menu.add(createCautionMenu(bot));
+        menu.add(createAvoidMenu(bot));
+        menu.add(createAggressionMenu(bot));
+        menu.add(createHerdingMenu(bot));
+        menu.add(createBraveryMenu(bot));
+        return menu;
+    }
+
+    JMenu createHerdingMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.herding"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: herd : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: herd : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createBraveryMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.bravery"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: brave : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: brave : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createAggressionMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.aggression"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: aggression : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: aggression : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createAvoidMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.avoid"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: avoid : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: avoid : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+    JMenu createCautionMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.caution"));
+        JMenuItem item = new JMenuItem("+");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: caution : +",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        item = new JMenuItem("-");
+        item.addActionListener(evt -> {
+            client.sendChat(String.format("%s: caution : -",
+                bot.getName()
+            ));
+        });
+        menu.add(item);
+        return menu;
+    }
+
+
+    JMenu createFleeMenu(Player bot) {
+        JMenu menu = new JMenu(Messages.getString("Bot.commands.flee"));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.northEdge")), bot, CardinalEdge.NORTH));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.southEdge")), bot, CardinalEdge.SOUTH));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.westEdge")), bot, CardinalEdge.WEST));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.eastEdge")), bot, CardinalEdge.EAST));
+        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.nearestEdge")), bot, CardinalEdge.NEAREST));
+        return menu;
+    }
+
+    private JMenuItem setFleeAction(JMenuItem fleeMenuItem, Player bot, CardinalEdge cardinalEdge) {
+        fleeMenuItem.addActionListener(evt -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                gui.getFrame(),
+                Messages.getString("Bot.commands.flee.confirmation", bot.getName()),
+                Messages.getString("Bot.commands.flee.confirm"),
+                JOptionPane.YES_NO_OPTION);
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                client.sendChat(String.format("%s: flee : %d",
+                    bot.getName(),
+                    cardinalEdge.getIndex()
+                ));
+            }
+        });
+
+        return fleeMenuItem;
+    }
+
+    JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: ignoreTarget : %d",
+                bot.getName(),
+                entity.getId()
+            ))
+        );
+        return item;
+    }
+
+    JMenuItem createPrioritizeTargetUnitMenu(Player bot, Entity entity) {
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: prioritize : %d",
+                bot.getName(),
+                entity.getId()
+            ))
+        );
+        return item;
+    }
+
+    JMenuItem createTargetHexMenuItem(Player bot) {
+        JMenuItem item = new JMenuItem(coords.toFriendlyString());
+        item.addActionListener(evt ->
+            client.sendChat(String.format("%s: target : %02d%02d",
+                bot.getName(),
+                coords.getX()+1,
+                coords.getY()+1
+            ))
+        );
+        return item;
+    }
+
+    /**
      * Create various menus related to GameMaster (GM) mode
      *
      * @return
      */
     private JMenu createGamemasterMenu() {
         JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
-        if (!client.getLocalPlayer().getGameMaster()) {
-            return menu;
-        } else {
-
+        if (client.getLocalPlayer().getGameMaster()) {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
+            JMenu traitorMenu = new JMenu(Messages.getString("Gamemaster.Traitor"));
+            JMenu rescueMenu = new JMenu(Messages.getString("Gamemaster.Rescue"));
+            JMenu killMenu = new JMenu(Messages.getString("Gamemaster.KillUnit"));
+            JMenu specialCommandsMenu = createGMSpecialCommandsMenu();
+
             var entities = client.getGame().getEntitiesVector(coords);
+
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
                 cfgMenu.add(createCustomMekMenuItem(entity));
+                traitorMenu.add(createTraitorMenuItem(entity));
+                rescueMenu.add(createRescueMenuItem(entity));
+                killMenu.add(createKillMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
             }
             if (cfgMenu.getItemCount() != 0) {
                 menu.add(cfgMenu);
+                menu.addSeparator();
             }
-            return menu;
+            if (traitorMenu.getItemCount() != 0) {
+                menu.add(traitorMenu);
+            }
+            if (rescueMenu.getItemCount() != 0) {
+                menu.add(rescueMenu);
+            }
+            if (killMenu.getItemCount() != 0) {
+                menu.add(killMenu);
+                menu.addSeparator();
+            }
+            menu.add(specialCommandsMenu);
         }
+        return menu;
+    }
+
+    /**
+     * Create a menu for special commands for the GM
+     * @return the menu
+     */
+    private JMenu createGMSpecialCommandsMenu() {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.SpecialCommands"));
+        List.of(
+            new ChangeOwnershipCommand(null, null),
+            new ChangeWeatherCommand(null, null),
+            new DisasterCommand(null, null),
+            new KillCommand(null, null),
+            new FirefightCommand(null, null),
+            new FirestarterCommand(null, null),
+            new FirestormCommand(null, null),
+            new NoFiresCommand(null, null),
+            new OrbitalBombardmentCommand(null, null),
+            new RemoveSmokeCommand(null, null),
+            new RescueCommand(null, null)
+        ).forEach(cmd -> {
+            JMenuItem item = new JMenuItem(cmd.getLongName());
+            item.addActionListener(evt -> new ClientCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
+            menu.add(item);
+        });
+
+        return menu;
     }
 
     JMenuItem createCustomMekMenuItem(Entity entity) {
@@ -469,6 +720,112 @@ public class MapMenu extends JPopupMenu {
             med.setVisible(true);
             client.sendUpdateEntity(entity);
             gui.getBoardView().setShouldIgnoreKeys(false);
+        });
+        return item;
+    }
+
+    /**
+     * Create traitor menu for game master options
+     * @param entity    the entity to create the traitor menu for
+     * @return JMenu    the traitor menu
+     */
+    private JMenuItem createTraitorMenuItem(Entity entity) {
+        // Traitor Command
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.Traitor.text", entity.getDisplayName()));
+        item.addActionListener(evt -> {
+            gui.getBoardView().setShouldIgnoreKeys(false);
+            var players = client.getGame().getPlayersList();
+            Integer[] playerIds = new Integer[players.size() - 1];
+            String[] playerNames = new String[players.size() - 1];
+            String[] options = new String[players.size() - 1];
+
+            Player currentOwner = entity.getOwner();
+            // Loop through the players vector and fill in the arrays
+            int idx = 0;
+            for (var player : players) {
+                if (player.getName().equals(currentOwner.getName())
+                    || (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+                    continue;
+                }
+                playerIds[idx] = player.getId();
+                playerNames[idx] = player.getName();
+                options[idx] = player.getName() + " (ID: " + player.getId() + ")";
+                idx++;
+            }
+
+            // No players available?
+            if (idx == 0) {
+                JOptionPane.showMessageDialog(gui.getFrame(),
+                    Messages.getString("Gamemaster.Traitor.text.noplayers"));
+                return;
+            }
+
+            // Dialog for choosing which player to transfer to
+            String option = (String) JOptionPane.showInputDialog(gui.getFrame(),
+                Messages.getString("Gamemaster.Traitor.text.selectplayer", entity.getDisplayName()),
+                Messages.getString("Gamemaster.Traitor.title"), JOptionPane.QUESTION_MESSAGE, null,
+                options, options[0]);
+
+            // Verify that we have a valid option...
+            if (option != null) {
+                // Now that we've selected a player, correctly associate the ID and name
+                int id = playerIds[Arrays.asList(options).indexOf(option)];
+                String name = playerNames[Arrays.asList(options).indexOf(option)];
+
+                // And now we perform the actual transfer
+                int confirm = JOptionPane.showConfirmDialog(
+                    gui.getFrame(),
+                    Messages.getString("Gamemaster.Traitor.confirmation", entity.getDisplayName(), name),
+                    Messages.getString("Gamemaster.Traitor.confirm"),
+                    JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    client.sendChat(String.format("/changeOwner %d %d", entity.getId(), id));
+                }
+            }
+        });
+
+        return item;
+    }
+
+    /**
+     * Create a menu for killing a specific entity
+     *
+     * @param entity    the entity to create the kill menu for
+     * @return JMenuItem    the kill menu item
+     */
+    private JMenuItem createKillMenuItem(Entity entity) {
+        return createEntityCommandMenuItem(entity, "Gamemaster.KillUnit.text",
+            "Gamemaster.KillUnit.confirmation", String.format("/kill %d", entity.getId()));
+    }
+
+    /**
+     * Create a menu for rescuing a specific entity
+     * @param entity    the entity to create the rescue menu for
+     * @return          the rescue menu item
+     */
+    private JMenuItem createRescueMenuItem(Entity entity) {
+        return createEntityCommandMenuItem(entity, "Gamemaster.Rescue.text",
+            "Gamemaster.Rescue.confirmation", String.format("/rescue %d", entity.getId()));
+    }
+
+    /**
+     * Create a menu for a specific GM command
+     * @param entity            the entity to create the menu for
+     * @param messageKey        the menu item message key for the menu item
+     * @param confirmationKey   the confirmation message key
+     * @param command           the command that will be sent to the server
+     * @return                  the menu item
+     */
+    private JMenuItem createEntityCommandMenuItem(Entity entity, String messageKey, String confirmationKey, String command) {
+        JMenuItem item = new JMenuItem(Messages.getString(messageKey, entity.getDisplayName()));
+        item.addActionListener(evt -> {
+            int confirm = JOptionPane.showConfirmDialog(
+                gui.getFrame(), Messages.getString(confirmationKey, entity.getDisplayName()),
+                Messages.getString("Gamemaster.dialog.confirm"), JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                client.sendChat(command);
+            }
         });
         return item;
     }
@@ -1254,7 +1611,7 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasWeaponFlag(BigInteger weaponFlag) {
+    private boolean hasWeaponFlag(EquipmentFlag weaponFlag) {
         if (myEntity.getWeaponList().isEmpty()) {
             return false;
         }
@@ -1421,9 +1778,7 @@ public class MapMenu extends JPopupMenu {
 
         if (list.size() == 1) {
             myTarget = selectedEntity = list.firstElement();
-
-            if (currentPanel instanceof FiringDisplay) {
-                FiringDisplay panel = (FiringDisplay) currentPanel;
+            if (currentPanel instanceof FiringDisplay panel) {
                 panel.target(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);

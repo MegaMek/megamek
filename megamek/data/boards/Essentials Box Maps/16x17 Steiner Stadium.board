@@ -1,6 +1,8 @@
 size 16 17
 tag "Cliffs (Auto)"
 tag "HighHills (Auto)"
+tag "Impassable (Auto)"
+tag "Elevator (Auto)"
 hex 0101 5 "impassable:5" "volcano"
 hex 0201 5 "impassable:5" "volcano"
 hex 0301 5 "impassable:5" "volcano"

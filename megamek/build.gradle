@@ -109,11 +109,13 @@ jar {
 }
 
 task generateDynamicFiles() {
+    def jvmOptions = project.ext.mmJvmOptions.join('\n')
+
     doLast {
         new File("${projectDir}/docs/mm-revision.txt").text = versionDetails().gitHashFull
         new File("${projectDir}/MegaMek.l4j.ini").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
-${project.ext.mmJvmOptions.join('\n')}
+${jvmOptions}
 """
     }
 }
@@ -172,6 +174,7 @@ task copyFiles(type: Copy) {
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     description = 'Combines individual image files into a set of image atlases.'
+    group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)

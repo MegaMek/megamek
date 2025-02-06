@@ -19,6 +19,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
@@ -42,7 +43,6 @@ import java.util.stream.Stream;
  */
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
-    private static final Logger log = LogManager.getLogger(BasicPathRanker.class);
 
     // this is a value used to indicate how much we value the unit being at its
     // destination
@@ -465,19 +465,28 @@ public class BasicPathRanker extends PathRanker {
                     && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
                     || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
         }
-
+        Map<String, Double> scores = new HashMap<>();
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
 
         // Worry about failed piloting rolls (weighted by Fall Shame).
         double successProbability = getMovePathSuccessProbability(pathCopy);
         double fallMod = calculateFallMod(successProbability);
-
+        scores.put("fallMod", fallMod);
+        scores.put("successProbability", successProbability);
+        scores.put("maxRange", (double) maxRange);
+        scores.put("fallTolerance", fallTolerance);
+        scores.put("blackIce", (double) blackIce);
+        scores.put("enemies", (double) enemies.size());
+        scores.put("friendsCoords_x", friendsCoords == null ? -1.0 : friendsCoords.getX());
+        scores.put("friendsCoords_y", friendsCoords == null ? -1.0 : friendsCoords.getY());
+        scores.put("entityId", (double) movingUnit.getId());
+        scores.put("entityBehaviorState", (double) getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()).ordinal());
         // Worry about how badly we can damage ourselves on this path!
         double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
-
+        scores.put("damageExpectedPath", (double) expectedDamageTaken);
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
@@ -551,12 +560,16 @@ public class BasicPathRanker extends PathRanker {
                 && path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
-
+        scores.put("damageExpectedTotal", expectedDamageTaken);
+        scores.put("myAttackFiring", damageEstimate.firingDamage);
+        scores.put("myAttackPhysical", damageEstimate.physicalDamage);
         // I can kick a different target than I shoot, so add physical to
         // total damage after I've looked at all enemies
 
         double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
-
+        scores.put("braveryValue", getOwner().getBehaviorSettings().getBraveryValue());
+        scores.put("braveryIndex", (double) getOwner().getBehaviorSettings().getBraveryIndex());
+        scores.put("braveryMod", braveryMod);
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
         // the only critters not subject to aggression and herding mods are
         // airborne aeros on ground maps, as they move incredibly fast
@@ -564,16 +577,35 @@ public class BasicPathRanker extends PathRanker {
         // (weighted by Aggression slider).
         double aggressionMod = isNotAirborne ?
             calculateAggressionMod(movingUnit, pathCopy, game) : 0;
+        double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+        scores.put("closestEnemyDistance", distToEnemy);
+        scores.put("aggressionValue", getOwner().getBehaviorSettings().getHyperAggressionValue());
+        scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
+        scores.put("aggressionMod", aggressionMod);
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
+        if (movingUnit.getPosition() != null && friendsCoords != null) {
+            scores.put("friendsDistance", (double) friendsCoords.distance(movingUnit.getPosition()));
+        }
+        scores.put("herdingValue", getOwner().getBehaviorSettings().getHerdMentalityValue());
+        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
+        scores.put("herdingMod", herdingMod);
 
 
         // Movement is good, it gives defense and extends a player power in the game.
         double movementMod = calculateMovementMod(pathCopy, game, enemies);
-
+        scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
+        scores.put("herdingValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
+        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
+        scores.put("movementMod", movementMod);
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
+        scores.put("facing", (double) movingUnit.getFacing());
+        scores.put("finalFacing", (double) pathCopy.getFinalFacing());
+        scores.put("facingMod", facingMod);
+
         var formula = new StringBuilder(256);
         if (facingMod <= -10000) {
             return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
@@ -638,6 +670,7 @@ public class BasicPathRanker extends PathRanker {
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
+        rankedPath.getScores().putAll(scores);
         return rankedPath;
     }
 

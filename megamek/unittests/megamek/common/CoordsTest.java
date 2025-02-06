@@ -31,20 +31,40 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class CoordsTest {
+    //========================================================
+    // Note, this is for the underlying 0,0 coordinate system.
+    // To convert to map number, add [+1 +1] to Coords:
+    //
+    //         Internal Rep.                  Map Rep.
+    //           _____                         _____
+    //          /     \                       /     \
+    //    _____/ 0,-1  \_____           _____/  0100 \_____
+    //   /     \       /     \         /     \       /     \
+    //  / -1,-1 \_____/  1,-1 \       /  0000 \_____/  0200 \
+    //  \       /     \       /       \       /     \       /
+    //   \_____/  0,0  \_____/  ___\   \_____/  0101 \_____/
+    //   /     \       /     \     /   /     \       /     \
+    //  / -1,0  \_____/  1,0  \       /  0001 \_____/  0201 \
+    //  \       /     \       /       \       /     \       /
+    //   \_____/  0,1  \_____/         \_____/  0102 \_____/
+    //         \       /                     \       /
+    //          \_____/                       \_____/
+    //
+    //========================================================
 
     @Test
     void testTranslated() {
-        assertEquals(new Coords(1, 1), new Coords(0, 0).translated(2));
-        assertEquals(new Coords(2, 0), new Coords(1, 0).translated(2));
-        assertEquals(new Coords(3, 2), new Coords(2, 1).translated(2));
+        assertEquals(new Coords(1, 0), new Coords(0, 0).translated(2));
+        assertEquals(new Coords(2, 1), new Coords(1, 0).translated(2));
+        assertEquals(new Coords(3, 1), new Coords(2, 1).translated(2));
 
         assertEquals(new Coords(0, 1), new Coords(0, 0).translated(3));
-        assertEquals(new Coords(6, -3), new Coords(7, -2).translated(5));
+        assertEquals(new Coords(6, -2), new Coords(7, -2).translated(5));
 
-        assertEquals(new Coords(3, 2), new Coords(0, 0).translated(2, 3));
+        assertEquals(new Coords(3, 1), new Coords(0, 0).translated(2, 3));
         assertEquals(new Coords(10, 2), new Coords(10, 4).translated(0, 2));
         assertEquals(new Coords(10, 9), new Coords(10, 4).translated(3, 5));
-        assertEquals(new Coords(7, 6), new Coords(10, 4).translated(4, 3));
+        assertEquals(new Coords(7, 5), new Coords(10, 4).translated(4, 3));
     }
 
     @Test
@@ -59,28 +79,28 @@ class CoordsTest {
 
         final List<Coords> expectedAdjacent = new ArrayList<>();
         expectedAdjacent.add(new Coords(0, -1));
+        expectedAdjacent.add(new Coords(1, -1));
         expectedAdjacent.add(new Coords(1, 0));
-        expectedAdjacent.add(new Coords(1, 1));
         expectedAdjacent.add(new Coords(0, 1));
-        expectedAdjacent.add(new Coords(-1, 1));
         expectedAdjacent.add(new Coords(-1, 0));
+        expectedAdjacent.add(new Coords(-1, -1));
         assertEquals(new Coords(0, 0).allAdjacent().size(), 6);
         new Coords(0, 0).allAdjacent().forEach(coords -> assertTrue(expectedAdjacent.contains(coords)));
 
         // for a radius 2 donut we expect to see 12 hexes.
         final List<Coords> expectedAtDistance2 = new ArrayList<>();
         expectedAtDistance2.add(new Coords(0, -2));
-        expectedAtDistance2.add(new Coords(1, -1));
+        expectedAtDistance2.add(new Coords(1, -2));
         expectedAtDistance2.add(new Coords(2, -1));
         expectedAtDistance2.add(new Coords(2, 0));
         expectedAtDistance2.add(new Coords(2, 1));
-        expectedAtDistance2.add(new Coords(1, 2));
+        expectedAtDistance2.add(new Coords(1, 1));
         expectedAtDistance2.add(new Coords(0, 2));
-        expectedAtDistance2.add(new Coords(-1, 2));
+        expectedAtDistance2.add(new Coords(-1, 1));
         expectedAtDistance2.add(new Coords(-2, 1));
         expectedAtDistance2.add(new Coords(-2, 0));
         expectedAtDistance2.add(new Coords(-2, -1));
-        expectedAtDistance2.add(new Coords(-1, -1));
+        expectedAtDistance2.add(new Coords(-1, -2));
 
         assertEquals(new Coords(0, 0).allAtDistance(2).size(), 12);
         new Coords(0, 0).allAtDistance(2).forEach(coords -> assertTrue(expectedAtDistance2.contains(coords)));
@@ -93,7 +113,8 @@ class CoordsTest {
         assertEquals(new Coords(10, 10).allAtDistanceOrLess(0).size(), 1);
     }
 
-    List<Coords> generateLevel2Neighbors(Coords centroid){
+    List<Coords> generateLevel2NeighborsEvenX(Coords centroid){
+        // Manually computed kernel based on map offsets; only for even-X coords
         return Arrays.asList(
             new Coords(centroid.getX(), centroid.getY()),
             // immediate neighbors
@@ -119,11 +140,37 @@ class CoordsTest {
         );
     }
 
-    @Test
-    void testAllAtDistanceOrLessAlignedCorrectly() {
-        Coords centroid = new Coords(7, 7);
+    List<Coords> generateLevel2NeighborsOddX(Coords centroid){
+        // Manually computed kernel based on map offsets; only for even-X coords
+        return Arrays.asList(
+            new Coords(centroid.getX(), centroid.getY()),
+            // immediate neighbors
+            new Coords(centroid.getX(), centroid.getY() - 1),
+            new Coords(centroid.getX() + 1, centroid.getY()),
+            new Coords(centroid.getX() + 1, centroid.getY() + 1),
+            new Coords(centroid.getX(), centroid.getY() + 1),
+            new Coords(centroid.getX() - 1, centroid.getY() + 1),
+            new Coords(centroid.getX() - 1, centroid.getY()),
+            // neighbors + 1
+            new Coords(centroid.getX(), centroid.getY() - 2),
+            new Coords(centroid.getX() + 1, centroid.getY() - 1),
+            new Coords(centroid.getX() + 2, centroid.getY() - 1),
+            new Coords(centroid.getX() + 2, centroid.getY()),
+            new Coords(centroid.getX() + 2, centroid.getY() + 1),
+            new Coords(centroid.getX() + 1, centroid.getY() + 2),
+            new Coords(centroid.getX(), centroid.getY() + 2),
+            new Coords(centroid.getX() - 1, centroid.getY() + 2),
+            new Coords(centroid.getX() - 2, centroid.getY() + 1),
+            new Coords(centroid.getX() - 2, centroid.getY()),
+            new Coords(centroid.getX() - 2, centroid.getY() - 1),
+            new Coords(centroid.getX() - 1, centroid.getY() - 1)
+        );
+    }
+
+    void testAllAtDistanceOrLessAlignedCorrectly(Coords centroid) {
         List<Coords> neighbors = centroid.allAtDistanceOrLess(2);
-        List<Coords> expectedNeighbors = generateLevel2Neighbors(centroid);
+        List<Coords> expectedNeighbors = ((centroid.getX() & 1) == 1) ?
+            generateLevel2NeighborsOddX(centroid) : generateLevel2NeighborsEvenX(centroid);
         assertEquals(19, neighbors.size());
         assertEquals(19, expectedNeighbors.size());
 
@@ -155,10 +202,18 @@ class CoordsTest {
     }
 
     @Test
+    void testAllAtDistanceOrLess() {
+        Coords centroid = new Coords(6, 7);
+        testAllAtDistanceOrLessAlignedCorrectly(centroid);
+        centroid = new Coords(7, 7);
+        testAllAtDistanceOrLessAlignedCorrectly(centroid);
+    }
+
+    @Test
     void testTranslation() {
         Coords center = new Coords(8, 9);
-        assertEquals(new Coords(7, 10), center.translated(4, 1));
-        assertEquals(new Coords(7, 9), center.translated(5, 1));
+        assertEquals(new Coords(7, 9), center.translated(4, 1));
+        assertEquals(new Coords(7, 8), center.translated(5, 1));
     }
 
     @Test
@@ -244,12 +299,12 @@ class CoordsTest {
         assertEquals(0, source.direction(target2));
 
         // Test one away NE
-        Coords target3 = new Coords(6, 4);
+        Coords target3 = new Coords(6, 5);
         assertEquals(1.047, source.radian(target3), 0.01);
         assertEquals(1, source.direction(target3));
 
         // Test one away SE
-        Coords target4 = new Coords(6, 5);
+        Coords target4 = new Coords(6, 6);
         assertEquals(2.1, source.radian(target4), 0.1);
         assertEquals(2, source.direction(target4));
 
@@ -262,19 +317,20 @@ class CoordsTest {
 
     @Test
     void testHex2HexDistance() {
-        // Dist from 0702 to 0601 should be 1, not 2.
-        Coords source = new Coords(7, 2);
+        // Test of distance(), separate from donut and adjacency tests.
+        // Dist from 7,1 (0802) to 6,1 (0702) should be 1
+        Coords source = new Coords(7, 1);
         Coords target1 = new Coords(6, 1);
         assertEquals(1, source.distance(target1));
 
-        // Dist from 0601 to 0702 should be 1
+        // Reciprocal distance from 6,1 (0702) to 7,1 (0802) should be also 1
         source = new Coords(6, 1);
-        target1 = new Coords(7, 2);
+        target1 = new Coords(7, 1);
         assertEquals(1, source.distance(target1));
 
-        // Dist from 0602 to 0703 should be 1, not 2.
+        // Dist from 6,2 (0703) to 7,2 (0803) should be 1
         source = new Coords(6, 2);
-        target1 = new Coords(7, 3);
+        target1 = new Coords(7, 2);
         assertEquals(1, source.distance(target1));
 
         source = new Coords(13, 5);

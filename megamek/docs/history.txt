@@ -12,6 +12,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6497: Action Logger
 + PR #6498: Feat: log bot actions for debugging
 + PR #6486: Piracy, new behaviors, and a new test platform to build upon
++ PR #6506: fix: bad naming for log file
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

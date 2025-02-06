@@ -407,7 +407,6 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case PREMOVEMENT:
-
                     break;
                 case MOVEMENT:
                     /*

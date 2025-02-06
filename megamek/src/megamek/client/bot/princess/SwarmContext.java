@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class SwarmContext {
 
     private final Map<Integer, Integer> enemyTargetCounts = new HashMap<>();
-    private final Map<Coords, Integer> positionDensity = new HashMap<>();
     private final List<Coords> strategicGoals = new Vector<>();
     private Coords currentCenter;
 
@@ -45,9 +44,10 @@ public class SwarmContext {
     }
 
     /**
-     * Record an enemy target
+     * Record an enemy target, incrementing the number of units targeting the enemy this turn
      * @param enemyId The enemy id
      */
+    @SuppressWarnings("unused")
     public void recordEnemyTarget(int enemyId) {
         enemyTargetCounts.put(enemyId, enemyTargetCounts.getOrDefault(enemyId, 0) + 1);
     }
@@ -57,6 +57,7 @@ public class SwarmContext {
      * @param enemyId The enemy id
      * @return The number of times the enemy has been targeted
      */
+    @SuppressWarnings("unused")
     public int getEnemyTargetCount(int enemyId) {
         return enemyTargetCounts.getOrDefault(enemyId, 0);
     }
@@ -66,35 +67,6 @@ public class SwarmContext {
      */
     public void resetEnemyTargets() {
         enemyTargetCounts.clear();
-    }
-
-    /**
-     * Reset the position density map
-     */
-    public void resetPositionDensity() {
-        positionDensity.clear();
-    }
-
-    /**
-     * Record a planned position for a unit
-     * @param coords The coordinates to record
-     */
-    public void recordPlannedPosition(Coords coords) {
-        positionDensity.put(coords, positionDensity.getOrDefault(coords, 0) + 1);
-    }
-
-    /**
-     * Get the density of the positions around the given coordinates
-     * @param coords The coordinates to check
-     * @param radius The radius to check
-     * @return The density of the positions
-     */
-    public int getPositionDensity(Coords coords, int radius) {
-        int accumulatedDensity = 0;
-        for (var c : coords.allAtDistanceOrLess(radius)) {
-            accumulatedDensity += positionDensity.getOrDefault(c, 0);
-        }
-        return accumulatedDensity;
     }
 
     /**

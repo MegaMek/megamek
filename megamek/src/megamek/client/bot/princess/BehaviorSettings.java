@@ -683,8 +683,13 @@ public class BehaviorSettings implements Serializable {
         this.antiCrowding = validateIndex(antiCrowding);
     }
 
-    public void setAntiCrowding(String antiCrowding) {
-        this.antiCrowding = validateIndex(Integer.parseInt(antiCrowding));
+    public void setAntiCrowding(String antiCrowding) throws PrincessException {
+        try {
+            this.antiCrowding = validateIndex(Integer.parseInt(antiCrowding));
+        } catch (final NumberFormatException e) {
+            this.antiCrowding = 0;
+            throw new PrincessException(e);
+        }
     }
 
     public int getFavorHigherTMM() {
@@ -695,8 +700,13 @@ public class BehaviorSettings implements Serializable {
         this.favorHigherTMM = validateIndex(favorHigherTMM);
     }
 
-    public void setFavorHigherTMM(String favorHigherTMM) {
-        this.favorHigherTMM = validateIndex(Integer.parseInt(favorHigherTMM));
+    public void setFavorHigherTMM(String favorHigherTMM) throws PrincessException {
+        try {
+            this.favorHigherTMM = validateIndex(Integer.parseInt(favorHigherTMM));
+        } catch (final NumberFormatException e) {
+            this.favorHigherTMM = 0;
+            throw new PrincessException(e);
+        }
     }
 
     /**

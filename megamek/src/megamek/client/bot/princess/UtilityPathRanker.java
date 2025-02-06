@@ -59,7 +59,6 @@ public class UtilityPathRanker extends BasicPathRanker {
             return null;
         }
         RankedPath bestRankedPath = ps.first();
-        getOwner().getSwarmContext().recordPlannedPosition(bestRankedPath.getPath().getFinalCoords());
         return bestRankedPath;
     }
 
@@ -171,10 +170,10 @@ public class UtilityPathRanker extends BasicPathRanker {
         double fallMod = calculateFallMod(successProbability);
 
         // Movement is good, it gives defense and extends a player power in the game.
-        double movementMod = calculateMovementMod(pathCopy, game, enemies);
+        double movementMod = calculateMovementMod(pathCopy, game);
 
         // Try to face the enemy.
-        double facingMod = calculateFacingMod(movingUnit, pathCopy);
+        double facingMod = calculateFacingMod(pathCopy);
 
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
@@ -262,10 +261,9 @@ public class UtilityPathRanker extends BasicPathRanker {
      * Calculates the TMM score of the unit
      * @param pathCopy The path to evaluate
      * @param game The game
-     * @param enemies The list of enemies
      * @return The TMM score
      */
-    protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
+    protected double calculateMovementMod(MovePath pathCopy, Game game) {
         var tmmFactor = getOwner().getBehaviorSettings().getFavorHigherTMM() / 10.0;
         var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
         var tmmValue = MathUtility.clamp(tmm.getValue() / 8.0, 0.0, 1.0);
@@ -308,7 +306,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         return movePath.getFinalCoords().direction(position);
     }
 
-    protected double calculateFacingMod(Entity movingUnit, final MovePath path) {
+    protected double calculateFacingMod(final MovePath path) {
         int facingDiff = getFacingDiff(path);
         var facingMod = 1 / Math.pow(10, facingDiff);
 

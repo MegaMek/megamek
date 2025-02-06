@@ -89,8 +89,7 @@ public class QuickGameRunner {
                 run(gameFile, roundsLimit, timeoutMinutes);
             }
         } catch (Exception e) {
-            Sentry.captureException(e);
-            logger.error(e, "Failed to start game");
+            logger.fatal(e, "Failed to start game");
         }
         cleanup();
     }

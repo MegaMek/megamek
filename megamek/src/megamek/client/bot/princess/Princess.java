@@ -2998,7 +2998,6 @@ public class Princess extends BotClient {
         enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
         swarmContext.assignClusters(getFriendEntities());
         swarmContext.resetEnemyTargets();
-        swarmContext.resetPositionDensity();
 
         for (var entity : getEntitiesOwned()) {
             if (entity.isDeployed()) {

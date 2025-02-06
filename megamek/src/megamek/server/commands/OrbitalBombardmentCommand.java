@@ -62,12 +62,16 @@ public class OrbitalBombardmentCommand extends GamemasterServerCommand {
 
         // is the hex on the board?
         if (!gameManager.getGame().getBoard().contains(orbitalBombardment.getX(), orbitalBombardment.getY())) {
-            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.orbitalbombardment.error.outofbounds"));
+            if (connId != Server.SERVER_CONN) {
+                server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.orbitalbombardment.error.outofbounds"));
+            }
             return;
         }
 
         gameManager.addScheduledOrbitalBombardment(orbitalBombardment);
-        server.sendServerChat(Messages.getString("Gamemaster.cmd.orbitalbombardment.success"));
+        if (connId != Server.SERVER_CONN) {
+            server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.orbitalbombardment.success"));
+        }
     }
 
 }

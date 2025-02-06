@@ -57,7 +57,8 @@ public abstract class PathRanker implements IPathRanker {
     public enum PathRankerType {
         Basic,
         Infantry,
-        NewtonianAerospace
+        NewtonianAerospace,
+        Utility
     }
 
     private final Princess owner;
@@ -92,7 +93,7 @@ public abstract class PathRanker implements IPathRanker {
         // the anchor point
         Coords allyCenter = owner.getFriendlyHotSpot(movePaths.get(0).getEntity().getPosition());
         if (allyCenter == null) {
-            allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
+            allyCenter = this.calculateAlliesCenter(movePaths.get(0).getEntity().getId(), friends, game);
         }
 
         TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
@@ -537,6 +538,10 @@ public abstract class PathRanker implements IPathRanker {
             }
         }
         return false;
+    }
+
+    public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
+        return calcAllyCenter(myId, friends, game);
     }
 
     public static @Nullable Coords calcAllyCenter(int myId, @Nullable List<Entity> friends, Game game) {

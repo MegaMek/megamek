@@ -24,6 +24,7 @@ import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -385,7 +386,7 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
-    private double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
+    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
         int facingDiff = getFacingDiff(movingUnit, game, path);
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
@@ -586,6 +587,8 @@ public class BasicPathRanker extends PathRanker {
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
+
+        // Movement is good, it gives defense and extends a player power in the game.
         if (movingUnit.getPosition() != null && friendsCoords != null) {
             scores.put("friendsDistance", (double) friendsCoords.distance(movingUnit.getPosition()));
         }
@@ -593,9 +596,9 @@ public class BasicPathRanker extends PathRanker {
         scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
         scores.put("herdingMod", herdingMod);
 
-
+        var movementModFormula = new StringBuilder(64);
         // Movement is good, it gives defense and extends a player power in the game.
-        double movementMod = calculateMovementMod(pathCopy, game, enemies);
+        double movementMod = calculateMovementMod(pathCopy, game, enemies, movementModFormula);
         scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
         scores.put("herdingValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
         scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
@@ -610,7 +613,8 @@ public class BasicPathRanker extends PathRanker {
         if (facingMod <= -10000) {
             return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
         }
-
+        var crowdingToleranceFormula = new StringBuilder(64);
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, crowdingToleranceFormula);
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
         double offBoardMod = calculateOffBoardMod(pathCopy);
@@ -622,6 +626,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= aggressionMod;
         utility -= herdingMod;
         utility += movementMod;
+        utility -= crowdingTolerance;
         utility -= facingMod;
         utility -= selfPreservationMod;
         utility -= utility * offBoardMod;
@@ -656,17 +661,21 @@ public class BasicPathRanker extends PathRanker {
         } else {
             formula.append("0 no friends");
         }
-        formula
-            .append("] + movementMod [")
-            .append(movementMod)
-            .append("] - facingMod [")
+        formula.append("]");
+        if (movementMod != 0.0) {
+            formula.append(" + ").append(movementModFormula);
+        }
+        if (crowdingTolerance != 0.0) {
+            formula.append(" - ").append(crowdingToleranceFormula);
+        }
+
+        formula.append(" - facingMod [")
             .append(LOG_DECIMAL.format(facingMod))
             .append(" = max(0, 50 * {")
             .append(getFacingDiff(movingUnit, game, pathCopy))
             .append(" - 1})]");
 
-        logger.trace("utility [{} = - fallMod({}) - offBoard*utility({}) - selfPreservation({}) - facingMod({}) + bravery({}) + movement({}) - aggression({}) - herding({})]",
-            utility, fallMod, utility * offBoardMod, selfPreservationMod, facingMod, braveryMod, movementMod, aggressionMod, herdingMod);
+        logger.trace("{}", formula);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
@@ -674,7 +683,7 @@ public class BasicPathRanker extends PathRanker {
         return rankedPath;
     }
 
-    private double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
+    protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
         double maximumDamageDone = damageEstimate.getMaximumDamageEstimate();
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
@@ -687,17 +696,63 @@ public class BasicPathRanker extends PathRanker {
     }
 
     // Only forces unit to move if there are no units around
-    private double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies) {
-        if (!enemies.isEmpty() || !getOwner().getEnemyHotSpots().isEmpty()) {
+    protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
+        var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
+        boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
+        boolean disabledFavorHigherTMM = favorHigherTMM == 0;
+        if (noEnemiesInSight || !disabledFavorHigherTMM) {
+            var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(), pathCopy.isJumping(), pathCopy.isAirborne(), game);
+            double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
+            var tmmValue = tmm.getValue();
+            var movementFactor = tmmValue * (selfPreservation + favorHigherTMM);
+            formula.append("movementMod [").append(movementFactor).append(" = ").append(tmmValue).append(" * (")
+                .append(selfPreservation).append(" + ").append(favorHigherTMM).append(")]");
+            logger.trace("movement mod [{} = {} * ({} + {})]", movementFactor, tmmValue, selfPreservation, favorHigherTMM);
+            return movementFactor;
+        }
+        return 0.0;
+    }
+
+    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, StringBuilder formula) {
+        var self = movePath.getEntity();
+        formula.append(" crowdingTolerance ");
+        if (!(self instanceof Mek) && !(self instanceof Tank)) {
+            formula.append("[0 not a Mek or Tank]}");
             return 0.0;
         }
-        var distanceMoved = pathCopy.getDistanceTravelled();
-        var tmm = Compute.getTargetMovementModifier(distanceMoved, pathCopy.isJumping(), pathCopy.isAirborne(), game);
-        double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
-        var tmmValue = tmm.getValue();
-        var movementFactor = tmmValue * selfPreservation;
-        logger.trace("movement mod [{} = {} * {})]", movementFactor, tmmValue, selfPreservation);
-        return movementFactor;
+
+        var antiCrowding = getOwner().getBehaviorSettings().getAntiCrowding();
+        if (antiCrowding == 0) {
+            formula.append("[0 antiCrowding is disabled]}");
+            return 0;
+        }
+
+        var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
+        final double herdingDistance = Math.ceil(antiCrowding * 1.3);
+        final double closingDistance = Math.ceil(Math.max(3.0, self.getMaxWeaponRange() * 0.6));
+
+        var crowdingFriends = getOwner().getFriendEntities().stream()
+            .filter(e -> e instanceof Mek || e instanceof Tank)
+            .filter(Entity::isDeployed)
+            .map(Entity::getPosition)
+            .filter(Objects::nonNull)
+            .filter(c -> c.distance(movePath.getFinalCoords()) <= herdingDistance)
+            .count();
+
+        var crowdingEnemies = enemies.stream()
+            .filter(e -> e instanceof Mek || e instanceof Tank)
+            .filter(Entity::isDeployed)
+            .map(Entity::getPosition)
+            .filter(Objects::nonNull)
+            .filter(c -> c.distance(movePath.getFinalCoords()) <= closingDistance)
+            .count();
+
+        double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
+        double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
+        formula.append("[").append(friendsCrowdingTolerance + enemiesCrowdingTolerance).append(" = (")
+            .append(antiCrowdingFactor).append(" * ").append(crowdingFriends).append(" friends) + (")
+            .append(antiCrowdingFactor).append(" * ").append(crowdingEnemies).append(" enemies)]");
+        return friendsCrowdingTolerance + enemiesCrowdingTolerance;
     }
 
     /**

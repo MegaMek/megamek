@@ -78,6 +78,8 @@ import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
@@ -87,7 +89,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private final static MMLogger logger = MMLogger.create(BotConfigDialog.class);
 
     private static final String OK_ACTION = "Ok_Action";
-
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
 
@@ -102,6 +104,14 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(
             Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
+
+    private MMToggleButton iAmAPirateCheck = new TipMMToggleButton(
+        Messages.getString("BotConfigDialog.iAmAPirateCheck"));
+
+    private MMToggleButton experimentalCheck = new TipMMToggleButton(
+        Messages.getString("BotConfigDialog.experimentalCheck"));
+
+
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
     private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
@@ -113,6 +123,9 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider selfPreservationSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
+    private TipSlider antiCrowdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+    private TipSlider favorHigherTMMSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 0);
+
     private TipButton savePreset = new TipButton(Messages.getString("BotConfigDialog.save"));
     private TipButton saveNewPreset = new TipButton(Messages.getString("BotConfigDialog.saveNew"));
 
@@ -327,6 +340,31 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Messages.getString("BotConfigDialog.fallShameToolTip"),
                 Messages.getString("BotConfigDialog.fallShameSliderTitle")));
 
+        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(buildSlider(antiCrowdingSlidebar, Messages.getString("BotConfigDialog.antiCrowdingSliderMin"),
+                Messages.getString("BotConfigDialog.antiCrowdingSliderMax"),
+                Messages.getString("BotConfigDialog.antiCrowdingToolTip"),
+                Messages.getString("BotConfigDialog.antiCrowdingTitle")));
+            panContent.add(Box.createVerticalStrut(7));
+
+            panContent.add(buildSlider(favorHigherTMMSlidebar, Messages.getString("BotConfigDialog.favorHigherTMMSliderMin"),
+                Messages.getString("BotConfigDialog.favorHigherTMMSliderMax"),
+                Messages.getString("BotConfigDialog.favorHigherTMMToolTip"),
+                Messages.getString("BotConfigDialog.favorHigherTMMTitle")));
+            panContent.add(Box.createVerticalStrut(7));
+        }
+
+        iAmAPirateCheck.setToolTipText(Messages.getString("BotConfigDialog.iAmAPirateCheckToolTip"));
+        iAmAPirateCheck.addActionListener(this);
+        panContent.add(iAmAPirateCheck);
+
+        experimentalCheck.setToolTipText(Messages.getString("BotConfigDialog.experimentalCheckToolTip"));
+        experimentalCheck.addActionListener(this);
+
+        if (CLIENT_PREFERENCES.getEnableExperimentalBotFeatures()) {
+            panContent.add(experimentalCheck);
+        }
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
@@ -441,6 +479,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         fallShameSlidebar.setValue(princessBehavior.getFallShameIndex());
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
+        antiCrowdingSlidebar.setValue(princessBehavior.getAntiCrowding());
+        favorHigherTMMSlidebar.setValue(princessBehavior.getFavorHigherTMM());
+        iAmAPirateCheck.setSelected(princessBehavior.iAmAPirate());
+        experimentalCheck.setSelected(princessBehavior.isExperimental());
     }
 
     private void updateDialogFields() {
@@ -487,7 +529,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                         || chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue()
                         || chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue()
                         || chosenPreset.getHerdMentalityIndex() != herdingSlidebar.getValue()
-                        || chosenPreset.getBraveryIndex() != braverySlidebar.getValue());
+                        || chosenPreset.getBraveryIndex() != braverySlidebar.getValue()
+                        || chosenPreset.getAntiCrowding() != antiCrowdingSlidebar.getValue()
+                        || chosenPreset.getFavorHigherTMM() != favorHigherTMMSlidebar.getValue()
+                        || chosenPreset.iAmAPirate() != iAmAPirateCheck.isSelected()
+                        || chosenPreset.isExperimental() != experimentalCheck.isSelected()
+        );
     }
 
     private JPanel buildSlider(JSlider thisSlider, String minMsgProperty,
@@ -605,7 +652,6 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         } else if (e.getSource() == saveNewPreset) {
             saveAsNewPreset();
-
         }
     }
 
@@ -657,6 +703,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         newBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         newBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         newBehavior.setBraveryIndex(braverySlidebar.getValue());
+        newBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+        newBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
+        newBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        newBehavior.setExperimental(experimentalCheck.isSelected());
         behaviorSettingsFactory.addBehavior(newBehavior);
         behaviorSettingsFactory.saveBehaviorSettings(false);
     }
@@ -692,6 +742,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         tempBehavior.setSelfPreservationIndex(selfPreservationSlidebar.getValue());
         tempBehavior.setHerdMentalityIndex(herdingSlidebar.getValue());
         tempBehavior.setBraveryIndex(braverySlidebar.getValue());
+        tempBehavior.setAntiCrowding(antiCrowdingSlidebar.getValue());
+        tempBehavior.setFavorHigherTMM(favorHigherTMMSlidebar.getValue());
+        tempBehavior.setIAmAPirate(iAmAPirateCheck.isSelected());
+        tempBehavior.setExperimental(experimentalCheck.isSelected());
+
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
                 tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());

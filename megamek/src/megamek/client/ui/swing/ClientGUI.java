@@ -89,8 +89,10 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
@@ -2465,10 +2467,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 }
             }
 
-            // Ask if you want to persist the final unit list from a battle encounter
-            if (doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
-                            Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
-                saveVictoryList();
+            if (PreferenceManager.getClientPreferences().askForVictoryList()) {
+                // Ask if you want to persist the final unit list from a battle encounter
+                if (doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
+                                Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
+                    saveVictoryList();
+                }
             }
 
             // save all destroyed units in a separate "salvage MUL"

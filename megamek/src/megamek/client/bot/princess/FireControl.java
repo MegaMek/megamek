@@ -1965,7 +1965,7 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter
      *         is capable of dropping bombs.
      */
-    private FiringPlan getDiveBombPlan(final Entity shooter,
+    protected FiringPlan getDiveBombPlan(final Entity shooter,
             final MovePath flightPath,
             final Targetable target,
             final Game game,

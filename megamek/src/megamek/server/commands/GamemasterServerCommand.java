@@ -17,6 +17,8 @@ import megamek.server.Server;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.totalwarfare.TWGameManager;
 
+import static megamek.server.Server.SERVER_CONN;
+
 /**
  * A ServerCommand that can only be used by Game Masters,
  * This abstract class implements many features that are common to all Game Master commands,
@@ -47,7 +49,7 @@ public abstract class GamemasterServerCommand extends ClientServerCommand {
     @Override
     protected boolean preRun(int connId) {
         // Override to add pre-run checks
-        var userIsGm = isGM(connId);
+        var userIsGm = connId == SERVER_CONN || isGM(connId);
 
         if (!userIsGm) {
             server.sendServerChat(connId, "This command is restricted to GMs.");

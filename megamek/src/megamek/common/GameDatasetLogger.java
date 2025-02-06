@@ -53,7 +53,7 @@ public class GameDatasetLogger {
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
-            logfile = new File(LOG_DIR + File.separator + filename + LocalDateTime.now() + ".tsv");
+            logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {

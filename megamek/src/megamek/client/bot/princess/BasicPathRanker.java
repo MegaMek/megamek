@@ -19,6 +19,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
@@ -26,6 +27,7 @@ import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.logging.MMLogger;
 
 import java.text.DecimalFormat;
@@ -495,19 +497,28 @@ public class BasicPathRanker extends PathRanker {
                     && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
                     || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
         }
-
+        Map<String, Double> scores = new HashMap<>();
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
 
         // Worry about failed piloting rolls (weighted by Fall Shame).
         double successProbability = getMovePathSuccessProbability(pathCopy);
         double fallMod = calculateFallMod(successProbability);
-
+        scores.put("fallMod", fallMod);
+        scores.put("successProbability", successProbability);
+        scores.put("maxRange", (double) maxRange);
+        scores.put("fallTolerance", fallTolerance);
+        scores.put("blackIce", (double) blackIce);
+        scores.put("enemies", (double) enemies.size());
+        scores.put("friendsCoords_x", friendsCoords == null ? -1.0 : friendsCoords.getX());
+        scores.put("friendsCoords_y", friendsCoords == null ? -1.0 : friendsCoords.getY());
+        scores.put("entityId", (double) movingUnit.getId());
+        scores.put("entityBehaviorState", (double) getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()).ordinal());
         // Worry about how badly we can damage ourselves on this path!
         double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
-
+        scores.put("damageExpectedPath", (double) expectedDamageTaken);
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
@@ -581,12 +592,16 @@ public class BasicPathRanker extends PathRanker {
                 && path.getEntity().getCrew().isClanPilot()) {
             damageEstimate.physicalDamage = 0;
         }
-
+        scores.put("damageExpectedTotal", expectedDamageTaken);
+        scores.put("myAttackFiring", damageEstimate.firingDamage);
+        scores.put("myAttackPhysical", damageEstimate.physicalDamage);
         // I can kick a different target than I shoot, so add physical to
         // total damage after I've looked at all enemies
 
         double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
-
+        scores.put("braveryValue", getOwner().getBehaviorSettings().getBraveryValue());
+        scores.put("braveryIndex", (double) getOwner().getBehaviorSettings().getBraveryIndex());
+        scores.put("braveryMod", braveryMod);
         var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
         // the only critters not subject to aggression and herding mods are
         // airborne aeros on ground maps, as they move incredibly fast
@@ -594,16 +609,35 @@ public class BasicPathRanker extends PathRanker {
         // (weighted by Aggression slider).
         double aggressionMod = isNotAirborne ?
             calculateAggressionMod(movingUnit, pathCopy, game) : 0;
+        double distToEnemy = distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game);
+        scores.put("closestEnemyDistance", distToEnemy);
+        scores.put("aggressionValue", getOwner().getBehaviorSettings().getHyperAggressionValue());
+        scores.put("aggressionIndex", (double) getOwner().getBehaviorSettings().getHyperAggressionIndex());
+        scores.put("aggressionMod", aggressionMod);
+
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
         double herdingMod = isNotAirborne ? calculateHerdingMod(friendsCoords, pathCopy) : 0;
+        if (movingUnit.getPosition() != null && friendsCoords != null) {
+            scores.put("friendsDistance", (double) friendsCoords.distance(movingUnit.getPosition()));
+        }
+        scores.put("herdingValue", getOwner().getBehaviorSettings().getHerdMentalityValue());
+        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getHerdMentalityIndex());
+        scores.put("herdingMod", herdingMod);
 
 
         // Movement is good, it gives defense and extends a player power in the game.
         double movementMod = calculateMovementMod(pathCopy, game, enemies);
-
+        scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
+        scores.put("herdingValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
+        scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
+        scores.put("movementMod", movementMod);
         // Try to face the enemy.
         double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
+        scores.put("facing", (double) movingUnit.getFacing());
+        scores.put("finalFacing", (double) pathCopy.getFinalFacing());
+        scores.put("facingMod", facingMod);
+
         var formula = new StringBuilder(256);
         if (facingMod <= -10000) {
             return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
@@ -668,6 +702,7 @@ public class BasicPathRanker extends PathRanker {
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
+        rankedPath.getScores().putAll(scores);
         return rankedPath;
     }
 
@@ -916,6 +951,9 @@ public class BasicPathRanker extends PathRanker {
                     // 1 in 3 chance to hit Black Ice on any given Pavement hex
                     hazardValue += calcIceHazard(movingUnit, hex, step, movePath, jumpLanding) / 3.0;
                     break;
+                case Terrains.HAZARDOUS_LIQUID:
+                    hazardValue += calcHazardousLiquidHazard(hex, endHex, movingUnit, step);
+                    break;
             }
         }
 
@@ -934,7 +972,8 @@ public class BasicPathRanker extends PathRanker {
         Terrains.SNOW,
         Terrains.SWAMP,
         Terrains.MUD,
-        Terrains.TUNDRA));
+        Terrains.TUNDRA,
+        Terrains.HAZARDOUS_LIQUID));
     private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
     static {
         HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
@@ -1317,6 +1356,65 @@ public class BasicPathRanker extends PathRanker {
         // additional turns
         logger.trace("Total hazard = {}", hazardValue * psrFactor);
         return Math.round(hazardValue * psrFactor);
+    }
+
+    private double calcHazardousLiquidHazard(Hex hex, boolean endHex, Entity movingUnit, MoveStep step) {
+        logger.trace("Calculating hazardous liquid hazard.");
+        int unitDamageLevel = movingUnit.getDamageLevel();
+        double dmg;
+
+        // Hovers/VTOLs are unaffected _unless_ they end on the hex and are in danger of
+        // losing mobility.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode()
+            || EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            if (!endHex) {
+                logger.trace("Hovering/VTOL while traversing hazardous liquids (0).");
+                return 0;
+            } else {
+                // Estimate chance of being disabled or immobilized over open lava; this is
+                // fatal!
+                // Calc expected damage as ((current damage level [0 ~ 4]) / 4) *
+                // UNIT_DESTRUCTION_FACTOR
+                dmg = (unitDamageLevel / 4.0) * UNIT_DESTRUCTION_FACTOR;
+                logger.trace("Ending hover/VTOL movement over lava ({}).", dmg);
+                return dmg;
+            }
+        }
+
+        dmg = (HazardousLiquidPoolUtil.AVERAGE_DAMAGE_HAZARDOUS_LIQUID_POOL * HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageMultiplierForUnsealed(movingUnit))
+            / (HazardousLiquidPoolUtil.getHazardousLiquidPoolDamageDivisorForInfantry(movingUnit));
+
+        // After all that math let's make sure we do at least 1 damage
+        // (.6 repeating when normalized for the HLP doing no damage 1/3 of the time)
+        dmg = Math.max(dmg, 2.0/3.0);
+
+        // Factor in potential to suffer fatal damage.
+        // Dependent on expected average damage / exposed remaining armor *
+        // UNIT_DESTRUCTION_FACTOR
+        int exposedArmor;
+        double hazardValue = 0;
+        if (step.isProne() || (hex.containsTerrain(Terrains.WATER) && hex.terrainLevel(Terrains.WATER) > 1)) {
+            exposedArmor = movingUnit.getTotalArmor();
+            logger.trace("Fully Submerged damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof BipedMek) {
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG).mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Biped Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof TripodMek) {
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_CLEG)
+                .mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Tripod Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else if (movingUnit instanceof QuadMek){
+            exposedArmor = Stream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
+                .mapToInt(movingUnit::getArmor).sum();
+            logger.trace("Quad Mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        } else {
+            exposedArmor = movingUnit.getTotalArmor();
+            logger.trace("Fully Submerged non-mek damage = {}, exposed armor = {}", dmg, exposedArmor);
+        }
+        hazardValue += (UNIT_DESTRUCTION_FACTOR * (dmg / Math.max(exposedArmor, 1)));
+
+        logger.trace("Total hazard = {}", hazardValue);
+        return Math.round(hazardValue);
     }
 
     private double calcBogDownFactor(String name, boolean endHex, boolean jumpLanding, int pilotSkill, int modifier) {

@@ -60,6 +60,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.C3Util;
 import megamek.common.util.EmailService;
+import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.AreaEffectHelper;
@@ -83,7 +84,7 @@ import megamek.server.victory.VictoryResult;
  */
 public class TWGameManager extends AbstractGameManager {
     private static final MMLogger logger = MMLogger.create(TWGameManager.class);
-
+    private static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     private Game game = new Game();
@@ -849,6 +850,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     send(createMapSettingsPacket());
+                    datasetLogger.append(newSettings, true);
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
@@ -858,6 +860,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     send(packetHelper.createPlanetaryConditionsPacket());
+                    datasetLogger.append(conditions, true);
                 }
                 break;
             case UNLOAD_STRANDED:
@@ -3878,6 +3881,7 @@ public class TWGameManager extends AbstractGameManager {
         // looks like mostly everything's okay
         MovePathHandler handler = new MovePathHandler(this, entity, md, losCache);
         handler.processMovement();
+        datasetLogger.append(md, true);
 
         // The attacker may choose to break a chain whip grapple by expending MP
         if ((entity.getGrappled() != Entity.NONE)
@@ -3935,6 +3939,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // This entity's turn is over.
         // N.B. if the entity fell, a *new* turn has already been added.
+        datasetLogger.append(game, true);
         endCurrentTurn(entity);
     }
 
@@ -4687,6 +4692,7 @@ public class TWGameManager extends AbstractGameManager {
             // otherwise, magma crust won't have a chance to break
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, mainPhaseReport, this);
             ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
+            ServerHelper.checkEnteringHazardousLiquid(nextHex, nextElevation, entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -8904,6 +8910,7 @@ public class TWGameManager extends AbstractGameManager {
 
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, displacementReport, this);
         ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
+        ServerHelper.checkEnteringHazardousLiquid(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
         if (violation == null) {
@@ -9240,7 +9247,7 @@ public class TWGameManager extends AbstractGameManager {
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
-
+        datasetLogger.append(game, true);
         endCurrentTurn(entity);
     }
 
@@ -9500,7 +9507,7 @@ public class TWGameManager extends AbstractGameManager {
             logger.error("Server got deploy minefields packet in wrong phase");
             return;
         }
-
+        datasetLogger.append(game, true);
         // looks like mostly everything's okay
         processDeployMinefields(minefields);
         endCurrentTurn(null);
@@ -9651,7 +9658,7 @@ public class TWGameManager extends AbstractGameManager {
         if (vector == null) {
             vector = new Vector<>(0);
         }
-
+        boolean withHeader = true;
         // Not **all** actions take up the entity's turn.
         boolean setDone = !((game.getTurn() instanceof TriggerAPPodTurn)
                 || (game.getTurn() instanceof TriggerBPodTurn));
@@ -9661,6 +9668,9 @@ public class TWGameManager extends AbstractGameManager {
                 logger.error("Attack packet has wrong attacker");
                 continue;
             }
+            datasetLogger.append(game, ea, withHeader);
+            withHeader = false;
+
             if (ea instanceof PushAttackAction) {
                 // push attacks go the end of the displacement attacks
                 PushAttackAction paa = (PushAttackAction) ea;
@@ -18913,7 +18923,8 @@ public class TWGameManager extends AbstractGameManager {
                 } else if (ferroLamellorArmor
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
-                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_AX)) {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor((((double) damage) * 4) / 5);
                     if (damage <= 0) {
@@ -18929,6 +18940,7 @@ public class TWGameManager extends AbstractGameManager {
                         && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                                || (hit.getGeneralDamageType() == HitData.DAMAGE_AX) //AX doesn't affect ballistic-reinforced armor, TO:AUE (6th), pg. 179
                                 || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);
@@ -31178,6 +31190,23 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Airborne ground units aren't effected by dangerous terrain, unless it's an erupton
+     * @param en
+     * @param eruption
+     * @return true if the unit should be damaged by dangerous grund (magma, hazardous liquid pool)
+     */
+    private boolean isUnitEffectedByHazardousGround(Entity en, boolean eruption) {
+        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
+                || (en.getMovementMode() == EntityMovementMode.HOVER)
+                || ((en.getMovementMode() == EntityMovementMode.WIGE)
+                    && (en.getOriginalWalkMP() > 0) && !eruption))
+            && !en.isImmobile()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * do damage from magma
      *
      * @param en       the affected <code>Entity</code>
@@ -31186,13 +31215,10 @@ public class TWGameManager extends AbstractGameManager {
      *                 of an eruption
      */
     public void doMagmaDamage(Entity en, boolean eruption) {
-        if ((((en.getMovementMode() == EntityMovementMode.VTOL) && (en.getElevation() > 0))
-                || (en.getMovementMode() == EntityMovementMode.HOVER)
-                || ((en.getMovementMode() == EntityMovementMode.WIGE)
-                        && (en.getOriginalWalkMP() > 0) && !eruption))
-                && !en.isImmobile()) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
             return;
         }
+
         Report r;
         boolean isMek = en instanceof Mek;
         if (isMek) {
@@ -31213,6 +31239,26 @@ public class TWGameManager extends AbstractGameManager {
             }
         } else {
             addReport(destroyEntity(en, "fell into magma", false, false));
+        }
+        addNewLines();
+    }
+
+    /**
+     * do damage from hazardous liquids
+     *
+     * @param en       the affected <code>Entity</code>
+     * @param eruption <code>boolean</code> indicating whether or not this is
+     *                 because
+     *                 of an eruption (geyser)
+     * @param depth    How deep is the hazardous liquid?
+     */
+    public void doHazardousLiquidDamage(Entity en, boolean eruption, int depth) {
+        if (!isUnitEffectedByHazardousGround(en, eruption)) {
+            return;
+        }
+
+        for (Report report : HazardousLiquidPoolUtil.getHazardousLiquidDamage(en, eruption, depth, this)) {
+            addReport(report);
         }
         addNewLines();
     }
@@ -31672,6 +31718,7 @@ public class TWGameManager extends AbstractGameManager {
             if (!(ah instanceof TAGHandler)) {
                 continue;
             }
+
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
@@ -31694,6 +31741,7 @@ public class TWGameManager extends AbstractGameManager {
                 Report.addNewline(handleAttackReports);
             }
         }
+
         // now resolve everything but TAG
         for (AttackHandler ah : currentAttacks) {
             if (ah instanceof TAGHandler) {
@@ -31737,6 +31785,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
+        datasetLogger.append(game, true);
     }
 
     /**

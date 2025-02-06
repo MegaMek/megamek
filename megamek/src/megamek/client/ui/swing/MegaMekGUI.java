@@ -269,6 +269,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // the button width "look" reasonable.
         int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
 
+        //no more than 50% of image width
+        if (maximumWidth > (int) (0.5 * splash.getPreferredSize().width)) {
+            maximumWidth = (int) (0.5 * splash.getPreferredSize().width);
+        }
+
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {
             minButtonDim = textDim;

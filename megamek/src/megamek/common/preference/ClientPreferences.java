@@ -13,19 +13,17 @@
  */
 package megamek.common.preference;
 
+import megamek.MMConstants;
+import megamek.common.Configuration;
+import megamek.common.MovePath;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
-
-import megamek.MMConstants;
-import megamek.client.ui.baseComponents.FileNameComboBoxModel;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Configuration;
-import megamek.common.MovePath;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
@@ -52,6 +50,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String AI_DIRECTORY = "AIDirectory";
     public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String DATA_LOGGING = "DataLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
@@ -118,6 +117,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(START_SEARCHLIGHTS_ON, true);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
+        store.setDefault(DATA_LOGGING, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -222,6 +222,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
     }
 
+    public boolean dataLoggingEnabled() {
+        return store.getBoolean(DATA_LOGGING);
+    }
+
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -316,6 +320,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);
+    }
+
+    public void setDataLogging(boolean state) {
+        store.setValue(DATA_LOGGING, state);
     }
 
     public void setStampFormat(String format) {

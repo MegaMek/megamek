@@ -19,6 +19,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -38,7 +39,7 @@ import static megamek.client.ui.SharedUtility.predictLeapFallDamage;
 
 public abstract class PathRanker implements IPathRanker {
     private final static MMLogger logger = MMLogger.create(PathRanker.class);
-
+    private static final BotLogger botLogger = new BotLogger(PathRanker.class.getSimpleName());
     // TODO: Introduce PathRankerCacheHelper class that contains "global" path
     // ranker state
     // TODO: Introduce FireControlCacheHelper class that contains "global" Fire
@@ -102,7 +103,7 @@ public abstract class PathRanker implements IPathRanker {
             final BigDecimal numberPaths = new BigDecimal(validPaths.size());
             BigDecimal count = BigDecimal.ZERO;
             BigDecimal interval = new BigDecimal(5);
-
+            boolean withHeader = true;
             boolean pathsHaveExpectedDamage = false;
 
             for (MovePath path : validPaths) {
@@ -113,6 +114,7 @@ public abstract class PathRanker implements IPathRanker {
 
                     returnPaths.add(rankedPath);
 
+                    withHeader = false;
                     // we want to keep track of if any of the paths we've considered have some kind
                     // of damage potential
                     pathsHaveExpectedDamage |= (rankedPath.getExpectedDamage() > 0);
@@ -147,6 +149,17 @@ public abstract class PathRanker implements IPathRanker {
         } catch (Exception exception) {
             logger.error(exception, exception.getMessage());
             return returnPaths;
+        }
+        botLogger.append(game, true);
+        // log the top 50 paths
+        int numPathsToLog = Math.min(50, returnPaths.size());
+        int i = 0;
+        for (RankedPath rankedPath : returnPaths) {
+            if (i >= numPathsToLog) {
+                break;
+            }
+            botLogger.append(rankedPath, i == 0);
+            i++;
         }
 
         return returnPaths;

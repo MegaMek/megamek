@@ -20,10 +20,7 @@
  */
 package megamek;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputFilter;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.security.DigestInputStream;
@@ -54,6 +51,7 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
+import megamek.utilities.GifWriter;
 import megamek.utilities.RATGeneratorEditor;
 
 /**
@@ -144,7 +142,10 @@ public class MegaMek {
             startQuickLoad(restArgs);
             return;
         }
-
+        if (parser.writeGif()) {
+            startGifWriter(restArgs);
+            return;
+        }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
         } else {
@@ -351,6 +352,14 @@ public class MegaMek {
             mmg.start(false);
             mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
         });
+    }
+
+    private static void startGifWriter(String... args) {
+        try {
+            GifWriter.createGifFromGameSummary(args[0]);
+        } catch (Exception e) {
+            logger.error(e, "Error creating gif");
+        }
     }
 
     /**

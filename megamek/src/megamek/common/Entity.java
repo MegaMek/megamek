@@ -50,7 +50,6 @@ import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 
 import java.awt.*;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -4472,7 +4471,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The list of found bombs
      * @see Mounted#isOperable()
      */
-    public List<BombMounted> getBombs(BigInteger flag) {
+    public List<BombMounted> getBombs(EquipmentFlag flag) {
         return getBombs().stream()
                 .filter(b -> b.getType().hasFlag(flag))
                 .filter(Mounted::isOperable)
@@ -4634,7 +4633,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param flag A MiscType.F_XXX
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag) {
+    public boolean hasWorkingMisc(EquipmentFlag flag) {
         return hasWorkingMisc(flag, -1);
     }
 
@@ -4645,7 +4644,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param secondary A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag, long secondary) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary) {
         for (MiscMounted m : miscList) {
             if (m.isReady() && m.getType().hasFlag(flag)
                     && ((secondary == -1) || m.getType().hasSubType(secondary))) {
@@ -4655,11 +4654,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public boolean hasMisc(BigInteger flag) {
+    public boolean hasMisc(EquipmentFlag flag) {
         return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
     }
 
-    public List<MiscMounted> getMiscEquipment(BigInteger flag) {
+    public List<MiscMounted> getMiscEquipment(EquipmentFlag flag) {
         return miscList.stream()
                 .filter(item -> item.getType().hasFlag(flag))
                 .collect(Collectors.toList());
@@ -4684,11 +4683,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param flag
      * @return
      */
-    public int countWorkingMisc(BigInteger flag) {
+    public int countWorkingMisc(EquipmentFlag flag) {
         return countWorkingMisc(flag, -1);
     }
 
-    public int countWorkingMisc(BigInteger flag, int location) {
+    public int countWorkingMisc(EquipmentFlag flag, int location) {
         int count = 0;
         OUTER: for (MiscMounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag)
@@ -4747,7 +4746,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param location  The location to check e.g. Mek.LOC_LARM
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag, long secondary, int location) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary, int location) {
         // go through the location slot by slot, because of misc equipment that
         // is spreadable
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {

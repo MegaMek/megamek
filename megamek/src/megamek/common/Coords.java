@@ -549,6 +549,14 @@ public class Coords implements Serializable {
         return "(" + (x + 1) + ", " + (y + 1) + ")";
     }
 
+    /**
+     * Returns the coordinates in TSV format for logging purposes
+     * @return the coordinates in TSV format `x`\t`y`
+     */
+    public String toTSV() {
+        return x + "\t" + y;
+    }
+
     public int getX() {
         return x;
     }

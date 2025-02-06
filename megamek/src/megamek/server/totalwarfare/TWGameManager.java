@@ -84,7 +84,7 @@ import megamek.server.victory.VictoryResult;
  */
 public class TWGameManager extends AbstractGameManager {
     private static final MMLogger logger = MMLogger.create(TWGameManager.class);
-
+    private static final GameDatasetLogger datasetLogger = new GameDatasetLogger("game_actions");
     static final String DEFAULT_BOARD = MapSettings.BOARD_GENERATED;
 
     private Game game = new Game();
@@ -850,6 +850,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     send(createMapSettingsPacket());
+                    datasetLogger.append(newSettings, true);
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
@@ -859,6 +860,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     send(packetHelper.createPlanetaryConditionsPacket());
+                    datasetLogger.append(conditions, true);
                 }
                 break;
             case UNLOAD_STRANDED:
@@ -3879,6 +3881,7 @@ public class TWGameManager extends AbstractGameManager {
         // looks like mostly everything's okay
         MovePathHandler handler = new MovePathHandler(this, entity, md, losCache);
         handler.processMovement();
+        datasetLogger.append(md, true);
 
         // The attacker may choose to break a chain whip grapple by expending MP
         if ((entity.getGrappled() != Entity.NONE)
@@ -3936,6 +3939,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // This entity's turn is over.
         // N.B. if the entity fell, a *new* turn has already been added.
+        datasetLogger.append(game, true);
         endCurrentTurn(entity);
     }
 
@@ -9243,7 +9247,7 @@ public class TWGameManager extends AbstractGameManager {
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
-
+        datasetLogger.append(game, true);
         endCurrentTurn(entity);
     }
 
@@ -9503,7 +9507,7 @@ public class TWGameManager extends AbstractGameManager {
             logger.error("Server got deploy minefields packet in wrong phase");
             return;
         }
-
+        datasetLogger.append(game, true);
         // looks like mostly everything's okay
         processDeployMinefields(minefields);
         endCurrentTurn(null);
@@ -9654,7 +9658,7 @@ public class TWGameManager extends AbstractGameManager {
         if (vector == null) {
             vector = new Vector<>(0);
         }
-
+        boolean withHeader = true;
         // Not **all** actions take up the entity's turn.
         boolean setDone = !((game.getTurn() instanceof TriggerAPPodTurn)
                 || (game.getTurn() instanceof TriggerBPodTurn));
@@ -9664,6 +9668,9 @@ public class TWGameManager extends AbstractGameManager {
                 logger.error("Attack packet has wrong attacker");
                 continue;
             }
+            datasetLogger.append(game, ea, withHeader);
+            withHeader = false;
+
             if (ea instanceof PushAttackAction) {
                 // push attacks go the end of the displacement attacks
                 PushAttackAction paa = (PushAttackAction) ea;
@@ -31711,6 +31718,7 @@ public class TWGameManager extends AbstractGameManager {
             if (!(ah instanceof TAGHandler)) {
                 continue;
             }
+
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
@@ -31733,6 +31741,7 @@ public class TWGameManager extends AbstractGameManager {
                 Report.addNewline(handleAttackReports);
             }
         }
+
         // now resolve everything but TAG
         for (AttackHandler ah : currentAttacks) {
             if (ah instanceof TAGHandler) {
@@ -31776,6 +31785,7 @@ public class TWGameManager extends AbstractGameManager {
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);
+        datasetLogger.append(game, true);
     }
 
     /**

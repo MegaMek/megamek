@@ -44,7 +44,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
 
     @Override
-    protected @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
+    public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
         return getOwner().getSwarmContext().getCurrentCenter();
     }
     /**

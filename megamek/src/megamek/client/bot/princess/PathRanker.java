@@ -540,7 +540,7 @@ public abstract class PathRanker implements IPathRanker {
         return false;
     }
 
-    protected @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
+    public @Nullable Coords calculateAlliesCenter(int myId, @Nullable List<Entity> friends, Game game) {
         return calcAllyCenter(myId, friends, game);
     }
 

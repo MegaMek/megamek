@@ -18,6 +18,9 @@ package megamek.client.ratgenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -50,8 +53,10 @@ public class AvailabilityRating {
     int startYear;
     String unitName = null;
 
-    // Rating values by individual equipment levels
+    // Rating values indexed by equipment level names
     HashMap<String,Integer> ratingByLevel;
+    // Rating values indexed by equipment level values
+    HashMap<Integer,Integer> ratingByNumericLevel;
 
     /**
      * @param unit The chassis or model key
@@ -78,6 +83,7 @@ public class AvailabilityRating {
         startYear = era;
         this.ratingAdjustment = 0;
         ratingByLevel = new HashMap<>();
+        ratingByNumericLevel = new HashMap<>();
 
         String[] fields;
         String loggerData = unit + " in " + era + " era: " + code;
@@ -132,13 +138,13 @@ public class AvailabilityRating {
         } else {
 
             fields = code.split("!");
+            // FIXME: See if this property can be removed entirely
 //            String[] subfields = fields[0].split("!");
 //            ratings = subfields[1];
             faction = fields[0];
             String[] subfields;
             int avRating;
             for (int i = 1; i < fields.length; i++) {
-            //for (String curLevel : fields) {
                 subfields = fields[i].split(":");
 
                 if (subfields.length != 2) {
@@ -156,6 +162,9 @@ public class AvailabilityRating {
                 ratingByLevel.put(subfields[0], avRating);
 
             }
+
+            // Use the highest availability as a backup value
+            availability = Collections.max(ratingByLevel.values());
 
         }
 
@@ -223,6 +232,36 @@ public class AvailabilityRating {
         this.ratings = ratings;
     }
 
+    /**
+     * Converts letter-based equipment level to index-based for working with
+     * systems that use it
+     * @param fRec faction-specific record, for equipment levels (typically
+     *             A/B/C/D/F)
+     */
+    public void setRatingByNumericLevel(FactionRecord fRec) {
+        if (hasMultipleRatings()) {
+            Collection<String> levelNames = ratingByLevel.keySet();
+
+            int ratingLevel = -1;
+            ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
+            int numRatingLevels = factionRatings.size();
+
+            for (String curLevel : levelNames) {
+
+                if (curLevel == null && fRec.getRatingLevels().size() == 1) {
+                    ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+                }
+
+                if (curLevel != null && numRatingLevels > 1) {
+                    ratingLevel = factionRatings.indexOf(curLevel);
+                }
+
+                ratingByNumericLevel.put(ratingLevel, ratingByLevel.get(curLevel));
+
+            }
+        }
+    }
+
     public int getRatingAdjustment() {
         return ratingAdjustment;
     }
@@ -237,7 +276,7 @@ public class AvailabilityRating {
      * @return true if ratings for multiple levels are set
      */
     public boolean hasMultipleRatings() {
-        return !ratingByLevel.isEmpty() && ratingByLevel.values().stream().noneMatch(curRating -> curRating != 0);
+        return !ratingByLevel.isEmpty() && ratingByLevel.values().stream().anyMatch(curRating -> curRating > 0);
     }
 
     public int getEra() {

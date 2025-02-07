@@ -651,10 +651,15 @@ public class ServerHelper {
             return false;
         }
 
+        if (detector.isAerospace() && game.getBoard().onGround()) {
+            // Aerospace with BAP on the ground map detect hidden units to 1 hex on either
+            // side of their flight path; see https://bg.battletech.com/forums/index.php?topic=84054.0
+            probeRange = 1;
+        }
+
         // Get all hidden units in probe range
         List<Entity> hiddenUnits = new ArrayList<>();
-        // TODO: Check if this function is not suffering of an off-by-one error
-        for (Coords coords : detectorCoords.allLessThanDistance(probeRange)) {
+        for (Coords coords : detectorCoords.allAtDistanceOrLess(probeRange)) {
             for (Entity entity : game.getEntitiesVector(coords, true)) {
                 if (entity.isHidden() && entity.isEnemyOf(detector)) {
                     hiddenUnits.add(entity);

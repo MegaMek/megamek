@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.event.ListSelectionEvent;
 
+import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -163,7 +164,7 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         setupButtonPanel();
 
-        butDone.addActionListener(new AbstractAction() {
+        AbstractAction doneHandler = new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
             @Override
@@ -172,13 +173,22 @@ public class PointblankShotDisplay extends FiringDisplay {
                     return;
                 }
                 if (clientgui.isProcessingPointblankShot()) {
-                    ready();
+                    if (e.getSource().equals(butSkipTurn)) {
+                        // Undo any turret turns, arm flips, etc.
+                        attacks.clear();
+                        performDoneNoAction();
+                    } else {
+                        ready();
+                    }
                     // When the turn is ended, we could miss a key release event
                     // This will ensure no repeating keys are stuck down
                     clientgui.controller.stopAllRepeating();
                 }
             }
-        });
+        };
+        // All turn-end handling goes through ready()
+        butDone.addActionListener(doneHandler);
+        butSkipTurn.addActionListener(doneHandler);
     }
 
     @Override
@@ -238,6 +248,7 @@ public class PointblankShotDisplay extends FiringDisplay {
         controller.registerCommandAction(KeyCommandBind.FIRE, this::shouldPerformFireKeyCommand, this::fire);
         controller.registerCommandAction(KeyCommandBind.CANCEL, this::shouldPerformClearKeyCommand, this::clear);
         controller.registerCommandAction(KeyCommandBind.DONE, this::shouldPerformDoneKeyCommand, this::ready);
+        controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION, this::shouldPerformDoneKeyCommand, this::performDoneNoAction);
     }
 
     @Override
@@ -426,85 +437,91 @@ public class PointblankShotDisplay extends FiringDisplay {
         // remove temporary attacks from game & board
         removeTempAttacks();
 
-        // For bug 1002223
-        // Re-compute the to-hit numbers by adding in correct order.
-        Vector<EntityAction> newAttacks = new Vector<>();
-        for (EntityAction o : attacks) {
-            if (o instanceof ArtilleryAttackAction) {
-                newAttacks.addElement(o);
-            } else if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                Entity attacker = waa
+        if (attacks.isEmpty()) {
+            // Send signal that we are not taking a PBS shot if there are no attacks
+            clientgui.getClient().sendHiddenPBSCFRResponse(null);
+        } else {
+            // For bug 1002223
+            // Re-compute the to-hit numbers by adding in correct order.
+            Vector<EntityAction> newAttacks = new Vector<>();
+            for (EntityAction o : attacks) {
+                if (o instanceof ArtilleryAttackAction) {
+                    newAttacks.addElement(o);
+                } else if (o instanceof WeaponAttackAction) {
+                    WeaponAttackAction waa = (WeaponAttackAction) o;
+                    Entity attacker = waa
                         .getEntity(clientgui.getClient().getGame());
-                Targetable target1 = waa.getTarget(clientgui.getClient()
+                    Targetable target1 = waa.getTarget(clientgui.getClient()
                         .getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                    boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
-                if (curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(
+                    if (curInFrontArc) {
+                        WeaponAttackAction waa2 = new WeaponAttackAction(
                             waa.getEntityId(), waa.getTargetType(),
                             waa.getTargetId(), waa.getWeaponId());
-                    waa2.setAimedLocation(waa.getAimedLocation());
-                    waa2.setAimingMode(waa.getAimingMode());
-                    waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
-                    waa2.setAmmoId(waa.getAmmoId());
-                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
-                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayloads(waa.getBombPayloads());
-                    waa2.setStrafing(waa.isStrafing());
-                    waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
-                    waa2.setPointblankShot(waa.isPointblankShot());
-                    newAttacks.addElement(waa2);
+                        waa2.setAimedLocation(waa.getAimedLocation());
+                        waa2.setAimingMode(waa.getAimingMode());
+                        waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
+                        waa2.setAmmoId(waa.getAmmoId());
+                        waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
+                        waa2.setAmmoCarrier(waa.getAmmoCarrier());
+                        waa2.setBombPayloads(waa.getBombPayloads());
+                        waa2.setStrafing(waa.isStrafing());
+                        waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
+                        waa2.setPointblankShot(waa.isPointblankShot());
+                        newAttacks.addElement(waa2);
+                    }
+                } else {
+                    newAttacks.addElement(o);
                 }
-            } else {
-                newAttacks.addElement(o);
             }
-        }
-        // now add the attacks in rear/arm arcs
-        for (EntityAction o : attacks) {
-            if (o instanceof ArtilleryAttackAction) {
-                // newAttacks.addElement(o);
-                continue;
-            } else if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                Entity attacker = waa
+            // now add the attacks in rear/arm arcs
+            for (EntityAction o : attacks) {
+                if (o instanceof ArtilleryAttackAction) {
+                    // newAttacks.addElement(o);
+                    continue;
+                } else if (o instanceof WeaponAttackAction) {
+                    WeaponAttackAction waa = (WeaponAttackAction) o;
+                    Entity attacker = waa
                         .getEntity(clientgui.getClient().getGame());
-                Targetable target1 = waa.getTarget(clientgui.getClient()
+                    Targetable target1 = waa.getTarget(clientgui.getClient()
                         .getGame());
-                boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
+                    boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
                         attacker.getSecondaryFacing(), target1,
                         attacker.getForwardArc());
-                if (!curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(
+                    if (!curInFrontArc) {
+                        WeaponAttackAction waa2 = new WeaponAttackAction(
                             waa.getEntityId(), waa.getTargetType(),
                             waa.getTargetId(), waa.getWeaponId());
-                    waa2.setAimedLocation(waa.getAimedLocation());
-                    waa2.setAimingMode(waa.getAimingMode());
-                    waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
-                    waa2.setAmmoId(waa.getAmmoId());
-                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
-                    waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayloads(waa.getBombPayloads());
-                    waa2.setStrafing(waa.isStrafing());
-                    waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
-                    waa2.setPointblankShot(waa.isPointblankShot());
-                    newAttacks.addElement(waa2);
+                        waa2.setAimedLocation(waa.getAimedLocation());
+                        waa2.setAimingMode(waa.getAimingMode());
+                        waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
+                        waa2.setAmmoId(waa.getAmmoId());
+                        waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
+                        waa2.setAmmoCarrier(waa.getAmmoCarrier());
+                        waa2.setBombPayloads(waa.getBombPayloads());
+                        waa2.setStrafing(waa.isStrafing());
+                        waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
+                        waa2.setPointblankShot(waa.isPointblankShot());
+                        newAttacks.addElement(waa2);
+                    }
                 }
             }
-        }
 
-        // If the user picked a hex along the flight path, server needs to know
-        if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(currentEntity);
-            if (targetPos != null) {
-                clientgui.getClient().sendPlayerPickedPassThrough(
+            // If the user picked a hex along the flight path, server needs to know
+            if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
+                Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(currentEntity);
+                if (targetPos != null) {
+                    clientgui.getClient().sendPlayerPickedPassThrough(
                         ((Entity) target).getId(), currentEntity, targetPos);
+                }
             }
+
+            // send out attacks
+            clientgui.getClient().sendHiddenPBSCFRResponse(newAttacks);
         }
 
-        // send out attacks
-        clientgui.getClient().sendHiddenPBSCFRResponse(newAttacks);
         clientgui.setPointblankEID(Entity.NONE);
 
         // clear queue

@@ -5978,43 +5978,47 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
 
-                // The second packet contains the attacks to process
-                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
-                // Mark the hidden unit as having taken a PBS
-                hidden.setMadePointblankShot(true);
-                // Process the Actions
-                for (EntityAction ea : attacks) {
-                    Entity entity = game.getEntity(ea.getEntityId());
-                    if (ea instanceof TorsoTwistAction) {
-                        TorsoTwistAction tta = (TorsoTwistAction) ea;
-                        if (entity.canChangeSecondaryFacing()) {
-                            entity.setSecondaryFacing(tta.getFacing());
-                        }
-                    } else if (ea instanceof FlipArmsAction) {
-                        FlipArmsAction faa = (FlipArmsAction) ea;
-                        entity.setArmsFlipped(faa.getIsFlipped());
-                    } else if (ea instanceof SearchlightAttackAction) {
-                        boolean hexesAdded = ((SearchlightAttackAction) ea).setHexesIlluminated(game);
-                        // If we added new hexes, send them to all players.
-                        // These are spotlights at night, you know they're there.
-                        if (hexesAdded) {
-                            send(createIlluminatedHexesPacket());
-                        }
-                        SearchlightAttackAction saa = (SearchlightAttackAction) ea;
-                        addReport(saa.resolveAction(game));
-                    } else if (ea instanceof WeaponAttackAction) {
-                        WeaponAttackAction waa = (WeaponAttackAction) ea;
-                        Entity ae = game.getEntity(waa.getEntityId());
-                        Mounted<?> m = ae.getEquipment(waa.getWeaponId());
-                        Weapon w = (Weapon) m.getType();
-                        // Track attacks original target, for things like swarm LRMs
-                        waa.setOriginalTargetId(waa.getTargetId());
-                        waa.setOriginalTargetType(waa.getTargetType());
-                        AttackHandler ah = w.fire(waa, game, this);
-                        if (ah != null) {
-                            ah.setStrafing(waa.isStrafing());
-                            ah.setStrafingFirstShot(waa.isStrafingFirstShot());
-                            game.addAttack(ah);
+                // The second packet contains the attacks to process _or_ signals not firing
+                if (rp.getPacket().getObject(1) == null) {
+                    return false;
+                } else {
+                    Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
+                    // Mark the hidden unit as having taken a PBS
+                    hidden.setMadePointblankShot(true);
+                    // Process the Actions
+                    for (EntityAction ea : attacks) {
+                        Entity entity = game.getEntity(ea.getEntityId());
+                        if (ea instanceof TorsoTwistAction) {
+                            TorsoTwistAction tta = (TorsoTwistAction) ea;
+                            if (entity.canChangeSecondaryFacing()) {
+                                entity.setSecondaryFacing(tta.getFacing());
+                            }
+                        } else if (ea instanceof FlipArmsAction) {
+                            FlipArmsAction faa = (FlipArmsAction) ea;
+                            entity.setArmsFlipped(faa.getIsFlipped());
+                        } else if (ea instanceof SearchlightAttackAction) {
+                            boolean hexesAdded = ((SearchlightAttackAction) ea).setHexesIlluminated(game);
+                            // If we added new hexes, send them to all players.
+                            // These are spotlights at night, you know they're there.
+                            if (hexesAdded) {
+                                send(createIlluminatedHexesPacket());
+                            }
+                            SearchlightAttackAction saa = (SearchlightAttackAction) ea;
+                            addReport(saa.resolveAction(game));
+                        } else if (ea instanceof WeaponAttackAction) {
+                            WeaponAttackAction waa = (WeaponAttackAction) ea;
+                            Entity ae = game.getEntity(waa.getEntityId());
+                            Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+                            Weapon w = (Weapon) m.getType();
+                            // Track attacks original target, for things like swarm LRMs
+                            waa.setOriginalTargetId(waa.getTargetId());
+                            waa.setOriginalTargetType(waa.getTargetType());
+                            AttackHandler ah = w.fire(waa, game, this);
+                            if (ah != null) {
+                                ah.setStrafing(waa.isStrafing());
+                                ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                                game.addAttack(ah);
+                            }
                         }
                     }
                 }

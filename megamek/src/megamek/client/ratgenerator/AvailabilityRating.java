@@ -1,7 +1,7 @@
 /*
 * MegaMek -
 * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (C) 2025 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -21,21 +21,16 @@ import megamek.logging.MMLogger;
 /**
  * Handles availability rating values and calculations for RAT generator.
  * Availability is rated on a base-2 logarithmic scale from 0 (non-existent) to
- * 10 (ubiquitous),
- * with 6 being a typical value when the source material does not give an
- * indication of frequency.
+ * 10 (ubiquitous), with 6 being a typical value when the source material does
+ * not give an indication of frequency.
  * The availability rating is actually twice the exponent, which allows more
- * precision
- * while still storing values as integers (so it's really a base-(sqrt(2))
- * scale, but using
- * 2 as the base should theoretically be faster).
+ * precision while still storing values as integers (so it's really a
+ * base-(sqrt(2)) scale, but using 2 as the base should theoretically be faster).
  *
- * These values are stored separately for chassis and models; for example, there
- * is
- * one value to indicate the likelihood that a medium Mek is a Phoenix Hawk and
- * another
- * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or
- * 1K, etc.
+ * These values are stored separately for chassis and models; there is one
+ * value to indicate the likelihood that a medium Mek is a Phoenix Hawk and
+ * another set of values to indicate the likelihood that a give Phoenix Hawk
+ * is a 1D or 1K, etc.
  *
  * @author Neoancient
  */
@@ -57,22 +52,20 @@ public class AvailabilityRating {
      * @param unit The chassis or model key
      * @param era  The era that this availability code applies to.
      * @param code A string with the format FKEY[!RATING]:AV[+/-][:YEAR]
-     *             FKEY: the faction key
-     *             RATING: if supplied, will limit this record to units with the
+     *             <br>examples: FS:3+, DC!A:8:3051
+     *             <br>FKEY: the faction key
+     *             <br>!RATING: if supplied, will limit this record to units with the
      *             indicated equipment rating
-     *             AV: a value that indicates how common this unit is, from 0
+     *             <br>AV: a value that indicates how common this unit is, from 0
      *             (non-existent) to 10 (ubiquitous)
-     *             +: the indicated av rating applies to the highest equipment
-     *             rating for the faction
-     *             (usually A or Keshik) and decreases for each step the rating is
-     *             reduced.
-     *             -: as +, but applies to the lowest equipment rating (F or PGC)
-     *             and decreases
-     *             as rating increases.
-     *             YEAR: when the unit becomes available to the faction, if later
-     *             than the beginning of the era.
-     *             Any year before this within the era will be treated as having no
-     *             availability.
+     *             <br>+: the indicated av rating applies to the highest equipment
+     *             rating for the faction (usually A or Keshik) and decreases
+     *             for each step the rating is reduced.
+     *             <br>-: as +, but applies to the lowest equipment rating (F or PGC)
+     *             and decreases as rating increases.
+     *             <br>YEAR: when the unit becomes available to the faction, if later
+     *             than the beginning of the era. Any year before this within the era
+     *             will be treated as having no availability.
      */
     public AvailabilityRating(String unit, int era, String code) {
         unitName = unit;

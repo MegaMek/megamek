@@ -186,7 +186,7 @@ public class AvailabilityRating {
     /**
      * Returns the availability value, using the provided equipment value if
      * multiple levels are present or the raw value if not
-     * @param equipmentLevel
+     * @param equipmentLevel  name of equipment level, typically one of A/B/C/D/F
      * @return
      */
     public int getAvailability(String equipmentLevel) {
@@ -194,6 +194,21 @@ public class AvailabilityRating {
             return getAvailability();
         } else {
             return ratingByLevel.getOrDefault(equipmentLevel, 0);
+        }
+    }
+
+    /**
+     * Returns the availability value, using the provided equipment level if
+     * multiple levels are present or the raw value if not
+     * @param equipmentLevelIndex index number of equipment level, typically
+     *                            0 (F), 1 (D), 2 (C), 3 (B), 4 (A)
+     * @return
+     */
+    public int getAvailability(int equipmentLevelIndex) {
+        if (!hasMultipleRatings() || equipmentLevelIndex < 0) {
+            return getAvailability();
+        } else {
+            return ratingByNumericLevel.getOrDefault(equipmentLevelIndex, 0);
         }
     }
 

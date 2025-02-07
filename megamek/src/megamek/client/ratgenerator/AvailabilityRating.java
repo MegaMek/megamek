@@ -18,6 +18,8 @@ package megamek.client.ratgenerator;
 import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
 
+import java.util.HashMap;
+
 /**
  * Handles availability rating values and calculations for RAT generator.
  * Availability is rated on a base-2 logarithmic scale from 0 (non-existent) to
@@ -26,7 +28,7 @@ import megamek.logging.MMLogger;
  * The availability rating is actually twice the exponent, which allows more
  * precision while still storing values as integers (so it's really a
  * base-(sqrt(2)) scale, but using 2 as the base should theoretically be faster).
- *
+ * <br>
  * These values are stored separately for chassis and models; there is one
  * value to indicate the likelihood that a medium Mek is a Phoenix Hawk and
  * another set of values to indicate the likelihood that a give Phoenix Hawk
@@ -48,16 +50,19 @@ public class AvailabilityRating {
     int startYear;
     String unitName = null;
 
+    // Rating values by individual equipment levels
+    HashMap<String,Integer> ratingByLevel;
+
     /**
      * @param unit The chassis or model key
      * @param era  The era that this availability code applies to.
      * @param code A string with the format FKEY[!RATING]:AV[+/-][:YEAR]
-     *             <br>examples: FS:3+, DC!A:8:3051
+     *             <br>examples: LA:7, FS:3+:3024, DC!A:8!B:7
      *             <br>FKEY: the faction key
-     *             <br>!RATING: if supplied, will limit this record to units with the
-     *             indicated equipment rating
-     *             <br>AV: a value that indicates how common this unit is, from 0
-     *             (non-existent) to 10 (ubiquitous)
+     *             <br>!RATING: provides direct control over each equipment
+     *             level. Not compatible with +/- or year values.
+     *             <br>AV: an integer that indicates how common this unit is
+     *             relative to others (chassis or model of same chassis)
      *             <br>+: the indicated av rating applies to the highest equipment
      *             rating for the faction (usually A or Keshik) and decreases
      *             for each step the rating is reduced.
@@ -72,37 +77,90 @@ public class AvailabilityRating {
         this.era = era;
         startYear = era;
         this.ratingAdjustment = 0;
-        String[] fields = code.split(":");
-        if (fields[0].contains("!")) {
-            String[] subfields = fields[0].split("!");
-            ratings = subfields[1];
-            fields[0] = subfields[0];
-        }
-        faction = fields[0];
+        ratingByLevel = new HashMap<>();
 
-        if (fields.length < 2) {
-            logger.warn("No availability code given for " + unit +
-                    " (" + era + "): " + faction);
-            return;
-        }
-        if (fields[1].endsWith("+")) {
-            this.ratingAdjustment++;
-            fields[1] = fields[1].replace("+", "");
-        }
-        if (fields[1].endsWith("-")) {
-            this.ratingAdjustment--;
-            fields[1] = fields[1].replace("-", "");
-        }
-        availability = Integer.parseInt(fields[1]);
-        if (fields.length > 2) {
-            try {
-                startYear = Integer.parseInt(fields[2]);
-            } catch (NumberFormatException ex) {
-                logger.warn(ex, "Could not parse start year " + fields[2] + " for "
-                        + unit + " in " + era);
+        String[] fields;
+        String loggerData = unit + " in " + era + " era: " + code;
+
+        // The '!' character is used to indicate discrete equipment level ratings
+        if (!code.contains("!")) {
+
+            fields = code.split(":");
+
+            // Simple availability will have either one or two values
+            if (fields.length < 2 || fields.length > 3) {
+                logger.warn("Incorrect availability formatting for " + loggerData);
+                return;
             }
+
+            faction = fields[0];
+
+            // The '+' character indicates decreasing values for decreasing
+            // equipment levels
+            if (fields[1].endsWith("+")) {
+                this.ratingAdjustment++;
+                fields[1] = fields[1].replace("+", "");
+            }
+
+            // The '-' character indicates decreasing values for increasing
+            // equipment levels
+            if (fields[1].endsWith("-")) {
+                this.ratingAdjustment--;
+                fields[1] = fields[1].replace("-", "");
+            }
+
+            try {
+                availability = Integer.parseInt(fields[1]);
+            } catch (NumberFormatException ex) {
+                availability = 0;
+                logger.warn(ex, "Incorrect availability formatting for " + loggerData);
+            }
+
+            // A third field will always be a year modifier
+            if (fields.length > 2) {
+                try {
+                    startYear = Integer.parseInt(fields[2]);
+                    if (startYear < 0) {
+                        throw new NumberFormatException("Invalid year value.");
+                    }
+                } catch (NumberFormatException ex) {
+                    startYear = era;
+                    logger.warn(ex, "Could not parse start year for " + loggerData);
+                }
+            }
+
+        } else {
+
+            fields = code.split("!");
+//            String[] subfields = fields[0].split("!");
+//            ratings = subfields[1];
+            faction = fields[0];
+            String[] subfields;
+            int avRating;
+            for (int i = 1; i < fields.length; i++) {
+            //for (String curLevel : fields) {
+                subfields = fields[i].split(":");
+
+                if (subfields.length != 2) {
+                    logger.warn("Incorrect availability formatting for " + loggerData);
+                    return;
+                }
+
+                try {
+                    avRating = Integer.parseInt(subfields[1]);
+                } catch (NumberFormatException ex) {
+                    avRating = 0;
+                    logger.warn(ex, "Incorrect availability formatting for " + loggerData);
+                }
+
+                ratingByLevel.put(subfields[0], avRating);
+
+            }
+
         }
+
     }
+
 
     public String getFaction() {
         return faction;
@@ -114,6 +172,20 @@ public class AvailabilityRating {
 
     public int getAvailability() {
         return availability;
+    }
+
+    /**
+     * Returns the availability value, using the provided equipment value if
+     * multiple levels are present or the raw value if not
+     * @param equipmentLevel
+     * @return
+     */
+    public int getAvailability(String equipmentLevel) {
+        if (!hasMultipleRatings()) {
+            return getAvailability();
+        } else {
+            return ratingByLevel.getOrDefault(equipmentLevel, 0);
+        }
     }
 
     /**
@@ -157,6 +229,15 @@ public class AvailabilityRating {
 
     public void setRatingAdjustment(int ratingAdjustment) {
         this.ratingAdjustment = ratingAdjustment;
+    }
+
+    /**
+     * Indicates this availability rating object has different ratings for
+     * multiple levels.
+     * @return true if ratings for multiple levels are set
+     */
+    public boolean hasMultipleRatings() {
+        return !ratingByLevel.isEmpty() && ratingByLevel.values().stream().noneMatch(curRating -> curRating != 0);
     }
 
     public int getEra() {

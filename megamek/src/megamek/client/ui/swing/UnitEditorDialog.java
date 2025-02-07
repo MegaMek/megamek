@@ -1565,7 +1565,7 @@ public class UnitEditorDialog extends JDialog {
             }
 
             if (current > 0) {
-                for (int i = 0; i < current; i++) {
+                for (int i = 0; i < current && i < checks.size(); i++) {
                     checks.get(i).setSelected(true);
                 }
             }

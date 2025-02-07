@@ -47,6 +47,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
@@ -4693,6 +4694,7 @@ public class TWGameManager extends AbstractGameManager {
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, mainPhaseReport, this);
             ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
             ServerHelper.checkEnteringHazardousLiquid(nextHex, nextElevation, entity, this);
+            ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -8915,6 +8917,7 @@ public class TWGameManager extends AbstractGameManager {
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, displacementReport, this);
         ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
         ServerHelper.checkEnteringHazardousLiquid(destHex, entity.getElevation(), entity, this);
+        ServerHelper.checkEnteringUltraSublevel(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
         if (violation == null) {
@@ -24645,6 +24648,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
                 && (entityHex != null) && game.getBoard().onGround()
+                && !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL)
                 && !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
             if (entity instanceof LargeSupportTank) {
@@ -31266,6 +31270,17 @@ public class TWGameManager extends AbstractGameManager {
         }
         addNewLines();
     }
+
+    public void doUltraSublevelDamage(Entity entity) {
+        if (!isUnitEffectedByHazardousGround(entity, false)) {
+            return;
+        }
+
+        // {entity} fell into a hole and was never seen again
+        addReport(destroyEntity(entity, Internationalization.getText("TWGameManager.report.ultra_sublevel.text"), false, false));
+        addNewLines();
+    }
+
 
     /**
      * Applies damage to any eligible unit hit by anti-TSM missiles or entering

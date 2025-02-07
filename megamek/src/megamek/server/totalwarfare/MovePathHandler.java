@@ -769,6 +769,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         gameManager.getMainPhaseReport(), gameManager);
                 ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
                 ServerHelper.checkEnteringHazardousLiquid(curHex, entity.getElevation(), entity, gameManager);
+                ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -2537,6 +2538,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             gameManager.getMainPhaseReport(), gameManager);
                     ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, gameManager);
                     ServerHelper.checkEnteringHazardousLiquid(curHex, step.getElevation(), entity, gameManager);
+                    ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
                 }
             }
 

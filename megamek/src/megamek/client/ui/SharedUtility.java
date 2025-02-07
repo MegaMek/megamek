@@ -357,6 +357,16 @@ public class SharedUtility {
                     .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
             }
 
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
+            }
+
             // check for sideslip
             if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -615,6 +625,11 @@ public class SharedUtility {
             if ((hex.containsTerrain(Terrains.HAZARDOUS_LIQUID)) && (lastElevation == 0)) {
                 nagReport.append(Internationalization
                     .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
+            if ((hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
             }
         }
 

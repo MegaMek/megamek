@@ -525,6 +525,12 @@ public class ServerHelper {
             }
     }
 
+    public static void checkEnteringUltraSublevel(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
+        if (hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && (elevation <= 0)) {
+            gameManager.doUltraSublevelDamage(entity);
+        }
+    }
+
     /**
      * Check for black ice when moving into pavement hex.
      */

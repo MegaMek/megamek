@@ -414,7 +414,7 @@ public class BehaviorSettings implements Serializable {
      *
      * @return Bravery modifier value.
      */
-    double getBraveryValue() {
+    public double getBraveryValue() {
         return getBraveryValue(braveryIndex);
     }
 
@@ -424,7 +424,7 @@ public class BehaviorSettings implements Serializable {
      * @param index The index of the Bravery modifier to retrieve.
      * @return Bravery modifier value at given index.
      */
-    protected double getBraveryValue(final int index) {
+    public double getBraveryValue(final int index) {
         return BRAVERY[validateIndex(index)];
     }
 
@@ -460,7 +460,7 @@ public class BehaviorSettings implements Serializable {
     /**
      * @return How much do I want to avoid failed Piloting Rolls?
      */
-    int getFallShameValue() {
+    public int getFallShameValue() {
         return getFallShameValue(getFallShameIndex());
     }
 
@@ -470,7 +470,7 @@ public class BehaviorSettings implements Serializable {
      *         and indexes greater than 10 are
      *         treated as 10.
      */
-    protected int getFallShameValue(final int index) {
+    public int getFallShameValue(final int index) {
         return FALL_SHAME_VALUES[validateIndex(index)];
     }
 
@@ -506,7 +506,7 @@ public class BehaviorSettings implements Serializable {
      *
      * @return Current herd mentality value.
      */
-    double getHerdMentalityValue() {
+    public double getHerdMentalityValue() {
         return getHerdMentalityValue(herdMentalityIndex);
     }
 
@@ -517,7 +517,7 @@ public class BehaviorSettings implements Serializable {
      *              used.
      * @return The herd mentality value at the specified index.
      */
-    protected double getHerdMentalityValue(final int index) {
+    public double getHerdMentalityValue(final int index) {
         return HERD_MENTALITY_VALUES[validateIndex(index)];
     }
 
@@ -651,7 +651,7 @@ public class BehaviorSettings implements Serializable {
      *
      * @return Current hyper aggression value.
      */
-    double getHyperAggressionValue() {
+    public double getHyperAggressionValue() {
         return getHyperAggressionValue(hyperAggressionIndex);
     }
 
@@ -661,7 +661,7 @@ public class BehaviorSettings implements Serializable {
      * @param index The index[0-10] of the hyper aggression value desired.
      * @return The hyper aggression value at the given index.
      */
-    protected double getHyperAggressionValue(final int index) {
+    public double getHyperAggressionValue(final int index) {
         return HYPER_AGGRESSION_VALUES[validateIndex(index)];
     }
 

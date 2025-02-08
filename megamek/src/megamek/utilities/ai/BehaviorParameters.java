@@ -1,8 +1,27 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ */
 package megamek.utilities.ai;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Stream;
 
+/**
+ * Represents the parameters of a behavior function.
+ * @author Luana Coppio
+ */
 public record BehaviorParameters(
     double p1, double p2, double p3, double p4, double p5,
     double p6, double p7, double p8, double p9, double p10, double p11, double p12, double p13, double p14,
@@ -84,6 +103,27 @@ public record BehaviorParameters(
         return 28;
     }
 
+    public BehaviorParameters addNoise(double strength) {
+        Random rand = new Random();
+        return this.add(new BehaviorParameters(
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength, rand.nextGaussian()*strength,
+            rand.nextGaussian()*strength
+        ));
+    }
+
     public double[] toArray() {
         return new double[]{p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22,
             p23, p24, p25, p26, p27, p28, p29};
@@ -93,7 +133,7 @@ public record BehaviorParameters(
         return Arrays.stream(toArray()).boxed();
     }
 
-    private static BehaviorParameters fromArray(double[] arr) {
+    public static BehaviorParameters fromArray(double[] arr) {
         return new BehaviorParameters(
             arr[0], arr[1], arr[2], arr[3], arr[4],
             arr[5], arr[6], arr[7], arr[8], arr[9],
@@ -104,18 +144,26 @@ public record BehaviorParameters(
         );
     }
 
-    public BehaviorParameters add(BehaviorParameters multiply) {
+    public BehaviorParameters add(BehaviorParameters other) {
         return new BehaviorParameters(
-            p1 + multiply.p1(), p2 + multiply.p2(), p3 + multiply.p3(),
-            p4 + multiply.p4(), p5 + multiply.p5(), p6 + multiply.p6(),
-            p7 + multiply.p7(), p8 + multiply.p8(), p9 + multiply.p9(),
-            p10 + multiply.p10(), p11 + multiply.p11(), p12 + multiply.p12(),
-            p13 + multiply.p13(), p14 + multiply.p14(), p15 + multiply.p15(),
-            p16 + multiply.p16(), p17 + multiply.p17(), p18 + multiply.p18(),
-            p19 + multiply.p19(), p20 + multiply.p20(), p21 + multiply.p21(),
-            p22 + multiply.p22(), p23 + multiply.p23(), p24 + multiply.p24(),
-            p25 + multiply.p25(), p26 + multiply.p26(), p27 + multiply.p27(),
-            p28 + multiply.p28(), p29 + multiply.p29()
+            p1 + other.p1(), p2 + other.p2(), p3 + other.p3(),
+            p4 + other.p4(), p5 + other.p5(), p6 + other.p6(),
+            p7 + other.p7(), p8 + other.p8(), p9 + other.p9(),
+            p10 + other.p10(), p11 + other.p11(), p12 + other.p12(),
+            p13 + other.p13(), p14 + other.p14(), p15 + other.p15(),
+            p16 + other.p16(), p17 + other.p17(), p18 + other.p18(),
+            p19 + other.p19(), p20 + other.p20(), p21 + other.p21(),
+            p22 + other.p22(), p23 + other.p23(), p24 + other.p24(),
+            p25 + other.p25(), p26 + other.p26(), p27 + other.p27(),
+            p28 + other.p28(), p29 + other.p29()
+        );
+    }
+
+    public BehaviorParameters copy() {
+        return new BehaviorParameters(
+            p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14,
+            p15, p16, p17, p18, p19, p20, p21, p22, p23, p24, p25, p26,
+            p27, p28, p29
         );
     }
 }

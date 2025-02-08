@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ */
 package megamek.utilities.ai;
 
 import megamek.client.bot.princess.CardinalEdge;
@@ -8,6 +22,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * This class represents a cost function for the utility path ranker. It serves as a kind of "sandbox" for
+ * experimenting with new functions, parameters, etc.
+ *
+ * @param homeEdge The edge of the map where the home base is located.
+ * @param swarmContext The context of the swarm.
+ * @param board The game board.
+ * @author Luana Coppio
+ */
 public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionSwarmContext swarmContext, Board board) implements CostFunction {
 
     public UtilityPathRankerCostFunction {
@@ -28,17 +51,17 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         }
         BehaviorState state = determineBehaviorState(unitAction, currentUnitStates);
 
-        double polynomialAggressionMod = polynomialAggressionMod(unitAction, currentUnitStates, behaviorParameters);
+        double polynomialAggressionMod = polynomialAggressionMod(behaviorParameters);
         double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, behaviorParameters);
-        double fallMod = calculateFallMod(unitAction, currentUnitStates, behaviorParameters);
+        double fallMod = calculateFallMod(unitAction, behaviorParameters);
         double bravery = getBraveryMod(unitAction, currentUnitStates, behaviorParameters);
         double movementMod = calculateMovementMod(unitAction, currentUnitStates, behaviorParameters);
         double facingMod = calculateFacingMod(unitAction, currentUnitStates, behaviorParameters);
         double selfPreservationMod = calculateSelfPreservationMod(unitAction, currentUnitStates, behaviorParameters);
-        double strategicMod = calculateStrategicGoalMod(unitAction, currentUnitStates, behaviorParameters);
+        double strategicMod = calculateStrategicGoalMod(unitAction, behaviorParameters);
         double formationMod = calculateFormationModifier(unitAction, currentUnitStates, behaviorParameters);
         double exposurePenalty = calculateExposurePenalty(unitAction, currentUnitStates, behaviorParameters);
-        double healthMod = calculateHealthMod(unitAction, currentUnitStates, behaviorParameters);
+        double healthMod = calculateHealthMod(unitAction, behaviorParameters);
         double nearbyUnitsMod = calculateNearbyUnitsMod(unitAction, currentUnitStates, behaviorParameters);
         double swarmMod = calculateSwarmCohesionMod(unitAction, currentUnitStates, behaviorParameters);
         double enemyPosMod = calculateEnemyPositioningMod(unitAction, currentUnitStates, behaviorParameters);
@@ -46,7 +69,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         double advancedCoverMod = calculateAdvancedCoverage(unitAction, currentUnitStates, behaviorParameters);
         double environmentMod = calculateImmediateEnvironmentMod(unitAction, currentUnitStates, behaviorParameters);
         double calculateMovementInertiaMod = calculateMovementInertia(unitAction, currentUnitStates, behaviorParameters);
-        double anticrowding = calculateCrowdingTolerance(unitAction, currentUnitStates, behaviorParameters);
+        double antiCrowding = calculateCrowdingTolerance(unitAction, currentUnitStates, behaviorParameters);
 
         List<Double> factors = List.of(
             polynomialAggressionMod,
@@ -67,7 +90,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             nearbyUnitsMod,
             selfPreservationMod,
             environmentMod,
-            anticrowding
+            antiCrowding
         );
 
         double logSum = 0.0;
@@ -79,8 +102,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         }
         double geometricMean = Math.exp(logSum / count);
         double geometricMeanAdjustedToBehavior = applyBehaviorState(state, geometricMean, unitAction, currentUnitStates, behaviorParameters);
-        double utility = clamp01(geometricMeanAdjustedToBehavior);
-        return utility;
+        return clamp01(geometricMeanAdjustedToBehavior);
     }
 
     static double clamp01(double value) {
@@ -114,7 +136,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
         return clamp01(clamp01(params.p10() * (1 - distanceToCentroid/20) + params.p22() * vectorAlignment) + 0.1);
     }
-
 
     private double calculateVectorAlignment(Coords from, Coords to, Coords target) {
         Coords movementVector = to.subtract(from);
@@ -385,28 +406,26 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
     private double calculateScoutingBonus(UnitAction action, Map<Integer, UnitState> states) {
         UnitState unitState = states.get(action.id());
-        double flankScore = calculateFlankingPosition(unitState.maxRange(), action.finalPosition(),
+        return calculateFlankingPosition(unitState.maxRange(), action.finalPosition(),
             swarmContext.getStrategicGoalsOnCoordsQuadrant(action.finalPosition()));
-        double sensorCoverage = calculateSensorCoverage(action, states);
-        return flankScore + sensorCoverage;
-    }
-
-    private double calculateSensorCoverage(UnitAction action, Map<Integer, UnitState> states) {
-        return 1.0;
     }
 
     private boolean hasLineOfSight(Board board, Coords from, Coords to) {
         List<Coords> line = getHexLine(from, to);
-        // Skip the first and last hex if desired (assuming the source and target hexes are allowed)
+        int startingLevel = boardTerrainLevels[from.getY() * board.getWidth() + from.getX()];
+        int numberOfWoods = 0;
         for (int i = 1; i < line.size() - 1; i++) {
-            Hex hex = board.getHex(line.get(i));
-            // If the hex is missing or not clear, then the LOS is blocked.
-            if (hex == null || !hex.isClearHex()) {
+            if (boardTerrainLevels[line.get(i).getY() * board.getWidth() + line.get(i).getX()] > startingLevel + 1) {
+                return false;
+            }
+            numberOfWoods += woodedTerrain.get(line.get(i).getY() * board.getWidth() + line.get(i).getX()) ? 1: 0;
+            if (numberOfWoods > 1) {
                 return false;
             }
         }
         return true;
     }
+
     private List<Coords> getHexLine(Coords a, Coords b) {
         CubeCoords ac = a.toCube();
         CubeCoords bc = b.toCube();
@@ -438,7 +457,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         }
         return false;
     }
-
 
     private double calculateAggressiveBonus(UnitAction action, Map<Integer, UnitState> states) {
         double damagePotential = getDamageAtRange(
@@ -497,22 +515,11 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             .orElse(null);
     }
 
-    private double calculateHerdingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
-        if (alliedUnits(unitAction, currentUnitStates).size() == 1) {
-            return 0;
-        }
-
-        double finalDistance = distanceToClosestNonAlliedUnit(unitAction, currentUnitStates);
-        double herding = behaviorParameters.p8();
-        return finalDistance * herding;
-    }
-
-    private double polynomialAggressionMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double polynomialAggressionMod(BehaviorParameters behaviorParameters) {
         double alternativeActionsUtility = behaviorParameters.p1() * behaviorParameters.p1();
         return clamp01(1 - behaviorParameters.p1() + alternativeActionsUtility);
     }
 
-    // P1
     private double calculateAggressionMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
         double distToEnemy = distanceToClosestNonAlliedUnit(unitAction, currentUnitStates);
         var self = currentUnitStates.get(unitAction.id()).type();
@@ -530,7 +537,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return clamp01(1.1 - weight + aggression * weight);
     }
 
-    // P5
     private static double calculateFacingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
         int facingDiff = getFacingDiff(unitAction, currentUnitStates);
         return 1 - behaviorParameters.p5() + ((facingDiff * behaviorParameters.p5()) / (1 + behaviorParameters.p5()));
@@ -609,7 +615,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     // P2
-    private static double calculateFallMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double calculateFallMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
         double pilotingFailure = unitAction.chanceOfFailure();
         double fallShameFactor = behaviorParameters.p2();
         return clamp01((1 - fallShameFactor) + (1 - pilotingFailure) * fallShameFactor);
@@ -621,7 +627,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return clamp01(1.1 - weight + (1.0 / (distance + 1)) * weight);
     }
 
-    private static double calculateHealthMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double calculateHealthMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
         double weight = behaviorParameters.p6();
         double health = (unitAction.armorP() + unitAction.internalP()) / 2;
         if (health < 0.7) {
@@ -630,7 +636,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return health * weight;
     }
 
-    // P6
     private double calculateSelfPreservationMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
         double weight = behaviorParameters.p6();
         double health = (unitAction.armorP() + unitAction.internalP()) / 2;
@@ -667,7 +672,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         };
     }
 
-    private double calculateStrategicGoalMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateStrategicGoalMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
         // Existing strategic goal calculation
         double maxGoalUtility = 0.0;
         for (Coords goal : swarmContext.getStrategicGoalsOnCoordsQuadrant(unitAction.finalPosition())) {
@@ -686,7 +691,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             CostFunctionSwarmContext.SwarmCluster cluster = swarmContext.getClusterFor(currentUnitStates.get(unitAction.id()));
 
             double lineMod = calculateLineFormationMod(cluster, unitAction, currentUnitStates, behaviorParameters);
-            double spacingMod = calculateOptimalSpacingMod(cluster, unitAction, currentUnitStates, behaviorParameters);
+            double spacingMod = calculateOptimalSpacingMod(cluster, unitAction, behaviorParameters);
             double coverageMod = calculateCoverageModifier(unitAction, currentUnitStates, behaviorParameters);
 
             return clamp01(lineMod * coverageMod * spacingMod  * behaviorParameters.p8());
@@ -704,7 +709,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return 0.8 + (coveringAllies * behaviorParameters.p4());
     }
 
-    private double calculateOptimalSpacingMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateOptimalSpacingMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, BehaviorParameters behaviorParameters) {
         double avgDistance = cluster.getMembers().stream()
             .filter(m -> m.id() != unitAction.id())
             .mapToDouble(m -> m.position().distance(unitAction.finalPosition()))
@@ -847,16 +852,13 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     private Coords calculateOrbitPosition(Coords currentPos, Coords threatPos, double targetRange, int orbitDirection) {
-        // 1. Calculate current orbital angle
         double currentDistance = currentPos.distance(threatPos);
         Coords idealPos = threatPos.translated(orbitDirection, (int) Math.round(targetRange));
 
-        // 2. Maintain minimum range if too close
         if(currentDistance < targetRange * 0.8) {
             return idealPos.translated(orbitDirection, 1);
         }
 
-        // 3. Adjust position while maintaining range
         return idealPos.translated(
             (orbitDirection + 3) % 6, // Opposite direction
             (int) Math.round((currentDistance - targetRange)/2)
@@ -881,7 +883,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
                 .filter(e -> e.maxRange() <= unitAction.finalPosition().distance(e.position()))
                 .count();
 
-            if (validateUnitCoverage(unitAction, currentUnitStates, behaviorParameters)) {
+            if (validateUnitCoverage(unitAction, currentUnitStates)) {
                 double exposureScore = 1 + (threateningEnemies * 0.3);
                 return 1.0 / exposureScore  * behaviorParameters.p9();
             } else {
@@ -892,7 +894,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return behaviorParameters.p9();
     }
 
-    public boolean validateUnitCoverage(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    public boolean validateUnitCoverage(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates) {
         // Check 0.6x coverage from at least one ally
         return alliedUnits(unitAction, currentUnitStates).stream()
             .filter(e -> e.id() != unitAction.id())

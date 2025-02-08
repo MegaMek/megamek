@@ -1,7 +1,25 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ */
 package megamek.utilities.ai;
 
 import java.util.*;
 
+/**
+ * Experimental set of extra parameters for the cost function. Can be "added" to any other cost function.
+ * @author Luana Coppio
+ */
 public class ExtendedCostFunction implements CostFunction {
 
     private final CostFunction costFunction;
@@ -47,18 +65,35 @@ public class ExtendedCostFunction implements CostFunction {
         return costFunction.resolve(unitAction, currentUnitStates, behaviorParameters);
     }
 
+    /**
+     * Compute the victory term based on the board control term. The team with the most BVs is considered "winning".
+     * @param control The board control term.
+     * @return The victory term.
+     */
     private double computeVictoryTerm(double control) {
         if (control > 0.6) return 1.0;
         if (control < 0.4) return -1.0;
         return 0.0;
     }
 
+    /**
+     * Compute the resource term based on the current and next unit states.
+     * @param currentUnitStates The current unit states.
+     * @param action The action to take.
+     * @param nextUnitState The next unit states.
+     * @return The resource term.
+     */
     private double computeResourceTerm(Map<Integer, UnitState> currentUnitStates, UnitAction action, Map<Integer, UnitState> nextUnitState) {
         // e.g., measure how many resources were gained this step, or net resource difference
         UnitState currentState = currentUnitStates.get(action.id());
         return calculateInfluence(nextUnitState).get(currentState.playerId()) - calculateInfluence(currentUnitStates).get(currentState.playerId());
     }
 
+    /**
+     * Calculate the influence of each player based on the unit states.
+     * @param unitStateMap The unit states.
+     * @return A map of player IDs to influence. Influence is the sum of the BVs of the units of a player.
+     */
     private Map<Integer, Integer> calculateInfluence(Map<Integer, UnitState> unitStateMap) {
         Map<Integer, Integer> pointPerPlayer = new HashMap<>();
         for (UnitState unitState : unitStateMap.values()) {
@@ -69,8 +104,11 @@ public class ExtendedCostFunction implements CostFunction {
         }
         return pointPerPlayer;
     }
-    BitSet[] controlledTerritories = new BitSet[]{new BitSet(255), new BitSet(255), new BitSet(255), new BitSet(255)};
-    int[] playerControllerTerritories = new int[4];
+
+    // set of controlled territories for each player
+    // each bit set represents a 3x3 area of the board
+    private final BitSet[] controlledTerritories = new BitSet[]{new BitSet(65535), new BitSet(65535), new BitSet(65535), new BitSet(65535)};
+
     private double computeBoardControlTerm(UnitState unitState, Map<Integer, UnitState> nextUnitState) {
         var player = unitState.playerId();
         controlledTerritories[0].clear();
@@ -79,11 +117,11 @@ public class ExtendedCostFunction implements CostFunction {
         controlledTerritories[3].clear();
         for (UnitState state : nextUnitState.values()) {
             int playerKey = state.playerId();
-            controlledTerritories[playerKey].set(Math.min(15, (state.position().getX() / 3)) << 4 | Math.min(15, (state.position().getY() / 3)));
+            controlledTerritories[playerKey].set(Math.min(255, (state.position().getX() / 3)) << 8 | Math.min(255, (state.position().getY() / 3)));
         }
         int totalAreas = 0;
-        for (int i = 0; i < controlledTerritories.length; i++) {
-            totalAreas += controlledTerritories[i].cardinality();
+        for (BitSet controlledTerritory : controlledTerritories) {
+            totalAreas += controlledTerritory.cardinality();
         }
         double controlledPercentage = controlledTerritories[player].cardinality() / (double) totalAreas;
         return controlledPercentage;
@@ -92,8 +130,9 @@ public class ExtendedCostFunction implements CostFunction {
     private double computeCuriosityTerm(UnitState nextUnitState) {
         // e.g., measure if this is a rarely visited state. This might require
         // a global or static map to track visitation counts.
-        int visits = StateVisitRegistry.getVisits(nextUnitState);
-        StateVisitRegistry.incrementVisits(nextUnitState);
+        int hashCode = nextUnitState.x() * 1000 + nextUnitState.y() + nextUnitState.playerId() * 100000;
+        int visits = StateVisitRegistry.getVisits(hashCode);
+        StateVisitRegistry.incrementVisits(hashCode);
 
         // Simple scheme: return positive if first-time visit, else 0
         // or some decreasing function of visits
@@ -103,14 +142,12 @@ public class ExtendedCostFunction implements CostFunction {
     public static class StateVisitRegistry {
         private static final Map<Integer, Integer> visitCounts = new HashMap<>();
 
-        public static int getVisits(UnitState state) {
-            int key = state.hashCode();
+        public static int getVisits(int key) {
             return visitCounts.getOrDefault(key, 0);
         }
 
-        public static void incrementVisits(UnitState state) {
-            int key = state.hashCode();
-            visitCounts.put(key, getVisits(state) + 1);
+        public static void incrementVisits(int key) {
+            visitCounts.put(key, getVisits(key) + 1);
         }
 
         public static void reset() {

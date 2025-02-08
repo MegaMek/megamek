@@ -30,6 +30,7 @@ public class Hex implements Serializable {
     private Coords coords;
     private int level;
     private Map<Integer, Terrain> terrains = new HashMap<>(1);
+    private BitSet terrainTypes = new BitSet(Terrains.SIZE + 1);
     private String theme;
     private String originalTheme;
     private int fireTurn;
@@ -63,6 +64,7 @@ public class Hex implements Serializable {
         for (final Terrain t : terrains) {
             if (t != null) {
                 this.terrains.put(t.getType(), t);
+                this.terrainTypes.set(t.getType());
             }
         }
 
@@ -517,12 +519,14 @@ public class Hex implements Serializable {
      */
     public void addTerrain(Terrain terrain) {
         terrains.put(terrain.getType(), terrain);
+        terrainTypes.set(terrain.getType());
     }
 
     /**
      * @param type the terrain type to remove
      */
     public void removeTerrain(int type) {
+        terrainTypes.clear(type);
         terrains.remove(type);
     }
 
@@ -530,6 +534,7 @@ public class Hex implements Serializable {
      * Removes all Terrains from the hex.
      */
     public void removeAllTerrains() {
+        terrainTypes.clear();
         terrains.clear();
     }
 
@@ -682,21 +687,30 @@ public class Hex implements Serializable {
         coords = c;
     }
 
+    static BitSet nonClearTerrains = new BitSet(Terrains.SIZE + 1);
+    static  {
+        nonClearTerrains.set(1, Terrains.BLDG_BASE_COLLAPSED);
+        nonClearTerrains.clear(Terrains.FLUFF);
+        nonClearTerrains.clear(Terrains.ARMS);
+        nonClearTerrains.clear(Terrains.LEGS);
+    }
+
     /**
      * @return if this hex is "clear", based on the absence of most terrain types.
      */
     public boolean isClearHex() {
-        for (int t = 1; t <= Terrains.BLDG_BASE_COLLAPSED; t++) {
-            // Ignore some terrain types
-            if ((t == Terrains.FLUFF) || (t == Terrains.ARMS) || (t == Terrains.LEGS)) {
-                continue;
-            }
-
-            if (containsTerrain(t)) {
-                return false;
-            }
-        }
-        return true;
+        return !terrainTypes.intersects(nonClearTerrains);
+//        for (int t = 1; t <= Terrains.BLDG_BASE_COLLAPSED; t++) {
+//            // Ignore some terrain types
+//            if ((t == Terrains.FLUFF) || (t == Terrains.ARMS) || (t == Terrains.LEGS)) {
+//                continue;
+//            }
+//
+//            if (containsTerrain(t)) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     /**

@@ -155,7 +155,7 @@ public class Terrains implements Serializable {
 
     public static final int HAZARDOUS_LIQUID = 58;
 
-    /**
+    /**f
      * Keeps track of the different type of terrains that can have exits.
      */
     public static final int[] exitableTerrains = { PAVEMENT, ROAD, BUILDING, FUEL_TANK, BRIDGE, WATER };

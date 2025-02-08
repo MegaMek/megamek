@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.SharedUtility;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.planetaryconditions.PlanetaryConditions;
@@ -26,6 +27,8 @@ import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -91,6 +94,46 @@ public class GameDatasetLogger {
                     planetaryConditions.getLight() + ""
                 )
             );
+        } catch (Exception ex) {
+            logger.error(ex, "Error logging entity action");
+        }
+    }
+
+    public void append(Board board, boolean withHeader) {
+        try {
+            if (board == null) {
+                return;
+            }
+            if (withHeader) {
+                append(
+                    String.join(
+                        "\t",
+                        "BOARD_NAME", "WIDTH", "HEIGHT"
+                    )
+                );
+            }
+            append(
+                String.join(
+                    "\t",
+                    board.getMapName(), board.getWidth() + "", board.getHeight() + ""
+                )
+            );
+
+            StringBuilder sb = new StringBuilder(1024);
+            for (int x = 0; x < board.getWidth(); x++) {
+                sb.append("COL_").append(x).append("\t");
+            }
+            append(sb.toString());
+
+            List<Hex> lineHexes = new ArrayList<>();
+            for (int x = 0; x < board.getWidth(); x++) {
+                lineHexes.clear();
+                for (int y = 0; y < board.getHeight(); y++) {
+                    lineHexes.add(board.getHex(x, y));
+                }
+                append("ROW_" + x + "\t" + String.join("\t", lineHexes.stream().map(Hex::toString).toList()));
+            }
+
         } catch (Exception ex) {
             logger.error(ex, "Error logging entity action");
         }
@@ -232,7 +275,7 @@ public class GameDatasetLogger {
                 append(
                     String.join(
                         "\t",
-                        "ROUND", "PHASE", "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL" ,"TYPE", "ROLE", "X", "Y", "FACING", "MP",
+                        "ROUND", "PHASE", "TEAM_ID", "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL" ,"TYPE", "ROLE", "X", "Y", "FACING", "MP",
                         "HEAT", "PRONE", "AIRBORNE", "OFF_BOARD", "CRIPPLED", "DESTROYED", "ARMOR_P", "INTERNAL_P", "DONE"
                     )
                 );
@@ -244,6 +287,7 @@ public class GameDatasetLogger {
                     continue;
                 }
                 var ownerID = entity.getOwner().getId() + "";
+                var teamID = entity.getOwner().getTeam() + "";
                 var chassis = entity.getChassis();
                 var model = entity.getModel();
                 var entityId = entity.getId() + "";
@@ -265,7 +309,7 @@ public class GameDatasetLogger {
                 append(
                     String.join(
                         "\t",
-                        currentRound, gamePhase, ownerID, entityId, chassis, model, type, role, coords, facing, mp, heatP, isProne,
+                        currentRound, gamePhase, teamID, ownerID, entityId, chassis, model, type, role, coords, facing, mp, heatP, isProne,
                          isAirborne, isOffBoard, isCrippled, isDestroyed, armorP, internalP, isDone
                     )
                 );
@@ -323,6 +367,7 @@ public class GameDatasetLogger {
             var isMoveLegal = movePath.isMoveLegal() ? "1" : "0";
             var armor = LOG_DECIMAL.format(Math.max(0, movePath.getEntity().getArmorRemainingPercent()));
             var internal = LOG_DECIMAL.format(Math.max(0, movePath.getEntity().getInternalRemainingPercent()));
+            var chanceOfFailure = LOG_DECIMAL.format(SharedUtility.getPSRList(movePath).stream().map(psr -> psr.getValue() / 36d).reduce(0.0, (a, b) -> a * b));
             var steps = new StringBuilder();
             movePath.getStepVector().forEach(step -> steps.append(step.toString()).append(" "));
             if (withHeader) {
@@ -330,7 +375,7 @@ public class GameDatasetLogger {
                     String.join(
                         "\t",
                         "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL", "FACING", "FROM_X", "FROM_Y", "TO_X", "TO_Y", "HEXES_MOVED", "DISTANCE",
-                        "MP_USED", "MAX_MP", "MP_P", "HEAT_P", "ARMOR_P", "INTERNAL_P", "JUMPING", "PRONE", "LEGAL", "STEPS"
+                        "MP_USED", "MAX_MP", "MP_P", "HEAT_P", "ARMOR_P", "INTERNAL_P", "JUMPING", "PRONE", "LEGAL", "STEPS", "CHANCE_OF_FAILURE"
                     )
                 );
             }
@@ -338,7 +383,7 @@ public class GameDatasetLogger {
                 String.join(
                     "\t",
                     ownerID, entityId, chassis, model, facing, from, to, hexesMoved, distanceTravelled, mpUsed, maxMp, usedPercentMp, heatP,
-                    armor, internal, isJumping, isProne, isMoveLegal, steps
+                    armor, internal, isJumping, isProne, isMoveLegal, steps, chanceOfFailure
                 )
             );
         } catch (Exception ex) {

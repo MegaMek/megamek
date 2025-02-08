@@ -2329,6 +2329,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
+        datasetLogger.append(newBoard, true);
     }
 
     /**

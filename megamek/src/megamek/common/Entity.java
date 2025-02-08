@@ -2574,7 +2574,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
-        return isAero() && isAirborne() && getGame().getBoard().onGround();
+        return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
     }
 
     /**
@@ -14437,7 +14437,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
             } else {
-                range = (game.getOptions().booleanOption(
+                range = (game != null && game.getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                                 : type.getLongRange());
             }

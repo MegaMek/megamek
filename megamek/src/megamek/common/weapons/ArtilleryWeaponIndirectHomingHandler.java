@@ -201,6 +201,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         int hits = handleAMS(vPhaseReport);
 
         if (bMissed && !missReported) {
+            // Notify player of last-second miss that hits the hex instead
+            r = new Report(3201);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+
             reportMiss(vPhaseReport);
 
             // Works out fire setting, AMS shots, and whether continuation is
@@ -293,11 +299,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 if (!bMissed && (entity == entityTarget)) {
                     continue; // don't splash the original target unless it's a miss
                 }
-            //public static void artilleryDamageEntity(
-                //        Entity entity, int damage, Building bldg, int bldgAbsorbs,
-            //            boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
-            //            Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-            //            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, TWGameManager gameManager)
 
                 AreaEffectHelper.artilleryDamageEntity(
                     entity, ratedDamage, bldg, bldgAbsorbs,
@@ -392,7 +393,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
-            toHit = new ToHitData(4,Messages.getString("WeaponAttackAction.HomingArtyMissChance"));
+            toHit = new ToHitData(4,Messages.getString("ArtilleryIndirectHomingHandler.HomingArtyMissChance"));
         } else {
             // The player gets to select the target
             List<Integer> targetIds = new ArrayList<>();
@@ -406,7 +407,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
-            toHit = new ToHitData(4,Messages.getString("WeaponAttackAction.HomingArtyMissChance"));
+            toHit = new ToHitData(4,Messages.getString("ArtilleryIndirectHomingHandler.HomingArtyMissChance"));
         }
     }
 

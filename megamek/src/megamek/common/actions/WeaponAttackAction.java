@@ -20,6 +20,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -5393,21 +5394,26 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (isHoming) {
             srt.setSpecialResolution(true);
             String msg = Messages.getString("WeaponAttackAction.HomingArty");
-            // Check if any spotters can help us out...
-            if (Compute.findTAGSpotter(game, ae, target, true) != null) {
-                // Likelihood of hitting goes up as speed goes down...
-                ToHitData thd = new ToHitData(4, msg);
-                if (null != te) {
-                    thd.append(
+            if (game.getPhase() != GamePhase.FIRING) {
+                // This check is for bot planning _only_; consider removing to bot hit calc code.
+                // Check if any spotters can help us out...
+                if (Compute.findTAGSpotter(game, ae, target, true) != null) {
+                    // Likelihood of hitting goes up as speed goes down...
+                    ToHitData thd = new ToHitData(4, msg);
+                    if (null != te) {
+                        thd.append(
                             Compute.getTargetMovementModifier(
-                                    te.getRunMP(),
-                                    false,
-                                    false,
-                                    game));
+                                te.getRunMP(),
+                                false,
+                                false,
+                                game));
+                    }
+                    return thd;
+                } else {
+                    return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
                 }
-                return thd;
             } else {
-                return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
+                return new ToHitData(4, msg);
             }
         }
 

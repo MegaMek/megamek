@@ -293,10 +293,17 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 if (!bMissed && (entity == entityTarget)) {
                     continue; // don't splash the original target unless it's a miss
                 }
+            //public static void artilleryDamageEntity(
+                //        Entity entity, int damage, Building bldg, int bldgAbsorbs,
+            //            boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
+            //            Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
+            //            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, TWGameManager gameManager)
 
-                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs,
-                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType,
-                        coords, targetingHex, entityTarget, hex, hexDamage, vPhaseReport, gameManager);
+                AreaEffectHelper.artilleryDamageEntity(
+                    entity, ratedDamage, bldg, bldgAbsorbs,
+                    false, false, false, 0,
+                    coords, ammoType, coords, false,
+                    ae, hex, ae.getId(), vPhaseReport, gameManager);
             }
         }
         Report.addNewline(vPhaseReport);

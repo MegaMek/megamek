@@ -392,6 +392,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
+            toHit = new ToHitData(4,Messages.getString("WeaponAttackAction.HomingArtyMissChance"));
         } else {
             // The player gets to select the target
             List<Integer> targetIds = new ArrayList<>();
@@ -405,6 +406,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
+            toHit = new ToHitData(4,Messages.getString("WeaponAttackAction.HomingArtyMissChance"));
         }
     }
 

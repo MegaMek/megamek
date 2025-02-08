@@ -314,10 +314,6 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
         tagger.setPosition(taggerPosition);
         defender.setPosition(defenderPosition);
 
-        // Create TAG WAA and handler
-        WeaponAttackAction tagWAA = makeWAA(tagger, defender, tagger.getWeapon(0));
-        TAGHandler taggie = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
-
         // Create Artillery WAA and handler
         ArtilleryAttackAction awaa = makeArtilleryWAA(attacker, defender, attacker.getWeapon(0));
         ArtilleryWeaponIndirectHomingHandler artie = new ArtilleryWeaponIndirectHomingHandler(
@@ -334,6 +330,11 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
 
         // Now handle hit turn!
         game.setPhase(GamePhase.OFFBOARD);
+
+        // Create TAG WAA and handler after Artillery shot (as a test)
+        WeaponAttackAction tagWAA = makeWAA(tagger, defender, tagger.getWeapon(0));
+        TAGHandler taggie = new TAGHandler(makeTHD(2), tagWAA, game, gameManager);
+
         assertFalse(taggie.handle(game.getPhase(), reports));
         assertFalse(artie.handle(game.getPhase(), reports));
 

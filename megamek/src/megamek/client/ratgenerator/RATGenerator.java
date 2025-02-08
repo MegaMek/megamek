@@ -1578,7 +1578,7 @@ public class RATGenerator {
                         ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
                     }
 
-                    cr.getIncludedFactions().add(code.split(":")[0]);
+                    cr.getIncludedFactions().add(ar.getFaction());
                     chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
 
                 }
@@ -1631,7 +1631,7 @@ public class RATGenerator {
                         ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
                     }
 
-                    mr.getIncludedFactions().add(code.split(":")[0]);
+                    mr.getIncludedFactions().add(ar.getFaction());
                     modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
 
                 }

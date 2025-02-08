@@ -138,9 +138,6 @@ public class AvailabilityRating {
         } else {
 
             fields = code.split("!");
-            // FIXME: See if this property can be removed entirely
-//            String[] subfields = fields[0].split("!");
-//            ratings = subfields[1];
             faction = fields[0];
             String[] subfields;
             int avRating;
@@ -184,10 +181,10 @@ public class AvailabilityRating {
     }
 
     /**
-     * Returns the availability value, using the provided equipment value if
+     * Returns the availability value, using the provided equipment rating if
      * multiple levels are present or the raw value if not
      * @param equipmentLevel  name of equipment level, typically one of A/B/C/D/F
-     * @return
+     * @return  availability value for the specified equipment rating string
      */
     public int getAvailability(String equipmentLevel) {
         if (!hasMultipleRatings()) {
@@ -202,7 +199,7 @@ public class AvailabilityRating {
      * multiple levels are present or the raw value if not
      * @param equipmentLevelIndex index number of equipment level, typically
      *                            0 (F), 1 (D), 2 (C), 3 (B), 4 (A)
-     * @return
+     * @return   availability value for the specified equipment rating value
      */
     public int getAvailability(int equipmentLevelIndex) {
         if (!hasMultipleRatings() || equipmentLevelIndex < 0) {
@@ -349,11 +346,11 @@ public class AvailabilityRating {
             return getFactionCode() + ":" + getAvailabilityCode()
                     + ":" + startYear;
         }
-        return getFactionCode() + ":" + getAvailabilityCode();
+        return getFactionCode() + (hasMultipleRatings() ? "" : ":") + getAvailabilityCode();
     }
 
     public AvailabilityRating makeCopy(String newFaction) {
-        return new AvailabilityRating(unitName, era, newFaction + ":" + getAvailabilityCode());
+        return new AvailabilityRating(unitName, era, newFaction + (hasMultipleRatings() ? "" : ":") + getAvailabilityCode());
     }
 
     public double getWeight() {

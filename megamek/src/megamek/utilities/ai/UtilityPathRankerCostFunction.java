@@ -55,7 +55,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, behaviorParameters);
         double fallMod = calculateFallMod(unitAction, behaviorParameters);
         double bravery = getBraveryMod(unitAction, currentUnitStates, behaviorParameters);
-        double movementMod = calculateMovementMod(unitAction, currentUnitStates, behaviorParameters);
+        double movementMod = calculateMovementMod(unitAction, behaviorParameters);
         double facingMod = calculateFacingMod(unitAction, currentUnitStates, behaviorParameters);
         double selfPreservationMod = calculateSelfPreservationMod(unitAction, currentUnitStates, behaviorParameters);
         double strategicMod = calculateStrategicGoalMod(unitAction, behaviorParameters);
@@ -67,7 +67,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         double enemyPosMod = calculateEnemyPositioningMod(unitAction, currentUnitStates, behaviorParameters);
         double damageMod = calculateExpectedDamage(unitAction, currentUnitStates, behaviorParameters);
         double advancedCoverMod = calculateAdvancedCoverage(unitAction, currentUnitStates, behaviorParameters);
-        double environmentMod = calculateImmediateEnvironmentMod(unitAction, currentUnitStates, behaviorParameters);
+        double environmentMod = calculateImmediateEnvironmentMod(unitAction, behaviorParameters);
         double calculateMovementInertiaMod = calculateMovementInertia(unitAction, currentUnitStates, behaviorParameters);
         double antiCrowding = calculateCrowdingTolerance(unitAction, currentUnitStates, behaviorParameters);
 
@@ -219,7 +219,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
                                              BehaviorParameters params) {
         long coveringAllies = alliedUnits(action, states).stream()
             .filter(a -> a.position().distance(action.finalPosition()) <= a.maxRange() * 0.6)
-            .filter(a -> hasLineOfSight(board, a.position(), action.finalPosition()))
+            .filter(a -> hasLineOfSight(a.position(), action.finalPosition()))
             .count();
 
         double baseCoverage = 0.8 + (coveringAllies * params.p13());
@@ -229,7 +229,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     private double calculateImmediateEnvironmentMod(UnitAction action,
-                                                    Map<Integer, UnitState> states,
                                                     BehaviorParameters params) {
         Hex finalHex = board.getHex(action.finalPosition());
         if (finalHex == null) {
@@ -341,7 +340,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
     private double calculateCoverDensity(Coords position, int radius) {
         return (double) position.allAtDistanceOrLess(radius).stream()
-            .filter(c -> containsCover(board, position, c))
+            .filter(c -> bonusCover(position, c) > 0.0)
             .count() / (6.0 * radius * (radius + 1)/2.0);
     }
 
@@ -354,7 +353,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             case AGGRESSIVE -> baseUtility *
                 (1 + params.p16() * calculateAggressiveBonus(action, states));
             case DEFENSIVE -> baseUtility *
-                (1 + params.p18() * calculateDefensiveBonus(action, states));
+                (1 + params.p18() * calculateDefensiveBonus(action));
         };
     }
 
@@ -368,24 +367,8 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return clamp01(1 - penalty);
     }
 
-    private double calculateDefensiveBonus(UnitAction action, Map<Integer, UnitState> states) {
-        Hex targetHex = board.getHex(action.finalPosition());
-        double bonus = 0;
-        if (targetHex != null) {
-            // Add bonus if there is a building at the target position.
-            if (board.getBuildingAt(action.finalPosition()) != null) {
-                bonus += 0.3;
-            }
-            // Check the surrounding hexes for an elevation advantage.
-            int baseLevel = targetHex.getLevel();
-            for (Coords c : action.finalPosition().allAtDistanceOrLess(2)) {
-                Hex neighborHex = board.getHex(c);
-                if (neighborHex != null && neighborHex.getLevel() < baseLevel) {
-                    bonus += 0.05;
-                }
-            }
-        }
-        return bonus;
+    private double calculateDefensiveBonus(UnitAction action) {
+        return calculateCoverDensity(action.finalPosition(), 2);
     }
 
     private double calculateFlankingPosition(int maxRange, Coords unitPos, List<Coords> strategicGoals) {
@@ -410,7 +393,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             swarmContext.getStrategicGoalsOnCoordsQuadrant(action.finalPosition()));
     }
 
-    private boolean hasLineOfSight(Board board, Coords from, Coords to) {
+    private boolean hasLineOfSight(Coords from, Coords to) {
         List<Coords> line = getHexLine(from, to);
         int startingLevel = boardTerrainLevels[from.getY() * board.getWidth() + from.getX()];
         int numberOfWoods = 0;
@@ -440,22 +423,25 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return results;
     }
 
-    private boolean containsCover(Board board, Coords position, Coords hexLocation) {
-        Hex candidate = board.getHex(hexLocation);
-        if (candidate == null) {
-            return false;
+    private double bonusCover(Coords position, Coords hexLocation) {
+        double bonus = 0;
+        // Add bonus if there is a building at the target position.
+        if (woodedTerrain.get(position.getY() * board.getWidth() + position.getX())) {
+            bonus += 0.05;
         }
-        // If the candidate hex is not clear, we assume it offers cover.
-        if (!candidate.isClearHex()) {
-            return true;
+
+        // Check the surrounding hexes for an elevation advantage.
+        int baseLevel = boardTerrainLevels[position.getY() * board.getWidth() + position.getX()];
+        for (Coords c : hexLocation.allAtDistanceOrLess(2)) {
+            if (woodedTerrain.get(c.getY() * board.getWidth() + c.getX())) {
+                bonus += 0.1;
+            }
+            if (boardTerrainLevels[c.getY() * board.getWidth() + c.getX()] > baseLevel + 1) {
+                bonus += 0.5;
+            }
         }
-        // Alternatively, if the candidate hex is at a higher elevation than the hex at 'position',
-        // it may also be considered cover.
-        Hex currentHex = board.getHex(position);
-        if (currentHex != null && candidate.getLevel() > currentHex.getLevel()) {
-            return true;
-        }
-        return false;
+
+        return bonus;
     }
 
     private double calculateAggressiveBonus(UnitAction action, Map<Integer, UnitState> states) {
@@ -597,7 +583,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     // P4
-    private static double calculateMovementMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double calculateMovementMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
         var tmmFactor = behaviorParameters.p4();
         var tmm = Compute.getTargetMovementModifier(unitAction.hexesMoved(), unitAction.jumping(), false, null);
         var tmmValue = clamp01(tmm.getValue() / 8.0);
@@ -756,7 +742,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         double positionQuality = ((rangeQuality * 0.5) +
             (formationQuality * 0.3) +
             (forwardBias * 0.2) -
-            borderPenalty);
+            borderPenalty) * behaviorParameters.p5();
 
         return clamp01(positionQuality);
     }
@@ -918,7 +904,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         private final Map<Integer, SwarmCluster> unitClusters = new HashMap<>();
         private final List<SwarmCluster> clusters = new ArrayList<>();
 
-        public CostFunctionSwarmContext() {;
+        public CostFunctionSwarmContext() {
         }
 
         /**
@@ -943,13 +929,14 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         /**
          * Reset the enemy target counts
          */
+        @SuppressWarnings("unused")
         public void resetEnemyTargets() {
             enemyTargetCounts.clear();
         }
 
         /**
          * Add a strategic goal to the list of goals, a strategic goal is simply a coordinate which we want to move towards,
-         * its mainly used for double blind games where we don't know the enemy positions, the strategic goals help
+         * it's mainly used for double-blind games where we don't know the enemy positions, the strategic goals help
          * distribute the map evenly accross the units inside the swarm to cover more ground and find the enemy faster
          * @param coords  The coordinates to add
          */
@@ -1012,6 +999,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
          * Set the current center of the swarm
          * @param adjustedCenter The new center
          */
+        @SuppressWarnings("unused")
         public void setCurrentCenter(Coords adjustedCenter) {
             this.currentCenter = adjustedCenter;
         }
@@ -1020,13 +1008,9 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
          * Get the current center of the swarm
          * @return The current center
          */
+        @SuppressWarnings("unused")
         public @Nullable Coords getCurrentCenter() {
             return currentCenter;
-        }
-
-        public boolean isUnitTooFarFromCluster(UnitAction unit, Map<Integer, UnitState> currentUnitState, double v) {
-            SwarmCluster cluster = getClusterFor(currentUnitState.get(unit.id()));
-            return unit.finalPosition().distance(cluster.centroid) > v;
         }
 
         public List<SwarmCluster> getClusters() {
@@ -1041,6 +1025,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
          * Remove all strategic goals on the quadrant of the given coordinates
          * @param coords The coordinates to check
          */
+        @SuppressWarnings("unused")
         public void removeAllStrategicGoalsOnCoordsQuadrant(Coords coords) {
             QuadrantParameters quadrant = getQuadrantParameters(coords);
             for (int i = quadrant.startX(); i < quadrant.endX(); i++) {

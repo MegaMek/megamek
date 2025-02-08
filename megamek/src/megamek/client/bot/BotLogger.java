@@ -61,8 +61,12 @@ public class BotLogger {
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
-            logfile = new File(LOG_DIR + File.separator + filename + "_" + LocalDateTime.now() + ".tsv");
-            writer = new BufferedWriter(new FileWriter(logfile));
+            if (logger.isDebugEnabled()) {
+                logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
+                writer = new BufferedWriter(new FileWriter(logfile));
+            } else {
+                writer = null;
+            }
             initialize();
         } catch (Exception ex) {
             logger.error("Failure to initialize BotLogger, no log will be persisted", ex);
@@ -297,10 +301,7 @@ public class BotLogger {
     }
 
     private void append(String toLog) {
-        if (!logger.isDebugEnabled()) {
-            return;
-        }
-        if (writer == null) {
+        if (!logger.isDebugEnabled() || (writer == null)) {
             return;
         }
         try {
@@ -311,7 +312,6 @@ public class BotLogger {
             logger.error("", ex);
             writer = null;
         }
-        return;
     }
 
     public void close() throws Exception {

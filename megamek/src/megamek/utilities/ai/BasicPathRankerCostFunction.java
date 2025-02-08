@@ -37,15 +37,15 @@ public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) im
     @Override
     public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
         BehaviorSettings behaviorSettings = behaviorSettingsFrom(behaviorParameters);
-        double fallMod = calculateFallMod(unitAction, currentUnitStates, behaviorSettings);
+        double fallMod = calculateFallMod(unitAction, behaviorSettings);
         double braveryMod = getBraveryMod(unitAction, currentUnitStates, behaviorSettings);
         double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, behaviorSettings);
         double herdingMod = calculateHerdingMod(unitAction, currentUnitStates, behaviorSettings);
         double movementMod = calculateMovementMod(unitAction, currentUnitStates, behaviorSettings);
-        double facingMod = calculateFacingMod(unitAction, currentUnitStates, behaviorSettings);
+        double facingMod = calculateFacingMod(unitAction, currentUnitStates);
         double crowdingTolerance = calculateCrowdingTolerance(unitAction, currentUnitStates, behaviorSettings);
         double selfPreservationMod = calculateSelfPreservationMod(unitAction, currentUnitStates, behaviorSettings);
-        double offBoardMod = calculateOffBoardMod(unitAction, currentUnitStates, behaviorSettings);
+        double offBoardMod = calculateOffBoardMod(unitAction, currentUnitStates);
 
         double utility = -fallMod;
         utility += braveryMod;
@@ -143,7 +143,7 @@ public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) im
         return distToEnemy * aggression;
     }
 
-    private static double calculateFacingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorSettings behaviorSetting) {
+    private static double calculateFacingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates) {
         int facingDiff = getFacingDiff(unitAction, currentUnitStates);
         return Math.max(0.0, 50 * (facingDiff - 1));
     }
@@ -223,7 +223,7 @@ public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) im
         return (successProbability * damageCaused * behaviorSetting.getBraveryValue()) - damageTaken;
     }
 
-    private static double calculateFallMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorSettings behaviorSettings) {
+    private static double calculateFallMod(UnitAction unitAction, BehaviorSettings behaviorSettings) {
         double pilotingFailure = unitAction.chanceOfFailure();
         double fallShame = behaviorSettings.getBraveryValue();
         return pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
@@ -253,7 +253,7 @@ public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) im
         };
     }
 
-    private static double calculateOffBoardMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorSettings behaviorSetting) {
+    private static double calculateOffBoardMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates) {
         if (currentUnitStates.get(unitAction.id()).offBoard()) {
             return 0.5;
         }

@@ -111,78 +111,86 @@ public class DatasetParser {
     }
 
     private UnitAction parseActionLine(String actionLine) {
-        String[] parts = actionLine.split("\t");
-        int entityId = Integer.parseInt(parts[1]) + idOffset;
-        int facing = Integer.parseInt(parts[4]);
-        int fromX = Integer.parseInt(parts[5]);
-        int fromY = Integer.parseInt(parts[6]);
-        int toX = Integer.parseInt(parts[7]);
-        int toY = Integer.parseInt(parts[8]);
-        int hexesMoved = Integer.parseInt(parts[9]);
-        int distance = Integer.parseInt(parts[10]);
-        int mpUsed = Integer.parseInt(parts[11]);
-        int maxMp = Integer.parseInt(parts[12]);
-        double mpP = Double.parseDouble(parts[13]);
-        double heatP = Double.parseDouble(parts[14]);
-        double armorP = Double.parseDouble(parts[15]);
-        double internalP = Double.parseDouble(parts[16]);
-        boolean jumping = parts[17].equals("1");
-        boolean prone = parts[18].equals("1");
-        boolean legal = parts[19].equals("1");
-        // Need to check if the unit in the previous turn had moved or not
-        if (highestEntityId < entityId) {
-            highestEntityId = entityId;
+        try {
+            String[] parts = actionLine.split("\t");
+            int entityId = Integer.parseInt(parts[1]) + idOffset;
+            int facing = Integer.parseInt(parts[4]);
+            int fromX = Integer.parseInt(parts[5]);
+            int fromY = Integer.parseInt(parts[6]);
+            int toX = Integer.parseInt(parts[7]);
+            int toY = Integer.parseInt(parts[8]);
+            int hexesMoved = Integer.parseInt(parts[9]);
+            int distance = Integer.parseInt(parts[10]);
+            int mpUsed = Integer.parseInt(parts[11]);
+            int maxMp = Integer.parseInt(parts[12]);
+            double mpP = Double.parseDouble(parts[13]);
+            double heatP = Double.parseDouble(parts[14]);
+            double armorP = Double.parseDouble(parts[15]);
+            double internalP = Double.parseDouble(parts[16]);
+            boolean jumping = parts[17].equals("1");
+            boolean prone = parts[18].equals("1");
+            boolean legal = parts[19].equals("1");
+            // Need to check if the unit in the previous turn had moved or not
+            if (highestEntityId < entityId) {
+                highestEntityId = entityId;
+            }
+            return new UnitAction(entityId, facing, fromX, fromY, toX, toY, hexesMoved, distance, mpUsed, maxMp, mpP, heatP, armorP,
+                internalP, jumping, prone, legal);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Error parsing action line: " + actionLine, e);
         }
-        return new UnitAction(entityId, facing, fromX, fromY, toX, toY, hexesMoved, distance, mpUsed, maxMp, mpP, heatP, armorP,
-            internalP, jumping, prone, legal);
     }
 
     private UnitState parseStateLine(String stateLine) {
-        int index = 0;
-        String[] parts = stateLine.split("\t");
-        int round = Integer.parseInt(parts[index++]);
-        index++;
-        int teamId = -1;
-        if (StringUtil.isInteger(parts[4])) {
-            teamId = Integer.parseInt(parts[index++]);
-        }
-        int playerId = Integer.parseInt(parts[index++]);
-        int entityId = Integer.parseInt(parts[index++]) + idOffset;
-        String chassis = parts[index++];
-        String model = parts[index++];
-        String type = parts[index++];
-        UnitRole role = UnitRole.valueOf(parts[index++]);
-        int x = Integer.parseInt(parts[index++]);
-        int y = Integer.parseInt(parts[index++]);
-        int facing = Integer.parseInt(parts[index++]);
-        double mp = Double.parseDouble(parts[index++]);
-        double heat = Double.parseDouble(parts[index++]);
-        boolean prone = parts[index++].equals("1");
-        boolean airborne = parts[index++].equals("1");
-        boolean offBoard = parts[index++].equals("1");
-        boolean crippled = parts[index++].equals("1");
-        boolean destroyed = parts[index++].equals("1");
-        double armorP = Double.parseDouble(parts[index++]);
-        double internalP = Double.parseDouble(parts[index++]);
-        boolean done = parts[index].equals("1");
-        int maxRange = 0;
-        int turnsWithoutMovement = 0;
-        int totalDamage = 0;
-        Entity entity = null;
-        if (!type.equals("MekWarrior") && !type.equals("EjectedCrew")) {
-            entity = entities.computeIfAbsent(entityId, i -> MekSummary.loadEntity(chassis + " " + model));
-        }
+        try {
+            int index = 0;
+            String[] parts = stateLine.split("\t");
+            int round = Integer.parseInt(parts[index++]);
+            index++;
+            int teamId = -1;
+            if (StringUtil.isInteger(parts[4])) {
+                teamId = Integer.parseInt(parts[index++]);
+            }
+            int playerId = Integer.parseInt(parts[index++]);
+            int entityId = Integer.parseInt(parts[index++]) + idOffset;
+            String chassis = parts[index++];
+            String model = parts[index++];
+            String type = parts[index++];
+            UnitRole role = UnitRole.valueOf(parts[index++]);
+            int x = Integer.parseInt(parts[index++]);
+            int y = Integer.parseInt(parts[index++]);
+            int facing = Integer.parseInt(parts[index++]);
+            double mp = Double.parseDouble(parts[index++]);
+            double heat = Double.parseDouble(parts[index++]);
+            boolean prone = parts[index++].equals("1");
+            boolean airborne = parts[index++].equals("1");
+            boolean offBoard = parts[index++].equals("1");
+            boolean crippled = parts[index++].equals("1");
+            boolean destroyed = parts[index++].equals("1");
+            double armorP = Double.parseDouble(parts[index++]);
+            double internalP = Double.parseDouble(parts[index++]);
+            boolean done = parts[index].equals("1");
+            int maxRange = 0;
+            int turnsWithoutMovement = 0;
+            int totalDamage = 0;
+            Entity entity = null;
+            if (!type.equals("MekWarrior") && !type.equals("EjectedCrew")) {
+                entity = entities.computeIfAbsent(entityId, i -> MekSummary.loadEntity(chassis + " " + model));
+            }
 
-        if (entity != null) {
-            maxRange = entity.getMaxWeaponRange();
-            totalDamage = Compute.computeTotalDamage(entity.getWeaponList());
-            entity.setInitialBV(entity.calculateBattleValue(true, true));
-            entity.setId(entityId);
+            if (entity != null) {
+                maxRange = entity.getMaxWeaponRange();
+                totalDamage = Compute.computeTotalDamage(entity.getWeaponList());
+                entity.setInitialBV(entity.calculateBattleValue(true, true));
+                entity.setId(entityId);
+            }
+            if (highestEntityId < entityId) {
+                highestEntityId = entityId;
+            }
+            return new UnitState(entityId, teamId, round, playerId, chassis, model, type, role, x, y, facing, mp, heat, prone, airborne, offBoard,
+                crippled, destroyed, armorP, internalP, done, maxRange, totalDamage, turnsWithoutMovement, entity);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Error parsing state line: " + stateLine, e);
         }
-        if (highestEntityId < entityId) {
-            highestEntityId = entityId;
-        }
-        return new UnitState(entityId, teamId, round, playerId, chassis, model, type, role, x, y, facing, mp, heat, prone, airborne, offBoard,
-            crippled, destroyed, armorP, internalP, done,maxRange, totalDamage, turnsWithoutMovement, entity);
     }
 }

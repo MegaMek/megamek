@@ -48,6 +48,22 @@ public record BehaviorParameters(
         return Arrays.stream(toArray()).map(Math::abs).max().orElse(0);
     }
 
+    public static BehaviorParameters random(Random rand) {
+        BehaviorParameters behaviorParameters = new BehaviorParameters(
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(),
+            rand.nextGaussian() * 1.5, rand.nextGaussian() * 1.5,
+            rand.nextGaussian() * 1.5, rand.nextGaussian() * 1.5,
+            rand.nextGaussian() * 1.5, rand.nextGaussian() * 1.5,
+            rand.nextGaussian() * 1.5, rand.nextGaussian() * 1.5);
+        return behaviorParameters.clamp(0, 1);
+    }
+
     public BehaviorParameters multiply(double scalar) {
         return new BehaviorParameters(
             p1 * scalar, p2 * scalar, p3 * scalar,
@@ -78,7 +94,7 @@ public record BehaviorParameters(
         );
     }
 
-    private double clamp(double value, double min, double max) {
+    public double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }
 

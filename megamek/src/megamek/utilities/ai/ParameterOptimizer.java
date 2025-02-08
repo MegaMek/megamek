@@ -66,14 +66,7 @@ public class ParameterOptimizer {
      * @return The optimized parameters
      */
     public BehaviorParameters optimize() {
-        BehaviorParameters params = new BehaviorParameters(
-            Math.random(), Math.random(), Math.random(), Math.random(), Math.random(),
-            Math.random(), Math.random(), Math.random(), Math.random(), Math.random(),
-            Math.random(), Math.random(), Math.random(), Math.random(), Math.random(),
-            Math.random(), Math.random(), Math.random(), Math.random(), Math.random(),
-            Math.random(), Math.random()*1.5, Math.random()*1.5, Math.random()*1.5, Math.random()*1.5,
-            Math.random()*1.5, Math.random()*1.5, Math.random()*1.5, Math.random()*1.5
-        );
+        BehaviorParameters params = BehaviorParameters.random(new Random());
 
         if (checkpoint != null) {
             params = BehaviorParameters.fromArray(checkpoint.getValues());

@@ -233,14 +233,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * game and boardview object will be used to display additional information.
      */
     public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme) {
-       return getMinimapImage(game, bv, zoom, null, minimapTheme);
+       return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList());
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme, List<Line> movePathLines) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
@@ -248,6 +248,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
             Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme);
             tempMM.zoom = zoom;
+            tempMM.movePathLines.clear();
+            tempMM.movePathLines.addAll(movePathLines);
             tempMM.initializeMap();
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
@@ -307,7 +309,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + e.getOldPhase() + ".png");
                     try {
-                        ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null), "png", imgFile);
+                        ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null, movePathLines), "png", imgFile);
                     } catch (Exception ex) {
                         logger.error(ex, "");
                     }
@@ -596,7 +598,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     };
 
     private final List<Line> movePathLines = new Vector<>();
-    private record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
+    public record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
     private final Color MOVE_PATH_COLOR = new Color(0, 0, 0, 128);
 
     private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {

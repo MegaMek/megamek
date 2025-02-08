@@ -15,13 +15,13 @@
 */
 package megamek.client.ratgenerator;
 
-import megamek.codeUtilities.StringUtility;
 import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Handles availability rating values and calculations for RAT generator.
@@ -319,20 +319,27 @@ public class AvailabilityRating {
     }
 
     public String getFactionCode() {
-        String retVal = faction;
-        if (!StringUtility.isNullOrBlank(ratings)) {
-            retVal += "!" + ratings;
-        }
-        return retVal;
+        return faction;
     }
 
+    /**
+     * Get the string equivalent of the ratings values. Multiple ratings
+     * requires compiling them back into a !RATING:VALUE!RATING:VALUE format
+     * @return string with properly formatted availability values, without
+     * the leading faction code
+     */
     public String getAvailabilityCode() {
-        if (ratingAdjustment == 0) {
-            return Integer.toString(availability);
-        } else if (ratingAdjustment < 0) {
-            return availability + "-";
+        if (!hasMultipleRatings()) {
+            if (ratingAdjustment == 0) {
+                return Integer.toString(availability);
+            } else if (ratingAdjustment < 0) {
+                return availability + "-";
+            } else {
+                return availability + "+";
+            }
         } else {
-            return availability + "+";
+            Collection<String> equipRatings = ratingByLevel.keySet();
+            return equipRatings.stream().map(curLevel -> '!' + curLevel + ':' + ratingByLevel.get(curLevel)).collect(Collectors.joining());
         }
     }
 

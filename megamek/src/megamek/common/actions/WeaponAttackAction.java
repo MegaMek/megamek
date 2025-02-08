@@ -1466,7 +1466,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Airborne units cannot tag and attack
         // http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
-        if (ae.isAirborne() && ae.usedTag()) {
+        // Rules seem to allow multiple TAG attempts but not TAG + any other attacks
+        if (ae.isAirborne() && !isTAG && ae.usedTag()) {
             return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
         }
 

@@ -20,31 +20,31 @@ import megamek.common.UnitRole;
 
 /**
  * Represents the state of a unit.
- * @param id
- * @param teamId
- * @param round
- * @param playerId
- * @param chassis
- * @param model
- * @param type
- * @param role
- * @param x
- * @param y
- * @param facing
- * @param mp
- * @param heat
- * @param prone
- * @param airborne
- * @param offBoard
- * @param crippled
- * @param destroyed
- * @param armorP
- * @param internalP
- * @param done
- * @param maxRange
- * @param totalDamage
+ * @param id unit id
+ * @param teamId team id
+ * @param round round number
+ * @param playerId player id
+ * @param chassis chassis
+ * @param model model
+ * @param type type is actually the simple name of the class of the entity
+ * @param role UnitRole
+ * @param x x coordinate
+ * @param y y coordinate
+ * @param facing facing direction
+ * @param mp movement points
+ * @param heat heat points
+ * @param prone prone
+ * @param airborne airborne
+ * @param offBoard off board
+ * @param crippled crippled
+ * @param destroyed destroyed
+ * @param armorP armor percent
+ * @param internalP internal percent
+ * @param done done
+ * @param maxRange max weapon range
+ * @param totalDamage total damage it can cause
  * @param turnsWithoutMovement // unused right now
- * @param entity
+ * @param entity entity
  * @author Luana Coppio
  */
 public record UnitState(int id, int teamId, int round, int playerId, String chassis, String model, String type, UnitRole role,

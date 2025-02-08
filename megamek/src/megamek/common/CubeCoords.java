@@ -44,7 +44,7 @@ public class CubeCoords {
      *
      * @param a the start cube coordinate
      * @param b the end cube coordinate
-     * @param t the interpolation parameter, where 0 <= t <= 1
+     * @param t the interpolation parameter, where {@code 0 <= t <= 1}
      * @return a new CubeCoords representing the interpolated coordinate
      */
     public static CubeCoords lerp(CubeCoords a, CubeCoords b, double t) {

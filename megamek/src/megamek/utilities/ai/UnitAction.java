@@ -18,23 +18,23 @@ import megamek.common.Coords;
 
 /**
  * Represents a unit action.
- * @param id
- * @param facing
- * @param fromX
- * @param fromY
- * @param toX
- * @param toY
- * @param hexesMoved
- * @param distance
- * @param mpUsed
- * @param maxMp
- * @param mpP
- * @param heatP
- * @param armorP
- * @param internalP
- * @param jumping
- * @param prone
- * @param legal
+ * @param id unit id
+ * @param facing facing direction
+ * @param fromX x coordinate of the starting position
+ * @param fromY y coordinate of the starting position
+ * @param toX x coordinate of the final position
+ * @param toY y coordinate of the final position
+ * @param hexesMoved number of hexes moved
+ * @param distance distance moved
+ * @param mpUsed movement points used
+ * @param maxMp maximum movement points
+ * @param mpP movement points percentage
+ * @param heatP heat percentage
+ * @param armorP armor percentage
+ * @param internalP internal percentage
+ * @param jumping jumping
+ * @param prone prone
+ * @param legal is move legal
  * @author Luana Coppio
  */
 public record UnitAction(int id, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,

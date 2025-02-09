@@ -12,7 +12,10 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
+
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitState;
 
 import java.util.Map;
 
@@ -21,24 +24,31 @@ import java.util.Map;
  * @author Luana Coppio
  */
 public interface CostFunction {
+
+    /**
+     * Returns the number of parameters of the behavior function.
+     * @return The number of parameters of the behavior function.
+     */
+    int numberOfParameters();
+
     /**
      * Resolves the cost of a unit action.
      * @param unitAction  The unit action to resolve.
      * @param currentUnitStates  The current state of the units.
-     * @param behaviorParameters  The parameters of the behavior function.
+     * @param parameters  The parameters of the behavior function.
      * @return The cost of the unit action.
      */
-    double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters);
+    double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters);
 
     /**
      * Resolves the cost of a unit action.
      * @param unitAction  The unit action to resolve.
      * @param currentUnitStates  The current state of the units.
      * @param nextUnitState  The state of the units in the following round.
-     * @param behaviorParameters The parameters of the behavior function.
+     * @param parameters The parameters of the behavior function.
      * @return The cost of the unit action.
      */
-    default double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Map<Integer, UnitState> nextUnitState, BehaviorParameters behaviorParameters) {
-        return resolve(unitAction, currentUnitStates, behaviorParameters);
+    default double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Map<Integer, UnitState> nextUnitState, Parameters parameters) {
+        return resolve(unitAction, currentUnitStates, parameters);
     }
 }

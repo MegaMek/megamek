@@ -12,7 +12,7 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.dataset;
 
 
 import java.util.List;

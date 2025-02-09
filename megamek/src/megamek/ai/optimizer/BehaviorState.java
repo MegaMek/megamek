@@ -12,7 +12,7 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
 
 /**
  * Represents the state of a unit.

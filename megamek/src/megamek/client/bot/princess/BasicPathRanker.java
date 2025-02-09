@@ -1002,32 +1002,13 @@ public class BasicPathRanker extends PathRanker {
         return hazardValue;
     }
 
-    private static final Set<Integer> HAZARDS = new HashSet<>(Arrays.asList(Terrains.FIRE,
-        Terrains.MAGMA,
-        Terrains.ICE,
-        Terrains.WATER,
-        Terrains.BUILDING,
-        Terrains.BRIDGE,
-        Terrains.BLACK_ICE,
-        Terrains.SNOW,
-        Terrains.SWAMP,
-        Terrains.MUD,
-        Terrains.TUNDRA,
-        Terrains.HAZARDOUS_LIQUID,
-        Terrains.ULTRA_SUBLEVEL));
-    private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
-    static {
-        HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
-        HAZARDS_WITH_BLACK_ICE.add(Terrains.PAVEMENT);
-    }
-
     private Set<Integer> getHazardTerrainIds(Hex hex) {
         var hazards = hex.getTerrainTypesSet();
         // Black Ice can appear if the conditions are favorable
         if (blackIce > 0) {
-            hazards.retainAll(HAZARDS_WITH_BLACK_ICE);
+            hazards.retainAll(Terrains.HAZARDS_WITH_BLACK_ICE);
         } else {
-            hazards.retainAll(HAZARDS);
+            hazards.retainAll(Terrains.HAZARDS);
         }
 
         return hazards;

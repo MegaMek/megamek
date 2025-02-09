@@ -12,7 +12,11 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
+
+import megamek.ai.dataset.ActionAndState;
+import megamek.ai.dataset.TrainingDataset;
+import megamek.ai.dataset.UnitState;
 
 import java.util.*;
 import java.util.function.Function;
@@ -33,13 +37,16 @@ public class ParameterOptimizer {
     private final double baseLearningRate; // = 1e-3;
     private final double maxLearningRate; // = 1e-1;
     private final int cycleLength; // = 2000;
+    private final int numberOfParameters;
 
     private double learningRate;
     private final int patience; // = 50;
-    private BehaviorParameters velocity = new BehaviorParameters(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+    private Parameters velocity;
     private final double momentum; // = 0.9;
     double[] finalParams;
     private Checkpoint checkpoint;
+
+    private final Random random = new Random();
 
     private ParameterOptimizer(Builder builder) {
         actionAndStates = builder.actionAndStates;
@@ -53,6 +60,7 @@ public class ParameterOptimizer {
         patience = builder.patience;
         momentum = builder.momentum;
         checkpoint = builder.checkpoint;
+        numberOfParameters = builder.numberOfParameters;
     }
 
     public static Builder newBuilder(ParameterOptimizer copy) {
@@ -65,12 +73,12 @@ public class ParameterOptimizer {
      * Optimize the parameters of the cost function using the training dataset.
      * @return The optimized parameters
      */
-    public BehaviorParameters optimize() {
-        BehaviorParameters params = BehaviorParameters.random(new Random());
+    public Parameters optimize() {
+        Parameters params = Parameters.random(numberOfParameters, random, 0, 1);
 
         if (checkpoint != null) {
-            params = BehaviorParameters.fromArray(checkpoint.getValues());
-            params = params.addNoise(0.01);
+            params = Parameters.fromArray(checkpoint.getValues());
+            params = params.addNoise(0.01, random);
         }
 
         double bestLoss = Double.MAX_VALUE;
@@ -79,10 +87,10 @@ public class ParameterOptimizer {
             learningRate = baseLearningRate + (maxLearningRate-baseLearningRate)*(1 + Math.cos(2*Math.PI*i/cycleLength))/2;
             // Add exploration noise
             if(i % 100 == 0) {
-                params = params.addNoise(0.01);
+                params = params.addNoise(0.01, random);
             }
 
-            BehaviorParameters gradient = computeGradient(params);
+            Parameters gradient = computeGradient(params);
             velocity = velocity.multiply(momentum).add(gradient.multiply(learningRate));
             params = params.subtract(velocity);
 
@@ -96,7 +104,7 @@ public class ParameterOptimizer {
             } else {
                 if(++noImprovementCount > patience) {
                     learningRate *= 0.5;
-                    params = params.addNoise(0.05);
+                    params = params.addNoise(0.05, random);
                     noImprovementCount = 0;
                 }
             }
@@ -115,12 +123,12 @@ public class ParameterOptimizer {
         return params;
     }
 
-    private BehaviorParameters clipGradient(BehaviorParameters grad) {
+    private Parameters clipGradient(Parameters grad) {
         double maxGrad = 1.0;
         return grad.multiply(maxGrad/grad.maxAbs());
     }
 
-    private double computeLoss(BehaviorParameters params, Iterator<ActionAndState> batch) {
+    private double computeLoss(Parameters params, Iterator<ActionAndState> batch) {
         List<Double> results = new ArrayList<>();
 
 
@@ -146,18 +154,18 @@ public class ParameterOptimizer {
         return mse + reg;
     }
 
-    private BehaviorParameters computeGradient(BehaviorParameters params) {
-        BehaviorParameters gradient = new BehaviorParameters(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    private Parameters computeGradient(Parameters params) {
+        Parameters gradient = Parameters.zeroes(numberOfParameters);
         Iterator<ActionAndState> batch = actionAndStates.sampleTrainingDataset(actionAndStates.size() / 5).iterator();
         double baseLoss = computeLoss(params, batch);
 
         for (int i = 0; i < params.size(); i++) {
             batch = actionAndStates.sampleTrainingDataset(actionAndStates.size() / 5).iterator();
             double epsilon = adaptiveEpsilon(params.get(i));
-            BehaviorParameters perturbed = params.perturb(i, epsilon);
+            Parameters perturbed = params.perturb(i, epsilon);
             double perturbedLoss = computeLoss(perturbed, batch);
             double derivative = (perturbedLoss - baseLoss) / epsilon;
-            gradient = gradient.set(i, derivative);
+            gradient.set(i, derivative);
         }
         return clipGradient(gradient);
     }
@@ -189,20 +197,20 @@ public class ParameterOptimizer {
         private final double learningRate;
         private int patience = 50;
         private double momentum = 0.9;
+        private final int numberOfParameters;
         private Checkpoint checkpoint;
 
         public Builder(TrainingDataset actionAndStates, CostFunction costFunction, double learningRate) {
             this.actionAndStates = actionAndStates;
             this.costFunction = costFunction;
             this.learningRate = learningRate;
+            this.numberOfParameters = costFunction.numberOfParameters();
         }
 
         public Builder(TrainingDataset actionAndStates, CostFunction costFunction, double learningRate, int maxIterations,
                        double tolerance, double baseLearningRate, double maxLearningRate, int cycleLength, int patience, double momentum,
                        Checkpoint checkpoint) {
-            this.actionAndStates = actionAndStates;
-            this.costFunction = costFunction;
-            this.learningRate = learningRate;
+            this(actionAndStates, costFunction, learningRate);
             this.maxIterations = maxIterations;
             this.tolerance = tolerance;
             this.baseLearningRate = baseLearningRate;

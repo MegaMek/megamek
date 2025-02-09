@@ -1,10 +1,19 @@
-package megamek.utilities.ai;
+package megamek.ai.dataset;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a training dataset.
+ * This dataset is used to train a model optimize the action selection of a bot player.
+ * @author Luana Coppio
+ */
 public class TrainingDataset {
 
+    /**
+     * An iterator for the training dataset.
+     * it always returns the ActionAndState for the current round and then the next round for the same unit.
+     */
     public static class TrainingDatasetIterator implements Iterator<ActionAndState> {
         private final List<ActionAndState> actionAndStates;
         private final List<ActionAndState> nextRoundActionAndState;

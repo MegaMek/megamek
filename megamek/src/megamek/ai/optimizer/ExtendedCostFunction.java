@@ -12,9 +12,14 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
 
-import java.util.*;
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitState;
+
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Experimental set of extra parameters for the cost function. Can be "added" to any other cost function.
@@ -24,14 +29,38 @@ public class ExtendedCostFunction implements CostFunction {
 
     private final CostFunction costFunction;
 
+    private record ExtendedCostParameter(int ordinal) implements ModelParameter { }
+
+    private final ExtendedCostParameter ALPHA;
+    private final ExtendedCostParameter BETA;
+    private final ExtendedCostParameter GAMMA;
+    private final ExtendedCostParameter CURIOSITY_W;
+    private final int numberOfParameters;
+
     public ExtendedCostFunction(CostFunction costFunction) {
         this.costFunction = costFunction;
+
+        int underlyingCostFunctionNumberOfParameters = costFunction.numberOfParameters();
+        ALPHA = new ExtendedCostParameter(underlyingCostFunctionNumberOfParameters++);
+        BETA = new ExtendedCostParameter(underlyingCostFunctionNumberOfParameters++);
+        GAMMA = new ExtendedCostParameter(underlyingCostFunctionNumberOfParameters++);
+        CURIOSITY_W = new ExtendedCostParameter(underlyingCostFunctionNumberOfParameters++);
+        // Now that we initialized all our 4 parameters, we can set the total number of parameters
+        // the value is incremented on each parameter initialization so we don't end up with an off by one error
+        numberOfParameters = underlyingCostFunctionNumberOfParameters;
         StateVisitRegistry.reset();
     }
 
+
     @Override
-    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Map<Integer, UnitState> nextUnitState, BehaviorParameters behaviorParameters) {
-        double baseCost = computeBaseCost(unitAction, currentUnitStates, behaviorParameters);
+    public int numberOfParameters() {
+        return numberOfParameters;
+    }
+
+
+    @Override
+    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Map<Integer, UnitState> nextUnitState, Parameters parameters) {
+        double baseCost = computeBaseCost(unitAction, currentUnitStates, parameters);
 
         double boardControlTerm  = computeBoardControlTerm(currentUnitStates.get(unitAction.id()), nextUnitState);
         double victoryTerm       = computeVictoryTerm(boardControlTerm);
@@ -39,13 +68,13 @@ public class ExtendedCostFunction implements CostFunction {
         double curiosityTerm     = computeCuriosityTerm(nextUnitState.get(unitAction.id()));
 
         // Weight for primary objective (victory)
-        double alpha = behaviorParameters.p23();
+        double alpha = parameters.get(ALPHA);
         // Weight for resource-related term
-        double beta = behaviorParameters.p24();
+        double beta = parameters.get(BETA);
         // Weight for board-control term
-        double gamma = behaviorParameters.p25();
+        double gamma = parameters.get(GAMMA);
         // Weight for exploration/curiosity term
-        double curiosityW = behaviorParameters.p26();
+        double curiosityW = parameters.get(CURIOSITY_W);
 
         double extendedCost = baseCost
             + alpha * victoryTerm
@@ -57,12 +86,12 @@ public class ExtendedCostFunction implements CostFunction {
     }
 
     @Override
-    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
        throw new RuntimeException("This method should not be called in this context");
     }
 
-    private double computeBaseCost(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
-        return costFunction.resolve(unitAction, currentUnitStates, behaviorParameters);
+    private double computeBaseCost(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
+        return costFunction.resolve(unitAction, currentUnitStates, parameters);
     }
 
     /**

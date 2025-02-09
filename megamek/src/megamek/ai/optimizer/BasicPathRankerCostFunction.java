@@ -12,13 +12,15 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitState;
 
 import java.util.Comparator;
 import java.util.List;
@@ -34,9 +36,24 @@ import java.util.Objects;
  */
 public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) implements CostFunction {
 
+    private enum Parameter implements ModelParameter {
+        BRAVERY,
+        FALL_SHAME,
+        SELF_PRESERVATION,
+        HYPER_AGGRESSION,
+        HERD_MENTALITY,
+        ANTI_CROWDING,
+        FAVOR_HIGHER_TMM;
+    }
+
     @Override
-    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
-        BehaviorSettings behaviorSettings = behaviorSettingsFrom(behaviorParameters);
+    public int numberOfParameters() {
+        return Parameter.values().length;
+    }
+
+    @Override
+    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
+        BehaviorSettings behaviorSettings = behaviorSettingsFrom(parameters);
         double fallMod = calculateFallMod(unitAction, behaviorSettings);
         double braveryMod = getBraveryMod(unitAction, currentUnitStates, behaviorSettings);
         double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, behaviorSettings);
@@ -59,15 +76,15 @@ public record BasicPathRankerCostFunction(CardinalEdge homeEdge, Board board) im
         return utility;
     }
 
-    public static BehaviorSettings behaviorSettingsFrom(BehaviorParameters behaviorParameters) {
+    public static BehaviorSettings behaviorSettingsFrom(Parameters parameters) {
         BehaviorSettings behaviorSettings = new BehaviorSettings();
-        behaviorSettings.setBraveryIndex((int) Math.round(behaviorParameters.p1() * 10));
-        behaviorSettings.setSelfPreservationIndex((int) Math.round(behaviorParameters.p2()* 10));
-        behaviorSettings.setFallShameIndex((int) Math.round(behaviorParameters.p3()* 10));
-        behaviorSettings.setFavorHigherTMM((int) Math.round(behaviorParameters.p4()* 10));
-        behaviorSettings.setAntiCrowding((int) Math.round(behaviorParameters.p5()* 10));
-        behaviorSettings.setHyperAggressionIndex((int) Math.round(behaviorParameters.p7()* 10));
-        behaviorSettings.setHerdMentalityIndex((int) Math.round(behaviorParameters.p8()* 10));
+        behaviorSettings.setBraveryIndex((int) Math.round(parameters.get(Parameter.BRAVERY) * 10));
+        behaviorSettings.setSelfPreservationIndex((int) Math.round(parameters.get(Parameter.SELF_PRESERVATION) * 10));
+        behaviorSettings.setFallShameIndex((int) Math.round(parameters.get(Parameter.FALL_SHAME) * 10));
+        behaviorSettings.setFavorHigherTMM((int) Math.round(parameters.get(Parameter.FAVOR_HIGHER_TMM) * 10));
+        behaviorSettings.setAntiCrowding((int) Math.round(parameters.get(Parameter.ANTI_CROWDING) * 10));
+        behaviorSettings.setHyperAggressionIndex((int) Math.round(parameters.get(Parameter.HYPER_AGGRESSION) * 10));
+        behaviorSettings.setHerdMentalityIndex((int) Math.round(parameters.get(Parameter.HERD_MENTALITY) * 10));
         return behaviorSettings;
     }
 

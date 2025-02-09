@@ -12,11 +12,13 @@
  * for more details.
  *
  */
-package megamek.utilities.ai;
+package megamek.ai.optimizer;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,35 +46,61 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         swarmContext.initializeStrategicGoals(board, 5, 5);
     }
 
+    private enum Parameter implements ModelParameter {
+        AGGRESSION,
+        FALL,
+        SELF_PRESERVATION,
+        BRAVERY,
+        MOVEMENT,
+        FACING,
+        STRATEGIC_GOAL,
+        FORMATION,
+        LINE_FORMATION,
+        EXPOSURE,
+        HEALTH,
+        SWARM,
+        ENEMY_POSITION,
+        EXPECTED_DAMAGE,
+        COVER,
+        ENVIRONMENT,
+        CROWDING,
+        SCOUTING_BONUS,
+        AGGRESSION_BONUS,
+        DEFENSIVE_BONUS,
+        ANTI_CROWDING,
+    }
+
     @Override
-    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    public int numberOfParameters() {
+        return Parameter.values().length;
+    }
+
+    @Override
+    public double resolve(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         if (swarmContext.getClusters().isEmpty()) {
             swarmContext.assignClusters(currentUnitStates.values());
         }
         BehaviorState state = determineBehaviorState(unitAction, currentUnitStates);
 
-        double polynomialAggressionMod = polynomialAggressionMod(behaviorParameters);
-        double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, behaviorParameters);
-        double fallMod = calculateFallMod(unitAction, behaviorParameters);
-        double bravery = getBraveryMod(unitAction, currentUnitStates, behaviorParameters);
-        double movementMod = calculateMovementMod(unitAction, behaviorParameters);
-        double facingMod = calculateFacingMod(unitAction, currentUnitStates, behaviorParameters);
-        double selfPreservationMod = calculateSelfPreservationMod(unitAction, currentUnitStates, behaviorParameters);
-        double strategicMod = calculateStrategicGoalMod(unitAction, behaviorParameters);
-        double formationMod = calculateFormationModifier(unitAction, currentUnitStates, behaviorParameters);
-        double exposurePenalty = calculateExposurePenalty(unitAction, currentUnitStates, behaviorParameters);
-        double healthMod = calculateHealthMod(unitAction, behaviorParameters);
-        double nearbyUnitsMod = calculateNearbyUnitsMod(unitAction, currentUnitStates, behaviorParameters);
-        double swarmMod = calculateSwarmCohesionMod(unitAction, currentUnitStates, behaviorParameters);
-        double enemyPosMod = calculateEnemyPositioningMod(unitAction, currentUnitStates, behaviorParameters);
-        double damageMod = calculateExpectedDamage(unitAction, currentUnitStates, behaviorParameters);
-        double advancedCoverMod = calculateAdvancedCoverage(unitAction, currentUnitStates, behaviorParameters);
-        double environmentMod = calculateImmediateEnvironmentMod(unitAction, behaviorParameters);
-        double calculateMovementInertiaMod = calculateMovementInertia(unitAction, currentUnitStates, behaviorParameters);
-        double antiCrowding = calculateCrowdingTolerance(unitAction, currentUnitStates, behaviorParameters);
+        double aggressionMod = calculateAggressionMod(unitAction, currentUnitStates, parameters);
+        double fallMod = calculateFallMod(unitAction, parameters);
+        double bravery = getBraveryMod(unitAction, currentUnitStates, parameters);
+        double movementMod = calculateMovementMod(unitAction, parameters);
+        double facingMod = calculateFacingMod(unitAction, currentUnitStates, parameters);
+        double selfPreservationMod = calculateSelfPreservationMod(unitAction, currentUnitStates, parameters);
+        double strategicMod = calculateStrategicGoalMod(unitAction, parameters);
+        double formationMod = calculateFormationModifier(unitAction, currentUnitStates, parameters);
+        double exposurePenalty = calculateExposurePenalty(unitAction, currentUnitStates, parameters);
+        double healthMod = calculateHealthMod(unitAction, parameters);
+        double nearbyUnitsMod = calculateNearbyUnitsMod(unitAction, currentUnitStates, parameters);
+        double swarmMod = calculateSwarmCohesionMod(unitAction, currentUnitStates, parameters);
+        double enemyPosMod = calculateEnemyPositioningMod(unitAction, currentUnitStates, parameters);
+        double damageMod = calculateExpectedDamage(unitAction, currentUnitStates, parameters);
+        double advancedCoverMod = calculateAdvancedCoverage(unitAction, currentUnitStates, parameters);
+        double environmentMod = calculateImmediateEnvironmentMod(unitAction, parameters);
+        double antiCrowding = calculateCrowdingTolerance(unitAction, currentUnitStates, parameters);
 
         List<Double> factors = List.of(
-            polynomialAggressionMod,
             aggressionMod,
             fallMod,
             bravery,
@@ -84,7 +112,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             healthMod,
             swarmMod,
             enemyPosMod,
-            calculateMovementInertiaMod,
             damageMod,
             advancedCoverMod,
             nearbyUnitsMod,
@@ -101,7 +128,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             count++;
         }
         double geometricMean = Math.exp(logSum / count);
-        double geometricMeanAdjustedToBehavior = applyBehaviorState(state, geometricMean, unitAction, currentUnitStates, behaviorParameters);
+        double geometricMeanAdjustedToBehavior = applyBehaviorState(state, geometricMean, unitAction, currentUnitStates, parameters);
         return clamp01(geometricMeanAdjustedToBehavior);
     }
 
@@ -112,9 +139,8 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     private BehaviorState determineBehaviorState(UnitAction action, Map<Integer, UnitState> states) {
         UnitState unit = states.get(action.id());
         double health = (unit.armorP() + unit.internalP()) / 2;
-        int turnsStationary = unit.turnsWithoutMovement();
 
-        if (unit.role() == UnitRole.SCOUT || turnsStationary > 1) {
+        if (unit.role() == UnitRole.SCOUT) {
             return BehaviorState.SCOUTING;
         } else if (health > 0.7 && getDamageAtRange(5, unit) > 10) {
             return BehaviorState.AGGRESSIVE;
@@ -123,7 +149,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         }
     }
     private double calculateSwarmCohesionMod(UnitAction action, Map<Integer, UnitState> states,
-                                             BehaviorParameters params) {
+                                             Parameters params) {
         CostFunctionSwarmContext.SwarmCluster cluster = swarmContext.getClusterFor(states.get(action.id()));
         Coords centroid = cluster.getCentroid();
 
@@ -134,7 +160,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             centroid
         );
 
-        return clamp01(clamp01(params.p10() * (1 - distanceToCentroid/20) + params.p22() * vectorAlignment) + 0.1);
+        return clamp01(clamp01(params.get(Parameter.SWARM) * (1 - distanceToCentroid/20) + params.get(Parameter.SWARM) * vectorAlignment) + 0.1);
     }
 
     private double calculateVectorAlignment(Coords from, Coords to, Coords target) {
@@ -144,7 +170,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     private double calculateEnemyPositioningMod(UnitAction action, Map<Integer, UnitState> states,
-                                                BehaviorParameters params) {
+                                                Parameters params) {
         int playerId = states.get(action.id()).playerId();
         List<UnitState> validEnemies = nonAlliedUnits(action, states).stream()
             .filter(e -> e.playerId() != playerId)
@@ -165,7 +191,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             .mapToDouble(d -> 1/(d+1))
             .sum();
 
-        return clamp01(params.p11() * enemyMedianDistance/30 + params.p19() * proximityThreat);
+        return clamp01(params.get(Parameter.ENEMY_POSITION) * enemyMedianDistance/30 + params.get(Parameter.ENEMY_POSITION) * proximityThreat);
     }
 
     private Coords calculateEnemyMedian(List<UnitState> enemyStates) {
@@ -205,65 +231,62 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     }
 
     private double calculateExpectedDamage(UnitAction action, Map<Integer, UnitState> states,
-                                           BehaviorParameters params) {
+                                           Parameters params) {
         Coords finalPos = action.finalPosition();
         double damageSum = nonAlliedUnits(action, states).stream()
             .filter(e -> e.position().distance(finalPos) <= e.maxRange())
             .mapToDouble(e -> getDamageAtRange(finalPos.distance(e.position()), e))
             .sum();
 
-        return clamp01(1 - params.p12() * damageSum/100);
+        return clamp01(1 - params.get(Parameter.EXPECTED_DAMAGE) * damageSum/100);
     }
 
     private double calculateAdvancedCoverage(UnitAction action, Map<Integer, UnitState> states,
-                                             BehaviorParameters params) {
+                                             Parameters params) {
         long coveringAllies = alliedUnits(action, states).stream()
             .filter(a -> a.position().distance(action.finalPosition()) <= a.maxRange() * 0.6)
             .filter(a -> hasLineOfSight(a.position(), action.finalPosition()))
             .count();
 
-        double baseCoverage = 0.8 + (coveringAllies * params.p13());
+        double baseCoverage = 0.8 + (coveringAllies * params.get(Parameter.COVER));
         double densityBonus = calculateCoverDensity(action.finalPosition(), 3);
 
-        return clamp01(baseCoverage + params.p21() * densityBonus);
+        return clamp01(baseCoverage + params.get(Parameter.COVER) * densityBonus);
     }
 
     private double calculateImmediateEnvironmentMod(UnitAction action,
-                                                    BehaviorParameters params) {
-        Hex finalHex = board.getHex(action.finalPosition());
-        if (finalHex == null) {
-            return 1;
-        }
+                                                    Parameters params) {
         double coverScore = 0;
         int currentHeight = boardTerrainLevels[action.toY() * board.getWidth() + action.toX()];
-        List<Coords> hexesAround = finalHex.getCoords().allAdjacent();
+        List<Coords> hexesAround = action.finalPosition().allAdjacent();
         for (var targetPosition : hexesAround) {
-            Hex targetHex = board.getHex(targetPosition);
-            if (targetHex == null) continue;
+            if (!insideBoard(targetPosition)) {
+                continue;
+            }
 
             coverScore += calculateHeightCover(action.finalPosition(), currentHeight);
             // Water depth analysis
-            coverScore += getWaterCoverScore(params, targetHex);
+            coverScore += getWaterCoverScore(targetPosition);
 
             // Surrounding terrain analysis
             coverScore += calculateTerrainCover(action.finalPosition());
 
             // Building cover
-            coverScore += calculateBuildingCovert(params, targetPosition);
+            coverScore += calculateBuildingCovert(targetPosition);
         }
-        return 1 + coverScore;
+        return 1 + coverScore * params.get(Parameter.ENVIRONMENT);
     }
 
-    private static double getWaterCoverScore(BehaviorParameters params, Hex targetHex) {
-        if (targetHex.hasDepth1WaterOrDeeper()) {
-            return 0.3 * params.p15();
+    private double getWaterCoverScore(Coords targetPosition) {
+        if (hasWaterLevel.get(targetPosition.getY() * board.getWidth() + targetPosition.getX())) {
+            return 0.3;
         }
         return 0.0;
     }
 
-    private double calculateBuildingCovert(BehaviorParameters params, Coords targetPosition) {
+    private double calculateBuildingCovert(Coords targetPosition) {
         if (buildings.get(targetPosition.getY() * board.getWidth() + targetPosition.getX())) {
-            return 0.4 * params.p15();
+            return 0.4;
         }
         return 0.0;
     }
@@ -274,21 +297,6 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
     static BitSet buildings;
     static BitSet clearTerrain;
     static BitSet hazardousTerrain;
-
-    private static final int[] HAZARDS = new int[]{
-        Terrains.FIRE,
-        Terrains.MAGMA,
-        Terrains.ICE,
-        Terrains.WATER,
-        Terrains.BUILDING,
-        Terrains.BRIDGE,
-        Terrains.BLACK_ICE,
-        Terrains.SNOW,
-        Terrains.SWAMP,
-        Terrains.MUD,
-        Terrains.TUNDRA,
-        Terrains.HAZARDOUS_LIQUID
-    };
 
     private boolean insideBoard(Coords position) {
         int idx = position.getY() * board.getWidth() + position.getX();
@@ -319,7 +327,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
                     if (hex.containsTerrain(Terrains.WOODS)) {
                         woodedTerrain.set(idx);
                     }
-                    if (hex.containsAnyTerrainOf(HAZARDS)) {
+                    if (hex.containsAnyTerrainOf(Terrains.HAZARDS)) {
                         hazardousTerrain.set(idx);
                     }
                     if (hex.isClearHex()) {
@@ -346,25 +354,15 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
     private double applyBehaviorState(BehaviorState state, double baseUtility,
                                       UnitAction action, Map<Integer, UnitState> states,
-                                      BehaviorParameters params) {
+                                      Parameters params) {
         return switch (state) {
             case SCOUTING -> baseUtility *
-                (1 + params.p17() * calculateScoutingBonus(action, states));
+                (1 + params.get(Parameter.SCOUTING_BONUS) * calculateScoutingBonus(action, states));
             case AGGRESSIVE -> baseUtility *
-                (1 + params.p16() * calculateAggressiveBonus(action, states));
+                (1 + params.get(Parameter.AGGRESSION_BONUS) * calculateAggressiveBonus(action, states));
             case DEFENSIVE -> baseUtility *
-                (1 + params.p18() * calculateDefensiveBonus(action));
+                (1 + params.get(Parameter.DEFENSIVE_BONUS) * calculateDefensiveBonus(action));
         };
-    }
-
-    private double calculateMovementInertia(UnitAction action, Map<Integer, UnitState> currentUnitsState,
-                                            BehaviorParameters params) {
-        var state = currentUnitsState.get(action.id());
-        int stagnantTurns = state.turnsWithoutMovement();
-        double penalty = stagnantTurns > 2 ?
-            params.p14() * (stagnantTurns - 2) * 0.2 :
-            0;
-        return clamp01(1 - penalty);
     }
 
     private double calculateDefensiveBonus(UnitAction action) {
@@ -501,12 +499,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             .orElse(null);
     }
 
-    private double polynomialAggressionMod(BehaviorParameters behaviorParameters) {
-        double alternativeActionsUtility = behaviorParameters.p1() * behaviorParameters.p1();
-        return clamp01(1 - behaviorParameters.p1() + alternativeActionsUtility);
-    }
-
-    private double calculateAggressionMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateAggressionMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         double distToEnemy = distanceToClosestNonAlliedUnit(unitAction, currentUnitStates);
         var self = currentUnitStates.get(unitAction.id()).type();
         boolean isInfantry = Objects.equals(self, "Infantry") || Objects.equals(self, "BattleAmor") || Objects.equals(self, "Mekwarrior")
@@ -518,14 +511,14 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
         int maxRange = Math.max(1, currentUnitStates.get(unitAction.id()).maxRange());
 
-        double weight = behaviorParameters.p1();
+        double weight = parameters.get(Parameter.AGGRESSION);
         double aggression = clamp01(maxRange / distToEnemy);
         return clamp01(1.1 - weight + aggression * weight);
     }
 
-    private static double calculateFacingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double calculateFacingMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         int facingDiff = getFacingDiff(unitAction, currentUnitStates);
-        return 1 - behaviorParameters.p5() + ((facingDiff * behaviorParameters.p5()) / (1 + behaviorParameters.p5()));
+        return 1 - parameters.get(Parameter.FACING) + ((facingDiff * parameters.get(Parameter.FACING)) / (1 + parameters.get(Parameter.FACING)));
     }
 
     private static int getFacingDiff(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates) {
@@ -552,18 +545,15 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             || Objects.equals(unitState.type(), "Tank") || Objects.equals(unitState.type(), "TripodMek"));
     }
 
-    private static double calculateCrowdingTolerance(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double calculateCrowdingTolerance(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         var self = currentUnitStates.get(unitAction.id());
         if (!(Objects.equals(self.type(), "BipedMek") || Objects.equals(self.type(), "QuadMek")
             || Objects.equals(self.type(), "Tank") || Objects.equals(self.type(), "TripodMek"))) {
-            return 0.0;
-        }
-        var antiCrowding = behaviorParameters.p5();
-        if (antiCrowding == 0) {
-            return 0;
+            return 1.0;
         }
 
-        var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
+        var antiCrowding = parameters.get(Parameter.CROWDING);
+
         final double herdingDistance = 2;
         final double closingDistance = Math.ceil(Math.max(3.0, 12 * 0.6));
         var position = unitAction.finalPosition();
@@ -577,44 +567,44 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             .map(UnitState::position)
             .filter(c -> c.distance(position) <= closingDistance)
             .count();
-        double friendsCrowdingTolerance = antiCrowdingFactor * crowdingFriends;
-        double enemiesCrowdingTolerance = antiCrowdingFactor * crowdingEnemies;
+        double friendsCrowdingTolerance = antiCrowding * crowdingFriends;
+        double enemiesCrowdingTolerance = antiCrowding * crowdingEnemies;
         return friendsCrowdingTolerance + enemiesCrowdingTolerance;
     }
 
     // P4
-    private static double calculateMovementMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
-        var tmmFactor = behaviorParameters.p4();
+    private static double calculateMovementMod(UnitAction unitAction, Parameters parameters) {
+        var tmmFactor = parameters.get(Parameter.MOVEMENT);
         var tmm = Compute.getTargetMovementModifier(unitAction.hexesMoved(), unitAction.jumping(), false, null);
         var tmmValue = clamp01(tmm.getValue() / 8.0);
         return tmmValue * tmmFactor;
     }
 
     // P3
-    private static double getBraveryMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private static double getBraveryMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         var closestEnemy = closestNonAlliedEntity(unitAction, currentUnitStates);
         var distanceToClosestEnemy = distanceToClosestNonAlliedUnit(unitAction, currentUnitStates);
         int damageTaken = getDamageAtRange(distanceToClosestEnemy, closestEnemy);
         int damageCaused = getDamageAtRange(distanceToClosestEnemy, currentUnitStates.get(unitAction.id()));
         double successProbability = 1d - unitAction.chanceOfFailure();
-        return clamp01(0.1 + clamp01((successProbability * damageCaused * behaviorParameters.p3()) - damageTaken));
+        return clamp01(0.1 + clamp01((successProbability * damageCaused * parameters.get(Parameter.BRAVERY)) - damageTaken));
     }
 
     // P2
-    private static double calculateFallMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
+    private static double calculateFallMod(UnitAction unitAction, Parameters parameters) {
         double pilotingFailure = unitAction.chanceOfFailure();
-        double fallShameFactor = behaviorParameters.p2();
+        double fallShameFactor = parameters.get(Parameter.FALL);
         return clamp01((1 - fallShameFactor) + (1 - pilotingFailure) * fallShameFactor);
     }
 
-    private static double calculateNearbyUnitsMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
-        double weight = behaviorParameters.p6();
+    private static double calculateNearbyUnitsMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
+        double weight = parameters.get(Parameter.SWARM);
         double distance = distanceToClosestNonAlliedUnit(unitAction, currentUnitStates);
         return clamp01(1.1 - weight + (1.0 / (distance + 1)) * weight);
     }
 
-    private static double calculateHealthMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
-        double weight = behaviorParameters.p6();
+    private static double calculateHealthMod(UnitAction unitAction, Parameters parameters) {
+        double weight = parameters.get(Parameter.HEALTH);
         double health = (unitAction.armorP() + unitAction.internalP()) / 2;
         if (health < 0.7) {
             weight *= 1.5; // More cautious when damaged
@@ -622,8 +612,8 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return health * weight;
     }
 
-    private double calculateSelfPreservationMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
-        double weight = behaviorParameters.p6();
+    private double calculateSelfPreservationMod(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
+        double weight = parameters.get(Parameter.SELF_PRESERVATION);
         double health = (unitAction.armorP() + unitAction.internalP()) / 2;
         if (health < 0.7) {
             weight *= 1.5; // More cautious when damaged
@@ -658,7 +648,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         };
     }
 
-    private double calculateStrategicGoalMod(UnitAction unitAction, BehaviorParameters behaviorParameters) {
+    private double calculateStrategicGoalMod(UnitAction unitAction, Parameters parameters) {
         // Existing strategic goal calculation
         double maxGoalUtility = 0.0;
         for (Coords goal : swarmContext.getStrategicGoalsOnCoordsQuadrant(unitAction.finalPosition())) {
@@ -669,33 +659,33 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         if (maxGoalUtility == 0.0) {
             return 1.0;
         }
-        return clamp01(maxGoalUtility * behaviorParameters.p7());
+        return clamp01(maxGoalUtility * parameters.get(Parameter.STRATEGIC_GOAL));
     }
 
-    private double calculateFormationModifier(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateFormationModifier(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         if (currentUnitStates.get(unitAction.id()) != null) {
             CostFunctionSwarmContext.SwarmCluster cluster = swarmContext.getClusterFor(currentUnitStates.get(unitAction.id()));
 
-            double lineMod = calculateLineFormationMod(cluster, unitAction, currentUnitStates, behaviorParameters);
-            double spacingMod = calculateOptimalSpacingMod(cluster, unitAction, behaviorParameters);
-            double coverageMod = calculateCoverageModifier(unitAction, currentUnitStates, behaviorParameters);
+            double lineMod = calculateLineFormationMod(cluster, unitAction, currentUnitStates, parameters);
+            double spacingMod = calculateOptimalSpacingMod(cluster, unitAction, parameters);
+            double coverageMod = calculateCoverageModifier(unitAction, currentUnitStates, parameters);
 
-            return clamp01(lineMod * coverageMod * spacingMod  * behaviorParameters.p8());
+            return clamp01(lineMod * coverageMod * spacingMod  * parameters.get(Parameter.FORMATION));
         } else {
             return 1.0;
         }
     }
 
-    private double calculateCoverageModifier(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateCoverageModifier(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         long coveringAllies = alliedUnits(unitAction, currentUnitStates).stream()
             .filter(a -> a.position().distance(unitAction.finalPosition()) <=
                 a.maxRange() * 0.6)
             .count();
 
-        return 0.8 + (coveringAllies * behaviorParameters.p4());
+        return 0.8 + (coveringAllies * parameters.get(Parameter.COVER));
     }
 
-    private double calculateOptimalSpacingMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, BehaviorParameters behaviorParameters) {
+    private double calculateOptimalSpacingMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, Parameters parameters) {
         double avgDistance = cluster.getMembers().stream()
             .filter(m -> m.id() != unitAction.id())
             .mapToDouble(m -> m.position().distance(unitAction.finalPosition()))
@@ -703,13 +693,13 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
             .orElse(0);
 
         // Ideal spacing between 3-5 hexes
-        if (avgDistance < 3) return 0.8 * behaviorParameters.p5();
-        if (avgDistance > 5) return 0.9 * behaviorParameters.p5();
-        return behaviorParameters.p5();
+        if (avgDistance < 3) return 0.8 * parameters.get(Parameter.ANTI_CROWDING);
+        if (avgDistance > 5) return 0.9 * parameters.get(Parameter.ANTI_CROWDING);
+        return parameters.get(Parameter.ANTI_CROWDING);
     }
 
 
-    private double calculateLineFormationMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateLineFormationMod(CostFunctionSwarmContext.SwarmCluster cluster, UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         UnitState unit = currentUnitStates.get(unitAction.id());
         if (unit.entity() == null) {
             return 1.0;
@@ -742,7 +732,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         double positionQuality = ((rangeQuality * 0.5) +
             (formationQuality * 0.3) +
             (forwardBias * 0.2) -
-            borderPenalty) * behaviorParameters.p5();
+            borderPenalty) * parameters.get(Parameter.LINE_FORMATION);
 
         return clamp01(positionQuality);
     }
@@ -862,7 +852,7 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
         return 1.0 - (directionDiff * directionDiff * 0.05);
     }
 
-    private double calculateExposurePenalty(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, BehaviorParameters behaviorParameters) {
+    private double calculateExposurePenalty(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates, Parameters parameters) {
         UnitState unit = currentUnitStates.get(unitAction.id());
         if (unit.role() == UnitRole.AMBUSHER || unit.role() == UnitRole.SCOUT || unit.role() == UnitRole.MISSILE_BOAT || unit.role() == UnitRole.SNIPER) { // SCOUT/FLANKER
             long threateningEnemies = nonAlliedUnits(unitAction, currentUnitStates).stream()
@@ -871,13 +861,13 @@ public record UtilityPathRankerCostFunction(CardinalEdge homeEdge, CostFunctionS
 
             if (validateUnitCoverage(unitAction, currentUnitStates)) {
                 double exposureScore = 1 + (threateningEnemies * 0.3);
-                return 1.0 / exposureScore  * behaviorParameters.p9();
+                return 1.0 / exposureScore  * parameters.get(Parameter.EXPOSURE);
             } else {
                 double exposureScore = 1 + (threateningEnemies * 0.5);
-                return 1.0 / exposureScore * behaviorParameters.p9();
+                return 1.0 / exposureScore * parameters.get(Parameter.EXPOSURE);
             }
         }
-        return behaviorParameters.p9();
+        return parameters.get(Parameter.EXPOSURE);
     }
 
     public boolean validateUnitCoverage(UnitAction unitAction, Map<Integer, UnitState> currentUnitStates) {

@@ -1965,7 +1965,7 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter
      *         is capable of dropping bombs.
      */
-    private FiringPlan getDiveBombPlan(final Entity shooter,
+    protected FiringPlan getDiveBombPlan(final Entity shooter,
             final MovePath flightPath,
             final Targetable target,
             final Game game,
@@ -2881,8 +2881,14 @@ public class FireControl {
                 continue;
             }
 
-            // If everything looks okay, replace the old WAA with the updated copy
-            info.setAction(cloneWAA);
+            /* If everything looks okay, update the action with the new values
+            *  Don't replace the old action with the clone - the clone doesn't
+            *  consider that the waa might have been a subclass of WeaponAttackAction
+            *  - like ArtilleryAttackAction. So instead update the changed values: */
+            info.getAction().setAmmoId(cloneWAA.getAmmoId());
+            info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
+            info.getAction().setAmmoCarrier(cloneWAA.getAmmoCarrier());
+
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                     shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
         }

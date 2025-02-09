@@ -4727,6 +4727,7 @@ public class Compute {
             Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
+
             if (te.isOffBoard()) {
                 return false;
             }
@@ -4819,6 +4820,109 @@ public class Compute {
         // don't let the BAP check do that
         if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
                 || ae.hasBAP(false)) {
+            tn -= 2;
+        }
+
+        // Now, determine if we've detected the target this round
+        return roll >= tn;
+    }
+
+    public static boolean calcFutureTargetFiringSolution(Game game, Entity attacker,
+                                             Targetable target, Coords futureTargetPosiion) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+
+            if (te.isOffBoard()) {
+                return false;
+            }
+        }
+
+        // NPE check. Fighter squadrons don't start with sensors, but pick them up from
+        // the component fighters each round
+        if (attacker.getActiveSensor() == null) {
+            return false;
+        }
+
+        // ESM sensor can't produce a firing solution
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+            return false;
+        }
+        Coords targetPos = futureTargetPosiion;
+        int distance = attacker.getPosition().distance(targetPos);
+        int roll = Compute.d6(2);
+        int tn = attacker.getCrew().getPiloting();
+        int autoVisualRange = 1;
+        int outOfVisualRange = (attacker.getActiveSensor().getRangeByBracket());
+        int rangeIncrement = (int) Math.ceil(outOfVisualRange / 10.0);
+
+        // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor
+        // doesn't know about Game or Entity
+        // to do otherwise. We need to use the space range instead.
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        }
+
+        if (distance > outOfVisualRange) {
+            return false;
+        }
+
+        if (attacker instanceof Aero aero) {
+            // Account for sensor damage
+            if (aero.isAeroSensorDestroyed()) {
+                return false;
+            } else {
+                tn += aero.getSensorHits();
+            }
+        }
+
+        // Targets at 1/10 max range are automatically detected
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+            autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+            autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
+        }
+
+        if (distance <= autoVisualRange) {
+            return true;
+        }
+
+        // Apply Sensor Geek SPA, if present
+        if (attacker.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+            tn -= 2;
+        }
+
+        // Otherwise, we add +1 to the tn for detection for each increment of the
+        // autovisualrange between attacker and target
+        tn += (distance / rangeIncrement);
+
+        // Apply ECM/ECCM effects
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            tn += calcSpaceECM(game, attacker, target);
+        }
+
+        // Apply large craft sensor shadows
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+            tn += calcSensorShadow(game, attacker, target);
+        }
+
+        // Apply modifiers for attacker's equipment
+        // -2 for a working Large NCSS
+        if (attacker.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            tn -= 2;
+        }
+        // -1 for a working Small NCSS
+        if (attacker.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            tn -= 1;
+        }
+        // -2 for any type of BAP or EW Equipment. ECM is already accounted for, so
+        // don't let the BAP check do that
+        if (attacker.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+            || attacker.hasBAP(false)) {
             tn -= 2;
         }
 
@@ -7745,5 +7849,69 @@ public class Compute {
 
         logger.debug(msg);
         return newPoint;
+    }
+
+    /**
+     * Lightweight helper to determine if a given unit can take a Pointblank shot on another
+     *
+     * @param attacker  Prospective Pointblank Shot shooter
+     * @param target    Prospective Pointblank Shot target
+     * @return          boolean true if shot can be taken legally; false otherwise
+     */
+    public static boolean canPointBlankShot(Entity attacker, Entity target) {
+        if (!attacker.isHidden() || !attacker.isEnemyOf(target)) {
+            // PBS attacker has to be hidden and an enemy of the PBS target
+            return false;
+        }
+
+        if (!target.isAerospace()){
+            // The simpler path: mainly worried about distance
+            if (attacker.getPosition().distance(target.getPosition()) != 1) {
+                // PBS attacker has to be exactly 1 hex away from target
+                return false;
+            }
+        } else {
+            // More complex; may need to worry about a flight path, and Infantry ranges
+            if (attacker.isInfantry()){
+                if (attacker.getMaxWeaponRange(true) <= 1) {
+                    // Infantry attacker needs long-range weapons that can hit an aircraft
+                    return false;
+                } else {
+                    boolean hasFieldGuns = ((Infantry) attacker).hasActiveFieldWeapon();
+                    boolean hasInfantrayAA = attacker.getEquipment().stream().anyMatch(
+                        eq -> eq instanceof WeaponMounted
+                            && ((WeaponMounted) eq).getType().hasFlag(WeaponType.F_INF_AA)
+                    );
+                    // Either allows infantry PBS on Aerospace.
+                    return (hasFieldGuns || hasInfantrayAA);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Lightweight helper for some step evaluation.  No side effects.
+     *
+     * @param detector  Entity that will detect a hidden unit
+     * @param distance  int Distance from detector to hidden entity
+     * @param endStep   boolean whether this detection is occuring at the last step of a move path
+     * @return true if detector can detect a unit in this situation
+     */
+    public static boolean canDetectHidden(Entity detector, int distance, boolean endStep) {
+        if (detector.isAerospace()) {
+            // Errata says Aerospace flying over hidden units detect them
+            // (https://bg.battletech.com/forums/index.php?topic=84054.0)
+            if (distance == 0) {
+                return true;
+            }
+        } else if ((distance == 1) && endStep) {
+            // Ending movement adjacent to a hidden unit also reveals it.
+            return true;
+        }
+        // Active Probe detection happens is handled in detectHiddenUnits
+        // Anything not explicitly detected is not detected.
+        return false;
     }
 } // End public class Compute

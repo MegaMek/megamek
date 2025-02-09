@@ -520,7 +520,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -540,7 +540,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -561,7 +561,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0)
                 + " - " + LOG_INT.format(1) + "})]");
@@ -591,7 +591,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
                 + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50)
                 + " * {" + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -614,7 +614,7 @@ class BasicPathRankerTest {
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
-                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod ["
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -648,7 +648,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -672,7 +672,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -701,7 +701,7 @@ class BasicPathRankerTest {
                 + " = " + LOG_DECIMAL.format(2) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - " + "herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -721,7 +721,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(22) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -744,7 +744,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(10) + " = "
                 + LOG_DECIMAL.format(10) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -762,7 +762,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(20) + " = "
                 + LOG_DECIMAL.format(20) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -777,7 +777,7 @@ class BasicPathRankerTest {
                 + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
-                + "] - herdingMod [0 no friends] + movementMod [0.0] - facingMod ["
+                + "] - herdingMod [0 no friends] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -797,7 +797,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -814,7 +814,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
                 + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -833,7 +833,7 @@ class BasicPathRankerTest {
                 + ")] - aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12)
                 + " * " + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0)
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
                 + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -858,7 +858,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(1) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -878,7 +878,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(2) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -896,7 +896,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
                 + LOG_INT.format(0) + ", " + "" + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(3) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -919,7 +919,7 @@ class BasicPathRankerTest {
                 + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
                 + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
                 + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
-                + "] + movementMod [0.0] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
                 + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
                 + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
@@ -1648,6 +1648,7 @@ class BasicPathRankerTest {
             when(mockBuilding.getCurrentCF(eq(testCoordsThree))).thenReturn(77);
         }
 
+        // START - Hazardous Liquid Pools
         @Test
         void testThreeHexShallowHazardousLiquid() {
             when(mockUnit.locations()).thenReturn(8);
@@ -1911,6 +1912,132 @@ class BasicPathRankerTest {
             when(mockTank.getDamageLevel()).thenReturn(Entity.DMG_MODERATE);
             assertEquals(500.0, testRanker.checkPathForHazards(mockPath, mockTank, mockGame), TOLERANCE);
         }
+        // END - Hazardous Liquid Pools
+
+        // START - Ultra Sublevel
+        @Test
+        void testWalkingThroughUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            final Hex mockHexTwo = testHexes.get(1);
+
+            // Test walking through hexes, one of which is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockHexTwo.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testWalkingEndingOnUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            // Test walking through hexes, the last one is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockFinalHex.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testJumpingOverUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            final Hex mockHexTwo = testHexes.get(1);
+
+            // Test jumping over hexes, one of which is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(true);
+            when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockHexTwo.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testJumpingEndingOnUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            // Test jumping over hexes, the last one is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(true);
+            when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockFinalHex.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(1000.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testVTOLThroughUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            when(mockUnit.getMovementMode()).thenReturn(EntityMovementMode.VTOL);
+            when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_VTOL_RUN);
+
+            final Hex mockHexTwo = testHexes.get(1);
+
+            // Test flying over hexes, one of which is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockHexTwo.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testVTOLEndingOnUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            when(mockUnit.getMovementMode()).thenReturn(EntityMovementMode.VTOL);
+            when(mockUnit.getDamageLevel()).thenReturn(1);
+            when(mockUnit.getElevation()).thenReturn(1);
+            when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_VTOL_RUN);
+
+            // Test flying over hexes, the last one is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockFinalHex.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+
+            // TODO: Fix the entire BasicPathRanker so damaged VTOLs can properly consider the safety of ending a turn over a hazard
+            //assertEquals(250.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+            assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testFlyingOverUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            when(mockUnit.getMovementMode()).thenReturn(EntityMovementMode.AERODYNE);
+            when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_FLYING);
+
+            final Hex mockHexTwo = testHexes.get(1);
+
+            // Test flying over hexes, one of which is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockHexTwo.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockHexTwo.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+            assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        @Test
+        void testFlyingEndingOnUltraSublevel() {
+            when(mockUnit.locations()).thenReturn(8);
+            when(mockUnit.getArmor(anyInt())).thenReturn(10);
+
+            when(mockUnit.getMovementMode()).thenReturn(EntityMovementMode.AERODYNE);
+            when(mockPath.getLastStepMovementType()).thenReturn(EntityMovementType.MOVE_FLYING);
+
+            // Test flying over hexes, the last one is an ultra sublevel
+            when(mockPath.isJumping()).thenReturn(false);
+            when(mockFinalHex.getTerrainTypesSet()).thenReturn(new HashSet<>(Set.of(Terrains.ULTRA_SUBLEVEL)));
+            when(mockFinalHex.terrainLevel(Terrains.ULTRA_SUBLEVEL)).thenReturn(0);
+
+            assertEquals(0.0, testRanker.checkPathForHazards(mockPath, mockUnit, mockGame), TOLERANCE);
+        }
+
+        // END - Ultra Sublevel
     }
 
     @Test

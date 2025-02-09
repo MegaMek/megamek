@@ -163,13 +163,15 @@ public class Princess extends BotClient {
     // Limits types of units Princess will target and attack with enhanced targeting
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
-
+    private SwarmContext swarmContext;
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
     // Controls whether Princess will use enhanced targeting on targets that have partial cover
     private boolean allowCoverEnhancedTargeting;
-
+    private EnemyTracker enemyTracker;
+    private CoverageValidator coverageValidator;
+    private SwarmCenterManager swarmCenterManager;
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -227,6 +229,8 @@ public class Princess extends BotClient {
             return getPathRanker(PathRankerType.Infantry);
         } else if (entity.isAero() && game.useVectorMove()) {
             return getPathRanker(PathRankerType.NewtonianAerospace);
+        } else if (behaviorSettings.isExperimental()) {
+            return getPathRanker(PathRankerType.Utility);
         }
         return getPathRanker(PathRankerType.Basic);
     }
@@ -352,6 +356,9 @@ public class Princess extends BotClient {
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
         setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
+        if (behaviorSettings.iAmAPirate() && honorUtil instanceof HonorUtil honorUtilCast) {
+            honorUtilCast.setIAmAPirate(behaviorSettings.iAmAPirate());
+        }
         if (getFallBack()) {
             return;
         }
@@ -2096,6 +2103,7 @@ public class Princess extends BotClient {
             }
             return path;
         } catch (Exception ignored) {
+            logger.error(ignored, "Error while calculating movement");
             return null;
         }
     }
@@ -2599,7 +2607,8 @@ public class Princess extends BotClient {
             initialize();
             checkMorale();
             unitBehaviorTracker.clear();
-
+            this.swarmContext.assignClusters(getFriendEntities());
+            this.enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
@@ -2667,12 +2676,17 @@ public class Princess extends BotClient {
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
-
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
             unitBehaviorTracker = new UnitBehavior();
             boardClusterTracker = new BoardClusterTracker();
+
+            // Set up heat mapping
+            initFriendlyHeatMap();
+            initEnemyHeatMaps();
+            initExperimentalFeatures();
+
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
@@ -2684,6 +2698,7 @@ public class Princess extends BotClient {
                     for (final Entity entity : game.getEntitiesVector(coords, true)) {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
+
                             sendChat("Building in Hex " + coords.toFriendlyString()
                                     + " designated target due to Gun Emplacement.", Level.INFO);
                         }
@@ -2691,15 +2706,23 @@ public class Princess extends BotClient {
                 }
             }
 
-            // Set up heat mapping
-            initEnemyHeatMaps();
-            initFriendlyHeatMap();
-
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
 
         }
+    }
+
+    /**
+     * Initialize the experimental features.
+     */
+    private void initExperimentalFeatures() {
+        this.enemyTracker = new EnemyTracker(this);
+        this.coverageValidator = new CoverageValidator(this);
+        this.swarmContext = new SwarmContext();
+        this.swarmCenterManager = new SwarmCenterManager(this);
+        int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
+        this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
     }
 
     /**
@@ -2738,6 +2761,10 @@ public class Princess extends BotClient {
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
         newtonianAerospacePathRanker.setPathEnumerator(getPrecognition().getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+
+        UtilityPathRanker utilityPathRanker = new UtilityPathRanker(this);
+        utilityPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.Utility, utilityPathRanker);
     }
 
     /**
@@ -2964,6 +2991,30 @@ public class Princess extends BotClient {
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
+        updateExperimentalFeatures();
+    }
+
+    private void updateExperimentalFeatures() {
+        if (getBehaviorSettings().isExperimental()) {
+            updateSwarmContext();
+        }
+    }
+
+    private void updateSwarmContext() {
+        if (swarmContext == null || enemyTracker == null || coverageValidator == null || swarmCenterManager == null) {
+            return;
+        }
+
+        swarmContext.setCurrentCenter(swarmCenterManager.calculateCenter());
+        enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
+        swarmContext.assignClusters(getFriendEntities());
+        swarmContext.resetEnemyTargets();
+
+        for (var entity : getEntitiesOwned()) {
+            if (entity.isDeployed()) {
+                swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
+            }
+        }
     }
 
     @Override
@@ -3421,7 +3472,7 @@ public class Princess extends BotClient {
      * @return
      */
     public Coords getFriendlyHotSpot (Coords testPosition) {
-        return friendlyHeatMap.getHotSpot(testPosition, true);
+        return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
     }
 
     /**
@@ -3507,5 +3558,21 @@ public class Princess extends BotClient {
     public void receiveEntityUpdate(final Packet packet) {
         super.receiveEntityUpdate(packet);
         updateEntityState((Entity) packet.getObject(1));
+    }
+
+    public SwarmContext getSwarmContext() {
+        return swarmContext;
+    }
+
+    public EnemyTracker getEnemyTracker() {
+        return enemyTracker;
+    }
+
+    public CoverageValidator getCoverageValidator() {
+        return coverageValidator;
+    }
+
+    public SwarmCenterManager getSwarmCenterManager() {
+        return swarmCenterManager;
     }
 }

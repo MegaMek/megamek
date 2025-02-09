@@ -64,4 +64,6 @@ public interface IHonorUtil {
     void checkEnemyBroken(Targetable target, boolean forcedWithdrawal);
 
     Set<Integer> getDishonoredEnemies();
+
+    boolean iAmAPirate();
 }

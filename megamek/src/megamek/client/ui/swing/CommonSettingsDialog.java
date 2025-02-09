@@ -226,6 +226,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField autoResolveLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
+    private final JCheckBox enableExperimentalBotFeatures = new JCheckBox(
+        Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures"));
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(
             Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled"));
     private final JCheckBox useAverageSkills = new JCheckBox(
@@ -682,6 +684,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(autoEndFiring, null));
         comps.add(checkboxEntry(autoDeclareSearchlight, null));
         comps.add(checkboxEntry(moveDefaultClimbMode, null));
+        comps.add(checkboxEntry(enableExperimentalBotFeatures, Messages.getString("CommonSettingsDialog.enableExperimentalBotFeatures.tooltip")));
         moveDefaultClimbMode.setToolTipText(Messages.getString("CommonSettingsDialog.moveDefaultClimbMode.tooltip"));
 
         addLineSpacer(comps);
@@ -1980,6 +1983,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             guiScale.setValue((int) (GUIP.getGUIScale() * 10));
             autoEndFiring.setSelected(GUIP.getAutoEndFiring());
             autoDeclareSearchlight.setSelected(GUIP.getAutoDeclareSearchlight());
+            enableExperimentalBotFeatures.setSelected(CLIENT_PREFERENCES.getEnableExperimentalBotFeatures());
             nagForMASC.setSelected(GUIP.getNagForMASC());
             nagForPSR.setSelected(GUIP.getNagForPSR());
             nagForWiGELanding.setSelected(GUIP.getNagForWiGELanding());
@@ -2532,7 +2536,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         CLIENT_PREFERENCES.setReportKeywords(reportKeywordsTextPane.getText());
         CLIENT_PREFERENCES.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
         CLIENT_PREFERENCES.setStartSearchlightsOn(startSearchlightsOn.isSelected());
-
+        CLIENT_PREFERENCES.setEnableExperimentalBotFeatures(enableExperimentalBotFeatures.isSelected());
         CLIENT_PREFERENCES.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         CLIENT_PREFERENCES.setUseAverageSkills(useAverageSkills.isSelected());
         CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());

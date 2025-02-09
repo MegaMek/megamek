@@ -70,6 +70,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+    public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
+    public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -115,8 +117,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
+        store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
         store.setDefault(DATA_LOGGING, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -370,6 +374,14 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(START_SEARCHLIGHTS_ON, value);
     }
 
+    public void setEnableExperimentalBotFeatures(boolean value) {
+        store.setValue(ENABLE_EXPERIMENTAL_BOT_FEATURES, value);
+    }
+
+    public boolean getEnableExperimentalBotFeatures() {
+        return store.getBoolean(ENABLE_EXPERIMENTAL_BOT_FEATURES);
+    }
+
     public void setStrategicViewTheme(String theme) {
         store.setValue(STRATEGIC_VIEW_THEME, theme);
     }
@@ -473,4 +485,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(MML_PATH, mmlPath.isBlank() ? "" : new File(mmlPath).getAbsolutePath());
     }
 
+    public boolean askForVictoryList() {
+        return store.getBoolean(NAG_ASK_FOR_VICTORY_LIST);
+    }
+
+    public void setAskForVictoryList(boolean value) {
+        store.setValue(NAG_ASK_FOR_VICTORY_LIST, value);
+    }
 }

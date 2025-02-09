@@ -87,7 +87,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return donePanel;
     }
 
-    private void performDoneNoAction() {
+    protected void performDoneNoAction() {
         ignoreNoActionNag = true;
         ready();
     }

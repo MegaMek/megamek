@@ -19,18 +19,15 @@
  */
 package megamek.client.bot.princess;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.CharArrayReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.stream.Streams;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.internal.util.collections.Sets;
 import org.w3c.dom.Document;
@@ -38,6 +35,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import megamek.utilities.xml.MMXMLUtility;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -47,34 +46,45 @@ class BehaviorSettingsFactoryTest {
 
     private BehaviorSettingsFactory testFactory = BehaviorSettingsFactory.getInstance();
 
-    private static Document buildTestDocument() throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
-        Reader reader = new CharArrayReader(
-                BehaviorSettingsFactoryTestConstants.GOOD_BEHAVIOR_SETTINGS_FILE.toCharArray());
-        return documentBuilder.parse(new InputSource(reader));
+    private static Document buildTestDocument() {
+        try {
+            DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
+            File file = new File("testresources/megamek/client/bot/behaviorSettings.xml");
+            try (Reader reader = new FileReader(file)) {
+                return documentBuilder.parse(new InputSource(reader));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @BeforeEach
+    void setUp() {
+        testFactory.behaviorMap.clear();
     }
 
     @Test
-    void testLoadBehaviorSettings() throws IOException, SAXException, ParserConfigurationException {
-        // Test loading a good behavior settings file.
-        testFactory.behaviorMap.clear();
-        assertTrue(testFactory.loadBehaviorSettings(buildTestDocument()));
-        assertEquals(5, testFactory.behaviorMap.size());
-        String[] expectedBehaviors = new String[] { BehaviorSettingsFactoryTestConstants.NM_RECKLESS,
-                BehaviorSettingsFactoryTestConstants.NM_COWARDLY,
-                BehaviorSettingsFactoryTestConstants.NM_ESCAPE,
-                BehaviorSettingsFactoryTestConstants.NM_DEFAULT,
-                BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION };
-        assertEquals(Sets.newSet(expectedBehaviors), Sets.newSet(testFactory.getBehaviorNames()));
-
+    void testLoadBehaviorSettingsWithNoSaveFile() {
         // Test loading a null behavior settings file.
-        testFactory.behaviorMap.clear();
         assertFalse(testFactory.loadBehaviorSettings(null));
-        assertEquals(4, testFactory.behaviorMap.size());
-        expectedBehaviors = new String[] { BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
-                BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
-                BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
-                BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION };
-        assertArrayEquals(expectedBehaviors, testFactory.getBehaviorNames());
+        var expectedBehaviors = Set.of(BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
+        assertEquals(expectedBehaviors, Sets.newSet(testFactory.getBehaviorNames()));
+    }
+
+    @Test
+    void testLoadBehaviorSettingsWithTestDocument() {
+        assertTrue(testFactory.loadBehaviorSettings(buildTestDocument()));
+        var expectedBehaviors = Set.of(BehaviorSettingsFactory.BERSERK_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.DEFAULT_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.ESCAPE_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.PIRATE_BEHAVIOR_DESCRIPTION,
+            BehaviorSettingsFactory.RUTHLESS_BEHAVIOR_DESCRIPTION);
+        assertTrue(Sets.newSet(testFactory.getBehaviorNames()).containsAll(expectedBehaviors));
     }
 }

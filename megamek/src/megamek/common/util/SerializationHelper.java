@@ -26,6 +26,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.common.Coords;
+import megamek.common.EntityFluff;
 import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.options.AbstractOptions;
 import megamek.server.victory.VictoryCondition;

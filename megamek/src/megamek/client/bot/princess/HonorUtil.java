@@ -34,6 +34,7 @@ public class HonorUtil implements IHonorUtil {
 
     private final Set<Integer> dishonoredEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> brokenEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private boolean iAmAPirate = false;
 
     private void checkEnemyBroken(Entity entity, boolean forcedWithdrawal) {
         if (forcedWithdrawal && entity.isCrippled()) {
@@ -50,12 +51,12 @@ public class HonorUtil implements IHonorUtil {
 
     @Override
     public boolean isEnemyBroken(int entityId, int playerId, boolean forcedWithdrawal) {
-        return brokenEnemies.contains(entityId) && !isEnemyDishonored(playerId);
+        return brokenEnemies.contains(entityId) && !isEnemyDishonored(playerId) ;
     }
 
     @Override
     public boolean isEnemyDishonored(int playerId) {
-        return dishonoredEnemies.contains(playerId);
+        return dishonoredEnemies.contains(playerId) || iAmAPirate(); // pirates have no honor to give in order to give
     }
 
     @Override
@@ -66,5 +67,14 @@ public class HonorUtil implements IHonorUtil {
     @Override
     public Set<Integer> getDishonoredEnemies() {
         return dishonoredEnemies;
+    }
+
+    @Override
+    public boolean iAmAPirate() {
+        return iAmAPirate;
+    }
+
+    public void setIAmAPirate(boolean iAmAPirate) {
+        this.iAmAPirate = iAmAPirate;
     }
 }

@@ -5,6 +5,21 @@ MEGAMEK VERSION HISTORY:
 + PR #6489: PPC Capacitors must all be linked to a PPC
 + PR #6500: Issue 6499: Better nudging for aeros that fail maneuvers and scatter off board
 + PR #6476: Issue 6303: RFE - Hazardous Liquid Pool
++ PR #6475: Changes every single BigInteger in MegaMek for an Enum
++ Fix #6491: AX SRM Hardened and Ballistic Reinforced Armor Fix
++ PR #6492: RAT Data update - IS faction light Mek review 2900-3049
++ PR #6495: Feat: Gif all the things
++ PR #6497: Action Logger
++ PR #6498: Feat: log bot actions for debugging
++ PR #6486: Piracy, new behaviors, and a new test platform to build upon
++ PR #6506: fix: bad naming for log file
++ MHQ #4985: add bounds check for unit editor dialog when number of recorded crits exceeds number of possible crits in a location
++ Fix #6127: softlock during invalid Pointblank Shot
++ PR #6503: fix: stop creating empty logs for the bot path ranker when its disabled
++ MML #1662: Fixed issue with Mek exporting to text
++ Fix #6511: Prevent cast class exception when switching Princess's ammo.
++ PR #6502: Implement Ultra Sublevel as part of RFE 6303
++ PR #1720: Fix MML Poor Sealing Quirk for Support and Combat Vehicles
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

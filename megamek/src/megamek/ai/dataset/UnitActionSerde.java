@@ -70,7 +70,6 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
 
     public UnitAction fromTsv(String line, int idOffset) {
         String[] parts = line.split("\t", -1); // include trailing empty strings
-        // For the fields that are not part of UnitAction (PLAYER_ID, CHASSIS, MODEL), we ignore the values.
         int entityId = Integer.parseInt(parts[UnitActionField.ENTITY_ID.ordinal()]) + idOffset;
         int playerId = Integer.parseInt(parts[UnitActionField.PLAYER_ID.ordinal()]);
         int teamId = Integer.parseInt(parts[UnitActionField.TEAM_ID.ordinal()]);
@@ -96,7 +95,7 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         List<MovePath.MoveStepType> steps = Arrays.stream(
                 parts[UnitActionField.STEPS.ordinal()].split(" "))
             .filter(s -> !s.isEmpty())
-            .map(MovePath.MoveStepType::valueOf)
+            .map(MovePath.MoveStepType::fromLabel)
             .collect(Collectors.toList());
 
         return new UnitAction(

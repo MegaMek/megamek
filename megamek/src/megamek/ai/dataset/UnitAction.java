@@ -43,7 +43,7 @@ import java.util.List;
  * @param legal is move legal
  * @author Luana Coppio
  */
-public record UnitAction(int id, int teamId, int playerId, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
+public record UnitAction(int id, int teamId, int playerId, String chassis, String model, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
                          int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
                          boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps) {
 
@@ -55,6 +55,8 @@ public record UnitAction(int id, int teamId, int playerId, int facing, int fromX
             entity.getId(),
             entity.getOwner() != null ? entity.getOwner().getTeam() : -1,
             entity.getOwner() != null ? entity.getOwner().getId() : -1,
+            entity.getChassis(),
+            entity.getModel(),
             movePath.getFinalFacing(),
             movePath.getStartCoords() != null ? movePath.getStartCoords().getX() : -1,
             movePath.getStartCoords() != null ? movePath.getStartCoords().getY() : -1,

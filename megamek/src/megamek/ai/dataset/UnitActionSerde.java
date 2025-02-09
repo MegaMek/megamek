@@ -34,12 +34,12 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
 
     @Override
     public String toTsv(UnitAction obj) {
-        // Create an array with one slot per column defined in the enum.
         String[] row = new String[UnitActionField.values().length];
-
         row[UnitActionField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
         row[UnitActionField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
         row[UnitActionField.TEAM_ID.ordinal()] = String.valueOf(obj.teamId());
+        row[UnitActionField.CHASSIS.ordinal()] = obj.chassis();
+        row[UnitActionField.MODEL.ordinal()] = obj.model();
         row[UnitActionField.FACING.ordinal()] = String.valueOf(obj.facing());
         row[UnitActionField.FROM_X.ordinal()] = String.valueOf(obj.fromX());
         row[UnitActionField.FROM_Y.ordinal()] = String.valueOf(obj.fromY());
@@ -56,23 +56,22 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         row[UnitActionField.JUMPING.ordinal()] = obj.jumping() ? "1" : "0";
         row[UnitActionField.PRONE.ordinal()] = obj.prone() ? "1" : "0";
         row[UnitActionField.LEGAL.ordinal()] = obj.legal() ? "1" : "0";
+        row[UnitActionField.CHANCE_OF_FAILURE.ordinal()] = LOG_DECIMAL.format(obj.chanceOfFailure());
 
         // For STEPS, join the list of MoveStepType values with a space.
         row[UnitActionField.STEPS.ordinal()] = obj.steps().stream()
             .map(Enum::name)
             .collect(Collectors.joining(" "));
 
-        row[UnitActionField.CHANCE_OF_FAILURE.ordinal()] =
-            LOG_DECIMAL.format(obj.chanceOfFailure());
-
         return String.join("\t", row);
     }
 
     public UnitAction fromTsv(String line, int idOffset) {
-        String[] parts = line.split("\t", -1); // include trailing empty strings
+        String[] parts = line.split("\t", -1);
         int entityId = Integer.parseInt(parts[UnitActionField.ENTITY_ID.ordinal()]) + idOffset;
         int playerId = Integer.parseInt(parts[UnitActionField.PLAYER_ID.ordinal()]);
-        int teamId = Integer.parseInt(parts[UnitActionField.TEAM_ID.ordinal()]);
+        String chassis = parts[UnitActionField.CHASSIS.ordinal()];
+        String model = parts[UnitActionField.MODEL.ordinal()];
         int facing = Integer.parseInt(parts[UnitActionField.FACING.ordinal()]);
         int fromX = Integer.parseInt(parts[UnitActionField.FROM_X.ordinal()]);
         int fromY = Integer.parseInt(parts[UnitActionField.FROM_Y.ordinal()]);
@@ -89,8 +88,12 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         boolean jumping = "1".equals(parts[UnitActionField.JUMPING.ordinal()]);
         boolean prone = "1".equals(parts[UnitActionField.PRONE.ordinal()]);
         boolean legal = "1".equals(parts[UnitActionField.LEGAL.ordinal()]);
-        double chanceOfFailure = Double.parseDouble(parts[UnitActionField.CHANCE_OF_FAILURE.ordinal()]);
-
+        int teamId = -1;
+        double chanceOfFailure = 0.0;
+        if (parts.length >= 23) {
+            teamId = Integer.parseInt(parts[UnitActionField.TEAM_ID.ordinal()]);
+            chanceOfFailure = Double.parseDouble(parts[UnitActionField.CHANCE_OF_FAILURE.ordinal()]);
+        }
         // Convert the steps field (a space-separated list) back to a List of MoveStepType.
         List<MovePath.MoveStepType> steps = Arrays.stream(
                 parts[UnitActionField.STEPS.ordinal()].split(" "))
@@ -102,6 +105,8 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
             entityId,
             teamId,
             playerId,
+            chassis,
+            model,
             facing,
             fromX,
             fromY,
@@ -126,48 +131,5 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
     @Override
     public String getHeaderLine() {
         return UnitActionField.getHeaderLine();
-    }
-
-    private enum UnitActionField {
-        ENTITY_ID("ENTITY_ID"),
-        TEAM_ID("TEAM_ID"),
-        PLAYER_ID("PLAYER_ID"),
-        FACING("FACING"),
-        FROM_X("FROM_X"),
-        FROM_Y("FROM_Y"),
-        TO_X("TO_X"),
-        TO_Y("TO_Y"),
-        HEXES_MOVED("HEXES_MOVED"),
-        DISTANCE("DISTANCE"),
-        MP_USED("MP_USED"),
-        MAX_MP("MAX_MP"),
-        MP_P("MP_P"),
-        HEAT_P("HEAT_P"),
-        ARMOR_P("ARMOR_P"),
-        INTERNAL_P("INTERNAL_P"),
-        JUMPING("JUMPING"),
-        PRONE("PRONE"),
-        LEGAL("LEGAL"),
-        STEPS("STEPS"),
-        CHANCE_OF_FAILURE("CHANCE_OF_FAILURE");
-
-        private final String headerName;
-
-        UnitActionField(String headerName) {
-            this.headerName = headerName;
-        }
-
-        public String getHeaderName() {
-            return headerName;
-        }
-
-        /**
-         * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
-         */
-        public static String getHeaderLine() {
-            return Arrays.stream(values())
-                .map(UnitActionField::getHeaderName)
-                .collect(Collectors.joining("\t"));
-        }
     }
 }

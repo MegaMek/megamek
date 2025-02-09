@@ -34,12 +34,14 @@ import java.util.Map;
 public class DatasetParser {
 
     private enum LineType {
-        MOVE_ACTION_HEADER("PLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tFACING\tFROM_X\tFROM_Y\tTO_X\tTO_Y\tHEXES_MOVED\tDISTANCE" +
+        MOVE_ACTION_HEADER_V1("PLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tFACING\tFROM_X\tFROM_Y\tTO_X\tTO_Y\tHEXES_MOVED\tDISTANCE" +
             "\tMP_USED\tMAX_MP\tMP_P\tHEAT_P\tARMOR_P\tINTERNAL_P\tJUMPING\tPRONE\tLEGAL\tSTEPS"),
-        STATE_HEADER("ROUND\tPHASE\tPLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tTYPE\tROLE\tX\tY\tFACING\tMP\tHEAT\tPRONE\tAIRBORNE" +
+        MOVE_ACTION_HEADER_V2(UnitActionField.getHeaderLine()),
+        STATE_HEADER_V1("ROUND\tPHASE\tPLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tTYPE\tROLE\tX\tY\tFACING\tMP\tHEAT\tPRONE\tAIRBORNE" +
             "\tOFF_BOARD\tCRIPPLED\tDESTROYED\tARMOR_P\tINTERNAL_P\tDONE"),
-        STATE_HEADER_TEAM("ROUND\tPHASE\tTEAM_ID\tPLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tTYPE\tROLE\tX\tY\tFACING\tMP\tHEAT\tPRONE" +
+        STATE_HEADER_V2("ROUND\tPHASE\tTEAM_ID\tPLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tTYPE\tROLE\tX\tY\tFACING\tMP\tHEAT\tPRONE" +
             "\tAIRBORNE\tOFF_BOARD\tCRIPPLED\tDESTROYED\tARMOR_P\tINTERNAL_P\tDONE"),
+        STATE_HEADER_V3(UnitStateField.getHeaderLine()),
         ATTACK_ACTION_HEADER("PLAYER_ID\tENTITY_ID\tCHASSIS\tMODEL\tFACING\tFROM_X\tFROM_Y\tTO_X\tTO_Y\tHEXES_MOVED\tDISTANCE" +
             "\tMP_USED\tMAX_MP\tMP_P\tHEAT_P\tARMOR_P\tINTERNAL_P\tJUMPING\tPRONE\tLEGAL\tSTEPS"),
         ROUND("ROUND"),
@@ -73,7 +75,7 @@ public class DatasetParser {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith(LineType.MOVE_ACTION_HEADER.getText())) {
+                if (line.startsWith(LineType.MOVE_ACTION_HEADER_V1.getText()) || line.startsWith(LineType.MOVE_ACTION_HEADER_V2.getText())) {
                     // Parse action line
                     String actionLine = reader.readLine();
                     if (actionLine == null) break;
@@ -81,7 +83,10 @@ public class DatasetParser {
 
                     // Parse state block
                     line = reader.readLine(); // State header
-                    if (line == null || !line.startsWith(LineType.STATE_HEADER.getText()) || !line.startsWith(LineType.STATE_HEADER_TEAM.getText())) {
+                    if (line == null) {
+                        throw new RuntimeException("Invalid line after action: " + actionLine);
+                    } else if (!line.startsWith(LineType.STATE_HEADER_V1.getText()) && !line.startsWith(LineType.STATE_HEADER_V2.getText())
+                        && !line.startsWith(LineType.STATE_HEADER_V3.getText())) {
                         throw new RuntimeException("Invalid state header after action: " + line);
                     }
 
@@ -108,8 +113,8 @@ public class DatasetParser {
                     // we are not currently parsing and using attack actions on the dataset right now.
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading file", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading file " + file.getName(), e);
         }
 
         idOffset = highestEntityId + 1;
@@ -147,7 +152,7 @@ public class DatasetParser {
                 highestEntityId = unitState.id();
             }
             return unitState;
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error parsing state line: " + stateLine, e);
         }
     }

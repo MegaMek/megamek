@@ -22,9 +22,7 @@ import megamek.common.enums.GamePhase;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * serializer and deserializer for game dataset UnitState
@@ -36,31 +34,31 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
 
     @Override
     public String toTsv(UnitState obj) {
-        String[] row = new String[UnitStateSerde.UnitStateField.values().length];
-        row[UnitStateSerde.UnitStateField.ROUND.ordinal()] = String.valueOf(obj.round());
-        row[UnitStateSerde.UnitStateField.PHASE.ordinal()] = obj.phase().name();
-        row[UnitStateSerde.UnitStateField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
-        row[UnitStateSerde.UnitStateField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
-        row[UnitStateSerde.UnitStateField.CHASSIS.ordinal()] = obj.chassis();
-        row[UnitStateSerde.UnitStateField.MODEL.ordinal()] = obj.chassis();
-        row[UnitStateSerde.UnitStateField.TYPE.ordinal()] = obj.type();
-        row[UnitStateSerde.UnitStateField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
-        row[UnitStateSerde.UnitStateField.X.ordinal()] = String.valueOf(obj.x());
-        row[UnitStateSerde.UnitStateField.Y.ordinal()] = String.valueOf(obj.y());
-        row[UnitStateSerde.UnitStateField.FACING.ordinal()] = String.valueOf(obj.facing());
-        row[UnitStateSerde.UnitStateField.MP.ordinal()] = LOG_DECIMAL.format(obj.mp());
-        row[UnitStateSerde.UnitStateField.HEAT.ordinal()] = LOG_DECIMAL.format(obj.heat());
-        row[UnitStateSerde.UnitStateField.PRONE.ordinal()] = obj.prone() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.AIRBORNE.ordinal()] = obj.airborne() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.OFF_BOARD.ordinal()] = obj.offBoard() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.CRIPPLED.ordinal()] = obj.crippled() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.DESTROYED.ordinal()] = obj.destroyed() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.ARMOR_P.ordinal()] = LOG_DECIMAL.format(obj.armorP());
-        row[UnitStateSerde.UnitStateField.INTERNAL_P.ordinal()] = LOG_DECIMAL.format(obj.internalP());
-        row[UnitStateSerde.UnitStateField.DONE.ordinal()] = obj.done() ? "1" : "0";
-        row[UnitStateSerde.UnitStateField.TEAM_ID.ordinal()] = String.valueOf(obj.teamId());
-        row[UnitStateSerde.UnitStateField.MAX_RANGE.ordinal()] = String.valueOf(obj.maxRange());
-        row[UnitStateSerde.UnitStateField.TOTAL_DAMAGE.ordinal()] = String.valueOf(obj.totalDamage());
+        String[] row = new String[UnitStateField.values().length];
+        row[UnitStateField.ROUND.ordinal()] = String.valueOf(obj.round());
+        row[UnitStateField.PHASE.ordinal()] = obj.phase().name();
+        row[UnitStateField.PLAYER_ID.ordinal()] = String.valueOf(obj.playerId());
+        row[UnitStateField.ENTITY_ID.ordinal()] = String.valueOf(obj.id());
+        row[UnitStateField.CHASSIS.ordinal()] = obj.chassis();
+        row[UnitStateField.MODEL.ordinal()] = obj.chassis();
+        row[UnitStateField.TYPE.ordinal()] = obj.type();
+        row[UnitStateField.ROLE.ordinal()] = obj.role() == null ? UnitRole.NONE.name() : obj.role().name();
+        row[UnitStateField.X.ordinal()] = String.valueOf(obj.x());
+        row[UnitStateField.Y.ordinal()] = String.valueOf(obj.y());
+        row[UnitStateField.FACING.ordinal()] = String.valueOf(obj.facing());
+        row[UnitStateField.MP.ordinal()] = LOG_DECIMAL.format(obj.mp());
+        row[UnitStateField.HEAT.ordinal()] = LOG_DECIMAL.format(obj.heat());
+        row[UnitStateField.PRONE.ordinal()] = obj.prone() ? "1" : "0";
+        row[UnitStateField.AIRBORNE.ordinal()] = obj.airborne() ? "1" : "0";
+        row[UnitStateField.OFF_BOARD.ordinal()] = obj.offBoard() ? "1" : "0";
+        row[UnitStateField.CRIPPLED.ordinal()] = obj.crippled() ? "1" : "0";
+        row[UnitStateField.DESTROYED.ordinal()] = obj.destroyed() ? "1" : "0";
+        row[UnitStateField.ARMOR_P.ordinal()] = LOG_DECIMAL.format(obj.armorP());
+        row[UnitStateField.INTERNAL_P.ordinal()] = LOG_DECIMAL.format(obj.internalP());
+        row[UnitStateField.DONE.ordinal()] = obj.done() ? "1" : "0";
+        row[UnitStateField.TEAM_ID.ordinal()] = String.valueOf(obj.teamId());
+        row[UnitStateField.MAX_RANGE.ordinal()] = String.valueOf(obj.maxRange());
+        row[UnitStateField.TOTAL_DAMAGE.ordinal()] = String.valueOf(obj.totalDamage());
 
         return String.join("\t", row);
     }
@@ -70,7 +68,6 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
 
         int id = Integer.parseInt(parts[UnitStateField.ENTITY_ID.ordinal()]) + idOffset;
         GamePhase phase = GamePhase.valueOf(parts[UnitStateField.PHASE.ordinal()]);
-        int teamId = Integer.parseInt(parts[UnitStateField.TEAM_ID.ordinal()]);
         int round = Integer.parseInt(parts[UnitStateField.ROUND.ordinal()]);
         int playerId = Integer.parseInt(parts[UnitStateField.PLAYER_ID.ordinal()]);
         String chassis = parts[UnitStateField.CHASSIS.ordinal()];
@@ -90,8 +87,14 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
         double armorP = Double.parseDouble(parts[UnitStateField.ARMOR_P.ordinal()]);
         double internalP = Double.parseDouble(parts[UnitStateField.INTERNAL_P.ordinal()]);
         boolean done = "1".equals(parts[UnitStateField.DONE.ordinal()]);
-        int maxRange = Integer.parseInt(parts[UnitStateField.MAX_RANGE.ordinal()]);
-        int totalDamage = Integer.parseInt(parts[UnitStateField.TOTAL_DAMAGE.ordinal()]);
+        int maxRange = 0;
+        int totalDamage = 0;
+        int teamId = -1;
+        if (parts.length == UnitStateField.values().length) {
+            maxRange = Integer.parseInt(parts[UnitStateField.MAX_RANGE.ordinal()]);
+            totalDamage = Integer.parseInt(parts[UnitStateField.TOTAL_DAMAGE.ordinal()]);
+            teamId = Integer.parseInt(parts[UnitStateField.TEAM_ID.ordinal()]);
+        }
 
         Entity entity = null;
 
@@ -141,51 +144,5 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
     @Override
     public String getHeaderLine() {
         return UnitStateField.getHeaderLine();
-    }
-
-    public enum UnitStateField {
-        ENTITY_ID("ENTITY_ID"),
-        PHASE("PHASE"),
-        TEAM_ID("TEAM_ID"),
-        ROUND("ROUND"),
-        PLAYER_ID("PLAYER_ID"),
-        CHASSIS("CHASSIS"),
-        MODEL("MODEL"),
-        TYPE("TYPE"),
-        ROLE("ROLE"),
-        X("X"),
-        Y("Y"),
-        FACING("FACING"),
-        MP("MP"),
-        HEAT("HEAT"),
-        PRONE("PRONE"),
-        AIRBORNE("AIRBORNE"),
-        OFF_BOARD("OFF_BOARD"),
-        CRIPPLED("CRIPPLED"),
-        DESTROYED("DESTROYED"),
-        ARMOR_P("ARMOR_P"),
-        INTERNAL_P("INTERNAL_P"),
-        DONE("DONE"),
-        MAX_RANGE("MAX_RANGE"),
-        TOTAL_DAMAGE("TOTAL_DAMAGE");
-
-        private final String headerName;
-
-        UnitStateField(String headerName) {
-            this.headerName = headerName;
-        }
-
-        public String getHeaderName() {
-            return headerName;
-        }
-
-        /**
-         * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
-         */
-        public static String getHeaderLine() {
-            return Arrays.stream(values())
-                .map(UnitStateField::getHeaderName)
-                .collect(Collectors.joining("\t"));
-        }
     }
 }

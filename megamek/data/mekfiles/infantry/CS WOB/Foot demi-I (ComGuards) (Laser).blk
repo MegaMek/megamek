@@ -1,0 +1,60 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-01-15
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot demi-I (ComGuards)
+</Name>
+
+<Model>
+(Laser)
+</Model>
+
+<mul id:>
+6998
+</mul id:>
+
+<year>
+2933
+</year>
+
+<originalBuildYear>
+2933
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare
+</source>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Laser Rifle
+</Primary>
+

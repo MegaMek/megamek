@@ -1,0 +1,58 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Artillery demi-I (ComGuards)
+</Name>
+
+<Model>
+(Motorized Sniper)
+</Model>
+
+<year>
+2933
+</year>
+
+<originalBuildYear>
+2933
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISSniper
+ISSniperAmmo
+</Field Guns Equipment>
+
+<notes>
+Squad/platoon size from TechManual. Armor kit from Tactical Operations. Intro date from official creation of ComStar Guards and Militia (ComGuards).
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+

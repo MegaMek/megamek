@@ -2847,6 +2847,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canUnjamRAC() {
         for (WeaponMounted mounted : getTotalWeaponList()) {
+
+            // Tanks can suffer a "weapon malfunction" critical. The weapon is marked
+            // as jammed but it should not be unjammed in the movement phase, it should
+            // be unjammed in the firing phase - that is, if this weapon is jammed from
+            // a weapon malfunction critical, we shouldn't unjam it using this method.
+            if (isVehicle() && this instanceof Tank tank) {
+                if (tank.getJammedWeapons().contains(mounted)) {
+                    continue;
+                }
+            }
+
             int ammotype = mounted.getType().getAmmoType();
             if ((ammotype == AmmoType.T_AC_ROTARY)
                     && mounted.isJammed() && !mounted.isDestroyed()) {

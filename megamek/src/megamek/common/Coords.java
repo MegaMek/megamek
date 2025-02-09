@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,8 +43,12 @@ public class Coords implements Serializable {
 
     private static final long serialVersionUID = -4451256806040563030L;
 
+    // region Constants
+    static final double EPSILON = 1e-7;
+    static final int MAX_ITERATIONS = 1000; // for median logic
     public static final double HEXSIDE = Math.PI / 3.0;
     public static final int[] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
+    // endregion Constants
 
     @XmlElement(name="x")
     private final int x;
@@ -66,7 +71,26 @@ public class Coords implements Serializable {
         this.y = other.y;
     }
 
-    public static Coords average(List<Coords> positions) {
+    public @Nullable Coords closestCoords(List<Coords> coords) {
+        if (coords.isEmpty()) {
+            return null;
+        }
+        Coords closest = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (Coords c : coords) {
+            int distance = distance(c);
+            if (distance < closestDistance) {
+                closest = c;
+                closestDistance = distance;
+            }
+        }
+        return closest;
+    }
+
+    public static @Nullable Coords average(List<Coords> positions) {
+        if (positions.isEmpty()) {
+            return null;
+        }
         int x = 0;
         int y = 0;
         for (Coords pos : positions) {
@@ -75,6 +99,74 @@ public class Coords implements Serializable {
         }
         return new Coords(x / positions.size(), y / positions.size());
     }
+
+
+    /**
+     * Returns the median of the given list of positions. The median is the point that minimizes the sum of the
+     * distances to all other points in the list. The algorithm is based on the Weiszfeld algorithm.
+     * @param positions list of positions
+     * @return the median of the given list of positions
+     */
+    public static @Nullable Coords median(List<Coords> positions) {
+        if (positions.isEmpty()) {
+            return null;
+        }
+
+        int n = positions.size();
+
+        if (n == 1) {
+            return positions.get(0);
+        }
+
+        double x0 = 0.0;
+        double y0 = 0.0;
+        for (Coords p : positions) {
+            x0 += p.x;
+            y0 += p.y;
+        }
+        x0 /= n;
+        y0 /= n;
+
+        double currentX = x0;
+        double currentY = y0;
+
+        for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
+            double numeratorX = 0.0;
+            double numeratorY = 0.0;
+            double denominator = 0.0;
+
+            for (Coords p : positions) {
+                double dx = p.x - currentX;
+                double dy = p.y - currentY;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 1e-15) {
+                    return p;
+                }
+
+                double w = 1.0 / dist;
+                numeratorX += p.x * w;
+                numeratorY += p.y * w;
+                denominator += w;
+            }
+
+            double newX = numeratorX / denominator;
+            double newY = numeratorY / denominator;
+
+            // Check for convergence
+            double shift = Math.sqrt((currentX - newX) * (currentX - newX)
+                + (currentY - newY) * (currentY - newY));
+            currentX = newX;
+            currentY = newY;
+
+            if (shift < EPSILON) {
+                break;
+            }
+        }
+
+        return new Coords((int) currentX, (int) currentY);
+    }
+
 
     /**
      * Returns the coordinate 1 unit in the specified direction dir.

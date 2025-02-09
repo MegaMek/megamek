@@ -68,6 +68,23 @@ class CoordsTest {
     }
 
     @Test
+    void testMedian() {
+        var c1 = new Coords(19, 9);
+        var c2 = new Coords(24, 9);
+        var c3 = new Coords(19, 12);
+        var c4 = new Coords(10, 10);
+        var c5 = new Coords(8, 10);
+        var teamBlue = List.of(c1, c2, c3, c4, c5);
+
+        var a1 = new Coords(12, 11);
+
+        var closestEnemy = a1.closestCoords(teamBlue);
+        var medianPosition = Coords.median(teamBlue);
+        assertEquals(c4, closestEnemy);
+        assertEquals(new Coords(18, 9), medianPosition);
+    }
+
+    @Test
     void testDistance() {
         assertEquals(new Coords(13, 6).distance(new Coords(15, 1)), 6);
         assertEquals(new Coords(12, 2).distance(new Coords(9, 2)), 3);

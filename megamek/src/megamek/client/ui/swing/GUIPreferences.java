@@ -21,7 +21,6 @@ import megamek.common.EntityMovementType;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -291,6 +290,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_SHOW_SENSOR_RANGE = "MinimapShowSensorRange";
     public static final String MINI_MAP_SHOW_FACING_ARROW = "MinimapShowFacingArrow";
     public static final String MINI_MAP_PAINT_BORDERS = "MinimapPaintBorders";
+    public static final String MINI_MAP_MOVE_PATH_PERSISTENCE = "MinimapMovePathPersistence";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -687,6 +687,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_SENSOR_RANGE, true);
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
+        store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
 
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
         store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);
@@ -3465,5 +3466,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPaintBorders(boolean state) {
         store.setValue(MINI_MAP_PAINT_BORDERS, state);
+    }
+
+    public int getMovePathPersistenceOnMiniMap() {
+        return getInt(MINI_MAP_MOVE_PATH_PERSISTENCE);
+    }
+
+    public void setMovePathPersistenceOnMiniMap(int rounds) {
+        store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
 }

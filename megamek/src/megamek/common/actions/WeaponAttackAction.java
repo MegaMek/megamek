@@ -5388,33 +5388,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             te = (Entity) target;
         }
 
-        // Homing warheads just need a flat 4 to seek out a successful TAG, but Princess
-        // needs help
-        // judging what a good homing target is.
+        // Homing warheads just need a flat 4 to seek out a successful TAG
         if (isHoming) {
             srt.setSpecialResolution(true);
             String msg = Messages.getString("WeaponAttackAction.HomingArty");
-            if (game.getPhase() != GamePhase.FIRING) {
-                // This check is for bot planning _only_; consider removing to bot hit calc code.
-                // Check if any spotters can help us out...
-                if (Compute.findTAGSpotter(game, ae, target, true) != null) {
-                    // Likelihood of hitting goes up as speed goes down...
-                    ToHitData thd = new ToHitData(4, msg);
-                    if (null != te) {
-                        thd.append(
-                            Compute.getTargetMovementModifier(
-                                te.getRunMP(),
-                                false,
-                                false,
-                                game));
-                    }
-                    return thd;
-                } else {
-                    return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
-                }
-            } else {
-                return new ToHitData(4, msg);
-            }
+            return new ToHitData(4, msg);
         }
 
         // Don't bother adding up modifiers if the target hex has been hit before

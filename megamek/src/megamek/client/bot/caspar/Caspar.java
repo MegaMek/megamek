@@ -54,6 +54,7 @@ public class Caspar extends Princess implements Agent<Entity, Entity, RankedPath
         return intelligence;
     }
 
+    @Override
     public TWWorld getWorld() {
         return world;
     }

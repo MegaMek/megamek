@@ -53,7 +53,6 @@ public class BasicPathRanker extends PathRanker {
     private final int UNIT_DESTRUCTION_FACTOR = 1000;
 
     protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
-    private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     protected final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
 
     private PathEnumerator pathEnumerator;
@@ -67,7 +66,7 @@ public class BasicPathRanker extends PathRanker {
     public BasicPathRanker(Princess owningPrincess) {
         super(owningPrincess);
         bestDamageByEnemies = new TreeMap<>();
-        logger.debug("Using %s behavior.", getOwner().getBehaviorSettings().getDescription());
+        logger.debug("Using {} behavior.", getOwner().getBehaviorSettings().getDescription());
     }
 
     FireControl getFireControl(Entity entity) {
@@ -108,7 +107,7 @@ public class BasicPathRanker extends PathRanker {
         Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
 
         if (enemyFacingSet == null) {
-            logger.warn("no facing set for %s", enemy.getDisplayName());
+            logger.warn("no facing set for {}", enemy.getDisplayName());
             return false;
         }
 
@@ -202,6 +201,7 @@ public class BasicPathRanker extends PathRanker {
         return super.getPSRList(path);
     }
 
+    @Override
     public double getMovePathSuccessProbability(MovePath movePath) {
         return super.getMovePathSuccessProbability(movePath);
     }

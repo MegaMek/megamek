@@ -349,11 +349,4 @@ class ArtilleryWeaponIndirectHomingHandlerTest {
             .collect(Collectors.joining(",\n"));
 
     }
-    @Test
-    void convertHomingShotToEntityTarget() {
-    }
-
-    @Test
-    void handleSpecialMiss() {
-    }
 }

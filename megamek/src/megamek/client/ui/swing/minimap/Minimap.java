@@ -52,6 +52,7 @@ import javax.swing.SwingUtilities;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.CloseClientListener;
 import megamek.client.IClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -76,6 +77,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
+import megamek.utilities.GifWriter;
 
 /**
  * Obviously, displays the map in scaled-down size.
@@ -146,7 +148,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final JDialog dialog;
     private Client client;
     private final IClientGUI clientGui;
-
+    private GifWriter gifWriter = null;
     private int margin = MARGIN;
     private int topMargin;
     private int leftMargin;
@@ -311,10 +313,23 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                     File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + e.getOldPhase() + ".png");
+                    if (gifWriter == null) {
+                        gifWriter = new GifWriter(game.getUUIDString());
+                    }
                     try {
-                        ImageIO.write(getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null), "png", imgFile);
+                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null);
+                        ImageIO.write(image, "png", imgFile);
+                        long frameDurationInMillis = e.getOldPhase().isFiring()? 400 : 200;
+                        gifWriter.appendFrame(image, frameDurationInMillis);
                     } catch (Exception ex) {
-                        logger.error(ex, "");
+                        logger.error(ex, "Error saving game summary image.");
+                    }
+                    if (e.getNewPhase().isVictory() && gifWriter != null) {
+                        try {
+                            gifWriter.close();
+                        } catch (Exception ex) {
+                            logger.error(ex, "Error closing gif writer.");
+                        }
                     }
                 }
                 refreshMap();
@@ -353,6 +368,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (bv != null) {
             bv.addBoardViewListener(boardViewListener);
         }
+        client.addCloseClientListener(() -> {
+            if (gifWriter != null) {
+                gifWriter.close();
+            }
+        });
         GUIP.addPreferenceChangeListener(this);
     }
 

@@ -15,6 +15,7 @@ package megamek.utilities;
 
 import com.squareup.gifencoder.GifEncoder;
 import com.squareup.gifencoder.ImageOptions;
+import megamek.logging.MMLogger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -36,20 +37,72 @@ import static megamek.common.Configuration.gameSummaryImagesMMDir;
  */
 public class GifWriter {
 
+    private static final MMLogger logger = MMLogger.create(GifWriter.class);
+
+    private final File folder;
+    private final File outputFile;
+    private int height = -1;
+    private int width = -1;
+    private GifEncoder encoder = null;
+    private boolean isEncoding = false;
     /**
      * Creates a gif from a series of images of a game summary.
      * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the /logs/gameSummary/minimap folder
      * @throws IOException if an I/O error occurs
      */
     public static void createGifFromGameSummary(String gameSummary) throws IOException {
-        new GifWriter().run(gameSummary);
+        new GifWriter(gameSummary).run();
     }
 
-    private GifWriter() {}
+    public GifWriter(String gameSummary) {
+        folder = new File(gameSummaryImagesMMDir(), gameSummary);
+        outputFile = new File(gameSummaryImagesMMDir(), gameSummary + ".gif");
+    }
 
-    private void run(String gameSummary) throws IOException {
-        File folder = new File(gameSummaryImagesMMDir(), gameSummary);
+    private OutputStream outputStream = null;
 
+    public void appendFrame(BufferedImage image, long duration) throws IOException {
+        if (outputStream == null) {
+            outputStream = new FileOutputStream(outputFile);
+        }
+        if (width == -1 || height == -1) {
+            width = image.getWidth();
+            height = image.getHeight();
+        } else if (width != image.getWidth() || height != image.getHeight()) {
+            throw new IllegalArgumentException("Image dimensions do not match previous images");
+        }
+        if (encoder == null) {
+            encoder = new GifEncoder(outputStream, width, height, 0);
+            isEncoding = true;
+        }
+        ImageOptions options = new ImageOptions();
+        options.setDelay(duration, TimeUnit.MILLISECONDS);
+        int[] rgbData;
+
+        rgbData = image.getRGB(0, 0, width, height, null, 0, width);
+        encoder.addImage(rgbData, width, options);
+    }
+
+    public void close() {
+        if (encoder != null && isEncoding) {
+            try {
+                encoder.finishEncoding();
+            } catch (IOException e) {
+                logger.error(e, "Error finishing encoding");
+            }
+            encoder = null;
+        }
+        if (outputStream != null) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                logger.error(e, "Error closing output stream");
+            }
+        }
+        outputStream = null;
+    }
+
+    private void run() throws IOException {
         List<File> files = new ArrayList<>(
             List.of(
                 Objects.requireNonNull(
@@ -70,8 +123,6 @@ public class GifWriter {
             splitO21 += Integer.parseInt(splitO2[2]);
             return Integer.compare(splitO11, splitO21);
         });
-
-        File outputFile = new File(gameSummaryImagesMMDir(), gameSummary + ".gif");
 
         // grab the output image type from the first image in the sequence
         BufferedImage firstImage = ImageIO.read(files.get(0));

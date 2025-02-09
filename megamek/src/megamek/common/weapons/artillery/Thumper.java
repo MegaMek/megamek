@@ -33,7 +33,6 @@ public class Thumper extends ArtilleryWeapon {
         addLookupName("CLThumper");
         addLookupName("CLThumperArtillery");
         addLookupName("Clan Thumper");
-        flags = flags.or(F_AERO_WEAPON);
         heat = 5;
         rackSize = 15;
         ammoType = AmmoType.T_THUMPER;

@@ -66,7 +66,7 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         return String.join("\t", row);
     }
 
-    public UnitAction fromTsv(String line, int idOffset) {
+    public UnitAction fromTsv(String line, int idOffset) throws NumberFormatException {
         String[] parts = line.split("\t", -1);
         int entityId = Integer.parseInt(parts[UnitActionField.ENTITY_ID.ordinal()]) + idOffset;
         int playerId = Integer.parseInt(parts[UnitActionField.PLAYER_ID.ordinal()]);

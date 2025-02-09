@@ -140,7 +140,7 @@ public class DatasetParser {
                 highestEntityId = unitAction.id();
             }
             return unitAction;
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error parsing action line: " + actionLine, e);
         }
     }

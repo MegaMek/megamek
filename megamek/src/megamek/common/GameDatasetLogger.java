@@ -216,7 +216,7 @@ public class GameDatasetLogger {
         if (attackAction == null) {
             return;
         }
-        String currentRound = game.getPhase().name();
+        String currentRound = game.getCurrentRound() + "";
         String entityId = "-1";
         String playerId = "-1";
         String type;

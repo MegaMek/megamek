@@ -63,7 +63,7 @@ public class UnitStateSerde extends TsvSerde<UnitState> {
         return String.join("\t", row);
     }
 
-    public UnitState fromTsv(String line, Map<Integer, Entity> entities, int idOffset) {
+    public UnitState fromTsv(String line, Map<Integer, Entity> entities, int idOffset) throws NumberFormatException {
         String[] parts = line.split("\t", -1);
 
         int id = Integer.parseInt(parts[UnitStateField.ENTITY_ID.ordinal()]) + idOffset;

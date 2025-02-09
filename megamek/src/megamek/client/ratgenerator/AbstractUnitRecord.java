@@ -52,7 +52,13 @@ public class AbstractUnitRecord {
      * @return The adjusted availability rating.
      */
     public int calcAvailability(AvailabilityRating avRating, int equipRating, int ratingLevels, int year) {
-        int retVal = avRating.adjustForRating(equipRating, ratingLevels);
+
+        int retVal;
+        if (!avRating.hasMultipleRatings()) {
+            retVal = avRating.adjustForRating(equipRating, ratingLevels);
+        } else {
+            retVal = avRating.getAvailability(equipRating);
+        }
 
         // Pre-production prototypes are heavily reduced
         if (year == introYear - 1) {

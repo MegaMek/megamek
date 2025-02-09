@@ -20,6 +20,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
@@ -1466,7 +1467,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Airborne units cannot tag and attack
         // http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
-        if (ae.isAirborne() && ae.usedTag()) {
+        // Rules seem to allow multiple TAG attempts but not TAG + any other attacks
+        if (ae.isAirborne() && !isTAG && ae.usedTag()) {
             return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
         }
 
@@ -5386,28 +5388,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             te = (Entity) target;
         }
 
-        // Homing warheads just need a flat 4 to seek out a successful TAG, but Princess
-        // needs help
-        // judging what a good homing target is.
+        // Homing warheads just need a flat 4 to seek out a successful TAG
         if (isHoming) {
             srt.setSpecialResolution(true);
             String msg = Messages.getString("WeaponAttackAction.HomingArty");
-            // Check if any spotters can help us out...
-            if (Compute.findTAGSpotter(game, ae, target, true) != null) {
-                // Likelihood of hitting goes up as speed goes down...
-                ToHitData thd = new ToHitData(4, msg);
-                if (null != te) {
-                    thd.append(
-                            Compute.getTargetMovementModifier(
-                                    te.getRunMP(),
-                                    false,
-                                    false,
-                                    game));
-                }
-                return thd;
-            } else {
-                return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
-            }
+            return new ToHitData(4, msg);
         }
 
         // Don't bother adding up modifiers if the target hex has been hit before

@@ -26,6 +26,7 @@ import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.HazardousLiquidPoolUtil;
@@ -386,21 +387,25 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
-    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
-        int facingDiff = getFacingDiff(movingUnit, game, path);
+    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path, @Nullable Coords closestPosition) {
+        // limit to the 5 closest enemies
+        int facingDiff = getFacingDiff(movingUnit, game, closestPosition, path);
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
         return facingMod;
     }
 
-    // todo account for damaged locations and face those away from enemy.
-    private int getFacingDiff(Entity movingUnit, Game game, final MovePath path) {
-        Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game, false);
-        Coords toFace = closest == null ? game.getBoard().getCenter() : closest.getPosition();
+    private int getFacingDiff(Entity movingUnit, Game game, @Nullable Coords closestPosition, final MovePath path) {
+        Coords toFace = closestPosition == null ? game.getBoard().getCenter() : closestPosition;
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
-
+        // -1 is bias towards facing left, 1 is bias towards facing right
+        int biasTowardsFacing = getBiasTowardsFacing(movingUnit);
+        desiredFacing -= biasTowardsFacing;
+        if (desiredFacing < 0) {
+            desiredFacing += 6;
+        }
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
@@ -413,6 +418,22 @@ public class BasicPathRanker extends PathRanker {
             facingDiff = 3;
         }
         return facingDiff;
+    }
+
+    private static int getBiasTowardsFacing(Entity movingUnit) {
+        int biasTowardsFacing = 0;
+        if (movingUnit.isMek()) {
+            // if we're a mek, we want to face the enemy towards the side that has more armor left
+            Mek mek = (Mek) movingUnit;
+            int leftArmor = mek.getArmor(Mek.LOC_LARM) + mek.getArmor(Mek.LOC_LLEG) + mek.getArmor(Mek.LOC_LT) + mek.getArmor(Mek.LOC_LLEG);
+            int rightArmor = mek.getArmor(Mek.LOC_RARM) + mek.getArmor(Mek.LOC_RLEG) + mek.getArmor(Mek.LOC_RT) + mek.getArmor(Mek.LOC_RLEG);
+            if (leftArmor > rightArmor) {
+                biasTowardsFacing = -1;
+            } else if (rightArmor > leftArmor) {
+                biasTowardsFacing = 1;
+            }
+        }
+        return biasTowardsFacing;
     }
 
     /**
@@ -604,15 +625,14 @@ public class BasicPathRanker extends PathRanker {
         scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
+        Coords medianEnemyPosition = getEnemiesMedianCoordinate(enemies, movingUnit);
+
+        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition);
         scores.put("facing", (double) movingUnit.getFacing());
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingMod", facingMod);
 
         var formula = new StringBuilder(256);
-        if (facingMod <= -10000) {
-            return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
-        }
         var crowdingToleranceFormula = new StringBuilder(64);
         double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, crowdingToleranceFormula);
         // If I need to flee the board, I want to get closer to my home edge.
@@ -672,7 +692,7 @@ public class BasicPathRanker extends PathRanker {
         formula.append(" - facingMod [")
             .append(LOG_DECIMAL.format(facingMod))
             .append(" = max(0, 50 * {")
-            .append(getFacingDiff(movingUnit, game, pathCopy))
+            .append(getFacingDiff(movingUnit, game, medianEnemyPosition, pathCopy))
             .append(" - 1})]");
 
         logger.trace("{}", formula);
@@ -681,6 +701,21 @@ public class BasicPathRanker extends PathRanker {
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         rankedPath.getScores().putAll(scores);
         return rankedPath;
+    }
+
+    private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
+        List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
+            boolean hasMoved1 = e1.isDone();
+            boolean hasMoved2 = e2.isDone();
+            double bonusDistance1 = hasMoved1 ? 0 : e1.getRunMP();
+            double bonusDistance2 = hasMoved2 ? 0 : e2.getRunMP();
+            double dist1 = e1.getPosition().distance(movingUnit.getPosition()) - bonusDistance1;
+            double dist2 = e2.getPosition().distance(movingUnit.getPosition()) - bonusDistance2;
+            return Double.compare(dist1, dist2);
+        }).limit(5).toList();
+
+        Coords medianPosition = Coords.median(closestEnemies.stream().map(Entity::getPosition).toList());
+        return medianPosition;
     }
 
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {

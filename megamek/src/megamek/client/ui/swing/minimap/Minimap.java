@@ -35,12 +35,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.JCheckBoxMenuItem;
@@ -240,14 +236,14 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      * game and boardview object will be used to display additional information.
      */
     public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, @Nullable File minimapTheme) {
-       return getMinimapImage(game, bv, zoom, null, minimapTheme);
+       return getMinimapImage(game, bv, zoom, null, minimapTheme, Collections.emptyList());
     }
 
     /**
      * Returns a minimap image of the given board at the given zoom index. The
      * game and boardview object will be used to display additional information.
      */
-    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme) {
+    public static BufferedImage getMinimapImage(Game game, BoardView bv, int zoom, IClientGUI clientGui, @Nullable File minimapTheme, List<Line> movePathLines) {
         try {
             // Send the fail image when the zoom index is wrong to make this noticeable
             if ((zoom < MIM_ZOOM) || (zoom > MAX_ZOOM)) {
@@ -255,6 +251,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
             Minimap tempMM = new Minimap(null, game, bv, clientGui, minimapTheme);
             tempMM.zoom = zoom;
+            tempMM.movePathLines.clear();
+            tempMM.movePathLines.addAll(movePathLines);
             tempMM.initializeMap();
             tempMM.drawMap(true);
             return ImageUtil.createAcceleratedImage(tempMM.mapImage);
@@ -317,7 +315,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         gifWriter = new GifWriter(game.getUUIDString());
                     }
                     try {
-                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null);
+
+                        BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null, movePathLines);
                         ImageIO.write(image, "png", imgFile);
                         long frameDurationInMillis = e.getOldPhase().isFiring()? 400 : 200;
                         gifWriter.appendFrame(image, frameDurationInMillis);
@@ -332,12 +331,28 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                         }
                     }
                 }
+                // We clear the move path lines locally, since the game does not currently hold this information until the end of the turn
+                if (e.getNewPhase().isDeployment() || e.getNewPhase().isLounge() || e.getNewPhase().isVictory()) {
+                    movePathLines.clear();
+                } else {
+                    movePathLines.removeIf(line -> (line.round() + GUIP.getMovePathPersistenceOnMiniMap()) <= game.getCurrentRound());
+                }
                 refreshMap();
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 refreshMap();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                // We store the move path lines locally because the game does not currently hold this information until the end of the turn
+                var movePath = e.getMovePath();
+                if (movePath != null && !movePath.isEmpty()) {
+                    addMovePath(new ArrayList<>(movePath), e.getOldEntity());
+                    refreshMap();
+                }
             }
 
             @Override
@@ -592,7 +607,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     drawMap();
                 } else {
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(16);
                     } catch (InterruptedException ie) {
                         // should never happen
                     }
@@ -603,6 +618,26 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         }
     };
+
+    private final List<Line> movePathLines = new Vector<>();
+    public record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
+    private final Color MOVE_PATH_COLOR = new Color(0, 0, 0, 128);
+
+    private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
+        // values equal or lower than 0 mean no persistence
+        if (GUIP.getMovePathPersistenceOnMiniMap() <= 0) {
+            return;
+        }
+        Coords previousCoords = entity.getPosition();
+        for (var unitLocation : unitLocations) {
+            var coords = unitLocation.getCoords();
+            movePathLines.add(new Line(previousCoords.getX(), previousCoords.getY(),
+                coords.getX(), coords.getY(),
+                MOVE_PATH_COLOR,
+                game.getCurrentRound()));
+            previousCoords = coords;
+        }
+    }
 
     /** Call this to schedule a minimap redraw. */
     public void refreshMap() {
@@ -690,6 +725,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             // In case the flag SHOW SYMBOLS is set, it will draw the units and other stuff
             if (symbolsDisplayMode == SHOW_SYMBOLS) {
                 if (null != game) {
+                    if (!movePathLines.isEmpty()) {
+                        paintMoveTracks(g);
+                    }
+
                     // draw declared fire
                     for (EntityAction action : game.getActionsVector()) {
                         if (action instanceof AttackAction) {
@@ -725,6 +764,19 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             drawButtons(g);
             repaint();
         }
+    }
+
+    private void paintMoveTracks(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+            0, new float[]{6}, 3);
+        g2d.setStroke(dashed);
+        Color previousColor = g.getColor();
+        for (Line line : movePathLines) {
+            paintMoveTrack(g2d, line);
+        }
+        g2d.dispose();
+        g.setColor(previousColor);
     }
 
     /** Indicates the deployment hexes. */
@@ -1011,6 +1063,15 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g.setColor(new Color(c / factor, c / factor, c, alpha)); // blue star
         }
         g.fillRect(baseX + dx, baseY + dy, 1, 1);
+    }
+
+    private void paintMoveTrack(Graphics2D g, Line line) {
+        int baseX1 = (line.x1 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+        int baseY1 = (((2 * line.y1) + 1 + (line.x1 % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        int baseX2 = (line.x2 * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin + HEX_SIDE[zoom];
+        int baseY2 = (((2 * line.y2) + 1 + (line.x2 % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
+        g.setColor(line.color);
+        g.drawLine(baseX1, baseY1, baseX2, baseY2);
     }
 
     /**

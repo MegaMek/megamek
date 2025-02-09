@@ -351,7 +351,7 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
-        bomb.shortName = "Arrow IV Homing (Air-Launch)";
+        bomb.shortName = "Arrow IV Homing Air";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_HOMING));
         bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_HOMING));
         bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_HOMING));
@@ -389,7 +389,7 @@ public class BombType extends AmmoType {
         BombType bomb = new BombType();
 
         bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
-        bomb.shortName = "Arrow IV (Air-Launched Version)";
+        bomb.shortName = "Arrow IV Air";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_ARROW));
         bomb.addLookupName("IS " + BombType.getBombInternalName(BombType.B_ARROW));
         bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_ARROW));

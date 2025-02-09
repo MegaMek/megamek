@@ -89,13 +89,20 @@ MEGAMEK VERSION HISTORY:
 + PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
 + PR #6474: makes Princess move way more than she otherwise would on no-contact
 + PR #6478: fix: a couple of signs in the wrong place on the scoring equation
-+ PR #6477: Fix 5590: princess firing on 13s due to intervening trees, etc
++ PR #6477, PR#6481: Fix 5590: princess firing on 13s due to intervening trees, etc
 + PR #6479: fix: removes an argument and early exit from hyperaggression
 + PR #6481: Fix 5590 part 2: stop Princess choosing zero damage attacks completely
 + PR #6488: Fix MML #1705 - update drone remote systems unit availability
 + PR #6487: Update MASH equipment to use size values
 + PR #6485: Fix: fixes html tags showing on tooltips
 + PR #6484: Fix: stop dropShadow from being calculated for force display tree
++ PR #6504: Feat/Mini-map move path
++ PR #6519: Fix MML#1487 - Unit selector redundant scrollpanes
++ PR #6522: Force generator update - individual equipment availability values
++ PR #6523: Feat: Use median of the 5 closest enemies for facing mod
++ PR #6526: Fix MML#1692 - Allow Arty correctly on DS/SC
++ Fix #6524: NullPointerException at beginning of firing phase (Unjam related)
++ Fix #5429, #6493: Fix various Arrow IV issues
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

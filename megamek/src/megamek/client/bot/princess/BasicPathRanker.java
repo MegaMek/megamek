@@ -63,7 +63,7 @@ public class BasicPathRanker extends PathRanker {
 
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
-    private final Map<Integer, Double> bestDamageByEnemies;
+    protected final Map<Integer, Double> bestDamageByEnemies;
 
     protected int blackIce = -1;
 
@@ -474,6 +474,14 @@ public class BasicPathRanker extends PathRanker {
         return 0.0;
     }
 
+
+    protected void checkBlackIce(Game game) {
+        blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+            && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
+            || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+    }
+
+
     /**
      * A path ranking
      */
@@ -483,10 +491,9 @@ public class BasicPathRanker extends PathRanker {
         Entity movingUnit = path.getEntity();
 
         if (blackIce == -1) {
-            blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-                    && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
-                    || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+            checkBlackIce(game);
         }
+
         Map<String, Double> scores = new HashMap<>();
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
@@ -512,8 +519,8 @@ public class BasicPathRanker extends PathRanker {
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
-        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean extremeRange = isExtremeRange(game);
+        boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
             if (enemy instanceof MekWarrior) {
@@ -523,7 +530,7 @@ public class BasicPathRanker extends PathRanker {
             // Skip units not actually on the board.
             if (enemy.isOffBoard() || (enemy.getPosition() == null)
                     || !game.getBoard().contains(enemy.getPosition())) {
-                continue;
+                 continue;
             }
 
             // Skip broken enemies
@@ -634,7 +641,7 @@ public class BasicPathRanker extends PathRanker {
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);
-        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, crowdingToleranceFormula);
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, maxRange, crowdingToleranceFormula);
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
         double offBoardMod = calculateOffBoardMod(pathCopy);
@@ -703,6 +710,14 @@ public class BasicPathRanker extends PathRanker {
         return rankedPath;
     }
 
+    protected boolean isLosRange(Game game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+    }
+
+    protected boolean isExtremeRange(Game game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+    }
+  
     private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
         List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
             boolean hasMoved1 = e1.isDone();
@@ -748,7 +763,7 @@ public class BasicPathRanker extends PathRanker {
         return 0.0;
     }
 
-    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, StringBuilder formula) {
+    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange, StringBuilder formula) {
         var self = movePath.getEntity();
         formula.append(" crowdingTolerance ");
         if (!(self instanceof Mek) && !(self instanceof Tank)) {
@@ -764,7 +779,7 @@ public class BasicPathRanker extends PathRanker {
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
         final double herdingDistance = Math.ceil(antiCrowding * 1.3);
-        final double closingDistance = Math.ceil(Math.max(3.0, self.getMaxWeaponRange() * 0.6));
+        final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities().stream()
             .filter(e -> e instanceof Mek || e instanceof Tank)
@@ -1022,32 +1037,13 @@ public class BasicPathRanker extends PathRanker {
         return hazardValue;
     }
 
-    private static final Set<Integer> HAZARDS = new HashSet<>(Arrays.asList(Terrains.FIRE,
-        Terrains.MAGMA,
-        Terrains.ICE,
-        Terrains.WATER,
-        Terrains.BUILDING,
-        Terrains.BRIDGE,
-        Terrains.BLACK_ICE,
-        Terrains.SNOW,
-        Terrains.SWAMP,
-        Terrains.MUD,
-        Terrains.TUNDRA,
-        Terrains.HAZARDOUS_LIQUID,
-        Terrains.ULTRA_SUBLEVEL));
-    private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
-    static {
-        HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
-        HAZARDS_WITH_BLACK_ICE.add(Terrains.PAVEMENT);
-    }
-
     private Set<Integer> getHazardTerrainIds(Hex hex) {
         var hazards = hex.getTerrainTypesSet();
         // Black Ice can appear if the conditions are favorable
         if (blackIce > 0) {
-            hazards.retainAll(HAZARDS_WITH_BLACK_ICE);
+            hazards.retainAll(Terrains.HAZARDS_WITH_BLACK_ICE);
         } else {
-            hazards.retainAll(HAZARDS);
+            hazards.retainAll(Terrains.HAZARDS);
         }
 
         return hazards;
@@ -1706,7 +1702,7 @@ public class BasicPathRanker extends PathRanker {
      * number.
      *
      */
-    protected class FiringPhysicalDamage {
+    public static class FiringPhysicalDamage {
         public double firingDamage;
         public double physicalDamage;
 

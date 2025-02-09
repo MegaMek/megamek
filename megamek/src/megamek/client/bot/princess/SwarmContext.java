@@ -204,7 +204,7 @@ public class SwarmContext {
                 var yMidPoint = (startY + endY) / 2;
                 for (var coords : new Coords(xMidPoint, yMidPoint).allAtDistanceOrLess(3)) {
                     var hex = board.getHex(coords);
-                    if (hex.isClearHex() && hasNoHazards(hex)) {
+                    if (hex == null || hex.isClearHex() && hasNoHazards(hex)) {
                         addStrategicGoal(coords);
                         break;
                     }
@@ -252,6 +252,14 @@ public class SwarmContext {
         List<Entity> members = new ArrayList<>();
         Coords centroid;
         int maxSize = 6;
+
+        public List<Entity> getMembers() {
+            return members;
+        }
+
+        public Coords getCentroid() {
+            return centroid;
+        }
 
         public void addMember(Entity unit) {
             if (members.size() >= maxSize) return;

@@ -700,4 +700,18 @@ public class Coords implements Serializable {
     public Coords add(Coords centroid) {
         return new Coords(x + centroid.x, y + centroid.y);
     }
+
+    public double magnitude() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public double cosineSimilarity(Coords other) {
+        double dot = getX() * other.getX() + getY() * other.getY();
+        double magA = magnitude();
+        double magB = other.magnitude();
+        if (magA == 0 || magB == 0) {
+            return 0;
+        }
+        return dot / (magA * magB);
+    }
 }

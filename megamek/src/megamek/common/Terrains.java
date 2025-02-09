@@ -14,9 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.*;
 
 import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
@@ -177,6 +175,16 @@ public class Terrains implements Serializable {
     public static final int SIZE = names.length;
 
     private static Hashtable<String, Integer> hash;
+
+    // Set of all hazardous terrain types
+    public static final Set<Integer> HAZARDS = Set.of(
+        Terrains.FIRE, Terrains.MAGMA, Terrains.ICE, Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW,
+        Terrains.SWAMP, Terrains.MUD, Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+
+    // Set of all hazardous terrain types + black ice
+    public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT, Terrains.FIRE, Terrains.MAGMA, Terrains.ICE,
+        Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW, Terrains.SWAMP, Terrains.MUD,
+        Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
 
     /**
      * Checks to see if the given terrain type can have exits.

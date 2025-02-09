@@ -55,7 +55,7 @@ public class TrainingDataset {
         for (int entityId : entityIds) {
             List<ActionAndState> actionsForEntity = actionAndStates.stream()
                 .filter(actionAndState -> actionAndState.unitAction().id() == entityId)
-                .filter(actionAndState -> actionAndState.boardUnitState().stream().anyMatch(u -> u.playerId() == 0 && u.id() == entityId))
+                .filter(actionAndState -> actionAndState.boardUnitState().stream().anyMatch(u -> u.id() == entityId))
                 .toList();
             if (actionsForEntity.size() < 2) {
                 continue;

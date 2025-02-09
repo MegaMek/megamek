@@ -61,6 +61,7 @@ public class ParameterOptimizer {
         momentum = builder.momentum;
         checkpoint = builder.checkpoint;
         numberOfParameters = builder.numberOfParameters;
+        velocity = Parameters.zeroes(numberOfParameters);
     }
 
     public static Builder newBuilder(ParameterOptimizer copy) {

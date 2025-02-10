@@ -18,6 +18,7 @@ package megamek.client.ui.swing.ai.editor;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.DefaultCurve;
 import megamek.client.bot.caspar.ai.utility.tw.considerations.TWConsideration;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.TWConsiderationClass;
 
 import javax.swing.*;
 import java.awt.*;

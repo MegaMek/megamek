@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
@@ -31,33 +30,24 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 /**
  * Are we facing the closest enemy?
  */
-@JsonTypeName("FacingTheEnemy")
-public class FacingTheEnemy extends TWConsideration {
+@JsonTypeName("ECMCoverage")
+public class ECMCoverage extends TWConsideration {
 
-    public FacingTheEnemy() {
+    public ECMCoverage() {
     }
 
     @Override
     public double score(DecisionContext<Entity, Entity> context) {
-        var firingUnit = context.getCurrentUnit();
-        var twDecisionContext = (TWDecisionContext) context;
-        var movePath = twDecisionContext.getMovePath();
-        var coordsToFace = new ArrayList<Coords>();
-        for (var enemy : twDecisionContext.getTargets()) {
-            var currentDistance = enemy.getPosition().distance(firingUnit.getPosition());
-            if (enemy.getMaxWeaponRange() >= currentDistance) {
-                coordsToFace.add(enemy.getPosition());
-            }
-        }
-        if (coordsToFace.isEmpty()) {
-            return 1d;
-        }
-        Coords toFace = Coords.median(coordsToFace);
-        // its never null, but the check is important, who knows what could happen?
-        int desiredFacing = toFace != null ? (toFace.direction(firingUnit.getPosition()) + 3) % 6 : 0;
-        int facingDiff = getFacingDiff(movePath, desiredFacing);
+//        TWDecisionContext twc = (TWDecisionContext) context;
+//        if (!twc.getCurrentUnit().hasECM()) return 0;
+//
+//        long overlappingECM = twc.getFriendlies().stream()
+//            .filter(f -> f.hasECM())
+//            .filter(f -> f.getPosition().distance(twc.getFinalPosition()) < 6)
+//            .count();
 
-        return clamp01((3 - facingDiff) / 3.0);
+//        return clamp01(1.0 - (overlappingECM * 0.2));
+        return 1;
     }
 
     private int getFacingDiff(MovePath movePath, int desiredFacing) {
@@ -79,8 +69,8 @@ public class FacingTheEnemy extends TWConsideration {
     }
 
     @Override
-    public FacingTheEnemy copy() {
-        var copy = new FacingTheEnemy();
+    public ECMCoverage copy() {
+        var copy = new ECMCoverage();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

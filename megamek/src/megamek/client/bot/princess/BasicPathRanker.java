@@ -547,7 +547,7 @@ public class BasicPathRanker extends PathRanker {
         double expectedDamageTaken = calculateMovePathPSRDamage(movingUnit, pathCopy);
         expectedDamageTaken += checkPathForHazards(pathCopy, movingUnit, game);
         expectedDamageTaken += MinefieldUtil.checkPathForMinefieldHazards(pathCopy);
-        scores.put("damageExpectedPath", (double) expectedDamageTaken);
+        scores.put("damageExpectedPath", expectedDamageTaken);
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
@@ -749,7 +749,7 @@ public class BasicPathRanker extends PathRanker {
     protected boolean isExtremeRange(Game game) {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
     }
-  
+
     private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
         List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
             boolean hasMoved1 = e1.isDone();
@@ -1728,20 +1728,5 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
-    }
-
-
-    /**
-     * Simple data structure that holds a separate firing and physical damage
-     * number.
-     *
-     */
-    public static class FiringPhysicalDamage {
-        public double firingDamage;
-        public double physicalDamage;
-
-        public double getMaximumDamageEstimate() {
-            return firingDamage + physicalDamage;
-        }
     }
 }

@@ -17,8 +17,7 @@ package megamek.client.bot.caspar.ai.utility.tw.decision;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.Consideration;
-import megamek.ai.utility.DecisionScoreEvaluator;
+import megamek.ai.utility.*;
 import megamek.common.Entity;
 
 import java.util.List;
@@ -27,21 +26,27 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Entity> {
 
+    private ScoreEvaluator<Entity, Entity> scoreEvaluator;
+
     public TWDecisionScoreEvaluator() {
     }
 
-    public TWDecisionScoreEvaluator(String name, String description, String notes) {
-        super(name, description, notes);
+    public TWDecisionScoreEvaluator(String name, String description, String notes, ScoreType scoreType) {
+        super(name, description, notes, scoreType);
     }
 
-    public TWDecisionScoreEvaluator(String name, String description, String notes, List<Consideration<Entity, Entity>> considerations) {
-        super(name, description, notes, considerations);
+    public TWDecisionScoreEvaluator(String name, String description, String notes, ScoreType scoreType, List<Consideration<Entity, Entity>> considerations) {
+        super(name, description, notes, scoreType, considerations);
+    }
+
+    @Override
+    public double score(DecisionContext<Entity, Entity> context, double bonus, IDebugReporter debugReport) {
+        return scoreEvaluator.score(context, bonus, debugReport);
     }
 
     @Override
     public DecisionScoreEvaluator<Entity, Entity> copy() {
-        return new TWDecisionScoreEvaluator(
-            getName(), getDescription(), getNotes(), getConsiderations().stream().map(Consideration::copy).toList());
+        return new TWDecisionScoreEvaluator(getName(), getDescription(), getNotes(), getScoreType(), getConsiderations().stream().map(Consideration::copy).toList());
     }
 
     @Override

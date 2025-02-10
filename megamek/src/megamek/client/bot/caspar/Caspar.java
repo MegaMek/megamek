@@ -16,6 +16,7 @@ package megamek.client.bot.caspar;
 
 import megamek.ai.utility.Agent;
 import megamek.ai.utility.Intelligence;
+import megamek.ai.utility.Memory;
 import megamek.client.bot.princess.PathRanker;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.RankedPath;
@@ -31,17 +32,27 @@ public class Caspar extends Princess implements Agent<Entity, Entity, RankedPath
 
     private final SimpleIntelligence intelligence;
     private final TWWorld world;
+    private final Memory memory;
 
     public Caspar(String name, String host, int port, TWProfile profile) {
+        this(name, host, port, profile, new Memory());
+    }
+
+    public Caspar(String name, String host, int port, TWProfile profile, Memory memory) {
         super(name, host, port);
         this.intelligence = new SimpleIntelligence(this, profile);
         this.world = new TWWorld(this.getGame(), this, new ClusteringService(15d, 6));
+        this.memory = memory;
     }
 
     @Override
     public void initializePathRankers() {
         super.initializePathRankers();
         pathRankers.put(PathRanker.PathRankerType.Basic, intelligence);
+    }
+
+    public Memory getMemory() {
+        return memory;
     }
 
     @Override

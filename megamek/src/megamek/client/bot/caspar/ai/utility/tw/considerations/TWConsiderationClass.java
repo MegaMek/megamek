@@ -13,17 +13,46 @@
  *
  */
 
-package megamek.client.ui.swing.ai.editor;
+package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import megamek.ai.utility.Consideration;
-import megamek.client.bot.caspar.ai.utility.tw.considerations.*;
 
 public enum TWConsiderationClass {
-
+    AttackTactics(AttackTactics.class),
+    CaptureEnemyMekWarrior(CaptureEnemyMekWarrior.class),
+    CoverFire(CoverFire.class),
+    Crowding(Crowding.class),
+    DamagedSide(DamagedSide.class),
+    DecoyValue(DecoyValue.class),
+    DefenseTactics(DefenseTactics.class),
+    ECMCoverage(ECMCoverage.class),
+    EnemyArtilleryFire(EnemyArtilleryFire.class),
+    EnemyPositioning(EnemyPositioning.class),
+    EnvironmentalCover(EnvironmentalCover.class),
+    EnvironmentalHazard(EnvironmentalHazard.class),
     DamageOutput(DamageOutput.class),
     FacingTheEnemy(FacingTheEnemy.class),
     FavoriteTargetInRange(FavoriteTargetInRange.class),
     IsVIPCloser(IsVIPCloser.class),
+    FireExposure(FireExposure.class),
+    FlankingPosition(FlankingPosition.class),
+    FormationCohesion(FormationCohesion.class),
+    FriendlyArtilleryFire(FriendlyArtilleryFire.class),
+    FriendsCoverFire(FriendsCoverFire.class),
+    HeatVulnerability(HeatVulnerability.class),
+    HullDown(HullDown.class),
+    KeepDistance(KeepDistance.class),
+    KillBox(KillBox.class),
+    PilotingCaution(PilotingCaution.class),
+    Retreat(Retreat.class),
+    Scouting(Scouting.class),
+    SensorCoverage(SensorCoverage.class),
+    StandStill(StandStill.class),
+    StickyMoveType(StickyMoveType.class),
+    StrategicGoal(StrategicGoal.class),
+    TimeToKill(TimeToKill.class),
+    TimeToDie(TimeToDie.class),
+    ZombieTactics(ZombieTactics.class),
     MyUnitBotSettings(MyUnitBotSettings.class),
     MyUnitHeatManagement(MyUnitHeatManagement.class),
     MyUnitIsMovingTowardsWaypoint(MyUnitIsMovingTowardsWaypoint.class),

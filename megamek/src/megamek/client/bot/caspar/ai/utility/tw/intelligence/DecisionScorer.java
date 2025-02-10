@@ -48,18 +48,22 @@ class DecisionScorer implements DecisionMaker<Entity, Entity, RankedPath> {
                 var debugReporter = initializeDebugReporterPreAllocated(decision);
                 var score = decisionScoreEvaluator.score(decisionContext, getBonusFactor(decision), debugReporter) * bonus;
                 var rankedPath = new RankedPath(score, decisionContext.getMovePath(), debugReporter.getReport(), decisionContext.getExpectedDamage());
-                logger.info(debugReporter.getReport());
+                if (debugReporter.enabled()) {
+                    logger.info(debugReporter.getReport());
+                }
                 returnPaths.add(rankedPath);
             }
         }
         return returnPaths;
     }
 
-    private DebugReporter initializeDebugReporterPreAllocated(Decision<Entity, Entity> decision) {
+    private IDebugReporter initializeDebugReporterPreAllocated(Decision<Entity, Entity> decision) {
+        if (!logger.isDebugEnabled()) {
+            return IDebugReporter.noOp;
+        }
         int projectedSizeForReport = 150 + 256 * decision.getDecisionScoreEvaluator().getConsiderations().size();
         var debugReporter = new DebugReporter(projectedSizeForReport);
-        return debugReporter.append(decision.getName()).append("::")
-            .append(decision.getDecisionScoreEvaluator().getName());
+        return debugReporter.append(decision.getName()).append("::").append(decision.getDecisionScoreEvaluator().getName());
     }
 
     @Override

@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MovePath;
@@ -31,10 +30,10 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 /**
  * Are we facing the closest enemy?
  */
-@JsonTypeName("FacingTheEnemy")
-public class FacingTheEnemy extends TWConsideration {
+@JsonTypeName("HullDown")
+public class HullDown extends TWConsideration {
 
-    public FacingTheEnemy() {
+    public HullDown() {
     }
 
     @Override
@@ -79,8 +78,8 @@ public class FacingTheEnemy extends TWConsideration {
     }
 
     @Override
-    public FacingTheEnemy copy() {
-        var copy = new FacingTheEnemy();
+    public HullDown copy() {
+        var copy = new HullDown();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

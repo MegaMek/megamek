@@ -15,103 +15,105 @@
 
 package megamek.ai.utility;
 
-import megamek.logging.MMLogger;
-import org.apache.logging.log4j.Level;
-
 import java.util.StringJoiner;
 
-public class DebugReporter {
-    private static final MMLogger logger = MMLogger.create(DebugReporter.class);
-    public static final String LINE_BREAK = "\n";
-
-    private StringBuilder stringBuilder;
-
-    public DebugReporter() {
-        if (logger.isLevelLessSpecificThan(Level.INFO)) {
-            stringBuilder = new StringBuilder();
-        }
-    }
+public class DebugReporter implements IDebugReporter {
+    private final StringBuilder stringBuilder;
+    private static final String LINE_BREAK = "\n";
+    private static final String TAB = "\t";
 
     public DebugReporter(int size) {
-        if (logger.isLevelLessSpecificThan(Level.INFO)) {
-            stringBuilder = new StringBuilder(size);
-        }
+        stringBuilder = new StringBuilder(size);
     }
 
-    public DebugReporter append(String s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter append(Consideration<?, ?> consideration) {
+        stringBuilder.append(consideration.getName());
         return this;
     }
 
-    public DebugReporter append(double s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter append(String s) {
+        stringBuilder.append(s);
         return this;
     }
 
-    public DebugReporter append(int s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter newLine(int i) {
+        stringBuilder.append(LINE_BREAK.repeat(Math.max(0, i)));
         return this;
     }
 
-    public DebugReporter append(float s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter indent(int i) {
+        stringBuilder.append(TAB.repeat(Math.max(0, i)));
         return this;
     }
 
-    public DebugReporter append(boolean s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter newLine() {
+        return newLine(1);
+    }
+
+    @Override
+    public IDebugReporter indent() {
+        return indent(1);
+    }
+
+    @Override
+    public IDebugReporter newLineIndent(int indent) {
+        return newLine().indent(indent);
+    }
+
+    @Override
+    public IDebugReporter newLineIndent() {
+        return newLine().indent();
+    }
+
+    @Override
+    public IDebugReporter append(double s) {
+        stringBuilder.append(s);
         return this;
     }
 
-    public DebugReporter append(Object s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter append(int s) {
+        stringBuilder.append(s);
         return this;
     }
 
-    public DebugReporter append(long s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s);
-        }
+    @Override
+    public IDebugReporter append(float s) {
+        stringBuilder.append(s);
         return this;
     }
 
-    public DebugReporter appendLine(String s) {
-        if (stringBuilder != null) {
-            stringBuilder.append(s).append(LINE_BREAK);
-        }
+    @Override
+    public IDebugReporter append(boolean s) {
+        stringBuilder.append(s);
         return this;
     }
 
-    public DebugReporter appendLine() {
-        if (stringBuilder != null) {
-            stringBuilder.append(LINE_BREAK);
-        }
+    @Override
+    public IDebugReporter append(Object s) {
+        stringBuilder.append(s);
         return this;
     }
 
+    @Override
+    public IDebugReporter append(long s) {
+        stringBuilder.append(s);
+        return this;
+    }
+
+    @Override
     public String getReport() {
-        if (stringBuilder != null) {
-            return stringBuilder.toString();
-        }
-        return "";
+        return stringBuilder.toString();
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", DebugReporter.class.getSimpleName() + "[", "]")
-            .add("stringBuilder=").add((stringBuilder != null) ? stringBuilder : "DEBUG REPORTING DISABLED")
-            .toString();
+            .add("stringBuilder=").add(stringBuilder).toString();
     }
 }

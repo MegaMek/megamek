@@ -423,7 +423,7 @@ public class MoveStep implements Serializable {
     }
 
     public Integer getAdditionalData(int key) {
-        return additionalData.containsKey(key) ? additionalData.get(key) : null;
+        return additionalData.get(key);
     }
 
     public TreeMap<Integer, Vector<Integer>> getLaunched() {

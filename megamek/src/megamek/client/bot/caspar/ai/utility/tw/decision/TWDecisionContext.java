@@ -16,6 +16,7 @@ package megamek.client.bot.caspar.ai.utility.tw.decision;
 
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.Intelligence;
+import megamek.ai.utility.Memory;
 import megamek.client.bot.princess.*;
 import megamek.client.bot.caspar.ai.utility.tw.context.StructOfArraysEntity;
 import megamek.client.bot.caspar.ai.utility.tw.context.TWWorld;
@@ -33,7 +34,7 @@ import static megamek.client.bot.princess.FireControl.getMaxDamageAtRange;
 
 
 public class TWDecisionContext extends DecisionContext<Entity, Entity> {
-
+    private final Memory memory;
     private final MovePath movePath;
     private final PathRankerUtilCalculator pathRankerUtilCalculator;
     private final Intelligence<Entity, Entity, RankedPath> intelligence;
@@ -46,6 +47,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
     public TWDecisionContext(
         Intelligence<Entity, Entity, RankedPath> intelligence,
         TWWorld world,
+        Memory memory,
         Entity currentUnit,
         List<Entity> targetUnits,
         MovePath movePath,
@@ -65,10 +67,15 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
         this.behaviorSettings = behaviorSettings;
         this.waypoint = waypoint;
         this.fireControlState = fireControlState;
+        this.memory = memory;
     }
 
     public UnitBehavior.BehaviorType getUnitBehavior() {
         return unitBehavior;
+    }
+
+    public Memory getMemory() {
+        return memory;
     }
 
     public BehaviorSettings getBehaviorSettings() {
@@ -406,6 +413,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
         private MovePath movePath;
         private PathRankerUtilCalculator pathRankerUtilCalculator;
         private Intelligence<Entity, Entity, RankedPath> intelligence;
+        private Memory memory;
         private BehaviorSettings behaviorSettings;
         private UnitBehavior.BehaviorType unitBehavior;
         private Coords waypoint;
@@ -420,6 +428,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
         public TWDecisionContextBuilder(TWDecisionContext other) {
             this.movePath = other.movePath;
+            this.memory = other.memory;
             this.pathRankerUtilCalculator = other.pathRankerUtilCalculator;
             this.intelligence = other.intelligence;
             this.behaviorSettings = other.behaviorSettings;
@@ -448,6 +457,11 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
         public TWDecisionContextBuilder withIntelligence(Intelligence<Entity, Entity, RankedPath> intelligence) {
             this.intelligence = intelligence;
+            return this;
+        }
+
+        public TWDecisionContextBuilder withMemories(Memory memory) {
+            this.memory = memory;
             return this;
         }
 
@@ -518,7 +532,7 @@ public class TWDecisionContext extends DecisionContext<Entity, Entity> {
 
         public TWDecisionContext build() {
             return
-                new TWDecisionContext(intelligence, world, currentUnit, targetUnits, movePath, pathRankerUtilCalculator, unitBehavior,
+                new TWDecisionContext(intelligence, world, memory, currentUnit, targetUnits, movePath, pathRankerUtilCalculator, unitBehavior,
                     behaviorSettings, fireControlState, waypoint, damageCache);
         }
     }

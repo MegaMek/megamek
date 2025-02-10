@@ -15,10 +15,7 @@
 
 package megamek.client.bot.caspar.ai.utility.tw.intelligence;
 
-import megamek.ai.utility.Decision;
-import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.DecisionMaker;
-import megamek.ai.utility.Intelligence;
+import megamek.ai.utility.*;
 import megamek.client.bot.caspar.Caspar;
 import megamek.client.bot.princess.BasicPathRanker;
 import megamek.client.bot.princess.RankedPath;
@@ -43,9 +40,11 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
     private final List<Decision<Entity, Entity>> decisions = new ArrayList<>();
     private final DecisionMaker<Entity, Entity, RankedPath> decisionMaker = new DecisionScorer();
     private final PathRankerUtilCalculator pathRankerUtilCalculator;
+    private final Memory memory;
 
     public SimpleIntelligence(Caspar caspar, TWProfile profile) {
         super(caspar);
+        this.memory = caspar.getMemory();
         this.decisions.addAll(profile.getDecisions());
         pathRankerUtilCalculator = new SimplePathRankerUtilCalculator(caspar, caspar.getGame(), this);
     }
@@ -110,6 +109,7 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
             .withCurrentUnit(currentEntity)
             .withFireControlState(caspar.getFireControlState())
             .withIntelligence(this)
+            .withMemories(this.memory)
             .withWorld(caspar.getWorld())
             .withTargetUnits(enemies)
             .withWaypoint(caspar.getUnitBehaviorTracker().getWaypointForEntity(currentEntity).orElse(null))

@@ -20,23 +20,6 @@
  */
 package megamek;
 
-import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-
-import javax.swing.*;
-
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
@@ -52,7 +35,24 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
+import megamek.utilities.PrincessFineTuning;
 import megamek.utilities.RATGeneratorEditor;
+
+import javax.swing.*;
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * This is the primary MegaMek class.
@@ -144,6 +144,10 @@ public class MegaMek {
         }
         if (parser.writeGif()) {
             startGifWriter(restArgs);
+            return;
+        }
+        if (parser.aiFineTuning()) {
+            startPrincessFineTuning(restArgs);
             return;
         }
         if (parser.ratGenEditor()) {
@@ -357,9 +361,13 @@ public class MegaMek {
     private static void startGifWriter(String... args) {
         try {
             GifWriter.createGifFromGameSummary(args[0]);
-        } catch (Exception e) {
-            logger.error(e, "Error creating gif");
+        } catch (IOException e) {
+            logger.error(e, "Error creating GIF");
         }
+    }
+
+    private static void startPrincessFineTuning(String... args) {
+        PrincessFineTuning.main(args);
     }
 
     /**

@@ -447,15 +447,14 @@ public class AreaEffectHelper {
             }
         }
 
-        // convention infantry take x2 damage from AE weapons
-        if (entity.isConventionalInfantry()) {
+        // Conventional infantry take x2 in the open and
+        // an additional x2 damage from AE weapons in general but
+        // this is handled in main damageEntity() function now.
+        if (entity.isConventionalInfantry() && isFuelAirBomb) {
+            // if it's fuel-air, we take more damage!
             hits *= 2;
-
-            // if it's fuel-air, we take even more damage!
-            if (isFuelAirBomb) {
-                hits *= 2;
-            }
         }
+
         boolean specialCaseFlechette = false;
 
         // Entity/ammo specific damage modifiers

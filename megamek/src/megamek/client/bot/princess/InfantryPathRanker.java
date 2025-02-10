@@ -18,16 +18,12 @@
 */
 package megamek.client.bot.princess;
 
-import java.util.List;
-
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.MekWarrior;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
+
+import java.util.List;
 
 public class InfantryPathRanker extends BasicPathRanker {
     private final static MMLogger logger = MMLogger.create(InfantryPathRanker.class);

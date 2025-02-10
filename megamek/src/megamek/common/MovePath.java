@@ -57,24 +57,123 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public enum MoveStepType {
-        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA,
-        FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC,
-        LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON,
-        CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
-        SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
-        RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE, CHAFF, PICKUP_CARGO, DROP_CARGO;
+        NONE(false, "???"),
+        FORWARDS(true, "F"),
+        BACKWARDS(true, "B"),
+        TURN_LEFT(false, "L"),
+        TURN_RIGHT(false, "R"),
+        GET_UP(false, "Up"),
+        GO_PRONE(false, "Prone"),
+        START_JUMP(false, "StrJump"),
+        CHARGE(false, "Ch"),
+        DFA(false, "DFA"),
+        FLEE(false, "Flee"),
+        LATERAL_LEFT(true, "ShL"),
+        LATERAL_RIGHT(true, "ShR"),
+        LATERAL_LEFT_BACKWARDS(true, "ShLB"),
+        LATERAL_RIGHT_BACKWARDS(true, "ShRB"),
+        UNJAM_RAC(false, "Unjam"),
+        LOAD(false, "Load"),
+        UNLOAD(false, "Unload"),
+        EJECT(false, "Eject"),
+        CLEAR_MINEFIELD(false, "ClearMinefield"),
+        UP(false, "U"),
+        DOWN(false, "D"),
+        SEARCHLIGHT(false, "SLight"),
+        LAY_MINE(false, "LayMine"),
+        HULL_DOWN(false, "HullDown"),
+        CLIMB_MODE_ON(false, "CM+"),
+        CLIMB_MODE_OFF(false, "CM-"),
+        SWIM(false, "Swim"),
+        DIG_IN(false, "DigIn"),
+        FORTIFY(false, "Fortify"),
+        SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
+        TAKEOFF(false, "Takeoff"),
+        VTAKEOFF(false, "Vertical Takeoff"),
+        LAND(false, "Landing"),
+        ACC(false, "Acc"),
+        DEC(false, "Dec"),
+        EVADE(false, "Evade"),
+        SHUTDOWN(false, "Shutdown"),
+        STARTUP(false, "Startup"),
+        SELF_DESTRUCT(false, "SelfDestruct"),
+        ACCN(false, "AccN"),
+        DECN(false, "DecN"),
+        ROLL(false, "Roll"),
+        OFF(false, "Fly Off"),
+        RETURN(false, "Fly Off (Return)"),
+        LAUNCH(false, "Launch"),
+        THRUST(false, "Thrust"),
+        YAW(false, "Yaw"),
+        CRASH(false, "Crash"),
+        RECOVER(false, "Recover"),
+        RAM(false, "Ram"),
+        HOVER(false, "Hover"),
+        MANEUVER(false, "Maneuver"),
+        LOOP(false, "Loop"),
+        CAREFUL_STAND(false, "Up"),  // note: same human-readable label as GET_UP!!!
+        JOIN(false, "Join"),
+        DROP(false, "Drop"),
+        VLAND(false, "Vertical Landing"),
+        MOUNT(false, "Mount"),
+        UNDOCK(false, "Undock"),
+        TAKE_COVER(false, "TakeCover"),
+        CONVERT_MODE(false, "ConvMode"),
+        BOOTLEGGER(false, "Bootlegger"),
+        TOW(false, "Tow"),
+        DISCONNECT(false, "Disconnect"),
+        BRACE(false, "Brace"),
+        CHAFF(false, "Chaff"),
+        PICKUP_CARGO(false, "Pickup Cargo"),
+        DROP_CARGO(false, "Drop Cargo");
+
+        private final boolean entersNewHex;
+        private final String humanReadableLabel;
+
+        // Constructor for the enum constants
+        MoveStepType(boolean entersNewHex, String humanReadableLabel) {
+            this.entersNewHex = entersNewHex;
+            this.humanReadableLabel = humanReadableLabel;
+        }
 
         /**
-         * Whether this move step type will result in the unit entering a new hex
+         * Returns whether this move step causes the unit to enter a new hex.
          */
         public boolean entersNewHex() {
-            return this == FORWARDS ||
-                    this == BACKWARDS ||
-                    this == LATERAL_LEFT ||
-                    this == LATERAL_RIGHT ||
-                    this == LATERAL_LEFT_BACKWARDS ||
-                    this == LATERAL_RIGHT_BACKWARDS;
+            return entersNewHex;
+        }
+
+        /**
+         * Returns the human‑readable label for this move step.
+         */
+        public String getHumanReadableLabel() {
+            return humanReadableLabel;
+        }
+
+        // Reverse lookup map from human-readable label to enum constant.
+        private static final Map<String, MoveStepType> LABEL_TO_ENUM = new HashMap<>();
+
+        static {
+            for (MoveStepType type : values()) {
+                // If duplicate labels exist (e.g. GET_UP and CAREFUL_STAND both return "Up"),
+                // only the first one encountered will be stored.
+                LABEL_TO_ENUM.putIfAbsent(type.getHumanReadableLabel(), type);
+            }
+        }
+
+        /**
+         * Returns the MoveStepType corresponding to the given human-readable label.
+         *
+         * @param label the label to look up (e.g., "F", "Up", "L", etc.)
+         * @return the corresponding MoveStepType
+         * @throws IllegalArgumentException if no matching type is found
+         */
+        public static MoveStepType fromLabel(String label) {
+            MoveStepType type = LABEL_TO_ENUM.get(label);
+            if (type == null) {
+                type = valueOf(label);
+            }
+            return type;
         }
     }
 

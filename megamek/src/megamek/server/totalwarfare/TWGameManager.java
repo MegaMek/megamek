@@ -2330,6 +2330,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
+        datasetLogger.append(newBoard, true);
     }
 
     /**
@@ -10817,6 +10818,12 @@ public class TWGameManager extends AbstractGameManager {
      * Resolve an Unjam Action object
      */
     private void resolveUnjam(Entity entity) {
+        // Entity will be null if it fled.
+        // If it fled, we don't care about unjamming RAC.
+        if (entity == null) {
+            return;
+        }
+
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {

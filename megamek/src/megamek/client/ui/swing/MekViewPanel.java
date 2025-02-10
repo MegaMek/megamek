@@ -62,15 +62,17 @@ public class MekViewPanel extends JPanel {
     public static final int DEFAULT_HEIGHT = 600;
 
     public MekViewPanel() {
-        this(DEFAULT_WIDTH, DEFAULT_HEIGHT, true);
+        this(-1, -1, true);
     }
 
     public MekViewPanel(int width, int height, boolean noBorder) {
         Report.setupStylesheet(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
-        txtMek.setMinimumSize(new Dimension(width, height));
-        txtMek.setPreferredSize(new Dimension(width, height));
+        if (width != -1) {
+            txtMek.setMinimumSize(new Dimension(width, height));
+            txtMek.setPreferredSize(new Dimension(width, height));
+        }
         txtMek.addHyperlinkListener(e -> {
             if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
                 UIUtil.browse(e.getURL().toString(), this);
@@ -85,13 +87,17 @@ public class MekViewPanel extends JPanel {
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         var textPanel = new JPanel(new GridLayout(1, 1));
-        textPanel.setMinimumSize(new Dimension(width, height));
-        textPanel.setPreferredSize(new Dimension(width, height));
+        if (width != -1) {
+            textPanel.setMinimumSize(new Dimension(width, height));
+            textPanel.setPreferredSize(new Dimension(width, height));
+        }
         textPanel.add(scrMek);
 
         var fluffPanel = new FixedXPanel();
-        fluffPanel.setMinimumSize(new Dimension(width, height));
-        fluffPanel.setPreferredSize(new Dimension(width, height));
+        if (width != -1) {
+            fluffPanel.setMinimumSize(new Dimension(width, height));
+            fluffPanel.setPreferredSize(new Dimension(width, height));
+        }
         fluffPanel.add(lblMek);
 
         JPanel p = new JPanel();
@@ -99,9 +105,8 @@ public class MekViewPanel extends JPanel {
         p.add(textPanel);
         p.add(fluffPanel);
         p.add(Box.createHorizontalGlue());
-        JScrollPane sp = new JScrollPane(p);
         setLayout(new BorderLayout());
-        add(sp);
+        add(p);
         addMouseWheelListener(wheelForwarder);
     }
 

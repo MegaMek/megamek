@@ -26,6 +26,7 @@ import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.util.HazardousLiquidPoolUtil;
@@ -59,7 +60,7 @@ public class BasicPathRanker extends PathRanker {
 
     // the best damage enemies could expect were I not here. Used to determine
     // whether they will target me.
-    private Map<Integer, Double> bestDamageByEnemies;
+    protected final Map<Integer, Double> bestDamageByEnemies;
 
     protected int blackIce = -1;
 
@@ -388,8 +389,9 @@ public class BasicPathRanker extends PathRanker {
         return herdingMod;
     }
 
-    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path) {
-        int facingDiff = getFacingDiff(movingUnit, game, path);
+    protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path, @Nullable Coords closestPosition) {
+        // limit to the 5 closest enemies
+        int facingDiff = getFacingDiff(movingUnit, game, closestPosition, path);
         double facingMod = Math.max(0.0, 50 * (facingDiff - 1));
         logger.trace("facing mod [-{} = max(0, 50 * ({}) - 1)]", facingMod, facingDiff);
         return facingMod;
@@ -425,14 +427,17 @@ public class BasicPathRanker extends PathRanker {
         return waypointMod;
     }
 
-    // todo account for damaged locations and face those away from enemy.
-    private int getFacingDiff(Entity movingUnit, Game game, final MovePath path) {
-        Targetable closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game, false);
-        Coords toFace = closest == null ? game.getBoard().getCenter() : closest.getPosition();
+    private int getFacingDiff(Entity movingUnit, Game game, @Nullable Coords closestPosition, final MovePath path) {
+        Coords toFace = closestPosition == null ? game.getBoard().getCenter() : closestPosition;
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
-
+        // -1 is bias towards facing left, 1 is bias towards facing right
+        int biasTowardsFacing = getBiasTowardsFacing(movingUnit);
+        desiredFacing -= biasTowardsFacing;
+        if (desiredFacing < 0) {
+            desiredFacing += 6;
+        }
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
@@ -445,6 +450,22 @@ public class BasicPathRanker extends PathRanker {
             facingDiff = 3;
         }
         return facingDiff;
+    }
+
+    private static int getBiasTowardsFacing(Entity movingUnit) {
+        int biasTowardsFacing = 0;
+        if (movingUnit.isMek()) {
+            // if we're a mek, we want to face the enemy towards the side that has more armor left
+            Mek mek = (Mek) movingUnit;
+            int leftArmor = mek.getArmor(Mek.LOC_LARM) + mek.getArmor(Mek.LOC_LLEG) + mek.getArmor(Mek.LOC_LT) + mek.getArmor(Mek.LOC_LLEG);
+            int rightArmor = mek.getArmor(Mek.LOC_RARM) + mek.getArmor(Mek.LOC_RLEG) + mek.getArmor(Mek.LOC_RT) + mek.getArmor(Mek.LOC_RLEG);
+            if (leftArmor > rightArmor) {
+                biasTowardsFacing = -1;
+            } else if (rightArmor > leftArmor) {
+                biasTowardsFacing = 1;
+            }
+        }
+        return biasTowardsFacing;
     }
 
     /**
@@ -485,6 +506,14 @@ public class BasicPathRanker extends PathRanker {
         return 0.0;
     }
 
+
+    protected void checkBlackIce(Game game) {
+        blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+            && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
+            || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+    }
+
+
     /**
      * A path ranking
      */
@@ -494,10 +523,9 @@ public class BasicPathRanker extends PathRanker {
         Entity movingUnit = path.getEntity();
 
         if (blackIce == -1) {
-            blackIce = ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-                    && game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP)
-                    || game.getPlanetaryConditions().getWeather().isIceStorm()) ? 1 : 0;
+            checkBlackIce(game);
         }
+
         Map<String, Double> scores = new HashMap<>();
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
@@ -523,8 +551,8 @@ public class BasicPathRanker extends PathRanker {
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
-        boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
-        boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+        boolean extremeRange = isExtremeRange(game);
+        boolean losRange = isLosRange(game);
         for (Entity enemy : enemies) {
             // Skip ejected pilots.
             if (enemy instanceof MekWarrior) {
@@ -534,7 +562,7 @@ public class BasicPathRanker extends PathRanker {
             // Skip units not actually on the board.
             if (enemy.isOffBoard() || (enemy.getPosition() == null)
                     || !game.getBoard().contains(enemy.getPosition())) {
-                continue;
+                 continue;
             }
 
             // Skip broken enemies
@@ -636,17 +664,16 @@ public class BasicPathRanker extends PathRanker {
         scores.put("herdingIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
         // Try to face the enemy.
-        double facingMod = calculateFacingMod(movingUnit, game, pathCopy);
+        Coords medianEnemyPosition = getEnemiesMedianCoordinate(enemies, movingUnit);
+
+        double facingMod = calculateFacingMod(movingUnit, game, pathCopy, medianEnemyPosition);
         scores.put("facing", (double) movingUnit.getFacing());
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingMod", facingMod);
 
         var formula = new StringBuilder(256);
-        if (facingMod <= -10000) {
-            return new RankedPath(facingMod, pathCopy, "Calculation {facing mod[<= -10000]}");
-        }
         var crowdingToleranceFormula = new StringBuilder(64);
-        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, crowdingToleranceFormula);
+        double crowdingTolerance = calculateCrowdingTolerance(pathCopy, enemies, maxRange, crowdingToleranceFormula);
         // If I need to flee the board, I want to get closer to my home edge.
         double selfPreservationMod= calculateSelfPreservationMod(movingUnit, pathCopy, game);
         double offBoardMod = calculateOffBoardMod(pathCopy);
@@ -704,7 +731,7 @@ public class BasicPathRanker extends PathRanker {
         formula.append(" - facingMod [")
             .append(LOG_DECIMAL.format(facingMod))
             .append(" = max(0, 50 * {")
-            .append(getFacingDiff(movingUnit, game, pathCopy))
+            .append(getFacingDiff(movingUnit, game, medianEnemyPosition, pathCopy))
             .append(" - 1})]");
 
         logger.trace("{}", formula);
@@ -713,6 +740,29 @@ public class BasicPathRanker extends PathRanker {
         rankedPath.setExpectedDamage(damageEstimate.getMaximumDamageEstimate());
         rankedPath.getScores().putAll(scores);
         return rankedPath;
+    }
+
+    protected boolean isLosRange(Game game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
+    }
+
+    protected boolean isExtremeRange(Game game) {
+        return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+    }
+  
+    private static Coords getEnemiesMedianCoordinate(List<Entity> enemies, Entity movingUnit) {
+        List<Entity> closestEnemies = enemies.stream().filter(e -> e.getPosition() != null).sorted((e1, e2) -> {
+            boolean hasMoved1 = e1.isDone();
+            boolean hasMoved2 = e2.isDone();
+            double bonusDistance1 = hasMoved1 ? 0 : e1.getRunMP();
+            double bonusDistance2 = hasMoved2 ? 0 : e2.getRunMP();
+            double dist1 = e1.getPosition().distance(movingUnit.getPosition()) - bonusDistance1;
+            double dist2 = e2.getPosition().distance(movingUnit.getPosition()) - bonusDistance2;
+            return Double.compare(dist1, dist2);
+        }).limit(5).toList();
+
+        Coords medianPosition = Coords.median(closestEnemies.stream().map(Entity::getPosition).toList());
+        return medianPosition;
     }
 
     protected double getBraveryMod(double successProbability, FiringPhysicalDamage damageEstimate, double expectedDamageTaken) {
@@ -745,7 +795,7 @@ public class BasicPathRanker extends PathRanker {
         return 0.0;
     }
 
-    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, StringBuilder formula) {
+    protected double calculateCrowdingTolerance(MovePath movePath, List<Entity> enemies, double maxRange, StringBuilder formula) {
         var self = movePath.getEntity();
         formula.append(" crowdingTolerance ");
         if (!(self instanceof Mek) && !(self instanceof Tank)) {
@@ -761,7 +811,7 @@ public class BasicPathRanker extends PathRanker {
 
         var antiCrowdingFactor = (10.0 / (11 - antiCrowding));
         final double herdingDistance = Math.ceil(antiCrowding * 1.3);
-        final double closingDistance = Math.ceil(Math.max(3.0, self.getMaxWeaponRange() * 0.6));
+        final double closingDistance = Math.ceil(Math.max(3.0, maxRange * 0.6));
 
         var crowdingFriends = getOwner().getFriendEntities().stream()
             .filter(e -> e instanceof Mek || e instanceof Tank)
@@ -1019,32 +1069,13 @@ public class BasicPathRanker extends PathRanker {
         return hazardValue;
     }
 
-    private static final Set<Integer> HAZARDS = new HashSet<>(Arrays.asList(Terrains.FIRE,
-        Terrains.MAGMA,
-        Terrains.ICE,
-        Terrains.WATER,
-        Terrains.BUILDING,
-        Terrains.BRIDGE,
-        Terrains.BLACK_ICE,
-        Terrains.SNOW,
-        Terrains.SWAMP,
-        Terrains.MUD,
-        Terrains.TUNDRA,
-        Terrains.HAZARDOUS_LIQUID,
-        Terrains.ULTRA_SUBLEVEL));
-    private static final Set<Integer> HAZARDS_WITH_BLACK_ICE = new HashSet<>();
-    static {
-        HAZARDS_WITH_BLACK_ICE.addAll(HAZARDS);
-        HAZARDS_WITH_BLACK_ICE.add(Terrains.PAVEMENT);
-    }
-
     private Set<Integer> getHazardTerrainIds(Hex hex) {
         var hazards = new HashSet<Integer>(hex.getTerrainTypesSet());
         // Black Ice can appear if the conditions are favorable
         if (blackIce > 0) {
-            hazards.retainAll(HAZARDS_WITH_BLACK_ICE);
+            hazards.retainAll(Terrains.HAZARDS_WITH_BLACK_ICE);
         } else {
-            hazards.retainAll(HAZARDS);
+            hazards.retainAll(Terrains.HAZARDS);
         }
 
         return hazards;
@@ -1697,5 +1728,20 @@ public class BasicPathRanker extends PathRanker {
         }
         logger.trace("Total Hazard = {}", hazard);
         return Math.round(hazard);
+    }
+
+
+    /**
+     * Simple data structure that holds a separate firing and physical damage
+     * number.
+     *
+     */
+    public static class FiringPhysicalDamage {
+        public double firingDamage;
+        public double physicalDamage;
+
+        public double getMaximumDamageEstimate() {
+            return firingDamage + physicalDamage;
+        }
     }
 }

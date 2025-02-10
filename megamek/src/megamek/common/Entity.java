@@ -2576,7 +2576,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
-        return isAero() && isAirborne() && getGame().getBoard().onGround();
+        return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
     }
 
     /**
@@ -2849,6 +2849,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canUnjamRAC() {
         for (WeaponMounted mounted : getTotalWeaponList()) {
+
+            // Tanks can suffer a "weapon malfunction" critical. The weapon is marked
+            // as jammed but it should not be unjammed in the movement phase, it should
+            // be unjammed in the firing phase - that is, if this weapon is jammed from
+            // a weapon malfunction critical, we shouldn't unjam it using this method.
+            if (isVehicle() && this instanceof Tank tank) {
+                if (tank.getJammedWeapons().contains(mounted)) {
+                    continue;
+                }
+            }
+
             int ammotype = mounted.getType().getAmmoType();
             if ((ammotype == AmmoType.T_AC_ROTARY)
                     && mounted.isJammed() && !mounted.isDestroyed()) {
@@ -14607,7 +14618,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
             } else {
-                range = (game.getOptions().booleanOption(
+                range = (game != null && game.getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                                 : type.getLongRange());
             }

@@ -20,6 +20,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6511: Prevent cast class exception when switching Princess's ammo.
 + PR #6502: Implement Ultra Sublevel as part of RFE 6303
 + PR #1720: Fix MML Poor Sealing Quirk for Support and Combat Vehicles
++ PR #6531: More ai tools 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

@@ -182,7 +182,7 @@ public class UtilityPathRanker extends BasicPathRanker {
         // on the subsequent turn.
         // Include in utility calculation:
         double strategicMod = calculateStrategicGoalMod(pathCopy);
-        double formationMod = calculateFormationModifier(path);
+        double formationMod = calculateFormationModifier(path, maxRange);
         double exposurePenalty = calculateExposurePenalty(movingUnit, pathCopy, enemies);
 
         double fallBack = shouldFallBack(pathCopy, movingUnit, enemies.get(0)) ? 0.5 : 1.0;
@@ -314,10 +314,10 @@ public class UtilityPathRanker extends BasicPathRanker {
         return clamp01(facingMod);
     }
 
-    private double calculateFormationModifier(MovePath path) {
+    private double calculateFormationModifier(MovePath path, int maxRange) {
         SwarmContext.SwarmCluster cluster = getOwner().getSwarmContext().getClusterFor(path.getEntity());
 
-        double lineMod = calculateLineFormationMod(path, cluster);
+        double lineMod = calculateLineFormationMod(path, maxRange, cluster);
         double coverageMod = calculateCoverageModifier(path);
         double spacingMod = calculateOptimalSpacingMod(path, cluster);
 
@@ -426,12 +426,11 @@ public class UtilityPathRanker extends BasicPathRanker {
         return Math.min(1.0, Math.max(0.0, value));
     }
 
-    private double calculateLineFormationMod(MovePath path, SwarmContext.SwarmCluster cluster) {
+    private double calculateLineFormationMod(MovePath path, int maxRange, SwarmContext.SwarmCluster cluster) {
         // 1. Get combat parameters
         Entity unit = path.getEntity();
         Coords currentPos = unit.getPosition();
         Coords newPos = path.getFinalCoords();
-        double maxRange = unit.getMaxWeaponRange();
         double optimalRange = maxRange * 0.6;
 
         // 2. Calculate threat parameters

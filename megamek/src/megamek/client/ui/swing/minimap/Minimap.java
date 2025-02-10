@@ -630,8 +630,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final Color MOVE_PATH_COLOR = new Color(0, 0, 0, 128);
 
     private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
-        // values equal or lower than 0 mean no persistence
-        if (GUIP.getMovePathPersistenceOnMiniMap() <= 0) {
+        if ((GUIP.getMovePathPersistenceOnMiniMap() <= 0) || !EntityVisibilityUtils.detectedOrHasVisual(getLocalPlayer(), game, entity)) {
             return;
         }
         Coords previousCoords = entity.getPosition();

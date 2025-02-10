@@ -155,6 +155,7 @@ public class MinimapUnitSymbols {
         STRAT_DESTROYED.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, 0);
         STRAT_DESTROYED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, 0);
 
+
         STRAT_VTOL = new Path2D.Double();
         STRAT_VTOL.append(STRAT_BASERECT, false);
         STRAT_VTOL.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 4, -STRAT_SYMBOLSIZE.getHeight() / 4);

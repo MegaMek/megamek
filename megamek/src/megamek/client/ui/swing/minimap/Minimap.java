@@ -1257,6 +1257,9 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.draw(STRAT_BASERECT);
             g2.fill(STRAT_BASERECT);
 
+            g.setColor(fontColor);
+
+
             // Set a thin brush for filled areas (leave a thick brush for line symbols
             if ((entity instanceof Mek) || (entity instanceof ProtoMek)
                     || (entity instanceof VTOL) || (entity.isAero())) {
@@ -1264,13 +1267,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             } else {
                 g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             }
-
             // Fill the form in player color / team color
             g.setColor(iconColor);
             g2.fill(form);
 
-            // Add the weight class or other lettering for certain units
-            g.setColor(fontColor);
+            g2.setColor(fontColor);
             if ((entity instanceof ProtoMek) || (entity instanceof Mek) || (entity instanceof Aero)) {
                 String s = "";
                 if (entity instanceof ProtoMek) {
@@ -1297,10 +1298,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 g2.setColor(fontColor);
                 g2.fillOval(-25, -25, 50, 50);
             }
-            if (entity.isDestroyed()) {
-                g2.draw(STRAT_DESTROYED);
-                g2.fill(STRAT_DESTROYED);
-            }
+
 
             // Draw the unit icon in black
             g2.draw(form);
@@ -1318,7 +1316,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.draw(form);
 
             // Fill the form in player color / team color
-            g.setColor(iconColor);
+            g2.setColor(iconColor);
             g2.fill(form);
 
             // Black border
@@ -1345,6 +1343,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(gv.getOutline((float) -STRAT_SYMBOLSIZE.getWidth() / 3f,
                 (float) -STRAT_SYMBOLSIZE.getHeight() / 5 * 4));
 
+        }
+        // If the unit is destroyed, it gets a strike on it.
+        if (entity.isDestroyed()) {
+            g2.setColor(fontColor);
+            g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            g2.draw(STRAT_DESTROYED);
         }
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));

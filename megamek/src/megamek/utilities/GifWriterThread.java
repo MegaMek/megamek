@@ -21,7 +21,7 @@ public class GifWriterThread extends Thread {
     public void addFrame(BufferedImage image, long durationMillis) {
         synchronized (this) {
             imageDeque.add(new Frame(image, durationMillis));
-            notify();
+            notifyAll();
         }
     }
 

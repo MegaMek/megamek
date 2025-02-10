@@ -56,6 +56,7 @@ public class MinimapUnitSymbols {
     public static final Path2D STD_VTOL;
     public static final Path2D STD_AERO;
     public static final Path2D STD_INFANTRY;
+    public static final Path2D STD_DESTROYED;
     public static final Path2D STD_MEKWARRIOR;
     public static final Path2D STD_NAVAL;
     public static final Path2D STD_SPHEROID;
@@ -127,6 +128,10 @@ public class MinimapUnitSymbols {
         STD_INFANTRY.curveTo(0, 20, 0, 20, 50, 0);
         STD_INFANTRY.curveTo(0, -20, 0, -20, -50, 0);
         STD_INFANTRY.closePath();
+
+        STD_DESTROYED = new Path2D.Double();
+        STD_DESTROYED.moveTo(-70, 0);
+        STD_DESTROYED.lineTo(70, 0);
 
         STD_MEKWARRIOR = new Path2D.Double();
         STD_MEKWARRIOR.moveTo(-30, 0);

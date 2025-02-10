@@ -1307,7 +1307,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             g2.draw(STRAT_BASERECT);
-
         } else {
             // Standard symbols
             // White border to set off the icon from the background
@@ -1331,12 +1330,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         if (GUIP.showUnitDisplayNamesOnMinimap()) {
             // write unit ID and name to the minimap:
+            g2.setColor(fontColor);
             int fontType = Font.BOLD;
             if (entity.isDestroyed()) {
                 fontType = Font.PLAIN;
             }
             g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-            String s = entity.getDisplayName();
+            String s = entity.getShortName();
             var fontContext = new FontRenderContext(null, true, true);
             var font = new Font(MMConstants.FONT_SANS_SERIF, fontType, 75);
             GlyphVector gv = font.createGlyphVector(fontContext, s);
@@ -1348,7 +1348,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (entity.isDestroyed()) {
             g2.setColor(fontColor);
             g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-            g2.draw(STRAT_DESTROYED);
+            if (stratOpsSymbols) {
+                g2.draw(STRAT_DESTROYED);
+            } else {
+                g2.draw(STD_DESTROYED);
+            }
         }
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));

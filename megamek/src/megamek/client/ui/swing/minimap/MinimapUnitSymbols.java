@@ -49,6 +49,7 @@ public class MinimapUnitSymbols {
     public static final Path2D STRAT_HOVER;
     public static final Path2D STRAT_WHEELED;
     public static final Path2D STRAT_NAVAL;
+    public static final Path2D STRAT_DESTROYED;
     public static final Path2D FACING_ARROW;
     public static final Path2D STD_MEK;
     public static final Path2D STD_TANK;
@@ -148,6 +149,11 @@ public class MinimapUnitSymbols {
         STRAT_INFANTRY.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
         STRAT_INFANTRY.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, STRAT_SYMBOLSIZE.getHeight() / 2);
         STRAT_INFANTRY.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, -STRAT_SYMBOLSIZE.getHeight() / 2);
+
+        STRAT_DESTROYED = new Path2D.Double();
+        STRAT_DESTROYED.append(STRAT_BASERECT, false);
+        STRAT_DESTROYED.moveTo(-STRAT_SYMBOLSIZE.getWidth() / 2, 0);
+        STRAT_DESTROYED.lineTo(STRAT_SYMBOLSIZE.getWidth() / 2, 0);
 
         STRAT_VTOL = new Path2D.Double();
         STRAT_VTOL.append(STRAT_BASERECT, false);
@@ -264,7 +270,6 @@ public class MinimapUnitSymbols {
     /** Returns the Path2D minimap symbol shape for the given entity. */
     public static Path2D getForm(Entity entity) {
         boolean stratOps = GUIP.getMmSymbol();
-
         if ((entity instanceof Mek) || (entity instanceof ProtoMek)) {
             return stratOps ? STRAT_MEK : STD_MEK;
         } else if (entity instanceof VTOL) {

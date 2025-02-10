@@ -45,6 +45,7 @@ public class GifWriter {
     private int width = -1;
     private GifEncoder encoder = null;
     private boolean isEncoding = false;
+    private boolean isLive = true;
     /**
      * Creates a gif from a series of images of a game summary.
      * @param gameSummary the game summary to create the gif from, its commonly a UUID inside the /logs/gameSummary/minimap folder
@@ -100,6 +101,7 @@ public class GifWriter {
             }
         }
         outputStream = null;
+        isLive = false;
     }
 
     private void run() throws IOException {
@@ -152,6 +154,10 @@ public class GifWriter {
 
         encoder.finishEncoding();
         outputStream.close();
+    }
+
+    public boolean isLive() {
+        return isLive;
     }
 
     public static void main(String[] args) throws Exception {

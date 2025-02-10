@@ -3403,7 +3403,7 @@
             </model>
         </chassis>
         <chassis name='Field Gun Level I (ComGuards)' unitType='Infantry'>
-            <availability>CS:7</availability>
+            <availability>CS:6</availability>
             <model name='(Tracked AC2)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
                 <availability>CS:5-</availability>

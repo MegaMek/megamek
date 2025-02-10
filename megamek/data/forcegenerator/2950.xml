@@ -2337,7 +2337,7 @@
 			</model>
 		</chassis>
 		<chassis name='Field Artillery' unitType='Infantry'>
-			<availability>HL:1,IS:3,Periphery:3</availability>
+			<availability>HL:1,IS:3,CS:2,Periphery:3</availability>
 			<model name='(Sniper)'>
 				<roles>artillery</roles>
 				<availability>General:6</availability>
@@ -2569,14 +2569,14 @@
 				<availability>IS:5-,CS:0,Periphery:7,TC:7-,HL:7-</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>IS:7,CS:4-,Periphery:7,TC:5,HL:7,Periphery.Deep:5</availability>
+				<availability>IS:7,CS:3-,Periphery:7,TC:5,HL:7,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft</roles>
 				<availability>IS:6,CS:6,Periphery:5+,TC:3+,HL:0,Periphery.Deep:0</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>IS:5,CS:0,Periphery:7-,TC:8,HL:8,Periphery.Deep:7</availability>
+				<availability>IS:5,CS:3-,Periphery:7-,TC:8,HL:8,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>
@@ -6009,10 +6009,10 @@
 			</model>
 		</chassis>
 		<chassis name='Space Marine' unitType='Infantry'>
-			<availability>CS:5</availability>
+			<availability>CS:2</availability>
 			<model name='Com Guards Warship Fleet Marine'>
 				<roles>marine</roles>
-				<availability>General:8</availability>
+				<availability>CS:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Spad' unitType='AeroSpaceFighter'>

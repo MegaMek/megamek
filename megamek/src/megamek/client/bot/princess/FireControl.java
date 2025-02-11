@@ -1123,11 +1123,11 @@ public class FireControl {
 
             // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
             if (firingAmmo.isGroundBomb()
-                    && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE)
-                )
-                && targetState.isAirborne() && target.getElevation() > 1
+                    && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
             ) {
-                return new ToHitData(TH_TOO_HIGH_FOR_AE);
+                if (Compute.allEnemiesAboveHeight(1, target, game.getEntitiesVector(target.getPosition()), shooter)) {
+                    return new ToHitData(TH_TOO_HIGH_FOR_AE);
+                }
             }
         }
 

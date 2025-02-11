@@ -7914,4 +7914,21 @@ public class Compute {
         // Anything not explicitly detected is not detected.
         return false;
     }
+
+    public static boolean allEnemiesAboveHeight(int height, Targetable target, List<Entity> entities, Entity attacker) {
+        return (
+            // Airborne ground targets can be bomb targets for e.g. laser-guided bombs
+            (target.getTargetType() == Targetable.TYPE_ENTITY
+                && target.isAirborne()
+                && target.getElevation() > height)
+                // Otherwise if all enemy targets in the hex are airborne above 1 elevation
+            || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB
+                && entities.stream().allMatch(
+                entity ->
+                    entity.isVisibleToEnemy() && entity.isEnemyOf(attacker) && entity.isAirborne()
+                        && entity.getElevation() > height
+                )
+            )
+        );
+    }
 } // End public class Compute

@@ -623,7 +623,14 @@ public class WeaponFireInfo {
                     return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
                 }
             }
-        }
+        } else if (weapon.isGroundBomb()
+                && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
+            ) {
+                // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
+                if (Compute.allEnemiesAboveHeight(1, target, game.getEntitiesVector(target.getPosition()), shooter)) {
+                    return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
+                }
+            }
 
         return realToHitData;
     }

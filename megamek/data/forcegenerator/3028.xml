@@ -177,9 +177,9 @@
 			<salvage pct='10'>CCC:2,CHH:1,CSR:3,CIH:8,CSV:3,CFM:2,CCO:1,CGS:1,CSA:2,CDS:1,CNC:5,CSJ:7,CJF:10,CGB:3,CB:2</salvage>
 		</faction>
 		<faction key='CS'>
-			<pctOmni>0,0</pctOmni>
-			<pctClan>0,0</pctClan>
-			<pctSL>50,75</pctSL>
+			<pctOmni>0,0,0,0,0</pctOmni>
+			<pctClan>0,0,0,0,0</pctClan>
+			<pctSL>0,20,40,50,75</pctSL>
 			<salvage pct='6'></salvage>
 		</faction>
 		<faction key='DC'>

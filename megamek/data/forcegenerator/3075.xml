@@ -200,9 +200,9 @@
 			<salvage pct='10'>CW:2,LA:5,CJF:10</salvage>
 		</faction>
 		<faction key='CS'>
-			<pctOmni>10,15</pctOmni>
-			<pctClan>10,18</pctClan>
-			<pctSL>70,90</pctSL>
+			<pctOmni>0,0,0,10,15</pctOmni>
+			<pctClan>0,0,0,10,18</pctClan>
+			<pctSL>0,20,40,70,80</pctSL>
 			<omniMargin>1</omniMargin>
 			<techMargin>1</techMargin>
 			<salvage pct='6'>CW:10,WOB:10,CGB:2</salvage>

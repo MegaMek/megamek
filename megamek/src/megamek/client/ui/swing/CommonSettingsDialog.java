@@ -348,7 +348,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
-
+    private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(
+            Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
     private JComboBox<UITheme> uiThemes;
 
@@ -1674,6 +1675,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
+        comps.add(checkboxEntry(showUnitDisplayNamesOnMinimap,
+            Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.tooltip")));
 
         SpinnerNumberModel movePathPersistenceModel = new SpinnerNumberModel(GUIP.getMovePathPersistenceOnMiniMap(), 0, 100, 1);
         movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
@@ -2082,6 +2085,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             drawFacingArrowsOnMiniMap.setSelected(GUIP.getDrawFacingArrowsOnMiniMap());
             drawSensorRangeOnMiniMap.setSelected(GUIP.getDrawSensorRangeOnMiniMap());
             paintBordersOnMiniMap.setSelected(GUIP.paintBorders());
+            showUnitDisplayNamesOnMinimap.setSelected(GUIP.showUnitDisplayNamesOnMinimap());
             levelhighlight.setSelected(GUIP.getLevelHighlight());
             shadowMap.setSelected(GUIP.getShadowMap());
             hexInclines.setSelected(GUIP.getHexInclines());
@@ -2473,6 +2477,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         GUIP.setDrawSensorRangeOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
         GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
+        GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
@@ -2576,7 +2581,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-
+        GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();
         if (!oldUITheme.equals(newUITheme.getClassName())) {
@@ -2961,6 +2966,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
         } else if (source.equals(movePathPersistenceOnMiniMap)) {
             GUIP.setMovePathPersistenceOnMiniMap((int) movePathPersistenceOnMiniMap.getValue());
+        } else if (source.equals(showUnitDisplayNamesOnMinimap)) {
+            GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         }
     }
 

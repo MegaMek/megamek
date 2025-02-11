@@ -255,7 +255,7 @@ public class GameDatasetLogger {
         if (target != null ) {
             targetId = target.getId() + "";
             targetType = target.getClass().getSimpleName();
-            targetCoords = target.getPosition() != null ? target.getPosition().toTSV() : "-1\t-1";
+            targetCoords = !(target instanceof INarcPod) && target.getPosition() != null ? target.getPosition().toTSV() : "-1\t-1";
             if (target instanceof Entity entity) {
                 targetPlayerId = entity.getOwner().getId() + "";
                 targetRole = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();

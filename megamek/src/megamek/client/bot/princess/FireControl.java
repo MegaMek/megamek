@@ -195,6 +195,7 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
     private static final TargetRollModifier TH_STABLE_WEAPON = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
+    static final TargetRollModifier TH_TOO_HIGH_FOR_AE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target flying too high!");
 
     /**
      * The possible fire control types.
@@ -1118,6 +1119,15 @@ public class FireControl {
             }
             if (0 == firingAmmo.getUsableShotsLeft()) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
+            }
+
+            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
+            if (firingAmmo.isGroundBomb()
+                    && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE)
+                )
+                && targetState.isAirborne() && target.getElevation() > 1
+            ) {
+                return new ToHitData(TH_TOO_HIGH_FOR_AE);
             }
         }
 

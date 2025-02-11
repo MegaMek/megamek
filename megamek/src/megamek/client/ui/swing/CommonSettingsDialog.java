@@ -236,6 +236,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Messages.getString("CommonSettingsDialog.useGPinUnitSelection"));
     private final JCheckBox generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames"));
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
+    private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString("CommonSettingsDialog.showAutoResolvePanel"));
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(
             Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
@@ -735,6 +736,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(showDamageLevel, null));
         comps.add(checkboxEntry(showDamageDecal, null));
         comps.add(checkboxEntry(showUnitId, null));
+        comps.add(checkboxEntry(showAutoResolvePanel, null));
         comps.add(checkboxEntry(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip")));
         comps.add(checkboxEntry(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip")));
         comps.add(checkboxEntry(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip")));
@@ -2065,6 +2067,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
+            showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
 
             int index = 0;
             if (CLIENT_PREFERENCES.getLocaleString().startsWith("de")) {
@@ -2563,12 +2566,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
+        CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
 
         CLIENT_PREFERENCES.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
-
         GUIP.setShowMapsheets(showMapsheets.isSelected());
         GUIP.setAOHexShadows(aOHexShadows.isSelected());
         GUIP.setFloatingIso(floatingIso.isSelected());

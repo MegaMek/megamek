@@ -7916,19 +7916,21 @@ public class Compute {
     }
 
     public static boolean allEnemiesAboveHeight(int height, Targetable target, List<Entity> entities, Entity attacker) {
-        return (
-            // Airborne ground targets can be bomb targets for e.g. laser-guided bombs
-            (target.getTargetType() == Targetable.TYPE_ENTITY
-                && target.isAirborne()
-                && target.getElevation() > height)
-                // Otherwise if all enemy targets in the hex are airborne above 1 elevation
-            || (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB
-                && entities.stream().allMatch(
-                entity ->
-                    entity.isVisibleToEnemy() && entity.isEnemyOf(attacker) && entity.isAirborne()
-                        && entity.getElevation() > height
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            return (
+                (target.isAirborneVTOLorWIGE() || target.isAirborne())
+                && target.getElevation() > height
+            );
+        } else if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+            return (
+                entities.stream().allMatch(
+                    entity ->
+                        entity.isVisibleToEnemy() && entity.isEnemyOf(attacker)
+                            && (entity.isAirborneVTOLorWIGE() || entity.isAirborne())
+                            && entity.getElevation() > height
                 )
-            )
-        );
+            );
+        }
+        return false;
     }
 } // End public class Compute

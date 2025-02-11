@@ -368,6 +368,15 @@ task gifWriter(type: JavaExec, dependsOn: jar) {
     group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.GifWriter'
+    args project.hasProperty('gifGameSummary') ? project.gifGameSummary.tokenize(' ') : []
+}
+
+task princessFineTuning(type: JavaExec, dependsOn: jar) {
+    description = 'Calculates the optimal Princess fine tuning for a unit'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.PrincessFineTuning'
+    args project.hasProperty('aiArgs') ? project.aiArgs.tokenize(' ') : []
 }
 
 task entityVerifier(type: JavaExec, dependsOn: jar) {

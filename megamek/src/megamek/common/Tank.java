@@ -2241,14 +2241,25 @@ public class Tank extends Entity {
         return (m_bTurretJammed || m_bDualTurretJammed) && getStunnedTurns() <= 0;
     }
 
+    /**
+     * Adds the provided weapon as a weapon that is jammed via the vehicle "weapon malfunction" critical hit
+     * @param weapon Weapon that suffered a "Weapon Malfunction" crit and should be jammed
+     */
     public void addJammedWeapon(Mounted<?> weapon) {
         jammedWeapons.add(weapon);
     }
 
+    /**
+     * All weapons that a vehicle could use "unjam weapon" for
+     * @return all weapons that are jammed via the vehicle "weapon malfunction" critical hit
+     */
     public ArrayList<Mounted<?>> getJammedWeapons() {
         return jammedWeapons;
     }
 
+    /**
+     * Resets the list of weapons a vehicle has jammed via "weapon malfunction" crits to empty
+     */
     public void resetJammedWeapons() {
         jammedWeapons = new ArrayList<>();
     }

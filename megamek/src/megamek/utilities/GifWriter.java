@@ -104,7 +104,7 @@ public class GifWriter {
     }
 
     public static void main(String[] args) throws Exception {
-        GifWriter.createGifFromGameSummary("2d27bf27-03d3-4fd4-b573-dc019d9204ca");
+        GifWriter.createGifFromGameSummary(args[0]);
     }
 
 }

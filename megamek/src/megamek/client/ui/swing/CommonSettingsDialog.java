@@ -312,6 +312,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbMapsheetColor;
     private JSpinner attackArrowTransparency;
     private JSpinner ecmTransparency;
+    private JSpinner movePathPersistenceOnMiniMap;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
 
@@ -525,6 +526,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
+    private int savedMovePathPersistenceOnMiniMap;
 
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
@@ -1674,6 +1676,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
+
+        SpinnerNumberModel movePathPersistenceModel = new SpinnerNumberModel(GUIP.getMovePathPersistenceOnMiniMap(), 0, 100, 1);
+        movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
+        movePathPersistenceOnMiniMap.setMaximumSize(new Dimension(150, 40));
+        movePathPersistenceOnMiniMap.setToolTipText(Messages.getString("CommonSettingsDialog.movePathPersistence.tooltip"));
+        JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString("CommonSettingsDialog.movePathPersistence"));
+        movePathPersistenceOnMiniMapLabel.setLabelFor(movePathPersistenceOnMiniMap);
+        row = new ArrayList<>();
+        row.add(movePathPersistenceOnMiniMapLabel);
+        row.add(movePathPersistenceOnMiniMap);
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -2177,6 +2191,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
             savedHighQualityGraphics = GUIP.getHighQualityGraphics();
+            savedMovePathPersistenceOnMiniMap = GUIP.getMovePathPersistenceOnMiniMap();
             savedAdvancedOpt.clear();
 
             advancedKeys.clearSelection();
@@ -2207,6 +2222,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setDrawSensorRangeOnMiniMap(savedDrawSensorRangeOnMiniMap);
         GUIP.setDrawFacingArrowsOnMiniMap(savedDrawFacingArrowsOnMiniMap);
         GUIP.setPaintBorders(savedPaintBorders);
+        GUIP.setMovePathPersistenceOnMiniMap(savedMovePathPersistenceOnMiniMap);
         GUIP.setTeamColoring(savedTeamColoring);
         GUIP.setDockOnLeft(savedDockOnLeft);
         GUIP.setDockMultipleOnYAxis(savedDockMultipleOnYAxis);
@@ -2946,6 +2962,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setDrawFacingArrowsOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
         } else if (source.equals(paintBordersOnMiniMap)) {
             GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
+        } else if (source.equals(movePathPersistenceOnMiniMap)) {
+            GUIP.setMovePathPersistenceOnMiniMap((int) movePathPersistenceOnMiniMap.getValue());
         }
     }
 

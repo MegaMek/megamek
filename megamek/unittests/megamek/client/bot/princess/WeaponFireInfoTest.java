@@ -18,7 +18,7 @@
  */
 package megamek.client.bot.princess;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -66,6 +66,9 @@ class WeaponFireInfoTest {
     private static EquipmentMode mockEquipmentMode;
     private static Princess mockPrincess;
     private static FireControl mockFireControl;
+
+    static AmmoType mockArrowIVAmmoType = (AmmoType) EquipmentType.get("ISArrowIV Ammo");
+    static AmmoType mockArrowIVHomingAmmoType = (AmmoType) EquipmentType.get("ISArrowIV Homing Ammo");
 
     @BeforeAll
     static void beforeAll() {
@@ -161,6 +164,15 @@ class WeaponFireInfoTest {
         when(mockWeaponType.getMediumRange()).thenReturn(15);
         when(mockWeaponType.getLongRange()).thenReturn(22);
         when(mockWeapon.getDesc()).thenReturn("Gauss Rifle (C)");
+    }
+
+    private void setupArrowIV() {
+        when(mockWeaponType.getHeat()).thenReturn(10);
+        when(mockWeaponType.getRackSize()).thenReturn(20);
+        when(mockWeaponType.getShortRange()).thenReturn(1);
+        when(mockWeaponType.getMediumRange()).thenReturn(2);
+        when(mockWeaponType.getLongRange()).thenReturn(8);
+        when(mockWeapon.getDesc()).thenReturn("IS Arrow IV Missile System");
     }
 
     private WeaponFireInfo setupWFI() {
@@ -277,5 +289,54 @@ class WeaponFireInfoTest {
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // todo build tests for AeroSpace attacks.
+    }
+
+    @Test
+    void testPostProcessingNoHomingNoTAGAround() {
+        // Should be no-op if conditions not met
+        WeaponFireInfo testWeaponFireInfo = setupWFI();
+        setupArrowIV();
+        setupMediumTarget();
+
+        // Configure ammo
+        AmmoMounted ammo = new AmmoMounted(mockShooter, mockArrowIVAmmoType);
+        testWeaponFireInfo.setAmmo(ammo);
+
+        // Set up THDs
+        ToHitData originalTHD = new ToHitData(4, "Gunnery SKill");
+        originalTHD.addModifier(1, "Walked");
+        originalTHD.addModifier(2, "Target Moved Some");
+        originalTHD.addModifier(1, "Intervening shrubbery");
+
+        // Expect to get the original THD back if no processing is needed
+        ToHitData processed = testWeaponFireInfo.postProcessToHit(originalTHD);
+        assertEquals(originalTHD.getValue(), processed.getValue());
+        assertEquals(originalTHD.getCumulativePlainDesc(), processed.getCumulativePlainDesc());
+        assertEquals(originalTHD, processed);
+    }
+
+    @Test
+    void testPostProcessingHomingNoTAGAround() {
+        // Should return impossible THD if Homing shot but no TAG friends are around
+        WeaponFireInfo testWeaponFireInfo = setupWFI();
+        setupArrowIV();
+        setupMediumTarget();
+
+        // Configure ammo
+        AmmoMounted ammo = new AmmoMounted(mockShooter, mockArrowIVAmmoType);
+        ammo.changeAmmoType(mockArrowIVHomingAmmoType);
+        ammo.setMode("Homing");
+        testWeaponFireInfo.setAmmo(ammo);
+
+        // Set up THDs
+        String msg = "Blah Blah need 4+ whatever";
+        ToHitData originalTHD = new ToHitData(4, msg);
+        ToHitData expectedTHD = new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
+
+        // Expect to get a new THD back if processing is needed
+        ToHitData processed = testWeaponFireInfo.postProcessToHit(originalTHD);
+        assertEquals(expectedTHD.getValue(), processed.getValue());
+        assertEquals(expectedTHD.getDesc(), processed.getDesc());
+        assertNotEquals(originalTHD, processed);
     }
 }

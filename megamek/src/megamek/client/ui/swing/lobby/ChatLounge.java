@@ -89,6 +89,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.List;
@@ -278,7 +279,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String CL_ACTIONCOMMAND_CAMO = "camo";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
+    private static final ClientPreferences CLIENT_PREFERENCES = PreferenceManager.getClientPreferences();
     private transient ClientGUI clientgui;
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
@@ -648,7 +649,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panAutoResolveInfo.add(row3);
         panAutoResolveInfo.add(row4);
         panAutoResolveInfo.add(row5);
-
+        panAutoResolveInfo.setVisible(CLIENT_PREFERENCES.getShowAutoResolvePanel());
         refreshPlayerTable();
     }
 
@@ -1284,6 +1285,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshTeams();
         refreshMapSettings();
         refreshDoneButton();
+    }
+
+    public void refreshAcar() {
+        panAutoResolveInfo.setVisible(CLIENT_PREFERENCES.getShowAutoResolvePanel());
     }
 
     /**
@@ -3139,6 +3144,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 mekModel.refreshCells();
                 refreshTree();
                 break;
+            case ClientPreferences.SHOW_AUTO_RESOLVE_PANEL:
+                refreshAcar();
             default:
                 break;
         }

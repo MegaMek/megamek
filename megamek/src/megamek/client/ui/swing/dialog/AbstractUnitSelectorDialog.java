@@ -674,11 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = textFilter.getText().toLowerCase();
+            String text = stripAccents(textFilter.getText().toLowerCase());
             String[] tokens = text.split(" ");
-            String searchText = unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase();
-            // search in both the actual name and a stripped version so "Götterdämmerung" can be found with both "gott" and "gött"
-            searchText = searchText + "###" + stripAccents(searchText);
+            String searchText = stripAccents(unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase());
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;

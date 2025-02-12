@@ -349,9 +349,9 @@
 			<salvage pct='5'>HL:10,CJF:3</salvage>
 		</faction>
 		<faction key='WOB'>
-			<pctOmni>0,3</pctOmni>
-			<pctClan>0,2</pctClan>
-			<pctSL>70,98</pctSL>
+			<pctOmni>0,0,0,0,3</pctOmni>
+			<pctClan>0,0,0,0,2</pctClan>
+			<pctSL>5,25,45,70,98</pctSL>
 			<salvage pct='5'>CS:10,CC:10,LA:4,CLAN:1,CM:6,MERC:10,DC:6</salvage>
 		</faction>
 		<faction key='FS.ACAD'>

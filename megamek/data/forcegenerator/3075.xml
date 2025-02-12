@@ -407,9 +407,9 @@
 			<salvage pct='5'>HL:10,CJF:3</salvage>
 		</faction>
 		<faction key='WOB'>
-			<pctOmni>0,30</pctOmni>
-			<pctClan>2,8</pctClan>
-			<pctSL>80,92</pctSL>
+			<pctOmni>0,0,0,0,30</pctOmni>
+			<pctClan>0,0,0,2,8</pctClan>
+			<pctSL>5,25,45,80,92</pctSL>
 			<omniMargin>1</omniMargin>
 			<techMargin>1</techMargin>
 			<salvage pct='5'>CC:4,CSR:1,LA:4,FS:10,MERC:1,DC:4,CGB:1</salvage>

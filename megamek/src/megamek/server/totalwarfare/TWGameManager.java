@@ -31403,10 +31403,10 @@ public class TWGameManager extends AbstractGameManager {
      *                       to roll
      */
     public Vector<Integer> artilleryDamageHex(Coords coords,
-            Coords attackSource, int damage, AmmoType ammo, int subjectId,
-            Entity killer, Entity exclude, boolean flak, int altitude,
-            Vector<Report> vPhaseReport, boolean asfFlak,
-            Vector<Integer> alreadyHit, boolean variableDamage) {
+          Coords attackSource, int damage, AmmoType ammo, int subjectId,
+          Entity killer, Entity exclude, boolean flak, int altitude,
+          Vector<Report> vPhaseReport, boolean asfFlak,
+          Vector<Integer> alreadyHit, boolean variableDamage) {
 
         Hex hex = game.getBoard().getHex(coords);
         if (hex == null) {
@@ -31575,6 +31575,19 @@ public class TWGameManager extends AbstractGameManager {
             Entity killer, int damage, int falloff, boolean flak, int altitude,
             Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
+
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = Compute.shapeBlast(ammo, centre, altitude, damage, game, true);
+
+        for (Map.Entry entry: blastShape.keySet()) {
+            Coords bCoords = (Coords) entry.getValue();
+            int bLevel = (int) entry.getKey();
+            alreadyHit = artilleryDamageHex(
+                bCoords, attackSource, blastShape.get(entry), ammo, subjectId, killer, null, flak,
+                bLevel, vPhaseReport, asfFlak, alreadyHit, false
+            );
+        }
+
+        /**
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             List<Coords> hexes = centre.allAtDistance(ring);
             for (Coords c : hexes) {
@@ -31584,6 +31597,7 @@ public class TWGameManager extends AbstractGameManager {
             }
             attackSource = centre; // all splash comes from ground zero
         }
+         */
 
         // Lets reports assess if anything was caught in area
         return alreadyHit;

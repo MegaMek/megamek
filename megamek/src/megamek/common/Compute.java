@@ -7933,4 +7933,39 @@ public class Compute {
         }
         return false;
     }
+
+    public static HashMap<Map.Entry<Integer, Coords>, Integer> shapeBlast(
+        AmmoType ammo, Coords center, int height, int baseDamage, Game game, boolean excludeCenter
+    ) {
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = new HashMap<>();
+
+        if (game == null) {
+            return blastShape;
+        }
+
+
+        if (!excludeCenter) {
+            blastShape.put(Map.entry(height, center), baseDamage);
+        }
+
+        // 1. Handle Artillery-specific blast column (damage/25 levels up from _any_ hit)
+
+        // If this is the center of an AE explosion, also deal damage 1 (or 2) levels up,
+        // and 1 (or 2) levels down.  TW: pp. 113, 172, 173.
+        // If this is an Artillery AE explosion, also deal damage D/25 levels up from center hex only
+        // TODO: implement MOF-based building level drift, building target level selection for user.
+        if (!flak && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))
+            && coords.equals(attackSource)) {
+
+            // Most will be 0; test this
+            int radius = Math.max(
+                BombType.getBlastRadius(BombType.getBombInternalName(((BombType) ammo).getBombType())),
+                AmmoType.getBlastRadius(ammo.getInternalName())
+            );
+
+
+        }
+
+        return blastShape;
+    }
 } // End public class Compute

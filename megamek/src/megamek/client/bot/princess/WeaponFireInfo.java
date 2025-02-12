@@ -23,11 +23,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
-import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.AmmoType.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
@@ -586,6 +584,12 @@ public class WeaponFireInfo {
      * @return
      */
     ToHitData postProcessToHit(ToHitData realToHitData) {
+        // If the shot already can't hit, no more processing is required.
+        if (realToHitData.cannotSucceed()) {
+            return realToHitData;
+        }
+
+        // Check if this is a homing shot of some kind first.
         boolean isHoming = preferredAmmo != null && preferredAmmo.isHomingAmmoInHomingMode();
         if (isHoming) {
             String msg = realToHitData.getCumulativePlainDesc();
@@ -624,13 +628,16 @@ public class WeaponFireInfo {
                 }
             }
         } else if (weapon.isGroundBomb()
-                && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
-            ) {
-                // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
-                if (Compute.allEnemiesAboveHeight(1, target, game.getEntitiesVector(target.getPosition()), shooter)) {
-                    return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
-                }
+            && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
+        ) {
+            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
+            Hex targetHex = game.getBoard().getHex(target.getPosition());
+            int height = (targetHex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))) ? 1 : 0;
+            height *= (BombType.getBlastRadius(weapon.getType().getInternalName()) == 0) ? 1 : 2;
+            if (Compute.allEnemiesAboveHeight(height, target, game.getEntitiesVector(target.getPosition()), shooter)) {
+                return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
             }
+        }
 
         return realToHitData;
     }
@@ -712,7 +719,7 @@ public class WeaponFireInfo {
                 // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();
 
-                int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName());
+                int blastRadius = BombType.getBlastRadius(bomb.getType().getInternalName());
                 for (int radius = 0; radius <= blastRadius; radius++) {
                     affectedHexes.addAll(bombedHex.allAtDistance(radius));
                 }

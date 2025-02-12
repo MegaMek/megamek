@@ -1122,10 +1122,14 @@ public class FireControl {
             }
 
             // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
-            if (firingAmmo.isGroundBomb()
+            if (weapon.isGroundBomb()
                     && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
             ) {
-                if (Compute.allEnemiesAboveHeight(1, target, game.getEntitiesVector(target.getPosition()), shooter)) {
+                // See if we can catch the target in the blast
+                Hex targetHex = game.getBoard().getHex(target.getPosition());
+                int height = (targetHex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))) ? 1 : 0;
+                height *= (BombType.getBlastRadius(weapon.getType().getInternalName()) == 0) ? 1 : 2;
+                if (Compute.allEnemiesAboveHeight(height, target, game.getEntitiesVector(target.getPosition()), shooter)) {
                     return new ToHitData(TH_TOO_HIGH_FOR_AE);
                 }
             }

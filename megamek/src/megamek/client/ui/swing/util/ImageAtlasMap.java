@@ -20,7 +20,6 @@
 package megamek.client.ui.swing.util;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -48,6 +47,8 @@ import megamek.logging.MMLogger;
 
 public class ImageAtlasMap {
     private static final MMLogger logger = MMLogger.create(ImageAtlasMap.class);
+    private static final YAMLFactory yamlFactory = new YAMLFactory();
+
     private ImageAtlasRecords imgFileToAtlasMap = new ImageAtlasRecords();
 
     public ImageAtlasMap() {
@@ -55,14 +56,6 @@ public class ImageAtlasMap {
 
     public ImageAtlasMap(ImageAtlasRecords imgFileToAtlasMap) {
         this.imgFileToAtlasMap = imgFileToAtlasMap;
-    }
-
-    public Map<String, String> getImgFileToAtlasMap() {
-        return imgFileToAtlasMap.toMap();
-    }
-
-    public void setImgFileToAtlasMap(Map<String, String> map) {
-        imgFileToAtlasMap.fromMap(map);
     }
 
     /**
@@ -97,7 +90,7 @@ public class ImageAtlasMap {
     }
 
     public void writeToFile() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        ObjectMapper mapper = new ObjectMapper(yamlFactory);
         mapper.findAndRegisterModules();
 
         try {
@@ -112,7 +105,7 @@ public class ImageAtlasMap {
             return null;
         }
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        ObjectMapper mapper = new ObjectMapper(yamlFactory);
         mapper.findAndRegisterModules();
 
         try {

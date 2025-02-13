@@ -677,12 +677,22 @@ public class AreaEffectHelper {
             falloff = 25;
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
         }
+
+        // BA specific
         if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
             // All BA Tube attacks are R1
             radius = 1;
         }
+        if (ammo.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+            damage = 2 * attackingBA;
+            falloff = 2 * attackingBA;
+            // All BA Tube attacks are R1
+            radius = 1;
+            clusterMunitionsFlag = true;
+        }
+
         // Air-Defense Arrow IV missiles
         if (ammo.getAmmoType() == AmmoType.T_ARROW_IV
                 && ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
@@ -957,6 +967,29 @@ public class AreaEffectHelper {
         AmmoType ammo, Coords center, int height, boolean artillery,
         boolean flak, boolean asfFlak, Game game, boolean excludeCenter
     ) {
+        // Use default falloff for this ammo.
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        return shapeBlast(
+            ammo, center, falloff, height, artillery, flak, asfFlak, game, excludeCenter
+        );
+    }
+
+    /**
+     * @param ammo              AmmoType of the attack.
+     * @param center            Coordinates of center of blast.
+     * @param falloff           Preset falloff to use for this blast; mainly for BA Tube attack.
+     * @param height            Elevation/level of target, or Altitude if firing on ASFs
+     * @param artillery         true if artillery attack; false if other AE attack
+     * @param flak              true if flak attack.
+     * @param asfFlak           true if flak attack on an Aerospace unit.
+     * @param game              Reference to game, for terrain checks
+     * @param excludeCenter     Used for creating all height, hex values but the center
+     * @return                  (height, Coords): damage map.
+     */
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
+        AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+        boolean flak, boolean asfFlak, Game game, boolean excludeCenter
+    ) {
         HashMap<Entry<Integer, Coords>, Integer> blastShape = new HashMap<>();
 
         if (game == null) {
@@ -965,14 +998,9 @@ public class AreaEffectHelper {
         }
 
         // Falloff is defined separately for each weapon and ammo type, unfortunately.
-        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         int baseDamage = falloff.damage;
         int radius = falloff.radius;
         boolean isBomb = (ammo instanceof BombType);
-        // Hack until we have a better system for mapping blast falloff
-        if (isBomb && falloff.clusterMunitionsFlag) {
-            baseDamage = 5;
-        }
 
         // We may want to calculate the blast zone without the center hex, for separate handling.
         if (!excludeCenter) {
@@ -1004,7 +1032,7 @@ public class AreaEffectHelper {
         // so we don't check for terrain type here.
         // Always exclude the center here: either we already made it, above, or we don't want it.
         blastShape.putAll(AreaEffectHelper.shapeBlastRing(
-            center, height, falloff.damage, falloff.falloff, true
+            center, falloff, height, true
         ));
 
         // 2.1 For FAE munitions, add an additional ring of 5 damage
@@ -1042,6 +1070,7 @@ public class AreaEffectHelper {
                     blastShape.put(Map.entry(height-1, center), (int) Math.ceil(baseDamage/2.0));
                 }
             }
+
             // R1+ AE attacks also generate 1/2-damage rings around the +1 and -1 levels of the center hex.
             if (radius > 0) {
                 // Damage for upper and lower rings are 1/2 base, rounded up.
@@ -1051,10 +1080,10 @@ public class AreaEffectHelper {
                 // falloff value.  We automatically subtract the falloff value for each radius outside of 1 so
                 // double the computed damage and set the falloff to equal it.
                 blastShape.putAll(AreaEffectHelper.shapeBlastRing(
-                    center, height+1, donutDamage * 2, donutDamage, true
+                    center, falloff, height+1, true
                 ));
                 blastShape.putAll(AreaEffectHelper.shapeBlastRing(
-                    center, height-1, donutDamage * 2, donutDamage, true
+                    center, falloff, height-1, true
                 ));
             }
 
@@ -1064,17 +1093,17 @@ public class AreaEffectHelper {
     }
 
     public static HashMap<Entry<Integer, Coords>, Integer> shapeBlastRing(
-        Coords center, int height, int baseDamage, int falloff, boolean excludeCenter
+        Coords center, DamageFalloff falloff, int height, boolean excludeCenter
     ) {
         HashMap<Entry<Integer, Coords>, Integer> blastRing = new HashMap<>();
 
         // We may want to calculate the blast zone without the center hex, for separate handling.
         if (!excludeCenter) {
-            blastRing.put(Map.entry(height, center), baseDamage);
+            blastRing.put(Map.entry(height, center), falloff.damage);
         }
 
-        int blastDamage = baseDamage - falloff;
-        for (int ring = 1; blastDamage > 0; ring++, blastDamage -= falloff) {
+        int blastDamage = (falloff.clusterMunitionsFlag) ? falloff.damage : falloff.damage - falloff.falloff;
+        for (int ring = 1; blastDamage > 0; ring++, blastDamage -= falloff.falloff) {
             List<Coords> ringCoords = center.allAtDistance(ring);
             for (Coords c: ringCoords) {
                 blastRing.put(Map.entry(height, c), blastDamage);

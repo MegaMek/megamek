@@ -13,7 +13,9 @@
  */
 package megamek.common.weapons;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -404,27 +406,28 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // generated
         // so we need to carry out offboard/null checks against the "current" version of
         // the target.
-        // TODO: update to use blastShape
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
-            int actualDamage = df.damage - (df.falloff * finalPos.distance(target.getPosition()));
-            Coords effectiveTargetPos = aaa.getCoords();
+            HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+                atype, aaa.getCoords(), df, 0, true, false, false, game, false
+            );
 
-            if (df.clusterMunitionsFlag) {
-                effectiveTargetPos = finalPos;
-            }
-
-            if (actualDamage > 0) {
-                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null,
+            for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
+                Coords bCoords = entry.getValue();
+                int bLevel = entry.getKey();
+                if (blastShape.containsKey(entry)) {
+                    AreaEffectHelper.artilleryDamageEntity(
+                        (Entity) updatedTarget, blastShape.get(entry), null,
                         0, false, asfFlak, isFlak, altitude,
-                        effectiveTargetPos, atype, finalPos, false, ae, null, altitude,
+                        aaa.getCoords(), atype, finalPos, false, ae, null, altitude,
                         vPhaseReport, gameManager);
+                }
             }
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     gameManager.artilleryDamageArea(finalPos, aaa.getCoords(), atype,
                             subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                            asfFlak, shootingBA));
+                            asfFlak));
 
         }
 

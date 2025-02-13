@@ -224,7 +224,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
         gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
                 subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                asfFlak, -1);
+                asfFlak);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying
         // to

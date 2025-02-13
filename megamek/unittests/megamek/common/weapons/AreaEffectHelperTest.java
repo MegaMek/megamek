@@ -129,7 +129,7 @@ class AreaEffectHelperTest {
         Coords centerPoint = new Coords(7,7);
         DamageFalloff falloff = calculateDamageFallOff(mockLTAmmoType, 0, false);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlastRing(
-            centerPoint, 0, falloff.damage, falloff.falloff,false
+            centerPoint, falloff, 0, false
         );
 
         // We expect a disk of 1 + 6 + 12 hexes centered around the centerPoint
@@ -138,7 +138,7 @@ class AreaEffectHelperTest {
 
         // Now create the disk minus the center point
         shape = AreaEffectHelper.shapeBlastRing(
-            centerPoint, 0, falloff.damage, falloff.falloff,true
+            centerPoint, falloff, 0,true
         );
         // We expect a disk of 6 + 12 hexes centered around the centerPoint, but no centerPoint
         assertEquals(18, shape.size());
@@ -149,9 +149,10 @@ class AreaEffectHelperTest {
     void testShapeBlastR2ArtilleryAttackOnBoardNoAETerrainLevel0() {
         game.setBoard(new Board(16,17));
         Coords centerPoint = new Coords(7,7);
+        AmmoType ammo = mockLTAmmoType;
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Map.Entry<Integer, Coords>, Integer> shape = AreaEffectHelper.shapeBlast(
-            mockLTAmmoType,
-            centerPoint, 0, true, false, false, game, false
+            ammo, centerPoint, falloff, 0, true, false, false, game, false
         );
 
         // We expect a column of two levels above the target level, plus a disk of 1 + 6 + 12 hexes at level

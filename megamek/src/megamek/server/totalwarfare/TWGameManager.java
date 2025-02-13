@@ -64,21 +64,16 @@ import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
-import megamek.common.weapons.AreaEffectHelper;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.DamageType;
-import megamek.common.weapons.TAGHandler;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.*;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
+
+import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
 
 /**
  * Manages the Game and processes player actions.
@@ -31528,25 +31523,17 @@ public class TWGameManager extends AbstractGameManager {
      * @param mineClear    Does this clear mines?
      * @param vPhaseReport The Vector of Reports for the phase report
      * @param asfFlak      Is this flak against ASF?
-     * @param attackingBA  How many BA suits are in the squad if this is a BA Tube
-     *                     arty
-     *                     attack, -1 otherwise
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource,
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
-            boolean asfFlak, int attackingBA) {
-        AreaEffectHelper.DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA,
-                mineClear);
+            boolean asfFlak) {
 
-        int damage = damageFalloff.damage;
-        int falloff = damageFalloff.falloff;
-        if (damageFalloff.clusterMunitionsFlag) {
-            attackSource = centre;
-        }
+        // Use the standard falloff values
+        DamageFalloff damageFalloff = calculateDamageFallOff(ammo, 0, mineClear);
 
         return artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
-                damage, falloff, flak, altitude, vPhaseReport, asfFlak);
+                damageFalloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
     /**
@@ -31577,15 +31564,16 @@ public class TWGameManager extends AbstractGameManager {
      * @param asfFlak
      *                     Is this flak against ASF?
      */
-    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
-            Entity killer, int damage, int falloff, boolean flak, int altitude,
-            Vector<Report> vPhaseReport, boolean asfFlak) {
+    public Vector<Integer> artilleryDamageArea(
+        Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
+        Entity killer, DamageFalloff falloff, boolean flak, int altitude,
+        Vector<Report> vPhaseReport, boolean asfFlak
+    ){
         Vector<Integer> alreadyHit = new Vector<>();
-
 
         // This is artillery damage
         HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
-            ammo, centre, altitude,true, flak, asfFlak, game, false);
+            ammo, centre, falloff, altitude,true, flak, asfFlak, game, false);
 
         for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
             Coords bCoords = entry.getValue();
@@ -31595,18 +31583,6 @@ public class TWGameManager extends AbstractGameManager {
                 bLevel, vPhaseReport, asfFlak, alreadyHit, false
             );
         }
-
-        /**
-        for (int ring = 0; damage > 0; ring++, damage -= falloff) {
-            List<Coords> hexes = centre.allAtDistance(ring);
-            for (Coords c : hexes) {
-                alreadyHit = artilleryDamageHex(c, attackSource, damage, ammo,
-                        subjectId, killer, null, flak, altitude, vPhaseReport,
-                        asfFlak, alreadyHit, false);
-            }
-            attackSource = centre; // all splash comes from ground zero
-        }
-         */
 
         // Lets reports assess if anything was caught in area
         return alreadyHit;
@@ -31632,20 +31608,6 @@ public class TWGameManager extends AbstractGameManager {
                 bLevel, vPhaseReport, false, alreadyHit, false
             );
         }
-
-        /**
-        alreadyHit = artilleryDamageHex(centre, centre, damage, ammo,
-                subjectId, killer, null, false, 0, vPhaseReport, false,
-                alreadyHit, false);
-        if (range > 0) {
-            List<Coords> hexes = centre.allAtDistance(range);
-            for (Coords c : hexes) {
-                alreadyHit = artilleryDamageHex(c, centre, damage, ammo,
-                        subjectId, killer, null, false, 0, vPhaseReport, false,
-                        alreadyHit, false);
-            }
-        }
-         */
 
         // Lets reports assess if anything was caught in area
         return alreadyHit;

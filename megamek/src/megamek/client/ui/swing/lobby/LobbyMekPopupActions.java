@@ -244,6 +244,10 @@ public class LobbyMekPopupActions implements ActionListener {
                 lobby.lobbyActions.load(entities, info);
                 break;
 
+            case LMP_TOW:
+                //lobby.lobbyActions.tow(entities, info);
+                break;
+
             case LMP_UNLOAD:
                 Set<Entity> updateCandidates = new HashSet<>();
                 lobby.disembarkAll(entities);

@@ -93,6 +93,7 @@ class LobbyMekPopup {
     static final String LMP_C3CM = "C3CM";
     static final String LMP_SQUADRON = "SQUADRON";
     static final String LMP_LOAD = "LOAD";
+    static final String LMP_TOW = "TOW";
     static final String LMP_FADDTO = "FADDTO";
     static final String LMP_FREMOVE = "FREMOVE";
     static final String LMP_FPROMOTE = "FPROMOTE";
@@ -216,6 +217,9 @@ class LobbyMekPopup {
         popup.add(ScalingPopup.spacer());
         popup.add(changeOwnerMenu(!entities.isEmpty() || !forces.isEmpty(), clientGui, listener, entities, forces));
         popup.add(loadMenu(clientGui, true, listener, joinedEntities));
+        if (entities.size() == 1) {
+            popup.add(towMenu(clientGui, true, listener, entities.get(0)));
+        }
 
         if (accessibleCarriers) {
             popup.add(
@@ -350,6 +354,26 @@ class LobbyMekPopup {
                                 "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()),
                                 LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
             }
+        }
+        menu.setEnabled(enabled && (menu.getItemCount() > 0));
+        return menu;
+    }
+
+    /**
+     * Returns the "Tow" submenu, allowing towing
+     */
+    private static JMenu towMenu(ClientGUI cg, boolean enabled, ActionListener listener,
+                                  Entity entity) {
+        Game game = cg.getClient().getGame();
+        JMenu menu = new JMenu("Towed by");
+        if (enabled && entity.isTrailer()) {
+            game.getEntitiesVector().stream()
+                .filter( e -> e.canTow(entity.getId()))
+                .filter(e -> !e.equals(entity))
+                .forEach(e -> menu.add(menuItem("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()),
+                    LMP_TOW + "|" + e.getId() + ":-1|" + entity.getId(), enabled, listener
+
+                )));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;

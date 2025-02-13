@@ -273,7 +273,7 @@ launch4j {
     internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
-    copyright = '2024 MegaMek Development Team.'
+    copyright = '2025 MegaMek Development Team.'
     trademarks = 'MechWarrior, BattleMech, `Mech and AeroTech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
     jreMinVersion = '17'

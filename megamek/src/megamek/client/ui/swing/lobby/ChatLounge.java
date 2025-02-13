@@ -1543,6 +1543,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /**
+     * Set the provided trailer to be towed by the tractor.
+     */
+    void towBy(Entity trailer, int tractorId) {
+        Entity tractor = game().getEntity(tractorId);
+        if (tractor == null || !tractor.canTow(trailer.getId())) {
+            return;
+        }
+
+        getLocalClient(trailer).sendTowEntity(trailer.getId(), tractor.getId());
+        // TODO: it would probably be a good idea
+        // to disable some settings for loaded units in customMekDialog
+    }
+
+    /**
      * Sends the entities in the given Collection to the Server.
      * Sends only those that can be edited, i.e. the player's own
      * or his bots' units.

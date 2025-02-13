@@ -368,10 +368,10 @@ class LobbyMekPopup {
         JMenu menu = new JMenu("Towed by");
         if (enabled && entity.isTrailer()) {
             game.getEntitiesVector().stream()
-                .filter( e -> e.canTow(entity.getId()))
-                .filter(e -> !e.equals(entity))
-                .forEach(e -> menu.add(menuItem("<HTML>" + e.getShortNameRaw() + idString(game, e.getId()),
-                    LMP_TOW + "|" + e.getId() + ":-1|" + entity.getId(), enabled, listener
+                .filter( tractor -> tractor.canTow(entity.getId()))
+                .filter(tractor -> !tractor.equals(entity))
+                .forEach(tractor -> menu.add(menuItem("<HTML>" + tractor.getShortNameRaw() + idString(game, tractor.getId()),
+                    LMP_TOW + "|" + tractor.getId() + ":-1|" + entity.getId(), enabled, listener
 
                 )));
         }

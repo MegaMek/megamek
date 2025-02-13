@@ -661,6 +661,37 @@ public class LobbyActions {
         }
     }
 
+    /**
+     *
+     * @param trailer Entity to be towed
+     * @param info
+     */
+    public void tow(Entity trailer, String info) {
+        StringTokenizer sTow = new StringTokenizer(info, ":");
+        int tractorId = Integer.parseInt(sTow.nextToken());
+        Entity tractor = game().getEntity(tractorId);
+        // Remove those entities from the candidates that are already carried by that
+        // loader
+        if (trailer == null || tractor == null || trailer.getTractor() == tractorId) {
+            return;
+        }
+
+        // If a unit of the selected units is currently loaded onto another, 2nd unit of
+        // the selected
+        // units, do not continue. The player should unload units first. This would
+        // require
+        // a server update offloading that second unit AND embarking it. Currently not
+        // possible
+        // as a single server update and updates for one unit shouldn't be chained.
+        if (tractor.getTowing() != Entity.NONE || trailer.getTractor() != Entity.NONE) {
+            LobbyErrors.showNoDualTow(frame());
+        }
+
+        StringBuilder errorMsg = new StringBuilder();
+
+            lobby.towBy(trailer, tractorId);
+    }
+
     /** Asks for a new name for the provided forceId and applies it. */
     void forceRename(int forceId) {
         if (forceId == Force.NO_FORCE) {

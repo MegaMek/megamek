@@ -768,6 +768,10 @@ public class TWGameManager extends AbstractGameManager {
                 receiveEntityLoad(packet, connId);
                 resetPlayersDone();
                 break;
+            case ENTITY_TOW:
+                receiveEntityTow(packet, connId);
+                resetPlayersDone();
+                break;
             case ENTITY_MODECHANGE:
                 receiveEntityModeChange(packet, connId);
                 break;
@@ -26902,6 +26906,29 @@ public class TWGameManager extends AbstractGameManager {
                 ServerLobbyHelper.entityUpdateMessage(loadee, getGame());
                 // Set this so units can be unloaded in the first movement phase
                 loadee.setLoadedThisTurn(false);
+            }
+        }
+    }
+
+    /**
+     * loads an entity into another one. Meant to be called from the chat lounge
+     *
+     * @param c         the packet to be processed
+     * @param connIndex the id for connection that received the packet.
+     */
+    private void receiveEntityTow(Packet c, int connIndex) {
+        int trailerId = (Integer) c.getObject(0);
+        int tractorId = (Integer) c.getObject(1);
+        Entity trailer = getGame().getEntity(trailerId);
+        Entity tractor = getGame().getEntity(tractorId);
+
+        if ((trailer != null) && (tractor != null)) {
+            towUnit(tractor, trailer);
+            // In the chat lounge, notify players of customizing of unit
+            if (getGame().getPhase().isLounge()) {
+                ServerLobbyHelper.entityUpdateMessage(trailer, getGame());
+                // Set this so units can be unloaded in the first movement phase
+                trailer.setLoadedThisTurn(false);
             }
         }
     }

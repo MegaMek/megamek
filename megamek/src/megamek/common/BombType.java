@@ -80,7 +80,7 @@ public class BombType extends AmmoType {
      * Get the blast radius of a particular bomb type, given the internal name.
      */
     public static int getBlastRadius(String name) {
-        return blastRadius.getOrDefault(name, 0);
+        return blastRadius.getOrDefault(name, -1);
     }
 
     public static String getBombName(int type) {

@@ -627,14 +627,17 @@ public class WeaponFireInfo {
                     return new ToHitData(ToHitData.AUTOMATIC_FAIL, msg);
                 }
             }
-        } else if (weapon.isGroundBomb()
+        } else if (weapon.isGroundBomb() && !(preferredAmmo == null)
+            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
             && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
         ) {
-            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
-            Hex targetHex = game.getBoard().getHex(target.getPosition());
-            int height = (targetHex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))) ? 1 : 0;
-            height *= (BombType.getBlastRadius(weapon.getType().getInternalName()) == 0) ? 1 : 2;
-            if (Compute.allEnemiesAboveHeight(height, target, game.getEntitiesVector(target.getPosition()), shooter)) {
+            // See if we can catch the target in the blast
+            if (
+                Compute.allEnemiesOutsideBlast(
+                    target.getElevation(), target, game.getEntitiesVector(target.getPosition()),
+                    shooter, preferredAmmo.getType(), false, false, false, game
+                )
+            ) {
                 return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
             }
         }

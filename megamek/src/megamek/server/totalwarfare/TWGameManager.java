@@ -31416,6 +31416,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Non-flak artillery damages terrain
+        // TODO: account for altitude vs: terrain height
         if (!flak) {
             // Report that damage applied to terrain, if there's TF to damage
             Hex h = game.getBoard().getHex(coords);
@@ -31439,6 +31440,7 @@ public class TWGameManager extends AbstractGameManager {
                 (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
                         BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
 
+        // TODO: account for altitude vs: terrain height
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
         if ((bldg != null)
@@ -31490,12 +31492,16 @@ public class TWGameManager extends AbstractGameManager {
             return alreadyHit;
         }
 
-        // get units in hex
+        // get units in hex at the specified altitude (elevation + hex level for non-Aerospace)
         for (Entity entity : game.getEntitiesVector(coords)) {
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            } else {
+            } else if (entity.getElevation() + hex.getLevel() != altitude) {
+                // We now track the blast on a per-level basis
+                continue;
+            }
+            else {
                 alreadyHit.add(entity.getId());
             }
 
@@ -31565,7 +31571,7 @@ public class TWGameManager extends AbstractGameManager {
      *                     Flak, hits flying units only, instead of flyers being
      *                     immune
      * @param altitude
-     *                     Absolute altitude for flak attack
+     *                     Absolute altitude/elevation for flak attack
      * @param vPhaseReport
      *                     The Vector of Reports for the phase report
      * @param asfFlak
@@ -31576,11 +31582,14 @@ public class TWGameManager extends AbstractGameManager {
             Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<>();
 
-        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = Compute.shapeBlast(ammo, centre, altitude, damage, game, true);
 
-        for (Map.Entry entry: blastShape.keySet()) {
-            Coords bCoords = (Coords) entry.getValue();
-            int bLevel = (int) entry.getKey();
+        // This is artillery damage
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+            ammo, centre, altitude,true, flak, asfFlak, game, false);
+
+        for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
+            Coords bCoords = entry.getValue();
+            int bLevel = entry.getKey();
             alreadyHit = artilleryDamageHex(
                 bCoords, attackSource, blastShape.get(entry), ammo, subjectId, killer, null, flak,
                 bLevel, vPhaseReport, asfFlak, alreadyHit, false
@@ -31605,18 +31614,26 @@ public class TWGameManager extends AbstractGameManager {
 
     public Vector<Integer> deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
             Vector<Report> vPhaseReport) {
-        int range = 0;
-        int damage = 10;
-        if (type == BombType.B_CLUSTER) {
-            range = 1;
-            damage = 5;
-        }
         Vector<Integer> alreadyHit = new Vector<>();
 
         // We need the actual ammo type in order to handle certain bomb issues
         // correctly.
         BombType ammo = BombType.createBombByType(type);
+        Hex hex = game.getBoard().getHex(centre);
 
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+            ammo, centre, (hex == null) ? 0 : hex.getLevel() , false, false, false, game, false);
+
+        for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
+            Coords bCoords = entry.getValue();
+            int bLevel = entry.getKey();
+            alreadyHit = artilleryDamageHex(
+                bCoords, centre, blastShape.get(entry), ammo, subjectId, killer, null, false,
+                bLevel, vPhaseReport, false, alreadyHit, false
+            );
+        }
+
+        /**
         alreadyHit = artilleryDamageHex(centre, centre, damage, ammo,
                 subjectId, killer, null, false, 0, vPhaseReport, false,
                 alreadyHit, false);
@@ -31628,6 +31645,7 @@ public class TWGameManager extends AbstractGameManager {
                         alreadyHit, false);
             }
         }
+         */
 
         // Lets reports assess if anything was caught in area
         return alreadyHit;

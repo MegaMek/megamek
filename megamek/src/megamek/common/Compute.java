@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -29,6 +30,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -7934,38 +7936,41 @@ public class Compute {
         return false;
     }
 
-    public static HashMap<Map.Entry<Integer, Coords>, Integer> shapeBlast(
-        AmmoType ammo, Coords center, int height, int baseDamage, Game game, boolean excludeCenter
+    public static boolean allEnemiesOutsideBlast(
+        int height, Targetable target, List<Entity> entities, Entity attacker, AmmoType ammoType,
+        boolean artillery, boolean flak, boolean asfFlak, Game game
     ) {
-        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = new HashMap<>();
-
-        if (game == null) {
-            return blastShape;
+        Coords position = target.getPosition();
+        if (position == null) {
+            return true;
         }
 
-
-        if (!excludeCenter) {
-            blastShape.put(Map.entry(height, center), baseDamage);
+        // Assume that offboard units are at or above 0; any underwater units should have negative elevation.
+        Hex hex = game.getBoard().getHex(position);
+        final int baseHeight = (hex != null) ? hex.getLevel() : 0;
+        if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB && hex != null) {
+            // Hex Targetables don't record actual height
+            height = baseHeight;
         }
 
-        // 1. Handle Artillery-specific blast column (damage/25 levels up from _any_ hit)
+        // Create the projected blast shape from the ammo, target, height, etc.
+        var blastShape = AreaEffectHelper.shapeBlast(
+            ammoType, target.getPosition(), height, artillery, flak, asfFlak, game, false
+        );
 
-        // If this is the center of an AE explosion, also deal damage 1 (or 2) levels up,
-        // and 1 (or 2) levels down.  TW: pp. 113, 172, 173.
-        // If this is an Artillery AE explosion, also deal damage D/25 levels up from center hex only
-        // TODO: implement MOF-based building level drift, building target level selection for user.
-        if (!flak && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))
-            && coords.equals(attackSource)) {
-
-            // Most will be 0; test this
-            int radius = Math.max(
-                BombType.getBlastRadius(BombType.getBombInternalName(((BombType) ammo).getBombType())),
-                AmmoType.getBlastRadius(ammo.getInternalName())
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            // check if the target unit is in the computed blast zone;
+            return (!blastShape.containsKey(Map.entry(baseHeight + target.getElevation(), target.getPosition())));
+        } else if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+            // Check if any of the possible targets are in the blast zone
+            return (
+                entities.stream().noneMatch(
+                    entity ->
+                        entity.isVisibleToEnemy() && entity.isEnemyOf(attacker)
+                        && blastShape.containsKey(Map.entry(baseHeight + entity.getElevation(), entity.getPosition()))
+                )
             );
-
-
         }
-
-        return blastShape;
+        return false;
     }
 } // End public class Compute

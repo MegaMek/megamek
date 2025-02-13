@@ -29,6 +29,7 @@ class ComputeTest {
     static Player player2 = new Player(1, "Test2");
     static WeaponType mockAC5 = (WeaponType) EquipmentType.get("ISAC5");
     static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
+    static AmmoType mockLTAmmoType = (AmmoType) EquipmentType.get("ISLongTom Ammo");
 
     @BeforeAll
     static void setUpAll() {
@@ -241,5 +242,4 @@ class ComputeTest {
 
         assertTrue(Compute.canPointBlankShot(attacker, target));
     }
-
 }

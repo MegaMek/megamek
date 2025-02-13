@@ -404,6 +404,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // generated
         // so we need to carry out offboard/null checks against the "current" version of
         // the target.
+        // TODO: update to use blastShape
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
             int actualDamage = df.damage - (df.falloff * finalPos.distance(target.getPosition()));

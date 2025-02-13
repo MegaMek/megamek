@@ -71,7 +71,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         // get primary and secondary weapons
-        if (dataFile.exists("secondn")) {
+        // the check for "secondary" is for legacy infantry files that have a <secondn> block but no actual secondary weapon
+        if (dataFile.exists("secondn") && dataFile.exists("Secondary")) {
             infantry.setSecondaryWeaponsPerSquad(dataFile.getDataAsInt("secondn")[0]);
         }
 

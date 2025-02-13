@@ -1568,10 +1568,19 @@ public class RATGenerator {
             if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 chassisIndex.get(era).put(chassisKey, new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
+                // Create a separate availability rating for each provided faction
                 for (String code : codes) {
+
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    cr.getIncludedFactions().add(code.split(":")[0]);
+                    // If it provides availability values based on equipment ratings,
+                    // generate index values in addition to letter values
+                    if (ar.hasMultipleRatings()) {
+                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                    }
+
+                    cr.getIncludedFactions().add(ar.getFaction());
                     chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+
                 }
             } else if (wn2.getNodeName().equalsIgnoreCase("model")) {
                 parseModelNode(era, cr, wn2);
@@ -1612,10 +1621,19 @@ public class RATGenerator {
             } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 modelIndex.get(era).put(mr.getKey(), new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
+                // Create a separate availability rating for each provided faction
                 for (String code : codes) {
+
                     AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
-                    mr.getIncludedFactions().add(code.split(":")[0]);
+                    // If it provides availability values based on equipment ratings,
+                    // generate index values in addition to letter values
+                    if (ar.hasMultipleRatings()) {
+                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                    }
+
+                    mr.getIncludedFactions().add(ar.getFaction());
                     modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
+
                 }
             }
         }

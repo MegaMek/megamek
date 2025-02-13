@@ -47,6 +47,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
@@ -2329,6 +2330,7 @@ public class TWGameManager extends AbstractGameManager {
                     game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
+        datasetLogger.append(newBoard, true);
     }
 
     /**
@@ -4693,6 +4695,7 @@ public class TWGameManager extends AbstractGameManager {
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, mainPhaseReport, this);
             ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
             ServerHelper.checkEnteringHazardousLiquid(nextHex, nextElevation, entity, this);
+            ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -5978,43 +5981,47 @@ public class TWGameManager extends AbstractGameManager {
                     }
                 }
 
-                // The second packet contains the attacks to process
-                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
-                // Mark the hidden unit as having taken a PBS
-                hidden.setMadePointblankShot(true);
-                // Process the Actions
-                for (EntityAction ea : attacks) {
-                    Entity entity = game.getEntity(ea.getEntityId());
-                    if (ea instanceof TorsoTwistAction) {
-                        TorsoTwistAction tta = (TorsoTwistAction) ea;
-                        if (entity.canChangeSecondaryFacing()) {
-                            entity.setSecondaryFacing(tta.getFacing());
-                        }
-                    } else if (ea instanceof FlipArmsAction) {
-                        FlipArmsAction faa = (FlipArmsAction) ea;
-                        entity.setArmsFlipped(faa.getIsFlipped());
-                    } else if (ea instanceof SearchlightAttackAction) {
-                        boolean hexesAdded = ((SearchlightAttackAction) ea).setHexesIlluminated(game);
-                        // If we added new hexes, send them to all players.
-                        // These are spotlights at night, you know they're there.
-                        if (hexesAdded) {
-                            send(createIlluminatedHexesPacket());
-                        }
-                        SearchlightAttackAction saa = (SearchlightAttackAction) ea;
-                        addReport(saa.resolveAction(game));
-                    } else if (ea instanceof WeaponAttackAction) {
-                        WeaponAttackAction waa = (WeaponAttackAction) ea;
-                        Entity ae = game.getEntity(waa.getEntityId());
-                        Mounted<?> m = ae.getEquipment(waa.getWeaponId());
-                        Weapon w = (Weapon) m.getType();
-                        // Track attacks original target, for things like swarm LRMs
-                        waa.setOriginalTargetId(waa.getTargetId());
-                        waa.setOriginalTargetType(waa.getTargetType());
-                        AttackHandler ah = w.fire(waa, game, this);
-                        if (ah != null) {
-                            ah.setStrafing(waa.isStrafing());
-                            ah.setStrafingFirstShot(waa.isStrafingFirstShot());
-                            game.addAttack(ah);
+                // The second packet contains the attacks to process _or_ signals not firing
+                if (rp.getPacket().getObject(1) == null) {
+                    return false;
+                } else {
+                    Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
+                    // Mark the hidden unit as having taken a PBS
+                    hidden.setMadePointblankShot(true);
+                    // Process the Actions
+                    for (EntityAction ea : attacks) {
+                        Entity entity = game.getEntity(ea.getEntityId());
+                        if (ea instanceof TorsoTwistAction) {
+                            TorsoTwistAction tta = (TorsoTwistAction) ea;
+                            if (entity.canChangeSecondaryFacing()) {
+                                entity.setSecondaryFacing(tta.getFacing());
+                            }
+                        } else if (ea instanceof FlipArmsAction) {
+                            FlipArmsAction faa = (FlipArmsAction) ea;
+                            entity.setArmsFlipped(faa.getIsFlipped());
+                        } else if (ea instanceof SearchlightAttackAction) {
+                            boolean hexesAdded = ((SearchlightAttackAction) ea).setHexesIlluminated(game);
+                            // If we added new hexes, send them to all players.
+                            // These are spotlights at night, you know they're there.
+                            if (hexesAdded) {
+                                send(createIlluminatedHexesPacket());
+                            }
+                            SearchlightAttackAction saa = (SearchlightAttackAction) ea;
+                            addReport(saa.resolveAction(game));
+                        } else if (ea instanceof WeaponAttackAction) {
+                            WeaponAttackAction waa = (WeaponAttackAction) ea;
+                            Entity ae = game.getEntity(waa.getEntityId());
+                            Mounted<?> m = ae.getEquipment(waa.getWeaponId());
+                            Weapon w = (Weapon) m.getType();
+                            // Track attacks original target, for things like swarm LRMs
+                            waa.setOriginalTargetId(waa.getTargetId());
+                            waa.setOriginalTargetType(waa.getTargetType());
+                            AttackHandler ah = w.fire(waa, game, this);
+                            if (ah != null) {
+                                ah.setStrafing(waa.isStrafing());
+                                ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                                game.addAttack(ah);
+                            }
                         }
                     }
                 }
@@ -8911,6 +8918,7 @@ public class TWGameManager extends AbstractGameManager {
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, displacementReport, this);
         ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
         ServerHelper.checkEnteringHazardousLiquid(destHex, entity.getElevation(), entity, this);
+        ServerHelper.checkEnteringUltraSublevel(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest, entity.climbMode());
         if (violation == null) {
@@ -10810,6 +10818,12 @@ public class TWGameManager extends AbstractGameManager {
      * Resolve an Unjam Action object
      */
     private void resolveUnjam(Entity entity) {
+        // Entity will be null if it fled.
+        // If it fled, we don't care about unjamming RAC.
+        if (entity == null) {
+            return;
+        }
+
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
@@ -24641,6 +24655,7 @@ public class TWGameManager extends AbstractGameManager {
         Hex entityHex = game.getBoard().getHex(curPos);
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
                 && (entityHex != null) && game.getBoard().onGround()
+                && !entityHex.containsTerrain(Terrains.ULTRA_SUBLEVEL)
                 && !((entity instanceof Infantry) || (entity instanceof ProtoMek))) {
             // large support vees will create ultra rough, otherwise rough
             if (entity instanceof LargeSupportTank) {
@@ -31262,6 +31277,17 @@ public class TWGameManager extends AbstractGameManager {
         }
         addNewLines();
     }
+
+    public void doUltraSublevelDamage(Entity entity) {
+        if (!isUnitEffectedByHazardousGround(entity, false)) {
+            return;
+        }
+
+        // {entity} fell into a hole and was never seen again
+        addReport(destroyEntity(entity, Internationalization.getText("TWGameManager.report.ultra_sublevel.text"), false, false));
+        addNewLines();
+    }
+
 
     /**
      * Applies damage to any eligible unit hit by anti-TSM missiles or entering

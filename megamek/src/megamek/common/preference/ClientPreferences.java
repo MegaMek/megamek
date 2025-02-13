@@ -71,6 +71,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
     public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
     public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
+    public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -120,6 +121,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MML_PATH, "");
         store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
         store.setDefault(DATA_LOGGING, false);
+        store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -481,5 +483,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setAskForVictoryList(boolean value) {
         store.setValue(NAG_ASK_FOR_VICTORY_LIST, value);
+    }
+
+    public void setShowAutoResolvePanel(boolean value) {
+        store.setValue(SHOW_AUTO_RESOLVE_PANEL, value);
+    }
+
+    public boolean getShowAutoResolvePanel() {
+        return store.getBoolean(SHOW_AUTO_RESOLVE_PANEL);
     }
 }

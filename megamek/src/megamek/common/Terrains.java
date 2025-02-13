@@ -14,9 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.*;
 
 import megamek.common.enums.HazardousLiquidPoolType;
 import megamek.server.SmokeCloud;
@@ -65,7 +63,6 @@ public class Terrains implements Serializable {
     // Bug Storm
     // Extreme Depths
     // Rail
-    // Dirt Roads, Gravel Roads
     // Water Flow
 
     public static final int FIRE_LVL_NORMAL = 1;
@@ -155,6 +152,8 @@ public class Terrains implements Serializable {
 
     public static final int HAZARDOUS_LIQUID = 58;
 
+    public static final int ULTRA_SUBLEVEL = 59;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -167,7 +166,7 @@ public class Terrains implements Serializable {
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom",
             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev", "black_ice", "sky",
-            "deployment_zone", "hazardous_liquid" };
+            "deployment_zone", "hazardous_liquid", "ultra_sublevel" };
 
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
@@ -176,6 +175,16 @@ public class Terrains implements Serializable {
     public static final int SIZE = names.length;
 
     private static Hashtable<String, Integer> hash;
+
+    // Set of all hazardous terrain types
+    public static final Set<Integer> HAZARDS = Set.of(
+        Terrains.FIRE, Terrains.MAGMA, Terrains.ICE, Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW,
+        Terrains.SWAMP, Terrains.MUD, Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
+
+    // Set of all hazardous terrain types + black ice
+    public static final Set<Integer> HAZARDS_WITH_BLACK_ICE = Set.of(Terrains.PAVEMENT, Terrains.FIRE, Terrains.MAGMA, Terrains.ICE,
+        Terrains.WATER, Terrains.BUILDING, Terrains.BRIDGE, Terrains.BLACK_ICE, Terrains.SNOW, Terrains.SWAMP, Terrains.MUD,
+        Terrains.TUNDRA, Terrains.HAZARDOUS_LIQUID, Terrains.ULTRA_SUBLEVEL);
 
     /**
      * Checks to see if the given terrain type can have exits.
@@ -411,6 +420,8 @@ public class Terrains implements Serializable {
                     default:
                         return "Hazardous Liquid";
                 }
+            case ULTRA_SUBLEVEL:
+                return "Ultra Sublevel";
             default:
                 return null;
         }

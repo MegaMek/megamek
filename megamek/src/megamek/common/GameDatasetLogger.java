@@ -14,6 +14,10 @@
 package megamek.common;
 
 import megamek.common.actions.*;
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitActionSerde;
+import megamek.ai.dataset.UnitState;
+import megamek.ai.dataset.UnitStateSerde;
 import megamek.common.enums.AimingMode;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
@@ -23,9 +27,12 @@ import megamek.logging.MMLogger;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The GameDatasetLogger class is used to log game data to a file in the log directory
@@ -35,9 +42,9 @@ import java.time.LocalDateTime;
 public class GameDatasetLogger {
     private static final MMLogger logger = MMLogger.create(GameDatasetLogger.class);
     public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
-    protected final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
-
-    private File logfile;
+    private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
+    private final UnitActionSerde unitActionSerde = new UnitActionSerde();
+    private final UnitStateSerde unitStateSerde = new UnitStateSerde();
 
     private BufferedWriter writer;
 
@@ -48,12 +55,15 @@ public class GameDatasetLogger {
         try {
             File logDir = new File(LOG_DIR);
             if (!logDir.exists()) {
-                logDir.mkdir();
+                if (!logDir.mkdir()) {
+                    logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
+                    return;
+                }
             }
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
-            logfile = new File(LOG_DIR + File.separator + filename + LocalDateTime.now() + ".tsv");
+            File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {
@@ -63,23 +73,28 @@ public class GameDatasetLogger {
     }
 
     protected void initialize() {
-        append("# Log file opened " + LocalDateTime.now());
+        appendToFile("# Log file opened " + LocalDateTime.now());
     }
 
+    /**
+     * Append a planetary conditions to the log file
+     * @param planetaryConditions the planetary conditions to log
+     * @param withHeader  whether to include the header in the log file
+     */
     public void append(PlanetaryConditions planetaryConditions, boolean withHeader) {
         try {
             if (planetaryConditions == null) {
                 return;
             }
             if (withHeader) {
-                append(
+                appendToFile(
                     String.join(
                         "\t",
                         "TEMPERATURE", "WEATHER", "GRAVITY", "WIND", "ATMOSPHERE", "FOG", "LIGHT"
                     )
                 );
             }
-            append(
+            appendToFile(
                 String.join(
                     "\t",
                     planetaryConditions.getTemperature() + "",
@@ -96,20 +111,70 @@ public class GameDatasetLogger {
         }
     }
 
+    /**
+     * Append a board to the log file
+     * @param board the board to log
+     * @param withHeader whether to include the header in the log file
+     */
+    public void append(Board board, boolean withHeader) {
+        try {
+            if (board == null) {
+                return;
+            }
+            if (withHeader) {
+                appendToFile(
+                    String.join(
+                        "\t",
+                        "BOARD_NAME", "WIDTH", "HEIGHT"
+                    )
+                );
+            }
+            appendToFile(
+                String.join(
+                    "\t",
+                    board.getMapName(), board.getWidth() + "", board.getHeight() + ""
+                )
+            );
+
+            StringBuilder sb = new StringBuilder(1024);
+            for (int x = 0; x < board.getWidth(); x++) {
+                sb.append("COL_").append(x).append("\t");
+            }
+            appendToFile(sb.toString());
+
+            List<Hex> lineHexes = new ArrayList<>();
+            for (int x = 0; x < board.getWidth(); x++) {
+                lineHexes.clear();
+                for (int y = 0; y < board.getHeight(); y++) {
+                    lineHexes.add(board.getHex(x, y));
+                }
+                appendToFile("ROW_" + x + "\t" + String.join("\t", lineHexes.stream().map(Hex::toString).toList()));
+            }
+
+        } catch (Exception ex) {
+            logger.error(ex, "Error logging entity action");
+        }
+    }
+
+    /**
+     * Append a map settings to the log file
+     * @param mapSettings the map settings to log
+     * @param withHeader whether to include the header in the log file
+     */
     public void append(MapSettings mapSettings, boolean withHeader) {
         try {
             if (mapSettings == null) {
                 return;
             }
             if (withHeader) {
-                append(
+                appendToFile(
                     String.join(
                         "\t",
                         "THEME", "CITY_TYPE", "MAP_SIZE", "MAP_WIDTH", "MAP_HEIGHT"
                     )
                 );
             }
-            append(
+            appendToFile(
                 String.join(
                     "\t",
                     mapSettings.getTheme(),
@@ -123,6 +188,12 @@ public class GameDatasetLogger {
         }
     }
 
+    /**
+     * Append an entity action to the log file
+     * @param game the game
+     * @param entityAction the entity action to log
+     * @param withHeader whether to include the header in the log file
+     */
     public void append(Game game, EntityAction entityAction, boolean withHeader) {
         try {
             if (entityAction instanceof AbstractAttackAction abstractAttackAction) {
@@ -133,7 +204,15 @@ public class GameDatasetLogger {
         }
     }
 
+    /**
+     * Append an attack action to the log file
+     * @param game the game
+     * @param attackAction the attack action to log
+     * @param withHeader whether to include the header in the log file
+     */
     private void append(Game game, AbstractAttackAction attackAction, boolean withHeader) {
+        // To be changed in the near future by a proper parser for the attack action
+        // as soon as it become necessary
         if (attackAction == null) {
             return;
         }
@@ -176,7 +255,7 @@ public class GameDatasetLogger {
         if (target != null ) {
             targetId = target.getId() + "";
             targetType = target.getClass().getSimpleName();
-            targetCoords = target.getPosition() != null ? target.getPosition().toTSV() : "-1\t-1";
+            targetCoords = !(target instanceof INarcPod) && target.getPosition() != null ? target.getPosition().toTSV() : "-1\t-1";
             if (target instanceof Entity entity) {
                 targetPlayerId = entity.getOwner().getId() + "";
                 targetRole = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
@@ -204,7 +283,7 @@ public class GameDatasetLogger {
             weaponId = weaponAttackAction.getWeaponId() + "";
         }
         if (withHeader) {
-            append(
+            appendToFile(
                 String.join(
                     "\t",
                     "ROUND", "PLAYER_ID", "ENTITY_ID", "TYPE", "ROLE", "X", "Y", "FACING",
@@ -213,7 +292,7 @@ public class GameDatasetLogger {
                 )
             );
         }
-        append(
+        appendToFile(
             String.join(
                 "\t",
                 currentRound, playerId, entityId, type, role, coords, facing, targetPlayerId, targetId, targetType, targetRole, targetCoords, targetFacing,
@@ -223,76 +302,62 @@ public class GameDatasetLogger {
 
     /**
      * Appends a game state to the log file
-     * @param game
-     * @param withHeader
+     * @param game the game
+     * @param withHeader whether to include the header in the log file
      */
     public void append(Game game, boolean withHeader) {
+
         try {
             if (withHeader) {
-                append(
-                    String.join(
-                        "\t",
-                        "ROUND", "PHASE", "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL" ,"TYPE", "ROLE", "X", "Y", "FACING", "MP",
-                        "HEAT", "PRONE", "AIRBORNE", "OFF_BOARD", "CRIPPLED", "DESTROYED", "ARMOR_P", "INTERNAL_P", "DONE"
-                    )
-                );
+                appendToFile(unitStateSerde.getHeaderLine());
             }
-            var currentRound = game.getCurrentRound() + "";
-            var gamePhase = game.getPhase().name();
             for (var inGameObject : game.getInGameObjects()) {
                 if (!(inGameObject instanceof Entity entity)) {
                     continue;
                 }
-                var ownerID = entity.getOwner().getId() + "";
-                var chassis = entity.getChassis();
-                var model = entity.getModel();
-                var entityId = entity.getId() + "";
-                var coords = entity.getPosition() != null ? entity.getPosition().toTSV() : "-1\t-1";
-                var facing = entity.getFacing() + "";
-                var mp = entity.getRunMP() > 0 ? LOG_DECIMAL.format(Math.min(1.0, entity.getMpUsedLastRound()/ (double) entity.getRunMP())) : "0.00";
-                var isProne = entity.isProne() ? "1" : "0";
-                var heatP = entity.getHeatCapacity() > 0 ? LOG_DECIMAL.format(entity.getHeat() / (double) entity.getHeatCapacity()) : "0.00";
-                var isAirborne = entity.isAirborne() ? "1" : "0";
-                var isOffBoard = entity.isOffBoard() ? "1" : "0";
-                var isDone = entity.isDone() ? "1" : "0";
-                var armorP = LOG_DECIMAL.format(entity.getArmorRemainingPercent());
-                var internalP = LOG_DECIMAL.format(entity.getInternalRemainingPercent());
-                var isCrippled = entity.isCrippled() ? "1" : "0";
-                var isDestroyed = entity.isDestroyed() || entity.isDoomed() ? "1" : "0";
-                var type = entity.getClass().getSimpleName();
-                var role = entity.getRole() == null ? UnitRole.NONE.name() : entity.getRole().name();
-
-                append(
-                    String.join(
-                        "\t",
-                        currentRound, gamePhase, ownerID, entityId, chassis, model, type, role, coords, facing, mp, heatP, isProne,
-                         isAirborne, isOffBoard, isCrippled, isDestroyed, armorP, internalP, isDone
-                    )
-                );
+                UnitState unitState = UnitState.fromEntity(entity, game);
+                appendToFile(unitStateSerde.toTsv(unitState));
             }
+        } catch (Exception ex) {
+            logger.error("Error logging global Game UnitState", ex);
+        }
 
+        try {
+            // Example of also logging minefields, which might have different columns
             var minefields = game.getMinedCoords();
             if (minefields != null && minefields.hasMoreElements()) {
                 if (withHeader) {
-                    append(String.join("\t", "ROUND", "PHASE", "OBJECT", "X", "Y"));
+                    // This is optional, or you can define a separate enum if you want a strict schema
+                    appendToFile("ROUND\tPHASE\tOBJECT\tX\tY");
                 }
+
+                String currentRound = String.valueOf(game.getCurrentRound());
+                String gamePhase = game.getPhase().name();
 
                 while (minefields.hasMoreElements()) {
                     var minefield = minefields.nextElement();
                     if (minefield == null) {
                         continue;
                     }
-                    append(String.join("\t", currentRound, gamePhase, "MINEFIELD", minefield.toTSV()));
+                    // You’d define the line any way you like
+                    appendToFile(String.join(
+                        "\t",
+                        currentRound,
+                        gamePhase,
+                        "MINEFIELD",
+                        String.valueOf(minefield.getX()),
+                        String.valueOf(minefield.getY())
+                    ));
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex, "Error logging entity action");
+            logger.error("Error logging Game UnitState Minefield", ex);
         }
     }
 
     /**
      * Appends a move path to the log file
-     * @param movePath
+     * @param movePath the move path to log
      */
     public void append(MovePath movePath) {
         append(movePath, false);
@@ -300,58 +365,31 @@ public class GameDatasetLogger {
 
     /**
      * Appends a move path to the log file
-     * @param movePath
-     * @param withHeader
+     * @param movePath the move path to log
+     * @param withHeader whether to include the header in the log file
      */
     public void append(MovePath movePath, boolean withHeader) {
         try {
-            var ownerID = movePath.getEntity().getOwner().getId() + "";
-            var chassis = movePath.getEntity().getChassis();
-            var model = movePath.getEntity().getModel();
-            var entityId = movePath.getEntity().getId() + "";
-            var from = movePath.getStartCoords() == null ? "-1\t-1" : movePath.getStartCoords().toTSV();
-            var to = movePath.getFinalCoords() == null ? "-1\t-1" : movePath.getFinalCoords().toTSV();
-            var hexesMoved = movePath.getHexesMoved() + "";
-            var facing = movePath.getFinalFacing() + "";
-            var mpUsed = movePath.getMpUsed() + "";
-            var maxMp = movePath.getMaxMP() + "";
-            var usedPercentMp = movePath.getMaxMP() > 0 ? LOG_DECIMAL.format(movePath.getMpUsed() / (double) movePath.getMaxMP()) : "0.00";
-            var heatP = movePath.getEntity().getHeatCapacity() > 0 ? LOG_DECIMAL.format(movePath.getEntity().getHeat() / (double) movePath.getEntity().getHeatCapacity()) : "0.00";
-            var distanceTravelled = movePath.getDistanceTravelled() + "";
-            var isJumping = movePath.isJumping() ? "1" : "0";
-            var isProne = movePath.getFinalProne() ? "1" : "0";
-            var isMoveLegal = movePath.isMoveLegal() ? "1" : "0";
-            var armor = LOG_DECIMAL.format(Math.max(0, movePath.getEntity().getArmorRemainingPercent()));
-            var internal = LOG_DECIMAL.format(Math.max(0, movePath.getEntity().getInternalRemainingPercent()));
-            var steps = new StringBuilder();
-            movePath.getStepVector().forEach(step -> steps.append(step.toString()).append(" "));
+            UnitAction unitAction = UnitAction.fromMovePath(movePath);
             if (withHeader) {
-                append(
-                    String.join(
-                        "\t",
-                        "PLAYER_ID", "ENTITY_ID", "CHASSIS", "MODEL", "FACING", "FROM_X", "FROM_Y", "TO_X", "TO_Y", "HEXES_MOVED", "DISTANCE",
-                        "MP_USED", "MAX_MP", "MP_P", "HEAT_P", "ARMOR_P", "INTERNAL_P", "JUMPING", "PRONE", "LEGAL", "STEPS"
-                    )
-                );
+                appendToFile(unitActionSerde.getHeaderLine());
             }
-            append(
-                String.join(
-                    "\t",
-                    ownerID, entityId, chassis, model, facing, from, to, hexesMoved, distanceTravelled, mpUsed, maxMp, usedPercentMp, heatP,
-                    armor, internal, isJumping, isProne, isMoveLegal, steps
-                )
-            );
+            appendToFile(unitActionSerde.toTsv(unitAction));
         } catch (Exception ex) {
-            logger.error(ex, "Error logging entity action");
+            logger.error(ex, "Error logging MovePath unit action");
         }
     }
 
-    private GameDatasetLogger append(String toLog) {
+    /**
+     * Appends the text to the log
+     * @param toLog the text to log
+     */
+    private void appendToFile(String toLog) {
         if (!PreferenceManager.getClientPreferences().dataLoggingEnabled()) {
-            return this;
+            return;
         }
         if (writer == null) {
-            return this;
+            return;
         }
         try {
             writer.write(toLog);
@@ -361,10 +399,13 @@ public class GameDatasetLogger {
             logger.error("", ex);
             writer = null;
         }
-        return this;
     }
 
-    public void close() throws Exception {
+    /**
+     * Closes the log file
+     * @throws IOException if an error occurs while closing the log file
+     */
+    public void close() throws IOException {
         if (writer != null) {
             writer.close();
         }

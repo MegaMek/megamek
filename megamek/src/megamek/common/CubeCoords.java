@@ -38,4 +38,19 @@ public class CubeCoords {
 
         return new CubeCoords(rx, ry, rz);
     }
+
+    /**
+     * Linearly interpolates between two cube coordinates.
+     *
+     * @param a the start cube coordinate
+     * @param b the end cube coordinate
+     * @param t the interpolation parameter, where {@code 0 <= t <= 1}
+     * @return a new CubeCoords representing the interpolated coordinate
+     */
+    public static CubeCoords lerp(CubeCoords a, CubeCoords b, double t) {
+        double q = a.q * (1 - t) + b.q * t;
+        double r = a.r * (1 - t) + b.r * t;
+        double s = a.s * (1 - t) + b.s * t;
+        return new CubeCoords(q, r, s);
+    }
 }

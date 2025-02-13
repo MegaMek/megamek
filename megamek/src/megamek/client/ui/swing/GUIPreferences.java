@@ -21,7 +21,6 @@ import megamek.common.EntityMovementType;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
-import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -215,6 +214,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
+    public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
@@ -291,6 +291,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_SHOW_SENSOR_RANGE = "MinimapShowSensorRange";
     public static final String MINI_MAP_SHOW_FACING_ARROW = "MinimapShowFacingArrow";
     public static final String MINI_MAP_PAINT_BORDERS = "MinimapPaintBorders";
+    public static final String MINI_MAP_MOVE_PATH_PERSISTENCE = "MinimapMovePathPersistence";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -687,7 +688,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_SENSOR_RANGE, true);
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
-
+        store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
+        store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
         store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);
 
@@ -1074,6 +1076,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getGameSummaryMinimap() {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
+    }
+
+    public boolean showUnitDisplayNamesOnMinimap() {
+        return store.getBoolean(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP);
     }
 
     public boolean getEntityOwnerLabelColor() {
@@ -1919,6 +1925,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setGameSummaryMinimap(boolean state) {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
+    }
+
+    public void setShowUnitDisplayNamesOnMinimap(boolean state) {
+        store.setValue(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, state);
     }
 
     public void setEntityOwnerLabelColor(boolean i) {
@@ -3465,5 +3475,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPaintBorders(boolean state) {
         store.setValue(MINI_MAP_PAINT_BORDERS, state);
+    }
+
+    public int getMovePathPersistenceOnMiniMap() {
+        return getInt(MINI_MAP_MOVE_PATH_PERSISTENCE);
+    }
+
+    public void setMovePathPersistenceOnMiniMap(int rounds) {
+        store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
 }

@@ -236,6 +236,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Messages.getString("CommonSettingsDialog.useGPinUnitSelection"));
     private final JCheckBox generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames"));
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
+    private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString("CommonSettingsDialog.showAutoResolvePanel"));
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(
             Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
@@ -311,6 +312,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbMapsheetColor;
     private JSpinner attackArrowTransparency;
     private JSpinner ecmTransparency;
+    private JSpinner movePathPersistenceOnMiniMap;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
 
@@ -347,7 +349,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
-
+    private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(
+            Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
     private JComboBox<UITheme> uiThemes;
 
@@ -524,6 +527,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
+    private int savedMovePathPersistenceOnMiniMap;
 
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
@@ -732,6 +736,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(showDamageLevel, null));
         comps.add(checkboxEntry(showDamageDecal, null));
         comps.add(checkboxEntry(showUnitId, null));
+        comps.add(checkboxEntry(showAutoResolvePanel, null));
         comps.add(checkboxEntry(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip")));
         comps.add(checkboxEntry(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip")));
         comps.add(checkboxEntry(useAutoCenter, Messages.getString("CommonSettingsDialog.useAutoCenter.tooltip")));
@@ -1672,6 +1677,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
+        comps.add(checkboxEntry(showUnitDisplayNamesOnMinimap,
+            Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.tooltip")));
+
+        SpinnerNumberModel movePathPersistenceModel = new SpinnerNumberModel(GUIP.getMovePathPersistenceOnMiniMap(), 0, 100, 1);
+        movePathPersistenceOnMiniMap = new JSpinner(movePathPersistenceModel);
+        movePathPersistenceOnMiniMap.setMaximumSize(new Dimension(150, 40));
+        movePathPersistenceOnMiniMap.setToolTipText(Messages.getString("CommonSettingsDialog.movePathPersistence.tooltip"));
+        JLabel movePathPersistenceOnMiniMapLabel = new JLabel(Messages.getString("CommonSettingsDialog.movePathPersistence"));
+        movePathPersistenceOnMiniMapLabel.setLabelFor(movePathPersistenceOnMiniMap);
+        row = new ArrayList<>();
+        row.add(movePathPersistenceOnMiniMapLabel);
+        row.add(movePathPersistenceOnMiniMap);
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -2048,6 +2067,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             useGPinUnitSelection.setSelected(CLIENT_PREFERENCES.useGPinUnitSelection());
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
+            showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
 
             int index = 0;
             if (CLIENT_PREFERENCES.getLocaleString().startsWith("de")) {
@@ -2068,6 +2088,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             drawFacingArrowsOnMiniMap.setSelected(GUIP.getDrawFacingArrowsOnMiniMap());
             drawSensorRangeOnMiniMap.setSelected(GUIP.getDrawSensorRangeOnMiniMap());
             paintBordersOnMiniMap.setSelected(GUIP.paintBorders());
+            showUnitDisplayNamesOnMinimap.setSelected(GUIP.showUnitDisplayNamesOnMinimap());
             levelhighlight.setSelected(GUIP.getLevelHighlight());
             shadowMap.setSelected(GUIP.getShadowMap());
             hexInclines.setSelected(GUIP.getHexInclines());
@@ -2174,6 +2195,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
             savedHighQualityGraphics = GUIP.getHighQualityGraphics();
+            savedMovePathPersistenceOnMiniMap = GUIP.getMovePathPersistenceOnMiniMap();
             savedAdvancedOpt.clear();
 
             advancedKeys.clearSelection();
@@ -2204,6 +2226,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setDrawSensorRangeOnMiniMap(savedDrawSensorRangeOnMiniMap);
         GUIP.setDrawFacingArrowsOnMiniMap(savedDrawFacingArrowsOnMiniMap);
         GUIP.setPaintBorders(savedPaintBorders);
+        GUIP.setMovePathPersistenceOnMiniMap(savedMovePathPersistenceOnMiniMap);
         GUIP.setTeamColoring(savedTeamColoring);
         GUIP.setDockOnLeft(savedDockOnLeft);
         GUIP.setDockMultipleOnYAxis(savedDockMultipleOnYAxis);
@@ -2457,6 +2480,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setDrawFacingArrowsOnMiniMap(drawFacingArrowsOnMiniMap.isSelected());
         GUIP.setDrawSensorRangeOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
         GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
+        GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
@@ -2542,12 +2566,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         CLIENT_PREFERENCES.setUseGpInUnitSelection(useGPinUnitSelection.isSelected());
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
+        CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
 
         CLIENT_PREFERENCES.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
-
         GUIP.setShowMapsheets(showMapsheets.isSelected());
         GUIP.setAOHexShadows(aOHexShadows.isSelected());
         GUIP.setFloatingIso(floatingIso.isSelected());
@@ -2560,7 +2584,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
-
+        GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();
         if (!oldUITheme.equals(newUITheme.getClassName())) {
@@ -2943,6 +2967,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setDrawFacingArrowsOnMiniMap(drawSensorRangeOnMiniMap.isSelected());
         } else if (source.equals(paintBordersOnMiniMap)) {
             GUIP.setPaintBorders(paintBordersOnMiniMap.isSelected());
+        } else if (source.equals(movePathPersistenceOnMiniMap)) {
+            GUIP.setMovePathPersistenceOnMiniMap((int) movePathPersistenceOnMiniMap.getValue());
+        } else if (source.equals(showUnitDisplayNamesOnMinimap)) {
+            GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         }
     }
 

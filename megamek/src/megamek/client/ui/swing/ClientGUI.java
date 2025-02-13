@@ -2653,6 +2653,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         }
                         return;
                     }
+                    // Confirm if these units can be part of a PBS at all
+                    if (!Compute.canPointBlankShot(attacker, target)) {
+                        // If we are the correct client but the PBS is not legal, return a cancellation
+                        logger.error(
+                            "Received request to handle an illegal pointblank shot ({} @ {} -> {} @ {})",
+                            attacker.getDisplayName(), attacker.getPosition().toFriendlyString(),
+                            target.getDisplayName(), target.getPosition().toFriendlyString()
+                        );
+                        client.sendHiddenPBSCFRResponse(null);
+                        return;
+                    }
                     // If this is the client to handle the PBS, take care of it
                     bv.centerOnHex(attacker.getPosition());
                     bv.highlight(attacker.getPosition());

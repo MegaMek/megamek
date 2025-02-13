@@ -406,6 +406,19 @@ public class Hex implements Serializable {
 
     /**
      * @param types the terrains to check
+     * @return if at least one of the specified terrains are represented in the hex at any level.
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     */
+    public boolean containsAnyTerrainOf(Set<Integer> types) {
+        Set<Integer> keys = new HashSet<>(terrains.keySet());
+        keys.retainAll(types);
+        return !keys.isEmpty();
+    }
+
+    /**
+     * @param types the terrains to check
      * @return <code>true</code> if all the specified terrains are represented in the hex at any level.
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsAllTerrainsOf(int...)
@@ -438,7 +451,8 @@ public class Hex implements Serializable {
      */
     public boolean hasPavedRoad() {
         if (containsTerrain(Terrains.ROAD)){
-            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD)); //Return false if the road is dirt or gravel
+            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD));
+            //Return false if the road is dirt or gravel
         }
         return false;
     }

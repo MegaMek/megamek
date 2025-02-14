@@ -121,28 +121,10 @@ ${jvmOptions}
     }
 }
 
-task officialUnitList(type: JavaExec, dependsOn: jar) {
-    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
-    group = 'build'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.MegaMek'
-    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
-}
-
-task equipmentList(type: JavaExec, dependsOn: jar) {
-    description = 'Generate current equipment.txt'
-    group = 'build'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.MegaMek'
-    args = [ '-eqdb', "${projectDir}/docs/equipment.txt" ]
-}
-
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
-    dependsOn officialUnitList
-    dependsOn equipmentList
     dependsOn generateDynamicFiles
 
     from projectDir
@@ -289,8 +271,6 @@ tasks.register("packagePrepWork") {
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
     dependsOn ratZip
     dependsOn createAllExecutables
 }
@@ -338,6 +318,22 @@ jacocoTestReport {
 }
 
 // These are utility classes for all of the classes with the src/utilities folder.
+
+task officialUnitList(type: JavaExec, dependsOn: jar) {
+    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
+}
+
+task equipmentList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate current equipment.txt'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqdb', "${projectDir}/docs/equipment.txt" ]
+}
 
 task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
     description = 'Outputs the Alpha Strike conversion of all units'

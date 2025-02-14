@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,9 +51,17 @@ public class ImageAtlasMap {
 
     private ImageAtlasRecords imgFileToAtlasMap = new ImageAtlasRecords();
 
+    /**
+     * Default constructor.
+     */
     public ImageAtlasMap() {
     }
 
+    /**
+     * Constructor that takes an existing map.
+     *
+     * @param imgFileToAtlasMap
+     */
     public ImageAtlasMap(ImageAtlasRecords imgFileToAtlasMap) {
         this.imgFileToAtlasMap = imgFileToAtlasMap;
     }
@@ -71,6 +79,14 @@ public class ImageAtlasMap {
         imgFileToAtlasMap.addRecord(valueString, keyString);
     }
 
+    /**
+     * Return the value for the given key, which is converted to a UNIX-style path
+     * string.
+     *
+     * @param key
+     *
+     * @return
+     */
     public String get(Path key) {
         String keyString = FilenameUtils.separatorsToUnix(key.toString());
         return imgFileToAtlasMap.get(keyString);
@@ -89,6 +105,9 @@ public class ImageAtlasMap {
         return imgFileToAtlasMap.containsKey(valueString);
     }
 
+    /**
+     * Write the map to the image atlas map file.
+     */
     public void writeToFile() {
         ObjectMapper mapper = new ObjectMapper(yamlFactory);
         mapper.findAndRegisterModules();
@@ -100,6 +119,11 @@ public class ImageAtlasMap {
         }
     }
 
+    /**
+     * Read the map from the image atlas map file.
+     *
+     * @return
+     */
     public static @Nullable ImageAtlasMap readFromFile() {
         if (!Configuration.imageFileAtlasMapFile().exists()) {
             return null;

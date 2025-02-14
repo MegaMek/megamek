@@ -20,34 +20,31 @@
 package megamek.client.ui.swing.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Class to encapsulate a list of image atlas records for the purposes of
+ * serialization. Contains methods for easily adding, removing, and accessing
+ * individual records within the list.
+ *
+ * @author rjhancock
+ */
 public class ImageAtlasRecords {
     private List<ImageAtlasRecord> records = new ArrayList<>();
 
+    /**
+     * Default constructor.
+     */
     public ImageAtlasRecords() {
     }
 
+    /**
+     * Constructor that takes an existing list of @see ImageAtlasRecord objects.
+     *
+     * @param records
+     */
     public ImageAtlasRecords(List<ImageAtlasRecord> records) {
         this.records = records;
-    }
-
-    public ImageAtlasRecords(Map<String, String> map) {
-        fromMap(map);
-    }
-
-    public List<ImageAtlasRecord> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<ImageAtlasRecord> records) {
-        this.records = records;
-    }
-
-    public void addRecord(ImageAtlasRecord atlasRecord) {
-        records.add(atlasRecord);
     }
 
     public void addRecord(String originalFilePath, String atlasFilePath) {
@@ -73,24 +70,5 @@ public class ImageAtlasRecords {
         }
 
         return false;
-    }
-
-    public Map<String, String> toMap() {
-        Map<String, String> map = new HashMap<>();
-        for (ImageAtlasRecord atlasRecord : records) {
-            map.put(atlasRecord.getOriginalFilePath(), atlasRecord.getAtlasFilePath());
-        }
-
-        return map;
-    }
-
-    public void fromMap(Map<String, String> map) {
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            addRecord(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public void removeRecord(ImageAtlasRecord atlasRecord) {
-        records.remove(atlasRecord);
     }
 }

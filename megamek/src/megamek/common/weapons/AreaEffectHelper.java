@@ -227,6 +227,8 @@ public class AreaEffectHelper {
         // brian" or "armored" building
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
         // on 9-, BA dies on 7-
+        // Use DamageFalloff to signal building damage factor
+        DamageFalloff falloff = new DamageFalloff();
         for (int damageBracket = blastRadius,
                 distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
             List<Coords> donut = center.allAtDistance(distFromCenter);
@@ -235,13 +237,15 @@ public class AreaEffectHelper {
                 if (conditions.getAtmosphere().isThin()) {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
+                falloff.damage = damage;
+                falloff.radius = blastRadius;
 
                 checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game,
                         gameManager);
 
                 gameManager.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(),
-                        attacker, null, false, 0, vPhaseReport, false,
-                        entitiesToExclude, false);
+                        attacker, null, false, 0, 0, vPhaseReport, false,
+                        entitiesToExclude, false, falloff);
 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
                 gameManager.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
@@ -1014,6 +1018,7 @@ public class AreaEffectHelper {
         // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
         // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)
         // Note that this falloff is separate from horizontal blast falloff, above.
+        // Also deal damage downward for Flak shots against VTOLs.
         if (artillery) {
             int levelMinus = (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) ? 25 : 10;
             for (int d=(baseDamage - levelMinus), l=height+1; d>0; d-=levelMinus, l++) {
@@ -1036,7 +1041,6 @@ public class AreaEffectHelper {
         ));
 
         // 2.1 For FAE munitions, add an additional ring of 5 damage
-        // at.getMunitionType().contains(AmmoType.Munitions.M_FAE)
         if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FAE) ||
             (isBomb && List.of(
                 BombType.B_FAE_SMALL, BombType.B_FAE_LARGE).contains(((BombType) ammo).getBombType())
@@ -1052,23 +1056,19 @@ public class AreaEffectHelper {
         // 3. Handle additional AE blast shaping.
         // If this is the center of an AE explosion hitting a building or water hex,
         // also deal damage 1 (or 2) levels up, and 1 (or 2) levels down.  TW: pp. 113, 172, 173.
-        // Note: Artillery does its own thing for the center column
         // TODO: implement MOF-based building level drift, building target level selection for user.
         Hex hex = game.getBoard().getHex(center);
         if (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))) {
             // Artillery can only target ground level, Homing target units, or Flak target entities so
-            // we only do this part for non-Artillery shots.
-            if (!artillery) {
-                // Calculate the center height and depth.
-                if (radius > 0) {
-                    blastShape.put(Map.entry(height+1, center), baseDamage);
-                    blastShape.put(Map.entry(height+2, center), (int) Math.ceil(baseDamage/2.0));
-                    blastShape.put(Map.entry(height-1, center), baseDamage);
-                    blastShape.put(Map.entry(height-2, center), (int) Math.ceil(baseDamage/2.0));
-                } else {
-                    blastShape.put(Map.entry(height+1, center), (int) Math.ceil(baseDamage/2.0));
-                    blastShape.put(Map.entry(height-1, center), (int) Math.ceil(baseDamage/2.0));
-                }
+            // Calculate the center height and depth.
+            if (radius > 0) {
+                blastShape.put(Map.entry(height+1, center), baseDamage);
+                blastShape.put(Map.entry(height+2, center), (int) Math.ceil(baseDamage/2.0));
+                blastShape.put(Map.entry(height-1, center), baseDamage);
+                blastShape.put(Map.entry(height-2, center), (int) Math.ceil(baseDamage/2.0));
+            } else {
+                blastShape.put(Map.entry(height+1, center), (int) Math.ceil(baseDamage/2.0));
+                blastShape.put(Map.entry(height-1, center), (int) Math.ceil(baseDamage/2.0));
             }
 
             // R1+ AE attacks also generate 1/2-damage rings around the +1 and -1 levels of the center hex.

@@ -407,28 +407,26 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // so we need to carry out offboard/null checks against the "current" version of
         // the target.
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
+            // Calculate blast damage falloff and shape
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
             HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
-                atype, aaa.getCoords(), df, 0, true, false, false, game, false
+                atype, finalPos, df, 0, true, false, false, game, false
             );
 
-            for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
-                Coords bCoords = entry.getValue();
-                int bLevel = entry.getKey();
-                if (blastShape.containsKey(entry)) {
-                    AreaEffectHelper.artilleryDamageEntity(
-                        (Entity) updatedTarget, blastShape.get(entry), null,
-                        0, false, asfFlak, isFlak, altitude,
-                        aaa.getCoords(), atype, finalPos, false, ae, null, altitude,
-                        vPhaseReport, gameManager);
-                }
+            Map.Entry<Integer, Coords> entry = Map.entry(updatedTarget.getElevation(), updatedTarget.getPosition());
+            if (blastShape.containsKey(entry)) {
+                AreaEffectHelper.artilleryDamageEntity(
+                    (Entity) updatedTarget, blastShape.get(entry), null,
+                    0, false, asfFlak, isFlak, entry.getKey(),
+                    finalPos, atype, entry.getValue(), false, ae, null, updatedTarget.getId(),
+                    vPhaseReport, gameManager
+                );
             }
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     gameManager.artilleryDamageArea(finalPos, aaa.getCoords(), atype,
                             subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
                             asfFlak));
-
         }
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying

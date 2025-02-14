@@ -15049,18 +15049,34 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void towUnit(int id) {
         Entity towed = game.getEntity(id);
         // Add this trailer to the connected list for all trailers already in this train
-        for (int tr : getAllTowedUnits()) {
+        List<Integer> otherTrailerIds = getAllTowedUnits();
+        List<Entity> otherTrailers = new ArrayList<>();
+        for (int tr : otherTrailerIds) {
             Entity trailer = game.getEntity(tr);
             trailer.connectedUnits.add(id);
+            otherTrailers.add(trailer);
         }
         addTowedUnit(id);
         towed.setTractor(getId());
+        Entity towingEnt = null;
         // Now, find the transporter and the actual towing entity (trailer or tractor)
-        Entity towingEnt = game.getEntity(towed.towedBy);
+        // If it's the only thing being towed, this entity is towing it
+
+        if (otherTrailers.isEmpty()) {
+            towingEnt = this;
+        } else {
+            for (Entity trailer : otherTrailers) {
+                if (trailer.getTowing() == Entity.NONE) {
+                    towingEnt = trailer;
+                }
+            }
+        }
         if (towingEnt != null) {
-            Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
-            if (hitch != null) {
-                hitch.load(towed);
+            for (Transporter transporter : towingEnt.getTransports()) {
+                if (transporter instanceof TankTrailerHitch hitch) {
+                    hitch.load(towed);
+                    towingEnt.setTowing(id);
+                }
             }
         }
     }

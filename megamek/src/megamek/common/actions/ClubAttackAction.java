@@ -481,7 +481,18 @@ public class ClubAttackAction extends PhysicalAttackAction {
         // penalties.
         toHit = new ToHitData(base, "base");
         toHit.addModifier(getHitModFor(clubType), clubType.getName());
-
+        
+        // Flat -1 for Accurate Weapon
+        if (club.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
+        }
+        // Stable Weapon - Reduces running/flanking penalty by 1
+        if (club.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)
+                && (ae.moved == EntityMovementType.MOVE_RUN)) {
+            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
+        }
+       
+        
         PhysicalAttackAction.setCommonModifiers(toHit, game, ae, target);
 
         // damaged or missing actuators

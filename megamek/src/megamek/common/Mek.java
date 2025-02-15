@@ -3265,7 +3265,30 @@ public abstract class Mek extends Entity {
         return getArmActuatorCost() + getLegActuatorCost();
     }
 
-    protected abstract double getArmActuatorCost();
+    protected double getArmActuatorCost() {
+        int numOfUpperArmActuators = 0;
+        int numOfLowerArmActuators = 0;
+        int numOfHands = 0;
+        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
+            numOfHands++;
+        }
+        if (hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
+            numOfLowerArmActuators++;
+        }
+        if (hasSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
+            numOfUpperArmActuators++;
+        }
+        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
+            numOfHands++;
+        }
+        if (hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
+            numOfLowerArmActuators++;
+        }
+        if (hasSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
+            numOfUpperArmActuators++;
+        }
+        return weight * (numOfUpperArmActuators * 100 + numOfLowerArmActuators * 50 + numOfHands * 80);
+    }
 
     protected abstract double getLegActuatorCost();
 

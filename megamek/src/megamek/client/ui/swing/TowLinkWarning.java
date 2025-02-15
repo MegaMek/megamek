@@ -20,10 +20,8 @@
 package megamek.client.ui.swing;
 
 import megamek.common.*;
-import megamek.logging.MMLogger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -31,7 +29,6 @@ import java.util.List;
  * with warning. or something
  */
 public class TowLinkWarning {
-    private final static MMLogger logger = MMLogger.create(TowLinkWarning.class);
 
     /**
      *
@@ -46,16 +43,10 @@ public class TowLinkWarning {
      *         should be placed.
      */
     public static List<Coords> findTowLinkIssues(Game game, Entity entity, Board board) {
-        List<Coords> warnList = new ArrayList<Coords>();
+        List<Coords> warnList = new ArrayList<>();
 
         List<Coords> validTractorCoords = findCoordsForTractor(game, entity, board);
         List<Coords> validTrailerCoords = findCoordsForTrailer(game, entity, board);
-
-        //int tractorId = entity.getTowedBy();
-        //Entity tractor = game.getEntity(tractorId);
-        //if (tractorId != Entity.NONE && tractor != null) {
-        //    validTrailerCoords = findCoordsForTrailer(game, tractor, board);
-        //}
 
         if (validTractorCoords == null && validTrailerCoords == null) {
             return warnList;
@@ -92,7 +83,7 @@ public class TowLinkWarning {
             return null;
         }
 
-        List<Coords> validCoords = new ArrayList<Coords>();
+        List<Coords> validCoords = new ArrayList<>();
 
         if (trailer.isDeployed()) {
             //Can they stack? If so, add the trailer's hex as valid
@@ -113,7 +104,6 @@ public class TowLinkWarning {
                 for (int y = 0; y < boardHeight; y++) {
                     Coords coords = new Coords(x, y);
                     if (board.isLegalDeployment(coords, tractor)) {
-                        int facing = tractor.getFacing();
                         // Can our trailer deploy in any of the adjacent hexes?
                         if (coords.allAdjacent().stream().anyMatch(c -> board.isLegalDeployment(c, trailer) && !trailer.isLocationProhibited(c))) {
                             validCoords.add(coords);
@@ -140,7 +130,7 @@ public class TowLinkWarning {
             return null;
         }
 
-        List<Coords> validCoords = new ArrayList<Coords>();
+        List<Coords> validCoords = new ArrayList<>();
 
         if (tractor.isDeployed()) {
             //Can they stack? If so, add the trailer's hex as valid
@@ -168,17 +158,5 @@ public class TowLinkWarning {
         }
 
         return validCoords;
-    }
-
-    private HashSet<Coords> getAllCoords(Board board) {
-        var boardHeight = board.getHeight();
-        var boardWidth = board.getWidth();
-        var coordsSet = new HashSet<Coords>();
-        for (int x = 0; x < boardWidth; x++) {
-            for (int y = 0; y < boardHeight; y++) {
-                coordsSet.add(new Coords(x, y));
-            }
-        }
-        return coordsSet;
     }
 }

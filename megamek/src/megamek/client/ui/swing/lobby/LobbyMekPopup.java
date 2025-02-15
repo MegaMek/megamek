@@ -396,22 +396,6 @@ class LobbyMekPopup {
         return menu;
     }
 
-    private static JMenu detachFromTractorMenu(ClientGUI cg, boolean enabled, ActionListener listener, Entity trailer) {
-        Game game = cg.getClient().getGame();
-        JMenu menu = new JMenu("Detach from Tractor");
-        if (enabled && trailer.isTrailer() && trailer.getTowedBy() != Entity.NONE) {
-            menu.setVisible(true);
-            menu.setEnabled(true);
-            menu.addActionListener(listener);
-        } else {
-            menu.setVisible(false);
-            menu.setEnabled(false);
-        }
-
-
-        return menu;
-    }
-
     /**
      * Returns the "Load ProtoMek" submenu
      */

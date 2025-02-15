@@ -687,9 +687,7 @@ public class LobbyActions {
             LobbyErrors.showNoDualTow(frame());
         }
 
-        StringBuilder errorMsg = new StringBuilder();
-
-            lobby.towBy(trailer, tractorId);
+        lobby.towBy(trailer, tractorId);
     }
 
     /** Asks for a new name for the provided forceId and applies it. */

@@ -86,16 +86,7 @@ public class TowLinkWarning {
         List<Coords> validCoords = new ArrayList<>();
 
         if (trailer.isDeployed()) {
-            //Can they stack? If so, add the trailer's hex as valid
-            if (Compute.stackingViolation(game, tractor.getId(), trailer.getPosition(), false) == null) {
-                validCoords.add(trailer.getPosition());
-            } else {
-                // Let's add the typical adjacent hexes
-                validCoords.addAll(trailer.getPosition().allAdjacent());
-
-                //Except the one behind the trailer, a tractor can't be there!
-                validCoords.remove(trailer.getPosition().translated(trailer.getFacing(), -1));
-            }
+            validCoords.addAll(getCoordsForTractorGivenTrailer(game, tractor, trailer));
         } else {
             var boardHeight = board.getHeight();
             var boardWidth = board.getWidth();
@@ -103,13 +94,37 @@ public class TowLinkWarning {
                 for (int y = 0; y < boardHeight; y++) {
                     Coords coords = new Coords(x, y);
                     if (board.isLegalDeployment(coords, tractor)) {
-                        // Can our trailer deploy in any of the adjacent hexes?
-                        if (coords.allAdjacent().stream().anyMatch(c -> board.isLegalDeployment(c, trailer) && !trailer.isLocationProhibited(c))) {
-                            validCoords.add(coords);
+                        if (trailer instanceof LargeSupportTank) {
+                            // Can our trailer deploy in any of the adjacent hexes?
+                            if (coords.allAdjacent().stream().anyMatch(c -> board.isLegalDeployment(c, trailer) && !trailer.isLocationProhibited(c))) {
+                                validCoords.add(coords);
+                            }
+                        }
+                        else {
+                            if (board.isLegalDeployment(coords, trailer) && !trailer.isLocationProhibited(coords)) {
+                                validCoords.add(coords);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        return validCoords;
+    }
+
+    public static List<Coords> getCoordsForTractorGivenTrailer(Game game, Entity tractor, Entity trailer) {
+        List<Coords> validCoords = new ArrayList<>();
+
+        //Can they stack? If so, add the trailer's hex as valid
+        if (Compute.stackingViolation(game, tractor.getId(), trailer.getPosition(), false) == null) {
+            validCoords.add(trailer.getPosition());
+        } else {
+            // Let's add the typical adjacent hexes
+            validCoords.addAll(trailer.getPosition().allAdjacent());
+
+            //Except the one behind the trailer, a tractor can't be there!
+            validCoords.remove(trailer.getPosition().translated(trailer.getFacing(), -1));
         }
 
         return validCoords;
@@ -132,14 +147,7 @@ public class TowLinkWarning {
         List<Coords> validCoords = new ArrayList<>();
 
         if (tractor.isDeployed()) {
-            //Can they stack? If so, add the tractor's hex as valid
-            if (Compute.stackingViolation(game, trailer.getId(), tractor.getPosition(), false) == null) {
-                validCoords.add(tractor.getPosition());
-            } else {
-                // Let's add all the adjacent hexes - even the spot in front of the tractor is valid, afaik it's
-                // possible for the tractor to turn any orientation at the end of its movement.
-                validCoords.addAll(tractor.getPosition().allAdjacent());
-            }
+            validCoords.addAll(getCoordsForTrailerGivenTractor(game, trailer, tractor));
         } else {
             var boardHeight = board.getHeight();
             var boardWidth = board.getWidth();
@@ -147,15 +155,35 @@ public class TowLinkWarning {
                 for (int y = 0; y < boardHeight; y++) {
                     Coords coords = new Coords(x, y);
                     if (board.isLegalDeployment(coords, trailer)) {
-                        // Can the tractor deploy in any of the adjacent hexes?
-                        if (coords.allAdjacent().stream().anyMatch(c -> board.isLegalDeployment(c, tractor) && !tractor.isLocationProhibited(c))) {
-                            validCoords.add(coords);
+                        if (trailer instanceof LargeSupportTank) {
+                            // Can the tractor deploy in any of the adjacent hexes?
+                            if (coords.allAdjacent().stream().anyMatch(c -> board.isLegalDeployment(c, tractor) && !tractor.isLocationProhibited(c))) {
+                                validCoords.add(coords);
+                            }
+                        }
+                        else {
+                            if (board.isLegalDeployment(coords, tractor) && !tractor.isLocationProhibited(coords)) {
+                                validCoords.add(coords);
+                            }
                         }
                     }
                 }
             }
         }
 
+        return validCoords;
+    }
+
+    public static List<Coords> getCoordsForTrailerGivenTractor(Game game, Entity trailer, Entity tractor) {
+        List<Coords> validCoords = new ArrayList<Coords>();
+        //Can they stack? If so, add the tractor's hex as valid
+        if (Compute.stackingViolation(game, trailer.getId(), tractor.getPosition(), false) == null) {
+            validCoords.add(tractor.getPosition());
+        } else {
+            // Let's add all the adjacent hexes - even the spot in front of the tractor is valid, afaik it's
+            // possible for the tractor to turn any orientation at the end of its movement.
+            validCoords.addAll(tractor.getPosition().allAdjacent());
+        }
         return validCoords;
     }
 }

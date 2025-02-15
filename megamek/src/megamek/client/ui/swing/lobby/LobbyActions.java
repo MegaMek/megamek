@@ -671,19 +671,20 @@ public class LobbyActions {
         int tractorId = Integer.parseInt(sTow.nextToken());
         Entity tractor = game().getEntity(tractorId);
         // Remove those entities from the candidates that are already carried by that
-        // loader
-        if (trailer == null || tractor == null || trailer.getTractor() == tractorId) {
+        // tractor/trailer
+        if (trailer == null || tractor == null || trailer.getTractor() == tractorId
+            || tractor.getTowing() != Entity.NONE || tractor.getTractor() == trailer.getId()) {
             return;
         }
 
-        // If a unit of the selected units is currently loaded onto another, 2nd unit of
+        // If a unit of the selected units is currently towed onto another, 2nd unit of
         // the selected
-        // units, do not continue. The player should unload units first. This would
+        // units, do not continue. The player should detach units first. This would
         // require
         // a server update offloading that second unit AND embarking it. Currently not
         // possible
         // as a single server update and updates for one unit shouldn't be chained.
-        if (tractor.getTowing() != Entity.NONE || trailer.getTractor() != Entity.NONE) {
+        if (tractor.getTowing() != Entity.NONE && trailer.getTractor() != Entity.NONE) {
             LobbyErrors.showNoDualTow(frame());
         }
 

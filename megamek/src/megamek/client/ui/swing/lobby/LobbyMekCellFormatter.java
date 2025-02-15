@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -92,7 +92,7 @@ class LobbyMekCellFormatter {
         Player owner = entity.getOwner();
         boolean localGM = localPlayer.isGameMaster();
         boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
-                && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
+            && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(DOT_SPACER);
             if (entity instanceof Infantry) {
@@ -117,6 +117,7 @@ class LobbyMekCellFormatter {
         }
 
         boolean isCarried = entity.getTransportId() != Entity.NONE;
+        boolean isTowed = entity.getTowedBy() != Entity.NONE;
         boolean hasWarning = false;
         boolean hasCritical = false;
         int mapType = lobby.mapSettings.getMedium();
@@ -130,10 +131,10 @@ class LobbyMekCellFormatter {
 
         // Critical (Red) Warnings
         if ((game.getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null)
-                || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
-                || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
-                || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                || (!entity.isDesignValid())) {
+            || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
+            || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
+            || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
+            || (!entity.isDesignValid())) {
             result.append(UIUtil.fontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
@@ -261,7 +262,7 @@ class LobbyMekCellFormatter {
         int sp = entity.getStartingPos(true);
         int spe = entity.getStartingPos(false);
         if ((!entity.isOffBoard())
-                && (sp >= 0)) {
+            && (sp >= 0)) {
             firstEntry = dotSpacer(result, firstEntry);
             if (spe != Board.START_NONE) {
                 result.append(UIUtil.fontHTML(uiLightGreen()));
@@ -339,7 +340,7 @@ class LobbyMekCellFormatter {
                 if (entity.hasC3S()) {
                     firstEntry = dotSpacer(result, firstEntry);
                     result.append(
-                            UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
+                        UIUtil.fontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3S") + UNCONNECTED_SIGN);
                     result.append("</FONT>");
                 }
 
@@ -360,7 +361,7 @@ class LobbyMekCellFormatter {
                 if (entity.hasC3MM()) {
                     String msg_freec3mnodes = Messages.getString("ChatLounge.FreeC3MNodes");
                     result.append(MessageFormat.format(" " + msg_freec3mnodes,
-                            entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
+                        entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
                 } else {
                     result.append(getString("ChatLounge.C3MNodes", entity.calculateFreeC3MNodes()));
                 }
@@ -397,7 +398,17 @@ class LobbyMekCellFormatter {
             }
             result.append("</I></FONT>");
 
-        } else { // Hide deployment info when a unit is carried
+        } else if (isTowed) { // Towed
+            firstEntry = dotSpacer(result, firstEntry);
+            Entity tractor = entity.getGame().getEntity(entity.getTowedBy());
+            result.append(UIUtil.fontHTML(uiGreen()) + LOADED_SIGN);
+            result.append("<I> " + Messages.getString("ChatLounge.towedBy") + " " + tractor.getChassis());
+            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
+                result.append(" [" + entity.getTransportId() + "]");
+            }
+            result.append("</I></FONT>");
+
+        } else { // Hide deployment info when a unit is carried or towed
             if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.compact.hidden"));

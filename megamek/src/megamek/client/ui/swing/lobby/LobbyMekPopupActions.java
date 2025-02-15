@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2021 - The MegaMek Team
+ * MegaMek - Copyright (C) 2021-2025 - The MegaMek Team
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -105,6 +105,8 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_LOAD:
             case LMP_UNLOAD:
             case LMP_UNLOADALL:
+            case LMP_DETACH_TRAILER:
+            case LMP_DETACH_FROM_TRACTOR:
             case LMP_DEPLOY:
             case LMP_ASSIGN:
             case LMP_HEAT:
@@ -202,6 +204,7 @@ public class LobbyMekPopupActions implements ActionListener {
 
     /** Calls lobby actions for multiple entities. */
     private void multiEntityAction(String command, Set<Entity> entities, String info) {
+        Set<Entity> updateCandidates;
         switch (command) {
             case LMP_INDI_CAMO:
                 lobby.lobbyActions.individualCamo(entities);
@@ -246,7 +249,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_UNLOAD:
-                Set<Entity> updateCandidates = new HashSet<>();
+                updateCandidates = new HashSet<>();
                 lobby.disembarkAll(entities);
                 break;
 
@@ -260,6 +263,18 @@ public class LobbyMekPopupActions implements ActionListener {
                 StringTokenizer st = new StringTokenizer(info, ":");
                 int newOwnerId = Integer.parseInt(st.nextToken());
                 lobby.lobbyActions.changeOwner(entities, LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
+                break;
+
+            case LMP_DETACH_TRAILER:
+                updateCandidates = new HashSet<>();
+                lobby.detachTrailers(entities, updateCandidates);
+                lobby.sendUpdate(updateCandidates);
+                break;
+
+            case LMP_DETACH_FROM_TRACTOR:
+                updateCandidates = new HashSet<>();
+                lobby.detachFromTractors(entities, updateCandidates);
+                lobby.sendUpdate(updateCandidates);
                 break;
 
             case LMP_DEPLOY:
@@ -493,8 +508,6 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_TOW:
                 lobby.lobbyActions.tow(entity, info);
                 break;
-
-
         }
     }
 }

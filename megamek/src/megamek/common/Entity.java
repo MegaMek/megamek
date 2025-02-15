@@ -15076,6 +15076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (transporter instanceof TankTrailerHitch hitch) {
                     hitch.load(towed);
                     towingEnt.setTowing(id);
+                    towed.setTowedBy(towingEnt.getId());
                 }
             }
         }
@@ -15096,8 +15097,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Now, find and empty the transporter on the actual towing entity (trailer or
         // tractor)
         Entity towingEnt = game.getEntity(towed.getTowedBy());
-        towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
+            towingEnt.connectedUnits.clear();
             Transporter hitch = towingEnt.getHitchCarrying(id);
             if (hitch != null) {
                 hitch.unload(towed);

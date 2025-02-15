@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -106,6 +106,8 @@ class LobbyMekPopup {
     static final String LMP_DELETE = "DELETE";
     static final String LMP_UNLOADALL = "UNLOADALL";
     static final String LMP_UNLOAD = "UNLOAD";
+    static final String LMP_DETACH_FROM_TRACTOR = "DETACHFROMTRACTOR";
+    static final String LMP_DETACH_TRAILER = "DETACHTRAILER";
     static final String LMP_MOVE_DOWN = "MOVE_DOWN";
     static final String LMP_INDI_CAMO = "INDI_CAMO";
     static final String LMP_DAMAGE = "DAMAGE";
@@ -151,11 +153,15 @@ class LobbyMekPopup {
         boolean accessibleFighters = accessibleEntities.stream().anyMatch(Entity::isFighter);
         boolean accessibleTransportBays = accessibleEntities.stream().anyMatch(e -> !e.getTransportBays().isEmpty());
         boolean accessibleCarriers = accessibleEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
+        boolean accessibleTractors = accessibleEntities.stream().anyMatch(e -> e.getTowing() != Entity.NONE);
+        boolean accessibleTrailers= accessibleEntities.stream().anyMatch(e -> e.getTowedBy() != Entity.NONE);
 
         // Find what can be done with the selected entities incl. those in selected
         // forces
         boolean anyCarrier = joinedEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
         boolean noneEmbarked = joinedEntities.stream().allMatch(e -> e.getTransportId() == Entity.NONE);
+        boolean anyTractor = joinedEntities.stream().anyMatch(e -> e.getTowing() != Entity.NONE);
+        boolean anyTrailer = joinedEntities.stream().anyMatch(e -> e.getTowedBy() != Entity.NONE);;
         boolean allProtomeks = !joinedEntities.isEmpty()
                 && joinedEntities.stream().allMatch(e -> e instanceof ProtoMek);
         boolean anyRFMGOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasRapidFireMG);
@@ -225,6 +231,14 @@ class LobbyMekPopup {
             popup.add(
                     menuItem("Disembark / leave from carriers", LMP_UNLOAD + NOINFO + seIds, !noneEmbarked, listener));
             popup.add(menuItem("Offload all carried units", LMP_UNLOADALL + NOINFO + seIds, anyCarrier, listener));
+        }
+
+        if (accessibleTrailers) {
+            popup.add(menuItem("Detach from Tractor", LMP_DETACH_FROM_TRACTOR + NOINFO + seIds, anyTrailer, listener));
+        }
+
+        if (accessibleTractors) {
+            popup.add(menuItem("Detach Trailer", LMP_DETACH_TRAILER + NOINFO + seIds, anyTractor, listener));
         }
 
         if (accessibleTransportBays) {
@@ -366,7 +380,9 @@ class LobbyMekPopup {
                                   Entity entity) {
         Game game = cg.getClient().getGame();
         JMenu menu = new JMenu("Towed by");
+        menu.setVisible(false);
         if (enabled && entity.isTrailer()) {
+            menu.setVisible(true);
             game.getEntitiesVector().stream()
                 .filter( tractor -> tractor.canTow(entity.getId()))
                 .filter(tractor -> !tractor.equals(entity))
@@ -376,6 +392,23 @@ class LobbyMekPopup {
                 )));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
+
+        return menu;
+    }
+
+    private static JMenu detachFromTractorMenu(ClientGUI cg, boolean enabled, ActionListener listener, Entity trailer) {
+        Game game = cg.getClient().getGame();
+        JMenu menu = new JMenu("Detach from Tractor");
+        if (enabled && trailer.isTrailer() && trailer.getTowedBy() != Entity.NONE) {
+            menu.setVisible(true);
+            menu.setEnabled(true);
+            menu.addActionListener(listener);
+        } else {
+            menu.setVisible(false);
+            menu.setEnabled(false);
+        }
+
+
         return menu;
     }
 

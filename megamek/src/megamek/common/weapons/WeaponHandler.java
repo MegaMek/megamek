@@ -2007,7 +2007,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Check for Laser Inhibiting smoke clouds
+     * Check for Laser Inhibiting smoke clouds, does not work against PPCs, Plasma Weapons, or Flamers per TacOps:AUE (6th) pg. 168
      */
     public int checkLI(int nDamage, Entity entityTarget, Vector<Report> vPhaseReport) {
         if ((ae.getPosition() == null) || (entityTarget.getPosition() == null)) {
@@ -2017,7 +2017,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         weapon = ae.getWeapon(waa.getWeaponId());
         wtype = weapon.getType();
 
-        if (!wtype.hasFlag(WeaponType.F_ENERGY)) {
+        if (!wtype.hasFlag(WeaponType.F_LASER)) {
             return nDamage;
         }
 

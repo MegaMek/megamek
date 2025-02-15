@@ -193,7 +193,7 @@
 	</faction>
 	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'>
 		<years>2788-3081</years>
-		<ratingLevels>B,A</ratingLevels>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
@@ -620,7 +620,7 @@
 	</faction>
 	<faction key='WOB' name='Word of Blake' minor='false' clan='false' periphery='false'>
 		<years>3052-3081</years>
-		<ratingLevels>B,A</ratingLevels>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='FS.ACAD' name='Academy and Training Units' minor='false' clan='false'

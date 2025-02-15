@@ -14456,4 +14456,10 @@ public class AmmoType extends EquipmentType {
         return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch || ar10Match) && !caselessMismatch
                 && !staticFeedMismatch;
     }
+
+    @Override
+    public boolean isArmorable() {
+        // Coolant pods are implemented as ammo, but are not ammo bins for rules purposes
+        return getAmmoType() == AmmoType.T_COOLANT_POD;
+    }
 }

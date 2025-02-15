@@ -1771,4 +1771,11 @@ public class EquipmentType implements ITechnology {
 
         return result;
     }
+
+    /**
+     * @return True if this equipment type is eligible for being an armored component, TO:AUE p.95
+     */
+    public boolean isArmorable() {
+        return isHittable();
+    }
 }

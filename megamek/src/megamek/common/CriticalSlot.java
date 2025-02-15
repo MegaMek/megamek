@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -256,5 +258,12 @@ public class CriticalSlot implements Serializable {
         if (!repairable)
             state.add("Not repairable");
         return typeString + " { " + String.join(", ", state) + " }";
+    }
+
+    /**
+     * @return True if this crit slot is eligible for being an armored component, TO:AUE p.95
+     */
+    public boolean isArmorable() {
+        return ((getType() == CriticalSlot.TYPE_SYSTEM) || ((getMount() != null) && getMount().getType().isArmorable()));
     }
 }

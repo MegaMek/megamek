@@ -1378,22 +1378,19 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         linked = null;
     }
 
+    /**
+     * Sets the Mounted to be an armored component, TO:AUE p.95. This method checks if the EquipmentType allows armoring at all and sets
+     * the armored status to false if it doesn't.
+     *
+     * @param armored The armored status to be set
+     */
     public void setArmored(boolean armored) {
-        // Ammobins cannot be armored.
-        if ((getType() instanceof AmmoType)
-                && (((AmmoType) getType()).getAmmoType() != AmmoType.T_COOLANT_POD)) {
-            armoredComponent = false;
-        } else if ((getType() instanceof MiscType)
-                && (getType().hasFlag(MiscType.F_SPIKES)
-                        || getType().hasFlag(MiscType.F_REACTIVE)
-                        || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType())
-                                .isShield())) {
-            armoredComponent = false;
-        } else {
-            armoredComponent = armored;
-        }
+        armoredComponent = getType().isArmorable() && armored;
     }
 
+    /**
+     * @return True if this Mounted is an armored component, TO:AUE p.95
+     */
     public boolean isArmored() {
         return armoredComponent;
     }

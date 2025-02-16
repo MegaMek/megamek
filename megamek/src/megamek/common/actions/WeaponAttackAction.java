@@ -5638,17 +5638,17 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Urban Guerrilla - Target gets a +1 bonus in any sort of urban terrain
             if (te.hasAbility(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                 && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.UrbanGuerilla"));
             }
             // Forest Ranger - Target gets a +1 bonus in wooded terrain when moving at
             // walking speed or greater
             if (te.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)
                 && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
                 && te.moved == EntityMovementType.MOVE_WALK) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.ForestRanger"));
             }
@@ -5656,7 +5656,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // running/flanking
             if (te.hasAbility(OptionsConstants.PILOT_TM_SWAMP_BEAST)
                 && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.MUD)
-                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.SWAMP))
                 && te.moved == EntityMovementType.MOVE_RUN) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SwampBeast"));
             }

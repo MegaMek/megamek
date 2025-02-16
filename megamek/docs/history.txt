@@ -33,7 +33,13 @@ MEGAMEK VERSION HISTORY:
 + Fix #6553: Prevent NPE when opening Map Editor
 + Fix #6546: AS conversion updates (MFB, CT, ATAC, SASRCS)
 + PR #6556: Allow units with unlinked weapon enhancements to load as invalid instead of failing to load
-+ PR #6557: Fix Mmegameklab #1523
++ PR #6557: Fix Megameklab #1523
++ Fix #6146: Interim fix for Princess bombing airborne units
++ PR #6549: Towing from MM lobby
++ PR #6560: Refactor in Mek (Remove Armlessmek, unify some code in Biped and Tripod, modernize code)
++ PR #6561: Official Hazardous Liquid Pool Maps
++ Fix #6532: Make sure target entity's are on the board before checking for hex/terrain-based defender SPAs
++ PR #6565: Prevent NPE when closing Counterbattery popup without a choice
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 
@@ -117,12 +123,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6526: Fix MML#1692 - Allow Arty correctly on DS/SC
 + Fix #6524: NullPointerException at beginning of firing phase (Unjam related)
 + Fix #5429, #6493: Fix various Arrow IV issues
-+ Fix #6146: Interim fix for Princess bombing airborne units
-+ PR #6549: Towing from MM lobby
-+ PR #6560: Refactor in Mek (Remove Armlessmek, unify some code in Biped and Tripod, modernize code)
-+ PR #6561: Official Hazardous Liquid Pool Maps
-+ Fix #6532: Make sure target entity's are on the board before checking for hex/terrain-based defender SPAs
-+ PR #6565: Prevent NPE when closing Counterbattery popup without a choice
+
 
 0.50.02 (2024-12-30 2130 UTC)
 + PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions

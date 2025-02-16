@@ -435,38 +435,8 @@ public class TripodMek extends Mek {
     }
 
     @Override
-    protected double getArmActuatorCost() {
-        double cost = 0;
-        int numOfUpperArmActuators = 0;
-        int numOfLowerArmActuators = 0;
-        int numOfHands = 0;
-        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
-            numOfHands++;
-        }
-        if (hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
-            numOfLowerArmActuators++;
-        }
-        if (hasSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
-            numOfUpperArmActuators++;
-        }
-        if (hasSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
-            numOfHands++;
-        }
-        if (hasSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
-            numOfLowerArmActuators++;
-        }
-        if (hasSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
-            numOfUpperArmActuators++;
-        }
-        cost += numOfUpperArmActuators * weight * 100;
-        cost += numOfLowerArmActuators * weight * 50;
-        cost += numOfHands * weight * 80;
-        return cost;
-    }
-
-    @Override
     protected double getLegActuatorCost() {
-        return (weight * 150 * 2) + (weight * 80 * 2) + (weight * 120 * 2);
+        return weight * 3 * (150 + 80 + 120);
     }
 
     /**

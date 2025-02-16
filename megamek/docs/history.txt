@@ -30,6 +30,10 @@ MEGAMEK VERSION HISTORY:
 + PR #6541: MML #1536: Unify armorable equipment tests in MM
 + Fix #6535: Fixed so correctDupeName() used to change name on initial connection
 + Fix #6544: Arrow IV Laser Inhibiting Smoke Fix
++ Fix #6553: Prevent NPE when opening Map Editor
++ Fix #6546: AS conversion updates (MFB, CT, ATAC, SASRCS)
++ PR #6556: Allow units with unlinked weapon enhancements to load as invalid instead of failing to load
++ PR #6557: Fix Mmegameklab #1523
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

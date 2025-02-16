@@ -1978,6 +1978,13 @@ public class FireControl {
         BombMounted exampleBomb = null;
 
         // things that cause us to avoid calculating a bomb plan:
+        // Target is flying unit
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
+                return diveBombPlan;
+            }
+        }
+
         // not having any bombs (in the first place)
         final Iterator<WeaponMounted> weaponIter = shooter.getWeapons();
         if (null == weaponIter) {

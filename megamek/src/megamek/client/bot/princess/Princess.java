@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import megamek.client.ui.swing.TowLinkWarning;
 import org.apache.logging.log4j.Level;
 
 import megamek.client.bot.BotClient;
@@ -724,6 +725,64 @@ public class Princess extends BotClient {
             sb = new StringBuilder();
             sb.append("Ranking deployment hexes...");
         }
+
+        // If we're a trailer, get out of here and let the tractor find the better position.
+        if (deployedUnit.getTowedBy() != Entity.NONE) {
+            Entity tractor = game.getEntity(deployedUnit.getTowedBy());
+            if (tractor != null) {
+                if (tractor.isDeployed()) {
+                    List<Coords> trailerDeployCoords = TowLinkWarning.getCoordsForTrailerGivenTractor(game, deployedUnit, tractor);
+                    // Would any of our possible deploy coords let us be towed by our tractor? Filter to that.
+                    // Else use the default list, guess we can't tow right now.
+                    if (possibleDeployCoords.stream().anyMatch(trailerDeployCoords::contains)) {
+                        possibleDeployCoords = possibleDeployCoords.stream().filter(trailerDeployCoords::contains).toList();
+                    }
+                } else {
+                    // If the tractor isn't deployed let's find the best place to deploy it instead and base our location on that
+                    final List<Coords> startingCoords = getStartingCoordsArray(tractor);
+                    if (startingCoords.isEmpty()) {
+                        logger.error("No valid locations to deploy " + tractor.getDisplayName());
+                    }
+
+                    Coords bestTractorCoords = getFirstValidCoords(tractor, startingCoords);
+                    List<Coords> filteredDeployCoords = new ArrayList<>();
+                    if (deployedUnit instanceof LargeSupportTank) {
+                        filteredDeployCoords = possibleDeployCoords.stream().filter(c -> bestTractorCoords.allAdjacent().contains(c)).toList();
+                        if (!filteredDeployCoords.isEmpty()) {
+                            possibleDeployCoords = filteredDeployCoords;
+                        }
+                    } else if (possibleDeployCoords.contains(bestTractorCoords)){
+                        filteredDeployCoords.add(bestTractorCoords);
+                        possibleDeployCoords = filteredDeployCoords;
+                    }
+                }
+            }
+        }
+
+        // If we're a tractor, let's make sure we can deploy with our trailer
+        if (deployedUnit.getTowing() != Entity.NONE) {
+            Entity trailer = game.getEntity(deployedUnit.getTowing());
+            if (trailer != null) {
+                if (trailer.isDeployed()) {
+                    List<Coords> tractorDeployCoords = TowLinkWarning.getCoordsForTractorGivenTrailer(game, deployedUnit, trailer);
+                    // Would any of our possible deploy coords let us be tow our trailer? Filter to that.
+                    // Else use the default list, guess we can't tow right now.
+                    if (possibleDeployCoords.stream().anyMatch(tractorDeployCoords::contains)) {
+                        possibleDeployCoords = possibleDeployCoords.stream().filter(tractorDeployCoords::contains).toList();
+                    }
+                } else {
+                    List<Coords> towLinkIssues = TowLinkWarning.findTowLinkIssues(game, deployedUnit, game.getBoard());
+                    // If there are any coords we can deploy to without tow link issues, filter our list to just that
+                    if (possibleDeployCoords.stream().anyMatch(c -> !towLinkIssues.contains(c))) {
+                        List<Coords> filteredDeployCoords = possibleDeployCoords.stream().filter(c -> !towLinkIssues.contains(c)).toList();
+                        if (!filteredDeployCoords.isEmpty()) {
+                            possibleDeployCoords = filteredDeployCoords;
+                        }
+                    }
+                }
+            }
+        }
+
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;

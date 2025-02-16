@@ -1,21 +1,26 @@
 /*
-* MegaMek -
-* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018, 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,129 +55,80 @@ import megamek.logging.MMLogger;
  * You know what Meks are, silly.
  */
 public abstract class Mek extends Entity {
-    private static final MMLogger logger = MMLogger.create(Mek.class);
-
+    @Serial
     private static final long serialVersionUID = -1929593228891136561L;
+    private static final MMLogger logger = MMLogger.create(Mek.class);
 
     // system designators for critical hits
     public static final int SYSTEM_LIFE_SUPPORT = 0;
-
     public static final int SYSTEM_SENSORS = 1;
-
     public static final int SYSTEM_COCKPIT = 2;
-
     public static final int SYSTEM_ENGINE = 3;
-
     public static final int SYSTEM_GYRO = 4;
 
     // actuators are systems too, for now
     public static final int ACTUATOR_SHOULDER = 7;
-
     public static final int ACTUATOR_UPPER_ARM = 8;
-
     public static final int ACTUATOR_LOWER_ARM = 9;
-
     public static final int ACTUATOR_HAND = 10;
-
     public static final int ACTUATOR_HIP = 11;
-
     public static final int ACTUATOR_UPPER_LEG = 12;
-
     public static final int ACTUATOR_LOWER_LEG = 13;
-
     public static final int ACTUATOR_FOOT = 14;
-
     public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
 
     // locations
     public static final int LOC_HEAD = 0;
-
     public static final int LOC_CT = 1;
-
     public static final int LOC_RT = 2;
-
     public static final int LOC_LT = 3;
-
     public static final int LOC_RARM = 4;
-
     public static final int LOC_LARM = 5;
-
     public static final int LOC_RLEG = 6;
-
     public static final int LOC_LLEG = 7;
-
     // center leg, for tripods
     public static final int LOC_CLEG = 8;
 
     // cockpit status
     public static final int COCKPIT_OFF = 0;
-
     public static final int COCKPIT_ON = 1;
-
     public static final int COCKPIT_AIMED_SHOT = 2;
 
     // gyro types
     public static final int GYRO_UNKNOWN = -1;
-
     public static final int GYRO_STANDARD = 0;
-
     public static final int GYRO_XL = 1;
-
     public static final int GYRO_COMPACT = 2;
-
     public static final int GYRO_HEAVY_DUTY = 3;
-
     public static final int GYRO_NONE = 4;
-
     public static final int GYRO_SUPERHEAVY = 5;
-
     public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro",
             "Compact Gyro", "Heavy Duty Gyro", "None", "Superheavy Gyro" };
-
     public static final String[] GYRO_SHORT_STRING = { "Standard", "XL",
             "Compact", "Heavy Duty", "None", "Superheavy" };
 
     // cockpit types
     public static final int COCKPIT_UNKNOWN = -1;
-
     public static final int COCKPIT_STANDARD = 0;
-
     public static final int COCKPIT_SMALL = 1;
-
     public static final int COCKPIT_COMMAND_CONSOLE = 2;
-
     public static final int COCKPIT_TORSO_MOUNTED = 3;
-
     public static final int COCKPIT_DUAL = 4;
-
     public static final int COCKPIT_INDUSTRIAL = 5;
-
     public static final int COCKPIT_PRIMITIVE = 6;
-
     public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
-
     public static final int COCKPIT_SUPERHEAVY = 8;
-
     public static final int COCKPIT_SUPERHEAVY_TRIPOD = 9;
-
     public static final int COCKPIT_TRIPOD = 10;
-
     public static final int COCKPIT_INTERFACE = 11;
-
     public static final int COCKPIT_VRRP = 12;
-
     public static final int COCKPIT_QUADVEE = 13;
-
     public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL = 14;
-
     public static final int COCKPIT_SUPERHEAVY_COMMAND_CONSOLE = 15;
-
     public static final int COCKPIT_SMALL_COMMAND_CONSOLE = 16;
-
     public static final int COCKPIT_TRIPOD_INDUSTRIAL = 17;
-
     public static final int COCKPIT_SUPERHEAVY_TRIPOD_INDUSTRIAL = 18;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
@@ -403,7 +359,7 @@ public abstract class Mek extends Entity {
     }
 
     /**
-     * @return if this Mek cannot stand up from hulldown
+     * @return True if this Mek can NOT stand up from hulldown. Checks leg and gyro damage.
      */
     public abstract boolean cannotStandUpFromHullDown();
 
@@ -5226,8 +5182,7 @@ public abstract class Mek extends Entity {
      */
     public void clearEngineCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_ENGINE));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
         }
     }
 
@@ -5237,12 +5192,9 @@ public abstract class Mek extends Entity {
      */
     public void clearCockpitCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_LIFE_SUPPORT));
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_SENSORS));
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                    SYSTEM_COCKPIT));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
         }
     }
 
@@ -5259,15 +5211,15 @@ public abstract class Mek extends Entity {
 
     public int shieldAbsorptionDamage(int damage, int location, boolean rear) {
         int damageAbsorption = damage;
-        if (this.hasActiveShield(location, rear)) {
+        if (hasActiveShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_CT:
                 case Mek.LOC_HEAD:
-                    if (this.hasActiveShield(Mek.LOC_RARM)) {
+                    if (hasActiveShield(Mek.LOC_RARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
                                 damageAbsorption);
                     }
-                    if (this.hasActiveShield(Mek.LOC_LARM)) {
+                    if (hasActiveShield(Mek.LOC_LARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
                                 damageAbsorption);
                     }
@@ -5275,13 +5227,13 @@ public abstract class Mek extends Entity {
                 case Mek.LOC_LARM:
                 case Mek.LOC_LT:
                 case Mek.LOC_LLEG:
-                    if (this.hasActiveShield(Mek.LOC_LARM)) {
+                    if (hasActiveShield(Mek.LOC_LARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
                                 damageAbsorption);
                     }
                     break;
                 default:
-                    if (this.hasActiveShield(Mek.LOC_RARM)) {
+                    if (hasActiveShield(Mek.LOC_RARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
                                 damageAbsorption);
                     }
@@ -5289,18 +5241,18 @@ public abstract class Mek extends Entity {
             }
         }
 
-        if (this.hasPassiveShield(location, rear)) {
+        if (hasPassiveShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_LARM:
                 case Mek.LOC_LT:
-                    if (this.hasPassiveShield(Mek.LOC_LARM)) {
+                    if (hasPassiveShield(Mek.LOC_LARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LARM,
                                 damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RARM:
                 case Mek.LOC_RT:
-                    if (this.hasPassiveShield(Mek.LOC_RARM)) {
+                    if (hasPassiveShield(Mek.LOC_RARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RARM,
                                 damageAbsorption);
                     }
@@ -5493,14 +5445,7 @@ public abstract class Mek extends Entity {
         return heatSinkCoolantFailureFactor;
     }
 
-    /**
-     * Modify the number of TacOps coolant failures. May be positive to indicate
-     * additional
-     * failures, or negative to indicate coolant being refreshed from an outside
-     * source.
-     *
-     * @param amount Amount to change the value, typical value is 1
-     */
+
     @Override
     public void addCoolantFailureAmount(int amount) {
         heatSinkCoolantFailureFactor += amount;
@@ -5514,21 +5459,11 @@ public abstract class Mek extends Entity {
         heatSinkCoolantFailureFactor = 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return 1 + getExtraCommGearTons();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getHQIniBonus()
-     */
     @Override
     public int getHQIniBonus() {
         int bonus = super.getHQIniBonus();
@@ -5538,11 +5473,6 @@ public abstract class Mek extends Entity {
         return bonus;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getBARRating()
-     */
     @Override
     public int getBARRating(int loc) {
         return (armorType[loc] == EquipmentType.T_ARMOR_COMMERCIAL) ? 5 : 10;
@@ -5610,21 +5540,11 @@ public abstract class Mek extends Entity {
         stalledThisTurn = true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#isStalled()
-     */
     @Override
     public boolean isStalled() {
         return stalled;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#isShutDown()
-     */
     @Override
     public boolean isShutDown() {
         return super.isShutDown() || isStalled();
@@ -6353,10 +6273,6 @@ public abstract class Mek extends Entity {
         return false;
     }
 
-    /**
-     * Report the location as destroyed if blown off in a previous phase, doomed
-     * if blown off in this one.
-     */
     @Override
     public int getInternal(int loc) {
         if (isLocationBlownOff(loc)) {
@@ -6521,13 +6437,6 @@ public abstract class Mek extends Entity {
         coolingFlawActive = flawActive;
     }
 
-    /**
-     * Used to determine the draw priority of different Entity subclasses.
-     * This allows different unit types to always be draw above/below other
-     * types.
-     *
-     * @return
-     */
     @Override
     public int getSpriteDrawPriority() {
         return 6;
@@ -6580,12 +6489,31 @@ public abstract class Mek extends Entity {
         return result;
     }
 
-    /**
-     * Method that returns the mapping between locations which, if cargo is carried,
-     * block other locations from firing.
-     */
     @Override
     protected Map<Integer, List<Integer>> getBlockedFiringLocations() {
         return BLOCKED_FIRING_LOCATIONS;
+    }
+
+    @Override
+    public boolean hasFunctionalLegAES() {
+        Set<Integer> aesLegLocations = new HashSet<>();
+        for (MiscMounted mounted : getMisc()) {
+            if (locationIsLeg(mounted.getLocation()) && mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                if (mounted.isInoperable()) {
+                    // a leg AES is destroyed, therefore AES cannot be used at all; shortcut out of the method
+                    return false;
+                }
+                aesLegLocations.add(mounted.getLocation());
+            }
+        }
+        // must have found an operable AES in each leg
+        return aesLegLocations.size() == legCount();
+    }
+
+    /**
+     * @return The number of legs on this Mek (the nominal number, regardless of state or damage, i.e. 2, 3 or 4)
+     */
+    protected int legCount() {
+        return 2;
     }
 }

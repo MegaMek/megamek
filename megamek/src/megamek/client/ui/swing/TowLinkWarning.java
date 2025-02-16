@@ -31,13 +31,12 @@ import java.util.List;
 public class TowLinkWarning {
 
     /**
+     * This is used by the {@link MovementDisplay} class.
      *
-     * This is
-     * used by the {@link MovementDisplay} class.
      *
      * @param game {@link Game} provided by the phase display class
      * @param entity {@link Entity} currently selected in the deployment phase.
-     * @param board {@link Board} board object with building data.
+     * @param board {@link Board} board object with hex data.
      *
      * @return returns a list of {@link Coords} that where warning flags
      *         should be placed.
@@ -48,18 +47,40 @@ public class TowLinkWarning {
         List<Coords> validTractorCoords = findCoordsForTractor(game, entity, board);
         List<Coords> validTrailerCoords = findCoordsForTrailer(game, entity, board);
 
+
+        // Null list means the unit is not a tractor/trailer - if both
+        // are null then there are no warnings to display, return the
+        // empty warn list.
         if (validTractorCoords == null && validTrailerCoords == null) {
             return warnList;
         }
-        var boardHeight = board.getHeight();
-        var boardWidth = board.getWidth();
-        for (int x = 0; x < boardWidth; x++) {
-            for (int y = 0; y < boardHeight; y++) {
+
+        List<Coords> validTowCoords = new ArrayList<>();
+
+        if (validTractorCoords == null) {
+            // We've established both aren't null -
+            // So if validTractorCoords is null, we can add
+            // validTrailerCoords as the only valid coords
+            validTowCoords.addAll(validTrailerCoords);
+        } else if (validTrailerCoords == null) {
+            // On the other hand, if validTrailerCoords is null,
+            // we can add validTractorCoords as the only valid coords
+            validTowCoords.addAll(validTractorCoords);
+        } else {
+            // If neither is null then we need to get the coords in common
+            // So add one, then retainAll with the other.
+            validTowCoords.addAll(validTractorCoords);
+            validTowCoords.retainAll(validTrailerCoords);
+        }
+
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
                 Coords coords = new Coords(x, y);
+                // We still need to check if it's a legal deployment
+                // again so we don't mark hexes that aren't even
+                // valid to deploy in as warning.
                 if (board.isLegalDeployment(coords, entity)) {
-                    if (validTractorCoords != null && !validTractorCoords.contains(coords)) {
-                        warnList.add(coords);
-                    } else if (validTrailerCoords != null && !validTrailerCoords.contains(coords)) {
+                    if (!validTowCoords.contains(coords)) {
                         warnList.add(coords);
                     }
                 }
@@ -88,10 +109,8 @@ public class TowLinkWarning {
         if (trailer.isDeployed()) {
             validCoords.addAll(getCoordsForTractorGivenTrailer(game, tractor, trailer));
         } else {
-            var boardHeight = board.getHeight();
-            var boardWidth = board.getWidth();
-            for (int x = 0; x < boardWidth; x++) {
-                for (int y = 0; y < boardHeight; y++) {
+            for (int x = 0; x < board.getWidth(); x++) {
+                for (int y = 0; y < board.getHeight(); y++) {
                     Coords coords = new Coords(x, y);
                     if (board.isLegalDeployment(coords, tractor)) {
                         if (trailer instanceof LargeSupportTank) {
@@ -149,10 +168,8 @@ public class TowLinkWarning {
         if (tractor.isDeployed()) {
             validCoords.addAll(getCoordsForTrailerGivenTractor(game, trailer, tractor));
         } else {
-            var boardHeight = board.getHeight();
-            var boardWidth = board.getWidth();
-            for (int x = 0; x < boardWidth; x++) {
-                for (int y = 0; y < boardHeight; y++) {
+            for (int x = 0; x < board.getWidth(); x++) {
+                for (int y = 0; y < board.getHeight(); y++) {
                     Coords coords = new Coords(x, y);
                     if (board.isLegalDeployment(coords, trailer)) {
                         if (trailer instanceof LargeSupportTank) {

@@ -26911,7 +26911,8 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * loads an entity into another one. Meant to be called from the chat lounge
+     * Set an entity to be towed by another entity.
+     * Meant to be called from the chat lounge.
      *
      * @param c         the packet to be processed
      * @param connIndex the id for connection that received the packet.

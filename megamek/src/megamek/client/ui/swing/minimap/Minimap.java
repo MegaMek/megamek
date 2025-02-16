@@ -389,11 +389,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (bv != null) {
             bv.addBoardViewListener(boardViewListener);
         }
-        client.addCloseClientListener(() -> {
-            if (gifWriterThread != null && gifWriterThread.isAlive()) {
-                gifWriterThread.stopThread();
-            }
-        });
+        if (client != null) {
+            client.addCloseClientListener(() -> {
+                if (gifWriterThread != null && gifWriterThread.isAlive()) {
+                    gifWriterThread.stopThread();
+                }
+            });
+        }
         GUIP.addPreferenceChangeListener(this);
     }
 

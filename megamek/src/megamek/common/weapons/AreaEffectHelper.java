@@ -715,6 +715,16 @@ public class AreaEffectHelper {
                 radius = 1;
                 clusterMunitionsFlag = true;
             }
+            if (bomb.getBombType() == BombType.B_ARROW) {
+                damage = bomb.getRackSize();
+                falloff = 10;
+                radius = 1;
+            }
+            if (bomb.getBombType() == BombType.B_HOMING) {
+                damage = bomb.getRackSize();
+                falloff = 20;
+                radius = -1;
+            }
         }
 
         if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
@@ -1011,6 +1021,11 @@ public class AreaEffectHelper {
             blastShape.put(Map.entry(height, center), baseDamage);
             if (asfFlak) {
                 // Only the central hex matters for altitude-level attacks
+                return blastShape;
+            }
+            if (radius == -1) {
+                // No blast effects at all, only central hex affected
+                // e.g. Arrow IV Homing
                 return blastShape;
             }
         }

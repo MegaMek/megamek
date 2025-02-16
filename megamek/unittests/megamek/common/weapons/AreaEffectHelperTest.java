@@ -3,7 +3,6 @@ package megamek.common.weapons;
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
-import megamek.common.enums.BuildingType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
@@ -245,4 +244,6 @@ class AreaEffectHelperTest {
             assertEquals(5, shape.get(Map.entry(2, c)));
         }
     }
+
+
 }

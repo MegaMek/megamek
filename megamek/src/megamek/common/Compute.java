@@ -7948,10 +7948,6 @@ public class Compute {
         // Assume that offboard units are at or above 0; any underwater units should have negative elevation.
         Hex hex = game.getBoard().getHex(position);
         final int baseHeight = (hex != null) ? hex.getLevel() : 0;
-        if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB && hex != null) {
-            // Hex Targetables don't record actual height
-            height = baseHeight;
-        }
 
         // Create the projected blast shape from the ammo, target, height, etc.
         var blastShape = AreaEffectHelper.shapeBlast(
@@ -7961,7 +7957,11 @@ public class Compute {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             // check if the target unit is in the computed blast zone;
             return (!blastShape.containsKey(Map.entry(baseHeight + target.getElevation(), target.getPosition())));
-        } else if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
+        }
+        if (
+            List.of(Targetable.TYPE_HEX_AERO_BOMB, Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_BUILDING)
+                .contains(target.getTargetType())
+        ) {
             // Check if any of the possible targets are in the blast zone
             return (
                 entities.stream().noneMatch(
@@ -7971,6 +7971,7 @@ public class Compute {
                 )
             );
         }
-        return false;
+        // If we got here, the enemies are outside the blast somehow.
+        return true;
     }
 } // End public class Compute

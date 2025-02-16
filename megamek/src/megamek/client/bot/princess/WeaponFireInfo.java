@@ -32,6 +32,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
@@ -632,13 +633,27 @@ public class WeaponFireInfo {
             && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
         ) {
             // See if we can catch the target in the blast
-            if (
-                Compute.allEnemiesOutsideBlast(
-                    target.getElevation(), target, game.getEntitiesVector(target.getPosition()),
-                    shooter, preferredAmmo.getType(), false, false, false, game
-                )
-            ) {
-                return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
+            Hex hex = game.getBoard().getHex(target.getPosition());
+            // Aim at ground level by default
+            ArrayList<Integer> heights = new ArrayList<Integer>();
+            heights.add((hex != null) ? hex.getLevel() : 0);
+            if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
+                // Aim at the top of any terrain features that cause AE blast spheres
+                for (int h=heights.get(0); h < hex.ceiling(); h++) {
+                    heights.add(h);
+                }
+            }
+
+            // Iterate through levels that can be struck, looking for victims.
+            for (int height: heights) {
+                if (
+                    Compute.allEnemiesOutsideBlast(
+                        height, target, game.getEntitiesVector(target.getPosition()),
+                        shooter, preferredAmmo.getType(), false, false, false, game
+                    )
+                ) {
+                    return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
+                }
             }
         }
 
@@ -703,7 +718,7 @@ public class WeaponFireInfo {
     }
 
     /**
-     * Worker function to compute expected bomb damage given the shooter
+     * Worker function to compute bomb damage given the shooter and target hex.
      *
      * @param shooter   The unit making the attack.
      * @param weapon    The weapon being used in the attack.
@@ -717,12 +732,13 @@ public class WeaponFireInfo {
         // everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                final int damagePerShot = bomb.getType().getDamagePerShot();
 
                 // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();
 
-                int blastRadius = BombType.getBlastRadius(bomb.getType().getInternalName());
+                AreaEffectHelper.DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(bomb.getType(), 0, false);
+                final int damagePerShot = falloff.damage;
+                int blastRadius = falloff.radius;
                 for (int radius = 0; radius <= blastRadius; radius++) {
                     affectedHexes.addAll(bombedHex.allAtDistance(radius));
                 }
@@ -739,8 +755,6 @@ public class WeaponFireInfo {
                 }
             }
         }
-
-        damage = damage * getProbabilityToHit();
 
         return damage;
     }
@@ -778,6 +792,8 @@ public class WeaponFireInfo {
         // later overwritten.
         getWeaponAttackAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
 
+        // As calcRealToHit engages the actual to-hit calculation code, we need to do
+        // bot-related postprocessing on its results rather than inside of the WAA code.
         if (!guess) {
             setToHit(postProcessToHit(calcRealToHit(getWeaponAttackAction())));
         } else if (null != shooterPath) {

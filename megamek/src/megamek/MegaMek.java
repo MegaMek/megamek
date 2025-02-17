@@ -37,6 +37,7 @@ import megamek.server.DedicatedServer;
 import megamek.utilities.GifWriter;
 import megamek.utilities.PrincessFineTuning;
 import megamek.utilities.RATGeneratorEditor;
+import megamek.utilities.StartupUtil;
 
 import javax.swing.*;
 import java.io.*;
@@ -66,39 +67,15 @@ public class MegaMek {
     private static final NumberFormat numberFormatter = NumberFormat.getInstance();
 
     private static final MMLogger logger = MMLogger.create(MegaMek.class);
-    private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
 
     public static void main(String... args) {
-        ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
+        StartupUtil.setupEnvironment(logger);
 
-        // Configure Sentry with defaults. Although the client defaults to enabled, the
-        // properties file is used to disable it and additional configuration can be
-        // done inside of the sentry.properties file. The defaults for everything else
-        // is set here.
-        Sentry.init(options -> {
-            options.setEnableExternalConfiguration(true);
-            options.setDsn("https://b1720cb789ec56df7df9610dfa463c09@sentry.tapenvy.us/8");
-            options.setEnvironment("production");
-            options.setTracesSampleRate(0.2);
-            options.setDebug(true);
-            options.setServerName("MegaMekClient");
-            options.setRelease(SuiteConstants.VERSION.toString());
-        });
-
-        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-
-        // First, create a global default exception handler
-        Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
-            final String name = t.getClass().getName();
-            final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
-            final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            logger.error(t, message, title);
-        });
 
         // Second, let's handle logging
         initializeLogging(MMConstants.PROJECT_NAME);
 
-        // Third, Command Line Arguments and Startup
+        // Command Line Arguments and Startup
         MegaMekCommandLineParser parser = new MegaMekCommandLineParser(args);
 
         // Parse the command line arguments and throw an error if needed.

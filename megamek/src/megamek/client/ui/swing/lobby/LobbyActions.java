@@ -1147,8 +1147,8 @@ public class LobbyActions {
     }
 
     /**
-     * Performs standard checks for updates (units must be present, visible and
-     * editable)
+     * Performs standard checks for updates (units must be present, visible,
+     * editable, and player is not done)
      * and returns false if that's not the case. Also shows an error message dialog.
      */
     private boolean validateUpdate(Collection<Entity> entities) {
@@ -1184,8 +1184,6 @@ public class LobbyActions {
         // Gather the necessary sending clients; this list may contain null if some
         // units
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
-
-     
         List<Client> senders = entities.stream().map(this::correctSender).distinct().collect(toList());
         for (Client sender : senders) {
             if (sender == null) {

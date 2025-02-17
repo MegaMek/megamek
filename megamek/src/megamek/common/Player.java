@@ -652,6 +652,9 @@ public final class Player extends TurnOrdered {
     }
 
     public String getColoredPlayerNameWithTeam() {
+        if (team == -1) {
+            team = 0;
+        } 
         return "<B><font color='" + getColour().getHexString(0x00F0F0F0) + "'>" + getName() +
             " (" + TEAM_NAMES[team] + ")</font></B>";
     }

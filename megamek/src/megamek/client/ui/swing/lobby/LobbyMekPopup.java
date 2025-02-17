@@ -384,6 +384,7 @@ class LobbyMekPopup {
         if (enabled && entity.isTrailer()) {
             menu.setVisible(true);
             game.getEntitiesVector().stream()
+                .filter(tractor -> tractor.getTowing() == Entity.NONE)
                 .filter( tractor -> tractor.canTow(entity.getId()))
                 .filter(tractor -> !tractor.equals(entity))
                 .forEach(tractor -> menu.add(menuItem("<HTML>" + tractor.getShortNameRaw() + idString(game, tractor.getId()),

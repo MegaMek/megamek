@@ -100,3 +100,4 @@ OfficialUnitList.txt
 equipment.txt
 .github/copilot-instructions.md
 *.iml
+sentry.properties

@@ -47,6 +47,7 @@ public final class LobbyErrors {
     private static final String FORCE_EMPTY = "Please select only empty forces.";
     private static final String FORCE_ASSIGN_ONLYTEAM = "Can only reassign a force to a teammate when reassigning without units.";
     private static final String FORCE_ATTACH_TOSUB = "Cannot attach a force to its own subforce.";
+    private static final String PLAYER_DONE = "Cannot edit units while your status is Done.";
     private static final String SBF_CONVERSIONERROR = "At least some of the forces you selected cannot be " +
             "converted to SBF Formations. Please select only the topmost forces to be converted, no subforces. " +
             "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
@@ -147,6 +148,10 @@ public final class LobbyErrors {
 
     public static void showSBFConversion(JFrame owner) {
         JOptionPane.showMessageDialog(owner, SBF_CONVERSIONERROR);
+    }
+
+    public static void showCannotEditWhileDone(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, PLAYER_DONE);
     }
 
     private LobbyErrors() { }

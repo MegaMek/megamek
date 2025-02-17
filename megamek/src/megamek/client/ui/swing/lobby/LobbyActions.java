@@ -1163,6 +1163,11 @@ public class LobbyActions {
             LobbyErrors.showCannotViewHidden(frame());
             return false;
         }
+        
+        if (localPlayer().isDone()) {
+            LobbyErrors.showCannotEditWhileDone(frame());
+            return false;
+        }
         return true;
     }
 
@@ -1179,6 +1184,8 @@ public class LobbyActions {
         // Gather the necessary sending clients; this list may contain null if some
         // units
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
+
+     
         List<Client> senders = entities.stream().map(this::correctSender).distinct().collect(toList());
         for (Client sender : senders) {
             if (sender == null) {

@@ -99,7 +99,7 @@ public final class StartupUtil {
             "Would you like to enable Sentry", "Sentry",
             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-        try (var writer = new FileWriter(propFile)) {
+        try (var writer = new FileWriter(propFile, false)) {
             if (shouldSentry) {
                 writer.write("enabled=true\n");
             } else {
@@ -113,6 +113,7 @@ public final class StartupUtil {
             e.printStackTrace();
             System.exit(1);
         }
+        window.dispose();
 
     }
 

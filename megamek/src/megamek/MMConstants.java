@@ -105,4 +105,16 @@ public final class MMConstants extends SuiteConstants {
     // endregion Magic Numbers That Should Be Enums
 
     public static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
+
+    public static final SentryAttributes SENTRY_ATTRIBUTES = new SentryAttributes() {
+        @Override
+        public String serverName() {
+            return "MegaMekClient";
+        }
+
+        @Override
+        public String dsn() {
+            return "https://b1720cb789ec56df7df9610dfa463c09@sentry.tapenvy.us/8";
+        }
+    };
 }

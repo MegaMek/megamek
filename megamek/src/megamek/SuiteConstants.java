@@ -67,4 +67,9 @@ public abstract class SuiteConstants {
     public static final String MM_PREFERENCES_FILE = "mmconf/mm.preferences";
     public static final String MML_PREFERENCES_FILE = "mmconf/mml.preferences";
     // endregion File Paths
+
+    public interface SentryAttributes {
+        String serverName();
+        String dsn();
+    }
 }

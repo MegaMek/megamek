@@ -69,7 +69,7 @@ public class MegaMek {
     private static final MMLogger logger = MMLogger.create(MegaMek.class);
 
     public static void main(String... args) {
-        StartupUtil.setupEnvironment(logger);
+        StartupUtil.setupEnvironment(logger, MMConstants.SENTRY_ATTRIBUTES);
 
 
         // Second, let's handle logging

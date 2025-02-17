@@ -23,7 +23,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
 import java.io.*;
-import java.nio.file.Files;
 
 /**
  * Common tasks to be performed when any of the suite programs first start.
@@ -34,10 +33,11 @@ public final class StartupUtil {
      * Enable ObjectInputFilter, logging and Sentry, set global exception handler,
      * and other startup tasks to prepare the execution environment.
      * @param topLevelLogger The logger for uncaught exceptions
+     * @param sentryAttributes The parameters for sentry for the specific project being started
      */
-    public static void setupEnvironment(MMLogger topLevelLogger) {
+    public static void setupEnvironment(MMLogger topLevelLogger, SuiteConstants.SentryAttributes sentryAttributes) {
         setOif();
-        setSentry();
+        setSentry(sentryAttributes);
         setTooltips();
         setExceptionHandler(topLevelLogger);
     }
@@ -61,25 +61,24 @@ public final class StartupUtil {
         ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
     }
 
-    private static void setSentry() {
+    private static void setSentry(SuiteConstants.SentryAttributes sentryAttributes) {
         querySentry();
-        initSentry();
+        initSentry(sentryAttributes);
     }
 
     /**
-     * // Configure Sentry with defaults. Although the client defaults to enabled, the
-     *         // properties file is used to disable it and additional configuration can be
-     *         // done inside the sentry.properties file. The defaults for everything else
-     *         // is set here.
+     * Configure Sentry with defaults.
+     * The properties file is used to disable it and additional configuration can be
+     * done inside the sentry.properties file. The defaults for everything else is set here.
      */
-    private static void initSentry() {
+    private static void initSentry(SuiteConstants.SentryAttributes sentryAttributes) {
         Sentry.init(options -> {
             options.setEnableExternalConfiguration(true);
-            options.setDsn("https://b1720cb789ec56df7df9610dfa463c09@sentry.tapenvy.us/8");
+            options.setDsn(sentryAttributes.dsn());
             options.setEnvironment("production");
             options.setTracesSampleRate(0.2);
             options.setDebug(true);
-            options.setServerName("MegaMekClient");
+            options.setServerName(sentryAttributes.serverName());
             options.setRelease(SuiteConstants.VERSION.toString());
         });
 

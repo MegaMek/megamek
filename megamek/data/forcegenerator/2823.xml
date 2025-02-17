@@ -189,7 +189,7 @@
 			<salvage pct='10'>CCC:3,CHH:3,CSR:10,CIH:3,CSV:3,CFM:3,CCO:3,CGS:3,CSA:5,CDS:3,CW:10,CJF:5,CGB:3</salvage>
 		</faction>
 		<faction key='CS'>
-			<pctSL>50,75</pctSL>
+			<pctSL>0,20,40,50,75</pctSL>
 		</faction>
 		<faction key='DC'>
 			<salvage pct='6'>CC:1,LA:8,FS:10</salvage>
@@ -2020,7 +2020,7 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Platoon' unitType='Infantry'>
-			<availability>PP:10,IS:10,Periphery:10,TC:3-,Periphery.Deep:10</availability>
+			<availability>PP:10,IS:10,CS:8,Periphery:10,TC:3-,Periphery.Deep:10</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>PP:7,IS:8,Periphery:8,TC:6-,Periphery.Deep:8</availability>
@@ -2071,13 +2071,29 @@
 				<availability>PP:2+,IS:5,Periphery:5,TC:3+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Foot Platoon (ComStar)' unitType='Infantry'>
+            <availability>CS:3+</availability>
+            <model name='(Laser)'>
+                <availability>CS:8</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>CS:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>CS:6-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>CS:5+</availability>
+            </model>
+        </chassis>
         <chassis name='Foot Platoon (Taurian)' unitType='Infantry'>
             <availability>TC:10</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
                 <availability>TC:5-</availability>
             </model>
-            <model name="(Laser)">
+            <model name='(Laser)'>
                 <availability>TC:5+</availability>
             </model>
             <model name='(MG)'>
@@ -2777,7 +2793,7 @@
 			</model>
 		</chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>PP:3+,IS:8,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
+			<availability>PP:3+,IS:8,CS:6,Periphery:7,TC:2-,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>PP:4,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
@@ -2799,6 +2815,16 @@
 				<availability>PP:3+,IS:5,Periphery:5,TC:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
+        <chassis name='Jump Platoon (ComStar)' unitType='Infantry'>
+            <availability>CS:2+</availability>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>CS:8</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>CS:5-</availability>
+            </model>
+        </chassis>
         <chassis name='Jump Platoon (Taurian)' unitType='Infantry'>
             <availability>TC:8+</availability>
             <model name='(Flamer)'>
@@ -3336,7 +3362,7 @@
 			</model>
 		</chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
-			<availability>PP:2+,IS:5,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
+			<availability>PP:2+,IS:5,CS:3,Periphery:5,TC:1-,Periphery.Deep:4+</availability>
 			<model name='(Demolition)'>
 				<roles>recon,engineer</roles>
 				<availability>General:2,PP:1+</availability>
@@ -3385,7 +3411,7 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-			<availability>PP:4+,IS:7,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
+			<availability>PP:4+,IS:7,CS:4,Periphery:7,TC:3-,Periphery.Deep:6+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>PP:6,IS:8,Periphery:8,TC:3-,Periphery.Deep:8</availability>
@@ -3428,7 +3454,7 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
-			<availability>PP:6+,IS:7,Periphery:7,TC:2-,Periphery.Deep:8+</availability>
+			<availability>PP:6+,IS:7,CS:5,Periphery:7,TC:2-,Periphery.Deep:8+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>PP:8,IS:8,Periphery:8,TC:4-,Periphery.Deep:8</availability>
@@ -3607,7 +3633,7 @@
 			</model>
 		</chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
-			<availability>CHH:4-,PP:7,IS:9,Periphery:9,TC:3-,Periphery.Deep:9</availability>
+			<availability>CHH:4-,PP:7,IS:9,CS:7,Periphery:9,TC:3-,Periphery.Deep:9</availability>
 			<model name='(Fieldworks)'>
 				<roles>engineer</roles>
 				<availability>CHH:8,IS:4,Periphery:2</availability>
@@ -3641,6 +3667,22 @@
 				<availability>PP:3+,IS:5,Periphery:5,TC:4+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
+        <chassis name='Motorized Platoon (ComStar)' unitType='Infantry'>
+            <availability>CS:2+</availability>
+            <model name='(Laser)'>
+                <availability>CS:8</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>CS:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>CS:6-</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>CS:5+</availability>
+            </model>
+        </chassis>
         <chassis name='Motorized Platoon (Taurian)' unitType='Infantry'>
             <availability>TC:9</availability>
             <model name='(Flamer)'>

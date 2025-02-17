@@ -1,0 +1,60 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-04
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Level I (WOBM)
+</Name>
+
+<Model>
+(Tracked LBX10)
+</Model>
+
+<year>
+3053
+</year>
+
+<originalBuildYear>
+3053
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Word of Blake Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISLBXAC10
+IS LB 10-X Cluster Ammo
+ISLBXAC10
+IS LB 10-X Cluster Ammo
+</Field Guns Equipment>
+
+<notes>
+Squad/platoon size from TechManual. Armor kit from Tactical Operations. Intro date from official creation of ComStar Guards and Militia (ComGuards).
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

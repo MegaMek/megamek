@@ -82,10 +82,6 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     }
 
     @Override
-    protected void processMFB(Transporter transporter) {
-    }
-
-    @Override
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 

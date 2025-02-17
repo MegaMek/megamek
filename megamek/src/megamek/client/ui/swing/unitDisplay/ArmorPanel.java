@@ -146,12 +146,6 @@ class ArmorPanel extends PicMap {
             minTopMargin = minMekTopMargin;
             minBottomMargin = minMekBottomMargin;
             minRightMargin = minMekRightMargin;
-        } else if (en instanceof ArmlessMek) {
-            ams = armless;
-            minLeftMargin = minMekLeftMargin;
-            minTopMargin = minMekTopMargin;
-            minBottomMargin = minMekBottomMargin;
-            minRightMargin = minMekRightMargin;
         } else if (en instanceof Mek) {
             ams = mek;
             minLeftMargin = minMekLeftMargin;

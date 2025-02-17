@@ -246,6 +246,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
+            computeTowLinkBreakageHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
@@ -257,6 +258,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void computeCFWarningHexes(Entity ce) {
         Game game = clientgui.getClient().getGame();
         List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+        clientgui.showCollapseWarning(warnList);
+    }
+
+    private void computeTowLinkBreakageHexes(Entity ce) {
+        Game game = clientgui.getClient().getGame();
+        List<Coords> warnList = TowLinkWarning.findTowLinkIssues(game, ce, game.getBoard());
         clientgui.showCollapseWarning(warnList);
     }
 

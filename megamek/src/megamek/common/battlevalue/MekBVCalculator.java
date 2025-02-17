@@ -203,9 +203,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 toSubtract = 1;
             }
 
-            // For weapons split between locations, subtract per critical slot
+            // For weapons split between locations, subtract per critical slot; on superheavy, consider the reduced slot count
             int criticals;
-            if (mounted.isSplit()) {
+            if (mounted.isSplit() || mek.isSuperHeavy()) {
                 criticals = 0;
                 for (int l = 0; l < entity.locations(); l++) {
                     if (((l == mounted.getLocation()) || (l == mounted.getSecondLocation()))

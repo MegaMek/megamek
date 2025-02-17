@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -673,9 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = textFilter.getText().toLowerCase();
+            String text = stripAccents(textFilter.getText().toLowerCase());
             String[] tokens = text.split(" ");
-            String searchText = unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase();
+            String searchText = stripAccents(unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase());
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;
@@ -683,6 +684,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
         return true;
+    }
+
+    public static String stripAccents(String input) {
+        if (input == null) {
+            return null;
+        }
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "");
     }
 
     /**

@@ -203,7 +203,7 @@ class WeaponFireInfoTest {
         double expectedKill = 0;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
         when(mockShooter.getEquipment(anyInt())).thenReturn((Mounted) mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());

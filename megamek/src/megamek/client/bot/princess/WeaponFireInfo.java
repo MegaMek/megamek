@@ -52,6 +52,7 @@ public class WeaponFireInfo {
 
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
+    private static final double[] ZERO_DAMAGE = {0.0, 0.0, 0.0};
 
     private WeaponAttackAction action;
     private Entity shooter;
@@ -61,6 +62,8 @@ public class WeaponFireInfo {
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
+    private double maxFriendlyDamage;
+    private double maxBuildingDamage;
     private double expectedDamageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
@@ -272,8 +275,26 @@ public class WeaponFireInfo {
         return maxDamage;
     }
 
-    private void setMaxDamage(final double maxDamage) {
-        this.maxDamage = maxDamage;
+    private void setMaxDamage(final double[] maxDamage) {
+        this.maxDamage = maxDamage[0];
+        this.maxFriendlyDamage = maxDamage[1];
+        this.maxBuildingDamage = maxDamage[2];
+    }
+
+    double getMaxFriendlyDamage() {
+        return maxFriendlyDamage;
+    }
+
+    private void setMaxFriendlyDamage(final double maxDamage) {
+        this.maxFriendlyDamage = maxDamage;
+    }
+
+    double getMaxBuildingDamage() {
+        return maxBuildingDamage;
+    }
+
+    private void setMaxBuildingDamage(final double maxDamage) {
+        this.maxBuildingDamage = maxDamage;
     }
 
     double getProbabilityToHit() {
@@ -413,10 +434,10 @@ public class WeaponFireInfo {
         return diveBomb;
     }
 
-    double computeExpectedDamage() {
+    double[] computeExpectedDamage() {
         // bombs require some special consideration
         if (weapon.isGroundBomb()) {
-            return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
+            return computeExpectedBombDamage(getShooter(), weapon, getTarget());
         }
 
         // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
@@ -428,7 +449,7 @@ public class WeaponFireInfo {
                 FLARE_MUNITIONS.containsAll(munitionType) ||
                 MINE_MUNITIONS.containsAll(munitionType)
             ) {
-                return 0D;
+                return ZERO_DAMAGE;
             }
 
             // Handle woods blocking cluster shots
@@ -457,7 +478,7 @@ public class WeaponFireInfo {
                     );
 
                     if (blockedByWoods) {
-                        return 0D;
+                        return ZERO_DAMAGE;
                     }
                 }
             }
@@ -470,6 +491,8 @@ public class WeaponFireInfo {
         // varies with distance to target.
         if (!weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
+            int bayFriendly = 0;
+            int bayBuilding = 0;
             for (WeaponMounted bayWeapon : weapon.getBayWeapons()) {
                 WeaponType weaponType = bayWeapon.getType();
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
@@ -487,8 +510,11 @@ public class WeaponFireInfo {
                 // to avoid grossly overestimating damage.
                 if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
                     switch (weaponType.getDamage()) {
-                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
                         case WeaponType.DAMAGE_ARTILLERY:
+                            // Rough estimate of collateral damage
+                            bayFriendly += weaponType.getRackSize() * 4;
+                            bayBuilding += weaponType.getRackSize() * 8;
+                        case WeaponType.DAMAGE_BY_CLUSTERTABLE:
                         case WeaponType.DAMAGE_SPECIAL:
                         case WeaponType.DAMAGE_VARIABLE:
                             bayDamage += weaponType.getRackSize();
@@ -498,14 +524,14 @@ public class WeaponFireInfo {
                     }
                 }
             }
-            return bayDamage;
+            return new double[] {bayDamage, bayFriendly, bayBuilding};
         }
 
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
                 TechAdvancement.TECH_BASE_CLAN == weaponType.getTechBase()) {
-            return 7D;
+            return new double[] {7D, 0D, 0D};
         }
 
         // artillery and cluster table use the rack size as the base damage amount,
@@ -517,8 +543,14 @@ public class WeaponFireInfo {
             // capabilities
             if (!List.of(AmmoType.T_SRM_STREAK, AmmoType.T_LRM_STREAK, AmmoType.T_IATM)
                     .contains(weaponType.getAmmoType())) {
+                boolean artillery = (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY);
                 int rs = weaponType.getRackSize();
-                return Compute.calculateClusterHitTableAmount(7, rs);
+                int damage = Compute.calculateClusterHitTableAmount(7, rs);
+                return new double[]{
+                    damage,
+                    (artillery) ? damage * 4 : 0D,
+                    (artillery) ? damage * 8 : 0D
+                };
             }
         }
 
@@ -527,13 +559,13 @@ public class WeaponFireInfo {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
                 (weaponType instanceof InfantryWeapon)) {
             int numTroopers = (shooter instanceof Infantry) ? ((Infantry) shooter).getShootingStrength() : 1;
-            return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
+            return new double[] {InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers, 0D, 0D};
         }
 
         // this is a special case - if we're considering hitting a swarmed target
         // that's basically our only option
         if (weaponType.getInternalName() == Infantry.SWARM_WEAPON_MEK) {
-            return 1;
+            return new double[] {1, 0D, 0D};
         }
 
         // Give an estimation of the utility of TAGging a given target.
@@ -557,10 +589,10 @@ public class WeaponFireInfo {
             if (weaponType.hasFlag(WeaponType.F_PLASMA)) {
                 dmg += 3; // Account for potential plasma heat.
             }
-            return dmg;
+            return new double[] {dmg, 0D, 0D};
         }
 
-        return weaponType.getDamage();
+        return new double[] {weaponType.getDamage(), 0D, 0D};
     }
 
     /**
@@ -570,7 +602,7 @@ public class WeaponFireInfo {
      *
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
-    double computeAeroExpectedTAGDamage() {
+    double[] computeAeroExpectedTAGDamage() {
         // If TAG damage exceeds the attacking unit's own max damage capacity, go for
         // it!
         return computeExpectedTAGDamage(true);
@@ -667,7 +699,7 @@ public class WeaponFireInfo {
      * @param exclusiveWithOtherWeapons true if Aero, false otherwise.
      * @return
      */
-    double computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons) {
+    double[] computeExpectedTAGDamage(boolean exclusiveWithOtherWeapons) {
         final StringBuilder msg = new StringBuilder("Assessing the expected max damage from ")
                 .append(shooter.getDisplayName())
                 .append(" using their TAG this turn");
@@ -688,7 +720,7 @@ public class WeaponFireInfo {
         msg.append("\n\tUtility: ").append(utility).append(" damage (Max, estimated)");
         logger.debug(msg.toString());
 
-        return Math.max(utility, 0);
+        return new double[] {Math.max(utility, 0), 0D, 0D};
     }
 
     /**
@@ -723,10 +755,15 @@ public class WeaponFireInfo {
      * @param shooter   The unit making the attack.
      * @param weapon    The weapon being used in the attack.
      * @param bombedHex The target hex.
-     * @return The expected damage of the attack.
+     * @return The array of expected damages of the attack.
      */
-    private double computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Coords bombedHex) {
-        double damage = 0D; // lol double damage I wish
+    private double[] computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Targetable targetHex) {
+        double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
+        Coords bombedHex = targetHex.getPosition();
+        int targetLevel = 0;
+        if (List.of(Targetable.TYPE_HEX_AERO_BOMB, Targetable.TYPE_HEX_BOMB).contains(targetHex.getTargetType())) {
+            targetLevel = targetHex.getTargetType();
+        }
 
         // for dive attacks, we can pretty much assume that we're going to drop
         // everything we've got on the poor scrubs in this hex
@@ -745,18 +782,22 @@ public class WeaponFireInfo {
 
                 // now we go through all affected hexes and add up the damage done
                 for (final Coords coords : affectedHexes) {
+                    Hex hex = game.getBoard().getHex(coords);
+                    // Record collateral damage to buildings
+                    buildingDamage += (hex != null) ? damagePerShot * 2 : 0;
+                    // Record damage to enemy and friendly units
                     for (final Entity currentVictim : game.getEntitiesVector(coords)) {
                         if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
                         } else { // we prefer not to blow up friendlies if we can help it
-                            damage -= damagePerShot;
+                            friendlyDamage += damagePerShot;
                         }
                     }
                 }
             }
         }
 
-        return damage;
+        return new double[] {damage, friendlyDamage, buildingDamage};
     }
 
     /*
@@ -808,7 +849,7 @@ public class WeaponFireInfo {
                             .append(" (").append(getToHit().getCumulativePlainDesc()).append(")")
                             .append((guess) ? " [guess]" : " [real]"));
             setProbabilityToHit(0);
-            setMaxDamage(0);
+            setMaxDamage(ZERO_DAMAGE);
             setHeat(0);
             setExpectedCriticals(0);
             setKillProbability(0);
@@ -850,7 +891,7 @@ public class WeaponFireInfo {
             logger
                     .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             setProbabilityToHit(0);
-            setMaxDamage(0);
+            setMaxDamage(new double[] {0D, 0D, 0D});
             setHeat(0);
             setExpectedCriticals(0);
             setKillProbability(0);

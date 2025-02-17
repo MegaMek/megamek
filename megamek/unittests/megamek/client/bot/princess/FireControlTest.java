@@ -252,6 +252,7 @@ class FireControlTest {
         when(mockTarget.getDisplayName()).thenReturn("mock target");
         when(mockTarget.getId()).thenReturn(MOCK_TARGET_ID);
         when(mockTarget.isMilitary()).thenReturn(true);
+        when(mockTarget.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
 
         testFireControl = spy(new FireControl(mockPrincess));
         doReturn(mockShooterMoveMod)

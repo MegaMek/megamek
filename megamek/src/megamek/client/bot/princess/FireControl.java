@@ -2001,6 +2001,7 @@ public class FireControl {
             final Game game,
             final boolean passedOverTarget,
             final boolean guess) {
+        final int targetLevel;
         final FiringPlan diveBombPlan = new FiringPlan(target);
         final HexTarget hexToBomb = new HexTarget(target.getPosition(),
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);
@@ -2008,10 +2009,34 @@ public class FireControl {
         BombMounted exampleBomb = null;
 
         // things that cause us to avoid calculating a bomb plan:
-        // Target is flying unit
+        // 1. Target is flying Aerospace unit
+        // 2. Target is VTOL not above blast-causing terrain
+        // 3. Target is Submarine too far below surface level
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
+            Entity entity = (Entity) target;
+            Hex hex = game.getBoard().getHex(entity.getPosition());
+
+            if (entity.isAirborne()) {
                 return diveBombPlan;
+            }
+            if (entity.isAirborneVTOLorWIGE()) {
+                // If VTOL / WiGE movement and flying, can only be hit if over water
+                // or buildings, and only if within a specific level range
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
+            }
+            // Submarine units can be bombed, but bombs impact the water surface and transfers 1 to 2
+            // levels of depth downward.
+            if (entity.getMovementMode().isSubmarine()) {
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                if (entity.getElevation() < -2) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
             }
         }
 

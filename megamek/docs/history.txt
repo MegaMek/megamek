@@ -40,6 +40,9 @@ MEGAMEK VERSION HISTORY:
 + PR #6561: Official Hazardous Liquid Pool Maps
 + Fix #6532: Make sure target entity's are on the board before checking for hex/terrain-based defender SPAs
 + PR #6565: Prevent NPE when closing Counterbattery popup without a choice
++ Fix #6515: added check if player was done to validateUpdate
++ Fix #6509: add -1 check to getColoredPlayerNameWithTeam
++ Fix #6570: Support Multiple Trailers from Lobby
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

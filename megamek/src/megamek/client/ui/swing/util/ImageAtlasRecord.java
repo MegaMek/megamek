@@ -19,6 +19,9 @@
 
 package megamek.client.ui.swing.util;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * Class to map a file path to a location within an image atlas file. Currently
  * stores the original file path along with the path to the atlas with
@@ -27,6 +30,8 @@ package megamek.client.ui.swing.util;
  *
  * @author rjhancock
  */
+@JsonSerialize(as = ImageAtlasRecord.class)
+@JsonDeserialize(as = ImageAtlasRecord.class)
 public class ImageAtlasRecord {
     // Original to ensure current implementation works as expected.
     private String originalFilePath;

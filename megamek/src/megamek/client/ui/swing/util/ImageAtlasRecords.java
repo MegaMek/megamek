@@ -22,6 +22,9 @@ package megamek.client.ui.swing.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * Class to encapsulate a list of image atlas records for the purposes of
  * serialization. Contains methods for easily adding, removing, and accessing
@@ -29,6 +32,8 @@ import java.util.List;
  *
  * @author rjhancock
  */
+@JsonDeserialize(as = ImageAtlasRecords.class)
+@JsonSerialize(as = ImageAtlasRecords.class)
 public class ImageAtlasRecords {
     private List<ImageAtlasRecord> records = new ArrayList<>();
 
@@ -47,11 +52,22 @@ public class ImageAtlasRecords {
         this.records = records;
     }
 
+    /**
+     * Adds a new record to the list.
+     *
+     * @param originalFilePath
+     * @param atlasFilePath
+     */
     public void addRecord(String originalFilePath, String atlasFilePath) {
         ImageAtlasRecord atlasRecord = new ImageAtlasRecord(originalFilePath, atlasFilePath);
         records.add(atlasRecord);
     }
 
+    /**
+     * Returns the Atlas File Path for an Original File Path.
+     *
+     * @param originalFilePath
+     */
     public String get(String originalFilePath) {
         for (ImageAtlasRecord atlasRecord : records) {
             if (atlasRecord.getOriginalFilePath().equals(originalFilePath)) {
@@ -62,6 +78,11 @@ public class ImageAtlasRecords {
         return null;
     }
 
+    /**
+     * Returns true if the AtlasMap contains the given Original File Path.
+     *
+     * @param originalFilePath
+     */
     public Boolean containsKey(String originalFilePath) {
         for (ImageAtlasRecord atlasRecord : records) {
             if (atlasRecord.getOriginalFilePath().equals(originalFilePath)) {

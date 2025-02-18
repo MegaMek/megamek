@@ -19,12 +19,13 @@
  */
 package megamek.client.ui.swing.util;
 
+import java.io.File;
 import java.nio.file.Path;
 
 import org.apache.commons.io.FilenameUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
@@ -47,7 +48,6 @@ import megamek.logging.MMLogger;
 
 public class ImageAtlasMap {
     private static final MMLogger logger = MMLogger.create(ImageAtlasMap.class);
-    private static final YAMLFactory yamlFactory = new YAMLFactory();
 
     private ImageAtlasRecords imgFileToAtlasMap = new ImageAtlasRecords();
 
@@ -73,9 +73,9 @@ public class ImageAtlasMap {
      * @param value
      * @param key
      */
-    public void put(Path value, Path key) {
-        String valueString = FilenameUtils.separatorsToUnix(value.toString());
-        String keyString = FilenameUtils.separatorsToUnix(key.toString());
+    public void put(Path originalFilePath, Path atlasFilePath) {
+        String valueString = FilenameUtils.separatorsToUnix(originalFilePath.toString());
+        String keyString = FilenameUtils.separatorsToUnix(atlasFilePath.toString());
         imgFileToAtlasMap.addRecord(valueString, keyString);
     }
 
@@ -106,17 +106,50 @@ public class ImageAtlasMap {
     }
 
     /**
-     * Write the map to the image atlas map file.
+     * Writes to a custom file for testing or custom paths.
+     *
+     * @param pathToFile
      */
-    public void writeToFile() {
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
+    public void writeToFile(File pathToFile) {
+        ObjectMapper mapper = new YAMLMapper();
         mapper.findAndRegisterModules();
 
         try {
-            mapper.writeValue(Configuration.imageFileAtlasMapFile(), imgFileToAtlasMap);
+            mapper.writeValue(pathToFile, imgFileToAtlasMap);
         } catch (Exception e) {
             logger.error("Unable to write to Image Atlas Map File", e);
         }
+
+    }
+
+    /**
+     * Write the map to the image atlas map file.
+     */
+    public void writeToFile() {
+        writeToFile(Configuration.imageFileAtlasMapFile());
+    }
+
+    /**
+     * Read the map from the provided file that should be an ImageAtlasMapFile.
+     *
+     * @return
+     */
+    public static @Nullable ImageAtlasMap readFromFile(File filePath) {
+        if (!filePath.exists()) {
+            return null;
+        }
+
+        ObjectMapper mapper = new YAMLMapper();
+        mapper.findAndRegisterModules();
+
+        try {
+            ImageAtlasRecords imgFileToAtlasMap = mapper.readValue(filePath, ImageAtlasRecords.class);
+            return new ImageAtlasMap(imgFileToAtlasMap);
+        } catch (Exception e) {
+            logger.error("Unable to read to Image Atlas Map File", e);
+        }
+
+        return null;
     }
 
     /**
@@ -125,21 +158,6 @@ public class ImageAtlasMap {
      * @return
      */
     public static @Nullable ImageAtlasMap readFromFile() {
-        if (!Configuration.imageFileAtlasMapFile().exists()) {
-            return null;
-        }
-
-        ObjectMapper mapper = new ObjectMapper(yamlFactory);
-        mapper.findAndRegisterModules();
-
-        try {
-            ImageAtlasRecords imgFileToAtlasMap = mapper.readValue(Configuration.imageFileAtlasMapFile(),
-                    ImageAtlasRecords.class);
-            return new ImageAtlasMap(imgFileToAtlasMap);
-        } catch (Exception e) {
-            logger.error("Unable to read to Image Atlas Map File", e);
-        }
-
-        return null;
+        return ImageAtlasMap.readFromFile(Configuration.imageFileAtlasMapFile());
     }
 }

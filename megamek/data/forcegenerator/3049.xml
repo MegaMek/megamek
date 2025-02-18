@@ -8641,9 +8641,6 @@
 			<model name='STK-4N'>
 				<availability>MOC:2,OA:2,IS:2,Periphery:2,TC:2</availability>
 			</model>
-			<model name='STK-4P'>
-				<availability>IS:1,MERC:1,Periphery:1</availability>
-			</model>
 			<model name='STK-5M'>
 				<availability>CC:2+,MOC:2+,FWL:5+,IS:2+,DC:4+,TC:2+</availability>
 			</model>

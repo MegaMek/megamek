@@ -6602,9 +6602,6 @@
 			<model name='STK-4N'>
 				<availability>MOC:2,OA:2,IS:2,Periphery:2,TC:2</availability>
 			</model>
-			<model name='STK-4P'>
-				<availability>IS:1,MERC:1,Periphery:1</availability>
-			</model>
 		</chassis>
 		<chassis name='Star Lord JumpShip' unitType='Jumpship'>
 			<availability>CS:3,MERC.KH:1,CLAN:3,IS:1,MERC:1,Periphery:1</availability>

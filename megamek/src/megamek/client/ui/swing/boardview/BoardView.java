@@ -1285,11 +1285,26 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         Board board = game.getBoard();
+        boolean airDeployGround = en_Deployer.getMovementMode().isHoverVTOLOrWiGE();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                if (board.isLegalDeployment(c, en_Deployer) &&
+                if (en_Deployer.isAero()) {
+                    // Aeros are always above it all
+                    if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
+                        drawHexBorder(g, getHexLocation(c), Color.yellow);
+                    }
+                } else if (airDeployGround) {
+                    // Draw hexes that are legal at a higher deployment elevation
+                    Hex hex = board.getHex(c);
+                    if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c, hex.ceiling() + 1)) {
+                        drawHexBorder(g, getHexLocation(c), Color.cyan);
+                    }
+                } else if (board.isLegalDeployment(c, en_Deployer) &&
+                    // Draw hexes that are legal at current deployment elevation
                         !en_Deployer.isLocationProhibited(c)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }

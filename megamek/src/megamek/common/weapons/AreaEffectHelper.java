@@ -1004,7 +1004,7 @@ public class AreaEffectHelper {
         AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
         boolean flak, boolean asfFlak, Game game, boolean excludeCenter
     ) {
-        HashMap<Entry<Integer, Coords>, Integer> blastShape = new HashMap<>();
+        HashMap<Entry<Integer, Coords>, Integer> blastShape = new LinkedHashMap<>();
 
         if (game == null) {
             // Nothing to be done

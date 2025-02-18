@@ -208,8 +208,8 @@ class WeaponFireInfoTest {
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage * expectedProbabilityToHit,
+                testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
@@ -223,11 +223,11 @@ class WeaponFireInfoTest {
         expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamageOnHit());
+                testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -242,11 +242,11 @@ class WeaponFireInfoTest {
         expectedKill = 0.02005;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamageOnHit());
+                testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -261,11 +261,11 @@ class WeaponFireInfoTest {
         expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
         assertEquals(expectedMaxDamage * testWeaponFireInfo.getProbabilityToHit(),
-                testWeaponFireInfo.getExpectedDamageOnHit());
+                testWeaponFireInfo.getExpectedDamage());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -280,10 +280,10 @@ class WeaponFireInfoTest {
         expectedKill = 0;
         doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(new double [] {expectedMaxDamage, 0D, 0D}).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
         assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getDamageOnHit());
         assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
         assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
         assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
@@ -338,5 +338,11 @@ class WeaponFireInfoTest {
         assertEquals(expectedTHD.getValue(), processed.getValue());
         assertEquals(expectedTHD.getDesc(), processed.getDesc());
         assertNotEquals(originalTHD, processed);
+    }
+
+    @Test
+    void testComputeExpectedBombDamageOnlyEnemy() {
+//        WeaponFireInfo testBombWFI = setupBombWFI();
+
     }
 }

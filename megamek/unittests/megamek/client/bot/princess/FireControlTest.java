@@ -2369,7 +2369,7 @@ class FireControlTest {
 
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockPPCFireInfo.getHeat()).thenReturn(10);
-        when(mockPPCFireInfo.getExpectedDamageOnHit()).thenReturn(10.0);
+        when(mockPPCFireInfo.getDamageOnHit()).thenReturn(10.0);
         when(mockPPCFireInfo.getExpectedCriticals()).thenReturn(0.46);
         when(mockPPCFireInfo.getKillProbability()).thenReturn(0.002);
         when(mockPPCFireInfo.getWeapon()).thenReturn(mockPPC);
@@ -2379,7 +2379,7 @@ class FireControlTest {
 
         when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockMLFireInfo.getHeat()).thenReturn(3);
-        when(mockMLFireInfo.getExpectedDamageOnHit()).thenReturn(5.0);
+        when(mockMLFireInfo.getDamageOnHit()).thenReturn(5.0);
         when(mockMLFireInfo.getExpectedCriticals()).thenReturn(0.0);
         when(mockMLFireInfo.getKillProbability()).thenReturn(0.0);
         when(mockMLFireInfo.getWeapon()).thenReturn(mockML);
@@ -2389,7 +2389,7 @@ class FireControlTest {
 
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockLRMFireInfo.getHeat()).thenReturn(1);
-        when(mockLRMFireInfo.getExpectedDamageOnHit()).thenReturn(3.0);
+        when(mockLRMFireInfo.getDamageOnHit()).thenReturn(3.0);
         when(mockLRMFireInfo.getExpectedCriticals()).thenReturn(0.0);
         when(mockLRMFireInfo.getKillProbability()).thenReturn(0.0);
         when(mockLRMFireInfo.getWeapon()).thenReturn(mockLRM5);
@@ -2402,7 +2402,7 @@ class FireControlTest {
         final WeaponFireInfo mockMGFireInfo = mock(WeaponFireInfo.class);
         when(mockMGFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockMGFireInfo.getHeat()).thenReturn(0);
-        when(mockMGFireInfo.getExpectedDamageOnHit()).thenReturn(2.0);
+        when(mockMGFireInfo.getDamageOnHit()).thenReturn(2.0);
         when(mockMGFireInfo.getExpectedCriticals()).thenReturn(0.0);
         when(mockMGFireInfo.getKillProbability()).thenReturn(0.0);
         when(mockMGFireInfo.getWeapon()).thenReturn(mockMG);
@@ -2528,15 +2528,15 @@ class FireControlTest {
         mockTarget = mock(MekWarrior.class);
         when(mockPPCFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockPPCFireInfo.getHeat()).thenReturn(10);
-        when(mockPPCFireInfo.getExpectedDamageOnHit()).thenReturn(10.0);
+        when(mockPPCFireInfo.getDamageOnHit()).thenReturn(10.0);
 
         when(mockMLFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockMLFireInfo.getHeat()).thenReturn(3);
-        when(mockMLFireInfo.getExpectedDamageOnHit()).thenReturn(5.0);
+        when(mockMLFireInfo.getDamageOnHit()).thenReturn(5.0);
 
         when(mockLRMFireInfo.getProbabilityToHit()).thenReturn(0.6);
         when(mockLRMFireInfo.getHeat()).thenReturn(1);
-        when(mockLRMFireInfo.getExpectedDamageOnHit()).thenReturn(3.0);
+        when(mockLRMFireInfo.getDamageOnHit()).thenReturn(3.0);
 
         doReturn(0.0).when(testFireControl).calcDamageAllocationUtility(any(Targetable.class), anyDouble());
 

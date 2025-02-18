@@ -1376,7 +1376,7 @@ public class FireControl {
 
         double modifier = 1;
         modifier += calcCommandUtility(firingPlan.getTarget());
-        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget(), firingPlan.getExpectedBuildingDamage());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
         double expectedDamage = firingPlan.getExpectedDamage();
@@ -1389,6 +1389,7 @@ public class FireControl {
         utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
         utility += TARGET_HP_FRACTION_DEALT_UTILITY
                 * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
+        utility -= firingPlan.getExpectedFriendlyDamage();
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -1396,7 +1397,7 @@ public class FireControl {
         firingPlan.setUtility(utility);
     }
 
-    protected double calcStrategicBuildingTargetUtility(final Targetable target) {
+    protected double calcStrategicBuildingTargetUtility(final Targetable target, final double expectedDamage) {
         if (!(target instanceof BuildingTarget)) {
             return 0;
         }
@@ -1406,7 +1407,7 @@ public class FireControl {
         final String coords = coordsFormat.format(targetCoords.getX() + 1)
                 + coordsFormat.format(targetCoords.getY() + 1);
         if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
-            return STRATEGIC_TARGET_UTILITY;
+            return STRATEGIC_TARGET_UTILITY + expectedDamage;
         }
         return 0;
     }
@@ -1512,15 +1513,12 @@ public class FireControl {
             return 100;
 
             // In cases that are not generally overkill (less than 50% of the target's total
-            // HP in
-            // damage), target as normal (don't want to spread damage in these cases).
+            // HP in damage), target as normal (don't want to spread damage in these cases).
             // Also want to disregard damage allocation weighting if the target is a
-            // building or
-            // infantry/BA (as they don't die until you do 100% damage to them normally).
-        } else if ((damageFraction < 0.5)
-                || (target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+            // building, or infantry/BA that won't be killed off in one shot.
+        } else if ((damageFraction < 0.5) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR))
+                || (owner.getGame().getEntity(target.getId()) instanceof Infantry) && damageFraction < 1.0) {
             return 0;
         }
 
@@ -2001,7 +1999,6 @@ public class FireControl {
             final Game game,
             final boolean passedOverTarget,
             final boolean guess) {
-        final int targetLevel;
         final FiringPlan diveBombPlan = new FiringPlan(target);
         final HexTarget hexToBomb = new HexTarget(target.getPosition(),
                 shooter.isAero() ? Targetable.TYPE_HEX_AERO_BOMB : Targetable.TYPE_HEX_BOMB);

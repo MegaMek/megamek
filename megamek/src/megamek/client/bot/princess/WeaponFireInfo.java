@@ -33,6 +33,7 @@ import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
@@ -62,9 +63,9 @@ public class WeaponFireInfo {
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
-    private double maxFriendlyDamage;
-    private double maxBuildingDamage;
-    private double expectedDamageOnHit;
+    private double maxFriendlyDamage = 0;
+    private double maxBuildingDamage = 0;
+    private double damageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
     private double expectedCriticals;
@@ -255,12 +256,12 @@ public class WeaponFireInfo {
         this.expectedCriticals = expectedCriticals;
     }
 
-    double getExpectedDamageOnHit() {
-        return expectedDamageOnHit;
+    double getDamageOnHit() {
+        return damageOnHit;
     }
 
-    private void setExpectedDamageOnHit(final double expectedDamageOnHit) {
-        this.expectedDamageOnHit = expectedDamageOnHit;
+    private void setDamageOnHit(final double damageOnHit) {
+        this.damageOnHit = damageOnHit;
     }
 
     double getKillProbability() {
@@ -275,26 +276,26 @@ public class WeaponFireInfo {
         return maxDamage;
     }
 
-    private void setMaxDamage(final double[] maxDamage) {
-        this.maxDamage = maxDamage[0];
-        this.maxFriendlyDamage = maxDamage[1];
-        this.maxBuildingDamage = maxDamage[2];
+    private void setMaxDamage(final double... damage) {
+        this.maxDamage = damage[0];
+        this.maxFriendlyDamage = damage[1];
+        this.maxBuildingDamage = damage[2];
     }
 
     double getMaxFriendlyDamage() {
         return maxFriendlyDamage;
     }
 
-    private void setMaxFriendlyDamage(final double maxDamage) {
-        this.maxFriendlyDamage = maxDamage;
+    private void setMaxFriendlyDamage(final double maxFriendlyDamage) {
+        this.maxFriendlyDamage = maxFriendlyDamage;
     }
 
     double getMaxBuildingDamage() {
         return maxBuildingDamage;
     }
 
-    private void setMaxBuildingDamage(final double maxDamage) {
-        this.maxBuildingDamage = maxDamage;
+    private void setMaxBuildingDamage(final double maxBuildingDamage) {
+        this.maxBuildingDamage = maxBuildingDamage;
     }
 
     double getProbabilityToHit() {
@@ -408,7 +409,7 @@ public class WeaponFireInfo {
     }
 
     public double getExpectedDamage() {
-        return getProbabilityToHit() * getExpectedDamageOnHit();
+        return getProbabilityToHit() * getDamageOnHit();
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
@@ -437,7 +438,8 @@ public class WeaponFireInfo {
     double[] computeExpectedDamage() {
         // bombs require some special consideration
         if (weapon.isGroundBomb()) {
-            return computeExpectedBombDamage(getShooter(), weapon, getTarget());
+            // We can only bomb hex targets, officially
+            return computeExpectedBombDamage(getShooter(), weapon, (HexTarget) getTarget());
         }
 
         // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
@@ -666,24 +668,12 @@ public class WeaponFireInfo {
         ) {
             // See if we can catch the target in the blast
             Hex hex = game.getBoard().getHex(target.getPosition());
-            // Aim at ground level by default
-            ArrayList<Integer> heights = new ArrayList<Integer>();
-            heights.add((hex != null) ? hex.getLevel() : 0);
-            if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
-                // Aim at the top of any terrain features that cause AE blast spheres
-                for (int h=heights.get(0); h < hex.ceiling(); h++) {
-                    heights.add(h);
-                }
-            }
+            int targetLevel = (target.getTargetType() == Targetable.TYPE_ENTITY)
+                ? ((Entity) target).getElevation()
+                : ((HexTarget) target).getTargetLevel();
 
-            // Iterate through levels that can be struck, looking for victims.
-            for (int height: heights) {
-                if (
-                    Compute.allEnemiesOutsideBlast(
-                        height, target, game.getEntitiesVector(target.getPosition()),
-                        shooter, preferredAmmo.getType(), false, false, false, game
-                    )
-                ) {
+            if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
+                if ((hex.ceiling() + 2 ) < hex.getLevel() + targetLevel) {
                     return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
                 }
             }
@@ -754,43 +744,64 @@ public class WeaponFireInfo {
      *
      * @param shooter   The unit making the attack.
      * @param weapon    The weapon being used in the attack.
-     * @param bombedHex The target hex.
+     * @param targetHex The target hex.
      * @return The array of expected damages of the attack.
      */
-    private double[] computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Targetable targetHex) {
+    protected double[] computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final HexTarget targetHex) {
         double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
-        Coords bombedHex = targetHex.getPosition();
+        Coords bombedCoords = targetHex.getPosition();
         int targetLevel = 0;
         if (List.of(Targetable.TYPE_HEX_AERO_BOMB, Targetable.TYPE_HEX_BOMB).contains(targetHex.getTargetType())) {
-            targetLevel = targetHex.getTargetType();
+            targetLevel = targetHex.getTargetLevel();
         }
 
         // for dive attacks, we can pretty much assume that we're going to drop
         // everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            // TODO: cache damage values and re-use for each bomb of the same type
             for (final BombMounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
 
-                // some bombs affect a blast radius, so we take that into account
-                final List<Coords> affectedHexes = new ArrayList<>();
-
-                AreaEffectHelper.DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(bomb.getType(), 0, false);
-                final int damagePerShot = falloff.damage;
-                int blastRadius = falloff.radius;
-                for (int radius = 0; radius <= blastRadius; radius++) {
-                    affectedHexes.addAll(bombedHex.allAtDistance(radius));
-                }
+                DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(bomb.getType(), 0, false);
+                HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+                    bomb.getType(), bombedCoords, falloff, targetLevel, false, false, false,
+                    game, false
+                );
 
                 // now we go through all affected hexes and add up the damage done
-                for (final Coords coords : affectedHexes) {
+                // Entries for blast shape are: (absolute level: Coords) : damage
+                // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
+                //   `(6: (1, 3)): 10`
+                List<Entity> hitVictims = new ArrayList<>();
+                for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+                    Coords coords = entry.getValue();
                     Hex hex = game.getBoard().getHex(coords);
+                    // Currently, bombs off board are not supported.
+                    if (hex == null) {
+                        continue;
+                    }
                     // Record collateral damage to buildings
-                    buildingDamage += (hex != null) ? damagePerShot * 2 : 0;
+                    if (hex.getTerrain(Terrains.BLDG_ELEV) != null && hex.ceiling() >= entry.getKey()) {
+                        // Only approximate building damage here.
+                        // Blast damage to buildings is cumulative.
+                        buildingDamage += blastShape.get(entry) * 2;
+                    }
                     // Record damage to enemy and friendly units
+                    // Entities can only be hit once per hex they occupy; blastShape assures we record
+                    // highest damage first.
                     for (final Entity currentVictim : game.getEntitiesVector(coords)) {
+                        if (currentVictim.isAirborne() || hitVictims.contains(currentVictim)) {
+                            continue;
+                        }
+                        int floor = currentVictim.getElevation() + hex.getLevel();
+                        int ceil = currentVictim.relHeight() + hex.getLevel();
+                        if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
+                            continue;
+                        }
+                        hitVictims.add(currentVictim);
                         if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
-                            damage += damagePerShot;
+                            damage += blastShape.get(entry);
                         } else { // we prefer not to blow up friendlies if we can help it
-                            friendlyDamage += damagePerShot;
+                            friendlyDamage += blastShape.get(entry);
                         }
                     }
                 }
@@ -853,7 +864,7 @@ public class WeaponFireInfo {
             setHeat(0);
             setExpectedCriticals(0);
             setKillProbability(0);
-            setExpectedDamageOnHit(0);
+            setDamageOnHit(0);
             return;
         }
 
@@ -879,23 +890,22 @@ public class WeaponFireInfo {
         msg.append("\n\tHeat: ").append(getHeat());
 
         setMaxDamage(computeExpectedDamage());
-        // Expected damage is the chance of hitting * the max damage
-        setExpectedDamageOnHit(getProbabilityToHit() * getMaxDamage());
+        setDamageOnHit(getMaxDamage());
 
         msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
-        msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(expectedDamageOnHit));
+        msg.append("\n\tExpected Damage: ").append(LOG_DEC.format(damageOnHit));
 
         // If expected damage from Aero tagging is zero, return out - save attacks for
         // later.
-        if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
+        if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getDamageOnHit() <= 0) {
             logger
                     .debug(msg.append("\n\tAerospace TAG attack not advised at this juncture").toString());
             setProbabilityToHit(0);
-            setMaxDamage(new double[] {0D, 0D, 0D});
+            setMaxDamage(ZERO_DAMAGE);
             setHeat(0);
             setExpectedCriticals(0);
             setKillProbability(0);
-            setExpectedDamageOnHit(0);
+            setDamageOnHit(0);
             return;
         }
 
@@ -960,7 +970,7 @@ public class WeaponFireInfo {
             final int targetInternals = Math.max(0, targetMek.getInternal(hitLocation));
 
             // If the location could be destroyed outright...
-            if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
+            if (getExpectedDamage() > ((targetArmor + targetInternals))) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                 if (Mek.LOC_CT == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
@@ -970,7 +980,7 @@ public class WeaponFireInfo {
                 }
 
                 // If the armor can be breached, but the location not destroyed...
-            } else if (getExpectedDamageOnHit() > (targetArmor)) {
+            } else if (getExpectedDamage() > (targetArmor)) {
                 setExpectedCriticals(getExpectedCriticals() +
                         (hitLocationProbability * getProbabilityToHit() *
                                 expectedCriticalHitCount));
@@ -1010,7 +1020,7 @@ public class WeaponFireInfo {
                 : ", Ammo: " + ((AmmoType) getAmmo().getType()).getSubMunitionName();
         return getWeapon().getName() + " P. Hit: " + LOG_PER.format(getProbabilityToHit())
                 + ", Max Dam: " + LOG_DEC.format(getMaxDamage())
-                + ", Exp. Dam: " + LOG_DEC.format(getExpectedDamageOnHit())
+                + ", Exp. Dam: " + LOG_DEC.format(getDamageOnHit())
                 + ", Num Crits: " + LOG_DEC.format(getExpectedCriticals())
                 + ", Kill Prob: " + LOG_PER.format(getKillProbability())
                 + ammoClause;

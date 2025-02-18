@@ -26919,17 +26919,23 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void receiveEntityTow(Packet c, int connIndex) {
         int trailerId = (Integer) c.getObject(0);
-        int tractorId = (Integer) c.getObject(1);
+        int towingEntId = (Integer) c.getObject(1);
         Entity trailer = getGame().getEntity(trailerId);
-        Entity tractor = getGame().getEntity(tractorId);
+        Entity towingEnt = getGame().getEntity(towingEntId);
 
-        if ((trailer != null) && (tractor != null)) {
+        if ((trailer != null) && (towingEnt != null)) {
+            Entity tractor = getGame().getEntity(towingEnt.getTractor());
+            if (tractor == null) {
+                tractor = towingEnt;
+            }
             towUnit(tractor, trailer);
             // In the chat lounge, notify players of customizing of unit
             if (getGame().getPhase().isLounge()) {
                 ServerLobbyHelper.entityUpdateMessage(trailer, getGame());
-                // Set this so units can be unloaded in the first movement phase
-                trailer.setLoadedThisTurn(false);
+                ServerLobbyHelper.entityUpdateMessage(tractor, getGame());
+                if (!towingEnt.equals(tractor)) {
+                    ServerLobbyHelper.entityUpdateMessage(towingEnt, getGame());
+                }
             }
         }
     }

@@ -4667,7 +4667,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // target in partial water
                 && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel) && (targEl == 0) && (te.height() > 0)) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            toHit.append(los.losModifiers(game, eistatus, underWater));
         }
 
         // Change hit table for partial cover, accommodate for partial underwater (legs)

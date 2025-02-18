@@ -31614,32 +31614,45 @@ public class TWGameManager extends AbstractGameManager {
         return alreadyHit;
     }
 
-    public Vector<Integer> deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
+    public Vector<Integer> deliverBombDamage(HexTarget targetHex, int type, int subjectId, Entity killer,
             Vector<Report> vPhaseReport) {
+        Coords center = targetHex.getPosition();
         Vector<Integer> alreadyHit = new Vector<>();
 
         // We need the actual ammo type in order to handle certain bomb issues
         // correctly.
         BombType ammo = BombType.createBombByType(type);
-        Hex hex = game.getBoard().getHex(centre);
+        Hex hex = game.getBoard().getHex(center);
 
-        // For now, drop bombs on the highest non-underwater level/elevation of the hex.
-        int topLevel = 0;
+        // Unfortunately this HexTarget is a new instance and contains no level data
+        int targetLevel = 0;
         if (hex != null) {
-            topLevel = (hex.containsTerrain(Terrains.BLDG_ELEV)) ? hex.ceiling() : hex.getLevel();
+            targetLevel = hex.getLevel();
+            if (hex.getTerrain(Terrains.BLDG_ELEV) != null) {
+                // Get an entity that's near or below the ceiling level
+                // and point the bombs at it.
+                Iterator<Entity> targetEnemies = game.getEnemyEntities(center, killer);
+                while (targetEnemies.hasNext()) {
+                    Entity next = targetEnemies.next();
+                    if (next.getElevation() + hex.getLevel() <= hex.ceiling() + 1) {
+                        targetLevel = next.getElevation() + hex.getLevel();
+                        break;
+                    }
+                }
+            }
         }
 
         DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(ammo, 0, false);
 
         HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
-            ammo, centre, falloff, topLevel, false, false, false, game, false);
+            ammo, center, falloff, targetLevel, false, false, false, game, false);
 
         for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
             Coords bCoords = entry.getValue();
             int bLevel = entry.getKey();
             alreadyHit = artilleryDamageHex(
-                bCoords, centre, blastShape.get(entry), ammo, subjectId, killer, null, false,
-                bLevel, topLevel, vPhaseReport, false, alreadyHit, false, falloff
+                bCoords, center, blastShape.get(entry), ammo, subjectId, killer, null, false,
+                bLevel, targetLevel, vPhaseReport, false, alreadyHit, false, falloff
             );
         }
 

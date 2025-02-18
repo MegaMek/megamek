@@ -277,7 +277,8 @@ public class BombAttackHandler extends WeaponHandler {
                     hitIds = AreaEffectHelper.processFuelAirDamage(drop,
                             EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
-                    hitIds = gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    // We know we can cast this to a HexTarget
+                    hitIds = gameManager.deliverBombDamage((HexTarget) target, type, subjectId, ae, vPhaseReport);
                 }
 
                 // Display drifts that hit nothing separately from drifts that dealt damage

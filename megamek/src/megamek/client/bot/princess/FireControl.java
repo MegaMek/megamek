@@ -1516,15 +1516,20 @@ public class FireControl {
             // HP in damage), target as normal (don't want to spread damage in these cases).
             // Also want to disregard damage allocation weighting if the target is a
             // building, or infantry/BA that won't be killed off in one shot.
-        } else if ((damageFraction < 0.5) && ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR))
-                || (owner.getGame().getEntity(target.getId()) instanceof Infantry) && damageFraction < 1.0) {
+        }
+        if ((damageFraction < 0.5)
+                || (target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+        ){
             return 0;
+        }
+        if ((owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+            // Don't disincentivize possible overkill attacks against Infantry too much.
+            return Math.min(4.0, damageFraction);
         }
 
         // In the remaining case, namely 0.5 <= damage, return the fraction of target HP
-        // dealt as
-        // the penalty scaling factor (multiplied by the weight value to produce a
+        // dealt as the penalty scaling factor (multiplied by the weight value to produce a
         // penalty).
         return damageFraction;
     }
@@ -2012,6 +2017,7 @@ public class FireControl {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
             Hex hex = game.getBoard().getHex(entity.getPosition());
+            hexToBomb.setTargetLevel(hex.getLevel());
 
             if (entity.isAirborne()) {
                 return diveBombPlan;

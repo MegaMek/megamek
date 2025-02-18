@@ -673,7 +673,7 @@ public class WeaponFireInfo {
                 : ((HexTarget) target).getTargetLevel();
 
             if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
-                if ((hex.ceiling() + 2 ) < hex.getLevel() + targetLevel) {
+                if ((hex.ceiling() + 2 ) < (hex.getLevel() + targetLevel)) {
                     return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
                 }
             }
@@ -798,10 +798,11 @@ public class WeaponFireInfo {
                             continue;
                         }
                         hitVictims.add(currentVictim);
+                        // Infantry take at least double damage from AE, if not 4x or 8x.
                         if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
-                            damage += blastShape.get(entry);
+                            damage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
                         } else { // we prefer not to blow up friendlies if we can help it
-                            friendlyDamage += blastShape.get(entry);
+                            friendlyDamage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
                         }
                     }
                 }

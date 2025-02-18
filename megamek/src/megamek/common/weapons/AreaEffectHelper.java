@@ -399,29 +399,19 @@ public class AreaEffectHelper {
             return;
         }
 
+        // Flak should only hit VTOLs or similar craft.
         if (flak) {
             // Check: is entity not a VTOL in flight or an ASF
             if (!((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero())) {
+                || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                || entity.isAero())) {
                 return;
             }
             // Check: is entity at correct elevation?
             if (entity.getElevation() != altitude) {
                 return;
             }
-        } else {
-            // Check: is entity a VTOL or Aero in flight?
-            if ((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero()) {
-                // VTOLs take no damage from normal artillery unless landed
-                if ((entity.getElevation() != 0)
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                    return;
-                }
-            }
+            // But VTOLs can also be hit by AE blasts while flying!
         }
 
         // Work out hit table to use

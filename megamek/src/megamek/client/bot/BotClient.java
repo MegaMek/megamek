@@ -679,7 +679,7 @@ public abstract class BotClient extends Client {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent)
                         && !deployed_ent.isLocationProhibited(c,
-                            ((deployed_ent.isAirborne() | deployed_ent.getMovementMode().isHoverVTOLOrWiGE())
+                            ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE())
                                 ? deployed_ent.getElevation() : 0))
                         && !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));

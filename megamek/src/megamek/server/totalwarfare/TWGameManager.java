@@ -31576,10 +31576,8 @@ public class TWGameManager extends AbstractGameManager {
      *                     Subject for reports
      * @param killer
      *                     Who should be credited with kills
-     * @param damage
-     *                     Damage at ground zero
      * @param falloff
-     *                     Reduction in damage for each hex of distance
+     *                     Lightweight class describing base damage, falloff per level/ring, cluster y/n, and radius
      * @param flak
      *                     Flak, hits flying units only, instead of flyers being
      *                     immune

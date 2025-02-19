@@ -17,19 +17,20 @@ package megamek.ai.utility;
 
 import megamek.client.bot.princess.RankedPath;
 import megamek.common.MovePath;
+import megamek.common.Targetable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 
-public interface Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> {
+public interface Intelligence {
 
-    void update(Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> intelligence);
-    List<Decision<IN_GAME_OBJECT, TARGETABLE>> getDecisions();
-    DecisionMaker<IN_GAME_OBJECT, TARGETABLE, RANKED> getDecisionMaker();
-    double getBonusFactor(IN_GAME_OBJECT inGameObject, MovePath movePath);
-    Optional<RANKED> getPastRankedPath(IN_GAME_OBJECT inGameObject);
-    default TreeSet<RANKED> scoreAllDecisions(List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts) {
+    void update(Intelligence intelligence);
+    List<Decision> getDecisions();
+    DecisionMaker getDecisionMaker();
+    double getBonusFactor(Targetable inGameObject);
+    Optional<RankedPath> getPastRankedPath(Targetable inGameObject);
+    default TreeSet<RankedPath> scoreAllDecisions(List<DecisionContext> contexts) {
         return getDecisionMaker().scoreAllDecisions(getDecisions(), contexts);
     }
 }

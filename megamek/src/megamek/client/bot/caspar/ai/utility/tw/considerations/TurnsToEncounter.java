@@ -37,29 +37,21 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("TurnsToEncounter")
 public class TurnsToEncounter extends TWConsideration {
 
-    private static final String turnsParam = "turns";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(turnsParam, Integer.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(turnsParam, new ParameterTitleTooltip("Turns"));
-
     public TurnsToEncounter() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        TWDecisionContext twContext = (TWDecisionContext) context;
-        var targetOpt = twContext.getClosestEnemyFromMovePathFinalPosition();
+    public double score(DecisionContext context) {
+        var targetOpt = context.getClosestEnemy();
 
-        if (targetOpt.isPresent()) {
-            var target = targetOpt.get();
-            int distance = target.getPosition().distance(twContext.getMovePath().getFinalCoords());
+        if (targetOpt.isPresent() && targetOpt.get() instanceof Entity target) {
+            int distance = target.getPosition().distance(context.getFinalPosition());
             int bestMp = getBooleanParameter(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT) ? target.getSprintMP() : target.getRunMP();
-
-            int turns = (int) Math.ceil(distance / (double) bestMp);
-            if (turns == 0) {
-                return 1.0;
+            if (bestMp <= 0) {
+                return 0.0;
             }
-
-            return clamp01(getDoubleParameter(turnsParam) / turns);
+            int turns = (int) Math.ceil(distance / (double) bestMp);
+            return clamp01(turns);
         }
         return 0.0;
     }

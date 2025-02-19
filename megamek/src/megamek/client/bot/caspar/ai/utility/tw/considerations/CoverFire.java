@@ -18,6 +18,7 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
@@ -31,20 +32,31 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("CoverFire")
 public class CoverFire extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
+    public static final String coverNumberParam = "Minimal number of friends you are covering";
+    private static final Map<String, Class<?>> parameterTypes = Map.of(coverNumberParam, int.class);
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
+        coverNumberParam, new ParameterTitleTooltip("CoverNumberParam"));
 
     public CoverFire() {
+        parameters.put(coverNumberParam, 1);
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-//        TWDecisionContext twc = (TWDecisionContext) context;
-//        return twc.getFriendliesInSupportRange().stream()
-//            .filter(e -> e.needsCover())
-//            .count() / 5.0; // Normalized to 0-1 scale
-        return 1;
+    public Map<String, Class<?>> getParameterTypes() {
+        return parameterTypes;
+    }
+
+    @Override
+    public Map<String, ParameterTitleTooltip> getParameterTooltips() {
+        return parameterTooltips;
+    }
+
+    @Override
+    public double score(DecisionContext context) {
+        var allies = context.getNumberOfFriendsInRange(
+                context.getFinalPosition(),
+                context.getMaxWeaponRange());
+        return clamp01(allies / (double) getIntParameter(coverNumberParam));
     }
 
     @Override

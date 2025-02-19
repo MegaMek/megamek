@@ -16,11 +16,16 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.dataset.UnitAction;
+import megamek.ai.dataset.UnitState;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
+import java.util.List;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -36,12 +41,43 @@ public class Scouting extends TWConsideration {
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
 
     public Scouting() {
+        parameters.put(roleParam, UnitRole.SCOUT);
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public Map<String, Class<?>> getParameterTypes() {
+        return parameterTypes;
+    }
+
+    @Override
+    public Map<String, ParameterTitleTooltip> getParameterTooltips() {
+        return parameterTooltips;
+    }
+
+    @Override
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        if (currentUnit.getRole().equals(getParameter(roleParam, UnitRole.class))) {
+            return calculateFlankingPosition(context.getMaxWeaponRange(), context.getFinalPosition(),
+                context.getStrategicGoalsOnCoordsQuadrant(context.getFinalPosition()));
+        }
+        return 0;
+    }
+
+    private double calculateFlankingPosition(int maxRange, Coords unitPos, List<Coords> strategicGoals) {
+        if (strategicGoals.isEmpty()) {
+            return 0;
+        }
+        double sumX = 0, sumY = 0;
+        for (Coords goal : strategicGoals) {
+            sumX += goal.getX();
+            sumY += goal.getY();
+        }
+        int avgX = (int) Math.round(sumX / strategicGoals.size());
+        int avgY = (int) Math.round(sumY / strategicGoals.size());
+        Coords avgGoal = new Coords(avgX, avgY);
+        double distance = unitPos.distance(avgGoal);
+        return clamp01(distance / (maxRange + 1));
     }
 
     @Override

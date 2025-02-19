@@ -29,7 +29,7 @@ import java.util.List;
     @JsonSubTypes.Type(value = TWProfile.class, name = "TWProfile"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Profile <A,B> implements NamedObject {
+public class Profile implements NamedObject {
     @JsonProperty("id")
     private final int id;
     @JsonProperty("name")
@@ -37,10 +37,10 @@ public class Profile <A,B> implements NamedObject {
     @JsonProperty("description")
     private String description;
     @JsonProperty("decisions")
-    private final List<Decision<A, B>> decisions;
+    private final List<Decision> decisions;
 
     @JsonCreator
-    public Profile(int id, String name, String description, List<Decision<A, B>> decisions) {
+    public Profile(int id, String name, String description, List<Decision> decisions) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -64,11 +64,11 @@ public class Profile <A,B> implements NamedObject {
         return id;
     }
 
-    public List<Decision<A, B>> getDecisions() {
+    public List<Decision> getDecisions() {
         return decisions;
     }
 
-    public void setDecisions(List<Decision<A, B>> decisions) {
+    public void setDecisions(List<Decision> decisions) {
         this.decisions.clear();
         this.decisions.addAll(decisions);
     }

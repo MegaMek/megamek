@@ -27,7 +27,7 @@ import java.util.List;
 
 @JsonTypeName("TWProfile")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TWProfile extends Profile<Entity, Entity> {
+public class TWProfile extends Profile {
 
 
 
@@ -36,7 +36,7 @@ public class TWProfile extends Profile<Entity, Entity> {
         @JsonProperty("id") int id,
         @JsonProperty("name") String name,
         @JsonProperty("description") String description,
-        @JsonProperty("decisions") List<Decision<Entity, Entity>> decisions)
+        @JsonProperty("decisions") List<Decision> decisions)
     {
         super(id, name, description, decisions);
     }

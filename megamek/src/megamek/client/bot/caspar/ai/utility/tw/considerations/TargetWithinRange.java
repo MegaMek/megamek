@@ -34,16 +34,18 @@ public class TargetWithinRange extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var firingUnit = context.getCurrentUnit();
         var maxRange = firingUnit.getMaxWeaponRange();
-        var distance = ((TWDecisionContext) context).getDistanceToClosestEnemy(firingUnit);
+        var distance = context.getDistanceToClosestEnemyAtFinalMovePathPosition();
 
         if (distance.isEmpty()) {
             return 0d;
         }
-
-        return clamp01(distance.getAsInt() / (double) maxRange);
+        if (distance.getAsInt() > maxRange) {
+            return 0d;
+        }
+        return 1.0;
     }
 
     @Override

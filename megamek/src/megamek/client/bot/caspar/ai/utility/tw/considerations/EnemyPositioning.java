@@ -17,31 +17,50 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.ai.utility.StructOfUnitArrays;
+import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
+import java.util.List;
 import java.util.Map;
-
-import static megamek.codeUtilities.MathUtility.clamp01;
+import java.util.Objects;
 
 /**
  * This consideration is used to determine friendly artillery fire risk
  */
 @JsonTypeName("EnemyPositioning")
 public class EnemyPositioning extends TWConsideration {
+    private static final double BANDWIDTH = Math.pow(0.8, 2);
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
-
-    public EnemyPositioning() {
-    }
+    public EnemyPositioning() {}
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+    public double score(DecisionContext context) {
+        StructOfUnitArrays enemies = context.getStructOfEnemiesArrays();
+
+        if (enemies == null || enemies.length == 0) {
+            return 0.0;
+        }
+
+        // Kernel density estimation on the enemy positions
+        double entropyOfEnemyPositions = 0.0;
+        int n = enemies.length;
+        double density;
+
+        for (var i : enemies) {
+            density = 0.0;
+            for (var j : enemies) {
+                if (!Objects.equals(i, j)) {
+                    double distance = Coords.distance(enemies.getX(i), enemies.getY(i), enemies.getX(j), enemies.getY(j));
+                    density += Math.exp(-Math.pow(distance, 2) / (2 * BANDWIDTH));
+                }
+            }
+            density /= (n - 1) * Math.sqrt(2 * Math.PI * BANDWIDTH);
+            // Adding a small value to avoid log(0)
+            entropyOfEnemyPositions -= density * Math.log(density + 1e-10);
+        }
+
+        return entropyOfEnemyPositions;
     }
 
     @Override

@@ -16,22 +16,28 @@ package megamek.ai.utility;
 
 import java.util.List;
 
-public interface ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> {
+/**
+ * Interface for scoring a decision.
+ * @author Luana Coppio
+ */
+public interface ScoreEvaluator {
 
     enum ScoreType {
         GEOMETRIC_MEAN,
         UTILITARIAN,
-        ADJUSTED_UTILITARIAN
+        ADJUSTED_UTILITARIAN,
+        NEURAL_NETWORK_200,
     }
 
-    default ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> getScoreEvaluator(ScoreType scoreType, DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    default ScoreEvaluator getScoreEvaluator(ScoreType scoreType, DecisionScoreEvaluator decisionScoreEvaluator) {
         return switch (scoreType) {
-            case GEOMETRIC_MEAN -> new GeometricMeanScoreEvaluator<>(decisionScoreEvaluator);
-            case UTILITARIAN -> new UtilitarianScoreEvaluator<>(decisionScoreEvaluator);
-            case ADJUSTED_UTILITARIAN -> new AdjustedUtilitarianScoreEvaluator<>(decisionScoreEvaluator);
+            case GEOMETRIC_MEAN -> new GeometricMeanScoreEvaluator(decisionScoreEvaluator);
+            case UTILITARIAN -> new UtilitarianScoreEvaluator(decisionScoreEvaluator);
+            case ADJUSTED_UTILITARIAN -> new AdjustedUtilitarianScoreEvaluator(decisionScoreEvaluator);
+            case NEURAL_NETWORK_200 -> new NeuralNetworkScoreEvaluator(decisionScoreEvaluator, new NeuralNetwork(200, 80, 40, 1));
         };
     }
 
-    double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, IDebugReporter debugReport);
-    List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations();
+    double score(DecisionContext context, double bonus, IDebugReporter debugReport);
+    List<Consideration> getConsiderations();
 }

@@ -18,9 +18,7 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.Infantry;
 
 import java.util.Map;
@@ -74,38 +72,39 @@ public class MyUnitBotSettings extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        TWDecisionContext twContext = (TWDecisionContext) context;
-        var score = herding(twContext) * bravery(twContext) * aggression(twContext) * caution(twContext) * selfPreservation(twContext);
+    public double score(DecisionContext context) {
+        var score = herding(context) * bravery(context) * aggression(context) * caution(context) * selfPreservation(context);
         return clamp01(score);
     }
 
-    private double herding(TWDecisionContext twContext) {
+    private double herding(DecisionContext context) {
         var herdingMod = getDoubleParameter(herdingWeight);
         if (herdingMod == 0.0) {
             return 1;
         }
-        var self = twContext.getCurrentUnit();
-        var clusterCentroid = twContext.getFriendsClusterCentroid(self);
+        var self = context.getCurrentUnit();
+        var clusterCentroid = context.getMyClusterCentroid(self);
         double distToFriends = clusterCentroid.distance(self.getPosition());
 
-        double herding = twContext.getBehaviorSettings().getHerdMentalityIndex();
+        double herding = context.getBehaviorSettings().getHerdMentalityIndex();
         double herdingFraction = herding / 10.0;
         double closeness = 1.0 / (1.0 + distToFriends);
         herdingMod *= herdingFraction * closeness;
         return clamp01(herdingMod);
     }
 
-    private double bravery(TWDecisionContext twContext) {
+    private double bravery(DecisionContext context) {
         var braveryMod = getDoubleParameter(braveryWeight);
         if (braveryMod == 0) {
             return 1.0;
         }
-        var self = twContext.getCurrentUnit();
-        var myWeaponsDamage = Compute.computeTotalDamage(self.getTotalWeaponList());
-        var totalDamageFraction = clamp01(twContext.getTotalDamage() / (double) myWeaponsDamage);
-        var damageCap = clamp01(twContext.getExpectedDamage() / (double) self.getTotalArmor()) / 2;
-        double braveryValue = twContext.getBehaviorSettings().getBraveryIndex();
+        var self = context.getCurrentUnit();
+        var myWeaponsDamage = 0;
+
+        myWeaponsDamage = Compute.computeTotalDamage(self.getTotalWeaponList());
+        var totalDamageFraction = clamp01(context.getTotalDamage() / (double) myWeaponsDamage);
+        var damageCap = clamp01(context.getExpectedDamage() / (double) context.getTotalHealth()) / 2;
+        double braveryValue = context.getBehaviorSettings().getBraveryIndex();
         double braveryFraction = braveryValue / 10.0;
         braveryMod *= totalDamageFraction * braveryFraction - (1 - damageCap);
         return clamp01(braveryMod);
@@ -114,13 +113,13 @@ public class MyUnitBotSettings extends TWConsideration {
     /**
      * Aggression is a measure of how much the unit wants to attack.
      */
-    public double aggression(TWDecisionContext twContext) {
+    public double aggression(DecisionContext context) {
         var aggressionMod = getDoubleParameter(aggressionWeight);
         if (aggressionMod == 0) {
             return 1.0;
         }
-        var self = twContext.getCurrentUnit();
-        var distanceToClosestEnemy = twContext.getDistanceToClosestEnemy(self);
+        var self = context.getCurrentUnit();
+        var distanceToClosestEnemy = context.getDistanceToClosestEnemyAtFinalMovePathPosition();
 
         // If there are no enemies at all, then this is as good as any other path
         if (distanceToClosestEnemy.isEmpty()) {
@@ -133,7 +132,7 @@ public class MyUnitBotSettings extends TWConsideration {
             distToEnemy = 2;
         }
 
-        double aggressionFraction = twContext.getBehaviorSettings().getHyperAggressionIndex() /  10.0;
+        double aggressionFraction = context.getBehaviorSettings().getHyperAggressionIndex() /  10.0;
         double closeness = 1.0 / (1.0 + distToEnemy);
         aggressionMod *= aggressionFraction * closeness;
         return clamp01(aggressionMod);
@@ -142,15 +141,15 @@ public class MyUnitBotSettings extends TWConsideration {
     /**
      * Caution is a measure of how much the unit wants to avoid falling down on the curb while walking.
      */
-    private double caution(TWDecisionContext twContext) {
+    private double caution(DecisionContext context) {
         var fallShameMod = getDoubleParameter(cautionWeight);
         // If the fall shame mod is 0, then we don't care about caution
         if (fallShameMod == 0) {
             return 1.0;
         }
 
-        var pilotingSuccess = twContext.getMovePathSuccessProbability();
-        double fallShameFraction = twContext.getBehaviorSettings().getFallShameIndex() / 10.0;
+        var pilotingSuccess = context.getMovePathSuccessProbability();
+        double fallShameFraction = context.getBehaviorSettings().getFallShameIndex() / 10.0;
         fallShameMod *= fallShameFraction;
         return clamp01(pilotingSuccess / fallShameMod);
     }
@@ -158,16 +157,15 @@ public class MyUnitBotSettings extends TWConsideration {
     /**
      * Self-preservation only applies when moving somewhere, 1 means "OK" to move there.
      */
-    private double selfPreservation(TWDecisionContext twContext) {
+    private double selfPreservation(DecisionContext context) {
         var selfPreservationMod = getDoubleParameter(selfPreservationWeight);
         if (selfPreservationMod == 0) {
             return 1.0;
         }
-        var selfPreservation = twContext.getBehaviorSettings().getSelfPreservationValue() / 10.0;
-        var self = twContext.getCurrentUnit();
-        var distance = twContext.getDistanceToDestination();
+        var selfPreservation = context.getBehaviorSettings().getSelfPreservationValue() / 10.0;
+        var distance = context.getDistanceToDestination();
         if (distance > 0) {
-            var risk = 1 - (twContext.getExpectedDamage() / (double) self.getTotalArmor());
+            var risk = 1 - (context.getExpectedDamage() / (double) context.getTotalHealth());
             return risk * selfPreservation;
         }
         return 1.0;

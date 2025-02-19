@@ -36,15 +36,13 @@ public class MyUnitTMM extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
-        TWDecisionContext twContext = (TWDecisionContext) context;
-        var movePath = twContext.getMovePath();
-        var hexesMoved = movePath.getHexesMoved();
+        var hexesMoved = context.getHexesMoved();
         var tmm = Compute.getTargetMovementModifier(
             hexesMoved,
-            movePath.isJumping(),
-            movePath.getFinalAltitude() > 0 && !currentUnit.isAerospace(),
+            context.isJumping(),
+            context.getFinalAltitude() > 0 && !currentUnit.isAerospace(),
             ((TWWorld) context.getWorld()).getGame());
 
         return clamp01(tmm.getValue() / 8.0d);

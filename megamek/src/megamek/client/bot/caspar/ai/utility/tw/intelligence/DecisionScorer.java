@@ -26,14 +26,14 @@
   * This class is responsible for scoring all decisions.
   * Implements DecisionMaker interface to provide a common interface for decision scoring.
   */
-class DecisionScorer implements DecisionMaker<Entity, Entity, RankedPath> {
+class DecisionScorer implements DecisionMaker {
     private final static MMLogger logger = MMLogger.create(DecisionScorer.class);
 
     public DecisionScorer() {
     }
 
     @Override
-    public TreeSet<RankedPath> scoreAllDecisions(List<Decision<Entity, Entity>> decisions, List<DecisionContext<Entity, Entity>> contexts) {
+    public TreeSet<RankedPath> scoreAllDecisions(List<Decision> decisions, List<DecisionContext> contexts) {
         TreeSet<RankedPath> returnPaths = new TreeSet<>(Collections.reverseOrder());
         for (var decision : decisions) {
             double cutoff = 0.0d;
@@ -57,7 +57,7 @@ class DecisionScorer implements DecisionMaker<Entity, Entity, RankedPath> {
         return returnPaths;
     }
 
-    private IDebugReporter initializeDebugReporterPreAllocated(Decision<Entity, Entity> decision) {
+    private IDebugReporter initializeDebugReporterPreAllocated(Decision decision) {
         if (!logger.isDebugEnabled()) {
             return IDebugReporter.noOp;
         }
@@ -75,7 +75,7 @@ class DecisionScorer implements DecisionMaker<Entity, Entity, RankedPath> {
     }
 
     @Override
-    public double getBonusFactor(Decision<Entity, Entity> scoreEvaluator) {
+    public double getBonusFactor(Decision scoreEvaluator) {
         return scoreEvaluator.getWeight();
     }
 }

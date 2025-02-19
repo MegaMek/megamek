@@ -33,7 +33,7 @@ public class MyUnitHeatManagement extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
         return clamp01( currentUnit.getHeat() / (double) currentUnit.getHeatCapacity());
     }

@@ -14,14 +14,14 @@
  */
 package megamek.ai.utility;
 
-public class AdjustedUtilitarianScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> extends UtilitarianScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> {
+public class AdjustedUtilitarianScoreEvaluator extends UtilitarianScoreEvaluator {
 
-    public AdjustedUtilitarianScoreEvaluator(DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    public AdjustedUtilitarianScoreEvaluator(DecisionScoreEvaluator decisionScoreEvaluator) {
         super(decisionScoreEvaluator);
     }
 
     @Override
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, IDebugReporter debugReport) {
+    public double score(DecisionContext context, double bonus, IDebugReporter debugReport) {
         double unadjustedScore = super.score(context, bonus, debugReport);
         var modificationFactor = 1 - (1 / getConsiderations().size());
         var makeUpValue = (1 - unadjustedScore) * modificationFactor;

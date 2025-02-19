@@ -16,7 +16,7 @@
 package megamek.client.bot.caspar.ai.utility.tw;
 
 import megamek.common.Coords;
-import megamek.common.Entity;
+import megamek.common.Targetable;
 
 import java.util.*;
 
@@ -30,7 +30,6 @@ public class ClusteringService {
     private final int maxClusterSize;     // Maximum number of elements in a cluster
 
     // Maps element ID -> cluster centroid (x,y)
-    private final Map<Integer, Coords> elementToClusterCentroid = new HashMap<>();
     private final Map<Integer, Cluster> elementToCluster = new HashMap<>();
     private final Set<Cluster> clusters = new HashSet<>();
 
@@ -44,12 +43,12 @@ public class ClusteringService {
         this.maxClusterSize = maxClusterSize;
     }
 
-    public Cluster getCluster(Entity entity) {
+    public Cluster getCluster(Targetable entity) {
         return elementToCluster.get(entity.getId());
     }
 
     public void updateClusterCentroids() {
-        for (Cluster c : elementToCluster.values()) {
+        for (Cluster c : clusters) {
             c.computeCentroid();
         }
     }
@@ -58,42 +57,37 @@ public class ClusteringService {
      * Build clusters from a list of elements.
      * @param elements List of elements to cluster
      */
-    public void buildClusters(List<Entity> elements) {
+    public void buildClusters(List<Targetable> elements) {
         elementToCluster.clear();
-        elementToClusterCentroid.clear();
 
-        Map<Integer, List<Entity>> teamToElements = new HashMap<>();
-        for (Entity e : elements) {
-            teamToElements
-                .computeIfAbsent(e.getOwner().getTeam(), k -> new ArrayList<>())
+        Map<Integer, List<Targetable>> playerToElements = new HashMap<>();
+        for (Targetable e : elements) {
+            playerToElements
+                .computeIfAbsent(e.getOwnerId(), k -> new ArrayList<>())
                 .add(e);
         }
 
         // For each team, build BFS clusters
-        for (Map.Entry<Integer, List<Entity>> entry : teamToElements.entrySet()) {
+        for (Map.Entry<Integer, List<Targetable>> entry : playerToElements.entrySet()) {
             int team = entry.getKey();
-            List<Entity> teamElements = entry.getValue();
+            List<Targetable> playerElements = entry.getValue();
 
             Set<Integer> visited = new HashSet<>();
-            for (Entity elem : teamElements) {
+            for (Targetable elem : playerElements) {
                 if (!visited.contains(elem.getId())) {
                     // BFS to find all elements reachable within maxDist
-                    List<Entity> bfsCluster = bfsCluster(teamElements, elem, visited);
+                    List<Targetable> bfsCluster = bfsCluster(playerElements, elem, visited);
                     // If that BFS cluster is bigger than maxClusterSize, split it up
-                    List<List<Entity>> splitClusters = splitLargeCluster(bfsCluster, maxClusterSize);
+                    List<List<Targetable>> splitClusters = splitLargeCluster(bfsCluster, maxClusterSize);
 
                     // Now, for each final sub-cluster, compute centroid and store element->centroid
-                    for (List<Entity> subClusterElements : splitClusters) {
+                    for (List<Targetable> subClusterElements : splitClusters) {
                         Cluster c = new Cluster(team);
-                        for (Entity scElem : subClusterElements) {
+                        for (Targetable scElem : subClusterElements) {
                             c.addMember(scElem);
                         }
                         c.computeCentroid();
-                        c.computeClusterRole();
-                        double cx = c.getCentroidX();
-                        double cy = c.getCentroidY();
-                        for (Entity scElem : subClusterElements) {
-                            elementToClusterCentroid.put(scElem.getId(), new Coords((int) Math.round(cx), (int) Math.round(cy)));
+                        for (Targetable scElem : subClusterElements) {
                             elementToCluster.put(scElem.getId(), c);
                         }
                         clusters.add(c);
@@ -101,6 +95,7 @@ public class ClusteringService {
                 }
             }
         }
+        updateClusterCentroids();
     }
 
     /**
@@ -108,18 +103,18 @@ public class ClusteringService {
      * marking them visited. Returns the entire BFS-connected set of elements
      * (i.e., all that are within maxDist of each other transitively).
      */
-    private List<Entity> bfsCluster(List<Entity> teamElements, Entity start, Set<Integer> visited) {
-        List<Entity> cluster = new ArrayList<>();
-        Queue<Entity> queue = new LinkedList<>();
+    private List<Targetable> bfsCluster(List<Targetable> teamElements, Targetable start, Set<Integer> visited) {
+        List<Targetable> cluster = new ArrayList<>();
+        Queue<Targetable> queue = new LinkedList<>();
         queue.add(start);
         visited.add(start.getId());
 
         while (!queue.isEmpty()) {
-            Entity current = queue.poll();
+            Targetable current = queue.poll();
             cluster.add(current);
 
             // Check all other team elements to see if they connect
-            for (Entity e2 : teamElements) {
+            for (Targetable e2 : teamElements) {
                 if (!visited.contains(e2.getId())) {
                     if (distance(current, e2) <= maxDist) {
                         queue.add(e2);
@@ -139,14 +134,14 @@ public class ClusteringService {
      * 2) Sort elements by distance to that centroid
      * 3) Chunk them into sub-lists of size <= maxSize
      */
-    private List<List<Entity>> splitLargeCluster(List<Entity> bigCluster, int maxSize) {
+    private List<List<Targetable>> splitLargeCluster(List<Targetable> bigCluster, int maxSize) {
         if (bigCluster.size() <= maxSize) {
             // No need to split, just return a single cluster
             return Collections.singletonList(bigCluster);
         }
         // 1) Compute overall centroid
         double sumX = 0, sumY = 0;
-        for (Entity e : bigCluster) {
+        for (Targetable e : bigCluster) {
             sumX += e.getPosition().getX();
             sumY += e.getPosition().getY();
         }
@@ -161,11 +156,11 @@ public class ClusteringService {
         });
 
         // 3) Split into chunks of size <= maxSize
-        List<List<Entity>> subClusters = new ArrayList<>();
+        List<List<Targetable>> subClusters = new ArrayList<>();
         int startIndex = 0;
         while (startIndex < bigCluster.size()) {
             int endIndex = Math.min(startIndex + maxSize, bigCluster.size());
-            List<Entity> subList = bigCluster.subList(startIndex, endIndex);
+            List<Targetable> subList = bigCluster.subList(startIndex, endIndex);
             subClusters.add(new ArrayList<>(subList)); // copy to a new list
             startIndex += maxSize;
         }
@@ -173,7 +168,7 @@ public class ClusteringService {
         return subClusters;
     }
 
-    private double distance(Entity e1, Entity e2) {
+    private double distance(Targetable e1, Targetable e2) {
         return e1.getPosition().distance(e2.getPosition());
     }
 
@@ -187,8 +182,11 @@ public class ClusteringService {
      * Retrieve the centroid (x, y) for any given element,
      * returns null if the element was never clustered.
      */
-    public Coords getClusterMidpoint(Entity e) {
-        return elementToClusterCentroid.getOrDefault(e.getId(), null);
+    public Coords getClusterMidpoint(Targetable e) {
+        if (elementToCluster.get(e.getId()) == null) {
+            return null;
+        }
+        return elementToCluster.get(e.getId()).getCentroid();
     }
 
     public Cluster getClosestEnemyCluster(Cluster cluster) {

@@ -34,15 +34,14 @@ public class MyUnitIsMovingTowardsWaypoint extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        TWDecisionContext twContext = (TWDecisionContext) context;
+    public double score(DecisionContext context) {
 
-        var delta = twContext.getDistanceDeltaToDestination();
+        var delta = context.getDistanceDeltaToDestination(context.getFinalPosition(), context.getStartingPosition(), context.getWaypoint());
         if (delta.isEmpty()) {
-            return 1;
+            return 0.0;
         }
 
-        return clamp01(delta.getAsInt() / (double) twContext.getCurrentUnitMaxRunMP());
+        return clamp01(delta.getAsInt() / (double) context.getCurrentUnitMaxRunMP());
     }
 
     @Override

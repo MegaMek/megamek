@@ -47,7 +47,7 @@ public class MyUnitRoleIs extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
         var role = getParameter(roleParam, UnitRole.class);
         if (role.equals(UnitRole.UNDETERMINED)) {

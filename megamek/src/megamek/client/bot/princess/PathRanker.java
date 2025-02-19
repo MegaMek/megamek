@@ -332,7 +332,7 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Returns the probability of success of a move path
      */
-    protected double getMovePathSuccessProbability(MovePath movePath) {
+    public double getMovePathSuccessProbability(MovePath movePath) {
         // introduced a caching mechanism, as the success probability was being
         // calculated at least twice
         if (getPathRankerState().getPathSuccessProbabilities().containsKey(movePath.getKey())) {
@@ -386,7 +386,6 @@ public abstract class PathRanker implements IPathRanker {
     /**
      * Estimates the most expected damage that a path could cause, given the pilot skill of the path ranker
      * and various conditions.
-     *
      * XXX Sleet01: add fall pilot damage, skid damage, and low-gravity overspeed damage calcs
      *
      * @param movingEntity

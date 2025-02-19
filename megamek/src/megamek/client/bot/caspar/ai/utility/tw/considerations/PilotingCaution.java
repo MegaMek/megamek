@@ -18,6 +18,7 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
@@ -33,17 +34,12 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("PilotingCaution")
 public class PilotingCaution extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
-
     public PilotingCaution() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+    public double score(DecisionContext context) {
+        return clamp01(context.getMovePathSuccessProbability());
     }
 
     @Override

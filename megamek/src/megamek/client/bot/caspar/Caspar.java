@@ -17,18 +17,14 @@ package megamek.client.bot.caspar;
 import megamek.ai.utility.Agent;
 import megamek.ai.utility.Intelligence;
 import megamek.ai.utility.Memory;
-import megamek.client.bot.princess.PathRanker;
-import megamek.client.bot.princess.Princess;
-import megamek.client.bot.princess.RankedPath;
 import megamek.client.bot.caspar.ai.utility.tw.ClusteringService;
 import megamek.client.bot.caspar.ai.utility.tw.context.TWWorld;
 import megamek.client.bot.caspar.ai.utility.tw.intelligence.SimpleIntelligence;
 import megamek.client.bot.caspar.ai.utility.tw.profile.TWProfile;
-import megamek.common.Entity;
-import megamek.logging.MMLogger;
+import megamek.client.bot.princess.PathRanker;
+import megamek.client.bot.princess.Princess;
 
-public class Caspar extends Princess implements Agent<Entity, Entity, RankedPath> {
-    private static final MMLogger logger = MMLogger.create(Caspar.class);
+public class Caspar extends Princess implements Agent {
 
     private final SimpleIntelligence intelligence;
     private final TWWorld world;
@@ -61,7 +57,7 @@ public class Caspar extends Princess implements Agent<Entity, Entity, RankedPath
     }
 
     @Override
-    public Intelligence<Entity, Entity, RankedPath> getIntelligence() {
+    public Intelligence getIntelligence() {
         return intelligence;
     }
 

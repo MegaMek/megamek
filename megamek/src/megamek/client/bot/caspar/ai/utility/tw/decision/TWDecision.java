@@ -23,7 +23,7 @@ import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;
 
 @JsonTypeName("TWDecision")
-public class TWDecision extends Decision<Entity, Entity> {
+public class TWDecision extends Decision {
 
     @JsonIgnore
     private RankedPath rankedPath;
@@ -31,7 +31,7 @@ public class TWDecision extends Decision<Entity, Entity> {
     public TWDecision() {
     }
 
-    public TWDecision(String name, String description, double weight, DecisionScoreEvaluator<Entity, Entity> decisionScoreEvaluator) {
+    public TWDecision(String name, String description, double weight, DecisionScoreEvaluator decisionScoreEvaluator) {
         super(name, description, weight, decisionScoreEvaluator);
     }
 

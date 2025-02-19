@@ -18,12 +18,12 @@ package megamek.ai.utility;
 import java.util.Comparator;
 
 
-public class ScoredDecision<IN_GAME_OBJECT, TARGETABLE> implements Comparator<ScoredDecision<IN_GAME_OBJECT, TARGETABLE>> {
+public class ScoredDecision implements Comparator<ScoredDecision> {
 
     private final double score;
-    private final Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator;
+    private final Decision scoreEvaluator;
 
-    private ScoredDecision(double score, Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator) {
+    private ScoredDecision(double score, Decision scoreEvaluator) {
         this.score = score;
         this.scoreEvaluator = scoreEvaluator;
     }
@@ -32,7 +32,7 @@ public class ScoredDecision<IN_GAME_OBJECT, TARGETABLE> implements Comparator<Sc
         return score;
     }
 
-    public Decision<IN_GAME_OBJECT, TARGETABLE> getDecisionScoreEvaluator() {
+    public Decision getDecisionScoreEvaluator() {
         return scoreEvaluator;
     }
 
@@ -42,7 +42,7 @@ public class ScoredDecision<IN_GAME_OBJECT, TARGETABLE> implements Comparator<Sc
         return Double.compare(-o1.getScore(), -o2.getScore());
     }
 
-    public static <IN_GAME_OBJECT, TARGETABLE> ScoredDecision<IN_GAME_OBJECT, TARGETABLE> of(double score, Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator) {
-        return new ScoredDecision<>(score, scoreEvaluator);
+    public static  ScoredDecision of(double score, Decision scoreEvaluator) {
+        return new ScoredDecision(score, scoreEvaluator);
     }
 }

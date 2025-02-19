@@ -17,13 +17,8 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.MovePath;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -38,30 +33,23 @@ public class FacingTheEnemy extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var firingUnit = context.getCurrentUnit();
-        var twDecisionContext = (TWDecisionContext) context;
-        var movePath = twDecisionContext.getMovePath();
-        var coordsToFace = new ArrayList<Coords>();
-        for (var enemy : twDecisionContext.getTargets()) {
-            var currentDistance = enemy.getPosition().distance(firingUnit.getPosition());
-            if (enemy.getMaxWeaponRange() >= currentDistance) {
-                coordsToFace.add(enemy.getPosition());
-            }
-        }
+        var finalFacing = context.getFinalFacing();
+        var finalPosition = context.getFinalPosition();
+        var coordsToFace = context.getNClosestEnemiesPositions(finalPosition, 5);
         if (coordsToFace.isEmpty()) {
             return 1d;
         }
         Coords toFace = Coords.median(coordsToFace);
         // its never null, but the check is important, who knows what could happen?
         int desiredFacing = toFace != null ? (toFace.direction(firingUnit.getPosition()) + 3) % 6 : 0;
-        int facingDiff = getFacingDiff(movePath, desiredFacing);
+        int facingDiff = getFacingDiff(finalFacing, desiredFacing);
 
         return clamp01((3 - facingDiff) / 3.0);
     }
 
-    private int getFacingDiff(MovePath movePath, int desiredFacing) {
-        int currentFacing = movePath.getFinalFacing();
+    private int getFacingDiff(int currentFacing, int desiredFacing) {
         int facingDiff;
 
         if (currentFacing == desiredFacing) {

@@ -18,6 +18,7 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Coords;
 import megamek.common.Entity;
 
 import java.util.Map;
@@ -35,11 +36,14 @@ public class IsVIPCloser extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        TWDecisionContext twContext = (TWDecisionContext) context;
-        var target = twContext.getClosestVIP();
-        int delta = target.map(twContext::getDistanceDeltaFromTargetUnit).orElse(OptionalInt.empty()).orElse(0);
-        return clamp01(delta / ((double) twContext.getCurrentUnitMaxRunMP()));
+    public double score(DecisionContext context) {
+        var target = context.getClosestVIP();
+        if (target.isEmpty()) {
+            return 0;
+        }
+        Coords finalPosition = context.getFinalPosition();
+        int delta = target.map( e -> e.getPosition().distance(finalPosition)).orElse(0);
+        return clamp01(delta / ((double) context.getCurrentUnitMaxRunMP() + 1.0));
     }
 
     @Override

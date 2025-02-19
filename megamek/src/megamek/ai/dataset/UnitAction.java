@@ -15,12 +15,11 @@
 package megamek.ai.dataset;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
+import megamek.common.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a unit action.
@@ -45,11 +44,12 @@ import java.util.List;
  */
 public record UnitAction(int id, int teamId, int playerId, String chassis, String model, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
                          int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
-                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps) {
+                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps) implements Targetable {
 
     public static  UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();
-        double chanceOfFailure = SharedUtility.getPSRList(movePath).stream().map(psr -> psr.getValue() / 36d).reduce(0.0, (a, b) -> a * b);
+        Map<EntityMovementType, PilotingRollData> cachedPilotBaseRoll = new HashMap<>();
+        double chanceOfFailure = SharedUtility.getPSRList(cachedPilotBaseRoll, movePath).stream().map(psr -> psr.getValue() / 36d).reduce(0.0, (a, b) -> a * b);
         var steps = movePath.getStepVector().stream().map(MoveStep::getType).toList();
         return new UnitAction(
             entity.getId(),
@@ -84,5 +84,118 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
 
     public Coords finalPosition() {
         return new Coords(toX, toY);
+    }
+
+    @Override
+    public int getTargetType() {
+        return 0;
+    }
+
+    @Override
+    public Coords getPosition() {
+        return currentPosition();
+    }
+
+    @Override
+    public Map<Integer, Coords> getSecondaryPositions() {
+        return Map.of();
+    }
+
+    @Override
+    public int relHeight() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
+    @Override
+    public int getElevation() {
+        return 0;
+    }
+
+    @Override
+    public int getAltitude() {
+        return 0;
+    }
+
+    @Override
+    public boolean isImmobile() {
+        return false;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return model + " " + chassis;
+    }
+
+    @Override
+    public int sideTable(Coords src) {
+        return 0;
+    }
+
+    @Override
+    public int sideTable(Coords src, boolean usePrior) {
+        return 0;
+    }
+
+    @Override
+    public boolean isOffBoard() {
+        return false;
+    }
+
+    @Override
+    public boolean isAirborne() {
+        return false;
+    }
+
+    @Override
+    public boolean isAirborneVTOLorWIGE() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnemyOf(Entity other) {
+        if (other.getOwner() == null) {
+            return true;
+        }
+        return other.getOwner().getTeam() != teamId;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int newId) {
+
+    }
+
+    @Override
+    public int getOwnerId() {
+        return playerId;
+    }
+
+    @Override
+    public void setOwnerId(int newOwnerId) {
+
+    }
+
+    @Override
+    public int getStrength() {
+        return 0;
+    }
+
+    @Override
+    public String generalName() {
+        return model + " " + chassis;
+    }
+
+    @Override
+    public String specificName() {
+        return model + " " + chassis;
     }
 }

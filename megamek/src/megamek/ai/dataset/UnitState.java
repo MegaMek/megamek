@@ -17,6 +17,8 @@ package megamek.ai.dataset;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 
+import java.util.Map;
+
 /**
  * Represents the state of a unit.
  * @param id unit id
@@ -48,7 +50,7 @@ import megamek.common.enums.GamePhase;
 public record UnitState(int id, GamePhase phase, int teamId, int round, int playerId, String chassis, String model, String type,
                         UnitRole role, int x, int y, int facing, double mp, double heat, boolean prone, boolean airborne,
                         boolean offBoard, boolean crippled, boolean destroyed, double armorP,
-                        double internalP, boolean done, int maxRange, int totalDamage, Entity entity) {
+                        double internalP, boolean done, int maxRange, int totalDamage, Entity entity) implements Targetable {
 
     public static UnitState fromEntity(Entity entity, Game game) {
         return new UnitState(
@@ -81,5 +83,115 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
 
     public Coords position() {
         return new Coords(x, y);
+    }
+
+    @Override
+    public int getTargetType() {
+        return TYPE_ENTITY;
+    }
+
+    @Override
+    public Coords getPosition() {
+        return position();
+    }
+
+    @Override
+    public Map<Integer, Coords> getSecondaryPositions() {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int relHeight() {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int getHeight() {
+        return entity.getHeight();
+    }
+
+    @Override
+    public int getElevation() {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int getAltitude() {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public boolean isImmobile() {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public String getDisplayName() {
+        return entity.getDisplayName();
+    }
+
+    @Override
+    public int sideTable(Coords src) {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int sideTable(Coords src, boolean usePrior) {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public boolean isOffBoard() {
+        return false;
+    }
+
+    @Override
+    public boolean isAirborne() {
+        return airborne;
+    }
+
+    @Override
+    public boolean isAirborneVTOLorWIGE() {
+        return airborne;
+    }
+
+    @Override
+    public boolean isEnemyOf(Entity other) {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(int newId) {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int getOwnerId() {
+        return playerId;
+    }
+
+    @Override
+    public void setOwnerId(int newOwnerId) {
+        throw new RuntimeException("Not Implemented");
+    }
+
+    @Override
+    public int getStrength() {
+        return entity.getStrength();
+    }
+
+    @Override
+    public String generalName() {
+        return entity.generalName();
+    }
+
+    @Override
+    public String specificName() {
+        return entity.specificName();
     }
 }

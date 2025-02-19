@@ -17,19 +17,13 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.MovePath;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-/**
- * Are we facing the closest enemy?
- */
 @JsonTypeName("ECMCoverage")
 public class ECMCoverage extends TWConsideration {
 
@@ -37,35 +31,16 @@ public class ECMCoverage extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-//        TWDecisionContext twc = (TWDecisionContext) context;
-//        if (!twc.getCurrentUnit().hasECM()) return 0;
-//
-//        long overlappingECM = twc.getFriendlies().stream()
-//            .filter(f -> f.hasECM())
-//            .filter(f -> f.getPosition().distance(twc.getFinalPosition()) < 6)
-//            .count();
+    public double score(DecisionContext context) {
+        var currentUnit = context.getCurrentUnit();
+        if (!currentUnit.hasECM()) return 0.0;
 
-//        return clamp01(1.0 - (overlappingECM * 0.2));
-        return 1;
-    }
+        Coords finalPosition = context.getFinalPosition();
+        long overlappingECM = context.getFriendliesWithinRange(finalPosition, 6).stream()
+            .filter(e -> ((Entity) e).hasECM())
+            .count();
 
-    private int getFacingDiff(MovePath movePath, int desiredFacing) {
-        int currentFacing = movePath.getFinalFacing();
-        int facingDiff;
-
-        if (currentFacing == desiredFacing) {
-            facingDiff = 0;
-        } else if ((currentFacing == ((desiredFacing + 1) % 6))
-            || (currentFacing == ((desiredFacing + 5) % 6))) {
-            facingDiff = 1;
-        } else if ((currentFacing == ((desiredFacing + 2) % 6))
-            || (currentFacing == ((desiredFacing + 4) % 6))) {
-            facingDiff = 2;
-        } else {
-            facingDiff = 3;
-        }
-        return facingDiff;
+        return clamp01(1.0 / (overlappingECM + 1));
     }
 
     @Override

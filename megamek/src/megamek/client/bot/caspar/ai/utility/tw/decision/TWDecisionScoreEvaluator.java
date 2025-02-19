@@ -24,9 +24,7 @@ import java.util.List;
 
 @JsonTypeName("TWDecisionScoreEvaluator")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Entity> {
-
-    private ScoreEvaluator<Entity, Entity> scoreEvaluator;
+public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator {
 
     public TWDecisionScoreEvaluator() {
     }
@@ -35,17 +33,12 @@ public class TWDecisionScoreEvaluator extends DecisionScoreEvaluator<Entity, Ent
         super(name, description, notes, scoreType);
     }
 
-    public TWDecisionScoreEvaluator(String name, String description, String notes, ScoreType scoreType, List<Consideration<Entity, Entity>> considerations) {
+    public TWDecisionScoreEvaluator(String name, String description, String notes, ScoreType scoreType, List<Consideration> considerations) {
         super(name, description, notes, scoreType, considerations);
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context, double bonus, IDebugReporter debugReport) {
-        return scoreEvaluator.score(context, bonus, debugReport);
-    }
-
-    @Override
-    public DecisionScoreEvaluator<Entity, Entity> copy() {
+    public DecisionScoreEvaluator copy() {
         return new TWDecisionScoreEvaluator(getName(), getDescription(), getNotes(), getScoreType(), getConsiderations().stream().map(Consideration::copy).toList());
     }
 

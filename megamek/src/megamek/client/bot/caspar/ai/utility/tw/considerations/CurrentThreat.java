@@ -24,23 +24,24 @@ import java.util.Map;
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine the armor percent.
+ * This consideration is used to determine the threat level of this field
  */
-@JsonTypeName("MyUnitArmor")
-public class MyUnitArmor extends TWConsideration {
+@JsonTypeName("CurrentThreat")
+public class CurrentThreat extends TWConsideration {
 
-    public MyUnitArmor() {
+    public CurrentThreat() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        double currentThreat = context.getQuickBoardRepresentation().getThreatLevel(currentUnit.getPosition());
+        return clamp01(currentThreat);
     }
 
     @Override
-    public MyUnitArmor copy() {
-        var copy = new MyUnitArmor();
+    public CurrentThreat copy() {
+        var copy = new CurrentThreat();
         copy.setCurve(getCurve().copy());
         copy.setParameters(Map.copyOf(getParameters()));
         copy.setName(getName());

@@ -17,12 +17,10 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.MovePath;
-import megamek.common.UnitRole;
 
+import java.util.List;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -33,30 +31,21 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("FlankingPosition")
 public class FlankingPosition extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
-
     public FlankingPosition() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-//        TWDecisionContext twContext = (TWDecisionContext) context;
-//        MovePath movePath = twContext.getMovePath();
-//        Entity target = twContext.getPrimaryThreat(movePath.getFinalCoords()).orElse(null);
-//        if (target == null) return 0;
-//
-//        int targetFacing = target.getFacing();
-//        int attackAngle = target.getPosition().direction(
-//            twContext.getMovePath().getFinalCoords());
-//
-//        int angleDiff = Math.abs(targetFacing - attackAngle) % 6;
-//        angleDiff = Math.min(angleDiff, 6 - angleDiff);
-//
-//        // 0 = front, 3 = rear
-//        return clamp01(angleDiff / 3.0);
-        return 1;
+    public double score(DecisionContext context) {
+        Coords position = context.getFinalPosition();
+        List<Coords> target = context.getNClosestEnemiesPositions(position, 1);
+        if (target.isEmpty()) return 0;
+        int attackAngle = target.get(0).direction(position);
+
+        int angleDiff = Math.abs(context.getFinalFacing() - attackAngle) % 6;
+        angleDiff = Math.min(angleDiff, 6 - angleDiff);
+
+        // 0 = front, 3 = rear
+        return clamp01(angleDiff / 3.0);
     }
 
     @Override

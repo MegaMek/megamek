@@ -30,7 +30,7 @@ public class MyUnitIsCrippled extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
         return currentUnit.isCrippled(true) ? 1d : 0d;
     }

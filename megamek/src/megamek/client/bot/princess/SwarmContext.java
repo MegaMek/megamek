@@ -27,9 +27,8 @@ import java.util.stream.Collectors;
 public class SwarmContext {
 
     private final Map<Integer, Integer> enemyTargetCounts = new HashMap<>();
-    private final List<Coords> strategicGoals = new Vector<>();
     private Coords currentCenter;
-
+    private final List<Coords> strategicGoals = new Vector<>();
     private int quadrantHeight = 0;
     private int quadrantWidth = 0;
     private int offsetX = 0;

@@ -18,16 +18,16 @@ import java.util.List;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-public class UtilitarianScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> {
+public class UtilitarianScoreEvaluator implements ScoreEvaluator {
 
-    private final DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator;
+    private final DecisionScoreEvaluator decisionScoreEvaluator;
 
-    public UtilitarianScoreEvaluator(DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    public UtilitarianScoreEvaluator(DecisionScoreEvaluator decisionScoreEvaluator) {
         this.decisionScoreEvaluator = decisionScoreEvaluator;
     }
 
     @Override
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, IDebugReporter debugReport) {
+    public double score(DecisionContext context, double bonus, IDebugReporter debugReport) {
         var finalScore = bonus;
         var considerationSize = getConsiderations().size();
         debugReport.newLineIndent().append("Consideration size: ").append(considerationSize)
@@ -52,7 +52,7 @@ public class UtilitarianScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements Sc
     }
 
     @Override
-    public List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations() {
+    public List<Consideration> getConsiderations() {
         return decisionScoreEvaluator.getConsiderations();
     }
 }

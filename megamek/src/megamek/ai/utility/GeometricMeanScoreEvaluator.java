@@ -18,18 +18,18 @@ import java.util.List;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
-public class GeometricMeanScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> {
+public class GeometricMeanScoreEvaluator implements ScoreEvaluator {
 
-    private final DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator;
+    private final DecisionScoreEvaluator decisionScoreEvaluator;
     private final double[] scores;
 
-    public GeometricMeanScoreEvaluator(DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    public GeometricMeanScoreEvaluator(DecisionScoreEvaluator decisionScoreEvaluator) {
         this.decisionScoreEvaluator = decisionScoreEvaluator;
         this.scores = new double[decisionScoreEvaluator.getConsiderations().size()];
     }
 
     @Override
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, IDebugReporter debugReport) {
+    public double score(DecisionContext context, double bonus, IDebugReporter debugReport) {
         var considerationSize = getConsiderations().size();
         debugReport.newLineIndent().append("Consideration size: ").append(considerationSize)
             .newLineIndent(2).append("Bonus: ").append(bonus);
@@ -59,7 +59,7 @@ public class GeometricMeanScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements 
     }
 
     @Override
-    public List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations() {
+    public List<Consideration> getConsiderations() {
         return decisionScoreEvaluator.getConsiderations();
     }
 }

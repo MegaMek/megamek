@@ -21,11 +21,11 @@ import java.util.TreeSet;
 
 import megamek.client.bot.princess.RankedPath;
 
-public interface DecisionMaker<IN_GAME_OBJECT, TARGETABLE, RANKED> {
+public interface DecisionMaker {
 
-    Optional<RANKED> pickOne(TreeSet<RankedPath> rankedDecisions);
+    Optional<RankedPath> pickOne(TreeSet<RankedPath> rankedDecisions);
 
-    TreeSet<RANKED> scoreAllDecisions(List<Decision<IN_GAME_OBJECT, TARGETABLE>> decisions, List<DecisionContext<IN_GAME_OBJECT, TARGETABLE>> contexts);
+    TreeSet<RankedPath> scoreAllDecisions(List<Decision> decisions, List<DecisionContext> contexts);
 
-    double getBonusFactor(Decision<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator);
+    double getBonusFactor(Decision scoreEvaluator);
 }

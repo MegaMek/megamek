@@ -18,63 +18,58 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import megamek.ai.utility.Consideration;
 
 public enum TWConsiderationClass {
-    AttackTactics(AttackTactics.class),
-    CaptureEnemyMekWarrior(CaptureEnemyMekWarrior.class),
+    BackSide(BackSide.class),
     CoverFire(CoverFire.class),
-    Crowding(Crowding.class),
-    DamagedSide(DamagedSide.class),
+    CrowdingEnemies(CrowdingEnemies.class),
+    CrowdingFriends(CrowdingFriends.class),
+    CurrentThreat(CurrentThreat.class),
+    DamageOutput(DamageOutput.class),
     DecoyValue(DecoyValue.class),
-    DefenseTactics(DefenseTactics.class),
     ECMCoverage(ECMCoverage.class),
-    EnemyArtilleryFire(EnemyArtilleryFire.class),
+    EnemyECMCoverage(EnemyECMCoverage.class),
     EnemyPositioning(EnemyPositioning.class),
     EnvironmentalCover(EnvironmentalCover.class),
     EnvironmentalHazard(EnvironmentalHazard.class),
-    DamageOutput(DamageOutput.class),
     FacingTheEnemy(FacingTheEnemy.class),
     FavoriteTargetInRange(FavoriteTargetInRange.class),
-    IsVIPCloser(IsVIPCloser.class),
     FireExposure(FireExposure.class),
     FlankingPosition(FlankingPosition.class),
     FormationCohesion(FormationCohesion.class),
     FriendlyArtilleryFire(FriendlyArtilleryFire.class),
+    FriendlyPositioning(FriendlyPositioning.class),
     FriendsCoverFire(FriendsCoverFire.class),
+    FrontSide(FrontSide.class),
     HeatVulnerability(HeatVulnerability.class),
-    HullDown(HullDown.class),
+    IsVIPCloser(IsVIPCloser.class),
     KeepDistance(KeepDistance.class),
-    KillBox(KillBox.class),
-    PilotingCaution(PilotingCaution.class),
-    Retreat(Retreat.class),
-    Scouting(Scouting.class),
-    SensorCoverage(SensorCoverage.class),
-    StandStill(StandStill.class),
-    StickyMoveType(StickyMoveType.class),
-    StrategicGoal(StrategicGoal.class),
-    TimeToKill(TimeToKill.class),
-    TimeToDie(TimeToDie.class),
-    ZombieTactics(ZombieTactics.class),
+    LeftSide(LeftSide.class),
     MyUnitBotSettings(MyUnitBotSettings.class),
     MyUnitHeatManagement(MyUnitHeatManagement.class),
-    MyUnitIsMovingTowardsWaypoint(MyUnitIsMovingTowardsWaypoint.class),
-    MyUnitArmor(MyUnitArmor.class),
-    MyUnitMoved(MyUnitMoved.class),
-    MyUnitTMM(MyUnitTMM.class),
     MyUnitIsCrippled(MyUnitIsCrippled.class),
-    MyUnitIsGettingAwayFromDanger(MyUnitIsGettingAwayFromDanger.class),
-    MyUnitUnderThreat(MyUnitUnderThreat.class),
-    TargetUnitsArmor(TargetUnitsArmor.class),
+    MyUnitIsMovingTowardsWaypoint(MyUnitIsMovingTowardsWaypoint.class),
+    MyUnitMoved(MyUnitMoved.class),
     MyUnitRoleIs(MyUnitRoleIs.class),
+    MyUnitTMM(MyUnitTMM.class),
+    MyUnitUnderThreat(MyUnitUnderThreat.class),
+    OverallArmor(OverallArmor.class),
+    PilotingCaution(PilotingCaution.class),
+    Retreat(Retreat.class),
+    RightSide(RightSide.class),
+    Scouting(Scouting.class),
+    StandStill(StandStill.class),
+    StrategicGoal(StrategicGoal.class),
+    TargetUnitsArmor(TargetUnitsArmor.class),
+    TargetWithinOptimalRange(TargetWithinOptimalRange.class),
     TargetWithinRange(TargetWithinRange.class),
-    TurnsToEncounter(TurnsToEncounter.class),
-    TargetWithinOptimalRange(TargetWithinOptimalRange.class);
+    TurnsToEncounter(TurnsToEncounter.class);
 
-    private final Class<? extends Consideration<?,?>> considerationClass;
+    private final Class<? extends Consideration> considerationClass;
 
-    TWConsiderationClass(Class<? extends Consideration<?,?>> considerationClass) {
+    TWConsiderationClass(Class<? extends Consideration> considerationClass) {
         this.considerationClass = considerationClass;
     }
 
-    public Class<? extends Consideration<?,?>> getConsiderationClass() {
+    public Class<? extends Consideration> getConsiderationClass() {
         return considerationClass;
     }
 

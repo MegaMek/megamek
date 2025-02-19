@@ -14,9 +14,6 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
-import java.util.*;
-
 import megamek.client.bot.princess.Princess;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
@@ -28,6 +25,9 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Holds movement path for an entity.
@@ -236,6 +236,7 @@ public class MovePath implements Cloneable, Serializable {
             || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
             && game.getBoard().onGround() && !entity.isAirborne());
     }
+
     /**
      * Generates a new, empty, movement path object.
      */

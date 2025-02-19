@@ -32,21 +32,18 @@ public class TargetWithinOptimalRange extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var targets = context.getTargets();
+    public double score(DecisionContext context) {
+        var target = context.getClosestEnemy();
         var firingUnit = context.getCurrentUnit();
-        var distance = targets.stream().map(Entity::getPosition)
-                .mapToInt(coords -> firingUnit.getPosition().distance(coords)).max()
-                .orElse(Integer.MAX_VALUE);;
+        int distance = target.map(t -> t.getPosition().distance(firingUnit.getPosition())).orElse(0);
 
-        var maxRange = firingUnit.getMaxWeaponRange();
         var bestRange = firingUnit.getOptimalRange();
 
-        if (distance <= bestRange) {
-            return 1d;
+        if (distance <= 0) {
+            return 0d;
         }
 
-        return clamp01(1.0001d - (double) (distance - bestRange) / (maxRange - bestRange));
+        return clamp01(bestRange / distance);
     }
 
 

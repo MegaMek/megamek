@@ -188,6 +188,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
             var model = profileDecisionTable.getModel();
             var selectedRow = profileDecisionTable.getSelectedRow();
             if (selectedRow >= 0) {
+                // noinspection unchecked
                 var decision = ((DecisionTableModel<TWDecision>) model).getDecisions().get(selectedRow);
                 if (decision.equals(currentDecision.get())) {
                     currentDecision.set(null);
@@ -570,7 +571,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void persistProfile() {
         //noinspection unchecked
         var model = (DecisionTableModel<TWDecision>) profileDecisionTable.getModel();
-        var decisions = model.getDecisions().stream().map(e -> (Decision<Entity, Entity>) e).toList();
+        var decisions = model.getDecisions().stream().map(e -> (Decision) e).toList();
 
         if (profileId <= 0) {
             var ids = sharedData.getProfiles().stream().map(TWProfile::getId).collect(Collectors.toSet());

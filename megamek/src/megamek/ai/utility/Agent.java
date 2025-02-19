@@ -15,10 +15,11 @@
 package megamek.ai.utility;
 
 import megamek.client.IClient;
+import megamek.common.Targetable;
 
-public interface Agent<IN_GAME_OBJECT, TARGETABLE, RANKED>  {
+public interface Agent  {
     int getId();
-    World<IN_GAME_OBJECT, TARGETABLE> getWorld();
-    Intelligence<IN_GAME_OBJECT, TARGETABLE, RANKED> getIntelligence();
+    World getWorld();
+    Intelligence getIntelligence();
     IClient getClient();
 }

@@ -25,13 +25,15 @@ import java.util.Map;
 public class SimplePathRankerUtilCalculator implements PathRankerUtilCalculator {
 
     private final BasicPathRanker pathRanker;
+    private final PathRankerState pathRankerState;
     private final Game game;
     private final Princess owner;
 
-    public SimplePathRankerUtilCalculator(Princess princess, Game game, BasicPathRanker pathRanker) {
+    public SimplePathRankerUtilCalculator(Princess princess, Game game, BasicPathRanker pathRanker, PathRankerState pathRankerState) {
         this.pathRanker = pathRanker;
         this.owner = princess;
         this.game = game;
+        this.pathRankerState = pathRankerState;
     }
 
     @Override
@@ -150,5 +152,10 @@ public class SimplePathRankerUtilCalculator implements PathRankerUtilCalculator 
     @Override
     public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean extremeRange, boolean losRange) {
         return pathRanker.evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
+    }
+
+    @Override
+    public Map<Coords, Double> getIncomingFriendlyArtilleryDamage() {
+        return pathRankerState.getIncomingFriendlyArtilleryDamage();
     }
 }

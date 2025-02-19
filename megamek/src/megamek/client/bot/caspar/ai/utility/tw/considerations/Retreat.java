@@ -17,31 +17,30 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.princess.UnitBehavior;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine friendly artillery fire risk
+ * This consideration is used to determine if the unit should retreat
  */
 @JsonTypeName("Retreat")
 public class Retreat extends TWConsideration {
-
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
 
     public Retreat() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+    public double score(DecisionContext context) {
+        UnitBehavior.BehaviorType behaviorType = context.getBehaviorType();
+        if (behaviorType == UnitBehavior.BehaviorType.ForcedWithdrawal || behaviorType == UnitBehavior.BehaviorType.MoveToDestination) {
+            int newDistanceToHome = context.getDistanceToHome();
+            return clamp01(1 - (newDistanceToHome / 10.0));
+        }
+        return 0.0;
     }
 
     @Override

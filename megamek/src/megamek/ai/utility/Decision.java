@@ -33,20 +33,20 @@ import java.util.StringJoiner;
     @JsonSubTypes.Type(value = TWDecision.class, name = "TWDecision"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObject {
+public abstract class Decision implements NamedObject {
     private String name;
     private String description;
     private double weight;
-    private DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator;
+    private DecisionScoreEvaluator decisionScoreEvaluator;
     @JsonIgnore
     private transient double score;
     @JsonIgnore
-    private transient DecisionContext<IN_GAME_OBJECT, TARGETABLE> decisionContext;
+    private transient DecisionContext decisionContext;
 
     public Decision() {
     }
 
-    public Decision(String name, String description, double weight, DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    public Decision(String name, String description, double weight, DecisionScoreEvaluator decisionScoreEvaluator) {
         this.name = name;
         this.description = description;
         this.weight = weight;
@@ -78,11 +78,11 @@ public abstract class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObjec
         this.weight = weight;
     }
 
-    public DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> getDecisionScoreEvaluator() {
+    public DecisionScoreEvaluator getDecisionScoreEvaluator() {
         return decisionScoreEvaluator;
     }
 
-    public void setDecisionScoreEvaluator(DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> decisionScoreEvaluator) {
+    public void setDecisionScoreEvaluator(DecisionScoreEvaluator decisionScoreEvaluator) {
         this.decisionScoreEvaluator = decisionScoreEvaluator;
     }
 
@@ -94,15 +94,15 @@ public abstract class Decision<IN_GAME_OBJECT, TARGETABLE> implements NamedObjec
         this.score = score;
     }
 
-    public DecisionContext<IN_GAME_OBJECT, TARGETABLE> getDecisionContext() {
+    public DecisionContext getDecisionContext() {
         return decisionContext;
     }
 
-    public void setDecisionContext(DecisionContext<IN_GAME_OBJECT, TARGETABLE> decisionContext) {
+    public void setDecisionContext(DecisionContext decisionContext) {
         this.decisionContext = decisionContext;
     }
 
-    public abstract Decision<IN_GAME_OBJECT, TARGETABLE> copy();
+    public abstract Decision copy();
 
     @Override
     public String toString() {

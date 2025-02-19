@@ -17,11 +17,12 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -31,17 +32,24 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("EnvironmentalHazard")
 public class EnvironmentalHazard extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
-
-    public EnvironmentalHazard() {
-    }
+    public EnvironmentalHazard() {}
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+    public double score(DecisionContext context) {
+
+        var unit = context.getCurrentUnit();
+        if (!context.getQuickBoardRepresentation().onGround() || unit.isAirborneAeroOnGroundMap()) {
+            return 1.0;
+        }
+
+        Set<Coords> path = context.getCoordsSet();
+        AtomicInteger hazards = new AtomicInteger();
+        path.forEach(coords -> {
+            if (context.getQuickBoardRepresentation().hasHazard(coords)) {
+                hazards.getAndIncrement();
+            }
+        });
+        return clamp01(1.0 - (hazards.get() / (double) path.size()));
     }
 
     @Override

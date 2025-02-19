@@ -12,74 +12,60 @@
  * for more details.
  *
  */
-
 package megamek.client.bot.caspar.ai.utility.tw.intelligence;
 
 import megamek.ai.utility.*;
 import megamek.client.bot.caspar.Caspar;
-import megamek.client.bot.princess.BasicPathRanker;
-import megamek.client.bot.princess.RankedPath;
 import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.client.bot.caspar.ai.utility.tw.profile.TWProfile;
+import megamek.client.bot.princess.BasicPathRanker;
+import megamek.client.bot.princess.FiringPhysicalDamage;
+import megamek.client.bot.princess.RankedPath;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.MovePath;
+import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 import java.util.*;
 
 /**
- * SimpleIntelligence does not implement memory or learning in any way, has no stickyness for decisions, and does not
+ * SimpleIntelligence does not implement memory or learning in any way, has no stickiness for decisions, and does not
  * implement any special behaviors, uses BEST for decision process.
  *
  * @author Luana Coppio
  */
-public class SimpleIntelligence extends BasicPathRanker implements Intelligence<Entity, Entity, RankedPath> {
+public class SimpleIntelligence extends BasicPathRanker implements Intelligence {
     private final static MMLogger logger = MMLogger.create(SimpleIntelligence.class);
-    private final List<Decision<Entity, Entity>> decisions = new ArrayList<>();
-    private final DecisionMaker<Entity, Entity, RankedPath> decisionMaker = new DecisionScorer();
+    private final List<Decision> decisions = new ArrayList<>();
+    private final DecisionMaker decisionMaker = new DecisionScorer();
     private final PathRankerUtilCalculator pathRankerUtilCalculator;
-    private final Memory memory;
 
     public SimpleIntelligence(Caspar caspar, TWProfile profile) {
         super(caspar);
-        this.memory = caspar.getMemory();
         this.decisions.addAll(profile.getDecisions());
-        pathRankerUtilCalculator = new SimplePathRankerUtilCalculator(caspar, caspar.getGame(), this);
+        pathRankerUtilCalculator = new SimplePathRankerUtilCalculator(caspar, caspar.getGame(), this, getPathRankerState());
     }
 
     @Override
-    public void update(Intelligence<Entity, Entity, RankedPath> intelligence) {
+    public void update(Intelligence intelligence) {
         // there is nothing to update
     }
 
     @Override
-    public List<Decision<Entity, Entity>> getDecisions() {
+    public List<Decision> getDecisions() {
         return decisions;
     }
 
     @Override
-    public DecisionMaker<Entity, Entity, RankedPath> getDecisionMaker() {
+    public DecisionMaker getDecisionMaker() {
         return decisionMaker;
     }
 
     @Override
-    public double getBonusFactor(Entity entity, MovePath movePath) {
-        // Can be used to control flow on the battlefield, negate areas, make sure that the unit does not
-        // do something specific like jumping or sprinting when we dont want to
-        // this would allow to create a list of denied actions
-        // For now, all it does is check if the current movePath being taken move as many hexes as
-        // it did in the previous movePath, if it did not, it will be penalized
-        if (!entity.isProne()) {
-            var pastRankedPathOpt = getPastRankedPath(entity);
-            if (pastRankedPathOpt.isPresent()) {
-                var pastRankedPath = pastRankedPathOpt.get();
-                if (pastRankedPath.getPath().getHexesMoved() > movePath.getHexesMoved()) {
-                    return 0.9;
-                }
-            }
-        }
+    public double getBonusFactor(Targetable entity) {
+        // Anything can be a bonus, we just return 1.0 here as a kind of "no op"
         return 1.0;
     }
 
@@ -100,24 +86,25 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
         return returnPaths;
     }
 
-    private List<DecisionContext<Entity, Entity>> createDecisionContexts(List<MovePath> validPaths, Entity currentEntity, List<Entity> enemies) {
-        List<DecisionContext<Entity, Entity>> decisionContexts = new ArrayList<>(validPaths.size());
+    private List<DecisionContext> createDecisionContexts(List<MovePath> validPaths, Entity currentEntity, List<Entity> enemies) {
+        List<DecisionContext> decisionContexts = new ArrayList<>(validPaths.size());
         Caspar caspar = getOwner();
         var decisionContextBuilder = TWDecisionContext.TWDecisionContextBuilder.aTWDecisionContext()
-            .withSharedDamageCache()
             .withBehaviorSettings(caspar.getBehaviorSettings())
             .withCurrentUnit(currentEntity)
             .withFireControlState(caspar.getFireControlState())
             .withIntelligence(this)
-            .withMemories(this.memory)
             .withWorld(caspar.getWorld())
-            .withTargetUnits(enemies)
             .withWaypoint(caspar.getUnitBehaviorTracker().getWaypointForEntity(currentEntity).orElse(null))
-            .withUnitBehavior(caspar.getUnitBehaviorTracker().getBehaviorType(currentEntity, caspar))
-            .withPathRankerUtilCalculator(pathRankerUtilCalculator);
+            .withUnitBehaviorType(caspar.getUnitBehaviorTracker().getBehaviorType(currentEntity, caspar))
+            .withPathRankerUtilCalculator(pathRankerUtilCalculator)
+            .withCachedDamage(new FiringPhysicalDamage())
+            .withDamageCache(new HashMap<>())
+            .withStrategicGoalsManager(caspar.getStrategicGoalsManager());
+
 
         for (var path : validPaths) {
-            var decisionContext = decisionContextBuilder.withMovePath(path).build();
+            var decisionContext = decisionContextBuilder.withMovePath(path).withWaypoint(path.getWaypoint()).build();
             decisionContexts.add(decisionContext);
         }
         return decisionContexts;
@@ -126,7 +113,7 @@ public class SimpleIntelligence extends BasicPathRanker implements Intelligence<
     private final Map<Integer, RankedPath> memoryOfPastPathsTaken = new HashMap<>();
 
     @Override
-    public Optional<RankedPath> getPastRankedPath(Entity entity) {
+    public Optional<RankedPath> getPastRankedPath(Targetable entity) {
         return Optional.ofNullable(memoryOfPastPathsTaken.get(entity.getId()));
     }
 

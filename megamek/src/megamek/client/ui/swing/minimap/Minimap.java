@@ -82,6 +82,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final MMLogger logger = MMLogger.create(Minimap.class);
 
     private static final Color[] terrainColors = new Color[Terrains.SIZE];
+    public static final int MOVE_PATH_ALPHA = 128;
     private static Color HEAVY_WOODS;
     private static Color ULTRA_HEAVY_WOODS;
     private static Color BACKGROUND;
@@ -599,7 +600,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
     private final List<Line> movePathLines = new Vector<>();
     public record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
-    private final Color MOVE_PATH_COLOR = new Color(0, 0, 0, 128);
 
     private void addMovePath(List<UnitLocation> unitLocations, Entity entity) {
         // values equal or lower than 0 mean no persistence
@@ -607,12 +607,18 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             return;
         }
         Coords previousCoords = entity.getPosition();
+        Color playerColor = entity.getOwner().getColour().getColour().darker();
+        Color color = new Color(playerColor.getRed(), playerColor.getGreen(), playerColor.getBlue(), MOVE_PATH_ALPHA);
         for (var unitLocation : unitLocations) {
             var coords = unitLocation.getCoords();
-            movePathLines.add(new Line(previousCoords.getX(), previousCoords.getY(),
-                coords.getX(), coords.getY(),
-                MOVE_PATH_COLOR,
-                game.getCurrentRound()));
+            if (previousCoords != null) {
+
+                movePathLines.add(new Line(
+                    previousCoords.getX(), previousCoords.getY(),
+                    coords.getX(), coords.getY(),
+                    color,
+                    game.getCurrentRound()));
+            }
             previousCoords = coords;
         }
     }
@@ -749,12 +755,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
             0, new float[]{6}, 3);
         g2d.setStroke(dashed);
-        Color previousColor = g.getColor();
         for (Line line : movePathLines) {
             paintMoveTrack(g2d, line);
         }
         g2d.dispose();
-        g.setColor(previousColor);
     }
 
     /** Indicates the deployment hexes. */

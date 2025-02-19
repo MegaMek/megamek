@@ -35,11 +35,11 @@ public class ParametersTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public ParametersTableModel(Consideration<?,?> consideration) {
+    public ParametersTableModel(Consideration consideration) {
         setParameters(consideration);
     }
 
-    public void setParameters(Consideration<?,?> consideration) {
+    public void setParameters(Consideration consideration) {
         setParameters(consideration.getParameters(), consideration.getParameterTypes(), consideration.getParameterTooltips());
     }
 

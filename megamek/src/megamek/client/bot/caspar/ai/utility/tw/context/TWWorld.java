@@ -15,11 +15,15 @@
 
 package megamek.client.bot.caspar.ai.utility.tw.context;
 
+import megamek.ai.utility.QuickBoardRepresentation;
+import megamek.ai.utility.StructOfUnitArrays;
 import megamek.ai.utility.World;
 import megamek.client.bot.caspar.ai.utility.tw.Cluster;
 import megamek.client.bot.caspar.ai.utility.tw.ClusteringService;
 import megamek.client.bot.princess.Princess;
 import megamek.common.*;
+import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 
@@ -28,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TWWorld implements World<Entity, Entity> {
+public class TWWorld implements World {
 
     private final Game game;
     private final ClusteringService clusteringService;
@@ -36,70 +40,62 @@ public class TWWorld implements World<Entity, Entity> {
     private StructOfArraysEntity enemies;
     private StructOfArraysEntity allies;
     private StructOfArraysEntity ownUnits;
+    private QuickBoardRepresentation boardRepresentation;
 
     public TWWorld(Game game, Princess princess, ClusteringService clusteringService) {
         this.game = game;
         this.princess = princess;
         this.clusteringService = clusteringService;
-
+        this.boardRepresentation = new QuickBoardRepresentation(game.getBoard());
         this.game.addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 if (e.getNewPhase().isInitiative()) {
                     initializeClusters();
+                    boardRepresentation.updateThreatHeatmap(enemies);
                 }
+            }
+
+            @Override
+            public void gameBoardNew(GameBoardNewEvent e) {
+                boardRepresentation = new QuickBoardRepresentation(e.getNewBoard());
+            }
+
+            @Override
+            public void gameBoardChanged(GameBoardChangeEvent e) {
+                super.gameBoardChanged(e);
             }
         });
     }
 
     public void resetReferences() {
-        enemies = new StructOfArraysEntity(getEnemyUnits());
-        allies = new StructOfArraysEntity(getAlliedUnits());
-        ownUnits = new StructOfArraysEntity(getMyUnits());
-        initializeClusters();
+        enemies = new StructOfArraysEntity(princess.getEnemyEntities());
+        allies = new StructOfArraysEntity(princess.getFriendEntities());
+        ownUnits = new StructOfArraysEntity(princess.getEntitiesOwned());
     }
 
     public void initializeClusters() {
-        clusteringService.buildClusters(princess.getFriendEntities());
+        clusteringService.buildClusters(new ArrayList<>(princess.getEntitiesOwned()));
     }
 
-    public Cluster getEntityCluster(Entity entity) {
-        return clusteringService.getCluster(entity);
-    }
-
-    public Coords getEntityClusterCentroid(Entity entity) {
+    public Coords getEntityClusterCentroid(Targetable entity) {
         return clusteringService.getClusterMidpoint(entity);
     }
 
-    public List<Entity> getEntities() {
-        return game.getEntitiesVector();
+    @Override
+    public List<Targetable> getMyUnits() {
+        return new ArrayList<>(princess.getEntitiesOwned());
     }
 
     @Override
-    public List<InGameObject> getInGameObjects() {
-        return game.getInGameObjects();
+    public List<Targetable> getAlliedUnits() {
+        return new ArrayList<>(princess.getFriendEntities());
     }
 
     @Override
-    public Map<Integer, Integer> getTeamByPlayer() {
-        return game.getTeamByPlayer();
+    public List<Targetable> getEnemyUnits() {
+        return new ArrayList<>(princess.getEnemyEntities());
     }
-
-    @Override
-    public List<Entity> getMyUnits() {
-        return princess.getFriendEntities();
-    }
-
-    @Override
-    public List<Entity> getAlliedUnits() {
-        return princess.getFriendEntities();
-    }
-
-    @Override
-    public List<Entity> getEnemyUnits() {
-        return princess.getEnemyEntities();
-    }
-
 
     @Override
     public boolean useBooleanOption(String option) {
@@ -107,32 +103,32 @@ public class TWWorld implements World<Entity, Entity> {
     }
 
     @Override
-    public boolean contains(Coords position) {
-        return game.getBoard().contains(position);
+    public double[] getHeatmap() {
+        return boardRepresentation.getNormalizedThreatLevelHeatmap();
     }
 
     @Override
-    public List<Entity> getEntities(List<Integer> ids) {
-        var entities = new ArrayList<Entity>(ids.size());
-        for (var id : ids) {
-            Optional.ofNullable(game.getEntity(id)).map(entities::add);
-        }
-        return entities;
+    public QuickBoardRepresentation getQuickBoardRepresentation() {
+        return boardRepresentation;
     }
 
     public Game getGame() {
         return game;
     }
 
-    public StructOfArraysEntity getEnemies() {
+    @Override
+    public StructOfUnitArrays getStructOfEnemyUnitArrays() {
         return enemies;
     }
 
-    public StructOfArraysEntity getAllies() {
+    @Override
+    public StructOfUnitArrays getStructOfAllyUnitArrays() {
         return allies;
     }
 
-    public StructOfArraysEntity getOwnUnits() {
+    @Override
+    public StructOfUnitArrays getStructOfOwnUnitsArrays() {
         return ownUnits;
     }
+
 }

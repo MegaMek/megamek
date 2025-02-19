@@ -27,7 +27,7 @@ public class DebugReporter implements IDebugReporter {
     }
 
     @Override
-    public IDebugReporter append(Consideration<?, ?> consideration) {
+    public IDebugReporter append(Consideration consideration) {
         stringBuilder.append(consideration.getName());
         return this;
     }

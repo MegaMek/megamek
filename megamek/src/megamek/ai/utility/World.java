@@ -16,17 +16,19 @@
 package megamek.ai.utility;
 
 import megamek.common.Coords;
-import megamek.common.InGameObject;
+import megamek.common.Targetable;
 
-import java.util.*;
+import java.util.List;
 
-public interface World<IN_GAME_OBJECT, TARGETABLE> {
-    List<InGameObject> getInGameObjects();
-    Map<Integer, Integer> getTeamByPlayer();
-    List<IN_GAME_OBJECT> getMyUnits();
-    List<TARGETABLE> getAlliedUnits();
-    List<TARGETABLE> getEnemyUnits();
+public interface World {
+    List<Targetable> getMyUnits();
+    List<Targetable> getAlliedUnits();
+    List<Targetable> getEnemyUnits();
     boolean useBooleanOption(String option);
-    boolean contains(Coords position);
-    List<IN_GAME_OBJECT> getEntities(List<Integer> ids);
+    double[] getHeatmap();
+    QuickBoardRepresentation getQuickBoardRepresentation();
+    StructOfUnitArrays getStructOfEnemyUnitArrays();
+    StructOfUnitArrays getStructOfAllyUnitArrays();
+    StructOfUnitArrays getStructOfOwnUnitsArrays();
+    Coords getEntityClusterCentroid(Targetable entity);
 }

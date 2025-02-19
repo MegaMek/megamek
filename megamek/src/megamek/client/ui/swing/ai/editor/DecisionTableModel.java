@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class DecisionTableModel<DECISION extends Decision<?,?>> extends AbstractTableModel {
+public class DecisionTableModel<DECISION extends Decision> extends AbstractTableModel {
 
     private final List<DECISION> rows;
     private final String[] columnNames = { "ID", "Decision", "Weight", "Evaluator" };
@@ -95,9 +95,7 @@ public class DecisionTableModel<DECISION extends Decision<?,?>> extends Abstract
                     dse.setWeight((Double) weight);
                 }
             case 3:
-                // noinspection rawtypes
                 if (aValue instanceof DecisionScoreEvaluator decisionScoreEvaluator) {
-                    // noinspection unchecked
                     dse.setDecisionScoreEvaluator(decisionScoreEvaluator);
                 }
                 break;

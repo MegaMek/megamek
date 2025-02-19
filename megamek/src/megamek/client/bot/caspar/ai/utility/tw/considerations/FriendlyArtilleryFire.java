@@ -18,10 +18,15 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.client.bot.princess.ArtilleryTargetingControl;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 
@@ -31,17 +36,21 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("FriendlyArtilleryFire")
 public class FriendlyArtilleryFire extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
-
     public FriendlyArtilleryFire() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
+        Map<Coords, Double> artyDamage = context.getIncomingFriendlyArtilleryDamage();
+        double friendlyArtilleryDamage = 0.0;
+        for (Coords c : context.getFinalPosition().allAtDistanceOrLess(2)) {
+            if (artyDamage.containsKey(c)) {
+                friendlyArtilleryDamage = artyDamage.get(c);
+                break;
+            }
+        }
         var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        return clamp01(friendlyArtilleryDamage / Math.max(1.0, currentUnit.getTotalArmor()));
     }
 
     @Override

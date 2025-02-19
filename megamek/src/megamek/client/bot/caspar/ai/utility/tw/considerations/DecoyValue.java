@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
 
 import java.util.Map;
 
@@ -31,17 +30,42 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("DecoyValue")
 public class DecoyValue extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
+    public static final String minJumpParam = "Minimal jump MP";
+    public static final String minRunParam = "Minimal run MP";
 
-    public DecoyValue() {
+    private static final Map<String, Class<?>> parameterTypes = Map.of(
+        minJumpParam, int.class,
+        minRunParam, int.class);
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
+        minJumpParam, new ParameterTitleTooltip("MinJumpParam"),
+        minRunParam, new ParameterTitleTooltip("MinRunParam")
+    );
+
+    @Override
+    public Map<String, Class<?>> getParameterTypes() {
+        return parameterTypes;
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public Map<String, ParameterTitleTooltip> getParameterTooltips() {
+        return parameterTooltips;
+    }
+
+    public DecoyValue() {
+        this.parameters.put(minJumpParam, 7);
+        this.parameters.put(minRunParam, 12);
+    }
+
+    @Override
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+
+        if ((currentUnit.getJumpMP() >= getIntParameter(minJumpParam))
+            || (currentUnit.getRunMP() >= getIntParameter(minRunParam))) {
+            return clamp01(1 - (currentUnit.getDamageLevel() / 4.0));
+        }
+
+        return currentUnit.getDamageLevel() / 8.0;
     }
 
     @Override

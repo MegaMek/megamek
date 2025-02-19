@@ -34,14 +34,14 @@ import java.util.List;
     @JsonSubTypes.Type(value = TWDecisionScoreEvaluator.class, name = "TWDecisionScoreEvaluator"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> implements NamedObject, ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> {
+public abstract class DecisionScoreEvaluator implements NamedObject, ScoreEvaluator {
     private String name;
     private String description;
     private String notes;
     private ScoreType scoreType;
-    private final List<Consideration<IN_GAME_OBJECT, TARGETABLE>> considerations = new ArrayList<>();
+    private final List<Consideration> considerations = new ArrayList<>();
     @JsonIgnore
-    private transient ScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> scoreEvaluator;
+    private transient ScoreEvaluator scoreEvaluator;
 
     public DecisionScoreEvaluator() {
         // no-args constructor for Jackson
@@ -55,25 +55,37 @@ public abstract class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> impleme
         String name, String description,
         String notes,
         ScoreType scoreType,
-        List<Consideration<IN_GAME_OBJECT, TARGETABLE>> considerations) {
+        List<Consideration> considerations) {
         this.name = name;
         this.description = description;
         this.notes = notes;
+        // This limit is here because the current neural network has 200 inputs, 100 for the heatmap and 100 for sensor data
+        // If the neural network is changed, this limit should be updated, or actually something better should be added, which
+        // would be to check the number of inputs in the neural network and adjust the limit accordingly, or maybe be more flexible
+        // or something like that.
+        if (considerations.size() > 100) {
+            throw new IllegalArgumentException(
+                "Too many considerations, maximum of 100 considerations allowed per decision score evaluator");
+        }
         this.considerations.addAll(considerations);
         this.scoreType = scoreType;
         this.scoreEvaluator = getScoreEvaluator(scoreType, this);
     }
 
     @JsonIgnore
-    public double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context, double bonus, IDebugReporter debugReport) {
+    public double score(DecisionContext context, double bonus, IDebugReporter debugReport) {
         return scoreEvaluator.score(context, bonus, debugReport);
     }
 
-    public List<Consideration<IN_GAME_OBJECT, TARGETABLE>> getConsiderations() {
+    public List<Consideration> getConsiderations() {
         return considerations;
     }
 
-    public void addConsideration(Consideration<IN_GAME_OBJECT, TARGETABLE> consideration) {
+    public void addConsideration(Consideration consideration) {
+        if (considerations.size()+1 > 100) {
+            throw new IllegalArgumentException(
+                "Too many considerations, maximum of 100 considerations allowed per decision score evaluator");
+        }
         considerations.add(0, consideration);
     }
 
@@ -111,7 +123,7 @@ public abstract class DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> impleme
         this.scoreEvaluator = getScoreEvaluator(this.scoreType, this);
     }
 
-    public abstract DecisionScoreEvaluator<IN_GAME_OBJECT, TARGETABLE> copy();
+    public abstract DecisionScoreEvaluator copy();
 
     @Override
     public String toString() {

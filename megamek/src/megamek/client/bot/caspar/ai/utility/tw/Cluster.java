@@ -17,8 +17,7 @@ package megamek.client.bot.caspar.ai.utility.tw;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.UnitRole;
-import megamek.common.util.Counter;
+import megamek.common.Targetable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,40 +26,30 @@ import java.util.StringJoiner;
 public class Cluster {
 
     private final int team;
-    private final List<Entity> members;
+    private final List<Targetable> members;
     private double centroidX;
     private double centroidY;
     private Coords centroid;
-    private UnitRole unitRole;
 
     public Cluster(int team) {
         this.team = team;
         this.members = new ArrayList<>();
     }
 
-    public void addMember(Entity e) {
+    public void addMember(Targetable e) {
         members.add(e);
-    }
-
-    public void computeClusterRole() {
-        Counter<UnitRole> counter = new Counter<>(members.stream().map(Entity::getRole).toList());
-        unitRole = counter.top();
     }
 
     public void computeCentroid() {
         double sumX = 0.0;
         double sumY = 0.0;
-        for (Entity e : members) {
+        for (Targetable e : members) {
             sumX += e.getPosition().getX();
             sumY += e.getPosition().getY();
         }
         centroidX = sumX / members.size();
         centroidY = sumY / members.size();
         centroid = new Coords((int) Math.round(centroidX), (int) Math.round(centroidY));
-    }
-
-    public UnitRole getUnitRole() {
-        return unitRole;
     }
 
     public double getCentroidX() {
@@ -75,7 +64,7 @@ public class Cluster {
         return centroid;
     }
 
-    public List<Entity> getMembers() {
+    public List<Targetable> getMembers() {
         return members;
     }
 
@@ -91,7 +80,6 @@ public class Cluster {
             .add("centroidX=" + centroidX)
             .add("centroidY=" + centroidY)
             .add("centroid=" + centroid)
-            .add("unitRole=" + unitRole)
             .toString();
     }
 }

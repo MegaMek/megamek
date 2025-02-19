@@ -19,10 +19,12 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.ai.utility.StrategicGoalsManager;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalCalculator;
 import megamek.client.bot.PhysicalOption;
+import megamek.client.bot.caspar.ai.utility.tw.ClusteringService;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.FiringPlanCalculationParameters.Builder;
 import megamek.client.bot.princess.PathRanker.PathRankerType;
@@ -164,6 +166,7 @@ public class Princess extends BotClient {
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
     private SwarmContext swarmContext;
+    private ClusteringService clusteringService;
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
@@ -172,6 +175,7 @@ public class Princess extends BotClient {
     private EnemyTracker enemyTracker;
     private CoverageValidator coverageValidator;
     private SwarmCenterManager swarmCenterManager;
+    private StrategicGoalsManager strategicGoalsManager;
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -2721,8 +2725,10 @@ public class Princess extends BotClient {
         this.coverageValidator = new CoverageValidator(this);
         this.swarmContext = new SwarmContext();
         this.swarmCenterManager = new SwarmCenterManager(this);
+        this.strategicGoalsManager = new StrategicGoalsManager();
         int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
         this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
+        this.strategicGoalsManager.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
     }
 
     /**
@@ -3574,5 +3580,9 @@ public class Princess extends BotClient {
 
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
+    }
+
+    public StrategicGoalsManager getStrategicGoalsManager() {
+        return strategicGoalsManager;
     }
 }

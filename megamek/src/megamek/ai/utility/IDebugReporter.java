@@ -9,7 +9,7 @@ public interface IDebugReporter {
         }
 
         @Override
-        public IDebugReporter append(Consideration<?, ?> consideration) {
+        public IDebugReporter append(Consideration consideration) {
             return this;
         }
 
@@ -86,7 +86,7 @@ public interface IDebugReporter {
 
     IDebugReporter append(String s);
 
-    IDebugReporter append(Consideration<?,?> consideration);
+    IDebugReporter append(Consideration consideration);
 
     IDebugReporter newLine(int i);
 

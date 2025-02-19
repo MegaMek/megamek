@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
@@ -50,17 +49,15 @@ public class FavoriteTargetInRange extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var movePath = ((TWDecisionContext) context).getMovePath();
-        var firingUnit = context.getCurrentUnit();
-        var maxRange = firingUnit.getMaxWeaponRange();
-        var role = getParameter(roleParam, UnitRole.class);
-        var finalPosition = movePath.getFinalCoords();
+    public double score(DecisionContext context) {
+        var finalPosition = context.getFinalPosition();
         if (finalPosition == null) {
             return 0;
         }
 
-        var distance = ((TWDecisionContext) context).getDistanceToClosestEnemyWithRole(finalPosition, role);
+        var role = getParameter(roleParam, UnitRole.class);
+        var maxRange = context.getMaxWeaponRange();
+        var distance = context.getDistanceToClosestEnemyWithRole(role);
         if (distance.isEmpty()) {
             return 0;
         }

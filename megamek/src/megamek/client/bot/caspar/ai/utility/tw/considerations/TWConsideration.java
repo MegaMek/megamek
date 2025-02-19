@@ -24,7 +24,7 @@ import megamek.common.Entity;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class TWConsideration extends Consideration<Entity, Entity> {
+public abstract class TWConsideration extends Consideration {
 
     public TWConsideration() {
     }

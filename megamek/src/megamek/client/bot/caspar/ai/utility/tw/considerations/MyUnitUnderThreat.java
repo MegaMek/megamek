@@ -34,11 +34,9 @@ public class MyUnitUnderThreat extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var twContext = (TWDecisionContext) context;
-        var expectedDamage = twContext.getExpectedDamage();
-        var currentUnit = context.getCurrentUnit();
-        return clamp01( expectedDamage / currentUnit.getTotalArmor());
+    public double score(DecisionContext context) {
+        var expectedDamage = context.getExpectedDamage();
+        return clamp01( expectedDamage / context.getTotalHealth());
     }
 
     @Override

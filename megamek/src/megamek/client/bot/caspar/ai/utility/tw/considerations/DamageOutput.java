@@ -50,13 +50,16 @@ public class DamageOutput extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var twContext = (TWDecisionContext) context;
-        var totalDamage = twContext.getFiringDamage() + twContext.getPhysicalDamage();
-        var damageTaken = twContext.getExpectedDamage();
+    public double score(DecisionContext context) {
+        var totalDamage = context.getFiringDamage() + context.getPhysicalDamage();
+        var damageTaken = context.getExpectedDamage();
 
         double ratio = (damageTaken == 0) ? Double.POSITIVE_INFINITY : (totalDamage / damageTaken);
-        double score = ratio / getIntParameter(damageFactorParam);
+        int damageFactor = getIntParameter(damageFactorParam);
+        if (damageFactor == 0) {
+            return 1.0;
+        }
+        double score = ratio / damageFactor;
         return clamp01(score);
     }
 

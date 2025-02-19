@@ -35,28 +35,9 @@ public class MyUnitMoved extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        TWDecisionContext twContext = (TWDecisionContext) context;
-        var movePath = twContext.getMovePath();
-        int distanceMoved = 0;
-        if (movePath.getStartCoords() != null) {
-            var lastStep = movePath.getLastStep();
-            if (lastStep != null) {
-                distanceMoved = movePath.getStartCoords().distance(lastStep.getPosition());
-            }
-        }
-        var self = twContext.getCurrentUnit();
-        var div = self.getWalkMP();
-        var moveType = movePath.getLastStepMovementType();
-        if (movePath.isJumping()) {
-            div = self.getJumpMP();
-        } else if (moveType.equals(EntityMovementType.MOVE_SPRINT)) {
-            div = self.getSprintMP();
-        } else if (moveType.equals(EntityMovementType.MOVE_RUN)) {
-            div = self.getRunMP();
-        }
-
-        return clamp01(distanceMoved / (double) div);
+    public double score(DecisionContext context) {
+        int distanceMoved = context.getDistanceMoved();
+        return clamp01(distanceMoved / (double) context.getCurrentUnitMaxRunMP());
     }
 
     @Override

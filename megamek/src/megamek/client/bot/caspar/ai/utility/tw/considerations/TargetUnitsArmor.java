@@ -34,13 +34,10 @@ public class TargetUnitsArmor extends TWConsideration {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var twContext = (TWDecisionContext) context;
-        var movePath = twContext.getMovePath();
-        var self = context.getCurrentUnit();
+    public double score(DecisionContext context) {
 
-        var maxDistance = self.getMaxWeaponRange(self.isAirborne());
-        var targets = twContext.getEnemiesAtRange(movePath.getFinalCoords(), maxDistance);
+        var maxDistance = context.getMaxWeaponRange();
+        var targets = context.getEnemiesWithinRange(context.getFinalPosition(), maxDistance);
 
         if (targets.isEmpty()) {
             return 0d;
@@ -49,7 +46,7 @@ public class TargetUnitsArmor extends TWConsideration {
         var armorPercent = 0d;
 
         for (var target : targets) {
-            armorPercent = target.getArmorRemainingPercent();
+            armorPercent = context.getArmorRemainingPercent(target);
         }
 
         return clamp01(armorPercent / targets.size());

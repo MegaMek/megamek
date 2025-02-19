@@ -18,6 +18,8 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
@@ -26,24 +28,24 @@ import java.util.Map;
 import static megamek.codeUtilities.MathUtility.clamp01;
 
 /**
- * This consideration is used to determine the attack tactic to use
- * It sets how many units should be in the front line, how many in the second line, how many should flank, the unit role of the unit in
- * each category.
+ * This consideration is used to determine if the unit is
+ * in the same place as before
  */
 @JsonTypeName("StandStill")
 public class StandStill extends TWConsideration {
-
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
 
     public StandStill() {
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
+    public double score(DecisionContext context) {
         var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+        Coords currentPosition = currentUnit.getPosition();
+        Coords finalPosition = context.getFinalPosition();
+        if (currentPosition != null) {
+            return  1.0 / Math.max(finalPosition.distance(currentPosition), context.getHexesMoved());
+        }
+        return 0.0;
     }
 
     @Override

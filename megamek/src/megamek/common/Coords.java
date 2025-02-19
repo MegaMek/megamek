@@ -279,8 +279,13 @@ public class Coords implements Serializable {
      * other coordinates.
      */
     public boolean isXOdd() {
+        return isXOdd(x);
+    }
+
+    public static boolean isXOdd(int x) {
         return (x & 1) == 1;
     }
+
 
     /**
      * Returns the direction in which another coordinate lies; 0 if the
@@ -382,11 +387,16 @@ public class Coords implements Serializable {
 
     /** Returns the distance to the coordinate given as distx, disty. */
     public int distance(int distx, int disty) {
+        return distance(distx, disty, x, y);
+    }
+
+    /** Returns the distance to the coordinate given as distx, disty. */
+    public static int distance(int distx, int disty, int targetx, int targety) {
         // based on
         // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
-        int xd = Math.abs(x - distx);
-        int yo = (xd / 2) + (!isXOdd() && ((distx & 1) == 1) ? 1 : 0);
-        int ymin = y - yo;
+        int xd = Math.abs(targetx - distx);
+        int yo = (xd / 2) + (!isXOdd(targetx) && ((distx & 1) == 1) ? 1 : 0);
+        int ymin = targety - yo;
         int ymax = ymin + xd;
         int ym = 0;
         if (disty < ymin) {
@@ -397,6 +407,7 @@ public class Coords implements Serializable {
         }
         return xd + ym;
     }
+
 
     /**
      * Returns a string representing a coordinate in "board number" format.
@@ -680,6 +691,24 @@ public class Coords implements Serializable {
      */
     public boolean between(Coords s, Coords e) {
         return (s.distance(e) == s.distance(this) + this.distance(e));
+    }
+
+    /**
+     * Returns all the coordinates of the line between and including coords {@code a} and {@code b}
+     * @param a the starting coordinate
+     * @param b the ending coordinate
+     * @return the list of coordinates between and including {@code a} and {@code b}
+     */
+    public static List<Coords> line(Coords a, Coords b) {
+        CubeCoords aCube = a.toCube();
+        CubeCoords bCube = b.toCube();
+        int N = a.distance(b);
+        List<Coords> results = new ArrayList<>();
+        double step = 1.0 / Math.max(N, 1);
+        for (int i = 0; i <= N; i++) {
+            results.add(CubeCoords.lerp(aCube, bCube, step*i).roundToNearestHex().toOffset());
+        }
+        return results;
     }
 
     /**

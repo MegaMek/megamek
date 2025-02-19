@@ -67,7 +67,7 @@ public class ConsiderationPane extends JPanel {
         });
     }
 
-    public void setConsideration(Consideration<?, ?> consideration) {
+    public void setConsideration(Consideration consideration) {
         considerationComboBox.setSelectedItem(TWConsiderationClass.fromClass(consideration.getClass()));
         considerationName.setText(consideration.getName());
         parametersTable.setModel(new ParametersTableModel(consideration));

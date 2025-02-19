@@ -22,6 +22,7 @@ import megamek.common.Game;
 import megamek.common.MovePath;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PathRankerUtilCalculator {
     FiringPhysicalDamage damageCalculator(MovePath path, List<Entity> enemies);
@@ -41,4 +42,6 @@ public interface PathRankerUtilCalculator {
     EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path, Game game);
 
     EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean extremeRange, boolean losRange);
+
+    Map<Coords, Double> getIncomingFriendlyArtilleryDamage();
 }

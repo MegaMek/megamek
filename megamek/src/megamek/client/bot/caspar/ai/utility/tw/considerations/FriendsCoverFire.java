@@ -18,9 +18,13 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
+import megamek.ai.utility.StructOfUnitArrays;
+import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -31,17 +35,40 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("FriendlyPositioning")
 public class FriendsCoverFire extends TWConsideration {
 
-    public static final String roleParam = "role";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
+    public static final String coverNumberParam = "Minimal number of friendlies covering you";
+    private static final Map<String, Class<?>> parameterTypes = Map.of(coverNumberParam, int.class);
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
+        coverNumberParam, new ParameterTitleTooltip("CoverNumberParam"));
 
     public FriendsCoverFire() {
+        parameters.put(coverNumberParam, 1);
     }
 
     @Override
-    public double score(DecisionContext<Entity, Entity> context) {
-        var currentUnit = context.getCurrentUnit();
-        return clamp01(currentUnit.getArmorRemainingPercent());
+    public Map<String, Class<?>> getParameterTypes() {
+        return parameterTypes;
+    }
+
+    @Override
+    public Map<String, ParameterTitleTooltip> getParameterTooltips() {
+        return parameterTooltips;
+    }
+
+    @Override
+    public double score(DecisionContext context) {
+        var originX = context.getFinalPosition().getX();
+        var originY = context.getFinalPosition().getY();
+        var allies = context.getStructOfAlliesArrays().toArray();
+        int count = 0;
+        for (int[] unit : allies) {
+            var x = unit[StructOfUnitArrays.Index.X.ordinal()];
+            var y = unit[StructOfUnitArrays.Index.Y.ordinal()];
+            var dist = Coords.distance(originX, originY, x, y);
+            if (unit[StructOfUnitArrays.Index.MAX_RANGE.ordinal()] >= dist) {
+                count++;
+            }
+        }
+        return clamp01(count / Math.max(1.0, getIntParameter(coverNumberParam)));
     }
 
     @Override

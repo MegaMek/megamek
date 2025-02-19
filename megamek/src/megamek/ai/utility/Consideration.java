@@ -26,59 +26,53 @@ import java.util.StringJoiner;
     property = "type"
 )
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = TWConsideration.class, name = "TWConsideration"),
-    @JsonSubTypes.Type(value = AttackTactics.class, name = "AttackTactics"),
-    @JsonSubTypes.Type(value = CaptureEnemyMekWarrior.class, name = "CaptureEnemyMekWarrior"),
+    @JsonSubTypes.Type(value = BackSide.class, name = "BackSide"),
     @JsonSubTypes.Type(value = CoverFire.class, name = "CoverFire"),
-    @JsonSubTypes.Type(value = Crowding.class, name = "Crowding"),
-    @JsonSubTypes.Type(value = DamagedSide.class, name = "DamagedSide"),
+    @JsonSubTypes.Type(value = CrowdingEnemies.class, name = "CrowdingEnemies"),
+    @JsonSubTypes.Type(value = CrowdingFriends.class, name = "CrowdingFriends"),
+    @JsonSubTypes.Type(value = CurrentThreat.class, name = "CurrentThreat"),
+    @JsonSubTypes.Type(value = DamageOutput.class, name = "DamageOutput"),
     @JsonSubTypes.Type(value = DecoyValue.class, name = "DecoyValue"),
-    @JsonSubTypes.Type(value = DefenseTactics.class, name = "DefenseTactics"),
     @JsonSubTypes.Type(value = ECMCoverage.class, name = "ECMCoverage"),
-    @JsonSubTypes.Type(value = EnemyArtilleryFire.class, name = "EnemyArtilleryFire"),
+    @JsonSubTypes.Type(value = EnemyECMCoverage.class, name = "EnemyECMCoverage"),
     @JsonSubTypes.Type(value = EnemyPositioning.class, name = "EnemyPositioning"),
     @JsonSubTypes.Type(value = EnvironmentalCover.class, name = "EnvironmentalCover"),
     @JsonSubTypes.Type(value = EnvironmentalHazard.class, name = "EnvironmentalHazard"),
-    @JsonSubTypes.Type(value = DamageOutput.class, name = "DamageOutput"),
     @JsonSubTypes.Type(value = FacingTheEnemy.class, name = "FacingTheEnemy"),
     @JsonSubTypes.Type(value = FavoriteTargetInRange.class, name = "FavoriteTargetInRange"),
-    @JsonSubTypes.Type(value = IsVIPCloser.class, name = "IsVIPCloser"),
     @JsonSubTypes.Type(value = FireExposure.class, name = "FireExposure"),
     @JsonSubTypes.Type(value = FlankingPosition.class, name = "FlankingPosition"),
     @JsonSubTypes.Type(value = FormationCohesion.class, name = "FormationCohesion"),
     @JsonSubTypes.Type(value = FriendlyArtilleryFire.class, name = "FriendlyArtilleryFire"),
+    @JsonSubTypes.Type(value = FriendlyPositioning.class, name = "FriendlyPositioning"),
     @JsonSubTypes.Type(value = FriendsCoverFire.class, name = "FriendsCoverFire"),
+    @JsonSubTypes.Type(value = FrontSide.class, name = "FrontSide"),
     @JsonSubTypes.Type(value = HeatVulnerability.class, name = "HeatVulnerability"),
-    @JsonSubTypes.Type(value = HullDown.class, name = "HullDown"),
+    @JsonSubTypes.Type(value = IsVIPCloser.class, name = "IsVIPCloser"),
     @JsonSubTypes.Type(value = KeepDistance.class, name = "KeepDistance"),
-    @JsonSubTypes.Type(value = KillBox.class, name = "KillBox"),
-    @JsonSubTypes.Type(value = PilotingCaution.class, name = "PilotingCaution"),
-    @JsonSubTypes.Type(value = Retreat.class, name = "Retreat"),
-    @JsonSubTypes.Type(value = Scouting.class, name = "Scouting"),
-    @JsonSubTypes.Type(value = SensorCoverage.class, name = "SensorCoverage"),
-    @JsonSubTypes.Type(value = StandStill.class, name = "StandStill"),
-    @JsonSubTypes.Type(value = StickyMoveType.class, name = "StickyMoveType"),
-    @JsonSubTypes.Type(value = StrategicGoal.class, name = "StrategicGoal"),
-    @JsonSubTypes.Type(value = TimeToKill.class, name = "TimeToKill"),
-    @JsonSubTypes.Type(value = TimeToDie.class, name = "TimeToDie"),
-    @JsonSubTypes.Type(value = ZombieTactics.class, name = "ZombieTactics"),
+    @JsonSubTypes.Type(value = LeftSide.class, name = "LeftSide"),
     @JsonSubTypes.Type(value = MyUnitBotSettings.class, name = "MyUnitBotSettings"),
     @JsonSubTypes.Type(value = MyUnitHeatManagement.class, name = "MyUnitHeatManagement"),
-    @JsonSubTypes.Type(value = MyUnitIsMovingTowardsWaypoint.class, name = "MyUnitIsMovingTowardsWaypoint"),
-    @JsonSubTypes.Type(value = MyUnitArmor.class, name = "MyUnitArmor"),
-    @JsonSubTypes.Type(value = MyUnitMoved.class, name = "MyUnitMoved"),
-    @JsonSubTypes.Type(value = MyUnitTMM.class, name = "MyUnitTMM"),
     @JsonSubTypes.Type(value = MyUnitIsCrippled.class, name = "MyUnitIsCrippled"),
-    @JsonSubTypes.Type(value = MyUnitIsGettingAwayFromDanger.class, name = "MyUnitIsGettingAwayFromDanger"),
-    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
-    @JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
+    @JsonSubTypes.Type(value = MyUnitIsMovingTowardsWaypoint.class, name = "MyUnitIsMovingTowardsWaypoint"),
+    @JsonSubTypes.Type(value = MyUnitMoved.class, name = "MyUnitMoved"),
     @JsonSubTypes.Type(value = MyUnitRoleIs.class, name = "MyUnitRoleIs"),
+    @JsonSubTypes.Type(value = MyUnitTMM.class, name = "MyUnitTMM"),
+    @JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
+    @JsonSubTypes.Type(value = OverallArmor.class, name = "OverallArmor"),
+    @JsonSubTypes.Type(value = PilotingCaution.class, name = "PilotingCaution"),
+    @JsonSubTypes.Type(value = Retreat.class, name = "Retreat"),
+    @JsonSubTypes.Type(value = RightSide.class, name = "RightSide"),
+    @JsonSubTypes.Type(value = Scouting.class, name = "Scouting"),
+    @JsonSubTypes.Type(value = StandStill.class, name = "StandStill"),
+    @JsonSubTypes.Type(value = StrategicGoal.class, name = "StrategicGoal"),
+    @JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
+    @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
     @JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
     @JsonSubTypes.Type(value = TurnsToEncounter.class, name = "TurnsToEncounter"),
-    @JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Consideration<IN_GAME_OBJECT, TARGETABLE>  implements NamedObject {
+public abstract class Consideration implements NamedObject {
     @JsonProperty("name")
     private String name;
     @JsonProperty("curve")
@@ -113,7 +107,7 @@ public abstract class Consideration<IN_GAME_OBJECT, TARGETABLE>  implements Name
         return Collections.emptyMap();
     }
 
-    public abstract double score(DecisionContext<IN_GAME_OBJECT, TARGETABLE> context);
+    public abstract double score(DecisionContext context);
 
     public Curve getCurve() {
         return curve;
@@ -198,7 +192,7 @@ public abstract class Consideration<IN_GAME_OBJECT, TARGETABLE>  implements Name
         this.name = name;
     }
 
-    public abstract Consideration<IN_GAME_OBJECT, TARGETABLE> copy();
+    public abstract Consideration copy();
 
     @Override
     public String toString() {

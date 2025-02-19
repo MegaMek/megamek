@@ -23,7 +23,7 @@ import javax.swing.table.TableCellEditor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DecisionScoreEvaluatorTable<DECISION extends Decision<?,?>> extends JTable {
+public class DecisionScoreEvaluatorTable<DECISION extends Decision> extends JTable {
 
     public DecisionScoreEvaluatorTable(
         DecisionTableModel<DECISION> model) {

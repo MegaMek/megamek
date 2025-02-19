@@ -1091,9 +1091,6 @@ public class AreaEffectHelper {
 
             // R1+ AE attacks also generate 1/2-damage rings around the +1 and -1 levels of the center hex.
             if (radius > 0) {
-                // Damage for upper and lower rings are 1/2 base, rounded up.
-                int donutDamage = (int) Math.ceil(baseDamage/2.0);
-
                 // Upper blast ring looks like >> | 1/2 damage || center || 1/2 damage | << so we need a different
                 // falloff value.  We automatically subtract the falloff value for each radius outside of 1 so
                 // double the computed damage and set the falloff to equal it.

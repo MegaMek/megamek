@@ -2002,7 +2002,7 @@ public class FireControl {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity entity = (Entity) target;
             Hex hex = game.getBoard().getHex(entity.getPosition());
-            hexToBomb.setTargetLevel(hex.getLevel());
+            hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
 
             if (entity.isAirborne()) {
                 return diveBombPlan;

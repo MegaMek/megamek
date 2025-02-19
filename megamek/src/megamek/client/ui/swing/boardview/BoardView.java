@@ -1285,7 +1285,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         Board board = game.getBoard();
-        boolean airDeployGround = en_Deployer.getMovementMode().isHoverVTOLOrWiGE();
+        boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
+        boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
@@ -1296,15 +1297,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
                         drawHexBorder(g, getHexLocation(c), Color.yellow);
                     }
-                } else if (airDeployGround) {
+                } else if (isAirDeployGround || isWiGE) {
                     // Draw hexes that are legal at a higher deployment elevation
                     Hex hex = board.getHex(c);
+                    int maxHeight = (isWiGE) ? 1 : (hex != null) ? hex.ceiling() + 1 : 1;
                     if (board.isLegalDeployment(c, en_Deployer) &&
-                        !en_Deployer.isLocationProhibited(c, hex.ceiling() + 1)) {
+                        !en_Deployer.isLocationProhibited(c, maxHeight)) {
                         drawHexBorder(g, getHexLocation(c), Color.cyan);
                     }
-                } else if (board.isLegalDeployment(c, en_Deployer) &&
-                    // Draw hexes that are legal at current deployment elevation
+                }
+
+                if (board.isLegalDeployment(c, en_Deployer) &&
+                    // Draw hexes that are legal at lowest deployment elevation
                         !en_Deployer.isLocationProhibited(c)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }

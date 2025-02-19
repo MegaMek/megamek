@@ -14329,17 +14329,6 @@ public class AmmoType extends EquipmentType {
                 cost = 3000;
             }
 
-            // Generate blast radius values for various alternate munitions
-            if (((munition.getAmmoType() == T_LONG_TOM) || (munition.getAmmoType() == T_LONG_TOM_CANNON)
-                || (munition.getAmmoType() == T_SNIPER) || (munition.getAmmoType() == T_SNIPER_CANNON)
-                || (munition.getAmmoType() == T_THUMPER) || (munition.getAmmoType() == T_THUMPER_CANNON)
-                || (munition.getAmmoType() == T_ARROWIV_PROTO) || (munition.getAmmoType() == T_ARROW_IV)
-                || (munition.getAmmoType() == T_CRUISE_MISSILE)
-                || (munition.getAmmoType() == T_BA_TUBE)
-            )) {
-                blastRadius.put(munition.internalName, generateBlastRadiusForMunition(munition));
-            }
-
             // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;
@@ -14478,93 +14467,5 @@ public class AmmoType extends EquipmentType {
     public boolean isArmorable() {
         // Coolant pods are implemented as ammo, but are not ammo bins for rules purposes
         return getAmmoType() == AmmoType.T_COOLANT_POD;
-
-    /**
-     * Get the blast radius of a particular bomb type, given the internal name.
-     */
-    public static int getBlastRadius(@Nullable String name) {
-        return blastRadius.getOrDefault(name, 0);
-    }
-
-    protected static int generateBlastRadiusForMunition(AmmoType munition) {
-        // base (HE) munitions use the fall-through value
-        String baseName = (munition.baseName == null)
-            ? munition.internalName.toLowerCase() : munition.baseName.toLowerCase();
-        String muniName = (munition.baseName == null)
-            ? "" : munition.internalName.toLowerCase();
-        if (baseName.contains("longtom")) {
-            if (muniName.contains("copperhead") || muniName.contains("fascam")) {
-                return 0;
-            }
-            if (muniName.contains("cluster") || muniName.contains("smoke")) {
-                return 1;
-            }
-            if (muniName.contains("illumination")) {
-                return 3;
-            }
-            return 2;
-
-        } else if (baseName.contains("sniper")) {
-            if (muniName.contains("copperhead") || muniName.contains("fascam")) {
-                return 0;
-            }
-            if (muniName.contains("cluster") || muniName.contains("smoke")) {
-                return 1;
-            }
-            if (muniName.contains("illumination")) {
-                return 2;
-            }
-            return 1;
-
-        } else if (baseName.contains("thumper")) {
-            if (muniName.contains("copperhead") || muniName.contains("fascam")) {
-                return 0;
-            }
-            if (muniName.contains("cluster") || muniName.contains("smoke")) {
-                return 1;
-            }
-            if (muniName.contains("illumination")) {
-                return 1;
-            }
-            return 1;
-
-        } else if (baseName.contains("batube")) {
-            if (muniName.contains("smoke")) {
-                return 1;
-            }
-            return 1;
-
-        } else if (baseName.contains("arrow")) {
-            if (muniName.contains("thunder")) {
-                return 0;
-            }
-            if (muniName.contains("cluster") || muniName.contains("smoke")
-                || muniName.contains("inferno") || muniName.contains("laser")) {
-                return 1;
-            }
-            if (muniName.contains("illumination")) {
-                return 4;
-            }
-            if (muniName.contains("ada") || muniName.contains("homing")) {
-                // No radius/special radius for blast column purposes
-                return -1;
-            }
-            return 1;
-
-        } else if (baseName.contains("cruise")) {
-            if (muniName.contains("120")) {
-                return 4;
-            }
-            if (muniName.contains("90")) {
-                return 3;
-            }
-            if (muniName.contains("70")) {
-                return 2;
-            }
-            return 1;
-        }
-
-        // safety value
-        return -1;
     }
 }

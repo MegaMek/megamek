@@ -76,13 +76,6 @@ public class BombType extends AmmoType {
         blastRadius = new HashMap<>();
     }
 
-    /**
-     * Get the blast radius of a particular bomb type, given the internal name.
-     */
-    public static int getBlastRadius(String name) {
-        return blastRadius.getOrDefault(name, -1);
-    }
-
     public static String getBombName(int type) {
         if ((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";

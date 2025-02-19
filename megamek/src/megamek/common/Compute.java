@@ -7920,9 +7920,16 @@ public class Compute {
     public static boolean allEnemiesOutsideBlast(
         Targetable target, Entity attacker, AmmoType ammoType, final boolean artillery, final boolean flak, final boolean asfFlak, Game game
     ) {
+       return enemiesInsideBlast(target, attacker, ammoType, artillery, flak, asfFlak, game).isEmpty();
+    }
+
+    public static Set<Entity> enemiesInsideBlast(
+        Targetable target, Entity attacker, AmmoType ammoType, final boolean artillery, final boolean flak, final boolean asfFlak, Game game
+    ) {
+        Set<Entity> entities = new HashSet<>();
         Coords position = target.getPosition();
         if (position == null) {
-            return true;
+            return entities;
         }
 
         // We don't need exact positional details to show entities are outside of the blast zone of a given
@@ -7970,8 +7977,8 @@ public class Compute {
         );
 
         int radius = falloff.radius;
-        if (flak) {
-            // Flak shots only affect the target hex
+        if (asfFlak) {
+            // Anti-ASF Flak shots only affect the target hex
             radius = 0;
         }
 
@@ -7980,13 +7987,13 @@ public class Compute {
         boolean cruiseMissile = ammoType.hasFlag(AmmoType.F_CRUISE_MISSILE);
         final int verticalLevels;
         if (cruiseMissile || artillery) {
-            // e.g. LT has damage 25, falloff 10, radius 2 -> round up (25/10) -> 3, -1 = R2.
+            // Levels above (and possibly below) level/center hex
+            // e.g. LT has damage 25, falloff 10, radius 2 -> round up (25/10) -> 3, -1 = 2.
             verticalLevels = (int) Math.ceil(damage / ((cruiseMissile) ? 25.0 : 10.0)) - 1;
         } else {
             verticalLevels = (radius >= 0) ? ((radius > 1) ? 2 : 1) : 0;
         }
 
-        Set<Entity> entities = new HashSet<>();
         if (causeAEBlast || flak || asfFlak) {
             // Both artillery and bombs cause AE blast spheres when hitting water or buildings.
             // For
@@ -8028,6 +8035,6 @@ public class Compute {
 
         }
         // No enemies in the volume == all outside
-        return entities.isEmpty();
+        return entities;
     }
 } // End public class Compute

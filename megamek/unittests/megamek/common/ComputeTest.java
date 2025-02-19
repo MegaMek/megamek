@@ -23,7 +23,7 @@ class ComputeTest {
     static GameOptions mockGameOptions = mock(GameOptions.class);
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
-    static Game game = new Game();
+    static Game game;
 
     static Team team1 = new Team(0);
     static Team team2 = new Team(1);
@@ -41,6 +41,7 @@ class ComputeTest {
 
     @BeforeEach
     void setUp() {
+        game = new Game();
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
         game.setOptions(mockGameOptions);

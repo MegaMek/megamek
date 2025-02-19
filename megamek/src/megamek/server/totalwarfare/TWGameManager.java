@@ -31625,6 +31625,8 @@ public class TWGameManager extends AbstractGameManager {
         Hex hex = game.getBoard().getHex(center);
 
         // Unfortunately this HexTarget is a new instance and contains no level data
+        // Pretend we know what level the user was aiming at.
+        // TODO: remove once we can pass targetLevel info between client and server
         int targetLevel = 0;
         if (hex != null) {
             targetLevel = hex.getLevel();
@@ -31634,6 +31636,8 @@ public class TWGameManager extends AbstractGameManager {
                 Iterator<Entity> targetEnemies = game.getEnemyEntities(center, killer);
                 while (targetEnemies.hasNext()) {
                     Entity next = targetEnemies.next();
+                    // Find the enemies in the target hex; if one's on a valid building or
+                    // water level, make its elevation the target level.
                     if (next.getElevation() + hex.getLevel() <= hex.ceiling() + 1) {
                         targetLevel = next.getElevation() + hex.getLevel();
                         break;

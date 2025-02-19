@@ -277,8 +277,11 @@ public class BombAttackHandler extends WeaponHandler {
                     hitIds = AreaEffectHelper.processFuelAirDamage(drop,
                             EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
-                    // We know we can cast this to a HexTarget
-                    hitIds = gameManager.deliverBombDamage((HexTarget) target, type, subjectId, ae, vPhaseReport);
+                    // We want to make this a HexTarget so we can ensure drifts happen at the same elevation
+                    // (Currently this is not working correctly because we don't pass targetLevel over the wire)
+                    HexTarget dropHex = new HexTarget(drop, target.getTargetType());
+                    dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
+                    hitIds = gameManager.deliverBombDamage(dropHex, type, subjectId, ae, vPhaseReport);
                 }
 
                 // Display drifts that hit nothing separately from drifts that dealt damage

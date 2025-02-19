@@ -439,7 +439,7 @@ public class WeaponFireInfo {
         // bombs require some special consideration
         if (weapon.isGroundBomb()) {
             // We can only bomb hex targets, officially
-            return computeExpectedBombDamage(getShooter(), weapon, (HexTarget) getTarget());
+            return computeExpectedBombDamage(getShooter(), weapon, getTarget());
         }
 
         // XXX: update this and other utility munition handling with smarter deployment, a la TAG above
@@ -747,12 +747,12 @@ public class WeaponFireInfo {
      * @param targetHex The target hex.
      * @return The array of expected damages of the attack.
      */
-    protected double[] computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final HexTarget targetHex) {
+    protected double[] computeExpectedBombDamage(final Entity shooter, final Mounted<?> weapon, final Targetable targetHex) {
         double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
         Coords bombedCoords = targetHex.getPosition();
         int targetLevel = 0;
         if (List.of(Targetable.TYPE_HEX_AERO_BOMB, Targetable.TYPE_HEX_BOMB).contains(targetHex.getTargetType())) {
-            targetLevel = targetHex.getTargetLevel();
+            targetLevel = ((HexTarget) targetHex).getTargetLevel();
         }
 
         // for dive attacks, we can pretty much assume that we're going to drop

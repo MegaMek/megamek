@@ -195,7 +195,7 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
     private static final TargetRollModifier TH_STABLE_WEAPON = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
-    static final TargetRollModifier TH_TOO_HIGH_FOR_AE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target flying too high!");
+    static final TargetRollModifier TH_NO_TARGETS_IN_BLAST = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "no targets in blast zone!");
 
     /**
      * The possible fire control types.
@@ -1125,28 +1125,13 @@ public class FireControl {
             if (weapon.isGroundBomb()
                     && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
             ) {
-                // See if we can catch the target in the blast
                 Hex hex = game.getBoard().getHex(target.getPosition());
-                // Aim at ground level by default
-                ArrayList<Integer> heights = new ArrayList<Integer>();
-                heights.add((hex != null) ? hex.getLevel() : 0);
-                if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
-                    // Aim at the top of any terrain features that cause AE blast spheres
-                    for (int h=heights.get(0); h < hex.ceiling(); h++) {
-                        heights.add(h);
-                    }
+                // If somehow we get an off-board hex, it's impossible to hit.
+                if (hex == null) {
+                    return new ToHitData(TH_NULL_POSITION);
                 }
-
-                // Iterate through levels that can be struck, looking for victims.
-                for (int height: heights) {
-                    if (
-                        Compute.allEnemiesOutsideBlast(
-                            height, target, game.getEntitiesVector(target.getPosition()),
-                            shooter, firingAmmo.getType(), false, false, false, game
-                        )
-                    ) {
-                        return new ToHitData(TH_TOO_HIGH_FOR_AE);
-                    }
+                if (Compute.allEnemiesOutsideBlast(target, shooter, firingAmmo.getType(), false, false, false, game)) {
+                    return new ToHitData(TH_NO_TARGETS_IN_BLAST);
                 }
             }
         }

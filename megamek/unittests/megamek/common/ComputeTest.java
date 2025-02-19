@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -241,5 +243,150 @@ class ComputeTest {
         target.setAltitude(3);
 
         assertTrue(Compute.canPointBlankShot(attacker, target));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomDirectlyOnMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        assertFalse(Compute.allEnemiesOutsideBlast(target, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomAdjacentToMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(6,5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomTwoFromMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(6,4), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomThreeFromMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(8,6), HexTarget.TYPE_HEX_ARTILLERY);
+        assertTrue(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomTwoUnderMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setElevation(2);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(5,5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomThreeUnderMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0, 0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setElevation(3);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(5, 5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertTrue(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
     }
 }

@@ -631,6 +631,16 @@ public class AreaEffectHelper {
         int radius = 0;
         boolean clusterMunitionsFlag = false;
 
+        if (List.of(
+                AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_PRIM, AmmoType.T_LONG_TOM_CANNON,
+                AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON,
+                AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON
+            ).contains(ammo.getAmmoType())
+        ) {
+            radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
+
+        }
+
         // Capital and Sub-capital missiles
         if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
                 || ammo.getAmmoType() == AmmoType.T_KRAKENM
@@ -1020,14 +1030,19 @@ public class AreaEffectHelper {
             }
         }
 
+        Hex hex = game.getBoard().getHex(center);
+        boolean effectivelyAE = (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
         // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
         // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)
         // Note that this falloff is separate from horizontal blast falloff, above.
         // Also deal damage downward for Flak shots against VTOLs.
         if (artillery) {
             int levelMinus = (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) ? 25 : 10;
-            for (int d=(baseDamage - levelMinus), l=height+1; d>0; d-=levelMinus, l++) {
-                blastShape.put(Map.entry(l, center), d);
+            if (flak || !effectivelyAE) {
+                // If non-Flak artillery is hitting a building or water hex, use the AE column rules
+                for (int d = (baseDamage - levelMinus), l = height + 1; d > 0; d -= levelMinus, l++) {
+                    blastShape.put(Map.entry(l, center), d);
+                }
             }
             if (flak) {
                 for (int d=(baseDamage - levelMinus), l=height-1; d>0; d-=levelMinus, l--) {
@@ -1057,13 +1072,11 @@ public class AreaEffectHelper {
             }
         }
 
-
         // 3. Handle additional AE blast shaping.
         // If this is the center of an AE explosion hitting a building or water hex,
         // also deal damage 1 (or 2) levels up, and 1 (or 2) levels down.  TW: pp. 113, 172, 173.
         // TODO: implement MOF-based building level drift, building target level selection for user.
-        Hex hex = game.getBoard().getHex(center);
-        if (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER))) {
+        if (effectivelyAE) {
             // Artillery can only target ground level, Homing target units, or Flak target entities so
             // Calculate the center height and depth.
             if (radius > 0) {

@@ -7917,61 +7917,117 @@ public class Compute {
         return false;
     }
 
-    public static boolean allEnemiesAboveHeight(int height, Targetable target, List<Entity> entities, Entity attacker) {
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            return (
-                (target.isAirborneVTOLorWIGE() || target.isAirborne())
-                && target.getElevation() > height
-            );
-        } else if (target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
-            return (
-                entities.stream().allMatch(
-                    entity ->
-                        entity.isVisibleToEnemy() && entity.isEnemyOf(attacker)
-                            && (entity.isAirborneVTOLorWIGE() || entity.isAirborne())
-                            && entity.getElevation() > height
-                )
-            );
-        }
-        return false;
-    }
-
     public static boolean allEnemiesOutsideBlast(
-        int height, Targetable target, List<Entity> entities, Entity attacker, AmmoType ammoType,
-        boolean artillery, boolean flak, boolean asfFlak, Game game
+        Targetable target, Entity attacker, AmmoType ammoType, final boolean artillery, final boolean flak, final boolean asfFlak, Game game
     ) {
         Coords position = target.getPosition();
         if (position == null) {
             return true;
         }
 
-        // Assume that offboard units are at or above 0; any underwater units should have negative elevation.
-        Hex hex = game.getBoard().getHex(position);
-        final int baseHeight = (hex != null) ? hex.getLevel() : 0;
+        // We don't need exact positional details to show entities are outside of the blast zone of a given
+        // AE munition:
+        // 1. The highest* an entity can be is: hex.ceiling() + 2 for R1+ bombs, OR
+        //                                      hex.ceiling() + 1 for R0 bombs, OR
+        //                                      hex.getLevel() + base damage / 25 for Cruise Missiles, OR
+        //                                      hex.getLevel() + base damage / 10 for non-homing Artillery
+        // *(For bombs: only over water or building hex; for artillery, any hex**)
+        // **(Artillery uses base AE rules for building/water hexes, based on radius rather than damage)
+        //
+        // 2. The lowest* an entity can be is:  hex.getLevel() - 2 for R1+ bombs/artillery, OR
+        //                                      hex.getLevel() - 1 for R0 bombs/artillery
+        // *(for all AE: only in building or water hexes)
+        //
+        // 3. Farthest out from the center a unit can be is Radius, set per munition.
+        // 4. Blast deals damage in "sphere" where horizontal + vertical displacement <= Radius, but
+        //    only for building / water hexes.
+        // 5. Artillery Flak creates a blast up and down in the target hex only
+        // 6. Anti-ASF Artillery Flak creates a blast in the target hex at the target altitude only
+        //
+        // To prove an AE attack will catch _zero_ enemies, we just need to prove any enemies in the zone
+        // are too deep or too high for _any_ blast damage to reach.
 
-        // Create the projected blast shape from the ammo, target, height, etc.
-        var blastShape = AreaEffectHelper.shapeBlast(
-            ammoType, target.getPosition(), height, artillery, flak, asfFlak, game, false
+        Hex hex = game.getBoard().getHex(position);
+        final boolean causeAEBlast = hex != null && hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER);
+        final int baseHeight;
+        final int ceiling;
+        if (flak) {
+            if (asfFlak) {
+                ceiling = baseHeight = target.getAltitude();
+            } else {
+                ceiling = baseHeight = target.getElevation();
+            }
+        } else {
+            baseHeight = (hex != null) ? hex.getLevel() : 0;
+            ceiling = (hex != null) ? hex.ceiling() : baseHeight;
+        }
+
+        // Get radius, base damage
+        AreaEffectHelper.DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(
+            ammoType,
+            attacker.isBattleArmor() ? ((BattleArmor) attacker).getTroopers() : 0,
+            false
         );
 
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            // check if the target unit is in the computed blast zone;
-            return (!blastShape.containsKey(Map.entry(baseHeight + target.getElevation(), target.getPosition())));
+        int radius = falloff.radius;
+        if (flak) {
+            // Flak shots only affect the target hex
+            radius = 0;
         }
-        if (
-            List.of(Targetable.TYPE_HEX_AERO_BOMB, Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_ARTILLERY, Targetable.TYPE_BUILDING)
-                .contains(target.getTargetType())
-        ) {
-            // Check if any of the possible targets are in the blast zone
-            return (
-                entities.stream().noneMatch(
-                    entity ->
-                        entity.isVisibleToEnemy() && entity.isEnemyOf(attacker)
-                        && blastShape.containsKey(Map.entry(baseHeight + entity.getElevation(), entity.getPosition()))
-                )
-            );
+
+        double damage = falloff.damage;
+
+        boolean cruiseMissile = ammoType.hasFlag(AmmoType.F_CRUISE_MISSILE);
+        final int verticalLevels;
+        if (cruiseMissile || artillery) {
+            // e.g. LT has damage 25, falloff 10, radius 2 -> round up (25/10) -> 3, -1 = R2.
+            verticalLevels = (int) Math.ceil(damage / ((cruiseMissile) ? 25.0 : 10.0)) - 1;
+        } else {
+            verticalLevels = (radius >= 0) ? ((radius > 1) ? 2 : 1) : 0;
         }
-        // If we got here, the enemies are outside the blast somehow.
-        return true;
+
+        Set<Entity> entities = new HashSet<>();
+        if (causeAEBlast || flak || asfFlak) {
+            // Both artillery and bombs cause AE blast spheres when hitting water or buildings.
+            // For
+            for (int r=0; r <= radius; r++) {
+                final int rad = r;
+                List<Coords> ringCoords = position.allAtDistance(r);
+                // Get all enemy entities that protrude into the blast sphere, or, for Anti-ASF Flak,
+                // are in the target's hex at the same altitude
+                for (Coords coords : ringCoords) {
+                    List<Entity> cEntities = game.getEntitiesVector(coords);
+                    entities.addAll(cEntities.stream().filter(
+                        e -> e.isEnemyOf(attacker) &&
+                            ((e.getElevation() + e.getHeight() >= rad + baseHeight - verticalLevels)
+                                && (e.getElevation() <= ceiling + verticalLevels - rad))
+                            || (e.isAero() && e.getAltitude() == baseHeight)
+                    ).toList());
+                }
+            }
+        } else if (artillery) {
+            // Central vertical blast column
+            entities.addAll(game.getEntitiesVector(position).stream().filter(
+                e -> e.isEnemyOf(attacker) &&
+                    (e.getElevation() + e.getHeight() >= baseHeight)
+                        && (e.getElevation() <= ceiling + verticalLevels)
+            ).toList());
+            for (int r=1; r <= radius; r++) {
+                // Get all the entities that cross the blast ring
+                List<Coords> ringCoords = position.allAtDistance(r);
+                for (Coords coords : ringCoords) {
+                    List<Entity> cEntities = game.getEntitiesVector(coords);
+                    entities.addAll(cEntities.stream().filter(
+                        e -> e.isEnemyOf(attacker) &&
+                            ((e.getElevation() + e.getHeight() >= baseHeight)
+                                && (e.getElevation() <= ceiling))
+                    ).toList());
+                }
+            }
+
+
+        }
+        // No enemies in the volume == all outside
+        return entities.isEmpty();
     }
 } // End public class Compute

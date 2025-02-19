@@ -674,7 +674,7 @@ public class WeaponFireInfo {
 
             if (hex != null && hex.containsAnyTerrainOf(Terrains.WATER, Terrains.BLDG_ELEV)) {
                 if ((hex.ceiling() + 2 ) < (hex.getLevel() + targetLevel)) {
-                    return new ToHitData(FireControl.TH_TOO_HIGH_FOR_AE);
+                    return new ToHitData(FireControl.TH_NO_TARGETS_IN_BLAST);
                 }
             }
         }

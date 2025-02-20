@@ -43,6 +43,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6515: added check if player was done to validateUpdate
 + Fix #6509: add -1 check to getColoredPlayerNameWithTeam
 + Fix #6570: Support Multiple Trailers from Lobby
++ MML #1527: Armor validation #6583
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

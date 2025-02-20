@@ -663,7 +663,7 @@ public class TestMek extends TestEntity {
         if (!getEntity().hasPatchworkArmor()
                 && (getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor())) {
             correct = false;
-            buff.append("Too many armor points allocated");
+            buff.append("Too many armor points allocated.\n");
         }
 
         return correct;

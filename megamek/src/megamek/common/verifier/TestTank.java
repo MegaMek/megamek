@@ -320,6 +320,9 @@ public class TestTank extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+
+        correct &= correctArmorOverAllocation(tank, buff);
+
         if (tank instanceof VTOL) {
             long mastMountCount = tank.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
             if (mastMountCount > 1) {

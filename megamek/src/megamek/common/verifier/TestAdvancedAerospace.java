@@ -593,6 +593,8 @@ public class TestAdvancedAerospace extends TestAero {
             correct = false;
         }
 
+        correct &= correctArmorOverAllocation(vessel, buff);
+
         return correct;
     }
 

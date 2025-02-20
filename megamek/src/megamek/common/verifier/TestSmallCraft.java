@@ -469,6 +469,8 @@ public class TestSmallCraft extends TestAero {
             correct = false;
         }
 
+        correct &= correctArmorOverAllocation(smallCraft, buff);
+
         return correct;
     }
 

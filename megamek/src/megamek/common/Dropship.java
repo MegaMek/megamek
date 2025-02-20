@@ -178,6 +178,11 @@ public class Dropship extends SmallCraft {
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
+        // Also check for any crushable entities
+        isProhibited |= game.getEntities(c).hasNext();
+        if (isProhibited) {
+            return true;
+        }
 
         HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);

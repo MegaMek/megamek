@@ -1291,13 +1291,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                if (en_Deployer.isAero()) {
-                    // Aeros are always above it all
+                if (en_Deployer.isAero() && en_Deployer.getAltitude() > 0) {
+                    // Flying Aeros are always above it all
                     if (board.isLegalDeployment(c, en_Deployer) &&
                         !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
                         drawHexBorder(g, getHexLocation(c), Color.yellow);
                     }
-                } else if (isAirDeployGround || isWiGE) {
+                } else if (isAirDeployGround || isWiGE || en_Deployer.isAero() && en_Deployer.getAltitude() == 0) {
                     // Draw hexes that are legal at a higher deployment elevation
                     Hex hex = board.getHex(c);
                     int maxHeight = (isWiGE) ? 1 : (hex != null) ? hex.ceiling() + 1 : 1;

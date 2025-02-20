@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2900-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -1015,7 +1012,7 @@
 			</model>
 			<model name='BL-7-KNT'>
                 <roles>command</roles>
-				<availability>FS:8,LA:8,FWL:8,DC:8,MERC:8</availability>
+				<availability>FS:8,LA:8,FWL:8+,DC:8,MERC:8</availability>
 			</model>
 			<model name='BL-7-KNT-L'>
                 <roles>command</roles>
@@ -1216,7 +1213,7 @@
 			</model>
 			<model name='CPLT-K2'>
 				<roles>fire_support</roles>
-				<availability>DC:7</availability>
+				<availability>DC:7+</availability>
 			</model>
 		</chassis>
 		<chassis name='Centurion' unitType='AeroSpaceFighter'>
@@ -1247,7 +1244,7 @@
 			</model>
 		</chassis>
 		<chassis name='Cestus' unitType='Mek'>
-			<availability>CS:4+,CLAN:3,NIOPS:4+</availability>
+			<availability>CS:5+,CLAN:3,NIOPS:4+</availability>
 			<model name='CTS-6Y'>
 				<availability>CS:8,CLAN:8,NIOPS:8</availability>
 			</model>
@@ -2681,7 +2678,7 @@
 			</model>
 		</chassis>
 		<chassis name='Grasshopper' unitType='Mek'>
-			<availability>IS:3,MERC:4,CS:4,Periphery:4+,TC:6+,MOC:6+,OA:6+,HL:4+,NIOPS:4-,Periphery.Deep:3+,PIR:4</availability>
+			<availability>IS:3,MERC:4,CS:4,Periphery:4+,NIOPS:4-,HL:4+,Periphery.Deep:3+,PIR:4</availability>
 			<model name='GHR-5H'>
                 <roles>raider</roles>
 				<availability>IS:8,Periphery:8,HL:8,Periphery.Deep:8,PIR:8</availability>
@@ -2746,7 +2743,7 @@
 			</model>
 			<model name='GLT-4L'>
 				<roles>raider</roles>
-				<availability>IS:8,CS:6-,Periphery:8,HL:8,NIOPS:0,Periphery.Deep:8</availability>
+				<availability>IS:8,CS:6-,Periphery:8,NIOPS:0,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='GLT-4P'>
 				<roles>raider</roles>
@@ -2981,7 +2978,7 @@
 			<model name='HEP-3H'>
 				<roles>mixed_artillery</roles>
 				<deployedWith>Helepolis</deployedWith>
-				<availability>General:8</availability>
+				<availability>CLAN:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Hellcat II' unitType='AeroSpaceFighter'>
@@ -3661,7 +3658,7 @@
 			</model>
 			<model name='LNC25-02'>
 				<roles>anti_aircraft,fire_support</roles>
-				<availability>DC:8</availability>
+				<availability>DC:8,Periphery:8,NIOPS:0</availability>
 			</model>
 			<model name='LNC25-03'>
                 <roles>cavalry,anti_aircraft</roles>
@@ -4791,7 +4788,7 @@
 			<availability>IS:4,CS:2,Periphery:3,NIOPS:6-,HL:1,Periphery.Deep:1+,BAN:2,PIR:4</availability>
 			<model name='OTL-4D'>
                 <roles>raider</roles>
-				<availability>IS:8,HL:8,Periphery:8,BAN:8</availability>
+				<availability>IS:8,Periphery:8,HL:8,BAN:8</availability>
 			</model>
 			<model name='OTL-4F'>
 				<availability>FS:3+</availability>
@@ -4800,7 +4797,7 @@
         <chassis name='Ostwar' unitType='Mek'>
             <availability>Periphery:2-,TC:1-,HL:4,NIOPS:3-,Periphery.Deep:5,PIR:1</availability>
             <model name='OWR-2M'>
-                <availability>Periphery:8</availability>
+                <availability>Periphery:8,TC:8,HL:8,NIOPS:8,Periphery.Deep:8,PIR:8</availability>
             </model>
         </chassis>
 		<chassis name='Overlord C' unitType='Dropship'>
@@ -5098,10 +5095,10 @@
 		<chassis name='Quickdraw' unitType='Mek'>
 			<availability>FS:3+,LA:3+,FWL:4,DC:4,CC:3+,MERC:3+,CS:3,Periphery:3+,TC:4+,MOC:4+,OA:4+,NIOPS:3-,HL:2+,Periphery.Deep:2+,PIR:4+</availability>
 			<model name='QKD-4G'>
-				<availability>IS:8,Periphery:8</availability>
+				<availability>IS:8,Periphery:8,NIOPS:8,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='QKD-4H'>
-				<availability>IS:4,Periphery:4</availability>
+				<availability>IS:4,Periphery:4,NIOPS:4,HL:4,Periphery.Deep:4</availability>
 			</model>
 		</chassis>
 		<chassis name='Rapier' unitType='AeroSpaceFighter'>
@@ -6454,13 +6451,13 @@
 				<availability>FS:7+,Periphery.HR:3+,PIR:0</availability>
 			</model>
 			<model name='WHM-6K'>
-				<availability>FS:1,FS.RR:2,FS.DMM:2,DC:7+,Periphery.DD:5+,Periphery.OS:3+,PIR:0</availability>
+				<availability>FS:1,FS.RR:2,FS.DMM:2,DC:7+,Periphery.DD:5+,Periphery.OS:3+</availability>
 			</model>
 			<model name='WHM-6L'>
 				<availability>CC:8+</availability>
 			</model>
 			<model name='WHM-6R'>
-				<availability>IS:8,FS:6,DC:6,CC:7,Periphery:8,CLAN:1-,BAN:8,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,FS:6,DC:6,CC:7,Periphery:8,CLAN:1-,HL:8,Periphery.Deep:8,BAN:8</availability>
 			</model>
 			<model name='WHM-6Rb'>
 				<availability>CLAN:4,BAN:4</availability>

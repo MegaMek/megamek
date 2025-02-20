@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2950-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -654,6 +651,10 @@
 				<roles>command,fire_support</roles>
 				<availability>LA:8+</availability>
 			</model>
+            <model name='ARC-2W'>
+                <roles>command,fire_support</roles>
+                <availability>MERC.WD:8</availability>
+            </model>
 		</chassis>
 		<chassis name='Ares Assault Craft' unitType='Small Craft'>
 			<availability>MERC.KH:5,MERC.WD:5,CLAN:4,IS:8,MERC:7,Periphery:8,BAN:3</availability>
@@ -2495,7 +2496,7 @@
 			</model>
 		</chassis>
 		<chassis name='Flashman' unitType='Mek'>
-			<availability>LA:4,CS:8,CLAN:5,CHH:4,CSV:6,CFM:6,CGS:4,CDS:4,CBS:4,CJF:6,CGB:4,Periphery.R:1+,NIOPS:5</availability>
+			<availability>LA:4+,CS:8,CLAN:5,CHH:4,CSV:6,CFM:6,CGS:4,CDS:4,CBS:4,CJF:6,CGB:4,Periphery.R:1+,NIOPS:5</availability>
 			<model name='FLS-7K'>
 				<availability>LA:8,Periphery.R:8</availability>
 			</model>
@@ -3077,7 +3078,7 @@
                 <roles>civilian</roles>
                 <availability>IS:8,LA!A:8!B:8,TC:8</availability>
 			</model>
-            <model name='HFL-1M LoggerMech'>
+            <model name='HFL-1M LoggerMech MOD'>
                 <availability>LA!F:8</availability>
             </model>
 		</chassis>
@@ -3912,7 +3913,7 @@
 			</model>
 			<model name='LNC25-02'>
 				<roles>anti_aircraft,fire_support</roles>
-				<availability>DC:8,Periphery:8,NIOPS:0</availability>
+				<availability>DC:8,NIOPS:0</availability>
 			</model>
 			<model name='LNC25-03'>
                 <roles>cavalry,anti_aircraft</roles>
@@ -4292,7 +4293,7 @@
             </model>
 			<model name='MAD-1R'>
                 <roles>command</roles>
-				<availability>CS:8,CLAN:2,NIOPS:8,BAN:3</availability>
+				<availability>CS:8+,CLAN:2,NIOPS:8,BAN:3</availability>
 			</model>
 			<model name='MAD-2R'>
                 <roles>command</roles>
@@ -4312,7 +4313,7 @@
 			</model>
 			<model name='MAD-3R'>
                 <roles>command</roles>
-				<availability>FS:6,LA:8,FWL:4,DC:8,CC:6,MERC:8,CS:4-,Periphery:8,HL:8,NIOPS:6</availability>
+				<availability>IS:8,FS:6,FWL:4,CC:6,CS:4,Periphery:8,HL:8,NIOPS:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Marksman Artillery Vehicle' unitType='Tank'>
@@ -4652,6 +4653,12 @@
 				<availability>CS:8,CLAN:8,NIOPS:4,BAN:6</availability>
 			</model>
 		</chassis>
+        <chassis name='Merlin' unitType='Mek'>
+            <availability>OA:3+</availability>
+            <model name='MLN-1A'>
+                <availability>OA:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Minsk' unitType='Mek'>
 			<availability>CGB:2-</availability>
             <model name=''>
@@ -6878,6 +6885,12 @@
 				<availability>IS:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Von Rohrs (Hebi)' unitType='Mek'>
+            <availability>Periphery.DD:1-,Periphery.OS:1-</availability>
+            <model name='VON 4RH-5'>
+                <availability>Periphery.DD:8,Periphery.OS:8</availability>
+            </model>
+        </chassis>
 		<chassis name='Vulcan' unitType='AeroSpaceFighter'>
 			<availability>MERC:4,TC:3</availability>
 			<model name='VLC-5N'>

@@ -4017,7 +4017,7 @@
             </model>
 			<model name='MAD-1R'>
                 <roles>command</roles>
-				<availability>CS:8,CLAN:3,NIOPS:8,BAN:4</availability>
+				<availability>CS:8+,CLAN:3,NIOPS:8,BAN:4</availability>
 			</model>
 			<model name='MAD-2R'>
                 <roles>command</roles>
@@ -4037,7 +4037,7 @@
 			</model>
 			<model name='MAD-3R'>
                 <roles>command</roles>
-				<availability>FS:6,LA:8,FWL:4,DC:8,CC:6,MERC:8,CS:4-,Periphery:8,HL:8,NIOPS:6</availability>
+				<availability>IS:8,FS:6,FWL:4,CC:6,CS:4,Periphery:8,HL:8,NIOPS:6</availability>
 			</model>
 		</chassis>
 		<chassis name='Marksman Artillery Vehicle' unitType='Tank'>

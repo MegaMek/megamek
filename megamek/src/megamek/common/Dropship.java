@@ -229,6 +229,8 @@ public class Dropship extends SmallCraft {
         int elevMinCount = 2;
         // Check elevation difference and make sure that the counts of different
         // elevations will allow for a legal deployment to exist
+        // TODO: get updated ruling; this code causes a hex with one single lower- or higher-level neighbor
+        // to be disqualified, but it would seem that a single lower-level neighbor should be fine.
         if ((elevDifference > 1) || (elevations.get(elevs[0]) < elevMinCount)
                 || (elevations.get(elevs[1]) < elevMinCount)) {
             return true;

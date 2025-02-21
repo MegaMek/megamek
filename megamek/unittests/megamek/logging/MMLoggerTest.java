@@ -65,6 +65,13 @@ public class MMLoggerTest {
     @Test
     public void testWarnLoggingWithException() {
         Exception e = new Exception("Test exception");
+        testMMLogger.warn(e, "Warn message: {}", "test");
+        verifyLog(Level.WARN, "Warn message: test", e);
+    }
+
+    @Test
+    public void testWarnLoggingWithExceptionWithStringFormat() {
+        Exception e = new Exception("Test exception");
         testMMLogger.warn(e, "Warn message: %s", "test");
         verifyLog(Level.WARN, "Warn message: test", e);
     }
@@ -83,12 +90,23 @@ public class MMLoggerTest {
             return;
         }
         automaticallyDismissDialog();
+        testMMLogger.errorDialog("test", "Error message: {}", "test");
+        verifyLog(Level.ERROR, "Error message: test");
+    }
+
+    @Test
+    public void testErrorLoggingWithStringFormat() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // Skip this test if running in headless mode
+            return;
+        }
+        automaticallyDismissDialog();
         testMMLogger.errorDialog("test", "Error message: %s", "test");
         verifyLog(Level.ERROR, "Error message: test");
     }
 
     @Test
-    public void testErrorLoggingWithExceptionNoParams() {
+    public void testDeprecatedErrorLoggingWithExceptionNoParams() {
         if (GraphicsEnvironment.isHeadless()) {
             // Skip this test if running in headless mode
             return;
@@ -111,7 +129,6 @@ public class MMLoggerTest {
         verifyLog(Level.ERROR, "Error message: test", e);
     }
 
-
     @Test
     public void testFatalLogging() {
         testMMLogger.fatal("Fatal without dialog without exception");
@@ -130,9 +147,32 @@ public class MMLoggerTest {
     }
 
     @Test
+    public void testDeprecatedFatalLoggingWithDialog() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // Skip this test if running in headless mode
+            return;
+        }
+        automaticallyDismissDialog();
+        testMMLogger.fatal("Fatal with dialog with exception", "Fatal dialog title");
+        verifyLog(Level.FATAL, "Fatal with dialog with exception");
+    }
+
+    @Test
     public void testFatalLoggingWithException() {
         Exception e = new Exception("Test exception");
         testMMLogger.fatal(e, "Fatal without dialog with exception");
+        verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
+    }
+
+    @Test
+    public void testDeprecatedFatalLoggingWithException() {
+        if (GraphicsEnvironment.isHeadless()) {
+            // Skip this test if running in headless mode
+            return;
+        }
+        automaticallyDismissDialog();
+        Exception e = new Exception("Test exception");
+        testMMLogger.fatal(e, "Fatal without dialog with exception" , "Fatal dialog title");
         verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
     }
 

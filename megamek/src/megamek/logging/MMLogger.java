@@ -19,8 +19,7 @@
 
 package megamek.logging;
 
-import javax.swing.JOptionPane;
-
+import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,27 +27,30 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 
-import io.sentry.Sentry;
-
+import javax.swing.*;
 import java.util.Collections;
 
 /**
- * MMLogger
- *
- * Utility class to handle logging functions as well as reporting exceptions to
+ * <h1>MMLogger</h1>
+ * <p>Utility class to handle logging functions as well as reporting exceptions to
  * Sentry. To deal with general recommendations of confirming log level before
  * logging, additional checks are added to ensure we're only ever logging data
- * based upon the currently active log level.
- *
- * To utilize this class properly, it must be initialized within each class that
- * will use it. For example for use with the megamek.MegaMek class,
- *
- * private static final MMLogger logger = MMLogger.create(MegaMek.class);
- *
- * And then for use, use logger.info(message) and pass a string to it. Currently
- * supported levels include info, warn, debug, error, and fatal. Error and Fatal
+ * based upon the currently active log level.</p>
+ * <h2>How to use:</h2>
+ * <p>To utilize this class properly, it must be initialized within each class that
+ * will use it. For example for use with the {@code megamek.MegaMek.class}.</p>
+ * <pre>{@code private static final MMLogger logger = MMLogger.create(MegaMek.class);}</pre>
+ * <p>And then for use, use {@code logger.info(message)} and pass a string to it. Currently
+ * supported levels include trace, info, warn, debug, error, and fatal. Warn, Error and Fatal
  * can take any Throwable for sending to Sentry and has an overload for a title
- * to allow for displaying of a dialog box
+ * to allow for displaying of a dialog box.</p>
+ * <p>This class also implements both the parametric pattern and the string format
+ * for the functions that are overriden and added here. This means that you can
+ * use the following formats for the messages in some cases:</p>
+ * <pre>{@code logger.info("number: {} string: {}", 42, "Hello");
+ * logger.info("number: %d string: %s", 42, "Hello");}</pre>
+ * <p>Due to how the logger works, the first format using curly braces is preferred, but the second one
+ * is grandfathered exclusively for logs already existing, and it is not recommended for any new log.</p>
  */
 public class MMLogger extends ExtendedLoggerWrapper {
     private final ExtendedLoggerWrapper exLoggerWrapper;
@@ -56,8 +58,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
     private static final String FQCN = MMLogger.class.getName();
 
     /**
-     * Private constructor as there should never be an instance of this
-     * class.
+     * Package protected constructor, this class should not be created directly.
      */
     MMLogger(final Logger logger) {
         super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
@@ -92,8 +93,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * Info Level Logging.
      *
      * @param message Message to be sent to the log file.
-     * @param args    Variable list of arguments for message to be passed to
-     *                String.format()
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void info(String message, Object... args) {
@@ -104,10 +104,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Warning Level Logging
      *
-     * @param message Message to be written to the log file.
-     * @param args    Variable list of arguments for message to be
-     *                passed to String.format()
-     *
+     * @param message Message to be logged.
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void warn(String message, Object... args) {
@@ -118,11 +116,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Warning Level Logging
      *
-     * @param exception Exception that was caught via a try/catch block.
-     * @param message   Message to be written to the log file.
-     * @param args      Variable list of arguments for message to be
-     *                  passed to String.format()
-     *
+     * @param exception Exception to be logged.
+     * @param message   Message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void warn(Throwable exception, String message, Object... args) {
         Sentry.captureException(exception);
@@ -133,22 +129,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Debug Level Logging
      *
-     * @param message Message to be written to the log file.
-     * @param p0 parameter to the message.
-     * @param p1 parameter to the message.
-     * @param p2 parameter to the message.
-     */
-    @Override
-    public void debug(final String message, final Object p0, final Object p1, final Object p2) {
-        logIfEnabled(FQCN, Level.DEBUG, null, message, p0, p1, p2);
-    }
-
-    /**
-     * Debug Level Logging
-     *
-     * @param message Message to be written to the log file.
-     * @param args    Variable list of arguments for message to be passed to
-     *                String.format()
+     * @param message Message to be logged.
+     * @param args    Variable list of arguments for the message
      */
     @Override
     public void debug(String message, Object... args) {
@@ -159,11 +141,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Debug Level Logging
      *
-     * @param exception Exception that was caught via a try/catch block.
-     * @param message   Message to be written to the log file.
-     * @param args      Variable list of arguments for message to be
-     *                  passed to String.format()
-     *
+     * @param exception Exception to be logged.
+     * @param message   Message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void debug(Throwable exception, String message, Object... args) {
         Sentry.captureException(exception);
@@ -174,8 +154,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Error Level Logging w/ Exception
      *
-     * @param exception Exception that was caught via a try/catch block.
-     * @param message   Additional message to report to the log file.
+     * @param exception Exception to be logged.
+     * @param message   Additional message.
      */
     public void error(Throwable exception, String message) {
         Sentry.captureException(exception);
@@ -185,8 +165,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Error Level Logging w/ Exception
      *
-     * @param exception Exception that was caught via a try/catch block.
-     * @param message   Additional message to report to the log file.
+     * @param exception Exception to be logged.
+     * @param message   Additional message to be logged.
+     * @param args      Variable list of arguments for the message
      */
     public void error(Throwable exception, String message, Object... args) {
         message = parametrizedStringIfEnabled(Level.ERROR, message, args);
@@ -196,11 +177,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      * Error Level Logging w/ Exception
-     *
      * This one was made to make it easier to replace the Log4J Calls
      *
-     * @param message   Additional message to report to the log file.
-     * @param exception Exception that was caught via a try/catch block.
+     * @param message   Message to be logged.
+     * @param exception Exception to be logged.
      */
     public void error(String message, Throwable exception) {
         Sentry.captureException(exception);
@@ -210,7 +190,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Error Level Logging w/o Exception.
      *
-     * @param message Message to be written to the log file.
+     * @param message Message to be logged.
      */
     @Override
     public void error(String message) {
@@ -219,8 +199,8 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      * Error Level Logging w/ Exception w/ Dialog.
-     * @deprecated (since 01-feb-2025) Use {@link #errorDialog(Throwable, String, String, Object...)} instead.
-     * @param exception Exception that was caught.
+     * @deprecated (since 21-feb-2025) Use {@link #errorDialog(Throwable, String, String, Object...)} instead.
+     * @param exception Exception to be logged.
      * @param message   Message to write to the log file AND be displayed in the
      *                  error pane.
      * @param title     Title of the error message box.
@@ -232,35 +212,17 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      * Formatted Error Level Logging w/ Exception w/ Dialog.
-     *
+     * @param exception Exception to be logged.
      * @param message Message to write to the log file AND be displayed in the
      *                error pane.
      * @param title   Title of the error message box.
+     * @param args    Variable list of arguments for the message.
      */
-    public void errorDialog(Throwable e, String message, String title, Object... args) {
-        Sentry.captureException(e);
+    public void errorDialog(Throwable exception, String message, String title, Object... args) {
+        Sentry.captureException(exception);
         message = parametrizedStringAnyway(message, args);
-        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, e);
+        exLoggerWrapper.logIfEnabled(MMLogger.FQCN, Level.ERROR, null, message, exception);
         popupErrorDialog(title, message);
-    }
-
-    private String parametrizedStringIfEnabled(Level level, String message, Object... args) {
-        if (isEnabled(level, null, message) && args.length > 0) {
-            message = parametrizedStringAnyway(message, args);
-        }
-        return message;
-    }
-
-
-    private String parametrizedStringAnyway(String message, Object... args) {
-        if (args.length > 0) {
-            if (message.contains("{}")) {
-                message = new ParameterizedMessage(message, args).getFormattedMessage();
-            } else {
-                message = String.format(message, args);
-            }
-        }
-        return message;
     }
 
     /**
@@ -269,6 +231,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param message Message to write to the log file AND be displayed in the
      *                error pane.
      * @param title   Title of the error message box.
+     * @param args      Variable list of arguments for the message
      */
     public void errorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
@@ -282,6 +245,7 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param message Message to write to the log file AND be displayed in the
      *                error pane.
      * @param title   Title of the error message box.
+     * @param args      Variable list of arguments for the message
      */
     private void popupErrorDialog(String title, String message, Object... args) {
         message = parametrizedStringAnyway(message, args);
@@ -322,11 +286,10 @@ public class MMLogger extends ExtendedLoggerWrapper {
     /**
      * Fatal Level Logging w/ Exception w/ Dialog
      *
-     * @deprecated (since 01-feb-2025) Use {@link #fatalDialog(Throwable, String, String)} instead.
+     * @deprecated (since 21-feb-2025) Use {@link #fatalDialog(Throwable, String, String)} instead.
      * @param exception Exception that was triggered. Probably uncaught.
      * @param message   Message to report to the log file.
      * @param title     Title of the error message box.
-     *
      */
     @Deprecated
     public void fatal(Throwable exception, String message, String title) {
@@ -339,7 +302,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * @param exception Exception that was triggered. Probably uncaught.
      * @param message   Message to report to the log file.
      * @param title     Title of the error message box.
-     *
      */
     public void fatalDialog(Throwable exception, String message, String title) {
         fatal(exception, message);
@@ -348,10 +310,9 @@ public class MMLogger extends ExtendedLoggerWrapper {
 
     /**
      *  Fatal Level Logging w/o Exception w/ Dialog
-     * @deprecated (since 01-feb-2025) Use {@link #fatalDialog(String, String)} instead.
+     * @deprecated (since 21-feb-2025) Use {@link #fatalDialog(String, String)} instead.
      * @param message Message to report to the log file.
      * @param title   Title of the error message box.
-     *
      */
     @Deprecated
     public void fatal(String message, String title) {
@@ -363,7 +324,6 @@ public class MMLogger extends ExtendedLoggerWrapper {
      *
      * @param message Message to report to the log file.
      * @param title   Title of the error message box.
-     *
      */
     public void fatalDialog(String message, String title) {
         fatal(message);
@@ -388,10 +348,28 @@ public class MMLogger extends ExtendedLoggerWrapper {
      * method.
      *
      * @param checkedLevel Passed in Level to compare to.
-     * @return
+     * @return True if the current log level is less specific than the passed in
      */
     public boolean isLevelLessSpecificThan(Level checkedLevel) {
         return exLoggerWrapper.getLevel().isLessSpecificThan(checkedLevel);
+    }
+
+    private String parametrizedStringIfEnabled(Level level, String message, Object... args) {
+        if (isEnabled(level, null, message) && args.length > 0) {
+            message = parametrizedStringAnyway(message, args);
+        }
+        return message;
+    }
+
+    private String parametrizedStringAnyway(String message, Object... args) {
+        if (args.length > 0) {
+            if (message.contains("{}")) {
+                message = new ParameterizedMessage(message, args).getFormattedMessage();
+            } else {
+                message = String.format(message, args);
+            }
+        }
+        return message;
     }
 
 }

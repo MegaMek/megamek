@@ -1115,7 +1115,7 @@ public abstract class Mek extends Entity {
 
     public boolean hasChainDrape() {
         for (MiscMounted mount : getMisc()) {
-            if (!mount.isDestroyed() && mount.getType().hasFlag(MiscType.F_CHAIN_DRAPE)) {
+            if (mount.getType().hasFlag(MiscType.F_CHAIN_DRAPE) && !mount.isDestroyed()) {
                 return true;
             }
         }

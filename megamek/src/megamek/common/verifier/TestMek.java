@@ -442,11 +442,11 @@ public class TestMek extends TestEntity {
         }
         if (mt.hasFlag(MiscType.F_CHAIN_DRAPE)) {
             if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LT) != 3) {
-                buff.append("incorrect number of chain draop crits in left torso\n");
+                buff.append("incorrect number of chain drape crits in left torso\n");
                 return false;
             }
             if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RT) != 3) {
-                buff.append("incorrect number of chain draop crits in right torso\n");
+                buff.append("incorrect number of chain drape crits in right torso\n");
                 return false;
             }
         }

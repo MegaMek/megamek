@@ -31522,7 +31522,7 @@ public class TWGameManager extends AbstractGameManager {
                 StringBuilder msg = new StringBuilder("Missed due to elevation difference: ")
                     .append("entity lvl/ht: ").append(hex.getLevel()).append("/").append(entity.getElevation())
                         .append("; current blast level: ").append(altitude);
-                logger.warn(msg.toString());
+                logger.debug(msg.toString());
                 // We now track the blast on a per-level basis
                 continue;
             }

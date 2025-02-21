@@ -45,6 +45,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #6570: Support Multiple Trailers from Lobby
 + Fix #6577: Fix duplicate LoS effects for to-hit
 + MML #1527: Armor validation #6583
++ Fix #6441: QuadVee fall fix
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

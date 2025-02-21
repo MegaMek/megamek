@@ -638,10 +638,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Coords previousCoords = entity.getPosition();
         for (var unitLocation : unitLocations) {
             var coords = unitLocation.getCoords();
-            movePathLines.add(new Line(previousCoords.getX(), previousCoords.getY(),
-                coords.getX(), coords.getY(),
-                MOVE_PATH_COLOR,
-                game.getCurrentRound()));
+            if (previousCoords != null) {
+                movePathLines.add(new Line(previousCoords.getX(), previousCoords.getY(),
+                    coords.getX(), coords.getY(),
+                    MOVE_PATH_COLOR,
+                    game.getCurrentRound()));
+            }
             previousCoords = coords;
         }
     }
@@ -786,12 +788,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
             0, new float[]{6}, 3);
         g2d.setStroke(dashed);
-        Color previousColor = g.getColor();
         for (Line line : movePathLines) {
             paintMoveTrack(g2d, line);
         }
         g2d.dispose();
-        g.setColor(previousColor);
     }
 
     /** Indicates the deployment hexes. */

@@ -277,9 +277,6 @@ public class BombAttackHandler extends WeaponHandler {
                     for (Coords c : hexes) {
                         gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
-                } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
-                    hitIds = AreaEffectHelper.processFuelAirDamage(drop, dropHex.getTargetLevel(),
-                        (BombType) EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
                     // We want to make this a HexTarget so we can ensure drifts happen at the same elevation
                     // (Currently this is not working correctly because we don't pass targetLevel over the wire)

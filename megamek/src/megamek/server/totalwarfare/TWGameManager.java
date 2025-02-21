@@ -31648,18 +31648,24 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
-        DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(ammo, 0, false);
+        if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+            // pass FAE bombs with the special handler
+            alreadyHit = AreaEffectHelper.processFuelAirDamage(center, targetLevel,
+                (BombType) EquipmentType.get(BombType.getBombInternalName(type)), killer, vPhaseReport, this);
+        } else {
+            // All other damage-dealing bombs
+            DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(ammo, 0, false);
+            HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+                ammo, center, falloff, targetLevel, false, false, false, game, false);
 
-        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
-            ammo, center, falloff, targetLevel, false, false, false, game, false);
-
-        for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
-            Coords bCoords = entry.getValue();
-            int bLevel = entry.getKey();
-            alreadyHit = artilleryDamageHex(
-                bCoords, center, blastShape.get(entry), ammo, subjectId, killer, null, false,
-                bLevel, targetLevel, vPhaseReport, false, alreadyHit, false, falloff
-            );
+            for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+                Coords bCoords = entry.getValue();
+                int bLevel = entry.getKey();
+                alreadyHit = artilleryDamageHex(
+                    bCoords, center, blastShape.get(entry), ammo, subjectId, killer, null, false,
+                    bLevel, targetLevel, vPhaseReport, false, alreadyHit, false, falloff
+                );
+            }
         }
 
         // Lets reports assess if anything was caught in area

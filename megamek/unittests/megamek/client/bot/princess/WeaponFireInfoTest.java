@@ -339,10 +339,4 @@ class WeaponFireInfoTest {
         assertEquals(expectedTHD.getDesc(), processed.getDesc());
         assertNotEquals(originalTHD, processed);
     }
-
-    @Test
-    void testComputeExpectedBombDamageOnlyEnemy() {
-//        WeaponFireInfo testBombWFI = setupBombWFI();
-
-    }
 }

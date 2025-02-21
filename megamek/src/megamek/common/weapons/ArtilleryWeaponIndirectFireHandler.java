@@ -302,6 +302,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
+        int altitude = 0;
+        if (isFlak) {
+            altitude = target.getElevation();
+        }
+
         // if attacker is an off-board artillery piece, check to see if we need to set
         // observation flags
         if (aaa.getEntity(game).isOffBoard()) {
@@ -317,9 +322,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
+            Hex finalHex = game.getBoard().getHex(finalPos);
+            altitude = (finalHex != null) ? finalHex.getLevel() : altitude;
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
-                            finalPos, aaa.getTarget(game).getElevation(), atype, aaa.getEntity(game), vPhaseReport, gameManager));
+                            finalPos, altitude, atype, aaa.getEntity(game), vPhaseReport, gameManager));
             return false;
         }
 
@@ -379,11 +386,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (atype.getMunitionType().contains(Munitions.M_LASER_INHIB)) {
             gameManager.deliverLIsmoke(finalPos, vPhaseReport);
             return false;
-        }
-
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
         }
 
         // check to see if this is a mine clearing attack

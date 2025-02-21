@@ -31454,7 +31454,7 @@ public class TWGameManager extends AbstractGameManager {
                     buildingDamage = damage * ((falloff.radius > 0) ? 3 : 2);
                     // Lower damage as distance increases
                     int hDist = coords.distance(attackSource);
-                    int vDist = Math.abs(targetLevel = altitude);
+                    int vDist = Math.abs(targetLevel - altitude);
                     if (falloff.radius == 0) {
                         // For single-hex AE attacks, damage above and below center is normal damage
                         if (hDist == 0 && vDist == 1) {
@@ -31519,6 +31519,10 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             } else if ((entity.getElevation() + hex.getLevel() > altitude)
                 || (entity.getElevation() + entity.getHeight() + hex.getLevel() < altitude) ) {
+                StringBuilder msg = new StringBuilder("Missed due to elevation difference: ")
+                    .append("entity lvl/ht: ").append(hex.getLevel()).append("/").append(entity.getElevation())
+                        .append("; current blast level: ").append(altitude);
+                logger.warn(msg.toString());
                 // We now track the blast on a per-level basis
                 continue;
             }

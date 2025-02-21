@@ -218,10 +218,17 @@ public class AreaEffectHelper {
             vPhaseReport.addElement(r);
         }
 
+        // assemble collection of <level, Coords> 3D locations at ranges 0 to radius
+        // for each hex, invoke artilleryDamageHex, with the damage set according to
+        // the blast shape (damage is divided by half, round up for thin atmo)
+        // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
+        // on 9-, BA dies on 7-
+        // Use DamageFalloff to signal building damage factor
         DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
         HashMap<Entry<Integer, Coords>, Integer> blastShape = shapeBlast(
             ammo, center, falloff, height, !(ammo instanceof BombType), false, false, game, false
         );
+        ArrayList<Coords> checkedAdditional = new ArrayList<>();
 
         for (Entry<Integer, Coords> entry: blastShape.keySet()) {
             Coords bCoords = entry.getValue();
@@ -231,61 +238,24 @@ public class AreaEffectHelper {
             if (thinAir) {
                 damage = (int) Math.ceil(damage / 2.0);
             }
-            checkInfantryDestruction(bCoords, distance, attacker, entitiesToExclude, vPhaseReport, game,
-                gameManager);
-
             gameManager.artilleryDamageHex(bCoords, center, damage, ammo, attacker.getId(),
-                attacker, null, false, 0, bLevel, vPhaseReport, false,
+                attacker, null, false, bLevel, height, vPhaseReport, false,
                 entitiesToExclude, false, falloff);
 
-            TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-            gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
-
-            clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
-                gameManager);
-        }
-
-        // assemble collection of hexes at ranges 0 to radius
-        // for each hex, invoke artilleryDamageHex, with the damage set according to
-        // this:
-        // radius chart
-        // (divided by half, round up for thin atmo)
-        // not here, but in artilleryDamageHex, make sure to 2x damage for infantry
-        // outside of building
-        // not here, but in artilleryDamageHex, make sure to 1.5x damage for light
-        // building or unit with armor BAR < 10
-        // not here, but in artilleryDamageHex, make sure to .5x damage for "castle
-        // brian" or "armored" building
-        // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
-        // on 9-, BA dies on 7-
-        // Use DamageFalloff to signal building damage factor
-        /**
-        for (int damageBracket = blastRadius,
-                distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
-            List<Coords> donut = center.allAtDistance(distFromCenter);
-            for (Coords coords : donut) {
-                int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-                if (conditions.getAtmosphere().isThin()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                }
-                falloff.damage = damage;
-                falloff.radius = blastRadius;
-
-                checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game,
-                        gameManager);
-
-                gameManager.artilleryDamageHex(coords, center, damage, ammo, attacker.getId(),
-                        attacker, null, false, 0, 0, vPhaseReport, false,
-                        entitiesToExclude, false, falloff);
+            if (!checkedAdditional.contains(bCoords)) {
+                // Perform additional destruction / ignition / minefield checks once per coordinate
+                checkInfantryDestruction(bCoords, distance, attacker, entitiesToExclude, vPhaseReport, game,
+                    gameManager);
 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-                gameManager.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
 
-                clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
-                        gameManager);
+                clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
+                    gameManager);
+
+                checkedAdditional.add(bCoords);
             }
-         }
-         */
+        }
         return entitiesToExclude;
     }
 
@@ -402,7 +372,7 @@ public class AreaEffectHelper {
         int cluster = 5;
 
         // Check: is entity inside building?
-        if ((bldg != null) && (bldgAbsorbs > 0)
+        if ((bldg != null) && (bldgAbsorbs > 0) && hex != null
                 && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             cluster -= bldgAbsorbs;
             // some buildings scale remaining damage that is not absorbed
@@ -666,7 +636,8 @@ public class AreaEffectHelper {
         if (List.of(
                 AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_PRIM, AmmoType.T_LONG_TOM_CANNON,
                 AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON,
-                AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON
+                AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON,
+                AmmoType.T_ARROW_IV, AmmoType.T_ARROWIV_PROTO
             ).contains(ammo.getAmmoType())
         ) {
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);

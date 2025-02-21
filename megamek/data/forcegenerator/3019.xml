@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3019-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -633,7 +630,7 @@
 			<availability>FS:6,LA:7,FWL:6,DC:7,CC:6,MERC:6,CS!A:3!B:3!C:4!D:5!F:6,Periphery:5,TC:6,NIOPS:5,Periphery.Deep:3</availability>
             <model name='ARC-1A'>
                 <roles>fire_support</roles>
-                <availability>Periphery:1-,TC:1-,NIOPS:0,HL:7-,Periphery.Deep:8,PIR:5-</availability>
+                <availability>Periphery:1-,NIOPS:0,HL:7-,Periphery.Deep:8,PIR:5-</availability>
             </model>
             <model name='ARC-2K'>
 				<roles>command,fire_support</roles>
@@ -1424,7 +1421,7 @@
             </model>
         </chassis>
 		<chassis name='Catapult' unitType='Mek'>
-			<availability>IS:1+,FS:3+,LA:1+,FWL:2+,DC:3+,CC:5+,MERC:2+,CS:3-,Periphery:1+,Periphery.HR:1+,Periphery.CM:2+,NIOPS:2</availability>
+			<availability>IS:1+,FS:3+,LA:1+,FWL:2+,DC:3+,CC:5+,MERC:2+,CS:3-,Periphery:1+,Periphery.CM:2+,NIOPS:2</availability>
 			<model name='CPLT-A1'>
 				<roles>fire_support</roles>
 				<availability>CC:4</availability>
@@ -3176,12 +3173,12 @@
 			</model>
 		</chassis>
         <chassis name='Hammerhands' unitType='Mek'>
-            <availability>FS:1-</availability>
+            <availability>FS:1-,Periphery.HR:1-</availability>
             <model name='HMH-3D'>
-                <availability>FS:8</availability>
+                <availability>FS:8,Periphery.HR:8</availability>
             </model>
             <model name='HMH-4D'>
-                <availability>FS:6</availability>
+                <availability>FS:6,Periphery.HR:6</availability>
             </model>
         </chassis>
 		<chassis name='Hammerhead' unitType='AeroSpaceFighter'>
@@ -4045,6 +4042,15 @@
 				<availability>DC:1</availability>
 			</model>
 		</chassis>
+        <chassis name='Koschei' unitType='Mek'>
+            <availability>CC:1-,Periphery.HR:2,Periphery.CM:1,TC:1-</availability>
+            <model name='KSC-3I'>
+                <availability>CC:8,Periphery.HR:8,Periphery.CM:8,TC:8</availability>
+            </model>
+            <model name='KSC-3L'>
+                <availability>CC:6,Periphery.HR:6,Periphery.CM:6,TC:6</availability>
+            </model>
+        </chassis>
 		<chassis name='Koshi (Mist Lynx)' unitType='Mek' omni='Clan'>
 			<availability>CIH:6,CLAN:7,CCO:5,BAN:7,CSA:5,CW:6,CSJ:9,CJF:5,CB:6</availability>
 			<model name='A'>

@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
@@ -130,6 +131,7 @@ public class AreaEffectHelper {
             Vector<Report> vPhaseReport, TWGameManager gameManager) {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean thinAir = conditions.getAtmosphere().isThin();
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
 
@@ -145,7 +147,7 @@ public class AreaEffectHelper {
 
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (conditions.getAtmosphere().isThin()) {
+        if (thinAir) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -187,11 +189,15 @@ public class AreaEffectHelper {
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
-    public static Vector<Integer> processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
-            Vector<Report> vPhaseReport, TWGameManager gameManager) {
+    public static Vector<Integer> processFuelAirDamage(
+        Coords center, int height, AmmoType ammo, Entity attacker,
+            Vector<Report> vPhaseReport, TWGameManager gameManager
+    ) {
         Game game = attacker.getGame();
         Vector<Integer> entitiesToExclude = new Vector<>();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean thinAir = conditions.getAtmosphere().isThin();
+
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
         if (game.getBoard().inSpace()
@@ -204,14 +210,39 @@ public class AreaEffectHelper {
             return entitiesToExclude;
         }
 
-        int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
-
-        if (conditions.getAtmosphere().isThin()) {
+        if (thinAir) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
             r.newlines = 1;
             vPhaseReport.addElement(r);
+        }
+
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        HashMap<Entry<Integer, Coords>, Integer> blastShape = shapeBlast(
+            ammo, center, falloff, height, !(ammo instanceof BombType), false, false, game, false
+        );
+
+        for (Entry<Integer, Coords> entry: blastShape.keySet()) {
+            Coords bCoords = entry.getValue();
+            int bLevel = entry.getKey();
+            int distance = bCoords.distance(center);
+            int damage = blastShape.get(entry);
+            if (thinAir) {
+                damage = (int) Math.ceil(damage / 2.0);
+            }
+            checkInfantryDestruction(bCoords, distance, attacker, entitiesToExclude, vPhaseReport, game,
+                gameManager);
+
+            gameManager.artilleryDamageHex(bCoords, center, damage, ammo, attacker.getId(),
+                attacker, null, false, 0, bLevel, vPhaseReport, false,
+                entitiesToExclude, false, falloff);
+
+            TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
+            gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+
+            clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
+                gameManager);
         }
 
         // assemble collection of hexes at ranges 0 to radius
@@ -228,7 +259,7 @@ public class AreaEffectHelper {
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
         // on 9-, BA dies on 7-
         // Use DamageFalloff to signal building damage factor
-        DamageFalloff falloff = new DamageFalloff();
+        /**
         for (int damageBracket = blastRadius,
                 distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
             List<Coords> donut = center.allAtDistance(distFromCenter);
@@ -243,7 +274,7 @@ public class AreaEffectHelper {
                 checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game,
                         gameManager);
 
-                gameManager.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(),
+                gameManager.artilleryDamageHex(coords, center, damage, ammo, attacker.getId(),
                         attacker, null, false, 0, 0, vPhaseReport, false,
                         entitiesToExclude, false, falloff);
 
@@ -253,7 +284,8 @@ public class AreaEffectHelper {
                 clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
                         gameManager);
             }
-        }
+         }
+         */
         return entitiesToExclude;
     }
 
@@ -638,7 +670,10 @@ public class AreaEffectHelper {
             ).contains(ammo.getAmmoType())
         ) {
             radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
-
+            // Fuel-Air munitions get special radius
+            if (ammo.getMunitionType().contains(Munitions.M_FAE)) {
+                radius = getFuelAirBlastRadiusIndex(ammo.getInternalName());
+            }
         }
 
         // Capital and Sub-capital missiles
@@ -727,7 +762,7 @@ public class AreaEffectHelper {
             }
         }
 
-        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
+        if (ammo.getMunitionType().contains(Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard
             if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
                 damage -= 5;
@@ -741,7 +776,7 @@ public class AreaEffectHelper {
             radius = 1;
             clusterMunitionsFlag = true;
 
-        } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
+        } else if (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)) {
             // TODO: update to current TacOps rules (damage differs between armor types)
             falloff = switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute

@@ -265,6 +265,10 @@ public class BombAttackHandler extends WeaponHandler {
                         continue;
                     }
                 }
+                // Capture drop hex info
+                HexTarget dropHex = new HexTarget(drop, target.getTargetType());
+                dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
+
                 if (type == BombType.B_INFERNO) {
                     hitIds = gameManager.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
@@ -274,13 +278,11 @@ public class BombAttackHandler extends WeaponHandler {
                         gameManager.deliverThunderMinefield(c, ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
-                    hitIds = AreaEffectHelper.processFuelAirDamage(drop,
-                            EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
+                    hitIds = AreaEffectHelper.processFuelAirDamage(drop, dropHex.getTargetLevel(),
+                        (BombType) EquipmentType.get(BombType.getBombInternalName(type)), ae, vPhaseReport, gameManager);
                 } else {
                     // We want to make this a HexTarget so we can ensure drifts happen at the same elevation
                     // (Currently this is not working correctly because we don't pass targetLevel over the wire)
-                    HexTarget dropHex = new HexTarget(drop, target.getTargetType());
-                    dropHex.setTargetLevel(((HexTarget) target).getTargetLevel());
                     hitIds = gameManager.deliverBombDamage(dropHex, type, subjectId, ae, vPhaseReport);
                 }
 

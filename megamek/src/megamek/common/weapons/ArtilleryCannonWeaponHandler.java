@@ -194,7 +194,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                             targetPos, atype, targetPos, false, ae, null, target.getElevation(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, target.getElevation(),
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 

@@ -319,7 +319,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
-                            finalPos, atype, aaa.getEntity(game), vPhaseReport, gameManager));
+                            finalPos, aaa.getTarget(game).getElevation(), atype, aaa.getEntity(game), vPhaseReport, gameManager));
             return false;
         }
 

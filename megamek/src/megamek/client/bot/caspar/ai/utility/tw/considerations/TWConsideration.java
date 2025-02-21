@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import megamek.ai.utility.Consideration;
 import megamek.ai.utility.Curve;
-import megamek.common.Entity;
 
 import java.util.Map;
 

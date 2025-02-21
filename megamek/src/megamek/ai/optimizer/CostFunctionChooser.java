@@ -29,7 +29,8 @@ public enum CostFunctionChooser {
     Princess,
     Utility,
     ExtendedUtility,
-    NeuralNetwork;
+    NeuralNetwork,
+    ExtendedNeuralNetwork;
 
     public static CostFunctionChooser fromString(String str) {
         return switch (str) {
@@ -45,19 +46,28 @@ public enum CostFunctionChooser {
         return String.join(", ", Arrays.stream(values()).map(Enum::name).toArray(String[]::new));
     }
 
-    public CostFunction createCostFunction(CardinalEdge edge, Board board, Object... config) {
+    public CostFunction createCostFunction(CardinalEdge edge, Board board, List<Consideration> considerations) {
         return switch (this) {
             case Princess -> new BasicPathRankerCostFunction(edge, board);
             case Utility -> new UtilityPathRankerCostFunction(edge, new UtilityPathRankerCostFunction.CostFunctionSwarmContext(), board);
-            case ExtendedUtility -> new ExtendedCostFunction(new UtilityPathRankerCostFunction(edge, new UtilityPathRankerCostFunction.CostFunctionSwarmContext(), board));
+            case ExtendedUtility -> new ExtendedCostFunction(new UtilityPathRankerCostFunction(edge,
+                new UtilityPathRankerCostFunction.CostFunctionSwarmContext(), board));
             case NeuralNetwork -> new NeuralNetworkPathRankerCostFunction(
-                new NeuralNetwork(150, 75, 1),
-                config.length > 0 ? (List<Consideration>) config[0] : new ArrayList<>(),
-                new StrategicGoalsManager().initializeStrategicGoals(board, 11, 11),
-                config.length > 1 ? (BehaviorSettings) config[1] : BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
+                NeuralNetworkFactory.createNeuralNetworkForConsiderationsAndThreatHeatmap(considerations.size(), 50),
+                considerations,
+                new StrategicGoalsManager().initializeStrategicGoals(board, 5, 5),
+                BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
                 board,
-                config.length > 2 ? (Game) config[2] : new Game()
+                new Game()
             );
+            case ExtendedNeuralNetwork -> new ExtendedCostFunction(new NeuralNetworkPathRankerCostFunction(
+                NeuralNetworkFactory.createNeuralNetworkForConsiderationsAndThreatHeatmap(considerations.size(), 50),
+                considerations,
+                new StrategicGoalsManager().initializeStrategicGoals(board, 5, 5),
+                BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
+                board,
+                new Game()
+            ));
         };
     }
 }

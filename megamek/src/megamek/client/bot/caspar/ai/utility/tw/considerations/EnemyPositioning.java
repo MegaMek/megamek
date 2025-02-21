@@ -19,9 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.StructOfUnitArrays;
 import megamek.common.Coords;
-import megamek.common.Entity;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 

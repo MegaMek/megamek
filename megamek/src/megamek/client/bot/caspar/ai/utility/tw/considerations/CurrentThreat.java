@@ -16,8 +16,8 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
-import megamek.common.Entity;
 
 import java.util.Map;
 
@@ -30,6 +30,14 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class CurrentThreat extends TWConsideration {
 
     public CurrentThreat() {
+    }
+
+    public CurrentThreat(String name) {
+        super(name);
+    }
+
+    public CurrentThreat(String name, Curve curve) {
+        super(name, curve);
     }
 
     @Override

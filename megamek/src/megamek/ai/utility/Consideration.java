@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.*;
 import megamek.client.bot.caspar.ai.utility.tw.considerations.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -78,7 +79,7 @@ public abstract class Consideration implements NamedObject {
     @JsonProperty("curve")
     private Curve curve;
     @JsonProperty("parameters")
-    protected Map<String, Object> parameters = Collections.emptyMap();
+    protected Map<String, Object> parameters = new HashMap<>();
 
     public Consideration() {
     }
@@ -88,13 +89,21 @@ public abstract class Consideration implements NamedObject {
     }
 
     public Consideration(String name, Curve curve) {
-        this(name, curve, Collections.emptyMap());
+        this(name, curve, new HashMap<>(4));
     }
 
     public Consideration(String name, Curve curve, Map<String, Object> parameters) {
         this.name = name;
         this.curve = curve;
-        this.parameters = Map.copyOf(parameters);
+        this.parameters = new HashMap<>();
+        for (String key : parameters.keySet()) {
+            if (getParameterTypes().containsKey(key)) {
+                this.parameters.put(key, parameters.get(key));
+            } else {
+                throw new IllegalArgumentException("Unknown parameter: " + key);
+            }
+        }
+
     }
 
     @JsonIgnore

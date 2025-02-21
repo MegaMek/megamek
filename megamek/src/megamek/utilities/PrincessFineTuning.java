@@ -17,12 +17,18 @@ package megamek.utilities;
 import megamek.ai.dataset.DatasetParser;
 import megamek.ai.dataset.TrainingDataset;
 import megamek.ai.optimizer.*;
+import megamek.ai.utility.Consideration;
+import megamek.ai.utility.DefaultCurve;
+import megamek.ai.utility.LogisticCurve;
+import megamek.client.bot.caspar.ai.utility.tw.considerations.*;
+import megamek.client.bot.caspar.ai.utility.tw.profile.TWProfile;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.common.Board;
 import megamek.common.MapSettings;
 import megamek.common.util.BoardUtilities;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -131,6 +137,60 @@ public class PrincessFineTuning {
         return BoardUtilities.generateRandom(mapSettings);
     }
 
+    private static List<Consideration> considerations;
+    static {
+        considerations = new ArrayList<>();
+        considerations.add(new BackSide("Backside", DefaultCurve.Logistic.getCurve()));
+        considerations.add(new FrontSide("Frontside", DefaultCurve.Logistic.getCurve()));
+        considerations.add(new RightSide());
+        considerations.add(new LeftSide());
+        considerations.add(new OverallArmor());
+    }
+    // @JsonSubTypes.Type(value = BackSide.class, name = "BackSide"),
+    //@JsonSubTypes.Type(value = CoverFire.class, name = "CoverFire"),
+    //@JsonSubTypes.Type(value = CrowdingEnemies.class, name = "CrowdingEnemies"),
+    //@JsonSubTypes.Type(value = CrowdingFriends.class, name = "CrowdingFriends"),
+    //@JsonSubTypes.Type(value = CurrentThreat.class, name = "CurrentThreat"),
+    //    //@JsonSubTypes.Type(value = DamageOutput.class, name = "DamageOutput"),
+    //@JsonSubTypes.Type(value = DecoyValue.class, name = "DecoyValue"),
+    //@JsonSubTypes.Type(value = ECMCoverage.class, name = "ECMCoverage"),
+    //@JsonSubTypes.Type(value = EnemyECMCoverage.class, name = "EnemyECMCoverage"),
+    //@JsonSubTypes.Type(value = EnemyPositioning.class, name = "EnemyPositioning"),
+    //@JsonSubTypes.Type(value = EnvironmentalCover.class, name = "EnvironmentalCover"),
+    //@JsonSubTypes.Type(value = EnvironmentalHazard.class, name = "EnvironmentalHazard"),
+    //@JsonSubTypes.Type(value = FacingTheEnemy.class, name = "FacingTheEnemy"),
+    //@JsonSubTypes.Type(value = FavoriteTargetInRange.class, name = "FavoriteTargetInRange"),
+    //@JsonSubTypes.Type(value = FireExposure.class, name = "FireExposure"),
+    //@JsonSubTypes.Type(value = FlankingPosition.class, name = "FlankingPosition"),
+    //@JsonSubTypes.Type(value = FormationCohesion.class, name = "FormationCohesion"),
+    //@JsonSubTypes.Type(value = FriendlyArtilleryFire.class, name = "FriendlyArtilleryFire"),
+    //@JsonSubTypes.Type(value = FriendlyPositioning.class, name = "FriendlyPositioning"),
+    //@JsonSubTypes.Type(value = FriendsCoverFire.class, name = "FriendsCoverFire"),
+    //@JsonSubTypes.Type(value = FrontSide.class, name = "FrontSide"),
+    //@JsonSubTypes.Type(value = HeatVulnerability.class, name = "HeatVulnerability"),
+    //@JsonSubTypes.Type(value = IsVIPCloser.class, name = "IsVIPCloser"),
+    //@JsonSubTypes.Type(value = KeepDistance.class, name = "KeepDistance"),
+    //@JsonSubTypes.Type(value = LeftSide.class, name = "LeftSide"),
+    //@JsonSubTypes.Type(value = MyUnitBotSettings.class, name = "MyUnitBotSettings"),
+    //@JsonSubTypes.Type(value = MyUnitHeatManagement.class, name = "MyUnitHeatManagement"),
+    //@JsonSubTypes.Type(value = MyUnitIsCrippled.class, name = "MyUnitIsCrippled"),
+    //@JsonSubTypes.Type(value = MyUnitIsMovingTowardsWaypoint.class, name = "MyUnitIsMovingTowardsWaypoint"),
+    //@JsonSubTypes.Type(value = MyUnitMoved.class, name = "MyUnitMoved"),
+    //@JsonSubTypes.Type(value = MyUnitRoleIs.class, name = "MyUnitRoleIs"),
+    //@JsonSubTypes.Type(value = MyUnitTMM.class, name = "MyUnitTMM"),
+    //@JsonSubTypes.Type(value = MyUnitUnderThreat.class, name = "MyUnitUnderThreat"),
+    //@JsonSubTypes.Type(value = OverallArmor.class, name = "OverallArmor"),
+    //@JsonSubTypes.Type(value = PilotingCaution.class, name = "PilotingCaution"),
+    //@JsonSubTypes.Type(value = Retreat.class, name = "Retreat"),
+    //@JsonSubTypes.Type(value = RightSide.class, name = "RightSide"),
+    //@JsonSubTypes.Type(value = Scouting.class, name = "Scouting"),
+    //@JsonSubTypes.Type(value = StandStill.class, name = "StandStill"),
+    //@JsonSubTypes.Type(value = StrategicGoal.class, name = "StrategicGoal"),
+    //@JsonSubTypes.Type(value = TargetUnitsArmor.class, name = "TargetUnitsArmor"),
+    //@JsonSubTypes.Type(value = TargetWithinOptimalRange.class, name = "TargetWithinOptimalRange"),
+    //@JsonSubTypes.Type(value = TargetWithinRange.class, name = "TargetWithinRange"),
+    //@JsonSubTypes.Type(value = TurnsToEncounter.class, name = "TurnsToEncounter")
+
     /**
      * Main method to run the fine-tuning process.
      *
@@ -144,7 +204,10 @@ public class PrincessFineTuning {
 
         TrainingDataset dataset = loadTrainingDatasetFromFiles(arguments.gameActionsLogFiles);
         Board board = createBoard(dataset);
-        CostFunction costFunction = arguments.costFunction.createCostFunction(CardinalEdge.NORTH, board);
+
+        List<Consideration> considerations = new ArrayList<>();
+
+        CostFunction costFunction = arguments.costFunction.createCostFunction(CardinalEdge.NORTH, board, considerations);
 
         PrincessFineTuning princessFineTuning = new PrincessFineTuning(
             dataset, costFunction, arguments.iterations, 50, 5913, 0.01);

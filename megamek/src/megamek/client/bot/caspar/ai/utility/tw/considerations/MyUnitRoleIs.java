@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.common.Entity;
 import megamek.common.UnitRole;
 
 import java.util.Map;

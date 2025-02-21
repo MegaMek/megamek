@@ -215,6 +215,13 @@ public class DecisionScoreEvaluatorPane extends JPanel {
         considerationPaneList.clear();
     }
 
+    public void newDse(String name, String description, String notes) {
+        reset();
+        nameField.setText(name);
+        descriptionField.setText(description);
+        notesField.setText(notes);
+    }
+
     public void setDecisionScoreEvaluator(AtomicReference<TWDecisionScoreEvaluator> dse) {
         editedDecisionScoreEvaluator = dse;
         setDecisionScoreEvaluator(dse.get());

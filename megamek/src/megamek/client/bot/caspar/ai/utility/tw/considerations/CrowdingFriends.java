@@ -16,9 +16,13 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.GunEmplacement;
+import megamek.common.Mek;
+import megamek.common.Tank;
 
 import java.util.Map;
 
@@ -30,13 +34,27 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 @JsonTypeName("CrowdingFriends")
 public class CrowdingFriends extends TWConsideration {
 
-    public static final String herdingDistanceParam = "herding distance";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(herdingDistanceParam, int.class);
+    public static final String herdingDistanceParam = "crowding distance tolerance";
+    private static final Map<String, Class<?>> parameterTypes = Map.of(herdingDistanceParam, Integer.class);
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
         herdingDistanceParam, new ParameterTitleTooltip("HerdingDistance"));
 
     public CrowdingFriends() {
         parameters.put(herdingDistanceParam, 6);
+    }
+
+    public CrowdingFriends(String name) {
+        super(name);
+        parameters.put(herdingDistanceParam, 6);
+    }
+
+    public CrowdingFriends(String name, Curve curve) {
+        super(name, curve);
+        parameters.put(herdingDistanceParam, 6);
+    }
+
+    public CrowdingFriends(String name, Curve curve, Map<String, Object> parameters) {
+        super(name, curve, parameters);
     }
 
     @Override

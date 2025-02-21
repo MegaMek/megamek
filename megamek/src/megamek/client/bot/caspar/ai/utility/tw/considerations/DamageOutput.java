@@ -16,10 +16,9 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Entity;
 
 import java.util.Map;
 
@@ -33,10 +32,25 @@ public class DamageOutput extends TWConsideration {
 
     private static final String damageFactorParam = "damage factor";
     private static final Map<String, Class<?>> parameterTypes = Map.of(damageFactorParam, Integer.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(damageFactorParam, new ParameterTitleTooltip("DamageFactor"));
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(damageFactorParam,
+        new ParameterTitleTooltip("DamageFactor"));
 
     public DamageOutput() {
         parameters = Map.of(damageFactorParam, 2);
+    }
+
+    public DamageOutput(String name) {
+        super(name);
+        parameters = Map.of(damageFactorParam, 2);
+    }
+
+    public DamageOutput(String name, Curve curve) {
+        super(name, curve);
+        parameters = Map.of(damageFactorParam, 2);
+    }
+
+    public DamageOutput(String name, Curve curve, Map<String, Object> parameters) {
+        super(name, curve, parameters);
     }
 
     @Override

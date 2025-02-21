@@ -17,9 +17,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
 
 import java.util.Map;
 

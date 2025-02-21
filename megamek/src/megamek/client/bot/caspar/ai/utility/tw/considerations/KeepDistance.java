@@ -17,10 +17,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.common.Entity;
-import megamek.common.UnitRole;
 
 import java.util.Map;
 
@@ -37,7 +33,6 @@ public class KeepDistance extends TWConsideration {
 
     @Override
     public double score(DecisionContext context) {
-
         long numberOfEnemiesTooClose = context.getNClosestEnemiesPositions(context.getFinalPosition(), 10).stream()
             .filter(c -> c.distance(context.getFinalPosition()) <= 12).count();
         return clamp01(numberOfEnemiesTooClose / 10);

@@ -17,16 +17,10 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Entity;
-import megamek.common.Mek;
 import megamek.common.options.OptionsConstants;
 
-import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
-import java.util.stream.Stream;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 

@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.common.Entity;
 
 import java.util.Map;
 
@@ -34,8 +33,8 @@ public class DecoyValue extends TWConsideration {
     public static final String minRunParam = "Minimal run MP";
 
     private static final Map<String, Class<?>> parameterTypes = Map.of(
-        minJumpParam, int.class,
-        minRunParam, int.class);
+        minJumpParam, Integer.class,
+        minRunParam, Integer.class);
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
         minJumpParam, new ParameterTitleTooltip("MinJumpParam"),
         minRunParam, new ParameterTitleTooltip("MinRunParam")

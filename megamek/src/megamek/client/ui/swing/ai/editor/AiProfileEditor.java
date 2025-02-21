@@ -663,7 +663,7 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     private void createNewProfile() {
         profileId = -1;
         profileNameTextField.setText(Messages.getString("aiEditor.new.profile"));
-        descriptionTextField.setText(Messages.getString("aiEditor.new.profile.description", new Date()));
+        descriptionTextField.setText(Messages.getFormattedString("aiEditor.new.profile.description", new Date().toString()));
         profileDecisionTable.setModel(new DecisionTableModel<>());
         initializeProfileUI();
         mainEditorTabbedPane.setSelectedComponent(profileTabPane);
@@ -671,7 +671,9 @@ public class AiProfileEditor extends JFrame implements ActionListener {
     }
 
     private void createNewDecisionScoreEvaluator() {
-        ((DecisionScoreEvaluatorPane) dsePane).reset();
+        ((DecisionScoreEvaluatorPane) dsePane).newDse(Messages.getString("aiEditor.new.dse"),
+            Messages.getFormattedString("aiEditor.new.dse.description", new Date().toString()),
+            "");
         mainEditorTabbedPane.setSelectedComponent(dseTabPane);
         dsePane.updateUI();
     }

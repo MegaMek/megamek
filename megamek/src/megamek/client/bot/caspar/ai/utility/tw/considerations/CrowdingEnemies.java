@@ -18,7 +18,10 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.common.*;
+import megamek.common.Coords;
+import megamek.common.GunEmplacement;
+import megamek.common.Mek;
+import megamek.common.Tank;
 
 import java.util.Map;
 
@@ -33,9 +36,9 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class CrowdingEnemies extends TWConsideration {
 
     public static final String percentOfMaxWeaponRange = "percent of max weapon range";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(percentOfMaxWeaponRange, double.class);
+    private static final Map<String, Class<?>> parameterTypes = Map.of(percentOfMaxWeaponRange, Double.class);
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
-        percentOfMaxWeaponRange, new ParameterTitleTooltip("HerdingDistance"));
+        percentOfMaxWeaponRange, new ParameterTitleTooltip("PercentOfMaxWeaponRange"));
 
     public CrowdingEnemies() {
         parameters.put(percentOfMaxWeaponRange, 0.6);

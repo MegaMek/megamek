@@ -16,6 +16,7 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.common.*;
 
@@ -28,6 +29,14 @@ import java.util.Map;
 public class OverallArmor extends TWConsideration {
 
     public OverallArmor() {
+    }
+
+    public OverallArmor(String name, Curve curve) {
+        super(name, curve);
+    }
+
+    public OverallArmor(String name) {
+        super(name);
     }
 
     @Override

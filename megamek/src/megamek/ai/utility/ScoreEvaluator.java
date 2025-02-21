@@ -26,7 +26,7 @@ public interface ScoreEvaluator {
         GEOMETRIC_MEAN,
         UTILITARIAN,
         ADJUSTED_UTILITARIAN,
-        NEURAL_NETWORK_200,
+        NEURAL_NETWORK,
     }
 
     default ScoreEvaluator getScoreEvaluator(ScoreType scoreType, DecisionScoreEvaluator decisionScoreEvaluator) {
@@ -34,7 +34,11 @@ public interface ScoreEvaluator {
             case GEOMETRIC_MEAN -> new GeometricMeanScoreEvaluator(decisionScoreEvaluator);
             case UTILITARIAN -> new UtilitarianScoreEvaluator(decisionScoreEvaluator);
             case ADJUSTED_UTILITARIAN -> new AdjustedUtilitarianScoreEvaluator(decisionScoreEvaluator);
-            case NEURAL_NETWORK_200 -> new NeuralNetworkScoreEvaluator(decisionScoreEvaluator, new NeuralNetwork(200, 80, 40, 1));
+            case NEURAL_NETWORK -> new NeuralNetworkScoreEvaluator(decisionScoreEvaluator,
+                NeuralNetworkFactory.createNeuralNetworkForConsiderationsAndThreatHeatmap(
+                    50,
+                    50,
+                    12));
         };
     }
 

@@ -16,15 +16,12 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import megamek.ai.utility.Curve;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.ai.utility.StructOfUnitArrays;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.UnitRole;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
@@ -36,12 +33,26 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FriendsCoverFire extends TWConsideration {
 
     public static final String coverNumberParam = "Minimal number of friendlies covering you";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(coverNumberParam, int.class);
+    private static final Map<String, Class<?>> parameterTypes = Map.of(coverNumberParam, Integer.class);
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(
         coverNumberParam, new ParameterTitleTooltip("CoverNumberParam"));
 
     public FriendsCoverFire() {
         parameters.put(coverNumberParam, 1);
+    }
+
+    public FriendsCoverFire(String name) {
+        super(name);
+        parameters.put(coverNumberParam, 1);
+    }
+
+    public FriendsCoverFire(String name, Curve curve) {
+        super(name, curve);
+        parameters.put(coverNumberParam, 1);
+    }
+
+    public FriendsCoverFire(String name, Curve curve, Map<String, Object> parameters) {
+        super(name, curve, parameters);
     }
 
     @Override

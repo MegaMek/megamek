@@ -38,7 +38,7 @@ public abstract class DecisionScoreEvaluator implements NamedObject, ScoreEvalua
     private String name;
     private String description;
     private String notes;
-    private ScoreType scoreType;
+    private ScoreType scoreType = ScoreType.NEURAL_NETWORK;
     private final List<Consideration> considerations = new ArrayList<>();
     @JsonIgnore
     private transient ScoreEvaluator scoreEvaluator;

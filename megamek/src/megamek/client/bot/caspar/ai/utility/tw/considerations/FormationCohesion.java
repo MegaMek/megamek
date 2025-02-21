@@ -18,10 +18,7 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.UnitRole;
 
 import java.util.Map;
 
@@ -34,7 +31,7 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FormationCohesion extends TWConsideration {
 
     public static final String idealDistanceParam = "Ideal distance between units";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(idealDistanceParam, int.class);
+    private static final Map<String, Class<?>> parameterTypes = Map.of(idealDistanceParam, Integer.class);
     private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(idealDistanceParam,
         new ParameterTitleTooltip("IdealDistanceParam"));
 

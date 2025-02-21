@@ -17,12 +17,9 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
 import megamek.common.Coords;
-import megamek.common.Entity;
 
 import java.util.Map;
-import java.util.OptionalInt;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 

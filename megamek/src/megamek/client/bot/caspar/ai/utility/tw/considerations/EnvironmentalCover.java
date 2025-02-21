@@ -19,7 +19,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
 import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.Targetable;
 
 import java.util.List;
@@ -34,8 +33,9 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class EnvironmentalCover extends TWConsideration {
 
     public static final String coverAgainstHowMany = "Cover against how many";
-    private static final Map<String, Class<?>> parameterTypes = Map.of(coverAgainstHowMany, int.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(coverAgainstHowMany, new ParameterTitleTooltip("CoverAgainstHowMany"));
+    private static final Map<String, Class<?>> parameterTypes = Map.of(coverAgainstHowMany, Integer.class);
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(coverAgainstHowMany,
+        new ParameterTitleTooltip("CoverAgainstHowMany"));
 
     public EnvironmentalCover() {
         parameters.put(coverAgainstHowMany, 3);

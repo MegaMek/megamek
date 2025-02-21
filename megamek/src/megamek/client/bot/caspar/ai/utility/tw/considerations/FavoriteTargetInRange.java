@@ -18,7 +18,6 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
 import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.common.Entity;
 import megamek.common.UnitRole;
 
 import java.util.Map;
@@ -32,7 +31,8 @@ import static megamek.codeUtilities.MathUtility.clamp01;
 public class FavoriteTargetInRange extends TWConsideration {
     public static final String roleParam = "role";
     private static final Map<String, Class<?>> parameterTypes = Map.of(roleParam, UnitRole.class);
-    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam, new ParameterTitleTooltip("FavTargetUnitRole"));
+    private static final Map<String, ParameterTitleTooltip> parameterTooltips = Map.of(roleParam,
+        new ParameterTitleTooltip("FavTargetUnitRole"));
 
     public FavoriteTargetInRange() {
         parameters = Map.of(roleParam, UnitRole.UNDETERMINED);

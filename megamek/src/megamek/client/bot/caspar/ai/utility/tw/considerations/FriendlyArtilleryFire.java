@@ -17,16 +17,9 @@ package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import megamek.ai.utility.DecisionContext;
-import megamek.ai.utility.ParameterTitleTooltip;
-import megamek.client.bot.caspar.ai.utility.tw.decision.TWDecisionContext;
-import megamek.client.bot.princess.ArtilleryTargetingControl;
 import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.UnitRole;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static megamek.codeUtilities.MathUtility.clamp01;
 

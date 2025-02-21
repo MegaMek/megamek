@@ -16,7 +16,7 @@
 package megamek.client.bot.caspar.ai.utility.tw.considerations;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import megamek.ai.utility.DecisionContext;
+import megamek.ai.utility.Curve;
 import megamek.common.*;
 
 import java.util.Map;
@@ -28,6 +28,14 @@ import java.util.Map;
 public class FrontSide extends OverallArmor {
 
     public FrontSide() {
+    }
+
+    public FrontSide(String name, Curve curve) {
+        super(name, curve);
+    }
+
+    public FrontSide(String name) {
+        super(name);
     }
 
     @Override

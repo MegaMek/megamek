@@ -714,4 +714,38 @@ public class Coords implements Serializable {
         }
         return dot / (magA * magB);
     }
+
+    /**
+     * Returns the hex code for this coordinate on the given board.
+     * @param board the board
+     * @return the hex code for this coordinate
+     */
+    public String hexCode(Board board) {
+        return hexCode(this, board);
+    }
+
+    /**
+     * Returns the hex code for the given coordinates on the given board.
+     * @param coords the coordinates
+     * @param board the board
+     * @return the hex code for the given coordinates
+     */
+    public static String hexCode(Coords coords, Board board) {
+        return hexCode(coords.getX() + 1, coords.getY() + 1, board);
+    }
+
+    /**
+     * Returns the hex code for the given coordinates.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param board the board
+     * @return the hex code for the given coordinates
+     */
+    public static  String hexCode(int x, int y, Board board) {
+        int maxSize = Math.max(board.getWidth(), board.getHeight());
+        if (maxSize+1 > 99) {
+            return String.format("%03d%03d", x, y);
+        }
+        return String.format("%02d%02d", x, y);
+    }
 }

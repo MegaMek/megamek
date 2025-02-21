@@ -437,6 +437,7 @@ public abstract class BotClient extends Client {
                 case PREFIRING:
                     break;
                 case FIRING:
+                    postMovementProcessing();
                     initFiring();
                     break;
                 case PHYSICAL:
@@ -472,6 +473,8 @@ public abstract class BotClient extends Client {
             logger.error(t, "changePhase");
         }
     }
+
+    protected abstract void postMovementProcessing();
 
     private void runEndGame() {
         // Make a list of the player's living units.

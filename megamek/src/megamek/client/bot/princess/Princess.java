@@ -3628,7 +3628,7 @@ public class Princess extends BotClient {
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
     }
-
+    @Override
     protected void postMovementProcessing(){
         for (var entity : getEntitiesOwned()) {
             if (entity.getPosition() == null) {

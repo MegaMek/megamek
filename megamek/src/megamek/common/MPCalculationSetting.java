@@ -63,7 +63,7 @@ public class MPCalculationSetting {
      * A setting for checking if a unit moved too fast under the effects of low
      * gravity.
      */
-    public static final MPCalculationSetting SAFE_MOVE = new Builder().noGravity().noHeat().noModularArmor().build();
+    public static final MPCalculationSetting SAFE_MOVE = new Builder().noGravity().noHeat().noModularArmor().noChainDrape().build();
 
     /**
      * A setting for testing if a unit is permanently immobilized. It excludes
@@ -86,7 +86,7 @@ public class MPCalculationSetting {
      * well as myomer boosters, DWP, BA burden and modular armor.
      */
     public static final MPCalculationSetting AS_CONVERSION = new Builder().noGravity().noWeather()
-            .noHeat().noCargo().baNoBurden().noMyomerBooster().noDWP().noModularArmor().noGrounded()
+            .noHeat().noCargo().baNoBurden().noMyomerBooster().noDWP().noModularArmor().noChainDrape().noGrounded()
             .noConversion().noOptionalRules().build();
 
     /**
@@ -110,6 +110,7 @@ public class MPCalculationSetting {
     public final boolean ignoreGravity;
     public final boolean ignoreHeat;
     public final boolean ignoreModularArmor;
+    public final boolean ignoreChainDrape;
     public final boolean ignoreDWP;
     public final boolean ignoreMyomerBooster;
     public final boolean ignoreMASC;
@@ -123,7 +124,7 @@ public class MPCalculationSetting {
     public final boolean ignoreSubmergedJumpJets;
     public final boolean forceTSM;
 
-    private MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, boolean ignoreModularArmor,
+    private MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, boolean ignoreModularArmor, boolean ignoreChainDrape,
             boolean ignoreMASC, boolean ignoreMyomerBooster, boolean ignoreDWP,
             boolean ignoreBurden, boolean ignoreCargo, boolean ignoreWeather,
             boolean singleMASC, boolean ignoreSubmergedJumpJets, boolean ignoreGrounded,
@@ -131,6 +132,7 @@ public class MPCalculationSetting {
         this.ignoreGravity = ignoreGravity;
         this.ignoreHeat = ignoreHeat;
         this.ignoreModularArmor = ignoreModularArmor;
+        this.ignoreChainDrape = ignoreChainDrape;
         this.ignoreMASC = ignoreMASC;
         this.ignoreMyomerBooster = ignoreMyomerBooster;
         this.ignoreDWP = ignoreDWP;
@@ -150,6 +152,7 @@ public class MPCalculationSetting {
         private boolean ignoreGravity = false;
         private boolean ignoreHeat = false;
         private boolean ignoreModularArmor = false;
+        private boolean ignoreChainDrape = false;
         private boolean ignoreBADWP = false;
         private boolean ignoreMyomerBooster = false;
         private boolean ignoreMASC = false;
@@ -164,7 +167,7 @@ public class MPCalculationSetting {
         private boolean forceTSM = false;
 
         MPCalculationSetting build() {
-            return new MPCalculationSetting(ignoreGravity, ignoreHeat, ignoreModularArmor, ignoreMASC,
+            return new MPCalculationSetting(ignoreGravity, ignoreHeat, ignoreModularArmor, ignoreChainDrape, ignoreMASC,
                     ignoreMyomerBooster, ignoreBADWP, ignoreBABurden, ignoreCargo, ignoreWeather, singleMASC,
                     ignoreSubmergedJumpJets, ignoreGrounded, ignoreOptionalRules, ignoreConversion, forceTSM);
         }
@@ -230,6 +233,12 @@ public class MPCalculationSetting {
         /** Disregards the effects of modular armor. */
         private Builder noModularArmor() {
             ignoreModularArmor = true;
+            return this;
+        }
+
+        /** Disregards the effects of a chain drape */
+        private Builder noChainDrape() {
+            ignoreChainDrape = true;
             return this;
         }
 

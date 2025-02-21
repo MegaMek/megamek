@@ -440,6 +440,16 @@ public class TestMek extends TestEntity {
                 return false;
             }
         }
+        if (mt.hasFlag(MiscType.F_CHAIN_DRAPE)) {
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LT) != 3) {
+                buff.append("incorrect number of chain draop crits in left torso\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RT) != 3) {
+                buff.append("incorrect number of chain draop crits in right torso\n");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -1061,6 +1071,13 @@ public class TestMek extends TestEntity {
                                     && (misc.getSubType() == MiscType.S_BACKHOE)
                                     || (misc.getSubType() == MiscType.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
+
+            if ((misc.hasFlag(MiscType.F_CHAIN_DRAPE_APRON) || misc.hasFlag(MiscType.F_CHAIN_DRAPE_PONCHO))
+                && (mek.isQuadMek() || mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+                ) {
+                buff.append("Quad meks and meks with torso cockpits may only mount a chain drape as a Cape");
                 illegal = true;
             }
         }

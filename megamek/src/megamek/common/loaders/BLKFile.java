@@ -201,10 +201,20 @@ public class BLKFile {
                 boolean isTurreted = false;
                 boolean isPintleTurreted = false;
                 double size = 0.0;
+                int shots = -1;
                 int sizeIndex = equipName.toUpperCase().indexOf(":SIZE:");
                 if (sizeIndex > 0) {
                     size = Double.parseDouble(equipName.substring(sizeIndex + 6));
                     equipName = equipName.substring(0, sizeIndex);
+                }
+                int shotsIndex = equipName.toUpperCase().indexOf(":SHOTS");
+                if (shotsIndex > 0) {
+                    int shotsEndIndex = equipName.substring(shotsIndex).indexOf("#");
+                    if (shotsEndIndex <= 0) {
+                        throw new EntityLoadingException("Improperly formatted ammo count");
+                    }
+                    shots = Integer.parseInt(equipName.substring(shotsIndex + ":Shots".length(), shotsIndex + shotsEndIndex));
+                    equipName = equipName.substring(0, shotsIndex);
                 }
                 if (equipName.toUpperCase().endsWith(":OMNI")) {
                     isOmniMounted = true;
@@ -240,6 +250,7 @@ public class BLKFile {
                     facing = 3;
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
+
                 EquipmentType etype = EquipmentType.get(equipName);
 
                 if (etype == null) {
@@ -265,6 +276,11 @@ public class BLKFile {
                             } else {
                                 mount.setFacing(facing);
                             }
+                        }
+                        if (shots > 0) {
+                            mount.setOriginalShots(shots);
+                            mount.setShotsLeft(shots);
+                            mount.setSize(shots * ((AmmoType) mount.getType()).getKgPerShot() / 1000.0);
                         }
                         if (etype.isVariableSize()) {
                             if (size == 0) {
@@ -592,6 +608,8 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "AeroSpaceFighter");
         } else if (t instanceof Aero) {
             blk.writeBlockData("UnitType", "Aero");
+        } else if (t instanceof HandheldWeapon) {
+            blk.writeBlockData("UnitType", "HandheldWeapon");
         }
 
         blk.writeBlockData("Name", t.getChassis());
@@ -682,7 +700,7 @@ public class BLKFile {
 
         if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
             blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());
-        } else {
+        } else if (!t.isHandheldWeapon()) {
             blk.writeBlockData("motion_type", t.getMovementModeAsString());
         }
 
@@ -701,7 +719,7 @@ public class BLKFile {
             blk.writeBlockData("transporters", transporter_array);
         }
 
-        if (!t.isConventionalInfantry()) {
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon())) {
             if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -780,10 +798,10 @@ public class BLKFile {
 
             // Need to make sure that only "Unknown" armor gets skipped
             // barRating block written out later in SV-specific section
-            if (!t.hasPatchworkArmor() && (t.getArmorType(1) != ArmorType.T_ARMOR_UNKNOWN)) {
-                blk.writeBlockData("armor_type", t.getArmorType(1));
+            if (!t.hasPatchworkArmor() && (t.getArmorType(0) != ArmorType.T_ARMOR_UNKNOWN)) {
+                blk.writeBlockData("armor_type", t.getArmorType(0));
                 blk.writeBlockData("armor_tech_rating", t.getArmorTechRating());
-                blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(1));
+                blk.writeBlockData("armor_tech_level", t.getArmorTechLevel(0));
             } else if (t.hasPatchworkArmor()) {
                 blk.writeBlockData("armor_type",
                         EquipmentType.T_ARMOR_PATCHWORK);
@@ -816,6 +834,8 @@ public class BLKFile {
                 for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
                 }
+            } else if (t.isHandheldWeapon()) {
+                armor_array = new int[] {t.getOArmor(HandheldWeapon.LOC_GUN)};
             } else {
                 armor_array = new int[numLocs - 1];
                 for (int i = 1; i < numLocs; i++) {
@@ -1192,7 +1212,7 @@ public class BLKFile {
         }
         // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location but they have different formats, yay!
-        if ((m.getEntity() instanceof BattleArmor) && (m.getType() instanceof AmmoType)) {
+        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) && (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {
             name += " (" + m.getBaseShotsLeft() + ")";

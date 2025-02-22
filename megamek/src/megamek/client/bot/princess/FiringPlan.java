@@ -79,7 +79,23 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     synchronized double getExpectedDamage() {
         double expectedDamage = 0;
         for (WeaponFireInfo weaponFireInfo : this) {
-            expectedDamage += weaponFireInfo.getExpectedDamageOnHit() * weaponFireInfo.getProbabilityToHit();
+            expectedDamage += weaponFireInfo.getDamageOnHit() * weaponFireInfo.getProbabilityToHit();
+        }
+        return expectedDamage;
+    }
+
+    synchronized double getExpectedFriendlyDamage() {
+        double expectedDamage = 0;
+        for (WeaponFireInfo weaponFireInfo : this) {
+            expectedDamage += weaponFireInfo.getMaxFriendlyDamage() * weaponFireInfo.getProbabilityToHit();
+        }
+        return expectedDamage;
+    }
+
+    synchronized double getExpectedBuildingDamage() {
+        double expectedDamage = 0;
+        for (WeaponFireInfo weaponFireInfo : this) {
+            expectedDamage += weaponFireInfo.getMaxBuildingDamage() * weaponFireInfo.getProbabilityToHit();
         }
         return expectedDamage;
     }

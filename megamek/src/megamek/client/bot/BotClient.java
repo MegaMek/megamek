@@ -437,6 +437,7 @@ public abstract class BotClient extends Client {
                 case PREFIRING:
                     break;
                 case FIRING:
+                    postMovementProcessing();
                     initFiring();
                     break;
                 case PHYSICAL:
@@ -472,6 +473,8 @@ public abstract class BotClient extends Client {
             logger.error(t, "changePhase");
         }
     }
+
+    protected abstract void postMovementProcessing();
 
     private void runEndGame() {
         // Make a list of the player's living units.
@@ -678,7 +681,9 @@ public abstract class BotClient extends Client {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent)
-                        && !deployed_ent.isLocationProhibited(c)
+                        && !deployed_ent.isLocationProhibited(c,
+                            ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE())
+                                ? deployed_ent.getElevation() : 0))
                         && !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }

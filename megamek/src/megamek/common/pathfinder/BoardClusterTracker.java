@@ -219,6 +219,45 @@ public class BoardClusterTracker {
     }
 
     /**
+     * Returns a set of coordinates that intersect with the cluster in which the given
+     * entity resides.
+     * @param entity
+     * @param destination
+     * @param terrainReduction
+     * @return
+     */
+    public Set<Coords> getDestinationCoords(Entity entity, Coords destination, boolean terrainReduction) {
+        updateMovableAreas(entity);
+
+        MovementType movementType = MovementType.getMovementType(entity);
+        Set<Coords> retVal = Collections.emptySet();
+
+        BoardCluster entityCluster = getEntityCluster(entity, movementType, terrainReduction, false);
+        if (entityCluster != null) {
+            retVal = entityCluster.getIntersectingHexes(destination, 3);
+        }
+
+        if (retVal.isEmpty()) {
+            entityCluster = getEntityCluster(entity, movementType, terrainReduction, true);
+            if (entityCluster != null) {
+                retVal = entityCluster.getIntersectingHexes(destination, 3);
+            }
+        }
+
+        return retVal;
+    }
+
+    private BoardCluster getEntityCluster(Entity entity, MovementType movementType, boolean terrainReduction, boolean useBridges) {
+        if (terrainReduction) {
+            return useBridges ? movableAreasBridgesWithTerrainReduction.get(movementType).get(entity.getPosition())
+                : movableAreasWithTerrainReduction.get(movementType).get(entity.getPosition());
+        } else {
+            return useBridges ? movableAreasBridges.get(movementType).get(entity.getPosition())
+                : movableAreas.get(movementType).get(entity.getPosition());
+        }
+    }
+
+    /**
      * Resets board clusters
      */
     public void clearMovableAreas() {
@@ -433,6 +472,23 @@ public class BoardClusterTracker {
         public BoardCluster(int id) {
             this.id = id;
         }
+
+        /**
+         * Returns a set of coordinates in the current cluster that intersect
+         * an arbitrary rectangle.
+         */
+        public Set<Coords> getIntersectingHexes(Coords coords, int size) {
+            Set<Coords> retVal = new HashSet<>();
+            var destinationCluster = coords.allAtDistanceOrLess(size);
+            for (var coord : destinationCluster) {
+                if (contents.containsKey(coord)) {
+                    retVal.add(coords);
+                }
+            }
+
+            return retVal;
+        }
+
 
         /**
          * Returns a set of coords in the current cluster that intersect the given board

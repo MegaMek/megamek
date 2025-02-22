@@ -285,7 +285,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         // on the other hand, if the hex *is* the target, do full damage
         int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
 
-        bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);

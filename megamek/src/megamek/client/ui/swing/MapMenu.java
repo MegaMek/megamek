@@ -429,15 +429,14 @@ public class MapMenu extends JPopupMenu {
     private JMenu createBotCommands(Player bot) {
         JMenu menu = new JMenu(bot.getName() + " (" + Player.TEAM_NAMES[bot.getTeam()] + ")");
 
-        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
         JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
         JMenu ignoreTargetMenu= new JMenu(Messages.getString("Bot.commands.ignore"));
         JMenu fleeMenu = createFleeMenu(bot);
         JMenu behaviorMenu = createBehaviorMenu(bot);
 
-        targetHexMenu.add(createTargetHexMenuItem(bot));
+        JMenu targetHexMenu = createTargetHexMenuItem(bot);
         menu.add(targetHexMenu);
-
+        menu.add(createWaypointMenu(bot));
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             prioritizeTargetUnitMenu.add(createPrioritizeTargetUnitMenu(bot, entity));
             ignoreTargetMenu.add(createIgnoreTargetUnitMenu(bot, entity));
@@ -582,7 +581,7 @@ public class MapMenu extends JPopupMenu {
                 JOptionPane.YES_NO_OPTION);
 
             if (confirm == JOptionPane.YES_OPTION) {
-                client.sendChat(String.format("%s: flee : %d",
+                client.sendChat(String.format("%s: fl : %d",
                     bot.getName(),
                     cardinalEdge.getIndex()
                 ));
@@ -595,7 +594,7 @@ public class MapMenu extends JPopupMenu {
     JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt ->
-            client.sendChat(String.format("%s: ignoreTarget : %d",
+            client.sendChat(String.format("%s: ig : %d",
                 bot.getName(),
                 entity.getId()
             ))
@@ -606,7 +605,7 @@ public class MapMenu extends JPopupMenu {
     JMenuItem createPrioritizeTargetUnitMenu(Player bot, Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt ->
-            client.sendChat(String.format("%s: prioritize : %d",
+            client.sendChat(String.format("%s: pr : %d",
                 bot.getName(),
                 entity.getId()
             ))
@@ -614,16 +613,56 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    JMenuItem createTargetHexMenuItem(Player bot) {
-        JMenuItem item = new JMenuItem(coords.toFriendlyString());
+    JMenu createWaypointMenu(Player bot) {
+        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.waypoint"));
+        JMenu setWaypointMenu = new JMenu(Messages.getString("Bot.commands.setWaypoint")); // "Set hex " + coords.toFriendlyString() + " as the waypoint"
+        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
+            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
+            waypoint.addActionListener(evt ->
+                client.sendChat(String.format("%s: aw : %s %s",
+                    bot.getName(),
+                    entity.getId() + "",
+                    coords.hexCode(client.getGame().getBoard())
+                ))
+            );
+            setWaypointMenu.add(waypoint);
+        }
+
+        JMenu addWaypointMenu = new JMenu(Messages.getString("Bot.commands.addWaypoint")); // "Add hex " + coords.toFriendlyString() + " as a waypoint");
+        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
+            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
+            waypoint.addActionListener(evt ->
+                client.sendChat(String.format("%s: sw : %s %s",
+                    bot.getName(),
+                    entity.getId() + "",
+                    coords.hexCode(client.getGame().getBoard())
+                ))
+            );
+            addWaypointMenu.add(waypoint);
+        }
+
+        JMenuItem clearWaypoints = new JMenuItem(Messages.getString("Bot.commands.clearAllWaypoints"));
+        clearWaypoints.addActionListener(evt -> client.sendChat(String.format("%s: nw", bot.getName())));
+
+        targetHexMenu.add(setWaypointMenu);
+        targetHexMenu.add(addWaypointMenu);
+        targetHexMenu.add(clearWaypoints);
+
+        return targetHexMenu;
+    }
+
+    JMenu createTargetHexMenuItem(Player bot) {
+        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.targetHex"));
+        JMenuItem item = new JMenuItem("Add hex " + coords.toFriendlyString() + " as strategic target");
         item.addActionListener(evt ->
-            client.sendChat(String.format("%s: target : %02d%02d",
+            client.sendChat(String.format("%s: ta : %02d%02d",
                 bot.getName(),
                 coords.getX()+1,
                 coords.getY()+1
             ))
         );
-        return item;
+        targetHexMenu.add(item);
+        return targetHexMenu;
     }
 
     /**

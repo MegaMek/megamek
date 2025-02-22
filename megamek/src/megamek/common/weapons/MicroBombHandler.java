@@ -24,8 +24,11 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
+
+import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
 
 /**
  * @author Sebastian Brocks
@@ -45,7 +48,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -82,11 +85,11 @@ public class MicroBombHandler extends AmmoWeaponHandler {
                 return !bMissed;
             }
         }
+        // Not mine clearing if we are shooting an entity
         Infantry ba = (Infantry) ae;
-        int ratedDamage = ba.getShootingStrength();
+        DamageFalloff falloff = calculateDamageFallOff((AmmoType) ammo.getType(), ba.getShootingStrength(), false);
         gameManager.artilleryDamageArea(coords, ae.getPosition(),
-                (AmmoType) ammo.getType(), subjectId, ae, ratedDamage * 2,
-                ratedDamage, false, 0, vPhaseReport, false);
+                (AmmoType) ammo.getType(), subjectId, ae, falloff, false, 0, vPhaseReport, false);
         return true;
     }
 }

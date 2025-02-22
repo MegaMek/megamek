@@ -8728,14 +8728,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * @return All Entities that can at this point be unloaded from any transports
      *         of this Entity which are
-     *         no Bays. This does not include any units that were loaded this turn.
-     *         Note that the returned list may be unmodifiable.
+     *         not Bays. This does not include any units that were loaded this turn.
+     *         Note that the returned list may be unmodifiable.This shouldn't return
+     *         towed entities, they're tracked separately.
      *
+     * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
      */
     public List<Entity> getUnitsUnloadableFromNonBays() {
         return transports.stream()
-                .filter(t -> !(t instanceof Bay))
+                .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch))
                 .flatMap(b -> b.getLoadedUnits().stream())
                 .filter(e -> !e.wasLoadedThisTurn())
                 .toList();

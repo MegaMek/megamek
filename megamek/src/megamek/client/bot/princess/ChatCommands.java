@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,6 +18,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.Messages;
 import megamek.client.bot.princess.commands.*;
 
 /**
@@ -28,68 +29,68 @@ import megamek.client.bot.princess.commands.*;
  */
 public enum ChatCommands {
     FLEE("fl", "flee",
-        "Flee - Causes princess-controlled units to start fleeing the board, regardless of damage level or Forced Withdrawal setting.",
+        Messages.getString("Princess.command.flee.description"),
         new FleeCommand()),
     @Deprecated(since="50.04", forRemoval = true)
     VERBOSE("ve", "verbose",
-        "Sets princess's verbosity level (unused, set for removal).",
+        Messages.getString("Princess.command.verbose.description"),
         new VerboseCommand()),
     BEHAVIOR("be", "behavior",
-        "Behavior - Change's princess's behavior to the named behavior.",
+        Messages.getString("Princess.command.behavior.description"),
         new BehaviorCommand()),
     CAUTION("ca",  "caution",
-        "Caution - Modifies princess's Piloting Caution setting. Each '+' increases it by 1 and each '-' decreases it by one. Or you can set it numerically from 0 to 10",
+        Messages.getString("Princess.command.caution.description"),
         new CautionCommand()),
     AVOID("av", "avoid",
-        "Avoid - Modifies princess's Self Preservation setting. Each '+' increases it by 1 and each '-' decreases it by one. Or you can set it numerically from 0 to 10",
+        Messages.getString("Princess.command.avoid.description"),
         new AvoidCommand()),
     AGGRESSION("ag", "aggression",
-        "Aggression - Modifies princess's Aggression setting. Each '+' increases it by 1 and each '-' decreases it by one. Or you can set it numerically from 0 to 10",
+        Messages.getString("Princess.command.aggression.description"),
         new AggressionCommand()),
     HERDING("he", "herding",
-        "Herd - Modifies princess's Herding setting. Each '+' increases it by 1 and each '-' decreases it by one. Or you can set it numerically from 0 to 10",
+        Messages.getString("Princess.command.herding.description"),
         new HerdingCommand()),
     BRAVERY("br", "bravery",
-        "Brave - Modifies princess's Bravery setting. Each '+' increases it by 1 and each '-' decreases it by one. Or you can set it numerically from 0 to 10",
+        Messages.getString("Princess.command.bravery.description"),
         new BraveryCommand()),
     TARGET("ta", "target",
-        "Target Hex - Adds the specified hex to princess's list of Strategic Targets.",
+        Messages.getString("Princess.command.targetGround.description"),
         new TargetGroundCommand()),
     PRIORITIZE("pr", "prioritize",
-        "Priority Target - Adds the specified unit to princess's Priority Targets list.",
+        Messages.getString("Princess.command.priorityTarget.description"),
         new PriorityTargetCommand()),
     SHOW_BEHAVIOR("sh", "show-behavior",
-        "Show Behavior - Princess will state the name of her current behavior.",
+        Messages.getString("Princess.command.showBehavior.description"),
         new ShowBehaviorCommand()),
     LIST__COMMANDS("li", "list-commands",
-        "List Commands - Displays this list of commands.",
+        Messages.getString("Princess.command.listCommands.description"),
         new ListCommands()),
     IGNORE_TARGET("ig", "ignore-target",
-        "Ignore Target - Will not fire on the entity with this ID.",
+        Messages.getString("Princess.command.ignoreTarget.description"),
         new IgnoreTargetCommand()),
     SHOW_DISHONORED("di", "show-dishonored",
-        "Show Dishonored - Show the players on the dishonored enemies list.",
+        Messages.getString("Princess.command.showDishonored.description"),
         new ShowDishonoredCommand()),
     CLEAR_IGNORED_TARGETS("cl", "clear-ignored-targets",
-        "Clear Ignored Target - Clears the list of ignored targets.",
+        Messages.getString("Princess.command.clearIgnoredTargets.description"),
         new ClearIgnoredTargetsCommand()),
     BLOOD_FEUD("bf",  "blood-feud",
-        "Blood Feud - Adds player to the dishonored enemies list.",
+        Messages.getString("Princess.command.bloodFeud.description"),
         new BloodFeudCommand()),
     ADD_WAYPOINT("aw", "add-waypoint",
-        "Add Waypoint - Add a waypoint destination to the princess's entity.",
+        Messages.getString("Princess.command.addWaypoint.description"),
         new AddWaypointCommand()),
     REMOVE_WAYPOINT("rw", "remove-waypoint",
-        "Remove Last Waypoint for unit - Remove last waypoint added to the entity list of waypoints.",
+        Messages.getString("Princess.command.removeWaypoint.description"),
         new RemoveWaypointCommand()),
     CLEAR_WAYPOINT("cw", "clear-waypoints",
-        "Clear Unit Waypoints - Remove all waypoints for unit.",
+        Messages.getString("Princess.command.clearWaypoints.description"),
         new ClearWaypointsCommand()),
     CLEAR_ALL_WAYPOINTS("nw", "clear-all-waypoints",
-        "Clear All Waypoints - Remove all waypoints for this bot.",
+        Messages.getString("Princess.command.clearAllWaypoints.description"),
         new ClearAllWaypointsCommand()),
     SET_WAYPOINT("sw", "set-waypoints",
-        "Set Waypoint - Set a new list of waypoints for a unit. It accepts any number of waypoints and the unit will follow one waypoint at a time",
+        Messages.getString("Princess.command.setWaypoints.description"),
         new SetWaypointsCommand());
 
     private final String abbreviation;
@@ -109,11 +110,13 @@ public enum ChatCommands {
     }
 
     public String getSyntax() {
-        return "princessName: " + getAbbreviation() + "/" + getCommand()  + (chatCommand.defineArguments().isEmpty() ? "" : ": " + chatCommand.getArgumentsRepr());
+        return "princessName: " + getAbbreviation() + "/" + getCommand() +
+            (chatCommand.defineArguments().isEmpty() ? "" : ": " + chatCommand.getArgumentsRepr());
     }
 
     public String getDescription() {
-        return (chatCommand.defineArguments().isEmpty() ? "" : chatCommand.getArgumentsRepr() + " ") + description;
+        return (chatCommand.defineArguments().isEmpty() ?
+            "" : chatCommand.getArgumentsRepr() + " : " + chatCommand.getArgumentsDescription() + " ") + description;
     }
 
     public String getCommand() {

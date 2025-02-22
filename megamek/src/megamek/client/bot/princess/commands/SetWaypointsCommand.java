@@ -1,5 +1,19 @@
+/*
+ * MegaMek - Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ */
 package megamek.client.bot.princess.commands;
 
+import megamek.client.bot.Messages;
 import megamek.client.bot.princess.Princess;
 import megamek.common.Entity;
 import megamek.server.commands.arguments.*;
@@ -7,6 +21,10 @@ import megamek.server.commands.arguments.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Command to set waypoints for a unit.
+ * @author Luana Coppio
+ */
 public class SetWaypointsCommand implements ChatCommand {
     private static final String UNIT_ID = "unitID";
     private static final String HEX_NUMBER = "hexNumber";
@@ -14,8 +32,8 @@ public class SetWaypointsCommand implements ChatCommand {
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-            new UnitArgument(UNIT_ID, "The ID of the unit to add a waypoint to."),
-            new MultiHexNumberArgument(HEX_NUMBER, "The hexes to set as waypoints."),
+            new UnitArgument(UNIT_ID, Messages.getString("Princess.command.setWaypoints.unitID")),
+            new MultiHexNumberArgument(HEX_NUMBER, Messages.getString("Princess.command.setWaypoints.waypoints")),
             quietArgument()
         );
     }
@@ -32,17 +50,22 @@ public class SetWaypointsCommand implements ChatCommand {
 
         if (unitOpt.isEmpty()) {
             if (!quietArgument.getValue()) {
-                princess.sendChat("Unit " + unitArgument.getValue() + " not found.");
+                princess.sendChat(Messages.getString("Princess.command.setWaypoints.unitNotFound", unitArgument.getValue()));
             }
             return;
         }
 
         for (var coords : multiHexNumberArgument.getValue()) {
             if (!princess.getGame().getBoard().contains(coords) && !quietArgument.getValue()) {
-                princess.sendChat("Board does not have hex " + coords.toFriendlyString());
+                princess.sendChat(Messages.getString("Princess.command.setWaypoints.boardNoHex", coords.toFriendlyString()));
                 return;
             }
         }
+
         princess.getUnitBehaviorTracker().setEntityWaypoints(unitOpt.get(), multiHexNumberArgument.getValue(), princess);
+
+        if (!quietArgument.getValue()) {
+            princess.sendChat(Messages.getString("Princess.command.setWaypoints.success", unitOpt.get().getDisplayName()));
+        }
     }
 }

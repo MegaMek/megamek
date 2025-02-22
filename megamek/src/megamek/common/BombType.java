@@ -69,18 +69,11 @@ public class BombType extends AmmoType {
 
     public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5, 6, 6, 5, 5, 1, 2, 1, 1, 10, 1, 2, 1 };
 
-    public static final Map<String, Integer> blastRadius;
     private int bombType;
 
+    public static final Map<String, Integer> blastRadius;
     static {
         blastRadius = new HashMap<>();
-    }
-
-    /**
-     * Get the blast radius of a particular bomb type, given the internal name.
-     */
-    public static int getBombBlastRadius(String name) {
-        return blastRadius.getOrDefault(name, 0);
     }
 
     public static String getBombName(int type) {

@@ -119,6 +119,10 @@ public class BipedMek extends MekWithArms {
             mp--;
         }
 
+        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+            mp--;
+        }
+
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {

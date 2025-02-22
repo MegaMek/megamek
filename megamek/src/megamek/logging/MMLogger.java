@@ -31,7 +31,6 @@ import javax.swing.*;
 import java.util.Collections;
 
 /**
- * <h1>MMLogger</h1>
  * <p>Utility class to handle logging functions as well as reporting exceptions to
  * Sentry. To deal with general recommendations of confirming log level before
  * logging, additional checks are added to ensure we're only ever logging data

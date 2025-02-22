@@ -22,6 +22,7 @@ public class HexTarget implements Targetable {
     private boolean m_bIgnite;
     private int m_type;
     private HexTarget originalTarget = null;
+    private int targetLevel = 0;
 
     public HexTarget(Coords c, int nType) {
         m_coords = c;
@@ -211,6 +212,15 @@ public class HexTarget implements Targetable {
     // For artillery leading
     public HexTarget getOriginalTarget() {
         return this.originalTarget;
+    }
+
+    // For bombing
+    public int getTargetLevel() {
+        return targetLevel;
+    }
+
+    public void setTargetLevel(int targetLevel) {
+        this.targetLevel = targetLevel;
     }
 
 }

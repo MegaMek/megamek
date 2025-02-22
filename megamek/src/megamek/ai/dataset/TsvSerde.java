@@ -13,8 +13,27 @@
  */
 package megamek.ai.dataset;
 
+/**
+ * <h1>TSV Serializer Deserializer</h1>
+ * <p>Abstract class to serialize/deserialize objects to/from TSV format.</p>
+ * @apiNote <p>It does not have a fromTsv function because I could not find a way to make a good API for it.</p>
+ * @param <T> type of object to serialize/deserialize
+ * @author Luana Coppio
+ */
 public abstract class TsvSerde<T> {
+
+    /**
+     * <h1>To TSV</h1>
+     * Serializes an object to TSV format.
+     * @param obj object to serialize
+     * @return the object serialized in TSV format
+     */
     public abstract String toTsv(T obj);
 
+    /**
+     * <h1>Get Header Line</h1>
+     * Returns the header line for the TSV format.
+     * @return the header line
+     */
     public abstract String getHeaderLine();
 }

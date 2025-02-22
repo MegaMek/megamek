@@ -18,10 +18,11 @@ package megamek.ai.dataset;
 import java.util.List;
 
 /**
+ * <h1>ActionAndState</h1>
  * Represents an action and the state of the board after the action is performed.
- * @param round
- * @param unitAction
- * @param boardUnitState
+ * @param round game round
+ * @param unitAction unit action performed
+ * @param boardUnitState state of the board when the action is performed
  * @author Luana Coppio
  */
 public record ActionAndState(int round, UnitAction unitAction, List<UnitState> boardUnitState){}

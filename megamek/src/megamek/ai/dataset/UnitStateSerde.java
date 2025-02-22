@@ -25,7 +25,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.Map;
 
 /**
- * serializer and deserializer for game dataset UnitState
+ * <h1>TSV Serializer Deserializer</h1>
+ * <p>serializer and deserializer for UnitState to/from TSV format.</p>
  * @author Luana Coppio
  */
 public class UnitStateSerde extends TsvSerde<UnitState> {

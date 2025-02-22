@@ -17,8 +17,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents a training dataset.
- * This dataset is used to train a model optimize the action selection of a bot player.
+ * <h1>Training Dataset</h1>
+ * <p>Represents a training dataset.
+ * This dataset is used to train a model optimize the action selection of a bot player.</p>
+ * @apiNote <p>This has the particularity of having two lists internally, they represent the same
+ * dataset but are offset by one round, this is a peculiarity of its internal representation so you should not worry about it
+ * unless you plan to use its iterator.</p>
  * @author Luana Coppio
  */
 public class TrainingDataset {
@@ -58,15 +62,17 @@ public class TrainingDataset {
     private final List<ActionAndState> nextRoundActionAndState = new ArrayList<>();
 
     /**
+     * <h1>Training Dataset</h1>
      * Create a new training dataset from a list of action and state pairs.
-     * This will filter out any actions that do not have a corresponding state for the player.
-     * This will discard all actions taken by a player different from player 0
+     * @apiNote
+     * This will discard all actions taken by non-human players
      * @param actionAndStates The list of action and state pairs.
      */
     public TrainingDataset(List<ActionAndState> actionAndStates) {
         Set<Integer> entityIds = actionAndStates.stream().map(ActionAndState::unitAction).map(UnitAction::id).collect(Collectors.toSet());
         for (int entityId : entityIds) {
             List<ActionAndState> actionsForEntity = actionAndStates.stream()
+                .filter(actionAndState -> actionAndState.unitAction().isHuman())
                 .filter(actionAndState -> actionAndState.unitAction().id() == entityId)
                 .filter(actionAndState -> actionAndState.boardUnitState().stream().anyMatch(u -> u.id() == entityId))
                 .toList();
@@ -80,11 +86,24 @@ public class TrainingDataset {
         }
     }
 
+    /** <h1>Training Dataset</h1>
+     * <p>Create a new training dataset from two lists of action state pairs, the second list is the state of the game in the round after
+     * that action was made.</p>
+     * @apiNote
+     * This expects that all action and state pairs are human actions.
+     * @param actionAndStates The list of action and state pairs.
+     * @param nextRoundActionAndState The list of action and state pairs for the next round.
+     */
     public TrainingDataset(List<ActionAndState> actionAndStates, List<ActionAndState> nextRoundActionAndState) {
         this.actionAndStates.addAll(actionAndStates);
         this.nextRoundActionAndState.addAll(nextRoundActionAndState);
     }
 
+    /**
+     * <h1>Board Height</h1>
+     * Get the height of the board.
+     * @return The height of the board.
+     */
     public int boardHeight() {
         int maxY = Integer.MIN_VALUE;
         for (var actionState : actionAndStates) {
@@ -98,6 +117,11 @@ public class TrainingDataset {
         return maxY + 5;
     }
 
+    /**
+     * <h1>Board Width</h1>
+     * Get the width of the board.
+     * @return The width of the board.
+     */
     public int boardWidth() {
         int maxX = Integer.MIN_VALUE;
         for (var actionState : actionAndStates) {
@@ -111,18 +135,34 @@ public class TrainingDataset {
         return maxX + 5;
     }
 
+    /**
+     * <h1>Size</h1>
+     * <p>Get the size of the training dataset.</p>
+     * @apiNote Even though internally it has two lists, the one of current action and another with the state of the game in the following
+     * round, this only considers the number of actions in one of the lists.
+     * @return The size of the training dataset.
+     */
     public int size() {
-        return Math.min(actionAndStates.size(), nextRoundActionAndState.size());
+        return actionAndStates.size();
     }
 
+    /**
+     * <h1>Is Empty?</h1>
+     * Check if the training dataset is empty.
+     * @return True if the training dataset is empty.
+     */
     public boolean isEmpty() {
         return actionAndStates.isEmpty() || nextRoundActionAndState.isEmpty();
     }
 
     /**
+     * <h1>Iterator</h1>
      * Get an iterator for the training dataset.
      * This iterator always returns the current state and then the next state in the dataset,
      * giving you access the state of the board before and after an action.
+     * @apiNote <p>This iterator will return the action and state for the current round and then the next round for the same unit.</p>
+     * <p>It always return in this two step way, current actionAndState followed by next round actionAndState, this is necessary
+     * because during training, we need to know the direct result of the action taken to judge if it was a good decision or bad.</p>
      * @return An iterator for the training dataset.
      */
     public Iterator<ActionAndState> iterator() {
@@ -130,8 +170,12 @@ public class TrainingDataset {
     }
 
     /**
-     * Sample a training dataset with a given batch size.
-     * This will randomly sample the dataset, the same index will not be sampled twice. It is returned out of order.
+     * <h1>Sample Training Dataset</h1>
+     * Sample a training dataset with a given {@code batchSize}.
+     * @apiNote This will not modify the original dataset,
+     * and it will randomly sample the dataset.
+     * The same index will not be sampled twice.
+     * It is returned out of order.
      * @param batchSize The batch size.
      * @return A new training dataset with the sampled data.
      */

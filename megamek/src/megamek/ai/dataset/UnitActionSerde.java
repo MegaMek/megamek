@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 /**
- * serializer and deserializer for game dataset UnitAction
+ * <h1>TSV Serializer Deserializer</h1>
+ * <p>serializer and deserializer for UnitAction to/from TSV format.</p>
  * @author Luana Coppio
  */
 public class UnitActionSerde extends TsvSerde<UnitAction> {
@@ -57,6 +57,7 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         row[UnitActionField.PRONE.ordinal()] = obj.prone() ? "1" : "0";
         row[UnitActionField.LEGAL.ordinal()] = obj.legal() ? "1" : "0";
         row[UnitActionField.CHANCE_OF_FAILURE.ordinal()] = LOG_DECIMAL.format(obj.chanceOfFailure());
+        row[UnitActionField.IS_BOT.ordinal()] = obj.bot() ? "1" : "0";
 
         // For STEPS, join the list of MoveStepType values with a space.
         row[UnitActionField.STEPS.ordinal()] = obj.steps().stream()
@@ -88,11 +89,13 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
         boolean jumping = "1".equals(parts[UnitActionField.JUMPING.ordinal()]);
         boolean prone = "1".equals(parts[UnitActionField.PRONE.ordinal()]);
         boolean legal = "1".equals(parts[UnitActionField.LEGAL.ordinal()]);
+        boolean bot = false;
         int teamId = -1;
         double chanceOfFailure = 0.0;
         if (parts.length >= 23) {
             teamId = Integer.parseInt(parts[UnitActionField.TEAM_ID.ordinal()]);
             chanceOfFailure = Double.parseDouble(parts[UnitActionField.CHANCE_OF_FAILURE.ordinal()]);
+            bot = "1".equals(parts[UnitActionField.IS_BOT.ordinal()]);
         }
         // Convert the steps field (a space-separated list) back to a List of MoveStepType.
         List<MovePath.MoveStepType> steps = Arrays.stream(
@@ -124,7 +127,8 @@ public class UnitActionSerde extends TsvSerde<UnitAction> {
             prone,
             legal,
             chanceOfFailure,
-            steps
+            steps,
+            bot
         );
     }
 

@@ -40,7 +40,8 @@ public enum UnitActionField {
     LEGAL("LEGAL"),
     STEPS("STEPS"),
     TEAM_ID("TEAM_ID"),
-    CHANCE_OF_FAILURE("CHANCE_OF_FAILURE");
+    CHANCE_OF_FAILURE("CHANCE_OF_FAILURE"),
+    IS_BOT("IS_BOT");
 
     private final String headerName;
 
@@ -57,6 +58,17 @@ public enum UnitActionField {
      */
     public static String getHeaderLine() {
         return Arrays.stream(values())
+            .map(UnitActionField::getHeaderName)
+            .collect(Collectors.joining("\t"));
+    }
+
+    /**
+     * Builds the TSV header line (joined by tabs) by iterating over all enum constants.
+     */
+    public static String getPartialHeaderLine(int startsAt, int endsAt) {
+        return Arrays.stream(values())
+            .skip(startsAt)
+            .limit(endsAt - startsAt)
             .map(UnitActionField::getHeaderName)
             .collect(Collectors.joining("\t"));
     }

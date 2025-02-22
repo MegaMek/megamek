@@ -736,7 +736,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     multiUnits.clear();
                     for (Entity e : game.getOutOfGameEntitiesVector()) {
                         if (e.getPosition() != null && removalReasons.contains(e.getRemovalCondition())) {
-                            paintUnit(g, e);
+                            paintUnit(g, e, true);
                         }
                     }
 
@@ -754,7 +754,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     // draw living units
                     for (Entity e : game.getEntitiesVector()) {
                         if (e.getPosition() != null) {
-                            paintUnit(g, e);
+                            paintUnit(g, e, false);
                         }
                     }
 
@@ -1182,13 +1182,13 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     }
 
     /** Draws the symbol for a single entity. Checks visibility in double blind. */
-    private void paintUnit(Graphics g, Entity entity) {
+    private void paintUnit(Graphics g, Entity entity, boolean removedFromGame) {
         int x = entity.getPosition().getX();
         int y = entity.getPosition().getY();
         int baseX = coordsXToPixel(x);
         int baseY = coordsYtoPixel(y, x);
 
-        if (EntityVisibilityUtils.onlyDetectedBySensors(getLocalPlayer(), entity) && !entity.isDestroyed()) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(getLocalPlayer(), entity) && !removedFromGame) {
             // This unit is visible only as a sensor Return
             String sensorReturn = "?";
             Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]);
@@ -1222,7 +1222,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
         }
 
-        if (entity.isDestroyed()) {
+        if (removedFromGame) {
             iconColor = changeColorForDestroyedUnit(iconColor.brighter(), DESTROYED_UNIT_ALPHA);
         }
 
@@ -1239,12 +1239,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE && !entity.isDestroyed() ? Color.BLACK : Color.WHITE;
-        if (entity.isDestroyed()) {
+        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE && !removedFromGame ? Color.BLACK : Color.WHITE;
+        if (removedFromGame) {
             borderColor = changeColorForDestroyedUnit(borderColor.brighter(), DESTROYED_UNIT_ALPHA);
         }
         Color fontColor = Color.BLACK;
-        if (entity.isDestroyed()) {
+        if (removedFromGame) {
             fontColor = changeColorForDestroyedUnit(fontColor.brighter(), DESTROYED_UNIT_ALPHA);
         }
         float outerBorderWidth = 30f;
@@ -1284,7 +1284,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 }
                 if (!s.isBlank()) {
                     int fontType = Font.BOLD;
-                    if (entity.isDestroyed()) {
+                    if (removedFromGame) {
                         fontType = Font.PLAIN;
                     }
                     var fontContext = new FontRenderContext(null, true, true);
@@ -1323,7 +1323,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.setColor(borderColor);
             g2.setStroke(new BasicStroke(innerBorderWidth / 2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
-            if (entity.isDestroyed()) {
+            if (removedFromGame) {
                 g2.draw(STRAT_DESTROYED);
                 g2.fill(STRAT_DESTROYED);
             }
@@ -1333,7 +1333,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             // write unit ID and name to the minimap:
             g2.setColor(fontColor);
             int fontType = Font.BOLD;
-            if (entity.isDestroyed()) {
+            if (removedFromGame) {
                 fontType = Font.PLAIN;
             }
             g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
@@ -1346,7 +1346,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         }
         // If the unit is destroyed, it gets a strike on it.
-        if (entity.isDestroyed()) {
+        if (removedFromGame) {
             g2.setColor(fontColor);
             g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             if (stratOpsSymbols) {
@@ -1358,7 +1358,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
-        if (GUIP.getDrawFacingArrowsOnMiniMap() && !entity.isDestroyed() && !entity.isInfantry()) {
+        if (GUIP.getDrawFacingArrowsOnMiniMap() && !removedFromGame && !entity.isInfantry()) {
             // draw facing arrow
             var facing = entity.getFacing();
             if (facing > -1) {

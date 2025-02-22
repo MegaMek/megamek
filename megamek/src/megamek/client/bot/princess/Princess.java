@@ -2982,7 +2982,7 @@ public class Princess extends BotClient {
         }
     }
 
-    public int calculateAdjustment(final String ticks) {
+    public static int calculateAdjustment(final String ticks) {
         int adjustment = 0;
         if (StringUtility.isNullOrBlank(ticks)) {
             return 0;
@@ -2997,7 +2997,7 @@ public class Princess extends BotClient {
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                logger.warn("Invalid tick: '" + tick + "'.");
+                logger.warn("Invalid tick: {}", tick);
             }
         }
         return adjustment;

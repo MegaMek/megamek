@@ -71,6 +71,71 @@ public class Coords implements Serializable {
         this.y = other.y;
     }
 
+    /**
+     * Parses a string into a Coords object. The string can be in the format
+     * x,y or HexNumber. HexNumbers are offset by 1, so we have to reduce it here.
+     * <pre>{@code String hexNUmber = "0423";
+     * Coords coords = Coords.parse(hexNumber);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     *<p>Using X and Y is also easy</p>
+     * <pre>{@code String xy = "4,23";
+     * Coords coords = Coords.parse(xy);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     * @param input the string to parse
+     * @return the Coords object
+     */
+    public static Coords parseHexNumber(String input) {
+        return parse(input, -1);
+    }
+
+    /**
+     * Parses a string into a Coords object. The string can be in the format
+     * x,y or HexNumber. You can also apply any offset you want to compensate
+     * different starting points or uses.
+     * <pre>{@code String hexNUmber = "0423";
+     * Coords coords = Coords.parse(hexNumber, -1);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     *<p>Using X and Y is also easy</p>
+     * <pre>{@code String xy = "4,23";
+     * Coords coords = Coords.parse(xy, 0);
+     * assert coords.getX() == 4;
+     * assert coords.getY() == 23;}</pre>
+     * @param input the string to parse
+     * @return the Coords object
+     * @throws IllegalArgumentException if the input is not in the correct format or is null
+     */
+    public static Coords parse(String input, int offset) {
+        if (input == null) {
+            throw new IllegalArgumentException("Coords require a value.");
+        }
+        String[] parts;
+        if (input.contains(",")) {
+             parts = input.split(",");
+        } else {
+            // split in half
+            if (input.length() % 2 == 1) {
+                throw new IllegalArgumentException(
+                    "Coords must be in the format x,y or hexnumber. Hexnumber always has an even number of digits.");
+            }
+            int half = input.length() / 2;
+            parts = new String[] {input.substring(0, half), input.substring(half)};
+        }
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Coords must be in the format x,y or hexnumber.");
+        }
+        try {
+            // hexNumbers are offset by 1, so we have to reduce it here
+            int x = Integer.parseInt(parts[0]) + offset;
+            int y = Integer.parseInt(parts[1]) + offset;
+            return new Coords(x, y);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Coords must be in the format x,y.");
+        }
+    }
+
     public @Nullable Coords closestCoords(List<Coords> coords) {
         if (coords.isEmpty()) {
             return null;

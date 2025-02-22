@@ -13,6 +13,9 @@
  */
 package megamek.server.commands.arguments;
 
+import megamek.common.Coords;
+
+import java.util.List;
 import java.util.Map;
 
 public class Arguments {
@@ -25,6 +28,48 @@ public class Arguments {
 
     public Argument<?> get(String name) {
         return arguments.get(name);
+    }
+
+    public <T> T get(String name, Class<T> clazz) {
+        if (!arguments.containsKey(name)) {
+            throw new IllegalArgumentException("Argument " + name + " not found.");
+        }
+        var argument = arguments.get(name);
+        if (!clazz.isInstance(argument)) {
+            throw new IllegalArgumentException("Argument " + name + " is not of type " + clazz.getSimpleName() + " it is " + argument.getClass().getSimpleName());
+        } else {
+            // noinspection unchecked
+            return (T) argument;
+        }
+    }
+
+    public <T> T getValue(String name, Class<T> clazz) {
+        if (!arguments.containsKey(name)) {
+            throw new IllegalArgumentException("Argument " + name + " not found.");
+        }
+        var argument = arguments.get(name);
+        if (!clazz.isInstance(argument.getValue())) {
+            throw new IllegalArgumentException("Argument " + name + " is not of type " + clazz.getSimpleName() + " it is " + argument.getClass().getSimpleName());
+        } else {
+            // noinspection unchecked
+            return (T) argument.getValue();
+        }
+    }
+
+    public boolean getBoolean(String name) {
+        return getValue(name, Boolean.class);
+    }
+
+    public int getInt(String name) {
+        return getValue(name, Integer.class);
+    }
+
+    public String getString(String name) {
+        return getValue(name, String.class);
+    }
+
+    public <T extends Enum<?>> T getEnum(String name, Class<T> clazz) {
+        return getValue(name, clazz);
     }
 
     public boolean hasArg(String name) {

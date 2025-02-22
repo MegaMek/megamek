@@ -59,7 +59,7 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
             } else {
                 value = Enum.valueOf(enumType, input.toUpperCase());
             }
-        } catch (IllegalArgumentException e) {
+        } catch (IndexOutOfBoundsException|NullPointerException|IllegalArgumentException e) {
             throw new IllegalArgumentException(getName() + " must be one of: "
                 + String.join(", ", Arrays.toString(enumType.getEnumConstants())));
         }

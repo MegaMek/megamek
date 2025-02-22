@@ -442,7 +442,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(" (PT)");
         }
         // Append the facing for VGLs
-        if (getType().hasFlag(WeaponType.F_VGL)) {
+        if ((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL)) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");
@@ -601,10 +601,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if (destroyed && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-            if (entity != null) {
-                entity.setHasDamagedRHS(true);
-            }
+        if ((entity != null) && destroyed && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            entity.setHasDamagedRHS(true);
         }
     }
 
@@ -663,10 +661,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if (hit && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-            if (entity != null) {
-                entity.setHasDamagedRHS(true);
-            }
+        if ((entity != null) && hit && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            entity.setHasDamagedRHS(true);
         }
     }
 
@@ -1289,14 +1285,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Convenience "property" to reduce typing, which returns true if the current
-     * piece of equipment is a bomb capable of striking ground targets.
-     *
-     * @return True if
+     * @return True if this Mounted is a bomb capable of striking ground targets.
      */
     public boolean isGroundBomb() {
-        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
-                getType().hasFlag(AmmoType.F_GROUND_BOMB);
+        return false;
     }
 
     public void setInternalBomb(boolean internal) {
@@ -1686,6 +1678,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     protected List<String> bayComponentsToString() {
         return Collections.emptyList();
+    }
+
+    /**
+     * @return True when this Mounted is a head, quad, shoulder, pintle or sponson turret.
+     */
+    public boolean isTurret() {
+        return false;
     }
 
     @Override

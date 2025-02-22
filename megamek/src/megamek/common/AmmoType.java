@@ -21,12 +21,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import megamek.logging.MMLogger;
 import org.apache.commons.lang3.ArrayUtils;
 
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 public class AmmoType extends EquipmentType {
+
+    private static final MMLogger LOGGER = MMLogger.create(AmmoType.class);
 
     // ammo types
     public static final int T_NA = -1;
@@ -496,6 +499,16 @@ public class AmmoType extends EquipmentType {
 
     public int getToHitModifier() {
         return toHitModifier;
+    }
+
+    @Override
+    public boolean hasFlag(EquipmentFlag flag) {
+        if (flag instanceof AmmoTypeFlag) {
+            return super.hasFlag(flag);
+        } else {
+            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypes against an AmmoTypeFlag.");
+            return false;
+        }
     }
 
     /**

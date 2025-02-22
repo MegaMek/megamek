@@ -170,6 +170,8 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_PINTLE_TURRET,
     F_SPONSON_TURRET,
 
+    F_TURRET,
+
     F_TRAILER_MODIFICATION,
     F_LARGE_COMM_SCANNER_SUITE,
     F_SMALL_COMM_SCANNER_SUITE,

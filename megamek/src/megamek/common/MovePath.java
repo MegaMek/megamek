@@ -40,6 +40,7 @@ public class MovePath implements Cloneable, Serializable {
     private Set<Coords> coordsSet = null;
     private final transient Object COORD_SET_LOCK = new Object();
     private transient CachedEntityState cachedEntityState;
+    private final Coords waypoint;
 
     public Game getGame() {
         return game;
@@ -224,13 +225,37 @@ public class MovePath implements Cloneable, Serializable {
      * Generates a new, empty, movement path object.
      */
     public MovePath(final Game game, final Entity entity) {
+        this(game, entity, null);
+    }
+
+    /**
+     * Generates a new, empty, movement path object.
+     */
+    public MovePath(Game game, Entity entity, @Nullable Coords waypoint) {
         this.setEntity(entity);
         this.setGame(game);
+        this.waypoint = waypoint;
         // Do we care about gravity when adding steps?
         gravity = game.getPlanetaryConditions().getGravity();
         gravityConcern = ((gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0
-                || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
-                && game.getBoard().onGround() && !entity.isAirborne());
+            || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
+            && game.getBoard().onGround() && !entity.isAirborne());
+    }
+
+    /**
+     * Checks if there is a waypoint referenced by this MovePath.
+     * @return true if there is a waypoint, false otherwise.
+     */
+    public boolean hasWaypoint() {
+        return waypoint != null;
+    }
+
+    /**
+     * Returns the waypoint referenced by this MovePath.
+     * @return the waypoint, or null if there is none.
+     */
+    public @Nullable Coords getWaypoint() {
+        return waypoint;
     }
 
     public Entity getEntity() {
@@ -1733,7 +1758,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     @Override
     public MovePath clone() {
-        final MovePath copy = new MovePath(getGame(), getEntity());
+        final MovePath copy = new MovePath(getGame(), getEntity(), getWaypoint());
         copyFields(copy);
         return copy;
     }

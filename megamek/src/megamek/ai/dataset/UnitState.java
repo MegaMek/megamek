@@ -18,7 +18,6 @@ import megamek.common.*;
 import megamek.common.enums.GamePhase;
 
 /**
- * <h1>Unit State</h1>
  * Represents the state of a unit.
  * @param id unit id
  * @param teamId team id
@@ -52,7 +51,6 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
                         double internalP, boolean done, int maxRange, int totalDamage, Entity entity) {
 
     /**
-     * <h1>fromEntity</h1>
      * Creates a UnitState from an {@code entity}.
      * @param entity The entity to which the state belongs
      * @param game The game reference
@@ -88,7 +86,6 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
     }
 
     /**
-     * <h1>position</h1>
      * Returns the position of the unit.
      * @return The position
      */

@@ -25,7 +25,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Map;
 
 /**
- * <h1>TSV Serializer Deserializer</h1>
  * <p>serializer and deserializer for UnitState to/from TSV format.</p>
  * @author Luana Coppio
  */

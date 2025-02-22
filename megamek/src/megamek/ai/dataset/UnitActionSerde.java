@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <h1>TSV Serializer Deserializer</h1>
  * <p>serializer and deserializer for UnitAction to/from TSV format.</p>
  * @author Luana Coppio
  */

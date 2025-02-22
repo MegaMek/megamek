@@ -76,8 +76,9 @@ public class GameDatasetLogger {
      */
     private void newLogFile() {
         try {
-            String filename = PreferenceManager.getClientPreferences().stampFilenames() ? StringUtil.addDateTimeStamp(prefix) : prefix;
-            File logfile = new File(LOG_DIR + File.separator + filename + "_" + counter + ".tsv");
+            boolean timestampFilenames = PreferenceManager.getClientPreferences().stampFilenames();
+            String filename = timestampFilenames ? StringUtil.addDateTimeStamp(prefix) : prefix + "_" + counter;
+            File logfile = new File(LOG_DIR + File.separator + filename  + ".tsv");
             // if a file with the same name already exists, delete it.
             if (logfile.exists()) {
                 if (!logfile.delete()) {

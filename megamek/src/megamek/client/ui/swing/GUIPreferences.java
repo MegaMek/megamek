@@ -214,6 +214,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
+    public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
     public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
@@ -1078,6 +1079,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
+    public boolean getGifGameSummaryMinimap() {
+        return store.getBoolean(GIF_GAME_SUMMARY_MINIMAP);
+    }
+
     public boolean showUnitDisplayNamesOnMinimap() {
         return store.getBoolean(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP);
     }
@@ -1925,6 +1930,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setGameSummaryMinimap(boolean state) {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
+    }
+
+    public void setGifGameSummaryMinimap(boolean state) {
+        store.setValue(GIF_GAME_SUMMARY_MINIMAP, state);
     }
 
     public void setShowUnitDisplayNamesOnMinimap(boolean state) {

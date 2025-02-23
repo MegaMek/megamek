@@ -120,6 +120,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final int MARGIN = 3;
     private static final int BUTTON_HEIGHT = 14;
 
+
     /**
      * The minimap zoom at which game summary images are saved regardless of the
      * ingame minimap setting.
@@ -303,7 +304,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                if (GUIP.getGameSummaryMinimap()
+                if ((GUIP.getGameSummaryMinimap() || GUIP.getGifGameSummaryMinimap())
                     && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
                     || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
                     || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
@@ -315,16 +316,19 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                     File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
                         + e.getOldPhase() + ".png");
-                    if (gifWriterThread == null) {
-                        gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()), "GifWriterThread");
-                        gifWriterThread.start();
-                    }
-                    try {
 
+                    try {
                         BufferedImage image = getMinimapImage(game, bv, GAME_SUMMARY_ZOOM, clientGui, null, movePathLines);
-                        ImageIO.write(image, "png", imgFile);
-                        long frameDurationInMillis = e.getOldPhase().isFiring()? 400 : 200;
-                        gifWriterThread.addFrame(image, frameDurationInMillis);
+                        if (GUIP.getGameSummaryMinimap()) {
+                            ImageIO.write(image, "png", imgFile);
+                        }
+                        if (GUIP.getGifGameSummaryMinimap()) {
+                            if (gifWriterThread == null) {
+                                gifWriterThread = new GifWriterThread(new GifWriter(game.getUUIDString()), "GifWriterThread");
+                                gifWriterThread.start();
+                            }
+                            gifWriterThread.addFrame(image, 400);
+                        }
                     } catch (Exception ex) {
                         logger.error(ex, "Error saving game summary image.");
                     }

@@ -22,7 +22,10 @@ package megamek.client.ui.swing;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * When deploying units that are towing units, let's mark hexes that would break the tow linkage

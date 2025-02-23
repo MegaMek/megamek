@@ -504,6 +504,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         if (isInternalBomb()) {
             desc.append(" (Int. Bay)");
         }
+
+        if (is(EquipmentTypeLookup.PINTLE_TURRET) && entity instanceof Tank tank && tank.getBaseChassisSponsonPintleWeight() >= 0) {
+            desc.append(" (%d kg)".formatted((int) (getTonnage() * 1000)));
+        }
         return desc.toString();
     }
 

@@ -628,13 +628,12 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(equipmentWeight / 10.0,
                     entity) / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
-            // For omnivehicles the weight should be set as chassis fixed weight.
-            // Split the weight evenly among the mounts to assure the total weight is
-            // correct.
-            if ((entity.isOmni() && (entity instanceof Tank)
-                    && ((Tank) entity).getBaseChassisSponsonPintleWeight() >= 0)) {
-                return ((Tank) entity).getBaseChassisSponsonPintleWeight() /
-                        entity.countWorkingMisc(MiscType.F_PINTLE_TURRET);
+            // Pintle turret weight may be set as a fixed weight. Split the weight evenly among the mounts to assure the total weight is
+            // correct. According to BT 35024, Handbook House Davion, p.198 and
+            // https://bg.battletech.com/forums/index.php/topic,77622.0.html,
+            // pintle turrets can be designed as empty with a fixed weight even on SV that are not Omni.
+            if ((entity instanceof Tank tank) && (tank.getBaseChassisSponsonPintleWeight() >= 0)) {
+                return tank.getBaseChassisSponsonPintleWeight() / entity.countMisc(EquipmentTypeLookup.PINTLE_TURRET);
             }
             double weaponWeight = 0;
             // 5% of linked weapons' weight

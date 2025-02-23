@@ -4669,7 +4669,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param flag The MiscTypeFlag flag to look for, e.g. F_VTOL_EQUIPMENT
      * @return True when the entity has a MiscType equipment with the given flag
-     * @see EquipmentType#hasFlag(EquipmentFlag) 
+     * @see EquipmentType#hasFlag(EquipmentFlag)
      * @see MiscType
      * @see MiscTypeFlag
      */
@@ -4689,6 +4689,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean hasMisc(String internalName) {
         return miscList.stream().anyMatch(misc -> misc.is(internalName));
+    }
+
+    /**
+     * Returns the number of MiscType equipment of the given internalName, regardless of state.
+     * When available, use EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal
+     * name, even of weapons, can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @return the number of MiscType equipment of the given internalName on the unit
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public int countMisc(String internalName) {
+        return (int) miscList.stream().filter(misc -> misc.is(internalName)).count();
     }
 
     /**

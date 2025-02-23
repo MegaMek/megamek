@@ -18,18 +18,17 @@
  */
 package megamek.client.generator;
 
+import megamek.MMConstants;
+import megamek.common.util.weightedMaps.WeightedIntMap;
+import megamek.logging.MMLogger;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
-import megamek.MMConstants;
-import megamek.common.util.weightedMaps.WeightedIntMap;
-import megamek.logging.MMLogger;
 
 /**
  * Save File Formatting:
@@ -37,9 +36,8 @@ import megamek.logging.MMLogger;
  * Callsign is a String that does not include a ','
  * Weight is an integer weight that is used during generation
  */
-public enum RandomCallsignGenerator {
-    INSTANCE;
-
+public class RandomCallsignGenerator {
+    private final static RandomCallsignGenerator INSTANCE = new RandomCallsignGenerator();
     private final static MMLogger logger = MMLogger.create(RandomCallsignGenerator.class);
 
     private final WeightedIntMap<String> weightedCallsigns = new WeightedIntMap<>();

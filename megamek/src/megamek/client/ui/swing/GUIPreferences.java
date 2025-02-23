@@ -690,6 +690,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
         store.setDefault(MINI_MAP_PAINT_BORDERS, true);
         store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
+        store.setDefault(GIF_GAME_SUMMARY_MINIMAP, true);
+        store.setDefault(GAME_SUMMARY_MINIMAP, false);
         store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
         store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);

@@ -47,6 +47,10 @@ public class TowLinkWarning {
     public static List<Coords> findTowLinkIssues(Game game, Entity entity, Board board) {
         List<Coords> warnList = new ArrayList<>();
 
+        if (entity.getTowing() == Entity.NONE && entity.getTowedBy() == Entity.NONE) {
+            return warnList;
+        }
+
         List<Coords> validTowCoords = findValidDeployCoordsForTractorTrailer(game, entity, board);
 
         if (validTowCoords == null) {

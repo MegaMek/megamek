@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +39,9 @@ import static org.mockito.Mockito.when;
 public class TowLinkWarningTest {
     final int TRACTOR_ID = 1;
     final int TRAILER_ID = 2;
+    final int TRAILER_2_ID = 3;
+    final int TRAILER_3_ID = 4;
+    final int TRAILER_4_ID = 5;
 
     Game mockGame;
     Board mockBoard;
@@ -58,10 +62,15 @@ public class TowLinkWarningTest {
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getEntity(TRACTOR_ID)).thenReturn(mockTractor);
         when(mockGame.getEntity(TRAILER_ID)).thenReturn(mockTrailer);
+        when(mockGame.hasEntity(TRACTOR_ID)).thenReturn(true);
+        when(mockGame.hasEntity(TRAILER_ID)).thenReturn(true);
+
+        when(mockTractor.isDeployed()).thenReturn(false);
+        when(mockTrailer.isDeployed()).thenReturn(false);
     }
 
     /**
-     * @see TowLinkWarning#findCoordsForTractor(Game, Entity, Board)
+     * @see TowLinkWarning#findValidDeployCoordsForTractorTrailer(Game, Entity, Board)
      */
     @Nested
     class testFindCoordsForTractor {
@@ -71,7 +80,7 @@ public class TowLinkWarningTest {
             // Arrange
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTractor(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
 
             // Assert
             assertNull(coords);
@@ -84,7 +93,7 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTractor(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
 
 
             // Assert
@@ -100,7 +109,7 @@ public class TowLinkWarningTest {
             when(mockTrailer.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTractor(mockGame, mockTractor, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
 
 
             // Assert
@@ -110,6 +119,12 @@ public class TowLinkWarningTest {
         @Test
         void testLargeTrailerDeployed() {
             // Arrange
+
+            mockTrailer = mock(LargeSupportTank.class);
+            when(mockTrailer.getId()).thenReturn(TRAILER_ID);
+            when(mockTrailer.isDeployed()).thenReturn(true);
+            when(mockGame.getEntity(TRAILER_ID)).thenReturn(mockTrailer);
+
             when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
             when(mockTrailer.isDeployed()).thenReturn(true);
@@ -121,16 +136,16 @@ public class TowLinkWarningTest {
                 compute.when(() -> Compute.stackingViolation(any(Game.class), anyInt(), any(Coords.class), anyBoolean())).thenReturn(mock(Entity.class));
 
                 // Act
-                testCoords = TowLinkWarning.findCoordsForTractor(mockGame, mockTractor, mockBoard);
+                testCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
             }
 
             // Assert
-            assertEquals(5, testCoords.size());
+            assertEquals(6, testCoords.size());
         }
     }
 
     /**
-     * @see TowLinkWarning#findCoordsForTrailer(Game, Entity, Board)
+     * @see TowLinkWarning#findValidDeployCoordsForTractorTrailer(Game, Entity, Board)
      */
     @Nested
     class testFindCoordsForTrailer {
@@ -140,7 +155,7 @@ public class TowLinkWarningTest {
             // Arrange
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
 
             // Assert
             assertNull(coords);
@@ -153,7 +168,7 @@ public class TowLinkWarningTest {
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
 
             // Assert
             assertEquals(25, coords.size());
@@ -169,7 +184,7 @@ public class TowLinkWarningTest {
             when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
 
             // Act
-            List<Coords> coords = TowLinkWarning.findCoordsForTrailer(mockGame, mockTrailer, mockBoard);
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
 
             // Assert
             assertEquals(1, coords.size());
@@ -178,6 +193,11 @@ public class TowLinkWarningTest {
         @Test
         void testLargeTrailerAndTractorDeployed() {
             // Arrange
+            mockTrailer = mock(LargeSupportTank.class);
+            when(mockTrailer.getId()).thenReturn(TRAILER_ID);
+            when(mockTrailer.isDeployed()).thenReturn(false);
+            when(mockGame.getEntity(TRAILER_ID)).thenReturn(mockTrailer);
+
             when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
             when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
 
@@ -190,12 +210,165 @@ public class TowLinkWarningTest {
                 compute.when(() -> Compute.stackingViolation(any(Game.class), anyInt(), any(Coords.class), anyBoolean())).thenReturn(mock(Entity.class));
 
                 // Act
-                testCoords = TowLinkWarning.findCoordsForTrailer(mockGame, mockTrailer, mockBoard);
+                testCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
             }
 
             // Assert
             assertEquals(6, testCoords.size());
         }
     }
+    @Nested
+    class TractorTrainTests {
+        // Let's mock another trailer and put it at the end of the train
+        Entity mockTrailer2;
+        Entity mockTrailer3;
+        Entity mockTrailer4;
 
+        @BeforeEach
+        void setUp() {
+            mockTrailer2 = mock(Entity.class);
+            when(mockTrailer2.getId()).thenReturn(TRAILER_2_ID);
+            when(mockGame.getEntity(mockTrailer2.getId())).thenReturn(mockTrailer2);
+            when(mockGame.hasEntity(mockTrailer2.getId())).thenReturn(true);
+
+            mockTrailer3 = mock(Entity.class);
+            when(mockTrailer3.getId()).thenReturn(TRAILER_3_ID);
+            when(mockGame.getEntity(mockTrailer3.getId())).thenReturn(mockTrailer3);
+            when(mockGame.hasEntity(mockTrailer3.getId())).thenReturn(true);
+
+            mockTrailer4 = mock(Entity.class);
+            when(mockTrailer4.getId()).thenReturn(TRAILER_4_ID);
+            when(mockGame.getEntity(mockTrailer4.getId())).thenReturn(mockTrailer4);
+            when(mockGame.hasEntity(mockTrailer4.getId())).thenReturn(true);
+
+            when(mockTrailer2.isDeployed()).thenReturn(false);
+            when(mockTrailer3.isDeployed()).thenReturn(false);
+            when(mockTrailer4.isDeployed()).thenReturn(false);
+        }
+
+        @Test
+        void test2TrailersLastTrailerDeployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRAILER_2_ID);
+
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTrailer2.getTowedBy()).thenReturn(TRAILER_ID);
+
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID));
+
+            when(mockTrailer2.isDeployed()).thenReturn(true);
+            when(mockTrailer2.getPosition()).thenReturn(new Coords(3, 3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+
+            // Assert
+            // This tractor should be suggested to deploy in any location adjacent to the current deployed trailer - 6 hexes
+            assertEquals(6, coords.size());
+        }
+
+        @Test
+        void test3TrailersLastTrailerDeployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer2.getTowing()).thenReturn(TRAILER_3_ID);
+
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTrailer2.getTowedBy()).thenReturn(TRAILER_ID);
+            when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
+
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID));
+
+            when(mockTrailer3.isDeployed()).thenReturn(true);
+            when(mockTrailer3.getPosition()).thenReturn(new Coords(3, 3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+
+            // Assert
+            // These trailers stack, so trailer 3 and 2 will be in one hex, and the tractor and trailer 1 in the adjacent hex
+            assertEquals(6, coords.size());
+        }
+
+        @Test
+        void test4TrailersLastTrailerDeployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer2.getTowing()).thenReturn(TRAILER_3_ID);
+            when(mockTrailer3.getTowing()).thenReturn(TRAILER_4_ID);
+
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTrailer2.getTowedBy()).thenReturn(TRAILER_ID);
+            when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
+
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+
+            when(mockTrailer4.isDeployed()).thenReturn(true);
+            when(mockTrailer4.getPosition()).thenReturn(new Coords(3, 3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
+
+            // Assert
+            // These trailers stack, so trailer 3 and 2 will be in one hex, and the tractor and trailer 1 in the adjacent hex
+            assertEquals(19, coords.size());
+        }
+
+        @Test
+        void testDeployTrailer4WithTrailer2Deployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer2.getTowing()).thenReturn(TRAILER_3_ID);
+            when(mockTrailer3.getTowing()).thenReturn(TRAILER_4_ID);
+
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTrailer2.getTowedBy()).thenReturn(TRAILER_ID);
+            when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
+
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+
+            when(mockTrailer2.isDeployed()).thenReturn(true);
+            when(mockTrailer2.getPosition()).thenReturn(new Coords(3, 3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer4, mockBoard);
+
+            // Assert
+            assertEquals(6, coords.size());
+        }
+
+        @Test
+        void testDeployTrailerMultiDeployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer2.getTowing()).thenReturn(TRAILER_3_ID);
+            when(mockTrailer3.getTowing()).thenReturn(TRAILER_4_ID);
+
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTrailer2.getTowedBy()).thenReturn(TRAILER_ID);
+            when(mockTrailer3.getTowedBy()).thenReturn(TRAILER_2_ID);
+            when(mockTrailer4.getTowedBy()).thenReturn(TRAILER_3_ID);
+
+            when(mockTractor.getAllTowedUnits()).thenReturn(Arrays.asList(TRAILER_ID, TRAILER_2_ID, TRAILER_3_ID, TRAILER_4_ID));
+
+            when(mockTractor.isDeployed()).thenReturn(true);
+            when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
+
+            when(mockTrailer4.isDeployed()).thenReturn(true);
+            when(mockTrailer4.getPosition()).thenReturn(new Coords(3, 1));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer2, mockBoard);
+
+            // Assert
+            assertEquals(1, coords.size());
+        }
+    }
 }

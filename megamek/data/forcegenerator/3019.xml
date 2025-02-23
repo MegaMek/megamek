@@ -4917,9 +4917,9 @@
 			</model>
 		</chassis>
 		<chassis name='Merlin' unitType='Mek'>
-			<availability>OA:6+,MERC:4</availability>
+			<availability>MERC:4,OA:6+</availability>
 			<model name='MLN-1A'>
-				<availability>OA:8,MERC:8</availability>
+				<availability>MERC:8,OA:8</availability>
 			</model>
 		</chassis>
 		<chassis name='Mithras Light Tank' unitType='Tank'>
@@ -7141,9 +7141,9 @@
 			</model>
 		</chassis>
         <chassis name='Viper' unitType='Mek'>
-            <availability>FWL:1,MERC:1</availability>
+            <availability>FWL:1,MERC:1,Periphery.MW:1,Periphery.ME:1</availability>
             <model name='VP-5'>
-                <availability>FWL:8,MERC:8</availability>
+                <availability>FWL:8,MERC:8,Periphery.MW:1,Periphery.ME:1</availability>
             </model>
         </chassis>
 		<chassis name='Visigoth' unitType='AeroSpaceFighter' omni='Clan'>

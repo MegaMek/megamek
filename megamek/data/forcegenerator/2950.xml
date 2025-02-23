@@ -6827,9 +6827,9 @@
 			</model>
 		</chassis>
         <chassis name='Viper' unitType='Mek'>
-            <availability>FWL:1,MERC:1</availability>
+            <availability>FWL:1,MERC:1,Periphery.MW:1,Periphery.ME:1</availability>
             <model name='VP-5'>
-                <availability>FWL:8,MERC:8</availability>
+                <availability>FWL:8,MERC:8,Periphery.MW:8,Periphery.ME:8</availability>
             </model>
         </chassis>
 		<chassis name='Visigoth' unitType='AeroSpaceFighter' omni='Clan'>

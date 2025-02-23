@@ -84,13 +84,19 @@ public enum RandomCallsignGenerator {
 
             while (input.hasNextLine()) {
                 lineNumber++;
-                String[] values = input.nextLine().split(",");
-                if (values.length == 2) {
+                String line = input.nextLine();
+                int lastCommaIndex = line.lastIndexOf(",");
+                if (lastCommaIndex == -1 || line.length() == lastCommaIndex + 1) {
+                    logger.debug("Not enough fields in {} on {}",file, lineNumber);
+                    continue;
+                }
+
+                String[] values = {line.substring(0, lastCommaIndex), line.substring(lastCommaIndex + 1)};
+
+                try {
                     callsigns.put(values[0], Integer.parseInt(values[1].trim()));
-                } else if (values.length < 2) {
-                    logger.warn("Not enough fields in {} on {}",file, lineNumber);
-                } else {
-                    logger.warn("Too many fields in {} on {}", file, lineNumber);
+                } catch (NumberFormatException e) {
+                    logger.warn("Invalid weight in {} on {}", file, lineNumber);
                 }
             }
         } catch (Exception e) {

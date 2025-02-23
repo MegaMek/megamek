@@ -155,6 +155,10 @@ public class TripodMek extends MekWithArms {
             mp--;
         }
 
+        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+            mp--;
+        }
+
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null)

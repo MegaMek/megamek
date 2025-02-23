@@ -407,6 +407,8 @@ public class TestProtoMek extends TestEntity {
                 correct = false;
             }
         }
+
+        correct &= correctArmorOverAllocation(proto, buffer);
         return correct;
     }
 

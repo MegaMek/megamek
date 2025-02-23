@@ -1039,6 +1039,8 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
+        correct &= correctArmorOverAllocation(supportVee, buff);
+
         if (supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
             int bar = supportVee.getBARRating(supportVee.firstArmorIndex());
 

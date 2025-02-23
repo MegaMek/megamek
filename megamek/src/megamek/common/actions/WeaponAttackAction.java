@@ -20,7 +20,6 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;

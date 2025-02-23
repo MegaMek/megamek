@@ -1015,6 +1015,142 @@ public abstract class TestEntity implements TestEntityOption {
         return true;
     }
 
+    /**
+     * For units without patchwork armor, tests if more armor is allocated on the unit's locations than it may have according to its armor
+     * tonnage. If it is, returns false and appends an error message to the given error buffer. Otherwise or if the unit has patchwork
+     * armor, returns true.
+     *
+     * @param entity The unit to test
+     * @param buff   A StringBuffer to write error messages to
+     * @return False when there is surplus armor allocated and the unit is invalid, true otherwise
+     */
+    protected boolean correctArmorOverAllocation(Entity entity, @Nullable StringBuffer buff) {
+        if (!entity.hasPatchworkArmor() && (entity.getTotalOArmor() > getArmorPoints(entity))) {
+            if (buff != null) {
+                buff.append("More armor allocated than is available according to armor tonnage.\n");
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns the total number of armor points available to the unit for a given tonnage of armor. This does not round down the
+     * calculation or take into account any maximum number of armor points or tonnage allowed to the unit. It also does not include any free
+     * armor points due to SI on aerospace units.
+     *
+     * NOTE: only use for non-patchwork armor
+     *
+     * @return the number of armor points available for the armor tonnage
+     */
+    public static double getRawArmorPoints(Entity unit, double armorTons) {
+        if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            return Math.round(armorTons / ArmorType.forEntity(unit).getWeightPerPoint());
+        } else if (unit.isSupportVehicle()) {
+            return Math.floor(armorTons / TestSupportVehicle.armorWeightPerPoint(unit));
+        } else if ((unit instanceof Jumpship)
+            && unit.getArmorType(unit.firstArmorIndex()) == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
+            // Because primitive JumpShip armor has an extra step of rounding we have to give it special treatment.
+            // Standard armor value is computed first, rounded down, then the primitive armor mod is applied.
+            return Math.floor(Math.floor(armorTons * TestAdvancedAerospace.armorPointsPerTon((Jumpship) unit,
+                EquipmentType.T_ARMOR_AEROSPACE, false)) * 0.66);
+        }
+        return armorTons * getArmorPointsPerTon(unit);
+    }
+
+    /**
+     * Returns the number of armor points the given unit has with the given armor tonnage. This includes bonus armor points for SI on DS/SC
+     * and capital craft.
+     *
+     * NOTE: only use for non-patchwork armor
+     *
+     * @param unit      the unit
+     * @param armorTons the armor tonnage
+     * @return the armor point total of the unit, including SI bonus armor
+     */
+    public static int getArmorPoints(Entity unit, double armorTons) {
+        int raw = (int) Math.floor(getRawArmorPoints(unit, armorTons) + TestEntity.getSIBonusArmorPoints(unit));
+        return Math.min(raw, getMaximumArmorPoints(unit));
+    }
+
+    /**
+     * Returns the number of armor points the given unit has. This includes bonus armor points for SI on DS/SC and capital craft.
+     *
+     * NOTE: only use for non-patchwork armor
+     *
+     * @param unit the unit
+     * @return the armor point total of the unit, including SI bonus armor
+     */
+    public static int getArmorPoints(Entity unit) {
+        return getArmorPoints(unit, unit.getLabArmorTonnage());
+    }
+
+    /**
+     * Calculate the number of armor points per ton of armor for the given unit.
+     *
+     * @param en The unit
+     * @return The number of armor points per ton
+     */
+    public static double getArmorPointsPerTon(Entity en) {
+        ArmorType armor = ArmorType.forEntity(en);
+        if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
+            return 1.0 / armor.getSVWeightPerPoint(en.getArmorTechRating());
+        } else {
+            return armor.getPointsPerTon(en);
+        }
+    }
+
+    public static int getMaximumArmorPoints(Entity unit) {
+        int points = 0;
+        if (unit.hasETypeFlag(Entity.ETYPE_MEK)) {
+            int headPoints = 3;
+            if (unit.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+                headPoints = 4;
+            }
+            points = (unit.getTotalInternal() * 2) + headPoints;
+        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+            points = TestProtoMek.maxArmorFactor((ProtoMek) unit);
+        } else if (unit.isSupportVehicle()) {
+            points = TestSupportVehicle.maxArmorFactor(unit);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK)) {
+            points = (int) Math.floor((unit.getWeight() * 3.5) + 40);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            points = (unit.getWeightClass() * 4) + 2;
+        } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            points = TestAdvancedAerospace.maxArmorPoints((Jumpship) unit);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            points = TestSmallCraft.maxArmorPoints((SmallCraft) unit);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
+            points = (int) Math.floor(unit.getWeight());
+        } else if (unit.hasETypeFlag(Entity.ETYPE_AERO)) {
+            points = (int) Math.floor(unit.getWeight() * 8);
+        }
+        return points;
+    }
+
+    /**
+     * Returns the number of free additional armor points provided for aerospace vessels based on their SI. This is usually a whole number
+     * but may be a fractional amount for primitive JumpShips. It is the total number, which is usually divided evenly among armor facings.
+     * For units other than SC/DS and capital craft, this is 0. See TM p.191, SO:AA p.140, IO:AE p.119-125
+     *
+     * @param entity The unit to compute bonus armor for
+     * @return The total number of extra armor points received for SI
+     */
+    public static double getSIBonusArmorPoints(Entity entity) {
+        double points = 0;
+        if (entity instanceof SmallCraft smallCraft) {
+            points = smallCraft.getSI() * (entity.locations() - 1);
+        } else if (entity instanceof Jumpship jumpship) {
+            points = Math.round(jumpship.getSI() / 10.0) * 6;
+        }
+        if (entity.isPrimitive()) {
+            return points * ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getArmorPointsMultiplier();
+        } else {
+            return points;
+        }
+    }
+
     public boolean hasIllegalTechLevels(StringBuffer buff) {
         return hasIllegalTechLevels(buff, getEntity().getTechLevel());
     }

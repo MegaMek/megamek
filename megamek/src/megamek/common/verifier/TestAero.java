@@ -526,6 +526,8 @@ public class TestAero extends TestEntity {
             correct = false;
         }
 
+        correct &= correctArmorOverAllocation(aero, buff);
+
         return correct;
     }
 

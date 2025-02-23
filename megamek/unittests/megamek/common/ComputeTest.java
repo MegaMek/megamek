@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
+ *
+ */
+
 package megamek.common;
 
 import megamek.client.Client;
@@ -11,6 +26,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -21,7 +38,7 @@ class ComputeTest {
     static GameOptions mockGameOptions = mock(GameOptions.class);
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
-    static Game game = new Game();
+    static Game game;
 
     static Team team1 = new Team(0);
     static Team team2 = new Team(1);
@@ -29,6 +46,7 @@ class ComputeTest {
     static Player player2 = new Player(1, "Test2");
     static WeaponType mockAC5 = (WeaponType) EquipmentType.get("ISAC5");
     static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
+    static AmmoType mockLTAmmoType = (AmmoType) EquipmentType.get("ISLongTom Ammo");
 
     @BeforeAll
     static void setUpAll() {
@@ -38,6 +56,7 @@ class ComputeTest {
 
     @BeforeEach
     void setUp() {
+        game = new Game();
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
         game.setOptions(mockGameOptions);
@@ -242,4 +261,148 @@ class ComputeTest {
         assertTrue(Compute.canPointBlankShot(attacker, target));
     }
 
+    @Test
+    void allEnemiesOutsideBlastLongTomDirectlyOnMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        assertFalse(Compute.allEnemiesOutsideBlast(target, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomAdjacentToMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(6,5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomTwoFromMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(6,4), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomThreeFromMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(8,6), HexTarget.TYPE_HEX_ARTILLERY);
+        assertTrue(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomTwoUnderMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0,0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setElevation(2);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(5,5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertFalse(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
+
+    @Test
+    void allEnemiesOutsideBlastLongTomThreeUnderMek() {
+        // Basic test: Artillery at target's hex
+        Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+        Mek target = createMek("Target", "TGT-2", "Bob");
+
+        attacker.setOwnerId(player1.getId());
+        attacker.setId(1);
+        Coords attackerCoords = new Coords(0, 0);
+        attacker.setPosition(attackerCoords);
+        attacker.setHidden(true);
+        attacker.setDeployed(true);
+        target.setOwnerId(player2.getId());
+        target.setId(2);
+        Coords targetCoords = new Coords(5, 5);
+        target.setPosition(targetCoords);
+        target.setElevation(3);
+        target.setDeployed(true);
+
+        game.addEntities(List.of(attacker, target));
+
+        HexTarget hTarget = new HexTarget(new Coords(5, 5), HexTarget.TYPE_HEX_ARTILLERY);
+        assertTrue(Compute.allEnemiesOutsideBlast(hTarget, attacker, mockLTAmmoType, true, false, false, game));
+    }
 }

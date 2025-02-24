@@ -100,11 +100,11 @@ class FiringPlanTest {
 
     @Test
     void testGetExpectedDamage() {
-        when(mockWeaponFireInfoMG.getExpectedDamageOnHit()).thenReturn(2.0);
+        when(mockWeaponFireInfoMG.getDamageOnHit()).thenReturn(2.0);
         when(mockWeaponFireInfoMG.getProbabilityToHit()).thenReturn(0.1666);
-        when(mockWeaponFireInfoPPC.getExpectedDamageOnHit()).thenReturn(10.0);
+        when(mockWeaponFireInfoPPC.getDamageOnHit()).thenReturn(10.0);
         when(mockWeaponFireInfoPPC.getProbabilityToHit()).thenReturn(0.7222);
-        when(mockWeaponFireInfoERML.getExpectedDamageOnHit()).thenReturn(5.0);
+        when(mockWeaponFireInfoERML.getDamageOnHit()).thenReturn(5.0);
         when(mockWeaponFireInfoERML.getProbabilityToHit()).thenReturn(0.4166);
 
         double expected = (2 * 0.1666) + (10 * 0.7222) + (5 * 0.4166);

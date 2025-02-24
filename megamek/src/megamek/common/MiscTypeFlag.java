@@ -298,4 +298,11 @@ public enum MiscTypeFlag implements EquipmentFlag {
     F_HYPERSPECTRAL_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
     F_INFRARED_IMAGER, // TODO: add game rules for the following imagers/radars, construction data only
     F_LOOKDOWN_RADAR, // TODO: add game rules for the following imagers/radars, construction data only
+
+    // UrbanFest Chain Drape
+    F_CHAIN_DRAPE,
+    F_CHAIN_DRAPE_APRON,
+    F_CHAIN_DRAPE_CAPE,
+    F_CHAIN_DRAPE_PONCHO,
+
 }

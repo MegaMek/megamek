@@ -14,13 +14,9 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
+import megamek.common.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 import megamek.common.equipment.WeaponMounted;
@@ -388,6 +384,11 @@ public class AmmoType extends EquipmentType {
     };
 
     private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD);
+
+    public static final Map<String, Integer> blastRadius;
+    static {
+        blastRadius = new HashMap<>();
+    }
 
     public AmmoType() {
         criticals = 1;
@@ -3444,6 +3445,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 1);
         return ammo;
     }
 
@@ -3470,6 +3472,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 2);
         return ammo;
     }
 
@@ -3496,6 +3499,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 3);
         return ammo;
     }
 
@@ -3522,6 +3526,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 4);
         return ammo;
     }
 
@@ -14323,6 +14328,7 @@ public class AmmoType extends EquipmentType {
                     && (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
             }
+
             // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;

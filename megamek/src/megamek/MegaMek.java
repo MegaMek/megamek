@@ -92,7 +92,7 @@ public class MegaMek {
             final String name = t.getClass().getName();
             final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
             final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            logger.error(t, message, title);
+            logger.errorDialog(t, message, title);
         });
 
         // Second, let's handle logging

@@ -195,6 +195,7 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
     private static final TargetRollModifier TH_STABLE_WEAPON = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
+    static final TargetRollModifier TH_NO_TARGETS_IN_BLAST = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "no targets in blast zone!");
 
     /**
      * The possible fire control types.
@@ -1119,6 +1120,20 @@ public class FireControl {
             if (0 == firingAmmo.getUsableShotsLeft()) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
             }
+
+            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
+            if (weapon.isGroundBomb()
+                    && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
+            ) {
+                Hex hex = game.getBoard().getHex(target.getPosition());
+                // If somehow we get an off-board hex, it's impossible to hit.
+                if (hex == null) {
+                    return new ToHitData(TH_NULL_POSITION);
+                }
+                if (Compute.allEnemiesOutsideBlast(target, shooter, firingAmmo.getType(), false, false, false, game)) {
+                    return new ToHitData(TH_NO_TARGETS_IN_BLAST);
+                }
+            }
         }
 
         // check if target is even under our path
@@ -1346,7 +1361,7 @@ public class FireControl {
 
         double modifier = 1;
         modifier += calcCommandUtility(firingPlan.getTarget());
-        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget(), firingPlan.getExpectedBuildingDamage());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
         double expectedDamage = firingPlan.getExpectedDamage();
@@ -1359,6 +1374,7 @@ public class FireControl {
         utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
         utility += TARGET_HP_FRACTION_DEALT_UTILITY
                 * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
+        utility -= firingPlan.getExpectedFriendlyDamage();
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -1366,7 +1382,7 @@ public class FireControl {
         firingPlan.setUtility(utility);
     }
 
-    protected double calcStrategicBuildingTargetUtility(final Targetable target) {
+    protected double calcStrategicBuildingTargetUtility(final Targetable target, final double expectedDamage) {
         if (!(target instanceof BuildingTarget)) {
             return 0;
         }
@@ -1376,7 +1392,7 @@ public class FireControl {
         final String coords = coordsFormat.format(targetCoords.getX() + 1)
                 + coordsFormat.format(targetCoords.getY() + 1);
         if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
-            return STRATEGIC_TARGET_UTILITY;
+            return STRATEGIC_TARGET_UTILITY + expectedDamage;
         }
         return 0;
     }
@@ -1482,21 +1498,23 @@ public class FireControl {
             return 100;
 
             // In cases that are not generally overkill (less than 50% of the target's total
-            // HP in
-            // damage), target as normal (don't want to spread damage in these cases).
+            // HP in damage), target as normal (don't want to spread damage in these cases).
             // Also want to disregard damage allocation weighting if the target is a
-            // building or
-            // infantry/BA (as they don't die until you do 100% damage to them normally).
-        } else if ((damageFraction < 0.5)
+            // building, or infantry/BA that won't be killed off in one shot.
+        }
+        if ((damageFraction < 0.5)
                 || (target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+        ){
             return 0;
+        }
+        if ((owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+            // Don't disincentivize possible overkill attacks against Infantry too much.
+            return Math.min(4.0, damageFraction);
         }
 
         // In the remaining case, namely 0.5 <= damage, return the fraction of target HP
-        // dealt as
-        // the penalty scaling factor (multiplied by the weight value to produce a
+        // dealt as the penalty scaling factor (multiplied by the weight value to produce a
         // penalty).
         return damageFraction;
     }
@@ -1978,10 +1996,35 @@ public class FireControl {
         BombMounted exampleBomb = null;
 
         // things that cause us to avoid calculating a bomb plan:
-        // Target is flying unit
+        // 1. Target is flying Aerospace unit
+        // 2. Target is VTOL not above blast-causing terrain
+        // 3. Target is Submarine too far below surface level
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
+            Entity entity = (Entity) target;
+            Hex hex = game.getBoard().getHex(entity.getPosition());
+            hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
+
+            if (entity.isAirborne()) {
                 return diveBombPlan;
+            }
+            if (entity.isAirborneVTOLorWIGE()) {
+                // If VTOL / WiGE movement and flying, can only be hit if over water
+                // or buildings, and only if within a specific level range
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
+            }
+            // Submarine units can be bombed, but bombs impact the water surface and transfers 1 to 2
+            // levels of depth downward.
+            if (entity.getMovementMode().isSubmarine()) {
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                if (entity.getElevation() < -2) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
             }
         }
 

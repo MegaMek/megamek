@@ -285,6 +285,11 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_TRENCH_CAPABLE = MiscTypeFlag.F_TRENCH_CAPABLE;
     public static final MiscTypeFlag F_SUPPORT_VEE_BAR_ARMOR = MiscTypeFlag.F_SUPPORT_VEE_BAR_ARMOR;
 
+    public static final MiscTypeFlag F_CHAIN_DRAPE = MiscTypeFlag.F_CHAIN_DRAPE;
+    public static final MiscTypeFlag F_CHAIN_DRAPE_CAPE = MiscTypeFlag.F_CHAIN_DRAPE_CAPE;
+    public static final MiscTypeFlag F_CHAIN_DRAPE_APRON = MiscTypeFlag.F_CHAIN_DRAPE_APRON;
+    public static final MiscTypeFlag F_CHAIN_DRAPE_PONCHO = MiscTypeFlag.F_CHAIN_DRAPE_PONCHO;
+
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
     public static final long S_TREE_CLUB = 1L << 1;// BMR
@@ -521,6 +526,8 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMEK_EQUIPMENT)) {
             return RoundWeight.nearestKg(entity.getWeight() / 5.0);
+        } else if (hasFlag(F_CHAIN_DRAPE)) {
+            return RoundWeight.nextHalfTon(entity.getWeight() / 10.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
             return RoundWeight.nextTon(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
@@ -1839,6 +1846,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSneakIRECMInfArmor());
         EquipmentType.addType(MiscType.createISSneakThreeSystemInfArmor());
 
+        EquipmentType.addType(MiscType.createChainDrape("Cape", F_CHAIN_DRAPE_CAPE));
+        EquipmentType.addType(MiscType.createChainDrape("Apron", F_CHAIN_DRAPE_APRON));
+        EquipmentType.addType(MiscType.createChainDrape("Poncho", F_CHAIN_DRAPE_PONCHO));
     }
 
     // Advanced Mek/ProtoMek/Vehicular Motive Systems
@@ -2114,6 +2124,28 @@ public class MiscType extends EquipmentType {
                 .setProductionFactions(F_FS, F_LC).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
+
+    public static MiscType createChainDrape(String configurationName, MiscTypeFlag configurationFlag) {
+        MiscType misc = new MiscType();
+
+        misc.name = "Chain Drape (%s)".formatted(configurationName);
+        misc.setInternalName("ChainDrape%s".formatted(configurationName));
+        misc.addLookupName("ChainDrape %s".formatted(configurationName));
+        misc.addLookupName("Chain Drape %s".formatted(configurationName));
+        misc.shortName = "Chain Drape %s".formatted(configurationName);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 6;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_CHAIN_DRAPE).or(configurationFlag).or(F_MEK_EQUIPMENT);
+        // Arcade Ops: UrbanFest
+        misc.rulesRefs = "16, UF";
+        // No information about this is provided so we fill in essentially "blank" data
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL).setTechRating(RATING_X)
+            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(DATE_ES).setISApproximate(true);
+
         return misc;
     }
 

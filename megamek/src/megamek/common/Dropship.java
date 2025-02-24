@@ -178,17 +178,24 @@ public class Dropship extends SmallCraft {
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
+        // Also check for any crushable entities
+        isProhibited |= game.getEntities(c).hasNext();
+        if (isProhibited) {
+            return true;
+        }
 
         HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
             Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
+            boolean occupied = game.getEntities(secondaryCoord).hasNext();
             if (secondaryHex == null) {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
             } else {
                 isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
+                isProhibited |= occupied;
 
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)) {
@@ -222,6 +229,8 @@ public class Dropship extends SmallCraft {
         int elevMinCount = 2;
         // Check elevation difference and make sure that the counts of different
         // elevations will allow for a legal deployment to exist
+        // TODO: get updated ruling; this code causes a hex with one single lower- or higher-level neighbor
+        // to be disqualified, but it would seem that a single lower-level neighbor should be fine.
         if ((elevDifference > 1) || (elevations.get(elevs[0]) < elevMinCount)
                 || (elevations.get(elevs[1]) < elevMinCount)) {
             return true;

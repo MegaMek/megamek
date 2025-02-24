@@ -4375,7 +4375,7 @@ exact "Pack Hunter II 2" "meks/PackhunterII_2.png"
 exact "Pack Hunter II 3" "meks/PackhunterII_2.png"
 exact "Pack Hunter II 4" "meks/PackhunterII_2.png"
 exact "Pack Hunter II (Isis)" "meks/PackhunterII_Isis.png"
-chassis "Pacifier SecurityMech" "meks/Pacifier.png"
+chassis "Pacifier" "meks/Pacifier.png"
 exact "Pacifier CCU-40 SecurityMech" "meks/Pacifier_40.png"
 #PALADIN
 chassis "Paladin" "meks/Paladin.png"

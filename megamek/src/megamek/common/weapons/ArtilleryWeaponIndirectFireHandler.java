@@ -13,7 +13,9 @@
  */
 package megamek.common.weapons;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.*;
@@ -300,6 +302,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
+        int altitude = 0;
+        if (isFlak) {
+            altitude = target.getElevation();
+        }
+
         // if attacker is an off-board artillery piece, check to see if we need to set
         // observation flags
         if (aaa.getEntity(game).isOffBoard()) {
@@ -315,9 +322,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         if (atype.getMunitionType().contains(Munitions.M_FAE)) {
+            Hex finalHex = game.getBoard().getHex(finalPos);
+            altitude = (finalHex != null) ? finalHex.getLevel() : altitude;
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     AreaEffectHelper.processFuelAirDamage(
-                            finalPos, atype, aaa.getEntity(game), vPhaseReport, gameManager));
+                            finalPos, altitude, atype, aaa.getEntity(game), vPhaseReport, gameManager));
             return false;
         }
 
@@ -379,11 +388,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
-        int altitude = 0;
-        if (isFlak) {
-            altitude = target.getElevation();
-        }
-
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
         // scatter hex has minefields
@@ -405,26 +409,26 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // so we need to carry out offboard/null checks against the "current" version of
         // the target.
         if ((updatedTarget != null) && updatedTarget.isOffBoard()) {
+            // Calculate blast damage falloff and shape
             DamageFalloff df = AreaEffectHelper.calculateDamageFallOff(atype, shootingBA, mineClear);
-            int actualDamage = df.damage - (df.falloff * finalPos.distance(target.getPosition()));
-            Coords effectiveTargetPos = aaa.getCoords();
+            HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+                atype, finalPos, df, 0, true, false, false, game, false
+            );
 
-            if (df.clusterMunitionsFlag) {
-                effectiveTargetPos = finalPos;
-            }
-
-            if (actualDamage > 0) {
-                AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null,
-                        0, false, asfFlak, isFlak, altitude,
-                        effectiveTargetPos, atype, finalPos, false, ae, null, altitude,
-                        vPhaseReport, gameManager);
+            Map.Entry<Integer, Coords> entry = Map.entry(updatedTarget.getElevation(), updatedTarget.getPosition());
+            if (blastShape.containsKey(entry)) {
+                AreaEffectHelper.artilleryDamageEntity(
+                    (Entity) updatedTarget, blastShape.get(entry), null,
+                    0, false, asfFlak, isFlak, entry.getKey(),
+                    finalPos, atype, entry.getValue(), false, ae, null, updatedTarget.getId(),
+                    vPhaseReport, gameManager
+                );
             }
         } else {
             handleArtilleryDriftMarker(targetPos, finalPos, aaa,
                     gameManager.artilleryDamageArea(finalPos, aaa.getCoords(), atype,
                             subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                            asfFlak, shootingBA));
-
+                            asfFlak));
         }
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying

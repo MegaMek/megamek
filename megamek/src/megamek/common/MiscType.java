@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.text.NumberFormat;
 
+import megamek.client.ui.preferences.SuitePreferences;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.miscGear.AntiMekGear;
@@ -25,12 +26,15 @@ import megamek.common.weapons.ppc.ISHeavyPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import megamek.logging.MMLogger;
 
 /**
  * @author Ben
  * @since April 2, 2002, 12:15 PM
  */
 public class MiscType extends EquipmentType {
+
+    private static final MMLogger LOGGER = MMLogger.create(MiscType.class);
 
     // equipment flags (okay, like every type of equipment has its own flag)
     public static final MiscTypeFlag F_HEAT_SINK = MiscTypeFlag.F_HEAT_SINK;
@@ -134,6 +138,10 @@ public class MiscType extends EquipmentType {
     public static final MiscTypeFlag F_SHOULDER_TURRET = MiscTypeFlag.F_SHOULDER_TURRET;
     public static final MiscTypeFlag F_HEAD_TURRET = MiscTypeFlag.F_HEAD_TURRET;
     public static final MiscTypeFlag F_QUAD_TURRET = MiscTypeFlag.F_QUAD_TURRET;
+
+    /** Encompasses Quad, Head, Shoulder, Pintle and Sponson turrets. */
+    public static final MiscTypeFlag F_TURRET = MiscTypeFlag.F_TURRET;
+
     public static final MiscTypeFlag F_SPACE_ADAPTATION = MiscTypeFlag.F_SPACE_ADAPTATION;
     public static final MiscTypeFlag F_CUTTING_TORCH = MiscTypeFlag.F_CUTTING_TORCH;
     public static final MiscTypeFlag F_OFF_ROAD = MiscTypeFlag.F_OFF_ROAD;
@@ -404,6 +412,16 @@ public class MiscType extends EquipmentType {
     public MiscType() {
     }
 
+    @Override
+    public boolean hasFlag(EquipmentFlag flag) {
+        if (flag instanceof MiscTypeFlag) {
+            return super.hasFlag(flag);
+        } else {
+            LOGGER.warn("Incorrect flag check: make sure to test only MiscTypeFlags on a MiscType.");
+            return false;
+        }
+    }
+
     public int getBaseDamageAbsorptionRate() {
         return baseDamageAbsorptionRate;
     }
@@ -617,13 +635,12 @@ public class MiscType extends EquipmentType {
             return defaultRounding.round(equipmentWeight / 10.0,
                     entity) / entity.countWorkingMisc(MiscType.F_SPONSON_TURRET);
         } else if (hasFlag(F_PINTLE_TURRET)) {
-            // For omnivehicles the weight should be set as chassis fixed weight.
-            // Split the weight evenly among the mounts to assure the total weight is
-            // correct.
-            if ((entity.isOmni() && (entity instanceof Tank)
-                    && ((Tank) entity).getBaseChassisSponsonPintleWeight() >= 0)) {
-                return ((Tank) entity).getBaseChassisSponsonPintleWeight() /
-                        entity.countWorkingMisc(MiscType.F_PINTLE_TURRET);
+            // Pintle turret weight may be set as a fixed weight. Split the weight evenly among the mounts to assure the total weight is
+            // correct. According to BT 35024, Handbook House Davion, p.198 and
+            // https://bg.battletech.com/forums/index.php/topic,77622.0.html,
+            // pintle turrets can be designed as empty with a fixed weight even on SV that are not Omni.
+            if ((entity instanceof Tank tank) && (tank.getBaseChassisSponsonPintleWeight() >= 0)) {
+                return tank.getBaseChassisSponsonPintleWeight() / entity.countMisc(EquipmentTypeLookup.PINTLE_TURRET);
             }
             double weaponWeight = 0;
             // 5% of linked weapons' weight
@@ -8634,7 +8651,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MEK_EQUIPMENT).or(F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
@@ -8656,7 +8673,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MEK_EQUIPMENT).or(F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
@@ -8679,7 +8696,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MEK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MEK_EQUIPMENT).or(F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "347, TO";
@@ -8709,7 +8726,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_HEAVY_EQUIPMENT);
+                .or(F_HEAVY_EQUIPMENT).or(F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "348, TO";
@@ -8731,7 +8748,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_PINTLE_TURRET).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_PINTLE_TURRET).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TURRET);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "234, TM";

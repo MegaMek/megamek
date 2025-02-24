@@ -281,7 +281,7 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                             }
                             mount.setSize(size);
                         }
-                        if (etype.hasFlag(MiscType.F_CARGO)) {
+                        if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CARGO)) {
                             // Treat F_CARGO equipment as cargo bays with 1 door, e.g. for ASF with IBB.
                             int idx = t.getTransportBays().size();
                             t.addTransporter(new CargoBay(mount.getSize(), 1, idx), omniMounted);

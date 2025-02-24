@@ -53,7 +53,7 @@ MEGAMEK VERSION HISTORY:
 + PR #6589: Feature: adds bot waypoint control to send certain units towards certain positions on the map
 + PR #6590: make ejected and other removed units show up transparent on minimap
 + PR #6592: small fixes that were missed from a previous code review
-
++ PR #6591 feat: MMLogger using parametrized message and string formatter
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

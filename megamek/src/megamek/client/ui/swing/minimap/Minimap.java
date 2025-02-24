@@ -332,7 +332,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     } catch (Exception ex) {
                         logger.error(ex, "Error saving game summary image.");
                     }
-                    if (e.getNewPhase().isVictory() && gifWriterThread.isAlive()) {
+                    if (e.getNewPhase().isVictory() && (gifWriterThread != null) && gifWriterThread.isAlive()) {
                         try {
                             gifWriterThread.stopThread();
                         } catch (Exception ex) {

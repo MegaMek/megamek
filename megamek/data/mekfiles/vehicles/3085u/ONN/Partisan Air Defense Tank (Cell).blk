@@ -146,3 +146,7 @@ TRO: 3039
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+anti_air
+</quirks>

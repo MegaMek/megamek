@@ -2255,7 +2255,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             // If something goes wrong, probably ProcessBuild.start if anything,
             // Make sure to set the button text back to what it started as no matter what.
             button.setText(Messages.getString("ChatLounge.butPrintList"));
-            logger.error(e, "Operation failed", "Error printing unit list");
+            logger.errorDialog(e, "Operation failed", "Error printing unit list");
 
         }
     }

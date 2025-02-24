@@ -20,38 +20,7 @@
  */
 package megamek.client.ui.swing;
 
-import static java.util.stream.Collectors.toList;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
-
-import javax.swing.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.MouseInputAdapter;
-
 import com.formdev.flatlaf.icons.FlatHelpButtonIcon;
-
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -75,6 +44,25 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * The Client Settings Dialog offering GUI options concerning tooltips, map
@@ -349,6 +337,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             Messages.getString("CommonSettingsDialog.gameSummaryBV.name"));
     private final JCheckBox gameSummaryMM = new JCheckBox(
             Messages.getString("CommonSettingsDialog.gameSummaryMM.name"));
+    private final JCheckBox gifGameSummaryMM = new JCheckBox(
+        Messages.getString("CommonSettingsDialog.gifGameSummaryMM.name"));
     private final JCheckBox showUnitDisplayNamesOnMinimap = new JCheckBox(
             Messages.getString("CommonSettingsDialog.showUnitDisplayNamesOnMinimap.name"));
     private JComboBox<String> skinFiles;
@@ -1674,6 +1664,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(gameSummaryMM,
                 Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip",
                         Configuration.gameSummaryImagesMMDir())));
+        comps.add(checkboxEntry(gifGameSummaryMM,
+                Messages.getString("CommonSettingsDialog.gifGameSummaryMM.tooltip",
+                        Configuration.gameSummaryImagesMMDir())));
         comps.add(checkboxEntry(drawFacingArrowsOnMiniMap, null));
         comps.add(checkboxEntry(drawSensorRangeOnMiniMap, null));
         comps.add(checkboxEntry(paintBordersOnMiniMap, null));
@@ -2114,7 +2107,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
             gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
-
+            gifGameSummaryMM.setSelected(GUIP.getGifGameSummaryMinimap());
             skinFiles.removeAllItems();
             ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
 
@@ -2584,10 +2577,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setAutoSelectNextUnit(useAutoSelectNext.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
+        GUIP.setGifGameSummaryMinimap(gifGameSummaryMM.isSelected());
         GUIP.setShowUnitDisplayNamesOnMinimap(showUnitDisplayNamesOnMinimap.isSelected());
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = GUIP.getUITheme();
-        if (!oldUITheme.equals(newUITheme.getClassName())) {
+        if (newUITheme != null && !oldUITheme.equals(newUITheme.getClassName())) {
             GUIP.setUITheme(newUITheme.getClassName());
         }
 

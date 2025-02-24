@@ -45,7 +45,7 @@ import java.util.List;
  */
 public record UnitAction(int id, int teamId, int playerId, String chassis, String model, int facing, int fromX, int fromY, int toX, int toY, int hexesMoved, int distance, int mpUsed,
                          int maxMp, double mpP, double heatP, double armorP, double internalP, boolean jumping, boolean prone,
-                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps) {
+                         boolean legal, double chanceOfFailure, List<MovePath.MoveStepType> steps, boolean bot) {
 
     public static  UnitAction fromMovePath(MovePath movePath) {
         Entity entity = movePath.getEntity();
@@ -74,12 +74,17 @@ public record UnitAction(int id, int teamId, int playerId, String chassis, Strin
             movePath.getFinalProne(),
             movePath.isMoveLegal(),
             chanceOfFailure,
-            steps
+            steps,
+            entity.getOwner().isBot()
         );
     }
 
     public Coords currentPosition() {
         return new Coords(fromX, fromY);
+    }
+
+    public boolean isHuman() {
+        return !bot;
     }
 
     public Coords finalPosition() {

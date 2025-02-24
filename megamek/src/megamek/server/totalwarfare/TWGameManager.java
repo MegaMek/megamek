@@ -850,7 +850,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     send(createMapSettingsPacket());
-                    datasetLogger.append(newSettings, true);
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
@@ -860,7 +859,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     send(packetHelper.createPlanetaryConditionsPacket());
-                    datasetLogger.append(conditions, true);
                 }
                 break;
             case UNLOAD_STRANDED:
@@ -1878,6 +1876,9 @@ public class TWGameManager extends AbstractGameManager {
                 game.createVictoryConditions();
                 // some entities may need to be checked and updated
                 checkEntityExchange();
+                datasetLogger.append(game.getBoard(), true);
+                datasetLogger.append(game.getMapSettings(), true);
+                datasetLogger.append(game.getPlanetaryConditions(), true);
                 break;
             case MOVEMENT:
                 // write Movement Phase header to report
@@ -1895,6 +1896,9 @@ public class TWGameManager extends AbstractGameManager {
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
+                break;
+            case VICTORY:
+                datasetLogger.requestNewLogFile();
                 break;
             default:
                 break;
@@ -2329,7 +2333,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
-        datasetLogger.append(newBoard, true);
     }
 
     /**
@@ -26061,9 +26064,14 @@ public class TWGameManager extends AbstractGameManager {
             addTeammates(vCanSee, entity.getOwner());
         }
 
-        // Deal with players who can see all.
+        // Deal with special states
         for (Player player : game.getPlayersList()) {
+            // Deal with players who can see all.
             if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
+                vCanSee.addElement(player);
+            }
+            // Players on a team who have a unit that observed this entity's off-board shots can see it.
+            if (entity.isOffBoard() && entity.isOffBoardObserved(player.getTeam()) && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }

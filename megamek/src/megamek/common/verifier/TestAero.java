@@ -636,9 +636,7 @@ public class TestAero extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
+            if (m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
                     || m.getType().hasFlag(WeaponType.F_ALT_BOMB)
                     || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                 numBombs++;

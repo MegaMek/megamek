@@ -53,7 +53,15 @@ MEGAMEK VERSION HISTORY:
 + PR #6589: Feature: adds bot waypoint control to send certain units towards certain positions on the map
 + PR #6590: make ejected and other removed units show up transparent on minimap
 + PR #6592: small fixes that were missed from a previous code review
-
++ PR #6591: feat: MMLogger using parametrized message and string formatter
++ Fix #6595: Improvements for Dataset Logger and its javadocs
++ PR #6596: Feat: Disable ACAR for all clients if using real-blind-drop
++ PR #6597: Feat: refactored princess chat commands to use a modular approach
++ Fix #6598: Fixed everything that there was to fix on the minimap
++ Fix #6600: Fix a parsing error and turns it into a singleton using enum
++ Fix #6601:Pintle turret and flags (MML #1741)
++ PR #6602: Feat: Separate gif game sumary from minimap game summary
++ Fix #6593: Counter-battery icon hidden in double blind
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

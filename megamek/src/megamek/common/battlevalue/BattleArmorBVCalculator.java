@@ -30,6 +30,8 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
 import megamek.common.equipment.AmmoMounted;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 
 public class BattleArmorBVCalculator extends BVCalculator {
 
@@ -110,14 +112,14 @@ public class BattleArmorBVCalculator extends BVCalculator {
     Predicate<Mounted<?>> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
             && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
 
-    Predicate<Mounted<?>> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
+    Predicate<Mounted<?>> supportFilter = m -> (m instanceof WeaponMounted) && !m.getType().hasFlag(WeaponType.F_INFANTRY)
             && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
 
-    Predicate<Mounted<?>> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
+    Predicate<Mounted<?>> antiMekClawFilter = m -> (m instanceof MiscMounted)
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
             && (isAnyBattleClaw(m));
 
-    Predicate<Mounted<?>> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
+    Predicate<Mounted<?>> antiMekWeaponFilter = m -> (m instanceof WeaponMounted)
             && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
             && !m.isBodyMounted()
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));

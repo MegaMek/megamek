@@ -288,9 +288,21 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 int extraXOffset = GUIP.getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
                 xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
                 yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
-                return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be
-                                                                                              // NARROW_EDGE_SIZE,
-                                                                                              // WIDE_EDGE_SIZE);
+                Rectangle myRectangle = new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);  // used to be
+                                                                                                                // NARROW_EDGE_SIZE,
+                                                                                                                // WIDE_EDGE_SIZE);
+
+                // Account for possible floating Unit Display blocking arrow icon
+                if (GUIP.getUnitDisplayEnabled() && GUIP.getUnitDisplayLocaton() == 0) {
+                    // Move arrow inward if either side overlaps with the Unit Display
+                    Rectangle udRectangle = clientgui.getUnitDisplayDialog().getBounds();
+                    if ((myRectangle.x + myRectangle.width + 5 > udRectangle.x && myRectangle.x <= udRectangle.x + udRectangle.width) ||
+                        (myRectangle.x <= udRectangle.x + udRectangle.width && myRectangle.x + 5 >= udRectangle.x))
+                    {
+                        myRectangle.translate(-GUIP.getUnitDisplaySizeWidth(), 0);
+                    }
+                }
+                return myRectangle;
             default:
                 return null;
         }

@@ -149,9 +149,8 @@ public class UnitBehavior {
         return Optional.ofNullable(entityWaypoints.computeIfAbsent(entity.getId(), k -> new ArrayDeque<>()).pollFirst());
     }
 
-
     /**
-     * Removes the head waypoint from the entity's waypoint queue
+     * Removes the tail waypoint from the entity's waypoint queue
      * If waypoints were added (1,1) then (2,2) then (3,3), this would remove (3,3), good for an "undo" behavior.
      * @param entity the entity to remove the waypoint from
      */
@@ -179,6 +178,13 @@ public class UnitBehavior {
         }
         logger.debug("Setting waypoints for entity " + entity.getId() + ": " + deque);
         entityWaypoints.put(entity.getId(), deque);
+        return true;
+    }
+
+
+    public boolean clearWaypoints(Entity entity) {
+        logger.debug("Clearing all waypoints for entity {}", entity.getDisplayName());
+        entityWaypoints.put(entity.getId(), new ArrayDeque<>());
         return true;
     }
 

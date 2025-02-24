@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-23
 <UnitType>
 SupportTank
 </UnitType>
@@ -16,9 +7,9 @@ SupportTank
 Heavy Combat ATV
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4831
@@ -45,8 +36,8 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:0.145:1:1
-pillionseats:2.0:0
+cargobay:0.145:1:1::-1:0
+pillionseats:2.0:0:-1::-1:0
 </transporters>
 
 <cruiseMP>
@@ -56,6 +47,18 @@ pillionseats:2.0:0
 <engine_type>
 1
 </engine_type>
+
+<armor_type>
+43
+</armor_type>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<armor_tech_level>
+1
+</armor_tech_level>
 
 <armor>
 1
@@ -71,14 +74,13 @@ SV Chassis Mod [Tractor]
 </Body Equipment>
 
 <Front Equipment>
+PintleTurret
 </Front Equipment>
 
 <Right Equipment>
-PintleTurret
 </Right Equipment>
 
 <Left Equipment>
-PintleTurret
 </Left Equipment>
 
 <Rear Equipment>
@@ -92,6 +94,10 @@ PintleTurret
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
 <source>
 Handbook: House Davion
 </source>
@@ -100,6 +106,10 @@ Handbook: House Davion
 0.5
 </tonnage>
 
+<baseChassisSponsonPintleWeight>
+0.022
+</baseChassisSponsonPintleWeight>
+
 <fuel>
 0.004
 </fuel>
@@ -107,3 +117,4 @@ Handbook: House Davion
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+

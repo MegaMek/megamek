@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * MegaMek - Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,62 +14,66 @@
 package megamek.server.commands.arguments;
 
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.util.StringUtil;
 
 /**
- * Argument for an Integer type.
+ * Argument for a special type that can be Increase, Decrease or Set an Integer value.
  * @author Luana Coppio
  */
-public class IntegerArgument extends Argument<Integer> {
+public class IncDecSetIntegerArgument extends Argument<Integer> {
+    public enum Operation {
+        CHANGE, SET
+    }
     private final int minValue;
     private final int maxValue;
-    private final Integer defaultValue;
+    private Operation operation;
 
-    public IntegerArgument(String name, String description) {
-        this(name, description, Integer.MIN_VALUE, Integer.MAX_VALUE, null);
-    }
-
-    public IntegerArgument(String name, String description, int minValue, int maxValue) {
-        this(name, description, minValue, maxValue, null);
-    }
-
-    public IntegerArgument(String name, String description, int minValue, int maxValue, Integer defaultValue) {
+    public IncDecSetIntegerArgument(String name, String description, int minValue, int maxValue) {
         super(name, description);
         this.minValue = minValue;
         this.maxValue = maxValue;
-        this.defaultValue = defaultValue;
     }
 
     @Override
     public Integer getValue() {
-        if (value == null && defaultValue != null) {
-            return defaultValue;
-        }
         return value;
+    }
+
+    public Operation getOperation() {
+        return operation;
     }
 
     @Override
     public void parse(String input) throws IllegalArgumentException {
-        if (input == null && defaultValue != null) {
-            value = defaultValue;
-            return;
-        } else {
-            if (input == null) {
-                throw new IllegalArgumentException(getName() + " is required.");
-            }
+        if (input == null) {
+            throw new IllegalArgumentException(getName() + " is required.");
         }
         try {
-            int parsedValue = Integer.parseInt(input);
-            if (parsedValue < minValue || parsedValue > maxValue) {
+            operation = Operation.SET;
+            if (StringUtility.isNullOrBlank(input)) {
+                value = 0;
+            } else if (StringUtil.isNumeric(input)) {
+                value = Integer.parseInt(input);
+            } else {
+                int adjustment = 0;
+                for (final char tick : input.toCharArray()) {
+                    if ('+' == tick) {
+                        adjustment++;
+                    } else if ('-' == tick) {
+                        adjustment--;
+                    }
+                }
+                value = adjustment;
+                operation = Operation.CHANGE;
+            }
+
+            if (Operation.SET.equals(operation) && (value < minValue) || (value > maxValue)) {
                 throw new IllegalArgumentException(getName() + " must be between " + minValue + " and " + maxValue);
             }
-            value = parsedValue;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(getName() + " must be an integer.");
         }
-    }
-
-    public boolean hasDefaultValue() {
-        return defaultValue != null;
     }
 
     public int getMinValue() {
@@ -84,9 +88,7 @@ public class IntegerArgument extends Argument<Integer> {
     public String getHelp() {
         return getDescription() + (minValue == Integer.MIN_VALUE ? "": " Min: " + minValue) +
             (maxValue == Integer.MAX_VALUE ? "": " Max: " + maxValue) +
-            (defaultValue != null ?
-                " [default: " + defaultValue + "]. " + Messages.getString("Gamemaster.cmd.params.optional") :
-                " " + Messages.getString("Gamemaster.cmd.params.required"));
+                " " + Messages.getString("Gamemaster.cmd.params.required");
     }
 
 }

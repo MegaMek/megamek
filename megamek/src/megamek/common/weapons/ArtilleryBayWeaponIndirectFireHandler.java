@@ -550,7 +550,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             while (nweaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                         subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                        asfFlak, -1);
+                        asfFlak);
                 nweaponsHit--;
             }
         } else {
@@ -572,7 +572,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
                         gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                                altitude, mineClear, vPhaseReport, asfFlak, -1));
+                                altitude, mineClear, vPhaseReport, asfFlak));
             }
 
         }

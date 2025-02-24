@@ -124,6 +124,11 @@ public class Princess extends BotClient {
      */
     private static final int CALLED_SHOT_MIN_JUMP = 5;
 
+    /**
+     * Distance to the waypoint to consider for considering the waypoint reached
+     */
+    public static final int DISTANCE_TO_WAYPOINT = 3;
+
 
     private final IHonorUtil honorUtil = new HonorUtil();
 
@@ -2977,7 +2982,7 @@ public class Princess extends BotClient {
         }
     }
 
-    public int calculateAdjustment(final String ticks) {
+    public static int calculateAdjustment(final String ticks) {
         int adjustment = 0;
         if (StringUtility.isNullOrBlank(ticks)) {
             return 0;
@@ -2992,7 +2997,7 @@ public class Princess extends BotClient {
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                logger.warn("Invalid tick: '" + tick + "'.");
+                logger.warn("Invalid tick: {}", tick);
             }
         }
         return adjustment;
@@ -3623,4 +3628,22 @@ public class Princess extends BotClient {
     public SwarmCenterManager getSwarmCenterManager() {
         return swarmCenterManager;
     }
+
+    @Override
+    protected void postMovementProcessing(){
+        for (var entity : getEntitiesOwned()) {
+            if (entity.getPosition() == null) {
+                continue;
+            }
+            var waypoint = getUnitBehaviorTracker().getWaypointForEntity(entity);
+            if (waypoint.isPresent()) {
+                var wp = waypoint.get();
+                if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
+                    logger.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    getUnitBehaviorTracker().removeHeadWaypoint(entity);
+                }
+            }
+        }
+    }
+
 }

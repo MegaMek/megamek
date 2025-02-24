@@ -119,3 +119,6 @@ Rec Guide:ilClan #33
 80.0
 </tonnage>
 
+<quirks>
+anti_air
+</quirks>

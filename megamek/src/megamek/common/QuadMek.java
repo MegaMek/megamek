@@ -150,6 +150,10 @@ public class QuadMek extends Mek {
             mp--;
         }
 
+        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+            mp--;
+        }
+
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {

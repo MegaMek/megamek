@@ -442,9 +442,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 mailProperties.load(propsReader);
                 mailer = new EmailService(mailProperties);
             } catch (Exception ex) {
-                logger.error(ex,
-                        Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                        Messages.getString("MegaMek.LoadGameAlert.title"));
+                logger.errorDialog(ex,
+                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"));
                 return false;
             }
         }
@@ -457,14 +457,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             gameManager = getGameManager(gameType);
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
         } catch (Exception ex) {
-            logger.error(ex,
-                    Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
-                    Messages.getString("MegaMek.LoadGameAlert.title"));
+            logger.errorDialog(ex,
+                Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
+                Messages.getString("MegaMek.LoadGameAlert.title"));
             return false;
         }
 
         if (saveGameFile != null && !server.loadGame(saveGameFile)) {
-            logger.error(Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()),
+            logger.errorDialog(Messages.getFormattedString("MegaMek.LoadGameAlert.message", saveGameFile.getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"));
             server.die();
             server = null;
@@ -520,7 +520,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             serverAddress = Server.validateServerAddress(serverAddress);
             port = Server.validatePort(port);
         } catch (Exception ex) {
-            logger.error(ex,
+            logger.errorDialog(ex,
                     Messages.getFormattedString("MegaMek.ServerConnectionError", serverAddress, port),
                     Messages.getString("MegaMek.LoadGameAlert.title"));
             return;
@@ -617,7 +617,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         } catch (Exception ex) {
-            logger.error(ex,
+            logger.errorDialog(ex,
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message",
                             fc.getSelectedFile().getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"));
@@ -764,15 +764,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             scenario = sl.load();
             game = scenario.createGame();
         } catch (Exception e) {
-            logger.error(e, Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
+            logger.errorDialog(e, Messages.getString("MegaMek.HostScenarioAlert.message", e.getMessage()),
                     Messages.getString("MegaMek.HostScenarioAlert.title"));
             return;
         }
 
         // popup options dialog
         if (!scenario.hasFixedGameOptions() && game instanceof Game twGame) {
-            GameOptionsDialog god = new GameOptionsDialog(frame, (GameOptions) twGame.getOptions(), false);
-            god.update((GameOptions) twGame.getOptions());
+            GameOptionsDialog god = new GameOptionsDialog(frame, twGame.getOptions(), false);
+            god.update(twGame.getOptions());
             god.setEditable(true);
             god.setVisible(true);
             for (IBasicOption opt : god.getOptions()) {

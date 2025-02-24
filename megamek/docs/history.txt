@@ -40,6 +40,28 @@ MEGAMEK VERSION HISTORY:
 + PR #6561: Official Hazardous Liquid Pool Maps
 + Fix #6532: Make sure target entity's are on the board before checking for hex/terrain-based defender SPAs
 + PR #6565: Prevent NPE when closing Counterbattery popup without a choice
++ Fix #6515: added check if player was done to validateUpdate
++ Fix #6509: add -1 check to getColoredPlayerNameWithTeam
++ Fix #6570: Support Multiple Trailers from Lobby
++ Fix #6577: Fix duplicate LoS effects for to-hit
++ MML #1527: Armor validation #6583
++ Fix #6441: QuadVee fall fix
++ PR #6594: Add Chain Drape (Construction Only) MML #1739
++ Fix #6461: clean up ASF / VTOL / Hover / WiGE deployment hex display
++ PR ##6584: Final Fix for 6146: princess bombing flying infantry
++ Fix #6569: Trailers towed on a tow hitch are no longer returned as an unloadable unit
++ PR #6589: Feature: adds bot waypoint control to send certain units towards certain positions on the map
++ PR #6590: make ejected and other removed units show up transparent on minimap
++ PR #6592: small fixes that were missed from a previous code review
++ PR #6591: feat: MMLogger using parametrized message and string formatter
++ Fix #6595: Improvements for Dataset Logger and its javadocs
++ PR #6596: Feat: Disable ACAR for all clients if using real-blind-drop
++ PR #6597: Feat: refactored princess chat commands to use a modular approach
++ Fix #6598: Fixed everything that there was to fix on the minimap
++ Fix #6600: Fix a parsing error and turns it into a singleton using enum
++ Fix #6601:Pintle turret and flags (MML #1741)
++ PR #6602: Feat: Separate gif game sumary from minimap game summary
++ Fix #6593: Counter-battery icon hidden in double blind
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

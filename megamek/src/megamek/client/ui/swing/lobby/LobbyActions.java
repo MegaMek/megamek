@@ -1147,8 +1147,8 @@ public class LobbyActions {
     }
 
     /**
-     * Performs standard checks for updates (units must be present, visible and
-     * editable)
+     * Performs standard checks for updates (units must be present, visible,
+     * editable, and player is not done)
      * and returns false if that's not the case. Also shows an error message dialog.
      */
     private boolean validateUpdate(Collection<Entity> entities) {
@@ -1161,6 +1161,11 @@ public class LobbyActions {
         }
         if (!canSeeAll(entities)) {
             LobbyErrors.showCannotViewHidden(frame());
+            return false;
+        }
+        
+        if (localPlayer().isDone()) {
+            LobbyErrors.showCannotEditWhileDone(frame());
             return false;
         }
         return true;

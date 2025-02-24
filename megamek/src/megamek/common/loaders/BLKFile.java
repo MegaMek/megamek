@@ -1059,10 +1059,10 @@ public class BLKFile {
                 blk.writeBlockData("baseChassisTurret2Weight",
                         tank.getBaseChassisTurret2Weight());
             }
-            if (tank.getBaseChassisSponsonPintleWeight() >= 0) {
-                blk.writeBlockData("baseChassisSponsonPintleWeight",
-                        tank.getBaseChassisSponsonPintleWeight());
-            }
+        }
+
+        if ((t instanceof Tank tank) && (tank.getBaseChassisSponsonPintleWeight() >= 0)) {
+            blk.writeBlockData("baseChassisSponsonPintleWeight", tank.getBaseChassisSponsonPintleWeight());
         }
 
         if (t.isSupportVehicle() && t.isOmni()) {

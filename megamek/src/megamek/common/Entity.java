@@ -4663,8 +4663,61 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    /**
+     * Returns true when the entity has a MiscType equipment with the given MiscTypeFlag, regardless of its state. Note that both the flags
+     * given in MiscType as well as the "actual" flags in MiscTypeFlag can be used.
+     *
+     * @param flag The MiscTypeFlag flag to look for, e.g. F_VTOL_EQUIPMENT
+     * @return True when the entity has a MiscType equipment with the given flag
+     * @see EquipmentType#hasFlag(EquipmentFlag)
+     * @see MiscType
+     * @see MiscTypeFlag
+     */
     public boolean hasMisc(EquipmentFlag flag) {
         return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
+    }
+
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state. When available, use
+     * EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal name, even of weapons,
+     * can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @return True when the entity has a MiscType equipment of the given internalName
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMisc(String internalName) {
+        return miscList.stream().anyMatch(misc -> misc.is(internalName));
+    }
+
+    /**
+     * Returns the number of MiscType equipment of the given internalName, regardless of state.
+     * When available, use EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal
+     * name, even of weapons, can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @return the number of MiscType equipment of the given internalName on the unit
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public int countMisc(String internalName) {
+        return (int) miscList.stream().filter(misc -> misc.is(internalName)).count();
+    }
+
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state, in the given location.
+     * When available, use EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal
+     * name, even of weapons, can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @param location     The location, e.g. Mek.LOC_LT
+     * @return True when the entity has a MiscType equipment of the given internalName in the given location
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMisc(String internalName, int location) {
+        return miscList.stream().filter(misc -> misc.getLocation() == location).anyMatch(misc -> misc.is(internalName));
     }
 
     public List<MiscMounted> getMiscEquipment(EquipmentFlag flag) {
@@ -8728,14 +8781,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * @return All Entities that can at this point be unloaded from any transports
      *         of this Entity which are
-     *         no Bays. This does not include any units that were loaded this turn.
-     *         Note that the returned list may be unmodifiable.
+     *         not Bays. This does not include any units that were loaded this turn.
+     *         Note that the returned list may be unmodifiable.This shouldn't return
+     *         towed entities, they're tracked separately.
      *
+     * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
      */
     public List<Entity> getUnitsUnloadableFromNonBays() {
         return transports.stream()
-                .filter(t -> !(t instanceof Bay))
+                .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch))
                 .flatMap(b -> b.getLoadedUnits().stream())
                 .filter(e -> !e.wasLoadedThisTurn())
                 .toList();

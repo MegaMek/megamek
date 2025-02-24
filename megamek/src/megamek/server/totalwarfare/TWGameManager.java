@@ -64,21 +64,16 @@ import megamek.common.util.EmailService;
 import megamek.common.util.HazardousLiquidPoolUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.TestEntity;
-import megamek.common.weapons.AreaEffectHelper;
-import megamek.common.weapons.ArtilleryBayWeaponIndirectHomingHandler;
-import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.DamageType;
-import megamek.common.weapons.TAGHandler;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.*;
+import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
+
+import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
 
 /**
  * Manages the Game and processes player actions.
@@ -855,7 +850,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     send(createMapSettingsPacket());
-                    datasetLogger.append(newSettings, true);
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
@@ -865,7 +859,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     send(packetHelper.createPlanetaryConditionsPacket());
-                    datasetLogger.append(conditions, true);
                 }
                 break;
             case UNLOAD_STRANDED:
@@ -1883,6 +1876,9 @@ public class TWGameManager extends AbstractGameManager {
                 game.createVictoryConditions();
                 // some entities may need to be checked and updated
                 checkEntityExchange();
+                datasetLogger.append(game.getBoard(), true);
+                datasetLogger.append(game.getMapSettings(), true);
+                datasetLogger.append(game.getPlanetaryConditions(), true);
                 break;
             case MOVEMENT:
                 // write Movement Phase header to report
@@ -1900,6 +1896,9 @@ public class TWGameManager extends AbstractGameManager {
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
+                break;
+            case VICTORY:
+                datasetLogger.requestNewLogFile();
                 break;
             default:
                 break;
@@ -2334,7 +2333,6 @@ public class TWGameManager extends AbstractGameManager {
                     game.getPlanetaryConditions().getWind());
         }
         game.setBoard(newBoard);
-        datasetLogger.append(newBoard, true);
     }
 
     /**
@@ -3015,6 +3013,9 @@ public class TWGameManager extends AbstractGameManager {
 
         // Report r;
         // ok now I need to look at the damage rings - start at 2 and go to 7
+        // Falloff is used for signalling building damage factor
+        DamageFalloff falloff = new DamageFalloff();
+        falloff.radius = 7;
         for (int i = 2; i < 8; i++) {
             int damageDice = (8 - i) * 2;
             List<Coords> ring = centralPos.allAtDistance(i);
@@ -3024,8 +3025,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
-                        killer, null, false, 0, mainPhaseReport, false,
-                        alreadyHit, true);
+                        killer, null, false, 0, 0, mainPhaseReport, false,
+                        alreadyHit, true, falloff);
             }
         }
         destroyDoomedEntities(alreadyHit);
@@ -26063,9 +26064,14 @@ public class TWGameManager extends AbstractGameManager {
             addTeammates(vCanSee, entity.getOwner());
         }
 
-        // Deal with players who can see all.
+        // Deal with special states
         for (Player player : game.getPlayersList()) {
+            // Deal with players who can see all.
             if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
+                vCanSee.addElement(player);
+            }
+            // Players on a team who have a unit that observed this entity's off-board shots can see it.
+            if (entity.isOffBoard() && entity.isOffBoardObserved(player.getTeam()) && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }
@@ -26919,17 +26925,23 @@ public class TWGameManager extends AbstractGameManager {
      */
     private void receiveEntityTow(Packet c, int connIndex) {
         int trailerId = (Integer) c.getObject(0);
-        int tractorId = (Integer) c.getObject(1);
+        int towingEntId = (Integer) c.getObject(1);
         Entity trailer = getGame().getEntity(trailerId);
-        Entity tractor = getGame().getEntity(tractorId);
+        Entity towingEnt = getGame().getEntity(towingEntId);
 
-        if ((trailer != null) && (tractor != null)) {
+        if ((trailer != null) && (towingEnt != null)) {
+            Entity tractor = getGame().getEntity(towingEnt.getTractor());
+            if (tractor == null) {
+                tractor = towingEnt;
+            }
             towUnit(tractor, trailer);
             // In the chat lounge, notify players of customizing of unit
             if (getGame().getPhase().isLounge()) {
                 ServerLobbyHelper.entityUpdateMessage(trailer, getGame());
-                // Set this so units can be unloaded in the first movement phase
-                trailer.setLoadedThisTurn(false);
+                ServerLobbyHelper.entityUpdateMessage(tractor, getGame());
+                if (!towingEnt.equals(tractor)) {
+                    ServerLobbyHelper.entityUpdateMessage(towingEnt, getGame());
+                }
             }
         }
     }
@@ -31397,10 +31409,10 @@ public class TWGameManager extends AbstractGameManager {
      *                       to roll
      */
     public Vector<Integer> artilleryDamageHex(Coords coords,
-            Coords attackSource, int damage, AmmoType ammo, int subjectId,
-            Entity killer, Entity exclude, boolean flak, int altitude,
-            Vector<Report> vPhaseReport, boolean asfFlak,
-            Vector<Integer> alreadyHit, boolean variableDamage) {
+          Coords attackSource, int damage, AmmoType ammo, int subjectId,
+          Entity killer, Entity exclude, boolean flak, int altitude, int targetLevel,
+          Vector<Report> vPhaseReport, boolean asfFlak,
+          Vector<Integer> alreadyHit, boolean variableDamage, DamageFalloff falloff) {
 
         Hex hex = game.getBoard().getHex(coords);
         if (hex == null) {
@@ -31410,6 +31422,7 @@ public class TWGameManager extends AbstractGameManager {
         Report r;
 
         // Non-flak artillery damages terrain
+        // TODO: account for altitude vs: terrain height
         if (!flak) {
             // Report that damage applied to terrain, if there's TF to damage
             Hex h = game.getBoard().getHex(coords);
@@ -31433,19 +31446,42 @@ public class TWGameManager extends AbstractGameManager {
                 (BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_SMALL ||
                         BombType.getBombTypeFromInternalName(ammo.getInternalName()) == BombType.B_FAE_LARGE);
 
+        // TODO: account for altitude vs: terrain height
+        // Buildings do _not_ shield housed units from artillery damage!
         Building bldg = game.getBoard().getBuildingAt(coords);
-        int bldgAbsorbs = 0;
         if ((bldg != null)
                 && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))
                         || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
-            bldgAbsorbs = bldg.getAbsorbtion(coords);
             if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
-                int actualDamage = damage;
+                int buildingDamage;
+                if (variableDamage) {
+                    // Dropship exhaust?  Sayonara, buildings!
+                    buildingDamage = Compute.d6(damage) * 3;
+                } else {
+                    // Central hex damage is determined by AE radius
+                    buildingDamage = damage * ((falloff.radius > 0) ? 3 : 2);
+                    // Lower damage as distance increases
+                    int hDist = coords.distance(attackSource);
+                    int vDist = Math.abs(targetLevel - altitude);
+                    if (falloff.radius == 0) {
+                        // For single-hex AE attacks, damage above and below center is normal damage
+                        if (hDist == 0 && vDist == 1) {
+                            buildingDamage = damage;
+                        }
+                    } else {
+                        // For multi-hex AE attacks, damage reduces in two stages
+                        if (hDist + vDist == 1) {
+                            buildingDamage = damage * 2;
+                        } else if (hDist + vDist >= 2) {
+                            buildingDamage = damage;
+                        }
+                    }
+                }
 
                 if (isFuelAirBomb) {
                     // light buildings take 1.5x damage from fuel-air bombs
                     if (bldg.getType() == BuildingType.LIGHT) {
-                        actualDamage = (int) Math.ceil(actualDamage * 1.5);
+                        buildingDamage = (int) Math.ceil(buildingDamage * 1.5);
 
                         r = new Report(9991);
                         r.indent(1);
@@ -31458,7 +31494,7 @@ public class TWGameManager extends AbstractGameManager {
                     // but I have no idea how to determine if a building is a castle or a brian
                     // note that being armored and being "light" are not mutually exclusive
                     if (bldg.getArmor(coords) > 0) {
-                        actualDamage = (int) Math.floor(actualDamage * .5);
+                        buildingDamage = (int) Math.floor(buildingDamage * .5);
 
                         r = new Report(9992);
                         r.indent(1);
@@ -31469,7 +31505,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 // damage the building
-                Vector<Report> buildingReport = damageBuilding(bldg, actualDamage, coords);
+                Vector<Report> buildingReport = damageBuilding(bldg, buildingDamage, coords);
                 for (Report report : buildingReport) {
                     report.subject = subjectId;
                 }
@@ -31484,16 +31520,25 @@ public class TWGameManager extends AbstractGameManager {
             return alreadyHit;
         }
 
-        // get units in hex
+        // get units in hex at the specified altitude (elevation + hex level for non-Aerospace)
         for (Entity entity : game.getEntitiesVector(coords)) {
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
-            } else {
+            } else if ((entity.getElevation() + hex.getLevel() > altitude)
+                || (entity.getElevation() + entity.getHeight() + hex.getLevel() < altitude) ) {
+                StringBuilder msg = new StringBuilder("Missed due to elevation difference: ")
+                    .append("entity lvl/ht: ").append(hex.getLevel()).append("/").append(entity.getElevation())
+                        .append("; current blast level: ").append(altitude);
+                logger.debug(msg.toString());
+                // We now track the blast on a per-level basis
+                continue;
+            }
+            else {
                 alreadyHit.add(entity.getId());
             }
 
-            AreaEffectHelper.artilleryDamageEntity(entity, damage, bldg, bldgAbsorbs,
+            AreaEffectHelper.artilleryDamageEntity(entity, damage, bldg, 0,
                     variableDamage, asfFlak, flak, altitude,
                     attackSource, ammo, coords, isFuelAirBomb,
                     killer, hex, subjectId, vPhaseReport, this);
@@ -31516,25 +31561,17 @@ public class TWGameManager extends AbstractGameManager {
      * @param mineClear    Does this clear mines?
      * @param vPhaseReport The Vector of Reports for the phase report
      * @param asfFlak      Is this flak against ASF?
-     * @param attackingBA  How many BA suits are in the squad if this is a BA Tube
-     *                     arty
-     *                     attack, -1 otherwise
      */
     public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource,
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
             int altitude, boolean mineClear, Vector<Report> vPhaseReport,
-            boolean asfFlak, int attackingBA) {
-        AreaEffectHelper.DamageFalloff damageFalloff = AreaEffectHelper.calculateDamageFallOff(ammo, attackingBA,
-                mineClear);
+            boolean asfFlak) {
 
-        int damage = damageFalloff.damage;
-        int falloff = damageFalloff.falloff;
-        if (damageFalloff.clusterMunitionsFlag) {
-            attackSource = centre;
-        }
+        // Use the standard falloff values
+        DamageFalloff damageFalloff = calculateDamageFallOff(ammo, 0, mineClear);
 
         return artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
-                damage, falloff, flak, altitude, vPhaseReport, asfFlak);
+                damageFalloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
     /**
@@ -31551,61 +31588,91 @@ public class TWGameManager extends AbstractGameManager {
      *                     Subject for reports
      * @param killer
      *                     Who should be credited with kills
-     * @param damage
-     *                     Damage at ground zero
      * @param falloff
-     *                     Reduction in damage for each hex of distance
+     *                     Lightweight class describing base damage, falloff per level/ring, cluster y/n, and radius
      * @param flak
      *                     Flak, hits flying units only, instead of flyers being
      *                     immune
      * @param altitude
-     *                     Absolute altitude for flak attack
+     *                     Absolute altitude/elevation for flak attack
      * @param vPhaseReport
      *                     The Vector of Reports for the phase report
      * @param asfFlak
      *                     Is this flak against ASF?
      */
-    public Vector<Integer> artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
-            Entity killer, int damage, int falloff, boolean flak, int altitude,
-            Vector<Report> vPhaseReport, boolean asfFlak) {
+    public Vector<Integer> artilleryDamageArea(
+        Coords centre, Coords attackSource, AmmoType ammo, int subjectId,
+        Entity killer, DamageFalloff falloff, boolean flak, int altitude,
+        Vector<Report> vPhaseReport, boolean asfFlak
+    ){
         Vector<Integer> alreadyHit = new Vector<>();
-        for (int ring = 0; damage > 0; ring++, damage -= falloff) {
-            List<Coords> hexes = centre.allAtDistance(ring);
-            for (Coords c : hexes) {
-                alreadyHit = artilleryDamageHex(c, attackSource, damage, ammo,
-                        subjectId, killer, null, flak, altitude, vPhaseReport,
-                        asfFlak, alreadyHit, false);
-            }
-            attackSource = centre; // all splash comes from ground zero
+
+        // This is artillery damage
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+            ammo, centre, falloff, altitude,true, flak, asfFlak, game, false);
+
+        for (Map.Entry<Integer, Coords> entry: blastShape.keySet()) {
+            Coords bCoords = entry.getValue();
+            int bLevel = entry.getKey();
+            alreadyHit = artilleryDamageHex(
+                bCoords, attackSource, blastShape.get(entry), ammo, subjectId, killer, null, flak,
+                bLevel, altitude, vPhaseReport, asfFlak, alreadyHit, false, falloff
+            );
         }
 
         // Lets reports assess if anything was caught in area
         return alreadyHit;
     }
 
-    public Vector<Integer> deliverBombDamage(Coords centre, int type, int subjectId, Entity killer,
+    public Vector<Integer> deliverBombDamage(HexTarget targetHex, int type, int subjectId, Entity killer,
             Vector<Report> vPhaseReport) {
-        int range = 0;
-        int damage = 10;
-        if (type == BombType.B_CLUSTER) {
-            range = 1;
-            damage = 5;
-        }
+        Coords center = targetHex.getPosition();
         Vector<Integer> alreadyHit = new Vector<>();
 
         // We need the actual ammo type in order to handle certain bomb issues
         // correctly.
         BombType ammo = BombType.createBombByType(type);
+        Hex hex = game.getBoard().getHex(center);
 
-        alreadyHit = artilleryDamageHex(centre, centre, damage, ammo,
-                subjectId, killer, null, false, 0, vPhaseReport, false,
-                alreadyHit, false);
-        if (range > 0) {
-            List<Coords> hexes = centre.allAtDistance(range);
-            for (Coords c : hexes) {
-                alreadyHit = artilleryDamageHex(c, centre, damage, ammo,
-                        subjectId, killer, null, false, 0, vPhaseReport, false,
-                        alreadyHit, false);
+        // Unfortunately this HexTarget is a new instance and contains no level data
+        // Pretend we know what level the user was aiming at.
+        // TODO: remove once we can pass targetLevel info between client and server
+        int targetLevel = 0;
+        if (hex != null) {
+            targetLevel = hex.getLevel();
+            if (hex.getTerrain(Terrains.BLDG_ELEV) != null) {
+                // Get an entity that's near or below the ceiling level
+                // and point the bombs at it.
+                Iterator<Entity> targetEnemies = game.getEnemyEntities(center, killer);
+                while (targetEnemies.hasNext()) {
+                    Entity next = targetEnemies.next();
+                    // Find the enemies in the target hex; if one's on a valid building or
+                    // water level, make its elevation the target level.
+                    if (next.getElevation() + hex.getLevel() <= hex.ceiling() + 1) {
+                        targetLevel = next.getElevation() + hex.getLevel();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (type == BombType.B_FAE_SMALL || type == BombType.B_FAE_LARGE) {
+            // pass FAE bombs with the special handler
+            alreadyHit = AreaEffectHelper.processFuelAirDamage(center, targetLevel,
+                (BombType) EquipmentType.get(BombType.getBombInternalName(type)), killer, vPhaseReport, this);
+        } else {
+            // All other damage-dealing bombs
+            DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(ammo, 0, false);
+            HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(
+                ammo, center, falloff, targetLevel, false, false, false, game, false);
+
+            for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+                Coords bCoords = entry.getValue();
+                int bLevel = entry.getKey();
+                alreadyHit = artilleryDamageHex(
+                    bCoords, center, blastShape.get(entry), ammo, subjectId, killer, null, false,
+                    bLevel, targetLevel, vPhaseReport, false, alreadyHit, false, falloff
+                );
             }
         }
 

@@ -509,6 +509,17 @@ public class EquipmentType implements ITechnology {
         return flags;
     }
 
+    /**
+     * Returns true when this EquipmentType has the given flag. NOTE: Even though EquipmentFlags are enums, checking e.g. a WeaponType if it
+     * has a MiscTypeFlag may return an incorrect true result, as the actual test is made using EquipmentBitSet, i.e. a number comparison.
+     * Example: EquipmentType.get("BAArmoredGlove").hasFlag(WeaponType.F_VGL) returns true, as WeaponType.F_VGL has the same ordinal as
+     * MiscType.F_ARMORED_GLOVE. Therefore, always make sure to test only MiscTypes against MiscTypeFlags, WeaponTypes against
+     * WeaponTypeFlags and AmmoTypes against AmmoTypeFlags. This method will log a warning if the rule is not followed.
+     *
+     * @param flag The EquipmentFlag to check
+     * @return True when this EquipmentType has the given flag
+     * @see EquipmentFlag
+     */
     public boolean hasFlag(EquipmentFlag flag) {
         return flags.get(flag);
     }

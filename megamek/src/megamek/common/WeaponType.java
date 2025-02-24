@@ -69,6 +69,7 @@ import megamek.common.weapons.tag.CLLightTAG;
 import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
+import megamek.logging.MMLogger;
 
 // TODO add XML support back in.
 
@@ -77,6 +78,9 @@ import megamek.common.weapons.unofficial.*;
  * for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
+
+    private static final MMLogger LOGGER = MMLogger.create(WeaponType.class);
+
     public static final int DAMAGE_BY_CLUSTERTABLE = -2;
     public static final int DAMAGE_VARIABLE = -3;
     public static final int DAMAGE_SPECIAL = -4;
@@ -408,6 +412,16 @@ public class WeaponType extends EquipmentType {
     @Override
     public int getHeat() {
         return heat;
+    }
+
+    @Override
+    public boolean hasFlag(EquipmentFlag flag) {
+        if (flag instanceof WeaponTypeFlag) {
+            return super.hasFlag(flag);
+        } else {
+            LOGGER.warn("Incorrect flag check: make sure to test only WeaponTypeFlags on a WeaponType.");
+            return false;
+        }
     }
 
     public int getFireTN() {

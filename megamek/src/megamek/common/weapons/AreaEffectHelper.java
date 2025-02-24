@@ -14,8 +14,10 @@
 package megamek.common.weapons;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import megamek.common.*;
+import megamek.common.AmmoType.Munitions;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.logging.MMLogger;
@@ -129,6 +131,7 @@ public class AreaEffectHelper {
             Vector<Report> vPhaseReport, TWGameManager gameManager) {
         Game game = attacker.getGame();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean thinAir = conditions.getAtmosphere().isThin();
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
 
@@ -144,7 +147,7 @@ public class AreaEffectHelper {
 
         int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
 
-        if (conditions.getAtmosphere().isThin()) {
+        if (thinAir) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -186,11 +189,15 @@ public class AreaEffectHelper {
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
-    public static Vector<Integer> processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
-            Vector<Report> vPhaseReport, TWGameManager gameManager) {
+    public static Vector<Integer> processFuelAirDamage(
+        Coords center, int height, AmmoType ammo, Entity attacker,
+            Vector<Report> vPhaseReport, TWGameManager gameManager
+    ) {
         Game game = attacker.getGame();
         Vector<Integer> entitiesToExclude = new Vector<>();
         PlanetaryConditions conditions = game.getPlanetaryConditions();
+        boolean thinAir = conditions.getAtmosphere().isThin();
+
         // sanity check: if this attack is happening in vacuum through very thin atmo,
         // add that to the phase report and terminate early
         if (game.getBoard().inSpace()
@@ -203,9 +210,7 @@ public class AreaEffectHelper {
             return entitiesToExclude;
         }
 
-        int blastRadius = getFuelAirBlastRadiusIndex(ordnanceType.getInternalName());
-
-        if (conditions.getAtmosphere().isThin()) {
+        if (thinAir) {
             Report r = new Report(9990);
             r.indent(1);
             r.subject = attacker.getId();
@@ -213,40 +218,42 @@ public class AreaEffectHelper {
             vPhaseReport.addElement(r);
         }
 
-        // assemble collection of hexes at ranges 0 to radius
+        // assemble collection of <level, Coords> 3D locations at ranges 0 to radius
         // for each hex, invoke artilleryDamageHex, with the damage set according to
-        // this:
-        // radius chart
-        // (divided by half, round up for thin atmo)
-        // not here, but in artilleryDamageHex, make sure to 2x damage for infantry
-        // outside of building
-        // not here, but in artilleryDamageHex, make sure to 1.5x damage for light
-        // building or unit with armor BAR < 10
-        // not here, but in artilleryDamageHex, make sure to .5x damage for "castle
-        // brian" or "armored" building
+        // the blast shape (damage is divided by half, round up for thin atmo)
         // if any attacked unit is infantry or BA, roll 2d6 + current distance. Inf dies
         // on 9-, BA dies on 7-
-        for (int damageBracket = blastRadius,
-                distFromCenter = 0; damageBracket >= 0; damageBracket--, distFromCenter++) {
-            List<Coords> donut = center.allAtDistance(distFromCenter);
-            for (Coords coords : donut) {
-                int damage = AreaEffectHelper.fuelAirDamage[damageBracket];
-                if (conditions.getAtmosphere().isThin()) {
-                    damage = (int) Math.ceil(damage / 2.0);
-                }
+        // Use DamageFalloff to signal building damage factor
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        HashMap<Entry<Integer, Coords>, Integer> blastShape = shapeBlast(
+            ammo, center, falloff, height, !(ammo instanceof BombType), false, false, game, false
+        );
+        ArrayList<Coords> checkedAdditional = new ArrayList<>();
 
-                checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game,
-                        gameManager);
+        for (Entry<Integer, Coords> entry: blastShape.keySet()) {
+            Coords bCoords = entry.getValue();
+            int bLevel = entry.getKey();
+            int distance = bCoords.distance(center);
+            int damage = blastShape.get(entry);
+            if (thinAir) {
+                damage = (int) Math.ceil(damage / 2.0);
+            }
+            gameManager.artilleryDamageHex(bCoords, center, damage, ammo, attacker.getId(),
+                attacker, null, false, bLevel, height, vPhaseReport, false,
+                entitiesToExclude, false, falloff);
 
-                gameManager.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(),
-                        attacker, null, false, 0, vPhaseReport, false,
-                        entitiesToExclude, false);
+            if (!checkedAdditional.contains(bCoords)) {
+                // Perform additional destruction / ignition / minefield checks once per coordinate
+                checkInfantryDestruction(bCoords, distance, attacker, entitiesToExclude, vPhaseReport, game,
+                    gameManager);
 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-                gameManager.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                gameManager.tryIgniteHex(bCoords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
 
-                clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
-                        gameManager);
+                clearMineFields(bCoords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game,
+                    gameManager);
+
+                checkedAdditional.add(bCoords);
             }
         }
         return entitiesToExclude;
@@ -365,7 +372,7 @@ public class AreaEffectHelper {
         int cluster = 5;
 
         // Check: is entity inside building?
-        if ((bldg != null) && (bldgAbsorbs > 0)
+        if ((bldg != null) && (bldgAbsorbs > 0) && hex != null
                 && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
             cluster -= bldgAbsorbs;
             // some buildings scale remaining damage that is not absorbed
@@ -394,29 +401,19 @@ public class AreaEffectHelper {
             return;
         }
 
+        // Flak should only hit VTOLs or similar craft.
         if (flak) {
             // Check: is entity not a VTOL in flight or an ASF
             if (!((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero())) {
+                || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                || entity.isAero())) {
                 return;
             }
             // Check: is entity at correct elevation?
             if (entity.getElevation() != altitude) {
                 return;
             }
-        } else {
-            // Check: is entity a VTOL or Aero in flight?
-            if ((entity instanceof VTOL)
-                    || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || entity.isAero()) {
-                // VTOLs take no damage from normal artillery unless landed
-                if ((entity.getElevation() != 0)
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BLDG_ELEV))
-                        && (entity.getElevation() != hex.terrainLevel(Terrains.BRIDGE_ELEV))) {
-                    return;
-                }
-            }
+            // But VTOLs can also be hit by AE blasts while flying!
         }
 
         // Work out hit table to use
@@ -631,9 +628,24 @@ public class AreaEffectHelper {
             return empty;
         }
 
-        int damage = ammo.getRackSize();
+        int damage = (ammo instanceof BombType) ? ammo.getDamagePerShot() : ammo.getRackSize();
         int falloff = 10;
+        int radius = 0;
         boolean clusterMunitionsFlag = false;
+
+        if (List.of(
+                AmmoType.T_LONG_TOM, AmmoType.T_LONG_TOM_PRIM, AmmoType.T_LONG_TOM_CANNON,
+                AmmoType.T_SNIPER, AmmoType.T_SNIPER_CANNON,
+                AmmoType.T_THUMPER, AmmoType.T_THUMPER_CANNON,
+                AmmoType.T_ARROW_IV, AmmoType.T_ARROWIV_PROTO
+            ).contains(ammo.getAmmoType())
+        ) {
+            radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
+            // Fuel-Air munitions get special radius
+            if (ammo.getMunitionType().contains(Munitions.M_FAE)) {
+                radius = getFuelAirBlastRadiusIndex(ammo.getInternalName());
+            }
+        }
 
         // Capital and Sub-capital missiles
         if (ammo.getAmmoType() == AmmoType.T_KRAKEN_T
@@ -641,6 +653,7 @@ public class AreaEffectHelper {
                 || ammo.getAmmoType() == AmmoType.T_MANTA_RAY) {
             damage = 50;
             falloff = 25;
+            radius = 1;
         }
         if (ammo.getAmmoType() == AmmoType.T_KILLER_WHALE
                 || ammo.getAmmoType() == AmmoType.T_KILLER_WHALE_T
@@ -648,10 +661,12 @@ public class AreaEffectHelper {
                 || ammo.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             damage = 40;
             falloff = 20;
+            radius = 1;
         }
         if (ammo.getAmmoType() == AmmoType.T_STINGRAY) {
             damage = 35;
             falloff = 17;
+            radius = 2;
         }
         if (ammo.getAmmoType() == AmmoType.T_WHITE_SHARK
                 || ammo.getAmmoType() == AmmoType.T_WHITE_SHARK_T
@@ -659,26 +674,66 @@ public class AreaEffectHelper {
                 || ammo.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             damage = 30;
             falloff = 15;
+            radius = 1;
         }
         if (ammo.getAmmoType() == AmmoType.T_BARRACUDA
                 || ammo.getAmmoType() == AmmoType.T_BARRACUDA_T
                 || ammo.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
             damage = 20;
             falloff = 10;
+            radius = 1;
         }
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
             falloff = 25;
+            radius = (int)(Math.ceil(1.0 * damage / falloff) - 1);
         }
+
+        // BA specific
         if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
+            // All BA Tube attacks are R1
+            radius = 1;
         }
+        if (ammo.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+            damage = 2 * attackingBA;
+            falloff = 2 * attackingBA;
+            // All BA Tube attacks are R1
+            radius = 1;
+            clusterMunitionsFlag = true;
+        }
+
         // Air-Defense Arrow IV missiles
         if (ammo.getAmmoType() == AmmoType.T_ARROW_IV
                 && ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
             falloff = damage;
+            // ADA does not have a radius as per normal Artillery / AE weapons.
+            radius = -1;
         }
-        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
+
+        // Bombs require specific handling
+        if (ammo instanceof BombType bomb) {
+            if (List.of(BombType.B_FAE_SMALL, BombType.B_FAE_LARGE).contains(bomb.getBombType())) {
+                radius = getFuelAirBlastRadiusIndex((bomb.getInternalName()));
+            }
+            if (bomb.getBombType() == BombType.B_CLUSTER) {
+                falloff = 5;
+                radius = 1;
+                clusterMunitionsFlag = true;
+            }
+            if (bomb.getBombType() == BombType.B_ARROW) {
+                damage = bomb.getRackSize();
+                falloff = 10;
+                radius = 1;
+            }
+            if (bomb.getBombType() == BombType.B_HOMING) {
+                damage = bomb.getRackSize();
+                falloff = 20;
+                radius = -1;
+            }
+        }
+
+        if (ammo.getMunitionType().contains(Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard
             if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
                 damage -= 5;
@@ -688,21 +743,28 @@ public class AreaEffectHelper {
                 falloff = 9;
             }
 
+            // All Cluster munitions are R1.
+            radius = 1;
             clusterMunitionsFlag = true;
-        } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
+
+        } else if (ammo.getMunitionType().contains(Munitions.M_FLECHETTE)) {
+            // TODO: update to current TacOps rules (damage differs between armor types)
             falloff = switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage
                 case AmmoType.T_LONG_TOM -> {
                     damage = 4;
+                    radius = 2;
                     yield 2;
                 }
                 case AmmoType.T_SNIPER -> {
                     damage = 2;
+                    radius = 1;
                     yield 1;
                 }
                 case AmmoType.T_THUMPER -> {
                     damage = 1;
+                    radius = 1;
                     yield 1;
                 }
                 default -> falloff;
@@ -710,11 +772,13 @@ public class AreaEffectHelper {
             // if this was a mine clearance, then it only affects the hex hit
         } else if (mineClear) {
             falloff = damage;
+            radius = 0;
         }
 
         DamageFalloff retVal = new DamageFalloff();
         retVal.damage = damage;
         retVal.falloff = falloff;
+        retVal.radius = radius;
         retVal.clusterMunitionsFlag = clusterMunitionsFlag;
 
         return retVal;
@@ -841,6 +905,7 @@ public class AreaEffectHelper {
     public static class DamageFalloff {
         public int damage;
         public int falloff;
+        public int radius = 0;
         public boolean clusterMunitionsFlag;
     }
 
@@ -875,5 +940,197 @@ public class AreaEffectHelper {
          * Note that the crater radius is this number multiplied by 2
          */
         public int craterDepth;
+    }
+
+    /**
+     * Computes the semi-3D blast shapes of AE and Artillery explosions using rules from:
+     * - Total Warfare pp. 173, XXX, and
+     * - Tactical Operations: Advanced Rules pp. 150, YYY
+     *
+     * The shape of an Area Effect explosion always includes a ring, but may have radius 0.
+     * In this case only units in the hit hex are affected.
+     * Additionally, an AE attack that hits a building or water hex deals damage above and below
+     * the level that was hit:
+     * - For R0 AE attacks: 1/2 to the level above, and 1/2 damage to the level below, the level
+     *                      that was hit/targeted in the central hex.  E.g. a WiGE vehicle at
+     *                      elevation 1 in a water hex would take 1/2 damage from any AE attack
+     *                      that targeted and hit that hex.  Any underwater vehicle at depth 1
+     *                      below the surface, likewise.
+     * - For R1 and larger: full damage to 1 level above and below the targeted level in that hex.
+     *                      1/2 damage to the levels 2 above and 2 below the level hit.
+     *                      Also 1/2 damage in an R1 ring at 1 level above and 1 level below.
+     *
+     * Further, cumulatively, Artillery attacks deal extra damage above the hexes they hit no
+     * matter what type of hex they are (except Building and Mobile Structures):
+     * - For any Artillery: apply base damage - (10 * level) for every level above the base hex
+     *                      until no damage would be dealt.
+     *                      Each unit hit can only be hit once by this damage
+     * - For Flak Artillery: apply base damage - (10 * level) for every level below the target's
+     *                      elevation as well.
+     *
+     * We do not currently support artillery flak fire at Low-Altitude units.
+     *
+     * Specific edge cases to consider:
+     * 1. Counter-battery fire - only worry about the ring at surface level.
+     *
+     * @param ammo              AmmoType of the attack.
+     * @param center            Coordinates of center of blast.
+     * @param height            Elevation/level of target, or Altitude if firing on ASFs
+     * @param artillery         true if artillery attack; false if other AE attack
+     * @param flak              true if flak attack.
+     * @param asfFlak           true if flak attack on an Aerospace unit.
+     * @param game              Reference to game, for terrain checks
+     * @param excludeCenter     Used for creating all height, hex values but the center
+     * @return                  (height, Coords): damage map.
+     */
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
+        AmmoType ammo, Coords center, int height, boolean artillery,
+        boolean flak, boolean asfFlak, Game game, boolean excludeCenter
+    ) {
+        // Use default falloff for this ammo.
+        DamageFalloff falloff = calculateDamageFallOff(ammo, 0, false);
+        return shapeBlast(
+            ammo, center, falloff, height, artillery, flak, asfFlak, game, excludeCenter
+        );
+    }
+
+    /**
+     * @param ammo              AmmoType of the attack.
+     * @param center            Coordinates of center of blast.
+     * @param falloff           Preset falloff to use for this blast; mainly for BA Tube attack.
+     * @param height            Elevation/level of target, or Altitude if firing on ASFs
+     * @param artillery         true if artillery attack; false if other AE attack
+     * @param flak              true if flak attack.
+     * @param asfFlak           true if flak attack on an Aerospace unit.
+     * @param game              Reference to game, for terrain checks
+     * @param excludeCenter     Used for creating all height, hex values but the center
+     * @return                  (height, Coords): damage map.
+     */
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlast(
+        AmmoType ammo, Coords center, DamageFalloff falloff, int height, boolean artillery,
+        boolean flak, boolean asfFlak, Game game, boolean excludeCenter
+    ) {
+        HashMap<Entry<Integer, Coords>, Integer> blastShape = new LinkedHashMap<>();
+
+        if (game == null) {
+            // Nothing to be done
+            return blastShape;
+        }
+
+        // Falloff is defined separately for each weapon and ammo type, unfortunately.
+        int baseDamage = falloff.damage;
+        int radius = falloff.radius;
+        boolean isBomb = (ammo instanceof BombType);
+
+        // We may want to calculate the blast zone without the center hex, for separate handling.
+        if (!excludeCenter) {
+            blastShape.put(Map.entry(height, center), baseDamage);
+            if (asfFlak) {
+                // Only the central hex matters for altitude-level attacks
+                return blastShape;
+            }
+            if (radius == -1) {
+                // No blast effects at all, only central hex affected
+                // e.g. Arrow IV Homing
+                return blastShape;
+            }
+        }
+
+        Hex hex = game.getBoard().getHex(center);
+        boolean effectivelyAE = (hex != null && hex.containsAnyTerrainOf(Set.of(Terrains.BUILDING, Terrains.WATER)));
+        // 1. Handle Artillery-specific blast column (N levels up from _any_ hit where N
+        // is base damage / 10 for most artillery, damage / 25 for Cruise Missiles)
+        // Note that this falloff is separate from horizontal blast falloff, above.
+        // Also deal damage downward for Flak shots against VTOLs.
+        if (artillery) {
+            int levelMinus = (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) ? 25 : 10;
+            if (flak || !effectivelyAE) {
+                // If non-Flak artillery is hitting a building or water hex, use the AE column rules
+                for (int d = (baseDamage - levelMinus), l = height + 1; d > 0; d -= levelMinus, l++) {
+                    blastShape.put(Map.entry(l, center), d);
+                }
+            }
+            if (flak) {
+                for (int d=(baseDamage - levelMinus), l=height-1; d>0; d-=levelMinus, l--) {
+                    blastShape.put(Map.entry(l, center), d);
+                }
+            }
+        }
+
+        // 2. Handle normal blast shaping.  Applies to both Artillery and AE in general.
+        // This is a donut of a set radius around the center hex coordinates.
+        // This can be applied to off-board units (see: counter-battery fire)
+        // so we don't check for terrain type here.
+        // Always exclude the center here: either we already made it, above, or we don't want it.
+        blastShape.putAll(AreaEffectHelper.shapeBlastRing(
+            center, falloff, height, true
+        ));
+
+        // 2.1 For FAE munitions, add an additional ring of 5 damage
+        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FAE) ||
+            (isBomb && List.of(
+                BombType.B_FAE_SMALL, BombType.B_FAE_LARGE).contains(((BombType) ammo).getBombType())
+            )
+        ) {
+            List<Coords> ringCoords = center.allAtDistance(radius);
+            for (Coords c : ringCoords) {
+                blastShape.put(Map.entry(height, c), 5);
+            }
+        }
+
+        // 3. Handle additional AE blast shaping.
+        // If this is the center of an AE explosion hitting a building or water hex,
+        // also deal damage 1 (or 2) levels up, and 1 (or 2) levels down.  TW: pp. 113, 172, 173.
+        // TODO: implement MOF-based building level drift, building target level selection for user.
+        if (effectivelyAE) {
+            // Artillery can only target ground level, Homing target units, or Flak target entities so
+            // Calculate the center height and depth.
+            if (radius > 0) {
+                blastShape.put(Map.entry(height+1, center), baseDamage);
+                blastShape.put(Map.entry(height+2, center), (int) Math.ceil(baseDamage/2.0));
+                blastShape.put(Map.entry(height-1, center), baseDamage);
+                blastShape.put(Map.entry(height-2, center), (int) Math.ceil(baseDamage/2.0));
+            } else {
+                blastShape.put(Map.entry(height+1, center), (int) Math.ceil(baseDamage/2.0));
+                blastShape.put(Map.entry(height-1, center), (int) Math.ceil(baseDamage/2.0));
+            }
+
+            // R1+ AE attacks also generate 1/2-damage rings around the +1 and -1 levels of the center hex.
+            if (radius > 0) {
+                // Upper blast ring looks like >> | 1/2 damage || center || 1/2 damage | << so we need a different
+                // falloff value.  We automatically subtract the falloff value for each radius outside of 1 so
+                // double the computed damage and set the falloff to equal it.
+                blastShape.putAll(AreaEffectHelper.shapeBlastRing(
+                    center, falloff, height+1, true
+                ));
+                blastShape.putAll(AreaEffectHelper.shapeBlastRing(
+                    center, falloff, height-1, true
+                ));
+            }
+
+        }
+
+        return blastShape;
+    }
+
+    public static HashMap<Entry<Integer, Coords>, Integer> shapeBlastRing(
+        Coords center, DamageFalloff falloff, int height, boolean excludeCenter
+    ) {
+        HashMap<Entry<Integer, Coords>, Integer> blastRing = new HashMap<>();
+
+        // We may want to calculate the blast zone without the center hex, for separate handling.
+        if (!excludeCenter) {
+            blastRing.put(Map.entry(height, center), falloff.damage);
+        }
+
+        int blastDamage = (falloff.clusterMunitionsFlag) ? falloff.damage : falloff.damage - falloff.falloff;
+        for (int ring = 1; blastDamage > 0; ring++, blastDamage -= falloff.falloff) {
+            List<Coords> ringCoords = center.allAtDistance(ring);
+            for (Coords c: ringCoords) {
+                blastRing.put(Map.entry(height, c), blastDamage);
+            }
+        }
+
+        return blastRing;
     }
 }

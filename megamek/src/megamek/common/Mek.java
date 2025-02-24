@@ -1113,6 +1113,16 @@ public abstract class Mek extends Entity {
         return Math.max(mp, 0);
     }
 
+    public boolean hasChainDrape() {
+        for (MiscMounted mount : getMisc()) {
+            if (mount.getType().hasFlag(MiscType.F_CHAIN_DRAPE) && !mount.isDestroyed()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public int getPartialWingJumpWeightClassBonus() {
         return (getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) ? 2 : 1;
     }

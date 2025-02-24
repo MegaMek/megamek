@@ -1,13 +1,4 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
-
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-23
 <UnitType>
 Tank
 </UnitType>
@@ -28,6 +19,10 @@ Partisan Heavy Tank
 3017
 </year>
 
+<originalBuildYear>
+3017
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -35,6 +30,10 @@ IS Level 1
 <role>
 Missile Boat
 </role>
+
+<quirks>
+anti_air
+</quirks>
 
 <motion_type>
 Tracked
@@ -47,6 +46,18 @@ Tracked
 <engine_type>
 1
 </engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech_rating>
+0
+</armor_tech_rating>
+
+<armor_tech_level>
+0
+</armor_tech_level>
 
 <armor>
 22
@@ -86,14 +97,6 @@ LRM 15
 LRM 15
 LRM 15
 </Turret Equipment>
-
-<source>
-TRO: 3039
-</source>
-
-<tonnage>
-80.0
-</tonnage>
 
 <capabilities>
 The Partisan Heavy Tank variants are specialized for anti-aircraft defense, each equipped with a sophisticated targeting system for engaging airborne targets. Primary armaments include long-range autocannons, effective against air threats, complemented by machine guns for close-range anti-infantry defense. These tanks are designed as support units with moderate armor, suitable for stationary or slow-moving roles rather than direct front-line combat.<p>Key across all variants is the balance between firepower and mobility. While capable of robust air defense, they rely on proximity to ammunition resupply points due to high consumption rates during operations. Despite variations in armaments and specific capabilities, all Partisan models maintain their primary function of providing air support and defense, utilizing a mix of advanced targeting systems, autocannons, and machine guns to achieve this objective effectively.<p>
@@ -138,3 +141,4 @@ TRO: 3039
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+

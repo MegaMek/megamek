@@ -386,4 +386,9 @@ public class WeaponMounted extends Mounted<WeaponType> {
         }
         return heat;
     }
+
+    @Override
+    public boolean isGroundBomb() {
+        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB);
+    }
 }

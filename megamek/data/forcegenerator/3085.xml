@@ -16894,9 +16894,6 @@
 			<model name='STK-4N'>
 				<availability>MOC:1-,IS:1-,Periphery:1-,TC:1-</availability>
 			</model>
-			<model name='STK-4P'>
-				<availability>MERC:1,Periphery:1</availability>
-			</model>
 			<model name='STK-5M'>
 				<availability>CC:3,MOC:3,FWL:6,IS:3,MH:2,DC:6,TC:3</availability>
 			</model>

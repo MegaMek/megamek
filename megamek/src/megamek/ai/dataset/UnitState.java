@@ -50,6 +50,12 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
                         boolean offBoard, boolean crippled, boolean destroyed, double armorP,
                         double internalP, boolean done, int maxRange, int totalDamage, Entity entity) {
 
+    /**
+     * Creates a UnitState from an {@code entity}.
+     * @param entity The entity to which the state belongs
+     * @param game The game reference
+     * @return The UnitState
+     */
     public static UnitState fromEntity(Entity entity, Game game) {
         return new UnitState(
             entity.getId(),
@@ -79,6 +85,10 @@ public record UnitState(int id, GamePhase phase, int teamId, int round, int play
             entity);
     }
 
+    /**
+     * Returns the position of the unit.
+     * @return The position
+     */
     public Coords position() {
         return new Coords(x, y);
     }

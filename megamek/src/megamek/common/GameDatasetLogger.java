@@ -45,25 +45,48 @@ public class GameDatasetLogger {
     private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance());
     private final UnitActionSerde unitActionSerde = new UnitActionSerde();
     private final UnitStateSerde unitStateSerde = new UnitStateSerde();
-
+    private final String prefix;
     private BufferedWriter writer;
-
+    private boolean createNewFile = true;
+    private int counter = 0;
     /**
      * Creates Game Dataset Log named
      */
-    public GameDatasetLogger(String filename) {
+    public GameDatasetLogger(String prefix) {
+        this.prefix = prefix;
+        File logDir = new File(LOG_DIR);
+        if (!logDir.exists()) {
+            if (!logDir.mkdir()) {
+                logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
+            }
+        }
+    }
+
+    /**
+     * When called, the next log entry will be written to a new file.
+     */
+    public void requestNewLogFile() {
+        createNewFile = true;
+        counter++;
+    }
+
+    /**
+     * Creates a new log file.
+     * If there is already a logfile with the same name, it will delete it and create a new one.
+     */
+    private void newLogFile() {
         try {
-            File logDir = new File(LOG_DIR);
-            if (!logDir.exists()) {
-                if (!logDir.mkdir()) {
-                    logger.error("Failed to create log directory, GameDatasetLogger wont log anything");
+            boolean timestampFilenames = PreferenceManager.getClientPreferences().stampFilenames();
+            String filename = timestampFilenames ? StringUtil.addDateTimeStamp(prefix) : prefix + "_" + counter;
+            File logfile = new File(LOG_DIR + File.separator + filename  + ".tsv");
+            // if a file with the same name already exists, delete it.
+            if (logfile.exists()) {
+                if (!logfile.delete()) {
+                    logger.error("Failed to delete existing log file, GameDatasetLogger wont log anything");
+                    writer = null;
                     return;
                 }
             }
-            if (PreferenceManager.getClientPreferences().stampFilenames()) {
-                filename = StringUtil.addDateTimeStamp(filename);
-            }
-            File logfile = new File(LOG_DIR + File.separator + filename + ".tsv");
             writer = new BufferedWriter(new FileWriter(logfile));
             initialize();
         } catch (Exception ex) {
@@ -72,8 +95,8 @@ public class GameDatasetLogger {
         }
     }
 
-    protected void initialize() {
-        appendToFile("# Log file opened " + LocalDateTime.now());
+    private void initialize() {
+        appendToFile("# Log file created at " + LocalDateTime.now());
     }
 
     /**
@@ -387,6 +410,10 @@ public class GameDatasetLogger {
     private void appendToFile(String toLog) {
         if (!PreferenceManager.getClientPreferences().dataLoggingEnabled()) {
             return;
+        }
+        if (createNewFile) {
+            createNewFile = false;
+            newLogFile();
         }
         if (writer == null) {
             return;

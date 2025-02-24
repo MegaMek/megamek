@@ -26064,9 +26064,14 @@ public class TWGameManager extends AbstractGameManager {
             addTeammates(vCanSee, entity.getOwner());
         }
 
-        // Deal with players who can see all.
+        // Deal with special states
         for (Player player : game.getPlayersList()) {
+            // Deal with players who can see all.
             if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
+                vCanSee.addElement(player);
+            }
+            // Players on a team who have a unit that observed this entity's off-board shots can see it.
+            if (entity.isOffBoard() && entity.isOffBoardObserved(player.getTeam()) && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }

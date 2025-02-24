@@ -3611,11 +3611,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
         // no re-use possible, add a new one
         // don't add a sprite for an artillery attack made by the other player
-        if (aa instanceof WeaponAttackAction) {
-            WeaponAttackAction waa = (WeaponAttackAction) aa;
+        if (aa instanceof WeaponAttackAction waa) {
+            int ownerId = waa.getEntity(game).getOwner().getId();
+            int teamId = waa.getEntity(game).getOwner().getTeam();
+
             if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(this, aa));
-            } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
+            } else if (ownerId == localPlayer.getId() || teamId == localPlayer.getTeam()) {
                 attackSprites.add(new AttackSprite(this, aa));
             }
         } else {

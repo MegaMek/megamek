@@ -20,7 +20,6 @@
 package megamek.client.ui.swing;
 
 import megamek.common.*;
-import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +33,24 @@ import java.util.HashSet;
 public class TowLinkWarning {
 
     /**
+     * We should stop searching for a tractor or trailer at some point.
+     * If a search reaches 10000 let's stop.
+      */
+    private static final int MAX_SEARCH_DEPTH = 10000;
+
+    /**
      * This is used by the {@link MovementDisplay} class.
      *
      *
      * @param game {@link Game} provided by the phase display class
      * @param entity {@link Entity} currently selected in the deployment phase.
      * @param board {@link Board} board object with hex data.
+     * @throws StackOverflowError if there is a loop in the towing configuration, or it is longer than MAX_SEARCH_DEPTH
      *
      * @return returns a list of {@link Coords} that where warning flags
      *         should be placed.
      */
-    public static List<Coords> findTowLinkIssues(Game game, Entity entity, Board board) {
+    public static List<Coords> findTowLinkIssues(Game game, Entity entity, Board board) throws StackOverflowError {
         List<Coords> warnList = new ArrayList<>();
 
         if (entity.getTowing() == Entity.NONE && entity.getTowedBy() == Entity.NONE) {
@@ -52,10 +58,6 @@ public class TowLinkWarning {
         }
 
         List<Coords> validTowCoords = findValidDeployCoordsForTractorTrailer(game, entity, board);
-
-        if (validTowCoords == null) {
-            return warnList;
-        }
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -76,60 +78,73 @@ public class TowLinkWarning {
 
     /**
      * For the provided entity, find its associated tractor and trailer and
-     * find what coords this unit is able to deploy to. If a tractor or trailer
-     * is already deployed
+     * find what coords this unit is able to deploy to. Will return an empty
+     * list for units that aren't tractors/trailers, so don't sue them for them!
      * @param game {@link Game} provided by the phase display class
      * @param deployingEntity {@link Entity} currently selected in the deployment phase.
      * @param board {@link Board} board object with hex data.
      * @return a list of {@link Coords} that this unit could deploy into that would let it connect with its
-     *          tow connections. Empty if there are no valid locations. Null if it's not towing.
+     *          tow connections. Empty if there are no valid locations or if it's not towing.
+     * @throws StackOverflowError if there is a loop in the towing configuration, or it is longer than MAX_SEARCH_DEPTH
      */
-    public static @Nullable List<Coords> findValidDeployCoordsForTractorTrailer(Game game, Entity deployingEntity, Board board) {
+    public static List<Coords> findValidDeployCoordsForTractorTrailer(Game game, Entity deployingEntity, Board board) throws StackOverflowError {
         List<Coords> validCoords = new ArrayList<>();
         Entity towingEnt = deployingEntity;
         Entity closestDeployedTractor = null;
         Entity closestDeployedTrailer = null;
+        boolean useTractorCoords = false;
+        boolean useTrailerCoords = false;
         boolean useAdjacentHexForTractor = (towingEnt instanceof LargeSupportTank);
         if (deployingEntity.getTowedBy() != Entity.NONE && game.hasEntity(deployingEntity.getTowedBy())) {
             towingEnt = game.getEntity(deployingEntity.getTowedBy());
             if (towingEnt != null) {
-                useAdjacentHexForTractor = !useAdjacentHexForTractor || towingEnt instanceof LargeSupportTank;
+                // Intentionally different - we want to use the last useAdjacentHex
+                // value unless it's a large support tank
+                useAdjacentHexForTractor = useAdjacentHexForTractor || towingEnt instanceof LargeSupportTank;
                 if (towingEnt.isDeployed()) {
                     closestDeployedTractor = towingEnt;
                 }
-                while (towingEnt != null && towingEnt.getTowedBy() != Entity.NONE) {
+                int count = 0;
+                while ((towingEnt != null) && (towingEnt.getTowedBy() != Entity.NONE) && count < MAX_SEARCH_DEPTH) {
                     towingEnt = game.getEntity(towingEnt.getTowedBy());
                     useAdjacentHexForTractor = !useAdjacentHexForTractor || towingEnt instanceof LargeSupportTank;
-                    if (towingEnt != null) {
-                        if (closestDeployedTractor == null) {
-                            if (towingEnt.isDeployed()){
-                                closestDeployedTractor = towingEnt;
-                            }
-                        }
+                    if ((closestDeployedTractor == null) && (towingEnt != null) && (towingEnt.isDeployed())) {
+                        closestDeployedTractor = towingEnt;
                     }
+                    count++;
+                }
+                if (count >= MAX_SEARCH_DEPTH) {
+                    throw new StackOverflowError("Towing length too deep, too many tractors");
                 }
             }
         }
 
         // Did we find a tractor?
-        Set<Coords> validTractorCoords = null;
+        Set<Coords> validTractorCoords = new HashSet<>();;
         boolean useAdjacentHex = useAdjacentHexForTractor;
         if (closestDeployedTractor != null) {
             Set<Coords> possibleCoords = new HashSet<>();
             possibleCoords.add(closestDeployedTractor.getPosition());
-            Entity testEntity = game.getEntity(closestDeployedTractor.getTowing());;
+            Entity testEntity = game.getEntity(closestDeployedTractor.getTowing());
+            int count = 0;
             do{
                 possibleCoords = getValidDeploymentCoords(testEntity, board, useAdjacentHex, possibleCoords);
                 testEntity = game.getEntity(testEntity.getTowing());
                 useAdjacentHex = !useAdjacentHex || testEntity instanceof LargeSupportTank;
+                count++;
             }
-            while(testEntity != null && !testEntity.equals(deployingEntity));
+            while((testEntity != null) && (!testEntity.equals(deployingEntity)) && (count < MAX_SEARCH_DEPTH));
+            if (count >= MAX_SEARCH_DEPTH) {
+                throw new StackOverflowError("Towing length too deep, could not path back to trailer");
+            }
 
             validTractorCoords = possibleCoords;
+            useTractorCoords = true;
         } else {
-            List<Coords> list = findCoordsForTrailer(game, deployingEntity, board);
-            if (list != null) {
+            if (validAttachedTractor(deployingEntity, game)) {
+                List<Coords> list = findCoordsForTrailer(game, deployingEntity, board);
                 validTractorCoords = new HashSet<>(list);
+                useTractorCoords = true;
             }
         }
 
@@ -140,22 +155,23 @@ public class TowLinkWarning {
                 if (towingEnt.isDeployed()) {
                     closestDeployedTrailer = towingEnt;
                 } else {
-                    while (towingEnt != null && towingEnt.getTowing() != Entity.NONE) {
+                    int count = 0;
+                    while ((towingEnt != null) && (towingEnt.getTowing() != Entity.NONE) && (count < MAX_SEARCH_DEPTH))  {
                         towingEnt = game.getEntity(towingEnt.getTowing());
-                        if (towingEnt != null) {
-                            if (closestDeployedTrailer == null) {
-                                if (towingEnt.isDeployed()){
-                                    closestDeployedTrailer = towingEnt;
-                                    break;
-                                }
-                            }
+                        if ((towingEnt != null) && (closestDeployedTrailer == null) && (towingEnt.isDeployed())) {
+                            closestDeployedTrailer = towingEnt;
+                            break;
                         }
+                        count++;
+                    }
+                    if (count >= MAX_SEARCH_DEPTH) {
+                        throw new StackOverflowError("Towing length too deep, too many trailers");
                     }
                 }
             }
         }
 
-        Set<Coords> validTrailerCoords = null;
+        Set<Coords> validTrailerCoords = new HashSet<>();;
         // Did we find a trailer?
         if (closestDeployedTrailer != null) {
             Set<Coords> possibleCoords = new HashSet<>();
@@ -164,38 +180,35 @@ public class TowLinkWarning {
             // value unless it's a large support tank
             useAdjacentHex = useAdjacentHex || closestDeployedTrailer instanceof LargeSupportTank;
             Entity testEntity = game.getEntity(closestDeployedTrailer.getTowedBy());
-            do  {
+            int count = 0;
+            do {
                 possibleCoords = getValidDeploymentCoords(testEntity, board, useAdjacentHex, possibleCoords);
                 useAdjacentHex = !useAdjacentHex || testEntity instanceof LargeSupportTank;
                 testEntity = game.getEntity(testEntity.getTowedBy());
-            } while ((testEntity != null) && (deployingEntity.getTowedBy() != testEntity.getId()));
-
+                count++;
+            } while ((testEntity != null) && (deployingEntity.getTowedBy() != testEntity.getId()) && (count < MAX_SEARCH_DEPTH));
+            if (count >= MAX_SEARCH_DEPTH) {
+                throw new StackOverflowError("Towing length too deep, could not path back to tractor");
+            }
+            useTrailerCoords = true;
             validTrailerCoords = possibleCoords;
         } else {
-            List<Coords> list = findCoordsForTractor(game, deployingEntity, board);
-            if (list != null) {
+            if (validAttachedTrailer(deployingEntity, game)) {
+                List<Coords> list = findCoordsForTractor(game, deployingEntity, board);
                 validTrailerCoords = new HashSet<>(list);
+                useTrailerCoords = true;
             }
         }
 
-        if (validTractorCoords == null && validTrailerCoords == null) {
-            return null;
-        }
-
-        if (validTractorCoords == null) {
-            // We've established both aren't null -
-            // So if validTractorCoords is null, we can add
-            // validTrailerCoords as the only valid coords
-            validCoords.addAll(validTrailerCoords);
-        } else if (validTrailerCoords == null) {
-            // On the other hand, if validTrailerCoords is null,
-            // we can add validTractorCoords as the only valid coords
-            validCoords.addAll(validTractorCoords);
-        } else {
-            // If neither is null then we need to get the coords in common
-            // So add one, then retainAll with the other.
+        // If there's valid tractor and/or trailer coords,
+        // let's get them and intersect them if needed.
+        if (useTrailerCoords && useTractorCoords) {
             validCoords.addAll(validTractorCoords);
             validCoords.retainAll(validTrailerCoords);
+        } else if (useTrailerCoords) {
+            validCoords.addAll(validTrailerCoords);
+        } else if (useTractorCoords) {
+            validCoords.addAll(validTractorCoords);
         }
 
         return validCoords;
@@ -226,16 +239,16 @@ public class TowLinkWarning {
      * @param game
      * @param tractor
      * @param board
-     * @return List of coords that a tractor could go, empty if there are none. Null if the tractor isn't a tractor or pulling anything
+     * @return List of coords that a tractor could go, empty if there are none or if the tractor isn't a tractor or pulling anything
      */
-    private static @Nullable List<Coords> findCoordsForTractor(Game game, Entity tractor, Board board) {
+    private static List<Coords> findCoordsForTractor(Game game, Entity tractor, Board board) {
+        List<Coords> validCoords = new ArrayList<>();
+
         int attachedTrailerId = tractor.getTowing();
         Entity attachedTrailer = game.getEntity(attachedTrailerId);
         if (attachedTrailerId == Entity.NONE || attachedTrailer == null || attachedTrailer.getDeployRound() != tractor.getDeployRound()) {
-            return null;
+            return validCoords;
         }
-
-        List<Coords> validCoords = new ArrayList<>();
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -266,16 +279,15 @@ public class TowLinkWarning {
      * @param game
      * @param trailer
      * @param board
-     * @return List of coords that a trailer could go, empty if there are none. Null if the trailer isn't a trailer or being pulled
+     * @return List of coords that a trailer could go, empty if there are none or if the trailer isn't a trailer or being pulled
      */
-    private static @Nullable List<Coords> findCoordsForTrailer(Game game, Entity trailer, Board board) {
+    private static List<Coords> findCoordsForTrailer(Game game, Entity trailer, Board board) {
+        List<Coords> validCoords = new ArrayList<>();
         int tractorId = trailer.getTowedBy();
         Entity tractor = game.getEntity(tractorId);
         if (tractorId == Entity.NONE || tractor == null || tractor.getDeployRound() != trailer.getDeployRound()) {
-            return null;
+            return validCoords;
         }
-
-        List<Coords> validCoords = new ArrayList<>();
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -299,4 +311,20 @@ public class TowLinkWarning {
         return validCoords;
     }
 
+    private static boolean validAttachedTractor(Entity trailer, Game game) {
+        int tractorId = trailer.getTowedBy();
+        Entity tractor = game.getEntity(tractorId);
+        return !((tractorId == Entity.NONE)
+                || (tractor == null)
+                || (tractor.getDeployRound() != trailer.getDeployRound()));
+    }
+
+    private static boolean validAttachedTrailer(Entity tractor, Game game) {
+        int attachedTrailerId = tractor.getTowing();
+
+        Entity attachedTrailer = game.getEntity(attachedTrailerId);
+        return !((attachedTrailerId == Entity.NONE)
+                || (attachedTrailer == null)
+                || (attachedTrailer.getDeployRound() != tractor.getDeployRound()));
+    }
 }

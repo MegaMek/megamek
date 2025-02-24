@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,6 +67,12 @@ public class TowLinkWarningTest {
 
         when(mockTractor.isDeployed()).thenReturn(false);
         when(mockTrailer.isDeployed()).thenReturn(false);
+
+        when(mockTractor.getTowing()).thenReturn(Entity.NONE);
+        when(mockTrailer.getTowing()).thenReturn(Entity.NONE);
+
+        when(mockTractor.getTowedBy()).thenReturn(Entity.NONE);
+        when(mockTrailer.getTowedBy()).thenReturn(Entity.NONE);
     }
 
     /**
@@ -83,7 +89,8 @@ public class TowLinkWarningTest {
             List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTractor, mockBoard);
 
             // Assert
-            assertNull(coords);
+            // Empty list - It's not a tractor or trailer!
+            assertEquals(0, coords.size());
         }
 
         @Test
@@ -158,7 +165,8 @@ public class TowLinkWarningTest {
             List<Coords> coords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(mockGame, mockTrailer, mockBoard);
 
             // Assert
-            assertNull(coords);
+            // Empty list - It's not a tractor or trailer!
+            assertEquals(0, coords.size());
         }
 
         @Test
@@ -244,6 +252,14 @@ public class TowLinkWarningTest {
             when(mockTrailer2.isDeployed()).thenReturn(false);
             when(mockTrailer3.isDeployed()).thenReturn(false);
             when(mockTrailer4.isDeployed()).thenReturn(false);
+
+            when(mockTrailer2.getTowing()).thenReturn(Entity.NONE);
+            when(mockTrailer3.getTowing()).thenReturn(Entity.NONE);
+            when(mockTrailer4.getTowing()).thenReturn(Entity.NONE);
+
+            when(mockTrailer2.getTowedBy()).thenReturn(Entity.NONE);
+            when(mockTrailer3.getTowedBy()).thenReturn(Entity.NONE);
+            when(mockTrailer4.getTowedBy()).thenReturn(Entity.NONE);
         }
 
         @Test
@@ -369,6 +385,116 @@ public class TowLinkWarningTest {
 
             // Assert
             assertEquals(1, coords.size());
+        }
+    }
+
+    /**
+     * @see TowLinkWarning#findTowLinkIssues(Game, Entity, Board)
+     */
+    @Nested
+    class FindTowLinkIssues {
+        @Test
+        void testTowLinkIssuesNoIssues() {
+            // Act
+            List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
+
+            // Assert
+            // Every hex is okay
+            assertEquals(0, coords.size());
+        }
+
+        @Test
+        void testTowLinkTrailerNoIssuesNotDeployed() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
+
+            // Assert
+            // Every hex is okay
+            assertEquals(0, coords.size());
+        }
+
+
+        @Test
+        void testTowLinkDeployedTractorIssues() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+
+            when(mockTractor.isDeployed()).thenReturn(true);
+            when(mockTractor.getPosition()).thenReturn(new Coords(3,3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
+
+            // Assert
+            // Only one okay hex
+            assertEquals(24, coords.size());
+        }
+
+        @Test
+        void testTowLinkTractorInCoordTrailerCantDeploy() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+
+            when(mockTractor.isDeployed()).thenReturn(true);
+            when(mockTractor.getPosition()).thenReturn(new Coords(3,3));
+
+            when(mockTrailer.isLocationProhibited(new Coords(3,3))).thenReturn(true);
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
+
+            // Assert
+            //No good hexes - bad tractor spot!
+            assertEquals(25, coords.size());
+        }
+
+        @Test
+        void testTowLinkWarningLargeTrailer() {
+            // Arrange
+            mockTrailer = mock(LargeSupportTank.class);
+            when(mockTrailer.getId()).thenReturn(TRAILER_ID);
+            when(mockTrailer.isDeployed()).thenReturn(true);
+            when(mockGame.getEntity(TRAILER_ID)).thenReturn(mockTrailer);
+
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTractor.isDeployed()).thenReturn(true);
+            when(mockTractor.getPosition()).thenReturn(new Coords(3, 3));
+
+            // Act
+            List<Coords> coords = TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard);
+
+            // Assert
+            // There should be 6 available hexes: 25 - 6 adjacent = 19 valid coords
+            assertEquals(19, coords.size());
+        }
+    }
+
+    /**
+     * Inspired by Luana's suggestion to add a limit to how many times the
+     * do while loops while search for a tractor/trailer. This will test
+     * invalid situations to ensure they fail in an expected manner.
+     */
+    @Nested
+    class TestInvalidUseCases {
+
+        @Test
+        void testInfiniteLoops() {
+            // Arrange
+            when(mockTractor.getTowing()).thenReturn(TRAILER_ID);
+            when(mockTrailer.getTowing()).thenReturn(TRACTOR_ID);
+            when(mockTrailer.getTowedBy()).thenReturn(TRACTOR_ID);
+            when(mockTractor.getTowedBy()).thenReturn(TRAILER_ID);
+
+            // Act / Assert
+            // This should throw a stack overflow error.
+            Throwable exception = assertThrows(StackOverflowError.class, () -> TowLinkWarning.findTowLinkIssues(mockGame, mockTrailer, mockBoard));
         }
     }
 }

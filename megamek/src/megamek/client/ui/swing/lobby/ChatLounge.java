@@ -1285,10 +1285,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshTeams();
         refreshMapSettings();
         refreshDoneButton();
+        refreshAcar();
     }
 
     public void refreshAcar() {
-        panAutoResolveInfo.setVisible(CLIENT_PREFERENCES.getShowAutoResolvePanel());
+        boolean clientEnabledAcar = CLIENT_PREFERENCES.getShowAutoResolvePanel();
+        boolean notRealBlindDrop = !game().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
+        panAutoResolveInfo.setVisible(clientEnabledAcar && notRealBlindDrop);
     }
 
     /**

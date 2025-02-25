@@ -19,6 +19,7 @@ import java.util.function.BiFunction;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.InfantryTransporter.PlatoonType;
 
 /**
  * Construction data used by transport bays for meks, vees, and aerospace units.
@@ -38,13 +39,13 @@ public enum BayData {
     VEHICLE_SH ("Superheavy Vehicle", 200.0, 15, SuperHeavyVehicleBay.techAdvancement(),
             (size, num) -> new SuperHeavyVehicleBay(size, 1, num)),
     INFANTRY_FOOT ("Infantry (Foot)", 5.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.FOOT)),
+            (size, num) -> new InfantryBay(size, 0, num, PlatoonType.FOOT)),
     INFANTRY_JUMP ("Infantry (Jump)", 6.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.JUMP)),
+            (size, num) -> new InfantryBay(size, 0, num, PlatoonType.JUMP)),
     INFANTRY_MOTORIZED ("Infantry (Motorized)", 7.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.MOTORIZED)),
+            (size, num) -> new InfantryBay(size, 0, num, PlatoonType.MOTORIZED)),
     INFANTRY_MECHANIZED ("Infantry (Mek. Squad)", 8.0, 0, InfantryBay.techAdvancement(),
-            (size, num) -> new InfantryBay(size, 0, num, InfantryBay.PlatoonType.MECHANIZED)),
+            (size, num) -> new InfantryBay(size, 0, num, PlatoonType.MECHANIZED)),
     IS_BATTLE_ARMOR ("BattleArmor (IS)", 8.0, 6, BattleArmorBay.techAdvancement(),
             (size, num) -> new BattleArmorBay(size, 0, num, false, false)),
     CLAN_BATTLE_ARMOR ("BattleArmor (Clan)", 10.0, 6, BattleArmorBay.techAdvancement(),

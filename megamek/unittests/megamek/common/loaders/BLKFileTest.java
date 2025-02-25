@@ -31,7 +31,7 @@ import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.DropshuttleBay;
 import megamek.common.InfantryBay;
-import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.InfantryTransporter.PlatoonType;
 import megamek.common.Jumpship;
 import megamek.common.MekBay;
 import megamek.common.NavalRepairFacility;

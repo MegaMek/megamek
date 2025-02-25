@@ -43,21 +43,6 @@ public final class CargoBay extends Bay {
         currentdoors = doors;
     }
 
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
-    @Override
-    public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        return false;
-    }
-
     @Override
     public String getUnusedString(boolean showRecovery) {
         StringBuffer returnString = new StringBuffer("Cargo Space "

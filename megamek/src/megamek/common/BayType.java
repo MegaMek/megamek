@@ -16,6 +16,7 @@ package megamek.common;
 import java.util.function.Predicate;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.InfantryTransporter.PlatoonType;
 
 /**
  * Data for various transport bay types. This is used by MekHQ for cubicle
@@ -94,7 +95,7 @@ public enum BayType implements ITechnologyDelegator {
      * CATEGORY_NON_INFANTRY calculates cost per cubicle. Capacity is the number of
      * entities that can fit
      * in a single cubicle.
-     * 
+     *
      * @return The category index.
      */
     public int getCategory() {
@@ -190,12 +191,12 @@ public enum BayType implements ITechnologyDelegator {
         } else if (bay instanceof LivestockCargoBay) {
             return LIVESTOCK_CARGO;
         } else if (bay instanceof InfantryBay) {
-            InfantryBay.PlatoonType ptype = ((InfantryBay) bay).getPlatoonType();
-            if (ptype == InfantryBay.PlatoonType.JUMP) {
+            PlatoonType ptype = ((InfantryBay) bay).getPlatoonType();
+            if (ptype == PlatoonType.JUMP) {
                 return INFANTRY_JUMP;
-            } else if (ptype == InfantryBay.PlatoonType.MOTORIZED) {
+            } else if (ptype == PlatoonType.MOTORIZED) {
                 return INFANTRY_MOTORIZED;
-            } else if (ptype == InfantryBay.PlatoonType.MECHANIZED) {
+            } else if (ptype == PlatoonType.MECHANIZED) {
                 return INFANTRY_MECHANIZED;
             } else {
                 return INFANTRY_FOOT;

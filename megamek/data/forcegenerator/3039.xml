@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3039-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -2904,7 +2901,7 @@
             </model>
         </chassis>
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
-            <availability>MH:2</availability>
+            <availability>MH:3</availability>
             <model name='(Motorized AC10)'>
                 <roles>field_gun</roles>
                 <availability>MH:3+</availability>

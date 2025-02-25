@@ -280,7 +280,7 @@ public class BLKFile {
                         if (shots > 0) {
                             mount.setOriginalShots(shots);
                             mount.setShotsLeft(shots);
-                            mount.setSize(shots * ((AmmoType) mount.getType()).getKgPerShot() / 1000.0);
+                            mount.setSize(shots);
                         }
                         if (etype.isVariableSize()) {
                             if (size == 0) {

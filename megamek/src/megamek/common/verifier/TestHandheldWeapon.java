@@ -4,6 +4,7 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.HandheldWeapon;
 import megamek.common.MiscType;
+import megamek.common.equipment.AmmoMounted;
 
 public class TestHandheldWeapon extends TestEntity {
     private final HandheldWeapon hhw;
@@ -143,5 +144,10 @@ public class TestHandheldWeapon extends TestEntity {
     @Override
     public double getWeightStructure() {
         return 0;
+    }
+
+    @Override
+    public String printWeightStructure() {
+        return "";
     }
 }

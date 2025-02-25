@@ -5,7 +5,7 @@ plugins {
     id 'checkstyle'
     id 'com.palantir.git-version' version '3.1.0'
     id 'edu.sc.seis.launch4j' version '3.0.6'
-    id "io.sentry.jvm.gradle" version '5.1.0'
+    id "io.sentry.jvm.gradle" version '5.2.0'
     id 'jacoco'
     id 'java'
     id 'org.ec4j.editorconfig' version '0.1.0'
@@ -37,28 +37,39 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.2'
-    implementation 'com.formdev:flatlaf:3.5.1'
-    implementation 'com.formdev:flatlaf-extras:3.5.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2'
+
+    implementation 'com.formdev:flatlaf:3.5.4'
+    implementation 'com.formdev:flatlaf-extras:3.5.4'
+
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
-    implementation 'com.thoughtworks.xstream:xstream:1.4.20'
+
+    implementation 'com.thoughtworks.xstream:xstream:1.4.21'
+
+    implementation 'commons-io:commons-io:2.18.0'
+
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-    implementation 'org.apache.commons:commons-collections4:4.5.0-M2'
+
+    implementation 'org.apache.commons:commons-collections4:4.5.0-M3'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
-    implementation 'org.apache.commons:commons-text:1.12.0'
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.0'
-    implementation 'org.freemarker:freemarker:2.3.33'
-    implementation 'org.commonmark:commonmark:0.22.0'
+    implementation 'org.apache.commons:commons-text:1.13.0'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+
+    implementation 'org.freemarker:freemarker:2.3.34'
+
+    implementation 'org.commonmark:commonmark:0.24.0'
+
     implementation 'com.squareup:gifencoder:0.10.1'
 
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.0'
-    testImplementation 'org.mockito:mockito-core:5.13.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.mockito:mockito-core:5.15.2'
 }
 
 application {
@@ -87,9 +98,9 @@ ext {
 }
 
 checkstyle {
-    toolVersion '10.18.1'
-    configFile file("config/checkstyle/checkstyle.xml")
-    ignoreFailures false
+    toolVersion = '10.18.1'
+    configFile = file("config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
 }
 
 run {
@@ -109,37 +120,21 @@ jar {
 }
 
 task generateDynamicFiles() {
+    def jvmOptions = project.ext.mmJvmOptions.join('\n')
+
     doLast {
         new File("${projectDir}/docs/mm-revision.txt").text = versionDetails().gitHashFull
         new File("${projectDir}/MegaMek.l4j.ini").text = """# Launch4j runtime config
 # you can add arguments here that will be processed by the JVM at runtime
-${project.ext.mmJvmOptions.join('\n')}
+${jvmOptions}
 """
     }
-}
-
-task officialUnitList(type: JavaExec, dependsOn: jar) {
-    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
-    group = 'build'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.MegaMek'
-    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
-}
-
-task equipmentList(type: JavaExec, dependsOn: jar) {
-    description = 'Generate current equipment.txt'
-    group = 'build'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'megamek.MegaMek'
-    args = [ '-eqdb', "${projectDir}/docs/equipment.txt" ]
 }
 
 task copyFiles(type: Copy) {
     description = 'Stages files that are to be copied into the distribution.'
     group = 'build'
 
-    dependsOn officialUnitList
-    dependsOn equipmentList
     dependsOn generateDynamicFiles
 
     from projectDir
@@ -172,6 +167,7 @@ task copyFiles(type: Copy) {
 
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     description = 'Combines individual image files into a set of image atlases.'
+    group = 'utility'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)
@@ -254,7 +250,7 @@ distributions {
                     .findAll { it.name.endsWith(".jar") }) {
                 into "${lib}"
             }
-            duplicatesStrategy 'exclude'
+            duplicatesStrategy = 'exclude'
         }
     }
 }
@@ -269,8 +265,8 @@ launch4j {
     internalName = 'MegaMek'
     downloadUrl = 'https://github.com/MegaMek/megamek/wiki/Updating-to-Adoptium-(Eclipse-Temurin-Open-Source-Java)'
     supportUrl = 'https://megamek.org'
-    copyright = '2024 MegaMek Development Team.'
-    trademarks = 'MechWarrior, BattleMech, `Mech and Aerotech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
+    copyright = '2025 MegaMek Development Team.'
+    trademarks = 'MechWarrior, BattleMech, `Mech and AeroTech - The The Topps Company, Inc. Catalyst Game Labs - InMediaRes Productions, LLC.'
     companyName = "MegaMek Development Team"
     jreMinVersion = '17'
     dontWrapJar = true
@@ -285,8 +281,6 @@ tasks.register("packagePrepWork") {
     dependsOn createStartScripts
     dependsOn copyFiles
     dependsOn createImageAtlases
-    dependsOn equipmentList
-    dependsOn officialUnitList
     dependsOn ratZip
     dependsOn createAllExecutables
 }
@@ -298,13 +292,13 @@ distZip {
 }
 
 distTar {
-    description = 'Creates a gziped tar ball for distribution'
+    description = 'Creates a gzipped tar ball for distribution'
     dependsOn packagePrepWork
     archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
-// The distribution plugin adds the distro packages to the assemble task, which causes the build task
+// The distribution plugin adds the distribution packages to the assemble task, which causes the build task
 // to run all the packaging tasks.
 task assemble(overwrite: true) {
     dependsOn jar
@@ -335,6 +329,54 @@ jacocoTestReport {
 
 // These are utility classes for all of the classes with the src/utilities folder.
 
+task officialUnitList(type: JavaExec, dependsOn: jar) {
+    description = 'Compiles a list of all units that come from official sources and saves it in the docs folder.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = ['-oul', "${projectDir}/docs/OfficialUnitList.txt"]
+}
+
+task equipmentList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate Full Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqdb', "${projectDir}/equipment.txt" ]
+}
+
+task extendedEquipmentList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate Extended Equipment Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqedb', "${projectDir}/extended-equipment.txt" ]
+}
+
+task weaponsList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate Weapons Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqwdb', "${projectDir}/weapons.txt" ]
+}
+
+task ammoList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate Ammo Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqadb', "${projectDir}/ammo.txt" ]
+}
+
+task weaponsMiscList(type: JavaExec, dependsOn: jar) {
+    description = 'Generate Misc Weapons Database'
+    group = 'database'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.MegaMek'
+    args = [ '-eqmdb', "${projectDir}/misc-weapons.txt" ]
+}
+
 task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
     description = 'Outputs the Alpha Strike conversion of all units'
     group = 'utility'
@@ -344,14 +386,14 @@ task alphaStrikeMassConvert(type: JavaExec, dependsOn: jar) {
 
 task boardsTagger(type: JavaExec, dependsOn: jar) {
     description = 'Tags all boards'
-    group = 'utility'
+    group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.BoardsTagger'
 }
 
 task boardsValidator(type: JavaExec, dependsOn: jar) {
     description = 'Validates all boards'
-    group = 'utility'
+    group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.BoardsValidator'
 }
@@ -393,9 +435,9 @@ task iconTest(type: JavaExec, dependsOn: jar) {
     mainClass = 'megamek.utilities.IconTest'
 }
 
-task mechCacheCSVTool(type: JavaExec, dependsOn: jar) {
-    description = 'Icon Tool'
-    group = 'utility'
+task mekCacheCSVTool(type: JavaExec, dependsOn: jar) {
+    description = 'Mek CSV Database'
+    group = 'database'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.MekCacheCSVTool'
 }

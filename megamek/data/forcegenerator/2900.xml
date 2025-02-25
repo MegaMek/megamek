@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2900-->
-<ratgen>
+<ratgen
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
+>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -2201,7 +2204,7 @@
 			</model>
 		</chassis>
 		<chassis name='Field Artillery' unitType='Infantry'>
-			<availability>HL:1,IS:3,Periphery:3</availability>
+			<availability>HL:1,IS:3,Periphery:3,MH:1+</availability>
 			<model name='(Sniper)'>
 				<roles>artillery</roles>
 				<availability>General:6</availability>
@@ -2236,6 +2239,17 @@
             <model name='(Wheeled Thumper)'>
                 <roles>mixed_artillery,urban</roles>
                 <availability>CS:8</availability>
+            </model>
+        </chassis>
+        <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
+            <availability>MH:2</availability>
+            <model name='(Motorized Light Rifle)'>
+                <roles>field_gun</roles>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Motorized Medium Rifle)'>
+                <roles>field_gun</roles>
+                <availability>MH:3</availability>
             </model>
         </chassis>
         <chassis name='Field Gun Platoon (ComStar)' unitType='Infantry'>
@@ -2290,22 +2304,22 @@
             </model>
         </chassis>
 		<chassis name='Field Gunners' unitType='Infantry'>
-			<availability>IS:4,Periphery:2</availability>
+			<availability>IS:4,Periphery:2,MH:1+</availability>
 			<model name='(AC10)'>
 				<roles>field_gun</roles>
-				<availability>General:8</availability>
+				<availability>General:8,MH:0</availability>
 			</model>
 			<model name='(AC2)'>
 				<roles>anti_aircraft,field_gun</roles>
-				<availability>General:7</availability>
+				<availability>General:7,MH:6</availability>
 			</model>
 			<model name='(AC20)'>
 				<roles>urban,field_gun</roles>
-				<availability>General:5</availability>
+				<availability>General:5,MH:0</availability>
 			</model>
 			<model name='(AC5)'>
 				<roles>anti_aircraft,field_gun</roles>
-				<availability>General:8</availability>
+				<availability>General:8,MH:7</availability>
 			</model>
 		</chassis>
 		<chassis name='Fire Scorpion' unitType='Mek'>
@@ -2401,8 +2415,28 @@
 				<availability>FWL:6,Periphery.MW:8,Periphery.ME:8,PIR:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Foot Duplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:9</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Laser)'>
+                <availability>MH:2+</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>MH:8</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:3+</availability>
+            </model>
+        </chassis>
 		<chassis name='Foot Platoon' unitType='Infantry'>
-			<availability>IS:10,CS:8,Periphery:10,TC:3-,HL:8,Periphery.Deep:10</availability>
+			<availability>IS:10,CS:8,Periphery:10,TC:3-,MH:2,HL:8,Periphery.Deep:10</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>IS:8,Periphery:8,TC:6-,HL:8,Periphery.Deep:8</availability>
@@ -2412,42 +2446,42 @@
 			</model>
 			<model name='(Laser Marine)'>
 				<roles>marine</roles>
-				<availability>OA:3,IS:2,Periphery:2</availability>
+				<availability>OA:3,IS:2,Periphery:2,MH:2+</availability>
 			</model>
 			<model name='(Laser XCT)'>
 				<roles>marine,xct</roles>
-				<availability>General:1,Periphery:1,TC:3</availability>
+				<availability>General:1,Periphery:1,TC:3,MH:1+</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6,Periphery:5,TC:3+,HL:3,Periphery.Deep:5</availability>
+				<availability>IS:6,Periphery:5,TC:3+,MH:5+,HL:3,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Light Scout)'>
 				<roles>recon</roles>
-				<availability>IS:5-,Periphery:7,TC:7-,HL:7-</availability>
+				<availability>IS:5-,Periphery:7,TC:7-,MH:7-,HL:7-</availability>
 			</model>
 			<model name='(MG)'>
-				<availability>IS:7,Periphery:7,TC:5,HL:7,Periphery.Deep:5</availability>
+				<availability>IS:7,Periphery:7,TC:5,MH:5,HL:7,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Rifle AA)'>
 				<roles>anti_aircraft</roles>
-				<availability>IS:6,Periphery:5+,TC:3+,HL:0,Periphery.Deep:0</availability>
+				<availability>IS:6,Periphery:5+,TC:3+,MH:0,HL:0,Periphery.Deep:0</availability>
 			</model>
 			<model name='(Rifle Light)'>
-				<availability>IS:5,Periphery:7-,TC:8,HL:8,Periphery.Deep:7</availability>
+				<availability>IS:5,Periphery:7-,TC:8,MH:8,HL:8,Periphery.Deep:7</availability>
 			</model>
 			<model name='(Rifle Mountain)'>
 				<roles>mountaineer</roles>
-				<availability>IS:3,Periphery:3</availability>
+				<availability>IS:3,Periphery:3,MH:0</availability>
 			</model>
 			<model name='(Rifle Paratrooper)'>
 				<roles>paratrooper</roles>
-				<availability>IS:3,Periphery:2</availability>
+				<availability>IS:3,Periphery:2,MH:0</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,Periphery:8,TC:6,HL:6,Periphery.Deep:6</availability>
+				<availability>IS:8,Periphery:8,TC:6,MH:6,HL:6,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,Periphery:5,TC:3+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:5,Periphery:5,TC:3+,MH:5+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Foot Platoon (ComStar)' unitType='Infantry'>
@@ -2498,12 +2532,32 @@
 			</model>
 		</chassis>
 		<chassis name='Foot Stealth Squad' unitType='Infantry'>
-			<availability>IS:2+,Periphery:1+</availability>
+			<availability>IS:2+,Periphery:1+,MH:0</availability>
 			<model name='(Sniper Paratrooper)'>
 				<roles>recon,specops,paratrooper</roles>
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Foot Triplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:8+</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>MH:3</availability>
+            </model>
+            <model name='(Laser)'>
+                <availability>MH:3+</availability>
+            </model>
+            <model name='(MG)'>
+                <roles>anti_infantry</roles>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>MH:7</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:5+</availability>
+            </model>
+        </chassis>
         <chassis name='ForestryMech' unitType='Mek'>
             <availability>IS:6,Periphery:3,HL:2+,Periphery.Deep:0,PIR:0</availability>
             <model name='ED-X3'>
@@ -3400,27 +3454,44 @@
 				<availability>General:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Jump Duplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:4+</availability>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>MH:6+</availability>
+            </model>
+            <model name='(MG)'>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>anti_mek</roles>
+                <availability>MH:7</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:4+</availability>
+            </model>
+        </chassis>
 		<chassis name='Jump Platoon' unitType='Infantry'>
-			<availability>IS:8,CS:6,Periphery:7,TC:2-,HL:5,Periphery.Deep:5+</availability>
+			<availability>IS:8,CS:6,Periphery:7,TC:2-,MH:2,HL:5,Periphery.Deep:5+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>IS:8,Periphery:8,TC:3-,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,Periphery:8,TC:3-,MH:4-,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6,Periphery:5,TC:5+,HL:3,Periphery.Deep:6+</availability>
+				<availability>IS:6,Periphery:5,TC:5+,MH:5+,HL:3,Periphery.Deep:6+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>IS:7,Periphery:7,TC:5,HL:7,Periphery.Deep:4</availability>
+				<availability>IS:7,Periphery:7,TC:5,MH:5,HL:7,Periphery.Deep:4</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,Periphery:8,TC:3,HL:7,Periphery.Deep:6</availability>
+				<availability>IS:8,Periphery:8,TC:3,MH:7,HL:7,Periphery.Deep:6</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,Periphery:5,TC:4+,HL:4+,Periphery.Deep:4+</availability>
+				<availability>IS:5,Periphery:5,TC:4+,MH:5+,HL:4+,Periphery.Deep:4+</availability>
 			</model>
 		</chassis>
         <chassis name='Jump Platoon (ComStar)' unitType='Infantry'>
@@ -3473,6 +3544,19 @@
 				<availability>IS:5,DC:7</availability>
 			</model>
 		</chassis>
+        <chassis name='Jump Triplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:5+</availability>
+            <model name='(Laser)'>
+                <roles>anti_mek</roles>
+                <availability>MH:7+</availability>
+            </model>
+            <model name='(MG)'>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Kanga Medium Hovertank' unitType='Tank'>
 			<availability>CS:2,CHH:2,CLAN:2,FWL:1,NIOPS:2</availability>
 			<model name=''>
@@ -4115,32 +4199,49 @@
 				<availability>CLAN:8</availability>
 			</model>
 		</chassis>
+        <chassis name='Mechanized Hover Century (MHAF)' unitType='Infantry'>
+            <availability>MH:3+</availability>
+            <model name='(Laser)'>
+                <roles>recon</roles>
+                <availability>MH:5+</availability>
+            </model>
+            <model name='(MG)'>
+                <availability>MH:4</availability>
+            </model>
+            <model name='(Rifle)'>
+                <roles>recon</roles>
+                <availability>MH:7</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
-			<availability>IS:5,CS:3,Periphery:5,TC:1-,HL:3,Periphery.Deep:4+</availability>
+			<availability>IS:5,CS:3,Periphery:5,TC:1-,MH:2,HL:3,Periphery.Deep:4+</availability>
 			<model name='(Demolition)'>
 				<roles>recon,engineer</roles>
 				<availability>General:2</availability>
 			</model>
 			<model name='(Flamer)'>
-				<availability>IS:8,Periphery:8,TC:2-,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,Periphery:8,TC:2-,MH:0,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
                 <roles>recon</roles>
-				<availability>IS:6,Periphery:5,TC:5+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:6,Periphery:5,TC:5+,MH:5+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>IS:7,Periphery:7,TC:4,HL:7,Periphery.Deep:6</availability>
+				<availability>IS:7,Periphery:7,TC:4,MH:4,HL:7,Periphery.Deep:6</availability>
 			</model>
 			<model name='(Rifle)'>
                 <roles>recon</roles>
-				<availability>IS:8,Periphery:8,TC:3,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,Periphery:8,TC:3,MH:7,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,Periphery:5,TC:4+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:5,Periphery:5,TC:4+,MH:4+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Mechanized Hover Platoon (ComStar)' unitType='Infantry'>
@@ -4185,8 +4286,9 @@
                 <availability>TC:5</availability>
             </model>
         </chassis>
+
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-			<availability>IS:7,CS:4,Periphery:7,TC:3-,HL:5,Periphery.Deep:6+</availability>
+			<availability>IS:7,CS:4,Periphery:7,TC:3-,MH:0,HL:5,Periphery.Deep:6+</availability>
 			<model name='(Bridging)'>
 				<roles>engineer</roles>
 				<availability>IS:1,CS:3,LA:2,FS:2,Periphery:1,Periphery.Deep:0</availability>
@@ -4253,7 +4355,7 @@
             </model>
         </chassis>
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
-			<availability>IS:7,CS:5,Periphery:7,TC:2-,HL:5,Periphery.Deep:8+</availability>
+			<availability>IS:7,CS:5,Periphery:7,TC:2-,MH:0,HL:5,Periphery.Deep:8+</availability>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
 				<availability>IS:8,Periphery:8,TC:4-,HL:8,Periphery.Deep:8</availability>
@@ -4476,35 +4578,51 @@
 				<availability>CLAN:2</availability>
 			</model>
 		</chassis>
+        <chassis name='Motorized Duplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:8</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>MH:5</availability>
+            </model>
+            <model name='(Laser)'>
+                <availability>MH:4+</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>MH:8</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:4+</availability>
+            </model>
+        </chassis>
 		<chassis name='Motorized Platoon' unitType='Infantry'>
-			<availability>IS:9,CS:7,Periphery:9,TC:3-,HL:7,Periphery.Deep:8</availability>
+			<availability>IS:9,CS:7,Periphery:9,TC:3-,MH:2,HL:7,Periphery.Deep:8</availability>
 			<model name='(Fieldworks)'>
 				<roles>engineer</roles>
-				<availability>IS:4,Periphery:2</availability>
+				<availability>IS:4,Periphery:2,MH:0</availability>
 			</model>
 			<model name='(Flamer)'>
                 <roles>urban</roles>
-				<availability>IS:8,Periphery:8,TC:5-,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,Periphery:8,TC:5-,MH:5,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(LRM)'>
 				<availability>General:5</availability>
 			</model>
 			<model name='(Laser)'>
-				<availability>IS:6,Periphery:5,TC:4+,HL:3,Periphery.Deep:5</availability>
+				<availability>IS:6,Periphery:5,TC:4+,MH:4+,HL:3,Periphery.Deep:5</availability>
 			</model>
 			<model name='(MG)'>
                 <roles>anti_infantry</roles>
-				<availability>IS:6,Periphery:7,TC:5,HL:7,Periphery.Deep:5</availability>
+				<availability>IS:6,Periphery:7,TC:5,MH:5,HL:7,Periphery.Deep:5</availability>
 			</model>
 			<model name='(Nonlethal)'>
 				<roles>urban,anti_infantry</roles>
 				<availability>CS:7,IS:2</availability>
 			</model>
 			<model name='(Rifle)'>
-				<availability>IS:8,Periphery:8,TC:7,HL:8,Periphery.Deep:8</availability>
+				<availability>IS:8,Periphery:8,TC:7,MH:8,HL:8,Periphery.Deep:8</availability>
 			</model>
 			<model name='(SRM)'>
-				<availability>IS:5,Periphery:5,TC:4+,HL:5+,Periphery.Deep:5+</availability>
+				<availability>IS:5,Periphery:5,TC:4+,MH:4+,HL:5+,Periphery.Deep:5+</availability>
 			</model>
 		</chassis>
         <chassis name='Motorized Platoon (ComStar)' unitType='Infantry'>
@@ -4556,6 +4674,22 @@
 				<availability>IS:9</availability>
 			</model>
 		</chassis>
+        <chassis name='Motorized Triplus Contubernium (MHAF)' unitType='Infantry'>
+            <availability>MH:8+</availability>
+            <model name='(Flamer)'>
+                <roles>urban</roles>
+                <availability>MH:3</availability>
+            </model>
+            <model name='(Laser)'>
+                <availability>MH:5+</availability>
+            </model>
+            <model name='(Rifle)'>
+                <availability>MH:7</availability>
+            </model>
+            <model name='(SRM)'>
+                <availability>MH:5+</availability>
+            </model>
+        </chassis>
 		<chassis name='Mowang Courier' unitType='Small Craft'>
 			<availability>CC:2</availability>
 			<model name=''>

@@ -71,10 +71,15 @@ public final class Configuration {
     /** The default images directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_IMAGES = "images";
 
-    /** The default file that maps image filenames to locations withn an image atlas. */
-    private static final String DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP = "images/imgFileAtlasMap.xml";
+    /**
+     * The default file that maps image filenames to locations within an image
+     * atlas.
+     */
+    private static final String DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP = "images/imgFileAtlasMap.yml";
 
-    /** The default board backgrounds directory name (under the images directory). */
+    /**
+     * The default board backgrounds directory name (under the images directory).
+     */
     private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
 
     /** The default unit files directory name (under the data directory). */
@@ -164,8 +169,7 @@ public final class Configuration {
     /**
      * Set the configuration directory.
      *
-     * @param config_dir_path
-     *            The path to the config directory.
+     * @param config_dir_path The path to the config directory.
      */
     public static void setConfigDir(final File config_dir_path) {
         lock.writeLock().lock();
@@ -191,8 +195,7 @@ public final class Configuration {
     /**
      * Set the data directory.
      *
-     * @param data_dir_path
-     *            The path to the data directory.
+     * @param data_dir_path The path to the data directory.
      */
     public static void setDataDir(final File data_dir_path) {
         lock.writeLock().lock();
@@ -218,8 +221,7 @@ public final class Configuration {
     /**
      * Set the documentation directory.
      *
-     * @param docs_dir_path
-     *            The path to the documentation directory.
+     * @param docs_dir_path The path to the documentation directory.
      */
     public static void setDocsDir(final File docs_dir_path) {
         lock.writeLock().lock();
@@ -245,8 +247,7 @@ public final class Configuration {
     /**
      * Set the skins directory.
      *
-     * @param skin_dir_path
-     *            The path to the skins directory.
+     * @param skin_dir_path The path to the skins directory.
      */
     public static void setSkinDir(final File skin_dir_path) {
         lock.writeLock().lock();
@@ -264,8 +265,7 @@ public final class Configuration {
     public static File armyTablesDir() {
         lock.readLock().lock();
         try {
-            return (army_tables_dir != null) ? army_tables_dir : new File(
-                    dataDir(), DEFAULT_DIR_NAME_ARMY_TABLES);
+            return (army_tables_dir != null) ? army_tables_dir : new File(dataDir(), DEFAULT_DIR_NAME_ARMY_TABLES);
         } finally {
             lock.readLock().unlock();
         }
@@ -275,8 +275,7 @@ public final class Configuration {
      * Set the army tables directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
      *
-     * @param army_tables_dir_path
-     *            The path to the army tables directory.
+     * @param army_tables_dir_path The path to the army tables directory.
      */
     public static void setArmyTablesDir(final File army_tables_dir_path) {
         lock.writeLock().lock();
@@ -293,8 +292,7 @@ public final class Configuration {
     public static File boardsDir() {
         lock.readLock().lock();
         try {
-            return (boards_dir != null) ? boards_dir : new File(dataDir(),
-                    DEFAULT_DIR_NAME_BOARDS);
+            return (boards_dir != null) ? boards_dir : new File(dataDir(), DEFAULT_DIR_NAME_BOARDS);
         } finally {
             lock.readLock().unlock();
         }
@@ -304,8 +302,7 @@ public final class Configuration {
      * Set the boards directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
      *
-     * @param boards_dir_path
-     *            dir path The path to the boards directory.
+     * @param boards_dir_path dir path The path to the boards directory.
      */
     public static void setBoardsDir(final File boards_dir_path) {
         lock.writeLock().lock();
@@ -332,7 +329,9 @@ public final class Configuration {
     }
 
     /**
-     * Return the minimap themes directory, which is relative to the hexes directory.
+     * Return the minimap themes directory, which is relative to the hexes
+     * directory.
+     *
      * @return {@link File} containing the path to the minimap themes directory.
      */
     public static File minimapThemesDir() {
@@ -340,16 +339,22 @@ public final class Configuration {
     }
 
     /**
-     * Return the orbital bombardment hexes directory, which is relative to the hexes directory.
-     * @return {@link File} containing the path to the orbital bombardment hexes directory.
+     * Return the orbital bombardment hexes directory, which is relative to the
+     * hexes directory.
+     *
+     * @return {@link File} containing the path to the orbital bombardment hexes
+     *         directory.
      */
     public static File orbitalBombardmentHexesDir() {
         return new File(hexesDir(), DEFAULT_DIR_ORBITAL_BOMBARDMENT);
     }
 
     /**
-     * Return the nuke hit hexes directory, which is relative to the hexes directory.
-     * @return {@link File} containing the path to the orbital bombardment hexes directory.
+     * Return the nuke hit hexes directory, which is relative to the hexes
+     * directory.
+     *
+     * @return {@link File} containing the path to the orbital bombardment hexes
+     *         directory.
      */
     public static File nukeHexesDir() {
         return new File(hexesDir(), DEFAULT_DIR_NUKE);
@@ -365,7 +370,10 @@ public final class Configuration {
         return new File(imagesDir(), DEFAULT_DIR_NAME_FLUFF_IMAGES);
     }
 
-    /** @return {@link File} containing the path to the universe images directory (having e.g. era, faction images). */
+    /**
+     * @return {@link File} containing the path to the universe images directory
+     *         (having e.g. era, faction images).
+     */
     public static File universeImagesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_IMG_UNIVERSE);
     }
@@ -379,8 +387,7 @@ public final class Configuration {
     public static File imagesDir() {
         lock.readLock().lock();
         try {
-            return (images_dir != null) ? images_dir : new File(dataDir(),
-                    DEFAULT_DIR_NAME_IMAGES);
+            return (images_dir != null) ? images_dir : new File(dataDir(), DEFAULT_DIR_NAME_IMAGES);
         } finally {
             lock.readLock().unlock();
         }
@@ -390,8 +397,7 @@ public final class Configuration {
      * Set the images directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
      *
-     * @param images_dir_path
-     *            The path to the images directory.
+     * @param images_dir_path The path to the images directory.
      */
     public static void setImagesDir(final File images_dir_path) {
         lock.writeLock().lock();
@@ -409,19 +415,19 @@ public final class Configuration {
     public static File imageFileAtlasMapFile() {
         lock.readLock().lock();
         try {
-            return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile : new File(dataDir(),
-                    DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
+            return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile
+                    : new File(dataDir(), DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     /**
-     * Set the  image file to atlas loc file to an arbitrary location (<b>not</b> relative to
+     * Set the image file to atlas loc file to an arbitrary location (<b>not</b>
+     * relative to
      * the data directory).
      *
-     * @param imgFileAtlasMapFilePath
-     *            The path to the images directory.
+     * @param imgFileAtlasMapFilePath The path to the images directory.
      */
     public static void setImageFileAtlasMapFile(final File imgFileAtlasMapFilePath) {
         lock.writeLock().lock();
@@ -449,8 +455,7 @@ public final class Configuration {
      * Set the board backgrounds directory to an arbitrary location (<b>not</b>
      * relative to the images directory).
      *
-     * @param board_background_dir_path
-     *            The path to the images directory.
+     * @param board_background_dir_path The path to the images directory.
      */
     public static void setboardBackgroundsDir(
             final File board_background_dir_path) {
@@ -468,29 +473,25 @@ public final class Configuration {
     public static File unitsDir() {
         lock.readLock().lock();
         try {
-            return (units_dir != null) ? units_dir : new File(dataDir(),
-                    DEFAULT_DIR_NAME_UNITS);
+            return (units_dir != null) ? units_dir : new File(dataDir(), DEFAULT_DIR_NAME_UNITS);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     public static File gameSummaryImagesBVDir() {
-        return new File(PreferenceManager.getClientPreferences()
-        .getLogDirectory() + "/gameSummaries/board");
+        return new File(PreferenceManager.getClientPreferences().getLogDirectory() + "/gameSummaries/board");
     }
 
     public static File gameSummaryImagesMMDir() {
-        return new File(PreferenceManager.getClientPreferences()
-        .getLogDirectory() + "/gameSummaries/minimap");
+        return new File(PreferenceManager.getClientPreferences().getLogDirectory() + "/gameSummaries/minimap");
     }
 
     /**
      * Set the units directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
      *
-     * @param units_dir_path
-     *            The path to the units directory.
+     * @param units_dir_path The path to the units directory.
      */
     public static void setUnitsDir(final File units_dir_path) {
         lock.writeLock().lock();
@@ -536,8 +537,7 @@ public final class Configuration {
     public static File scenariosDir() {
         lock.readLock().lock();
         try {
-            return (scenarios_dir != null) ? scenarios_dir : new File(
-                    dataDir(), DEFAULT_DIR_NAME_SCENARIOS);
+            return (scenarios_dir != null) ? scenarios_dir : new File(dataDir(), DEFAULT_DIR_NAME_SCENARIOS);
         } finally {
             lock.readLock().unlock();
         }
@@ -547,8 +547,7 @@ public final class Configuration {
      * Set the scenarios directory to an arbitrary location (<b>not</b> relative
      * to the data directory).
      *
-     * @param scenarios_dir_path
-     *            The path to the scenarios directory.
+     * @param scenarios_dir_path The path to the scenarios directory.
      */
     public static void setScenariosDir(final File scenarios_dir_path) {
         lock.writeLock().lock();
@@ -565,8 +564,7 @@ public final class Configuration {
     public static File soundsDir() {
         lock.readLock().lock();
         try {
-            return (sounds_dir != null) ? sounds_dir : new File(dataDir(),
-                    DEFAULT_DIR_NAME_SOUNDS);
+            return (sounds_dir != null) ? sounds_dir : new File(dataDir(), DEFAULT_DIR_NAME_SOUNDS);
         } finally {
             lock.readLock().unlock();
         }
@@ -576,8 +574,7 @@ public final class Configuration {
      * Set the sounds directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
      *
-     * @param sounds_dir_path
-     *            The path to the sounds directory.
+     * @param sounds_dir_path The path to the sounds directory.
      */
     public static void setSoundsDir(final File sounds_dir_path) {
         lock.writeLock().lock();
@@ -586,16 +583,16 @@ public final class Configuration {
     }
 
     /**
-     * Return the configured force generator data directory, if set, otherwise return the
-     * default path, relative to the configured data directory.
+     * Return the configured force generator data directory, if set, otherwise
+     * return the default path, relative to the configured data directory.
      *
      * @return {@link File} containing the path to the force generator directory.
      */
     public static File forceGeneratorDir() {
         lock.readLock().lock();
         try {
-            return (force_generator_dir != null) ? force_generator_dir : new File(
-                    dataDir(), DEFAULT_DIR_NAME_FORCE_GENERATOR);
+            return (force_generator_dir != null) ? force_generator_dir
+                    : new File(dataDir(), DEFAULT_DIR_NAME_FORCE_GENERATOR);
         } finally {
             lock.readLock().unlock();
         }
@@ -605,15 +602,13 @@ public final class Configuration {
      * Set the force generator directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
      *
-     * @param force_generator_dir_path
-     *            The path to the force generator directory.
+     * @param force_generator_dir_path The path to the force generator directory.
      */
     public static void setForceGeneratorDir(final File force_generator_dir_path) {
         lock.writeLock().lock();
         force_generator_dir = force_generator_dir_path;
         lock.writeLock().unlock();
     }
-
 
     /**
      * Return the configured fonts data directory, if set, otherwise return the
@@ -624,8 +619,7 @@ public final class Configuration {
     public static File fontsDir() {
         lock.readLock().lock();
         try {
-            return (fonts_dir != null) ? fonts_dir : new File(
-                    dataDir(), DEFAULT_DIR_NAME_FONTS);
+            return (fonts_dir != null) ? fonts_dir : new File(dataDir(), DEFAULT_DIR_NAME_FONTS);
         } finally {
             lock.readLock().unlock();
         }
@@ -635,8 +629,7 @@ public final class Configuration {
      * Set the force generator directory to an arbitrary location (<b>not</b>
      * relative to the data directory).
      *
-     * @param fontsDir
-     *            The path to the force generator directory.
+     * @param fontsDir The path to the force generator directory.
      */
     public static void setFontsDir(final File fontsDir) {
         lock.writeLock().lock();

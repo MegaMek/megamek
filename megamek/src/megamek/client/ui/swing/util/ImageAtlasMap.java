@@ -70,8 +70,8 @@ public class ImageAtlasMap {
      * Insert new values into the atlas map, using Paths which get converted to
      * UNIX-style path strings.
      *
-     * @param value
-     * @param key
+     * @param originalFilePath The file path on the file system during build.
+     * @param atlasFilePath    Which file it is in for the atlas.
      */
     public void put(Path originalFilePath, Path atlasFilePath) {
         String valueString = FilenameUtils.separatorsToUnix(originalFilePath.toString());
@@ -108,7 +108,8 @@ public class ImageAtlasMap {
     /**
      * Writes to a custom file for testing or custom paths.
      *
-     * @param pathToFile
+     * @param pathToFile Path to write to. Primarily used for testing but can be
+     *                   utilized elsewhere
      */
     public void writeToFile(File pathToFile) {
         ObjectMapper mapper = new YAMLMapper();
@@ -132,6 +133,8 @@ public class ImageAtlasMap {
     /**
      * Read the map from the provided file that should be an ImageAtlasMapFile.
      *
+     * @param filePath File to read from. Primarily used for testing but can be
+     *                 utilized elsewhere
      * @return
      */
     public static @Nullable ImageAtlasMap readFromFile(File filePath) {

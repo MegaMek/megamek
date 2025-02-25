@@ -51,13 +51,18 @@ class ForceDisplayMekCellFormatter {
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
      */
     static String formatUnitCompact(Entity entity, ClientGUI clientGUI) {
-        Client client = clientGUI.getClient();
-        Game game = client.getGame();
+        return formatUnitCompact(entity, clientGUI.getClient().getGame(), clientGUI.getClient().getLocalPlayer());
+    }
+
+    /**
+     * Creates and returns the display content of the C3-MekTree cell for the given entity and
+     * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided.
+     */
+    static String formatUnitCompact(Entity entity, Game game, Player localPlayer) {
         GameOptions options = game.getOptions();
-        Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
         boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
+                && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
 
         if (entity.isSensorReturn(localPlayer)) {
             String value = "<NOBR>&nbsp;&nbsp;";
@@ -303,10 +308,11 @@ class ForceDisplayMekCellFormatter {
         return formatForce(force, clientGUI);
     }
 
-    private static String formatForce(Force force, ClientGUI clientGUI) {
-        Client client = clientGUI.getClient();
-        Game game = client.getGame();
-        Player localPlayer = client.getLocalPlayer();
+    static String formatForce(Force force, ClientGUI clientGUI) {
+        return formatForceCompact(force, clientGUI.getClient().getGame(), clientGUI.getClient().getLocalPlayer());
+    }
+
+    static String formatForceCompact(Force force, Game game, Player localPlayer) {
         int ownerId = game.getForces().getOwnerId(force);
         Player owner = game.getPlayer(ownerId);
 
@@ -339,7 +345,7 @@ class ForceDisplayMekCellFormatter {
         result.append(fontHTML(GUIP.getUnitToolTipHighlightColor()) + id + "</FONT>");
 
         // Display force owner
-        if ((ownerId != client.getLocalPlayerNumber()) && (owner != null)) {
+        if ((ownerId != localPlayer.getId()) && (owner != null)) {
             result.append(DOT_SPACER);
             String oName = "\u2691 " + owner.getName();
             result.append(fontHTML(color) + oName + "</FONT>");

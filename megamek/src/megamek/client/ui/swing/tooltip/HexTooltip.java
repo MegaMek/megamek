@@ -37,11 +37,13 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 public final class HexTooltip {
 
     public static String getHexTip(Hex mhex, @Nullable Client client, GUIPreferences GUIP) {
+        return getHexTip(mhex, client.getGame(), client.getBoard(), client.getLocalPlayer(), GUIP);
+    }
+
+    public static String getHexTip(Hex mhex, Game game, Board board, Player localPlayer, GUIPreferences GUIP) {
         StringBuilder result = new StringBuilder();
         Coords mcoords = mhex.getCoords();
         // All of the following can be null even if there's a ClientGUI!
-        Game game = (client != null) ? client.getGame() : null;
-        Player localPlayer = (client != null) ? client.getLocalPlayer() : null;
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
 
         // Fuel Tank
@@ -49,19 +51,19 @@ public final class HexTooltip {
             String sFuelTank = "";
             // In at least the BoardEditor and lobby map preview, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
-            if ((game == null) || (game.getBoard().getBuildingAt(mcoords) == null)) {
+            if ((game == null) || (board.getBuildingAt(mcoords) == null)) {
                 sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
-                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
-                        Terrains.getEditorName(Terrains.FUEL_TANK),
-                        mhex.terrainLevel(Terrains.FUEL_TANK_CF),
-                        mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
+                    mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
+                    Terrains.getEditorName(Terrains.FUEL_TANK),
+                    mhex.terrainLevel(Terrains.FUEL_TANK_CF),
+                    mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
             } else {
-                FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
+                FuelTank bldg = (FuelTank) board.getBuildingAt(mcoords);
                 sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
-                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
-                        bldg.toString(),
-                        bldg.getCurrentCF(mcoords),
-                        bldg.getMagnitude());
+                    mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
+                    bldg.toString(),
+                    bldg.getCurrentCF(mcoords),
+                    bldg.getMagnitude());
             }
 
             String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
@@ -79,21 +81,21 @@ public final class HexTooltip {
             String sBuilding;
             // In at least the BoardEditor and lobby map preview, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
-            if ((game == null) || (game.getBoard().getBuildingAt(mcoords) == null)) {
+            if ((game == null) || (board.getBuildingAt(mcoords) == null)) {
                 sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-                        mhex.terrainLevel(Terrains.BLDG_ELEV),
-                        Terrains.getEditorName(Terrains.BUILDING),
-                        mhex.terrainLevel(Terrains.BLDG_CF),
-                        Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
-                        BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
+                    mhex.terrainLevel(Terrains.BLDG_ELEV),
+                    Terrains.getEditorName(Terrains.BUILDING),
+                    mhex.terrainLevel(Terrains.BLDG_CF),
+                    Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
+                    BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
             } else {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
+                Building bldg = board.getBuildingAt(mcoords);
                 sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-                        mhex.terrainLevel(Terrains.BLDG_ELEV),
-                        bldg.toString(),
-                        bldg.getCurrentCF(mcoords),
-                        bldg.getArmor(mcoords),
-                        bldg.getBasement(mcoords).toString());
+                    mhex.terrainLevel(Terrains.BLDG_ELEV),
+                    bldg.toString(),
+                    bldg.getCurrentCF(mcoords),
+                    bldg.getArmor(mcoords),
+                    bldg.getBasement(mcoords).toString());
 
                 if (bldg.getBasementCollapsed(mcoords)) {
                     sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
@@ -115,17 +117,17 @@ public final class HexTooltip {
             String sBridge;
             // In at least the BoardEditor and lobby map preview, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
-            if ((game == null) || (game.getBoard().getBuildingAt(mcoords) == null)) {
+            if ((game == null) || (board.getBuildingAt(mcoords) == null)) {
                 sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
-                        mhex.terrainLevel(Terrains.BRIDGE_ELEV),
-                        Terrains.getEditorName(Terrains.BRIDGE),
-                        mhex.terrainLevel(Terrains.BRIDGE_CF));
+                    mhex.terrainLevel(Terrains.BRIDGE_ELEV),
+                    Terrains.getEditorName(Terrains.BRIDGE),
+                    mhex.terrainLevel(Terrains.BRIDGE_CF));
             } else {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
+                Building bldg = board.getBuildingAt(mcoords);
                 sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
-                        mhex.terrainLevel(Terrains.BRIDGE_ELEV),
-                        bldg.toString(),
-                        bldg.getCurrentCF(mcoords));
+                    mhex.terrainLevel(Terrains.BRIDGE_ELEV),
+                    bldg.toString(),
+                    bldg.getCurrentCF(mcoords));
             }
 
             String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipBuildingFGColor()));
@@ -171,15 +173,15 @@ public final class HexTooltip {
             }
         }
 
-        if ((game != null) && game.getGroundObjects(mcoords).size() > 0) {
-        	for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
-        		result.append("&nbsp");
+        if ((game != null) && !game.getGroundObjects(mcoords).isEmpty()) {
+            for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
+                result.append("&nbsp");
                 String groundObj = groundObject.specificName();
                 String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
-        		result.append(groundObj);
-        		result.append("<BR/>");
-        	}
+                result.append(groundObj);
+                result.append("<BR/>");
+            }
         }
 
         return result.toString();

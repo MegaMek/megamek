@@ -18,51 +18,45 @@
  */
 package megamek.client.ui.swing.forceDisplay;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.event.MouseEvent;
-
-import javax.swing.ImageIcon;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
 import megamek.MMConstants;
-import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
+import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+
 /** A specialized renderer for the Mek Force tree. */
-public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
-    private static final MMLogger logger = MMLogger.create(ForceDisplayMekTreeRenderer.class);
+public class PlainForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
+    private static final MMLogger logger = MMLogger.create(PlainForceDisplayMekTreeRenderer.class);
 
     private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
 
-    private ClientGUI clientGUI;
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
-    private Entity entity;
-    private Player localPlayer;
     private JTree tree;
     private int row;
+    private Entity entity;
 
-    ForceDisplayMekTreeRenderer(ClientGUI clientGUI, JTree tree) {
-        this.clientGUI = clientGUI;
-        this.tree = tree;
+    private final Player localPlayer;
+    private final TilesetManager tilesetManager;
+    private final Game game;
+
+    public PlainForceDisplayMekTreeRenderer(Player localPlayer, TilesetManager tilesetManager, Game game) {
+        this.localPlayer = localPlayer;
+        this.tilesetManager = tilesetManager;
+        this.game = game;
     }
 
     @Override
@@ -70,7 +64,6 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             boolean leaf, int row, boolean hasFocus) {
 
         isSelected = sel;
-        localPlayer = clientGUI.getClient().getLocalPlayer();
         selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
 
@@ -87,24 +80,23 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             entity = (Entity) value;
             this.row = row;
             Player owner = entity.getOwner();
-            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI));
+            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, game, localPlayer));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                    && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, clientGUI.getClient().getGame(), entity);
+                    && !EntityVisibilityUtils.detectedOrHasVisual(localPlayer, game, entity);
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
                 Camouflage camo = entity.getCamouflageOrElseOwners();
-                Image image = clientGUI.getBoardView().getTilesetManager().loadPreviewImage(entity, camo, false);
+                Image image = tilesetManager.loadPreviewImage(entity, camo, false);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
-        } else if (value instanceof Force) {
+        } else if (value instanceof Force force) {
             entity = null;
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
             setFont(scaledFont);
-            Force force = (Force) value;
-            setText(ForceDisplayMekCellFormatter.formatForceCompact(force, clientGUI));
+            setText(ForceDisplayMekCellFormatter.formatForceCompact(force, game, localPlayer));
             setIcon(null);
         }
         return this;

@@ -23,11 +23,16 @@ import megamek.client.ui.dialogs.BotCommandsPanel;
 import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
 import megamek.client.ui.swing.audio.SoundType;
-import megamek.client.ui.swing.minimap.BoardviewlessMinimap;
+import megamek.client.ui.swing.commander.StrategicViewMenu;
+import megamek.client.ui.swing.forceDisplay.PlainForceDisplayPanel;
+import megamek.client.ui.swing.commander.StrategicView;
 import megamek.client.ui.swing.overlay.ChatOverlay;
+import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.util.EntitySelectionService;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
@@ -39,26 +44,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Luana Coppio
  */
-public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
+public class CommanderGUI extends Thread implements IClientGUI, ILocalBots, IDisplayedUnit {
     private static final MMLogger logger = MMLogger.create(CommanderGUI.class);
     private final Client client;
     private final MegaMekController controller;
     private final Map<String, AbstractClient> localBots;
+    private JPanel centerPanel;
     private final JFrame frame;
-    private BoardviewlessMinimap minimap;
     private boolean isLoading;
     private JProgressBar progressBar;
     private boolean alive = true;
+
+    private StrategicView strategicView;
     private final AudioService audioService;
     private BotCommandsPanel buttonPanel;
-    private JPanel centerPanel;
+    private StrategicViewMenu popup;
+    private transient final EntitySelectionService entitySelectionService;
 
     private final TreeMap<Integer, String> splashImages = new TreeMap<>();
     {
@@ -66,6 +72,9 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
     }
 
     public CommanderGUI(Client client, MegaMekController controller) {
+        frame = new JFrame(Messages.getString("ClientGUI.mini.title"));
+        frame.setMinimumSize(new Dimension(800, 800));
+
         this.client = client;
         if (client instanceof HeadlessClient headlessClient) {
             headlessClient.setSendDoneOnVictoryAutomatically(false);
@@ -75,8 +84,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         this.isLoading = true;
         this.audioService = new SoundManager();
         this.audioService.loadSoundFiles();
-        frame = new JFrame(Messages.getString("ClientGUI.mini.title"));
-        frame.setMinimumSize(new Dimension(800, 800));
+        this.entitySelectionService = new EntitySelectionService(client.getLocalPlayer());
     }
 
     @Override
@@ -101,6 +109,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
             awaitMillis = (targetFrameTimeNanos - elapsedNanos) / 1_000_000;
             try {
                 Thread.sleep(Math.max(1, awaitMillis));
+                SwingUtilities.invokeLater(() -> strategicView.updateUI());
             } catch (InterruptedException e) {
                 logger.error("Interrupted while waiting for next frame", e);
                 alive = false;
@@ -128,9 +137,9 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         progressBar.setIndeterminate(true);
         progressBar.setStringPainted(true);
         progressBar.setVisible(true);
-        minimap = new BoardviewlessMinimap(client);
+        strategicView = new StrategicView(client, this);
         var chatOverlay = new ChatOverlay(8);
-        minimap.addOverlay(chatOverlay);
+        strategicView.addOverlay(chatOverlay);
         centerPanel.add(splashImage, BorderLayout.CENTER);
         centerPanel.add(progressBar, BorderLayout.SOUTH);
 
@@ -145,7 +154,13 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         buttonPanel = new BotCommandsPanel(this.client, audioService, controller);
         buttonPanel.useSpaceForPauseUnpause();
 
-        var jScroll = new JScrollPane(entityListEntries);
+        JPanel jScroll;
+        try {
+            jScroll = new PlainForceDisplayPanel(this.getFrame(), getClient().getGame(), getClient(), new TilesetManager(getClient().getGame()),
+                null, this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         jScroll.setMinimumSize(new Dimension(-1, 20));
         jScroll.setPreferredSize(new Dimension(-1, 300));
 
@@ -233,7 +248,7 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
         if (isLoading) {
             isLoading = false;
             centerPanel.remove(0);
-            centerPanel.add(minimap, BorderLayout.CENTER, 0);
+            centerPanel.add(strategicView, BorderLayout.CENTER, 0);
             audioService.playSound(SoundType.BING_MY_TURN);
             SwingUtilities.invokeLater(() -> progressBar.setIndeterminate(false));
         }
@@ -290,5 +305,29 @@ public class CommanderGUI extends Thread implements IClientGUI, ILocalBots {
                 });
             setupMinimap();
         }
+    }
+
+    public EntitySelectionService getEntitySelectionService() {
+        return entitySelectionService;
+    }
+
+    @Override
+    public Entity getDisplayedUnit() {
+        return entitySelectionService.getSelectedUnits().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void setDisplayedUnit(Entity entity) {
+        this.entitySelectionService.setSelectedUnits(entity);
+    }
+
+    @Override
+    public Collection<Entity> getSelectedUnits() {
+        return entitySelectionService.getSelectedUnits();
+    }
+
+    private boolean fillPopup(Coords coords) {
+        popup = new StrategicViewMenu(coords, client, this);
+        return popup.getHasMenu();
     }
 }

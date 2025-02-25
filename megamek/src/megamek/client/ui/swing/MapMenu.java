@@ -731,7 +731,7 @@ public class MapMenu extends JPopupMenu {
             new RescueCommand(null, null)
         ).forEach(cmd -> {
             JMenuItem item = new JMenuItem(cmd.getLongName());
-            item.addActionListener(evt -> new ClientCommandPanel(gui.getFrame(), gui, cmd, coords).setVisible(true));
+            item.addActionListener(evt -> new ClientCommandPanel(gui.getFrame(), client, cmd, coords).setVisible(true));
             menu.add(item);
         });
 

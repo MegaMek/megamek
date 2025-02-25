@@ -1080,6 +1080,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         if (unitDisplay.getClientGUI() != null) {
             game = unitDisplay.getClientGUI().getClient().getGame();
+        } else if (en.getGame() != null) {
+            game = en.getGame();
         }
 
         // update pointer to weapons

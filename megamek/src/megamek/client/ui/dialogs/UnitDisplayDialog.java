@@ -29,6 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.annotations.Nullable;
 
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
@@ -37,7 +38,7 @@ public class UnitDisplayDialog extends JDialog {
     //endregion Variable Declarations
 
     //region Constructors
-    public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
+    public UnitDisplayDialog(JFrame frame, @Nullable ClientGUI clientGUI) {
         super(frame, "", false);
         this.setTitle(Messages.getString("ClientGUI.MekDisplay"));
 
@@ -76,7 +77,9 @@ public class UnitDisplayDialog extends JDialog {
                 GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
                 GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
                 GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
-                clientGUI.getUnitDisplay().saveSplitterLoc();
+                if (clientGUI != null) {
+                    clientGUI.getUnitDisplay().saveSplitterLoc();
+                }
             }
         }
     }
@@ -96,11 +99,13 @@ public class UnitDisplayDialog extends JDialog {
      */
     @Override
     protected void processKeyEvent(KeyEvent evt) {
-        evt.setSource(clientGUI);
-        clientGUI.getMenuBar().dispatchEvent(evt);
-        // Make the source be the ClientGUI and not the dialog
-        // This prevents a ClassCastException in ToolTipManager
-        clientGUI.getCurrentPanel().dispatchEvent(evt);
+        if (clientGUI != null) {
+            evt.setSource(clientGUI);
+            clientGUI.getMenuBar().dispatchEvent(evt);
+            // Make the source be the ClientGUI and not the dialog
+            // This prevents a ClassCastException in ToolTipManager
+            clientGUI.getCurrentPanel().dispatchEvent(evt);
+        }
         if (!evt.isConsumed()) {
             super.processKeyEvent(evt);
         }

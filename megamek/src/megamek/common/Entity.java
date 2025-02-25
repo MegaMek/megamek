@@ -9814,6 +9814,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && !hasSeenEntity(spotter) && hasDetectedEntity(spotter);
     }
 
+    public boolean isVisibleToPlayer(Player player) {
+        return !isSensorReturn(player) && hasSeenEntity(player) && !isHidden();
+    }
+
     protected int applyGravityEffectsOnMP(int MP) {
         int result = MP;
         if (game != null) {

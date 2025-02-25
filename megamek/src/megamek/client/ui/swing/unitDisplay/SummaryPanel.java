@@ -38,11 +38,7 @@ import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Configuration;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Hex;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
@@ -133,13 +129,9 @@ public class SummaryPanel extends PicMap {
         addBgDrawer(new BackGroundDrawer(tile, b));
     }
 
-    /**
-     * @param entity The Entity to display info for
-     */
-    public void displayMek(Entity entity) {
-        Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
+    public void displayMek(Entity entity, Player localPlayer, Game game, Board board) {
+        Hex mhex = board.getHex(entity.getPosition());
         String txt = "";
-
         if (entity == null) {
             txt = padLeft("No Unit");
         } else if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -160,16 +152,14 @@ public class SummaryPanel extends PicMap {
             row = UIUtil.tag("TR", "", col);
             rows += row;
 
-            Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
-
             if (mhex != null) {
-                String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
+                String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, game);
                 String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                 col = UIUtil.tag("TD", attr, terrainTip);
                 row = UIUtil.tag("TR", "", col);
                 rows += row;
 
-                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
+                String hexTip = HexTooltip.getHexTip(mhex, game, board, localPlayer, GUIP);
                 if (!hexTip.isEmpty()) {
                     attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
                     col = UIUtil.tag("TD", attr, hexTip);
@@ -190,6 +180,13 @@ public class SummaryPanel extends PicMap {
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
         unitInfo.setOpaque(false);
+    }
+
+    /**
+     * @param entity The Entity to display info for
+     */
+    public void displayMek(Entity entity) {
+        displayMek(entity, unitDisplay.getClient().getLocalPlayer(), entity.getGame(), entity.getGame().getBoard());
     }
 
     private String padLeft(String html) {

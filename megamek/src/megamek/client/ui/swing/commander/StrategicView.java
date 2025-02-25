@@ -13,14 +13,17 @@
  *
  */
 
-package megamek.client.ui.swing.minimap;
+package megamek.client.ui.swing.commander;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IDisplayedUnit;
+import megamek.client.ui.swing.minimap.Minimap;
+import megamek.client.ui.swing.minimap.MinimapUnitSymbols;
 import megamek.client.ui.swing.overlay.IFF;
 import megamek.client.ui.swing.overlay.OverlayPainter;
-import megamek.client.ui.swing.overlay.OverlayPanel;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -34,6 +37,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -51,14 +55,15 @@ import static megamek.common.Terrains.FUEL_TANK;
 /**
  * This class is WIP, commiting just to have an artifact.
  */
-public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
+public class StrategicView extends JPanel implements OverlayPainter {
     private final Client client;
     private final IGame game;
     private final List<Blip> removedUnits;
     private final List<Line> lines;
     private final List<Line> attackActions;
-    private final List<OverlayPanel> overlays;
+    private final List<IDisplayable> overlays;
     private final static int unitSize = 10;
+    private static final int DESTROYED_UNIT_ALPHA = 100;
     private record Blip(int x, int y, String code, IFF iff , Color color, int round) {};
     private record Line(int x1, int y1, int x2, int y2, Color color, int round) {};
 
@@ -91,10 +96,11 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
     private final int zoom = 6;
     private final int topMargin = 3;
     private final int leftMargin = 3;
+    private final IDisplayedUnit displayedUnit;
 
-
-    public BoardviewlessMinimap(Client client) {
+    public StrategicView(Client client, IDisplayedUnit displayedUnit) {
         super(new BorderLayout(), true);
+        this.displayedUnit = displayedUnit;
         this.client = client;
         this.game = client.getGame();
         this.overlays = new ArrayList<>();
@@ -172,15 +178,19 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             public void mousePressed(MouseEvent e) {
                 initialClickX = e.getX();
                 initialClickY = e.getY();
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    // select all units in the hex
+                    // if they are all from one team
+                    // otherwise, will select all units of the localPlayer team
+                    // otherwise will select all units that are enemy of localPlayer under that hex.
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    // open a context menu with the options to move, attack, etc.
+                }
             }
         });
-        addMouseWheelListener(e -> {
-            if (e.getWheelRotation() > 0) {
-                mSize = Math.min(mSize + 150, 50_000);
-            } else if (e.getWheelRotation() < 0) {
-                mSize = Math.max(5_000, mSize - 150);
-            }
-        });
+
+        // TODO add mouse motion listener
+
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -193,21 +203,11 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
                 repaint();
             }
         });
+
     }
 
     public void update() {
         updateUI();
-    }
-
-    static public void drawArrowHead(Graphics g, int x0, int y0, int x1,
-                                     int y1, int headLength, int headAngle) {
-        double offs = headAngle * Math.PI / 180.0;
-        double angle = Math.atan2(y0 - y1, x0 - x1);
-        int[] xs = {x1 + (int) (headLength * Math.cos(angle + offs)), x1,
-            x1 + (int) (headLength * Math.cos(angle - offs))};
-        int[] ys = {y1 + (int) (headLength * Math.sin(angle + offs)), y1,
-            y1 + (int) (headLength * Math.sin(angle - offs))};
-        g.drawPolyline(xs, ys, 3);
     }
 
     private BufferedImage boardImage = null;
@@ -263,31 +263,13 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
             g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
         }
         lines.removeIf(line -> line.round < currentRound - 4);
-        // 4) Draw attack lines
-
-//        for (var line : attackLines) {
-//            var delta = Math.max(1, (game.getCurrentRound() + 1 - line.round) * 2);
-//            var newColor = new Color(line.color.getRed(),
-//                line.color.getGreen(),
-//                line.color.getBlue(),
-//                (int) (line.color.getAlpha() / (double) delta));
-//            if (!g2d.getColor().equals(newColor)) {
-//                g2d.setColor(newColor);
-//            }
-//            var p1 = this.projectToView(line.x1, line.y1);
-//            var p2 = this.projectToView(line.x2, line.y2);
-//            g2d.drawLine(p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset);
-//            drawArrowHead(g2d, p1[0] + xOffset, p1[1] + yOffset, p2[0] + xOffset, p2[1] + yOffset, size, 30);
-//        }
         g2d.dispose();
-
-
 
         for (var attackAction : attackActions) {
             paintAttack(g, attackAction);
         }
 
-        attackActions.removeIf(timedAction -> timedAction.round < currentRound - 2);
+        attackActions.removeIf(timedAction -> timedAction.round < currentRound);
 
         // 5) Draw destroyed units
         for (var blip : removedUnits) {
@@ -300,13 +282,34 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
 
         // 7) Draw unit symbols
         multiUnits.clear();
+        for (var inGameObject : game.getGraveyard()) {
+            if (inGameObject instanceof Entity entity) {
+                if (entity.getPosition() != null) {
+                    paintUnit(g, entity, true);
+                }
+            }
+        }
+
         for (var inGameObject : game.getInGameObjects()) {
             if (inGameObject instanceof Entity entity) {
                 if (entity.getPosition() != null) {
-                    paintUnit(g, entity);
+                    paintUnit(g, entity, false);
                 }
+            }
+        }
+
+        for (var inGameObject : game.getInGameObjects()) {
+            if (inGameObject instanceof Entity entity) {
                 if (entity.getPosition() != null) {
                     paintSensor(g, entity);
+                }
+            }
+        }
+
+        for (var inGameObject : game.getInGameObjects()) {
+            if (inGameObject instanceof Entity entity) {
+                if (entity.getPosition() != null) {
+                    paintSelection(g, entity);
                 }
             }
         }
@@ -391,15 +394,40 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
     }
 
+    public Color specificColor(Color color, boolean isRemoved) {
+        if (isRemoved) {
+            color = color.brighter();
+            return new Color(color.getRed(), color.getGreen(), color.getBlue(), DESTROYED_UNIT_ALPHA);
+        }
+        return color;
+    }
+
+    private void paintSelection(Graphics g, Entity entity) {
+        int x = entity.getPosition().getX();
+        int y = entity.getPosition().getY();
+        int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom] + xOffset;
+        int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin + yOffset;
+        Graphics2D g2 = (Graphics2D) g;
+        // Create a colored circle if this is the selected unit
+        if (displayedUnit.getSelectedUnits().contains(entity)) {
+            int rad = 2 * unitSize - 1;
+            Color color = GUIP.getUnitSelectedColor();
+            g2.setColor(specificColor(color.darker(), false));
+            g2.setStroke(new BasicStroke((float) unitSize / 5));
+            g2.drawOval(baseX - rad, baseY - rad, rad * 2, rad * 2);
+        }
+
+    }
+
     /** Draws the symbol for a single entity. Checks visibility in double blind. */
-    private void paintUnit(Graphics g, Entity entity) {
+    private void paintUnit(Graphics g, Entity entity, boolean removedFromGame) {
         int x = entity.getPosition().getX();
         int y = entity.getPosition().getY();
         int facing = entity.getFacing();
         int baseX = x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom]) + leftMargin + HEX_SIDE[zoom] + xOffset;
         int baseY = (2 * y + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom] + topMargin + yOffset;
 
-        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+        if (EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity) && !removedFromGame) {
             // This unit is visible only as a sensor Return
             String sensorReturn = "?";
             Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]);
@@ -418,19 +446,18 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
         // Choose player or team color depending on preferences
-        Color iconColor = entity.getOwner().getColour().getColour(false);
+        Color iconColor = specificColor(entity.getOwner().getColour().getColour(false), removedFromGame);
         if (GUIP.getTeamColoring()) {
             boolean isLocalTeam = entity.getOwner().getTeam() == client.getLocalPlayer().getTeam();
             boolean isLocalPlayer = entity.getOwner().equals(client.getLocalPlayer());
             if (isLocalPlayer) {
-                iconColor = GUIP.getMyUnitColor();
+                iconColor = specificColor(GUIP.getMyUnitColor(), removedFromGame);
             } else if (isLocalTeam) {
-                iconColor = GUIP.getAllyUnitColor();
+                iconColor = specificColor(GUIP.getAllyUnitColor(), removedFromGame);
             } else {
-                iconColor = GUIP.getEnemyUnitColor();
+                iconColor = specificColor(GUIP.getEnemyUnitColor(), removedFromGame);
             }
         }
-        
 
         // Transform for placement and scaling
         var placement = AffineTransform.getTranslateInstance(baseX, baseY);
@@ -445,16 +472,16 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
 
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE ? Color.BLACK : Color.WHITE;
-        Color fontColor = Color.BLACK;
+        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE ? specificColor(Color.BLACK, removedFromGame) : specificColor(Color.WHITE, removedFromGame);
+        Color fontColor = specificColor(Color.BLACK, removedFromGame);
 
         float outerBorderWidth = 30f;
         float innerBorderWidth = 10f;
         float formStrokeWidth = 20f;
-
+        Color blackColor = specificColor(Color.BLACK, removedFromGame);
         // White border to set off the icon from the background
         g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-        g2.setColor(Color.BLACK);
+        g2.setColor(blackColor);
         g2.draw(STRAT_BASERECT);
 
         // Black background to fill forms like the DropShip
@@ -499,6 +526,31 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         }
         // Draw the unit icon in black
         g2.draw(form);
+
+
+        if (GUIP.showUnitDisplayNamesOnMinimap()) {
+            // write unit ID and name to the minimap:
+            g2.setColor(fontColor);
+            int fontType = Font.BOLD;
+            if (removedFromGame) {
+                fontType = Font.PLAIN;
+            }
+            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            String s = entity.getShortName();
+            var fontContext = new FontRenderContext(null, true, true);
+            var font = new Font(MMConstants.FONT_SANS_SERIF, fontType, 75);
+            GlyphVector gv = font.createGlyphVector(fontContext, s);
+            g2.fill(gv.getOutline((float) -STRAT_SYMBOLSIZE.getWidth() / 3f,
+                (float) -STRAT_SYMBOLSIZE.getHeight() / 5 * 4));
+
+        }
+        // If the unit is destroyed, it gets a strike on it.
+        if (removedFromGame) {
+            g2.setColor(fontColor);
+            g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            g2.draw(STRAT_DESTROYED);
+        }
+
         g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
         // Rectangle border for all units
@@ -506,8 +558,8 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
         g2.draw(STRAT_BASERECT);
 
         // Draw Facing Arrow
-        if (facing > -1) {
-            g2.setColor(Color.BLACK);
+        if (facing > -1 && !removedFromGame) {
+            g2.setColor(blackColor);
             g2.rotate(Math.toRadians(facing * 60));
             g2.draw(FACING_ARROW);
             g.setColor(iconColor);
@@ -625,23 +677,23 @@ public class BoardviewlessMinimap extends JPanel implements OverlayPainter {
 
     @Override
     public void paintOverlays(Graphics g) {
-        for (var overlay : overlays) {
-            overlay.paint(g, getWidth(), getHeight());
+        for (IDisplayable overlay : overlays) {
+            overlay.draw(g, new Rectangle(getWidth(), getHeight()));
         }
     }
 
     @Override
-    public void addOverlay(OverlayPanel overlayPanel) {
+    public void addOverlay(IDisplayable overlayPanel) {
         overlays.add(overlayPanel);
     }
 
     @Override
-    public void addOverlay(OverlayPanel overlayPanel, int index) {
+    public void addOverlay(IDisplayable overlayPanel, int index) {
         overlays.add(index, overlayPanel);
     }
 
     @Override
-    public void removeOverlay(OverlayPanel overlayPanel) {
+    public void removeOverlay(IDisplayable overlayPanel) {
         overlays.remove(overlayPanel);
     }
 

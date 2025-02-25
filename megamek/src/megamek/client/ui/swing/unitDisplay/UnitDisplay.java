@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 
+import megamek.client.Client;
+import megamek.client.IClient;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
@@ -46,8 +49,10 @@ import megamek.client.ui.swing.widget.MekPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
+import megamek.common.Board;
 import megamek.common.Configuration;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
@@ -82,9 +87,9 @@ public class UnitDisplay extends JPanel {
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
-    private ClientGUI clientgui;
     private Entity currentlyDisplaying;
     private JLabel labTitle;
+    private ClientGUI clientgui;
     private ArrayList<MekDisplayListener> eventListeners = new ArrayList<>();
 
     public static final String NON_TABBED_GENERAL = "General";
@@ -110,7 +115,8 @@ public class UnitDisplay extends JPanel {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
-
+    private final UnitDisplayDialog unitDisplayDialog;
+    private final Client client;
     /**
      * Creates and lays out a new mek display.
      *
@@ -123,13 +129,18 @@ public class UnitDisplay extends JPanel {
         this(clientgui, null);
     }
 
+
     public UnitDisplay(@Nullable ClientGUI clientgui,
-            @Nullable MegaMekController controller) {
+                       @Nullable MegaMekController controller) {
+        this(clientgui, clientgui.getClient(), controller, clientgui.getClient().getGame(), clientgui.getUnitDisplayDialog());
+    }
+
+    public UnitDisplay(@Nullable ClientGUI clientgui, @Nullable Client client, @Nullable MegaMekController controller, Game game, @Nullable UnitDisplayDialog unitDisplayDialog) {
         super(new GridBagLayout());
-        this.clientgui = clientgui;
-
         labTitle = new JLabel("Title");
-
+        this.clientgui = clientgui;
+        this.client = client;
+        this.unitDisplayDialog = unitDisplayDialog;
         tabStrip = new MekPanelTabStrip(this);
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
         Image tile = getToolkit()
@@ -142,8 +153,8 @@ public class UnitDisplay extends JPanel {
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
-        aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
-        wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
+        aPan = new ArmorPanel(game, this);
+        wPan = new WeaponPanel(this, client);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
 
@@ -234,41 +245,32 @@ public class UnitDisplay extends JPanel {
         ((GridBagLayout) getLayout()).setConstraints(butSwitchLocation, c);
         add(butSwitchLocation);
 
-        butSwitchView.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (clientgui != null) {
-                    UnitDisplayDialog unitDisplayDialog = clientgui.getUnitDisplayDialog();
-                    if (!(GUIP.getUnitDisplayStartTabbed())) {
-                        saveSplitterLoc();
-                        GUIP.setUnitDisplayNontabbedPosX(unitDisplayDialog.getLocation().x);
-                        GUIP.setUnitDisplayNontabbedPosY(unitDisplayDialog.getLocation().y);
-                        GUIP.setUnitDisplayNonTabbedSizeWidth(unitDisplayDialog.getSize().width);
-                        GUIP.setUnitDisplayNonTabbedSizeHeight(unitDisplayDialog.getSize().height);
-                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
-                        unitDisplayDialog.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
-                        setDisplayTabbed();
-                    } else {
-                        GUIP.setUnitDisplayPosX(unitDisplayDialog.getLocation().x);
-                        GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
-                        GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
-                        GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
-                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(),
-                                GUIP.getUnitDisplayNontabbedPosY());
-                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(),
-                                GUIP.getUnitDisplayNonTabbedSizeHeight());
-                        setDisplayNonTabbed();
-                    }
+        butSwitchView.addActionListener(e -> {
+            if (unitDisplayDialog != null) {
+                if (!(GUIP.getUnitDisplayStartTabbed())) {
+                    saveSplitterLoc();
+                    GUIP.setUnitDisplayNontabbedPosX(unitDisplayDialog.getLocation().x);
+                    GUIP.setUnitDisplayNontabbedPosY(unitDisplayDialog.getLocation().y);
+                    GUIP.setUnitDisplayNonTabbedSizeWidth(unitDisplayDialog.getSize().width);
+                    GUIP.setUnitDisplayNonTabbedSizeHeight(unitDisplayDialog.getSize().height);
+                    unitDisplayDialog.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+                    unitDisplayDialog.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
+                    setDisplayTabbed();
+                } else {
+                    GUIP.setUnitDisplayPosX(unitDisplayDialog.getLocation().x);
+                    GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
+                    GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
+                    GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
+                    unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(),
+                        GUIP.getUnitDisplayNontabbedPosY());
+                    unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(),
+                        GUIP.getUnitDisplayNonTabbedSizeHeight());
+                    setDisplayNonTabbed();
                 }
             }
         });
 
-        butSwitchLocation.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GUIP.toggleUnitDisplayLocation();
-            }
-        });
+        butSwitchLocation.addActionListener(e -> GUIP.toggleUnitDisplayLocation());
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             setDisplayTabbed();
@@ -281,7 +283,7 @@ public class UnitDisplay extends JPanel {
      * switch display to the tabbed version
      *
      */
-    private void setDisplayTabbed() {
+    public void setDisplayTabbed() {
         tabStrip.setVisible(true);
 
         displayP.removeAll();
@@ -463,15 +465,15 @@ public class UnitDisplay extends JPanel {
     }
 
     protected void updateDisplay() {
-        if (clientgui != null) {
-            String enName = currentlyDisplaying.getShortName();
-            enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
-            clientgui.getUnitDisplayDialog().setTitle(enName);
-            labTitle.setText(enName);
+        String enName = currentlyDisplaying.getShortName();
+        enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
+        if (unitDisplayDialog != null) {
+            unitDisplayDialog.setTitle(enName);
         }
-
+        labTitle.setText(enName);
         mPan.displayMek(currentlyDisplaying);
         pPan.displayMek(currentlyDisplaying);
+        aPan.addNotify();
         aPan.displayMek(currentlyDisplaying);
         wPan.displayMek(currentlyDisplaying);
         sPan.displayMek(currentlyDisplaying);
@@ -538,16 +540,11 @@ public class UnitDisplay extends JPanel {
      * @param event the mek display event.
      */
     void processMekDisplayEvent(MekDisplayEvent event) {
-        for (int i = 0; i < eventListeners.size(); i++) {
-            MekDisplayListener lis = eventListeners.get(i);
-            switch (event.getType()) {
-                case MekDisplayEvent.WEAPON_SELECTED:
-                    lis.weaponSelected(event);
-                    break;
-                default:
-                    logger
-                            .error("Received unknown event " + event.getType() + " in processMekDisplayEvent");
-                    break;
+        for (MekDisplayListener lis : eventListeners) {
+            if (event.getType() == MekDisplayEvent.WEAPON_SELECTED) {
+                lis.weaponSelected(event);
+            } else {
+                logger.error("Received unknown event {} in processMekDisplayEvent", event.getType());
             }
         }
     }
@@ -560,5 +557,10 @@ public class UnitDisplay extends JPanel {
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
+    }
+
+    @Nullable
+    public IClient getClient() {
+        return client;
     }
 }

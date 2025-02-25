@@ -16,17 +16,19 @@
 package megamek.client.ui.swing.overlay;
 
 
+import megamek.client.ui.IDisplayable;
+
 import java.awt.*;
 
 public interface OverlayPainter {
 
     void paintOverlays(Graphics g);
 
-    void addOverlay(OverlayPanel overlayPanel);
+    void addOverlay(IDisplayable overlayPanel);
 
-    void addOverlay(OverlayPanel overlayPanel, int index);
+    void addOverlay(IDisplayable overlayPanel, int index);
 
-    void removeOverlay(OverlayPanel overlayPanel);
+    void removeOverlay(IDisplayable overlayPanel);
 
     void removeOverlay(int index);
 

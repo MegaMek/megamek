@@ -17,7 +17,7 @@ package megamek.common;
  * Represents a volume of space set aside for carrying general cargo aboard large spacecraft and
  * mobile structures.
  */
-public final class CargoBay extends Bay {
+public final class CargoBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 4161027191694822726L;
 
     /**

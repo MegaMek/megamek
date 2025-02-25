@@ -36,7 +36,7 @@ public interface Transporter extends Serializable {
      *         otherwise.
      */
     boolean canLoad(Entity unit);
-    
+
     /**
      * Determines if this transporter can tow the given unit. By default, no.
      */
@@ -119,12 +119,12 @@ public interface Transporter extends Serializable {
     int getCargoMpReduction(Entity carrier);
 
     void setGame(Game game);
-    
+
     /**
      * clear out all troops listed in the transporter. Used by MHQ to reset units after game
      */
     void resetTransporter();
-    
+
     /**
      * Returns the number of Docking Collars (hardpoints) this transporter counts as toward
      * the maximum that a JumpShip (or WS, SS) may carry. TO:AUE p.146
@@ -134,4 +134,22 @@ public interface Transporter extends Serializable {
     default int hardpointCost() {
         return 0;
     }
+
+    /**
+     * Returns the number of units loaded on to this transporter this turn.
+     * Used to determine loading eligibility
+     * @return the number of units loaded
+     */
+    default int getNumberLoadedThisTurn() {
+        return 0;
+    };
+
+    /**
+     * Returns the number of units loaded on to this transporter this turn.
+     * Used to determine loading eligibility
+     * @return the number of units loaded
+     */
+    default int getNumberUnloadedThisTurn() {
+        return 0;
+    };
 }

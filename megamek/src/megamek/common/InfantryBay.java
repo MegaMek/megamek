@@ -18,7 +18,7 @@ import megamek.common.InfantryTransporter.PlatoonType;
  * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft
  * and mobile structures. Marines count as crew and should have at least steerage quarters.
  */
-public final class InfantryBay extends Bay {
+public final class InfantryBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 946578184870030662L;
 
     // This represents the "factory setting" of the bay, and is used primarily by the construction rules.
@@ -53,45 +53,6 @@ public final class InfantryBay extends Bay {
         this.bayNumber = bayNumber;
         currentdoors = doors;
         this.platoonType = bayType;
-    }
-
-    @Override
-    public double spaceForUnit(Entity unit) {
-        PlatoonType type = PlatoonType.getPlatoonType(unit);
-        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry) unit).getSquadCount();
-        } else {
-            return type.getWeight();
-        }
-    }
-
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
-    @Override
-    public boolean canLoad(Entity unit) {
-        // Only infantry
-        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
-
-        // We must have enough space for the new troops.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (getUnused() < spaceForUnit(unit)) {
-            result = false;
-        }
-
-        // is the door functional
-        if (currentdoors < loadedThisTurn) {
-            result = false;
-        }
-
-        // Return our result.
-        return result;
     }
 
     @Override

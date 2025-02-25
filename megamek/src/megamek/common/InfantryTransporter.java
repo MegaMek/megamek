@@ -13,10 +13,7 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Classes that implement this interface have the ability to load, carry, and
@@ -82,4 +79,49 @@ public interface InfantryTransporter extends Serializable {
             }
         }
     }
+
+    default public double spaceForUnit(Entity unit) {
+        PlatoonType type = PlatoonType.getPlatoonType(unit);
+        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
+            return type.getWeight() * ((Infantry) unit).getSquadCount();
+        } else {
+            return type.getWeight();
+        }
+    }
+
+    /**
+     * @return the number of unused spaces in this transporter.
+     */
+    double getUnused();
+    int getCurrentDoors();
+    int getNumberLoadedThisTurn();
+
+    /**
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     *
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
+     */
+    default public boolean canLoad(Entity unit) {
+        // Only infantry
+        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
+
+        // We must have enough space for the new troops.
+        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
+        if (getUnused() < spaceForUnit(unit)) {
+            result = false;
+        }
+
+        // is the door functional
+        if (getCurrentDoors() < getNumberLoadedThisTurn()) {
+            result = false;
+        }
+
+        // Return our result.
+        return result;
+    }
+
 }

@@ -108,6 +108,7 @@ exact "default_warship" "warships/Naga_Warship.png"
 exact "default_space_station" "Space Stations/Bastion System Defense Station.png"
 exact "default_fighter_squadron" "defaults/fighter_squadron.png"
 exact "default_tele_missile" "defaults/telemissile.png"
+exact "default_hhw" "defaults/default_hhw.png"
 exact "default_unknown" "defaults/unknown.png"
 
 # aerospace

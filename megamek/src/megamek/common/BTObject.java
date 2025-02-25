@@ -201,6 +201,15 @@ public interface BTObject {
     }
 
     /**
+     * Returns true when this object is a Handheld Weapon.
+     *
+     * @return True when this is a Conventional Infantry unit
+     */
+    default boolean isHandheldWeapon() {
+        return false;
+    }
+
+    /**
      * Returns true when this object is a Support Vehicle using aerospace movement
      * such as a Fixed-Wing support.
      * Returns false for any type of unit group even if it is of the right type.

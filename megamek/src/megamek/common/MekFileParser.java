@@ -200,6 +200,8 @@ public class MekFileParser {
                     loader = new BLKWarshipFile(bb);
                 } else if (sType.equals("SpaceStation")) {
                     loader = new BLKSpaceStationFile(bb);
+                } else if (sType.equals("HandheldWeapon")) {
+                    loader = new BLKHandheldWeaponFile(bb);
                 } else {
                     throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }

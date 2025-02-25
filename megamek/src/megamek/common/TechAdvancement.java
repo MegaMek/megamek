@@ -137,6 +137,7 @@ public class TechAdvancement implements ITechnology {
 
     /**
      * A convenience method that will set identical values for IS and Clan factions.
+     * Prototype, Production, Common, Extinct, Reintroduced
      * @param prog
      * @return
      */

@@ -216,6 +216,10 @@ public class EquipmentType implements ITechnology {
         subType |= newFlag;
     }
 
+    public boolean hasAnySubType(long... testFlags) {
+        return Arrays.stream(testFlags).anyMatch(this::hasSubType);
+    }
+
     public boolean hasSubType(long testFlag) {
         return (subType & testFlag) != 0;
     }
@@ -522,6 +526,10 @@ public class EquipmentType implements ITechnology {
      */
     public boolean hasFlag(EquipmentFlag flag) {
         return flags.get(flag);
+    }
+
+    public boolean hasAnyFlag(EquipmentFlag... flags) {
+        return Arrays.stream(flags).anyMatch(this::hasFlag);
     }
 
     /**

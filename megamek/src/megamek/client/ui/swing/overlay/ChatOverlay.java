@@ -15,13 +15,14 @@
 
 package megamek.client.ui.swing.overlay;
 
+import megamek.client.ui.IDisplayable;
 import megamek.common.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatOverlay implements OverlayPanel {
+public class ChatOverlay implements IDisplayable {
     private final List<String> messages;
     private final int limit;
 
@@ -42,8 +43,8 @@ public class ChatOverlay implements OverlayPanel {
     }
 
     @Override
-    public void paint(Graphics g, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g.create();
+    public void draw(Graphics graph, Rectangle rect) {
+        Graphics2D g2d = (Graphics2D) graph.create();
         g2d.setColor(new Color(255, 255, 255, 100));
         for (int i = 0; i < messages.size(); i++) {
             if (messages.get(i) != null) {

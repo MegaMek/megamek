@@ -13,26 +13,14 @@
  */
 package megamek.client.ui.swing.forceDisplay;
 
-import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.ToolTipManager;
-import javax.swing.event.MouseInputAdapter;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.IDisplayedUnit;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -43,26 +31,41 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
 
+import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 /**
  * Shows force display
  */
-public class ForceDisplayPanel extends JPanel implements GameListener, IPreferenceChangeListener {
-    private static final MMLogger logger = MMLogger.create(ForceDisplayPanel.class);
-
-    private ForceDisplayMekTreeModel forceTreeModel;
-    JTree forceTree;
-    private ForceTreeMouseAdapter mekForceTreeMouseListener = new ForceTreeMouseAdapter();
-    private ClientGUI clientgui;
-    private Game game;
+public class PlainForceDisplayPanel extends JPanel implements GameListener, IPreferenceChangeListener {
+    private static final MMLogger logger = MMLogger.create(PlainForceDisplayPanel.class);
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    public ForceDisplayPanel(ClientGUI clientgui) {
-        if (clientgui == null) {
-            return;
-        }
-        this.clientgui = clientgui;
-        this.game = clientgui.getClient().getGame();
+    JTree forceTree;
+    private ForceDisplayMekTreeModel forceTreeModel;
+    private final Client client;
+    private final Game game;
+    private final JFrame parentFrame;
 
+    private final BoardView boardViewRef;
+    private final IDisplayedUnit unitDisplayRef;
+    private final TilesetManager tilesetManager;
+
+    public PlainForceDisplayPanel(JFrame parentFrame, Game game, Client client, TilesetManager tilesetManager, BoardView boardViewRef, IDisplayedUnit unitDisplayRef) {
+        this.game = game;
+        this.client = client;
+        this.parentFrame = parentFrame;
+        this.boardViewRef = boardViewRef;
+        this.unitDisplayRef = unitDisplayRef;
+        this.tilesetManager = tilesetManager;
         setupForce();
         refreshTree();
 
@@ -70,17 +73,18 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         JScrollPane sp = new JScrollPane(forceTree);
         add(sp, BorderLayout.CENTER);
 
+        ForceTreeMouseAdapter mekForceTreeMouseListener = new ForceTreeMouseAdapter();
         forceTree.addMouseListener(mekForceTreeMouseListener);
-        clientgui.getClient().getGame().addGameListener(this);
+        game.addGameListener(this);
         GUIP.addPreferenceChangeListener(this);
     }
 
     private void setupForce() {
-        forceTreeModel = new ForceDisplayMekTreeModel(clientgui.getClient());
+        forceTreeModel = new ForceDisplayMekTreeModel(client);
         forceTree = new JTree(forceTreeModel);
         forceTree.setRootVisible(false);
         forceTree.setDragEnabled(false);
-        forceTree.setCellRenderer(new ForceDisplayMekTreeRenderer(clientgui, forceTree));
+        forceTree.setCellRenderer(new PlainForceDisplayMekTreeRenderer(client.getLocalPlayer(), tilesetManager, game));
         forceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         forceTree.setExpandsSelectedPaths(true);
         ToolTipManager.sharedInstance().registerComponent(forceTree);
@@ -95,10 +99,13 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!forceTree.isSelectionEmpty()) {
-            for (TreePath path : forceTree.getSelectionPaths()) {
-                Object sel = path.getLastPathComponent();
-                if (sel instanceof Force || sel instanceof Entity) {
-                    selections.add(path.getLastPathComponent());
+            var selectionPaths = forceTree.getSelectionPaths();
+            if (selectionPaths != null) {
+                for (TreePath path : selectionPaths) {
+                    Object sel = path.getLastPathComponent();
+                    if (sel instanceof Force || sel instanceof Entity) {
+                        selections.add(path.getLastPathComponent());
+                    }
                 }
             }
         }
@@ -187,7 +194,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         item.addActionListener(evt -> {
             try {
                 Entity entity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                LobbyUtility.mekReadout(entity, 0, false, clientgui.getFrame());
+                LobbyUtility.mekReadout(entity, 0, false, parentFrame);
             } catch (Exception ex) {
                 logger.error(ex, "");
             }
@@ -203,13 +210,13 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
             if (e.getClickCount() == 2) {
                 int row = forceTree.getRowForLocation(e.getX(), e.getY());
                 TreePath path = forceTree.getPathForRow(row);
-                if (path != null && path.getLastPathComponent() instanceof Entity) {
-                    Entity entity = (Entity) path.getLastPathComponent();
-                    clientgui.getUnitDisplay().displayEntity(entity);
-                    GUIP.setUnitDisplayEnabled(true);
-
-                    if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
-                        clientgui.getBoardView().centerOnHex(entity.getPosition());
+                if (path != null && path.getLastPathComponent() instanceof Entity entity) {
+                    if (unitDisplayRef != null) {
+                        unitDisplayRef.setDisplayedUnit(entity);
+                        GUIP.setUnitDisplayEnabled(true);
+                    }
+                    if (boardViewRef != null && entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null) {
+                        boardViewRef.centerOnHex(entity.getPosition());
                     }
                 }
             }
@@ -232,8 +239,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         private void showPopup(MouseEvent e) {
             int row = forceTree.getRowForLocation(e.getX(), e.getY());
             TreePath path = forceTree.getPathForRow(row);
-            if (path != null && path.getLastPathComponent() instanceof Entity) {
-                Entity entity = (Entity) path.getLastPathComponent();
+            if (path != null && path.getLastPathComponent() instanceof Entity entity) {
                 ScalingPopup popup = new ScalingPopup();
                 popup.add(viewReadoutJMenuItem(entity));
                 popup.show(e.getComponent(), e.getX(), e.getY());

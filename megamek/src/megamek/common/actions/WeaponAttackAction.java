@@ -3363,8 +3363,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Air-to-air Arrow and Light Air-to-air missiles
         if (((atype.getAmmoType() == AmmoType.T_AAA_MISSILE) || (atype.getAmmoType() == AmmoType.T_LAA_MISSILE))
                 && Compute.isAirToGround(ae, target)) {
-            // +4 penalty if trying to use one against a ground target
-            toHit.addModifier(+4, Messages.getString("WeaponAttackAction.AaaGroundAttack"));
+            // +4 penalty if trying to use one against a ground target that is not flying
+            // (Errata: https://bg.battletech.com/forums/index.php?topic=87401.msg2060972#msg2060972 )
+            if (!target.isAirborneVTOLorWIGE()) {
+                toHit.addModifier(+4, Messages.getString("WeaponAttackAction.AaaGroundAttack"));
+            }
             // +3 additional if the attacker is flying at Altitude 3 or less
             if (ae.getAltitude() < 4) {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.AaaLowAlt"));
@@ -3844,7 +3847,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (ae.isAero()) {
             IAero aero = (IAero) ae;
 
-            // check for heavy gauss rifle on fighter of small craft
+            // check for heavy gauss rifle on fighter or small craft
             // Arguably a weapon effect, except that it only applies when used by a fighter
             // (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board

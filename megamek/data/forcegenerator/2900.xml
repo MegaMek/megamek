@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2900-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -2244,11 +2241,11 @@
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
             <availability>MH:2</availability>
             <model name='(Motorized Light Cannon)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,fire_support</roles>
                 <availability>MH:5</availability>
             </model>
             <model name='(Motorized Medium Cannon)'>
-                <roles>field_gun</roles>
+                <roles>field_gun,fire_support</roles>
                 <availability>MH:3</availability>
             </model>
         </chassis>
@@ -3461,6 +3458,7 @@
                 <availability>MH:6+</availability>
             </model>
             <model name='(MG)'>
+                <roles>anti_infantry</roles>
                 <availability>MH:5</availability>
             </model>
             <model name='(Rifle)'>
@@ -3548,13 +3546,13 @@
             <availability>MH:5+</availability>
             <model name='(Laser)'>
                 <roles>anti_mek</roles>
-                <availability>MH:7+</availability>
+                <availability>MH:7</availability>
             </model>
             <model name='(MG)'>
                 <availability>MH:5</availability>
             </model>
             <model name='(SRM)'>
-                <availability>MH:5+</availability>
+                <availability>MH:5</availability>
             </model>
         </chassis>
 		<chassis name='Kanga Medium Hovertank' unitType='Tank'>
@@ -4286,7 +4284,6 @@
                 <availability>TC:5</availability>
             </model>
         </chassis>
-
 		<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
 			<availability>IS:7,CS:4,Periphery:7,TC:3-,MH:0,HL:5,Periphery.Deep:6+</availability>
 			<model name='(Bridging)'>

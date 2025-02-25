@@ -31523,7 +31523,8 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         // get units in hex at the specified altitude (elevation + hex level for non-Aerospace)
-        for (Entity entity : game.getEntitiesVector(coords)) {
+        // ignoring targetability (if it's there, it's fair)
+        for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Check: is entity excluded?
             if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;

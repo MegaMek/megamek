@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 2950-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>0,0</pctOmni>
@@ -2437,7 +2434,7 @@
             </model>
             <model name='(Tracked AC10)'>
                 <roles>field_gun</roles>
-                <availability>MH:5+</availability>
+                <availability>MH!A:5!B:4</availability>
             </model>
             <model name='(Tracked AC2)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
@@ -2449,7 +2446,7 @@
             </model>
             <model name='(Wheeled AC10)'>
                 <roles>field_gun,urban</roles>
-                <availability>MH:6+</availability>
+                <availability>MH!A:6!B:5</availability>
             </model>
             <model name='(Wheeled AC2)'>
                 <roles>anti_aircraft,field_gun,fire_support,urban</roles>
@@ -2457,7 +2454,7 @@
             </model>
             <model name='(Wheeled AC5)'>
                 <roles>anti_aircraft,field_gun,fire_support,urban</roles>
-                <availability>MH:8+</availability>
+                <availability>MH!A:8!B:7!C:5</availability>
             </model>
             <model name='(Wheeled Heavy Cannon)'>
                 <roles>field_gun,fire_support,urban</roles>
@@ -4656,7 +4653,7 @@
             <availability>MH:6+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
-                <availability>MH:4-</availability>
+                <availability>MH:4</availability>
             </model>
             <model name='(Laser)'>
                 <availability>MH:4+</availability>
@@ -4743,23 +4740,23 @@
             <availability>MH:7+</availability>
             <model name='(Flamer)'>
                 <roles>urban</roles>
-                <availability>5-</availability>
+                <availability>MH:5</availability>
             </model>
             <model name='(Laser)'>
                 <roles>urban</roles>
-                <availability>4+</availability>
+                <availability>MH:4+</availability>
             </model>
             <model name='(MG)'>
                 <roles>anti_infantry,urban</roles>
-                <availability>6</availability>
+                <availability>MH:6</availability>
             </model>
             <model name='(Rifle)'>
                 <roles>urban</roles>
-                <availability>8</availability>
+                <availability>MH:8</availability>
             </model>
             <model name='(SRM)'>
                 <roles>urban</roles>
-                <availability>5+</availability>
+                <availability>MH:5+</availability>
             </model>
         </chassis>
 		<chassis name='Mechanized Wheeled Platoon' unitType='Infantry'>
@@ -5104,6 +5101,7 @@
                 <availability>MH:5+</availability>
             </model>
             <model name='(MG)'>
+                <roles>anti_infantry</roles>
                 <availability>MH:4</availability>
             </model>
             <model name='(Rifle)'>

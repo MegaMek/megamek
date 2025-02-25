@@ -8,7 +8,7 @@ Field Gun Century (MHAF)
 </Name>
 
 <Model>
-(Motorized Medium Rifle)
+(Motorized Light Cannon)
 </Model>
 
 <year>
@@ -36,14 +36,18 @@ Generic Infantry Kit
 </Troopers Equipment>
 
 <Field Guns Equipment>
-Rifle (Cannon, Medium)
-IS Ammo Medium Rifle
-Rifle (Cannon, Medium)
-IS Ammo Medium Rifle
-Rifle (Cannon, Medium)
-IS Ammo Medium Rifle
-Rifle (Cannon, Medium)
-IS Ammo Medium Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
+Rifle (Cannon, Light)
+IS Ammo Light Rifle
 </Field Guns Equipment>
 
 <capabilities>

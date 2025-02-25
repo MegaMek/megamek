@@ -2243,11 +2243,11 @@
         </chassis>
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
             <availability>MH:2</availability>
-            <model name='(Motorized Light Rifle)'>
+            <model name='(Motorized Light Cannon)'>
                 <roles>field_gun</roles>
                 <availability>MH:5</availability>
             </model>
-            <model name='(Motorized Medium Rifle)'>
+            <model name='(Motorized Medium Cannon)'>
                 <roles>field_gun</roles>
                 <availability>MH:3</availability>
             </model>

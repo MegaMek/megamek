@@ -19,6 +19,7 @@
 
 package megamek.client.ui.swing.util;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -30,18 +31,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  *
  * @author rjhancock
  */
-@JsonSerialize(as = ImageAtlasRecord.class)
 @JsonDeserialize(as = ImageAtlasRecord.class)
+@JsonSerialize(as = ImageAtlasRecord.class)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ImageAtlasRecord {
     // Original to ensure current implementation works as expected.
     private String originalFilePath;
     private String atlasFilePath;
 
-    // Planned part 2 to simplify the data and processing itself.
-    private Integer xCoordinate;
-    private Integer yCoordinate;
-    private Integer width;
-    private Integer height;
+    public ImageAtlasRecord() {
+    }
 
     /**
      * Default constructor.
@@ -70,42 +69,6 @@ public class ImageAtlasRecord {
     }
 
     /**
-     * Get the x coordinate.
-     *
-     * @return
-     */
-    public Integer getXCoordinate() {
-        return xCoordinate;
-    }
-
-    /**
-     * Get the y coordinate.
-     *
-     * @return
-     */
-    public Integer getYCoordinate() {
-        return yCoordinate;
-    }
-
-    /**
-     * Get the width.
-     *
-     * @return
-     */
-    public Integer getWidth() {
-        return width;
-    }
-
-    /**
-     * Get the height.
-     *
-     * @return
-     */
-    public Integer getHeight() {
-        return height;
-    }
-
-    /**
      * Set the original file path.
      *
      * @param originalFilePath
@@ -121,41 +84,5 @@ public class ImageAtlasRecord {
      */
     public void setAtlasFilePath(String atlasFilePath) {
         this.atlasFilePath = atlasFilePath;
-    }
-
-    /**
-     * Set the x coordinate.
-     *
-     * @param xCoordinate
-     */
-    public void setXCoordinate(Integer xCoordinate) {
-        this.xCoordinate = xCoordinate;
-    }
-
-    /**
-     * Set the y coordinate.
-     *
-     * @param yCoordinate
-     */
-    public void setYCoordinate(Integer yCoordinate) {
-        this.yCoordinate = yCoordinate;
-    }
-
-    /**
-     * Set the width.
-     *
-     * @param width
-     */
-    public void setWidth(Integer width) {
-        this.width = width;
-    }
-
-    /**
-     * Set the height.
-     *
-     * @param height
-     */
-    public void setHeight(Integer height) {
-        this.height = height;
     }
 }

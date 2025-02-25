@@ -36,7 +36,7 @@ class ImageAtlasMapTest {
     private ImageAtlasMap imageAtlasMap;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         imageAtlasMap = new ImageAtlasMap();
     }
 
@@ -89,12 +89,12 @@ class ImageAtlasMapTest {
         boolean contains = imageAtlasMap.containsKey(originalFilePath);
         assertEquals(true, contains);
 
-        File testFilePath = new File("testresources/atlas_test.yml");
+        File testFilePath = new File("testresources/tmp/atlas_test.yml");
 
         imageAtlasMap.writeToFile(testFilePath);
 
         ImageAtlasMap readImageAtlasMap = ImageAtlasMap.readFromFile(testFilePath);
         String result = readImageAtlasMap.get(originalFilePath);
-        assertEquals(originalFilePath.toString(), result);
+        assertEquals(atlasFilePath.toString(), result);
     }
 }

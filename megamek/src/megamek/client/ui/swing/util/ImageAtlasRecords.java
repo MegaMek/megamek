@@ -22,6 +22,7 @@ package megamek.client.ui.swing.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -34,7 +35,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonDeserialize(as = ImageAtlasRecords.class)
 @JsonSerialize(as = ImageAtlasRecords.class)
+
 public class ImageAtlasRecords {
+    @JsonProperty("records")
     private List<ImageAtlasRecord> records = new ArrayList<>();
 
     /**

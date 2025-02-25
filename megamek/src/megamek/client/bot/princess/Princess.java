@@ -165,7 +165,7 @@ public class Princess extends BotClient {
     private final MoraleUtil moraleUtil = new MoraleUtil();
     private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final Set<Integer> crippledUnits = new HashSet<>();
-
+    private final ArtilleryCommandAndControl artilleryCommandAndControl = new ArtilleryCommandAndControl();
     // Track entities that fired an AMS manually this round
     private List<Integer> manualAMSIds;
 
@@ -3646,4 +3646,7 @@ public class Princess extends BotClient {
         }
     }
 
+    public ArtilleryCommandAndControl getArtilleryCommandAndControl() {
+        return artilleryCommandAndControl;
+    }
 }

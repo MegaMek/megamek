@@ -4062,6 +4062,7 @@
                 <availability>MH:7</availability>
             </model>
             <model name='(MG)'>
+                <roles>anti_infantry</roles>
                 <availability>MH:5</availability>
             </model>
             <model name='(SRM)'>

@@ -327,6 +327,16 @@ jacocoTestReport {
     }
 }
 
+// Test task including GUI tests
+task testWithGUITests(type: Test) {
+    useJUnitPlatform()
+    jvmArgs = mmJvmOptions
+    environment 'GUITests', "true"
+
+    group 'verification'
+    description 'Sets environment var to include GUI unit tests; no report generated.'
+}
+
 // These are utility classes for all of the classes with the src/utilities folder.
 
 task officialUnitList(type: JavaExec, dependsOn: jar) {

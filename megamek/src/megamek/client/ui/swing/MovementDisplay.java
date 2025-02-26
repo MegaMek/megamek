@@ -2582,11 +2582,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce.isAirborne() && !ce.getDroppableUnits().isEmpty()) {
             Set<Integer> droppedUnits = cmd.getDroppedUnits();
 
-
-
             for (Bay bay : ce.getTransportBays()) {
                 // If this bay has unloaded more units this turn than
-                // it has doors for, we should move on
+                // it has doors* for, we should move on
+                // *(excluding Infantry, see StratOps pg. 20)
                 int doorsEligibleForDrop = bay.getCurrentDoors();
 
                 // If we have droppable units and we haven't
@@ -2602,7 +2601,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 for (Entity droppableUnit : bay.getDroppableUnits()) {
                     if (doorsEligibleForDrop > 0) {
                         if (droppedUnits.contains(droppableUnit.getId())) {
-                            doorsEligibleForDrop--;
+                            // Infantry don't count against door usage
+                            if (!droppableUnit.isInfantry()) {
+                                doorsEligibleForDrop--;
+                            }
                         } else {
                             // Cannot set the button enabled yet,
                             // need to make sure we consider every
@@ -3986,28 +3988,41 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Vector<Bay> Bays = ce.getTransportBays();
         for (int i = 0; i < Bays.size(); i++) {
             Bay currentBay = Bays.elementAt(i);
+            boolean infantryBay = (currentBay instanceof InfantryTransporter);
+
+            // Can't drop infantry from above 8 Altitude
+            if (infantryBay && cmd.getLastStep().getAltitude() > 8) {
+                continue;
+            }
+
             Vector<Integer> bayChoices = new Vector<>();
             int doorsEligibleForDrop = currentBay.getCurrentDoors();
             List<Entity> currentUnits = new ArrayList<>();
             for (Entity entity : currentBay.getDroppableUnits()) {
+                // Do account for already-dropped Infantry
                 if (alreadyDropped.contains(entity.getId())) {
-                    doorsEligibleForDrop--; //If a unit is set to drop from a bay, we should reduce our capacity
+                    // But exclude infantry from count of doors used/usable
+                    if (!entity.isInfantry()) {
+                        doorsEligibleForDrop--; //If a unit is set to drop from a bay, we should reduce our capacity
+                    }
                 } else {
                     currentUnits.add(entity);
                 }
             }
 
-            if (!currentUnits.isEmpty() && (doorsEligibleForDrop > 0)) {
+            if (!currentUnits.isEmpty() && (infantryBay || (doorsEligibleForDrop > 0))) {
                 String[] names = new String[currentUnits.size()];
                 String question = Messages.getString("MovementDisplay.DropUnitDialog.message",
                         doorsEligibleForDrop, bayNum);
                 for (int loop = 0; loop < names.length; loop++) {
                     names[loop] = currentUnits.get(loop).getShortName();
                 }
+                // If this is an infantry-transporting bay (cargo, Infantry Bay, etc.) no limit on drops
+                int max = (infantryBay) ? -1 : doorsEligibleForDrop;
                 ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.DropUnitDialog.title",
                                 currentBay.getType(), bayNum),
-                        question, names, false, doorsEligibleForDrop);
+                        question, names, false, max);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
                     // load up the choices

@@ -44,8 +44,17 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     }
 
     @Override
+    public boolean canLoad(Entity unit) {
+        if (!unit.isInfantry()) {
+            return false;
+        }
+        return super.canLoad(unit);
+    }
+
+    // Use the calculated original weight for infantry in cargo bays
+    @Override
     public double spaceForUnit(Entity unit) {
-        return unit.getWeight();
+        return Math.round(unit.getWeight() / unit.getInternalRemainingPercent());
     }
 
     @Override

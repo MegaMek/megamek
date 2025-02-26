@@ -82,40 +82,15 @@ public interface InfantryTransporter extends Serializable {
     }
 
     /**
-     * @return the number of unused spaces in this transporter.
+     * These methods are required for Infantry unit loading/unloading.
+     * In practice, all are provided by Bay() or overridden in transports
+     * that can carry infantry.
      */
     double getUnused();
+    double getUnusedSlots();
     int getCurrentDoors();
-    int getNumberLoadedThisTurn();
     Vector<Entity> getLoadedUnits();
     double spaceForUnit(Entity unit);
-
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
-    default public boolean canLoad(Entity unit) {
-        // Only infantry
-        boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
-
-        // We must have enough space for the new troops.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if (getUnused() < spaceForUnit(unit)) {
-            result = false;
-        }
-
-        // is the door functional
-        if (getCurrentDoors() < getNumberLoadedThisTurn()) {
-            result = false;
-        }
-
-        // Return our result.
-        return result;
-    }
+    boolean canLoad(Entity unit);
 
 }

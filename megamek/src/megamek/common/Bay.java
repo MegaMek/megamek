@@ -345,7 +345,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     public int getNumberLoadedThisTurn() {
-        return unloadedThisTurn;
+        return loadedThisTurn;
     }
 
     /**

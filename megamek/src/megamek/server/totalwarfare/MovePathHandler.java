@@ -1851,8 +1851,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         r.subject = entity.getId();
                         r.add(nDropped);
                         addReport(r);
+                        Report dropEntityReport;
                         for (int unitId : drops) {
-                            if (Compute.d6(2) == 2) {
+                            Entity drop = getGame().getEntity(unitId);
+                            dropEntityReport = new Report(9374);
+                            dropEntityReport.add(drop.getShortName(), true);
+                            addReport(dropEntityReport);
+                            // Infantry don't have a chance to destory doors
+                            if (!drop.isInfantry() && Compute.d6(2) == 2) {
                                 r = new Report(9390);
                                 r.subject = entity.getId();
                                 r.indent(1);
@@ -1860,7 +1866,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                 addReport(r);
                                 currentBay.destroyDoorNext();
                             }
-                            Entity drop = getGame().getEntity(unitId);
                             gameManager.dropUnit(drop, entity, curPos, step.getAltitude());
                         }
                     }

@@ -8749,9 +8749,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
-            if ((next instanceof Bay nextbay) && (nextbay.getCurrentDoors() > 0)) {
-                for (Entity e : nextbay.getDroppableUnits()) {
-                    result.addElement(e);
+            if (next instanceof Bay nextbay) {
+                if (nextbay.getCurrentDoors() > 0) {
+                    for (Entity e : nextbay.getDroppableUnits()) {
+                        result.addElement(e);
+                    }
                 }
             }
         }
@@ -13263,8 +13265,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasUnloadedUnitsFromBays() {
         for (Transporter next : transports) {
-            if ((next instanceof Bay)
-                    && (((Bay) next).getNumberUnloadedThisTurn() > 0)) {
+            if ((next instanceof Bay nextBay)
+                    && (nextBay.getNumberUnloadedThisTurn() > 0)) {
                 return true;
             }
         }

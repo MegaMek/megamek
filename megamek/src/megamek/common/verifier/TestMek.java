@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
@@ -834,12 +835,13 @@ public class TestMek extends TestEntity {
         boolean hasMekJumpBooster = false;
         boolean hasPartialWing = false;
         EquipmentType advancedMyomer = null;
+        HashSet<Integer> shieldLocations = new HashSet<>();
 
         // First we find all the equipment that is required or incompatible with other
         // equipment,
         // so we don't have to execute another loop each time one of those situations
         // comes up.
-        for (Mounted<?> m : mek.getMisc()) {
+        for (MiscMounted m : mek.getMisc()) {
             hasHarjelII |= m.getType().hasFlag(MiscType.F_HARJEL_II);
             hasHarjelIII |= m.getType().hasFlag(MiscType.F_HARJEL_III);
             hasNullSig |= m.getType().hasFlag(MiscType.F_NULLSIG);
@@ -855,6 +857,16 @@ public class TestMek extends TestEntity {
             }
             hasMekJumpBooster |= m.is(EquipmentTypeLookup.MECHANICAL_JUMP_BOOSTER);
             hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
+
+            if (m.getType().hasFlag(MiscType.F_CLUB) &&
+                (m.getType().getSubType() & (MiscType.S_SHIELD_SMALL | MiscType.S_SHIELD_MEDIUM | MiscType.S_SHIELD_LARGE)) != 0) {
+                if (shieldLocations.contains(m.getLocation())) {
+                    illegal = true;
+                    buff.append("Only one shield can be mounted in a location.\n");
+                } else {
+                    shieldLocations.add(m.getLocation());
+                }
+            }
         }
 
         for (Mounted<?> m : getEntity().getMisc()) {

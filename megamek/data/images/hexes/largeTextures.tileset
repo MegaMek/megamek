@@ -171,6 +171,8 @@ base -6 "" "" "Ahne/iLarge_Textures/BigPlains-6.jpg"
 
 base 0 "space:1" "" "largeTextures/BigSpace.jpg"
 
+include "StandardIncludes/StandardUltraSublevel.tileinc"
+include "StandardIncludes/StandardHazardousLiquid.tileinc"
 
 #base 1 "water:*" "" "Ahne/iLarge_Textures/BigWater.jpg(0,72-84,-72);Ahne/iLarge_Textures/BigWater.jpg(84,0--84,72);Ahne/iLarge_Textures/BigWater.jpg(84,72--84,-72)"
 #base -1 "water:*" "" "Ahne/iLarge_Textures/BigWater2.jpg(0,72-84,-72);Ahne/iLarge_Textures/BigWater2.jpg(84,0--84,72);Ahne/iLarge_Textures/BigWater2.jpg(84,72--84,-72)"
@@ -761,3 +763,4 @@ base 10 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_0
 base -1 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_6.gif"
 base -2 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_7.gif"
 base -3 "bldg_basement_type:*" "" "Ahne/iLarge_Textures_pavement/grey_pavement_8.gif"
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"

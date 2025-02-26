@@ -1,6 +1,7 @@
 size 45 45
-tag "Water (Auto)"
 tag "SnowTheme (Auto)"
+tag "Water (Auto)"
+tag "MultipleTheme (Auto)"
 tag "MediumForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "woods:1;foliage_elev:2" "white"

@@ -1,0 +1,171 @@
+chassis:Hoplite
+model:C
+mul id:1540
+
+Config:Biped
+TechBase:Clan
+Era:3052
+Source:TRO: 3050
+Rules Level:2
+role:Brawler
+
+
+
+quirk:no_arms
+
+
+Mass:55
+Engine:220 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:26
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+1 CLUltraAC10, Right Arm, Ammo:30
+1 CLLRM15, Left Arm, Ammo:16
+2 CLMediumPulseLaser, Left Torso
+1 CLERMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLMediumPulseLaser
+CLMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Martinson Armaments designed the Hoplite as a support 'Mech for deployment alongside the infantry divisions of the newly formed Star League Defense Force.	
+
+capabilities:The Hoplite is slow for a medium 'Mech, with a top speed of only 64.8 km/h. However its 11.5 tons of armor and heavy arsenal, both impressive for a 'Mech of its size, makes the Hoplite a rugged machine able to fight its way out of most situations using superior firepower.
+
+deployment:Developed after the Battle of Luthien, the Hoplite C is a variant exclusively used by the Wolf's Dragoons that uses all Clan technology. Clad in 10 tons of ferro-fibrous and fitted with double heat sinks, the 'Mech carries a UAC/10 as its primary weapon, supported by an LRM-15 launcher for long-range engagements, and two medium pulse lasers and an ER medium laser for close range combat
+
+history:The Hoplite first saw service with the newly formed Star League Defense Force during the Reunification War before being relegated to Terran Hegemony militia units in the twenty-seventh century. While every Hoplite in the Inner Sphere was destroyed during the Amaris Crisis and the early Succession Wars, Aleksandr Kerensky's SLDF exiles found the simple and rugged design ideal for bolstering their forces in the months prior to the Exodus Civil War. Selected by Wolf's Dragoons in the belief that the ancient design wouldn't arouse undue attention, it had the complete opposite effect, and only raised more questions as to the Dragoons' origins when they arrived in 3005. After the mercenaries cut ties with the Clan Homeworlds in 3020, they also lost access to replacement Hoplites, with attrition bringing the design close to extinction by the Jihad. During the Jihad, when the surviving Dragoons relocated to Arc-Royal, experimental refits were performed on the remaining Hoplites, which continued after the conflict's end.
+
+manufacturer:Blackwell Corporation (Refit)
+primaryfactory:Outreach
+systemmanufacturer:CHASSIS:Star League HO-01a
+systemmanufacturer:ENGINE:DAV 220
+systemmanufacturer:ARMOR:Unknown Clan Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:MultiGab 2000
+systemmanufacturer:TARGETING:Dalban HiRez II

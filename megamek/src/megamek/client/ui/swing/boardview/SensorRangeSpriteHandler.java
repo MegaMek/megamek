@@ -35,13 +35,13 @@ import java.util.List;
 import java.util.Set;
 
 public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
-    
+
     private final Game game;
 
     // The last-used values are cached so they're available when the sensor range view is turned on
     private Entity currentEntity;
     private Coords currentPosition;
-    
+
     public SensorRangeSpriteHandler(BoardView boardView, Game game) {
         super(boardView);
         this.game = game;
@@ -86,7 +86,7 @@ public class SensorRangeSpriteHandler extends BoardViewSpriteHandler implements 
         int maxSensorRange = 0;
         int minAirSensorRange = 0;
         int maxAirSensorRange = 0;
-        GameOptions gameOptions = game.getOptions();
+        var gameOptions = game.getOptions();
 
         if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {

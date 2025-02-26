@@ -13,14 +13,14 @@
  */
 package megamek.common;
 
+import static megamek.common.Terrains.*;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-
-import static megamek.common.Terrains.*;
 
 /**
  * Represents a single type of terrain or condition in a hex. The type of a
@@ -283,7 +283,7 @@ public class Terrain implements Serializable {
      * @param roll the piloting roll
      * @param enteringRubble if the entered terrain contains rubble
      */
-    public void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+    public void applyPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         switch (type) {
             case JUNGLE:
                 if (level == 3) {
@@ -405,7 +405,7 @@ public class Terrain implements Serializable {
                     }
                 }
 
-                if ((e instanceof Mech) && e.isSuperHeavy()) {
+                if ((e instanceof Mek) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
 
@@ -427,7 +427,7 @@ public class Terrain implements Serializable {
                     }
                 }
 
-                if ((e instanceof Mech) && e.isSuperHeavy()) {
+                if ((e instanceof Mek) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
 
@@ -452,7 +452,7 @@ public class Terrain implements Serializable {
                     mp *= 2;
                 }
 
-                if ((e instanceof Mech) && e.isSuperHeavy()) {
+                if ((e instanceof Mek) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
 
@@ -523,7 +523,7 @@ public class Terrain implements Serializable {
                     mp = 1;
                 }
 
-                if ((e instanceof Mech) && e.isSuperHeavy()) {
+                if ((e instanceof Mek) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
@@ -542,7 +542,7 @@ public class Terrain implements Serializable {
                     }
                 }
 
-                if ((e instanceof Mech) && e.isSuperHeavy()) {
+                if ((e instanceof Mek) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
 
@@ -705,6 +705,8 @@ public class Terrain implements Serializable {
                 && level < 1) {
             valid = false;
         } else if ((type == BRIDGE_ELEV) && (level < 0)) {
+            valid = false;
+        } else if ((type == HAZARDOUS_LIQUID) && (level < 0 || level > 3)) {
             valid = false;
         }
 

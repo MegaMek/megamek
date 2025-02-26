@@ -26,7 +26,7 @@ public class BombArrowIV extends ArtilleryWeapon {
 
     public BombArrowIV() {
         super();
-        this.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
+        this.name = "Arrow IV Bomb Mount";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
         this.heat = 0;
         this.rackSize = 20;

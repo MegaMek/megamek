@@ -36,7 +36,7 @@ public class ISLaserAMS extends LaserWeapon {
         heat = 7;
         rackSize = 2;
         damage = 3; // for manual operation
-        minimumRange = 0; 
+        minimumRange = 0;
         shortRange = 1;
         mediumRange = 1;
         longRange = 1;
@@ -50,8 +50,8 @@ public class ISLaserAMS extends LaserWeapon {
         atClass = CLASS_AMS;
         // we need to remove the direct fire flag again, so TC weight is not
         // affected
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).andNot(F_PROTO_WEAPON)
-                .or(F_AUTO_TARGET).or(F_AMS).or(F_ENERGY).and(F_DIRECT_FIRE.not());
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).andNot(F_PROTO_WEAPON)
+                .or(F_AUTO_TARGET).or(F_AMS).or(F_ENERGY).andNot(F_DIRECT_FIRE);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
@@ -68,7 +68,7 @@ public class ISLaserAMS extends LaserWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return 0;
     }
 

@@ -21,7 +21,7 @@ import megamek.common.util.BuildingBlock;
  * @author taharqa
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKDropshipFile extends BLKFile implements IMechLoader {
+public class BLKDropshipFile extends BLKFile implements IMekLoader {
 
     public BLKDropshipFile(BuildingBlock bb) {
         dataFile = bb;
@@ -95,7 +95,6 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
         // All dropships are VSTOL and can hover
         a.setVSTOL(true);
-
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
@@ -279,13 +278,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-                if ((etype == null) && checkLegacyExtraEquipment(equipName)) {
-                    continue;
-                }
 
                 if (etype != null) {
                     // first load the equipment
-                    Mounted newmount;
+                    Mounted<?> newmount;
                     try {
                         if (nAmmo == 1) {
                             newmount = a.addEquipment(etype, nLoc, rearMount);
@@ -345,31 +341,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
                     }
                     if (etype.isVariableSize()) {
-                        if (size == 0.0) {
-                            size = getLegacyVariableSize(equipName);
-                        }
                         newmount.setSize(size);
                     }
                 } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
-                }
-            }
-        }
-        if (mashOperatingTheaters > 0) {
-            for (Mounted m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_MASH)) {
-                    // includes one as part of the core component
-                    m.setSize(m.getSize() + mashOperatingTheaters);
-                    break;
-                }
-            }
-        }
-        if (legacyDCCSCapacity > 0) {
-            for (Mounted m : a.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {
-                    // core system does not include drone capacity
-                    m.setSize(legacyDCCSCapacity);
-                    break;
                 }
             }
         }

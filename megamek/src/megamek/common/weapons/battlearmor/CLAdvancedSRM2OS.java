@@ -21,6 +21,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+
 /**
  * @author Sebastian Brocks
  */
@@ -29,7 +30,7 @@ public class CLAdvancedSRM2OS extends AdvancedSRMWeapon {
 
     public CLAdvancedSRM2OS() {
         super();
-         name = "Advanced SRM 2 (OS)";
+        name = "Advanced SRM 2 (OS)";
         setInternalName("CLAdvancedSRM2OS");
         rackSize = 2;
         shortRange = 4;
@@ -37,7 +38,8 @@ public class CLAdvancedSRM2OS extends AdvancedSRMWeapon {
         longRange = 12;
         extremeRange = 16;
         bv = 6;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
+                .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         tonnage = .07;
         criticals = 3;
         cost = 15000;
@@ -54,7 +56,7 @@ public class CLAdvancedSRM2OS extends AdvancedSRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         // The OS damage factor of 0.1 is handled elsewhere
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.4 : 0;
     }

@@ -18,8 +18,6 @@
  */
 package megamek.common.util;
 
-import java.util.regex.Pattern;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -28,6 +26,10 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.common.Coords;
+import megamek.common.EntityFluff;
+import megamek.common.net.marshalling.SanityInputFilter;
+import megamek.common.options.AbstractOptions;
+import megamek.server.victory.VictoryCondition;
 
 /**
  * Class that off-loads serialization related code from Server.java
@@ -48,54 +50,7 @@ public class SerializationHelper {
         // referencing objects in the XML graph
         xStream.setMode(XStream.ID_REFERENCES);
 
-        xStream.allowTypesByRegExp(new Pattern[] {
-                Pattern.compile("\\[C$"),
-                Pattern.compile("\\[I$"),
-                Pattern.compile("\\[Ljava\\.lang\\.Enum;$"),
-                Pattern.compile("java\\.io\\.File$"),
-                Pattern.compile("java\\.lang\\.Boolean$"),
-                Pattern.compile("java\\.lang\\.Enum$"),
-                Pattern.compile("java\\.lang\\.Integer$"),
-                Pattern.compile("java\\.lang\\.Double$"),
-                Pattern.compile("java\\.lang\\.Number$"),
-                Pattern.compile("java\\.lang\\.StringBuffer$"),
-                Pattern.compile("java\\.util\\.ArrayList$"),
-                Pattern.compile("java\\.util\\.Collections\\$SetFromMap$"),
-                Pattern.compile("java\\.util\\.Collections\\$UnmodifiableCollection$"),
-                Pattern.compile("java\\.util\\.Collections\\$UnmodifiableList$"),
-                Pattern.compile("java\\.util\\.concurrent\\.ConcurrentHashMap$"),
-                Pattern.compile("java\\.util\\.concurrent\\.ConcurrentHashMap\\$Segment$"),
-                Pattern.compile("java\\.util\\.concurrent\\.CopyOnWriteArrayList$"),
-                Pattern.compile("java\\.util\\.concurrent\\.locks\\.AbstractOwnableSynchronizer$"),
-                Pattern.compile("java\\.util\\.concurrent\\.locks\\.AbstractQueuedSynchronizer$"),
-                Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock$"),
-                Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$NonfairSync$"),
-                Pattern.compile("java\\.util\\.concurrent\\.locks\\.ReentrantLock\\$Sync$"),
-                Pattern.compile("java\\.util\\.UUID$"),
-                Pattern.compile("java\\.util\\.EnumMap$"),
-                Pattern.compile("java\\.util\\.EnumSet.*"),
-                Pattern.compile("java\\.util\\.HashMap$"),
-                Pattern.compile("java\\.util\\.HashSet$"),
-                Pattern.compile("java\\.util\\.Hashtable$"),
-                Pattern.compile("java\\.util\\.LinkedHashSet$"),
-                Pattern.compile("java\\.util\\.LinkedList$"),
-                Pattern.compile("java\\.util\\.TreeMap$"),
-                Pattern.compile("java\\.util\\.TreeSet$"),
-                Pattern.compile("java\\.util\\.Vector$"),
-                Pattern.compile("\\[Ljava\\.lang\\.Object;$"),
-                Pattern.compile("\\[Ljava\\.lang\\.String;$"),
-                Pattern.compile("\\[Ljava\\.util\\.concurrent\\.ConcurrentHashMap\\$Segment;$"),
-                Pattern.compile("\\[\\[Lmegamek.*"),
-                Pattern.compile("\\[Lmegamek.*"),
-                Pattern.compile("megamek.*"),
-                Pattern.compile("\\[\\[Lmekhq.*"),
-                Pattern.compile("\\[Lmekhq.*"),
-                Pattern.compile("mekhq.*"),
-                Pattern.compile("\\[\\[Lmegameklab.*"),
-                Pattern.compile("\\[Lmegameklab.*"),
-                Pattern.compile("megameklab.*"),
-                Pattern.compile("\\[Z$")
-        });
+        xStream.allowTypesByRegExp(SanityInputFilter.getFilterList());
 
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);
         xStream.allowTypeHierarchy(megamek.common.Building.class);
@@ -107,10 +62,10 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.Mounted.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);
         xStream.allowTypeHierarchy(megamek.common.icons.AbstractIcon.class);
-        xStream.allowTypeHierarchy(megamek.common.options.AbstractOptions.class);
+        xStream.allowTypeHierarchy(AbstractOptions.class);
         xStream.allowTypeHierarchy(megamek.common.options.IOption.class);
         xStream.allowTypeHierarchy(megamek.common.weapons.AttackHandler.class);
-        xStream.allowTypeHierarchy(megamek.server.victory.IVictoryConditions.class);
+        xStream.allowTypeHierarchy(VictoryCondition.class);
         xStream.allowTypeHierarchy(megamek.common.strategicBattleSystems.SBFMoveStep.class);
         return xStream;
     }

@@ -20,9 +20,27 @@
  */
 package megamek;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import io.sentry.Sentry;
+import megamek.client.ui.preferences.SuitePreferences;
+import megamek.client.ui.swing.ButtonOrderPreferences;
+import megamek.client.ui.swing.MegaMekGUI;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.common.annotations.Nullable;
+import megamek.common.commandline.AbstractCommandLineParser;
+import megamek.common.commandline.ClientServerCommandLineParser;
+import megamek.common.commandline.MegaMekCommandLineFlag;
+import megamek.common.commandline.MegaMekCommandLineParser;
+import megamek.common.net.marshalling.SanityInputFilter;
+import megamek.common.preference.PreferenceManager;
+import megamek.logging.MMLogger;
+import megamek.server.DedicatedServer;
+import megamek.utilities.GifWriter;
+import megamek.utilities.PrincessFineTuning;
+import megamek.utilities.RATGeneratorEditor;
+
+import javax.swing.*;
+import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -36,24 +54,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
-import io.sentry.Sentry;
-import megamek.client.ui.preferences.SuitePreferences;
-import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.client.ui.swing.MegaMekGUI;
-import megamek.client.ui.swing.util.FontHandler;
-import megamek.common.annotations.Nullable;
-import megamek.common.commandline.AbstractCommandLineParser;
-import megamek.common.commandline.ClientServerCommandLineParser;
-import megamek.common.commandline.MegaMekCommandLineFlag;
-import megamek.common.commandline.MegaMekCommandLineParser;
-import megamek.common.preference.PreferenceManager;
-import megamek.logging.MMLogger;
-import megamek.server.DedicatedServer;
-import megamek.utilities.RATGeneratorEditor;
-
 /**
  * This is the primary MegaMek class.
  *
@@ -66,12 +66,14 @@ public class MegaMek {
     private static final NumberFormat numberFormatter = NumberFormat.getInstance();
 
     private static final MMLogger logger = MMLogger.create(MegaMek.class);
+    private static final SanityInputFilter sanityInputFilter = new SanityInputFilter();
 
     public static void main(String... args) {
+        ObjectInputFilter.Config.setSerialFilter(sanityInputFilter);
+
         // Configure Sentry with defaults. Although the client defaults to enabled, the
-        // properties file is used to disable
-        // it and additional configuration can be done inside of the sentry.properties
-        // file. The defaults for everything else
+        // properties file is used to disable it and additional configuration can be
+        // done inside of the sentry.properties file. The defaults for everything else
         // is set here.
         Sentry.init(options -> {
             options.setEnableExternalConfiguration(true);
@@ -83,12 +85,14 @@ public class MegaMek {
             options.setRelease(SuiteConstants.VERSION.toString());
         });
 
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             final String name = t.getClass().getName();
             final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
             final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            logger.error(t, message, title);
+            logger.errorDialog(t, message, title);
         });
 
         // Second, let's handle logging
@@ -105,6 +109,9 @@ public class MegaMek {
                     parser.help()));
             System.exit(1);
         }
+
+        // log jvm parameters
+        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 
@@ -130,7 +137,14 @@ public class MegaMek {
             startQuickLoad(restArgs);
             return;
         }
-
+        if (parser.writeGif()) {
+            startGifWriter(restArgs);
+            return;
+        }
+        if (parser.aiFineTuning()) {
+            startPrincessFineTuning(restArgs);
+            return;
+        }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
         } else {
@@ -139,8 +153,7 @@ public class MegaMek {
     }
 
     public static void initializeLogging(final String originProject) {
-        String message = getUnderlyingInformation(originProject);
-        logger.info(message);
+        logger.info(getUnderlyingInformation(originProject));
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -215,8 +228,7 @@ public class MegaMek {
      * @param args the arguments to the dedicated server.
      */
     private static void startDedicatedServer(String... args) {
-        String message = String.format(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_DEDICATED_SERVER, Arrays.toString(args));
         DedicatedServer.start(args);
     }
 
@@ -247,8 +259,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -291,8 +302,7 @@ public class MegaMek {
                 MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_HOST_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
@@ -334,14 +344,25 @@ public class MegaMek {
                 null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
-        String message = String.format(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
-        logger.info(message);
+        logger.info(MMLoggingConstants.SC_STARTING_CLIENT_SERVER, Arrays.toString(args));
 
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
             mmg.start(false);
             mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
         });
+    }
+
+    private static void startGifWriter(String... args) {
+        try {
+            GifWriter.createGifFromGameSummary(args[0]);
+        } catch (IOException e) {
+            logger.error(e, "Error creating GIF");
+        }
+    }
+
+    private static void startPrincessFineTuning(String... args) {
+        PrincessFineTuning.main(args);
     }
 
     /**

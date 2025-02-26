@@ -21,7 +21,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.StreakHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -34,10 +34,10 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
         this.ammoType = AmmoType.T_SRM_STREAK;
         flags = flags.or(F_PROTO_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
     }
-    
+
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.5;
         } else {
             return super.getTonnage(entity, location, size);
@@ -46,12 +46,12 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new StreakHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize() * 2;

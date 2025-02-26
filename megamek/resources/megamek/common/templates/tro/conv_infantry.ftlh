@@ -14,21 +14,21 @@
 	${fluffOverview}
 	</p>
 	</#if>
-	
+
 	<#if fluffCapabilities??>
 	<p>
 	<b>Capabilities</b><br/>
 	${fluffCapabilities}
 	</p>
 	</#if>
-	
+
 	<#if fluffDeployment??>
 	<p>
 	<b>Deployment</b><br/>
 	${fluffDeployment}
 	</p>
 	</#if>
-	
+
 	<#if fluffHistory??>
 	<p>
 	<b>History</b><br/>
@@ -42,7 +42,7 @@
 <#if notableUnit??>
 	<b>Notable Unit: </b> ${notableUnit}<br/>
 </#if>
-	<b>Tech Base:</b> ${techBase}<br/> 
+	<b>Tech Base:</b> ${techBase}<br/>
 	<b>Tech Rating/Availability:</b> ${techRating}<br/>
 	<b>Transport Weight: </b> ${transportWeight}<br/>
 	<b>Equipment:</b><br/>
@@ -56,7 +56,7 @@
 	<b>Cost:</b> ${cost} C-bills<br/>
 	<b>Notes:</b> ${notes}<br/>
 	</p>
-	
+
 	<p>
 	<b>Platoon Type (Specialty):</b> ${motiveType} (${specialty})<br/>
 <#if groundMP??>

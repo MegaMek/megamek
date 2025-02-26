@@ -18,9 +18,9 @@
  */
 package megamek.server.sbf;
 
-import megamek.common.ReportEntry;
 import megamek.common.net.packets.Packet;
 import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFReportEntry;
 import megamek.server.GameManagerPacketHelper;
 
 public interface SBFGameManagerHelper {
@@ -31,7 +31,7 @@ public interface SBFGameManagerHelper {
         return gameManager().getGame();
     }
 
-    default void addReport(ReportEntry reportEntry) {
+    default void addReport(SBFReportEntry reportEntry) {
         gameManager().addReport(reportEntry);
     }
 

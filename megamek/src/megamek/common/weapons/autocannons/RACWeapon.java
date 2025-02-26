@@ -19,8 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RACHandler;
 import megamek.common.weapons.UltraWeaponHandler;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -32,8 +31,8 @@ public abstract class RACWeapon extends UACWeapon {
     public RACWeapon() {
         super();
         ammoType = AmmoType.T_AC_ROTARY;
-        String[] modeStrings = {MODE_AC_SINGLE, MODE_RAC_TWO_SHOT, MODE_RAC_THREE_SHOT,
-                MODE_RAC_FOUR_SHOT, MODE_RAC_FIVE_SHOT, MODE_RAC_SIX_SHOT};
+        String[] modeStrings = { MODE_AC_SINGLE, MODE_RAC_TWO_SHOT, MODE_RAC_THREE_SHOT,
+                MODE_RAC_FOUR_SHOT, MODE_RAC_FIVE_SHOT, MODE_RAC_SIX_SHOT };
         setModes(modeStrings);
         // explosive when jammed
         explosive = true;
@@ -51,8 +50,8 @@ public abstract class RACWeapon extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
+        Mounted<?> weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals(MODE_RAC_SIX_SHOT)
                 || weapon.curMode().equals(MODE_RAC_FIVE_SHOT)
@@ -65,7 +64,7 @@ public abstract class RACWeapon extends UACWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted disregard) {
+    public double getBattleForceDamage(int range, Mounted<?> disregard) {
         if (techAdvancement.getTechBase() == TECH_BASE_IS) {
             if (rackSize == 2) {
                 return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.8 : 0;

@@ -56,18 +56,18 @@ public class CLATM3 extends ATMWeapon {
         maxRange = RANGE_MED;
         rulesRefs = "229, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
-            .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, true, true, false, false)
-            .setPrototypeFactions(F_CCY)
-            .setProductionFactions(F_CCY);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+                .setClanAdvancement(3052, 3053, 3054, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, true, true, false, false)
+                .setPrototypeFactions(F_CCY)
+                .setProductionFactions(F_CCY);
     }
-    
+
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         if (range <= AlphaStrikeElement.SHORT_RANGE) {
             return 0.6;
         } else if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
@@ -76,5 +76,5 @@ public class CLATM3 extends ATMWeapon {
             return 0.2;
         }
     }
-    
+
 }

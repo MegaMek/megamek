@@ -192,29 +192,46 @@ public class WrapLayout extends FlowLayout {
     }
 
     /**
+     * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length of 100.
+     *
+     * @param input The input string to be wrapped.
+     * @return The string with line breaks inserted.
+     */
+    public static String wordWrap(String input) {
+        return wordWrap(input, 100);
+    }
+
+    /**
      * Inserts line breaks into a given input string to ensure that no line exceeds a maximum length.
      *
      * @param input The input string to be wrapped.
-     * @param maxLineLength The maximum length of each line.
+     * @param maximumCharacters The maximum number of characters (including whitespaces) on each line.
      * @return The string with line breaks inserted.
      */
-    public static String wordWrap(String input, int maxLineLength) {
-        StringTokenizer token = new StringTokenizer(input, " ");
+    public static String wordWrap(String input, int maximumCharacters) {
+        String[] lines = input.split("<br>");
+
         StringBuilder output = new StringBuilder(input.length());
+        output.append("<html>");
 
-        int lineLen = 0;
+        // Process each line
+        for (String line : lines) {
+            StringTokenizer token = new StringTokenizer(line, " ");
 
-        while (token.hasMoreTokens()) {
-            String word = token.nextToken();
+            int lineLen = 0;
+            while (token.hasMoreTokens()) {
+                String word = token.nextToken();
 
-            if (lineLen + word.length() > maxLineLength) {
-                output.append('\n');
-                lineLen = 0;
+                if (lineLen + word.length() > maximumCharacters) {
+                    output.append("<br>");
+                    lineLen = 0;
+                }
+                output.append(word).append(' ');
+                lineLen += word.length();
             }
-            output.append(word).append(' ');
-            lineLen += word.length();
+            output.append("<br>");
         }
-
+        output.append("</html>");
         return output.toString();
     }
 }

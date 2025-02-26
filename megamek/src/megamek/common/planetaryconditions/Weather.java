@@ -20,6 +20,8 @@ package megamek.common.planetaryconditions;
 
 import megamek.common.Messages;
 
+import java.util.Arrays;
+
 public enum Weather {
     CLEAR("WEATHER_CLEAR", "PlanetaryConditions.DisplayableName.Weather.Clear", "\u239A"),
     LIGHT_RAIN("WEATHER_LIGHT_RAIN", "PlanetaryConditions.DisplayableName.Weather.LightRain", "\u2601 \u2022 \u2022 \u2022 \u2022"),
@@ -141,9 +143,10 @@ public enum Weather {
     }
 
 
-    public boolean isLightRainOrModerateRain() {
+    public boolean isLightRainOrModerateRainOrLightningStorm() {
         return isLightRain()
-                || isModerateRain();
+                || isModerateRain()
+                || isLightningStorm();
     }
 
     public boolean isModerateSnowOrSnowFlurries() {
@@ -151,15 +154,22 @@ public enum Weather {
                 || isSnowFlurries();
     }
 
-    public boolean isModerateRainOrModerateSnow() {
+    public boolean isModerateRainOrLightningStorm() {
         return isModerateRain()
-                || isModerateSnow();
+                || isLightningStorm();
     }
 
-    public boolean isDownpourOrHeavySnowOrIceStorm() {
+    public boolean isModerateRainOrModerateSnowOrLightningStorm() {
+        return isModerateRain()
+                || isModerateSnow()
+                || isLightningStorm();
+    }
+
+    public boolean isDownpourOrHeavySnowOrIceStormOrLightningStorm() {
         return isDownpour()
                 || isHeavySnow()
-                || isIceStorm();
+                || isIceStorm()
+                || isLightningStorm();
     }
 
     public boolean isSnowFlurriesOrSleetOrIceStorm() {
@@ -218,11 +228,12 @@ public enum Weather {
                 || isSleet();
     }
 
-    public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpour() {
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrDownpourOrLightningStorm() {
         return isModerateRain()
                 || isHeavyRain()
                 || isGustingRain()
-                || isDownpour();
+                || isDownpour()
+                || isLightningStorm();
     }
 
     public boolean isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm() {
@@ -258,14 +269,27 @@ public enum Weather {
                 || isSnowFlurries();
     }
 
-    public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleet() {
+    public boolean isModerateRainOrHeavyRainOrGustingRainOrModerateSnowOrSnowFlurriesOrHeavySnowOrSleetOrLightningStorm() {
         return isModerateRain()
                 || isHeavyRain()
                 || isGustingRain()
                 || isModerateSnow()
                 || isSnowFlurries()
                 || isHeavySnow()
-                || isSleet();
+                || isSleet()
+                || isLightningStorm();
+    }
+
+    public boolean isAnyRain() {
+        return isAnyOf(LIGHT_RAIN, MOD_RAIN, HEAVY_RAIN, DOWNPOUR, GUSTING_RAIN);
+    }
+
+    public boolean isAnySnowfall() {
+        return isAnyOf(LIGHT_SNOW, MOD_SNOW, HEAVY_SNOW, SNOW_FLURRIES);
+    }
+
+    public boolean isAnyOf(Weather weather, Weather... moreWeathers) {
+        return this == weather || Arrays.stream(moreWeathers).anyMatch(w -> w == weather);
     }
 
     public static Weather getWeather(int i) {

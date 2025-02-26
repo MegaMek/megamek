@@ -28,13 +28,12 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -43,13 +42,13 @@ import megamek.server.Server;
 public class LegAttackHandler extends WeaponHandler {
     private static final long serialVersionUID = 4429993211361286138L;
 
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -68,10 +67,10 @@ public class LegAttackHandler extends WeaponHandler {
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
         if (entityTarget.getInternal(hit) <= 0) {
-            if (hit.getLocation() == Mech.LOC_RLEG) {
-                hit = new HitData(Mech.LOC_LLEG);
+            if (hit.getLocation() == Mek.LOC_RLEG) {
+                hit = new HitData(Mek.LOC_LLEG);
             } else {
-                hit = new HitData(Mech.LOC_RLEG);
+                hit = new HitData(Mek.LOC_RLEG);
             }
         }
         hit.setGeneralDamageType(generalDamageType);
@@ -99,7 +98,7 @@ public class LegAttackHandler extends WeaponHandler {
         if (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
             critMod -= 2;
         }
-        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MECH)) {
+        if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MEK)) {
             critMod += 1;
         }
         vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));

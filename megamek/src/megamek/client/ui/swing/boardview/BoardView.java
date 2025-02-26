@@ -19,6 +19,27 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
+import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
+
 import megamek.MMConstants;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
@@ -33,14 +54,24 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.EntityChoiceDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.TilesetManager;
-import megamek.client.ui.swing.util.*;
-import megamek.client.ui.swing.widget.MegamekBorder;
+import megamek.client.ui.swing.util.FontHandler;
+import megamek.client.ui.swing.util.ImageCache;
+import megamek.client.ui.swing.util.KeyBindReceiver;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.MegaMekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.PhysicalAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
@@ -55,31 +86,15 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.plaf.metal.DefaultMetalTheme;
-import javax.swing.plaf.metal.MetalTheme;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.List;
-import java.util.Queue;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static megamek.client.ui.swing.tileset.HexTileset.HEX_H;
-import static megamek.client.ui.swing.tileset.HexTileset.HEX_W;
+import megamek.logging.MMLogger;
+import megamek.server.props.OrbitalBombardment;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
 public final class BoardView extends AbstractBoardView implements BoardListener, MouseListener,
         IPreferenceChangeListener, KeyBindReceiver {
+    private static final MMLogger logger = MMLogger.create(BoardView.class);
 
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
@@ -92,8 +107,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
-    private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f, 1.6f, 2.0f, 3.0f};
+    private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
+            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f, 1.6f, 2.0f, 3.0f };
 
     private static final int[] ZOOM_SCALE_TYPES = {
             ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
@@ -102,10 +117,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
             ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
-            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC};
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC };
 
-
-    public static final int[] allDirections = {0, 1, 2, 3, 4, 5};
+    public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
 
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance().getIsometricEnabled();
@@ -132,7 +146,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private static Font FONT_16 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 16);
     private static Font FONT_18 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 18);
     private static Font FONT_24 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 24);
-
 
     Dimension hex_size;
 
@@ -171,7 +184,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * if the Entity has no secondary positions, the first element will be the
      * ID and the second element will be -1.
      */
-    private Map<List<Integer>, EntitySprite> entitySpriteIds = new HashMap<>();
+    private Map<ArrayList<Integer>, EntitySprite> entitySpriteIds = new HashMap<>();
     /**
      * A Map that maps an Entity ID and a secondary position to a Sprite. Note
      * that the key is a List where the first entry will be the Entity ID and
@@ -179,7 +192,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * if the Entity has no secondary positions, the first element will be the
      * ID and the second element will be -1.
      */
-    private Map<List<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
+    private Map<ArrayList<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
 
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
@@ -203,7 +216,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> c3Sprites = new ArrayList<>();
 
-    // list of sprites for declared VTOL/airmech bombing/strafing targets
+    // list of sprites for declared VTOL/airmek bombing/strafing targets
     private ArrayList<VTOLAttackSprite> vtolAttackSprites = new ArrayList<>();
 
     // vector of sprites for aero flyover lines
@@ -261,7 +274,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private long moveWait = 0;
 
     // moving entity sprites
-    private List<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
+    private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
     private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
     private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
 
@@ -342,7 +355,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /** True when the board is in the process of centering to a spot. */
     private boolean isSoftCentering = false;
-    /** The final position of a soft centering relative to board size (x, y = 0...1). */
+    /**
+     * The final position of a soft centering relative to board size (x, y = 0...1).
+     */
     private Point2D softCenterTarget = new Point2D.Double();
     private Point2D oldCenter = new Point2D.Double();
     private long waitTimer;
@@ -350,19 +365,25 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private static final int SOFT_CENTER_SPEED = 8;
 
     // Tooltip Info ---
-    /** Holds the final Coords for a planned movement. Set by MovementDisplay,
-     *  used to display the distance in the board tooltip. */
+    /**
+     * Holds the final Coords for a planned movement. Set by MovementDisplay,
+     * used to display the distance in the board tooltip.
+     */
     private Coords movementTarget;
 
     // Used to track the previous x/y for tooltip display
     int prevTipX = -1, prevTipY = -1;
 
     /**
-     * Flag to indicate if we should display information about illegal terrain in hexes.
+     * Flag to indicate if we should display information about illegal terrain in
+     * hexes.
      */
     boolean displayInvalidHexInfo = false;
 
-    /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
+    /**
+     * Stores the correct tooltip dismiss delay so it can be restored when exiting
+     * the boardview
+     */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
     /** The coords where the mouse was last. */
@@ -377,8 +398,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     BoardViewTooltipProvider boardViewToolTip = (point, movementTarget) -> null;
 
-    // Part of the sprites need specialized treatment; as there can be many sprites, filtering them
-    // on the spot is a noticeable performance hit (in iso mode), therefore the sprites are copied
+    // Part of the sprites need specialized treatment; as there can be many sprites,
+    // filtering them
+    // on the spot is a noticeable performance hit (in iso mode), therefore the
+    // sprites are copied
     // to specialized lists when created
     private final TreeSet<Sprite> overTerrainSprites = new TreeSet<>();
     private final TreeSet<HexSprite> behindTerrainHexSprites = new TreeSet<>();
@@ -408,7 +431,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         boardPanel.addMouseListener(this);
         boardPanel.addMouseWheelListener(we -> {
             Point mousePoint = we.getPoint();
-            Point dispPoint = new Point(mousePoint.x + boardPanel.getBounds().x, mousePoint.y + boardPanel.getBounds().y);
+            Point dispPoint = new Point(mousePoint.x + boardPanel.getBounds().x,
+                    mousePoint.y + boardPanel.getBounds().y);
 
             // If the mouse is over an IDisplayable, have it react instead of the board
             // Currently only implemented for the ChatterBox
@@ -505,7 +529,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         if (deltaMagnitude > GUIP.getTooltipDistSuppression()) {
                             prevTipX = -1;
                             prevTipY = -1;
-                            // Set the dismissal delay to 0 so that the tooltip goes away and does not reappear
+                            // Set the dismissal delay to 0 so that the tooltip goes away and does not
+                            // reappear
                             // until the mouse has moved more than the suppression distance
                             ToolTipManager.sharedInstance().setDismissDelay(0);
                             // and then, when the tooltip has gone away, reset the dismiss delay
@@ -514,7 +539,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                                     ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
                                 } else {
                                     ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
-                                }});
+                                }
+                            });
                         }
                     }
                     prevTipX = point.x;
@@ -612,6 +638,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         SpecialHexDisplay.Type.BOMB_HIT.init();
         SpecialHexDisplay.Type.BOMB_DRIFT.init();
         SpecialHexDisplay.Type.PLAYER_NOTE.init();
+        SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT.init();
+        SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING.init();
+        SpecialHexDisplay.Type.NUKE_HIT.init();
+        SpecialHexDisplay.Type.NUKE_INCOMING.init();
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening(this);
 
@@ -653,6 +683,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
         stopSoftCentering();
     }
+
     private void performChatCmd() {
         if (!getChatterBoxActive()) {
             setChatterBoxActive(true);
@@ -699,7 +730,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     SwingUtilities.invokeLater(redrawWorker);
                 } catch (Exception ie) {
-                    LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
+                    logger.error("Ignoring error: " + ie.getMessage());
                 }
             }
         };
@@ -711,7 +742,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         try {
             SwingUtilities.invokeLater(redrawWorker);
         } catch (Exception ie) {
-            LogManager.getLogger().error("Ignoring error: " + ie.getMessage());
+            logger.error("Ignoring error: " + ie.getMessage());
         }
     }
 
@@ -761,7 +792,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 break;
 
             case GUIPreferences.INCLINES:
-                game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
+                game.getBoard().initializeAllAutomaticTerrain();
                 clearHexImageCache();
                 boardPanel.repaint();
                 break;
@@ -803,7 +834,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             g.setColor(theme.getControlTextColor());
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
             if (!tileManager.isStarted()) {
-                LogManager.getLogger().info("Loading images for board");
+                logger.info("Loading images for board");
                 tileManager.loadNeededImages(game);
             }
             // wait 1 second, then repaint
@@ -833,13 +864,16 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                             g.drawImage(bvBgImage.getSubimage(xRem, yRem, w - xRem, h - yRem),
                                     clipping.x + x, clipping.y + y, boardPanel);
                         } catch (Exception e) {
-                            // if we somehow messed up the math, log the error and simply act as if we have no background image.
+                            // if we somehow messed up the math, log the error and simply act as if we have
+                            // no background image.
                             Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
 
-                            String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
-                                    rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
+                            String errorData = String.format(
+                                    "Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
+                                    rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(),
+                                    rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
-                            LogManager.getLogger().error(errorData);
+                            logger.error(errorData);
                         }
                     } else {
                         g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
@@ -923,12 +957,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, movementSprites);
         }
 
-        // draw movement, if valid
-        drawSprites(g, pathSprites);
-
-        // draw flight path indicators
-        drawSprites(g, fpiSprites);
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
@@ -936,12 +964,20 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         if (!useIsometric()) {
-            // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+            // In non-iso mode, all sprites can now be drawn according to their internal
+            // priority (draw order)
             drawSprites(g, allSprites);
         } else {
-            // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+            // In iso mode, some sprites are drawn in drawHexes so they can go behind
+            // terrain; draw only the others here
             drawSprites(g, overTerrainSprites);
         }
+
+        // draw movement, if valid
+        drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -961,7 +997,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Undo the previous translation
         g.translate(-HEX_W, -HEX_H);
-
 
         // draw all the "displayables"
         if (displayablesRect == null) {
@@ -991,15 +1026,16 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // debugging method that renders the bounding box of a unit's movement envelope.
-        //renderClusters((Graphics2D) g);
-        //renderMovementBoundingBox((Graphics2D) g);
-        //renderDonut(g, new Coords(10, 10), 2);
-        //renderApproxHexDirection((Graphics2D) g);
+        // renderClusters((Graphics2D) g);
+        // renderMovementBoundingBox((Graphics2D) g);
+        // renderDonut(g, new Coords(10, 10), 2);
+        // renderApproxHexDirection((Graphics2D) g);
     }
 
     /**
      * Debugging method that renders a hex in the approximate direction
      * from the selected entity to the selected hex, of both exist.
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1020,6 +1056,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1060,12 +1097,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Debugging method that renders a hex donut around the given coordinates, with the given radius.
+     * Debugging method that renders a hex donut around the given coordinates, with
+     * the given radius.
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
     private void renderDonut(Graphics2D g, Coords coords, int radius) {
-        List<Coords> donut = coords.allAtDistance(radius);
+        ArrayList<Coords> donut = coords.allAtDistance(radius);
 
         for (Coords donutCoords : donut) {
             Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
@@ -1075,7 +1114,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Debugging method that renders a obnoxious pink lines around hexes in "Board Clusters"
+     * Debugging method that renders a obnoxious pink lines around hexes in "Board
+     * Clusters"
+     *
      * @param g Graphics object on which to draw.
      */
     @SuppressWarnings("unused")
@@ -1112,18 +1153,21 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * onscreen.
      */
     private synchronized void drawSprites(Graphics g,
-                                          Collection<? extends Sprite> spriteArrayList) {
+            Collection<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
     }
 
     private synchronized void drawHexSpritesForHex(Coords c, Graphics g,
-                                                   Collection<? extends HexSprite> spriteArrayList) {
+            Collection<? extends HexSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
 
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
+            if (cp == null) {
+                continue;
+            }
             // This can potentially be an expensive operation
             Rectangle spriteBounds = sprite.getBounds();
             if (cp.equals(c) && view.intersects(spriteBounds) && !sprite.isHidden()) {
@@ -1141,13 +1185,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * hills are rendered to create the appearance that the sprite is behind the
      * hill.
      *
-     * @param c               The Coordinates of the hex that the sprites should be drawn
+     * @param c               The Coordinates of the hex that the sprites should be
+     *                        drawn
      *                        for.
      * @param g               The Graphics object for this board.
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricSpritesForHex(Coords c, Graphics g,
-                                                         Collection<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1168,13 +1213,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * hills are rendered to create the appearance that the sprite is behind the
      * hill.
      *
-     * @param c               The Coordinates of the hex that the sprites should be drawn
+     * @param c               The Coordinates of the hex that the sprites should be
+     *                        drawn
      *                        for.
      * @param g               The Graphics object for this board.
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricWreckSpritesForHex(Coords c,
-                                                              Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
+            Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1239,11 +1285,39 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         Board board = game.getBoard();
+        boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
+        boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
+                if (en_Deployer.isAero()) {
+                    if (en_Deployer.getAltitude() > 0) {
+                        // Flying Aeros are always above it all
+                        if (board.isLegalDeployment(c, en_Deployer) &&
+                            !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
+                            drawHexBorder(g, getHexLocation(c), Color.yellow);
+                        }
+                    } else if (en_Deployer.getAltitude() == 0){
+                        // Show prospective Altitude 1+ hexes
+                        if (board.isLegalDeployment(c, en_Deployer) &&
+                            !en_Deployer.isLocationProhibited(c, 1)) {
+                            drawHexBorder(g, getHexLocation(c), Color.cyan);
+                        }
+                    }
+                } else if (isAirDeployGround || isWiGE ) {
+                    // Draw hexes that are legal at a higher deployment elevation
+                    Hex hex = board.getHex(c);
+                    // Default to Elevation 1 if ceiling + 1 <= 0.
+                    int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
+                    if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c, maxHeight)) {
+                        drawHexBorder(g, getHexLocation(c), Color.cyan);
+                    }
+                }
+
                 if (board.isLegalDeployment(c, en_Deployer) &&
+                    // Draw hexes that are legal at lowest deployment elevation
                         !en_Deployer.isLocationProhibited(c)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }
@@ -1274,17 +1348,19 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        List<Player> players = game.getPlayersList();
-        final GameOptions gOpts = game.getOptions();
+        java.util.List<Player> players = game.getPlayersList();
+        final var gOpts = game.getOptions();
 
-        if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
-            players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
+        if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0)) {
+            players = new ArrayList<>(
+                    players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList()));
         }
 
         if (game.getPhase().isLounge() && !localPlayer.isGameMaster()
                 && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) {
-            players = players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList());
+                        || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) {
+            players = new ArrayList<>(
+                    players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList()));
         }
 
         Board board = game.getBoard();
@@ -1319,7 +1395,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * some padding around the border
      */
     private void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV,
-                              double pad) {
+            double pad) {
         Graphics2D g2D = (Graphics2D) g;
         g.setColor(col);
 
@@ -1371,10 +1447,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * returns the weapon selected in the mech display, or null if none selected
+     * returns the weapon selected in the mek display, or null if none selected
      * or it is not artillery or null if the selected entity is not owned
      */
-    public Mounted getSelectedArtilleryWeapon() {
+    public Mounted<?> getSelectedArtilleryWeapon() {
         // We don't want to display artillery auto-hit/adjusted fire hexes
         // during
         // the artyautohithexes phase. These could be displayed if the player
@@ -1412,10 +1488,48 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
+     * Draw the orbital bombardment attacks on the board view
+     *
+     * @author Luana Coppio
+     * @param boardGraphics     The graphics object to draw on
+     */
+    private void drawOrbitalBombardmentHexes(Graphics boardGraphics) {
+        Image orbitalBombardmentImage = tileManager.getOrbitalBombardmentImage();
+        Rectangle view = boardGraphics.getClipBounds();
+
+        // Compute the origin of the viewing area
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        // Compute size of viewing area
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        // Draw incoming artillery sprites - requires server to update client's
+        // view of game
+        for (Enumeration<OrbitalBombardment> attacks = game.getOrbitalBombardmentAttacks(); attacks.hasMoreElements();) {
+            final OrbitalBombardment orbitalBombardment = attacks.nextElement();
+            final Coords c = new Coords(orbitalBombardment.getX(), orbitalBombardment.getY());
+            // Is the Coord within the viewing area?
+            boolean insideViewArea = ((c.getX() >= drawX) && (c.getX() <= (drawX + drawWidth))
+                && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight)));
+            if (insideViewArea) {
+                Point p = getHexLocation(c);
+                boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true), p.x, p.y, boardPanel);
+                for (Coords c2 : c.allAtDistanceOrLess(orbitalBombardment.getRadius())) {
+                    Point p2 = getHexLocation(c2);
+                    boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true), p2.x, p2.y, boardPanel);
+                }
+            }
+
+        }
+    }
+
+    /**
      * Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes(Graphics g) {
-        Mounted weapon = getSelectedArtilleryWeapon();
+        Mounted<?> weapon = getSelectedArtilleryWeapon();
         Rectangle view = g.getClipBounds();
 
         // Compute the origin of the viewing area
@@ -1430,8 +1544,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Draw incoming artillery sprites - requires server to update client's
         // view of game
-        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks();
-             attacks.hasMoreElements(); ) {
+        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements();) {
             final ArtilleryAttackAction attack = attacks.nextElement();
             final Targetable target = attack.getTarget(game);
             if (target == null) {
@@ -1503,8 +1616,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int maxY = drawY + drawHeight;
 
         Board board = game.getBoard();
-        for (Enumeration<Coords> minedCoords = game.getMinedCoords();
-             minedCoords.hasMoreElements(); ) {
+        for (Enumeration<Coords> minedCoords = game.getMinedCoords(); minedCoords.hasMoreElements();) {
             Coords c = minedCoords.nextElement();
             // If the coords aren't visible, skip
             if ((c.getX() < drawX) || (c.getX() > maxX) || (c.getY() < drawY) || (c.getY() > maxY)
@@ -1598,6 +1710,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // Artillery targets
             drawArtilleryHexes(boardGraph);
 
+            // draw Orbital Bombardment targets;
+            drawOrbitalBombardmentHexes(boardGraph);
+
             // draw highlight border
             drawSprite(boardGraph, highlightSprite);
 
@@ -1653,10 +1768,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
 
             if (!useIsometric()) {
-                // In non-iso mode, all sprites can now be drawn according to their internal priority (draw order)
+                // In non-iso mode, all sprites can now be drawn according to their internal
+                // priority (draw order)
                 drawSprites(boardGraph, allSprites);
             } else {
-                // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
+                // In iso mode, some sprites are drawn in drawHexes so they can go behind
+                // terrain; draw only the others here
                 drawSprites(boardGraph, overTerrainSprites);
             }
         }
@@ -1725,12 +1842,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
             if (!saveBoardImage) {
-                // If we are using Isometric rendering, redraw the entity sprites at 50% transparent
+                // If we are using Isometric rendering, redraw the entity sprites at 50%
+                // transparent
                 // so sprites hidden behind hills can still be seen by the user.
                 drawIsometricSprites(g, isometricSprites);
             }
         } else {
-            // Draw hexes without regard to elevation when not using Isometric, since it does not
+            // Draw hexes without regard to elevation when not using Isometric, since it
+            // does not
             // matter.
             for (int i = 0; i < drawHeight; i++) {
                 for (int j = 0; j < drawWidth; j++) {
@@ -1742,7 +1861,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Draws a hex onto the board buffer. This assumes that drawRect is current, and does not check
+     * Draws a hex onto the board buffer. This assumes that drawRect is current, and
+     * does not check
      * if the hex is visible.
      */
     private void drawHex(Coords c, Graphics boardGraph, boolean saveBoardImage) {
@@ -1751,6 +1871,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         final Hex hex = game.getBoard().getHex(c);
+        if (hex == null) {
+            return;
+        }
         final Point hexLoc = getHexLocation(c);
         PlanetaryConditions conditions = game.getPlanetaryConditions();
 
@@ -1805,7 +1928,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     largestLevelDiff = levelDiff;
                 }
             }
-            imgHeight += HEX_ELEV * scale * largestLevelDiff;
+            imgHeight += (int) (HEX_ELEV * scale * largestLevelDiff);
         }
         // If the base image isn't ready, we should signal a repaint and stop
         if ((imgWidth < 0) || (imgHeight < 0)) {
@@ -1831,7 +1954,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     (int) (HEX_H * scale));
 
             // hex mask to limit drawing to the hex shape
-            // TODO : this is not ideal yet but at least it draws without leaving gaps at any zoom
+            // TODO : this is not ideal yet but at least it draws without leaving gaps at
+            // any zoom
             Image hexMask = getScaledImage(tileManager.getHexMask(), true);
             g.drawImage(hexMask, 0, 0, boardPanel);
             Composite svComp = g.getComposite();
@@ -1859,8 +1983,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                         null); // paint addtl slice on the left side
                 // paint addtl slice on the top left side
                 g.drawImage(scaledImage, origImgWidth - p1SRC.x, origImgHeight
-                        - p1SRC.y, p2DST.x, p2DST.y, 0, 0, p2SRC.x
-                        - origImgWidth, p2SRC.y - origImgHeight, null);
+                        - p1SRC.y, p2DST.x, p2DST.y, 0, 0,
+                        p2SRC.x
+                                - origImgWidth,
+                        p2SRC.y - origImgHeight, null);
             }
 
             g.setComposite(svComp);
@@ -1870,7 +1996,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         // have to be drawn before the shadow map, otherwise the supers are
         // drawn after. Unfortunately the supers images
         // themselves can't be checked for roads.
-        List<Image> supers = tileManager.supersFor(hex);
+        java.util.List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
         if (hex.containsTerrain(Terrains.ROAD)
                 || hex.containsTerrain(Terrains.WATER)
@@ -1944,7 +2070,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Orthos = bridges
-        List<Image> orthos = tileManager.orthoFor(hex);
+        java.util.List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
                 if (animatedImages.contains(image.hashCode())) {
@@ -2011,6 +2137,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
         }
 
+        if (hex.containsTerrain(Terrains.DEPLOYMENT_ZONE) && (game.getPhase().isUnknown())) {
+            drawHexBorder(g, Color.yellow, 5, 5);
+            drawCenteredString("DZ " + Board.exitsAsIntList(hex.getTerrain(Terrains.DEPLOYMENT_ZONE).getExits()),
+                    0, (int) (50 * scale), font_note, g);
+        }
+
         // Set the text color according to Preferences or Light Gray in space
         g.setColor(GUIP.getBoardTextColor());
         if (game.getBoard().inSpace()) {
@@ -2023,13 +2155,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(), localPlayer, GUIP)) {
-                        scaledImage = getScaledImage(shd.getType().getDefaultImage(), true);
+                        scaledImage = getScaledImage(shd.getDefaultImage(), true);
                         g.drawImage(scaledImage, 0, 0, boardPanel);
                     }
                 }
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Exception, probably can't load file.", e);
+            logger.error(e, "Exception, probably can't load file.");
             drawCenteredString("Loading Error", 0, (int) (50 * scale), font_note, g);
             return;
         }
@@ -2192,7 +2324,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Draws a orthographic hex onto the board buffer. This assumes that drawRect is current, and
+     * Draws a orthographic hex onto the board buffer. This assumes that drawRect is
+     * current, and
      * does not check if the hex is visible.
      */
     private void drawOrthograph(Coords c, Graphics boardGraph) {
@@ -2232,7 +2365,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
-    boolean useIsometric() {
+    public boolean useIsometric() {
         return drawIsometric;
     }
 
@@ -2253,11 +2386,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * but the y value has been increased (or decreased) based on the difference
      * in elevation between the given hex and the adjacent hex.
      *
-     * @param c          Coordinates of the source hex.
-     * @param color      Color to use for the elevation polygons.
-     * @param p1         The First point on the edge of the hex.
-     * @param p2         The second point on the edge of the hex.
-     * @param dir        The side of the hex to have the elevation drawn on.
+     * @param c     Coordinates of the source hex.
+     * @param color Color to use for the elevation polygons.
+     * @param p1    The First point on the edge of the hex.
+     * @param p2    The second point on the edge of the hex.
+     * @param dir   The side of the hex to have the elevation drawn on.
      * @param g
      */
     private final void drawIsometricElevation(Coords c, Color color, Point p1, Point p2, int dir, Graphics g) {
@@ -2287,9 +2420,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             }
             int scaledHeight = (int) (HEX_ELEV * scale * height);
 
-            Polygon p = new Polygon(new int[]{p1.x, p2.x, p2.x, p1.x},
-                    new int[]{p1.y + fudge, p2.y + fudge,
-                            p2.y + scaledHeight, p1.y + scaledHeight}, 4);
+            Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x },
+                    new int[] { p1.y + fudge, p2.y + fudge,
+                            p2.y + scaledHeight, p1.y + scaledHeight },
+                    4);
             g.setColor(color);
             g.drawPolygon(p);
             g.fillPolygon(p);
@@ -2316,25 +2450,26 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             int scaledDelta = (int) (HEX_ELEV * scale * delta);
             Point p3 = new Point(p1.x, p1.y + scaledDelta + fudge);
 
-            Polygon p = new Polygon(new int[]{p1.x, p2.x, p2.x, p1.x},
-                    new int[]{p1.y + fudge, p2.y + fudge,
+            Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x },
+                    new int[] { p1.y + fudge, p2.y + fudge,
                             p2.y + fudge + scaledDelta,
-                            p1.y + fudge + scaledDelta}, 4);
+                            p1.y + fudge + scaledDelta },
+                    4);
 
             if ((p1.y + fudge) < 0) {
-                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p1.y + fudge));
+                logger.info("Negative Y value (Fudge)!: " + (p1.y + fudge));
             }
 
             if ((p2.y + fudge) < 0) {
-                LogManager.getLogger().info("Negative Y value (Fudge)!: " + (p2.y + fudge));
+                logger.info("Negative Y value (Fudge)!: " + (p2.y + fudge));
             }
 
             if ((p2.y + fudge + scaledDelta) < 0) {
-                LogManager.getLogger().info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
+                logger.info("Negative Y value!: " + (p2.y + fudge + scaledDelta));
             }
 
             if ((p1.y + fudge + scaledDelta) < 0) {
-                LogManager.getLogger().info("Negative Y value!: " + (p1.y + fudge + scaledDelta));
+                logger.info("Negative Y value!: " + (p1.y + fudge + scaledDelta));
             }
             g.setColor(color);
             g.drawPolygon(p);
@@ -2368,10 +2503,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Given an int-packed RGB value, apply a modifier for the light level and return the result.
+     * Given an int-packed RGB value, apply a modifier for the light level and
+     * return the result.
      *
      * @param rgb int-packed ARGB value.
-     * @return An int-packed ARGB value, which is an adjusted value of the input, based on the light level
+     * @return An int-packed ARGB value, which is an adjusted value of the input,
+     *         based on the light level
      */
     public int getNightDarkenedColor(int rgb) {
         int rd = (rgb >> 16) & 0xFF;
@@ -2422,7 +2559,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 return null;
             }
         } else {
-            // no shadow area when the current hex is not lower than the next hex in direction
+            // no shadow area when the current hex is not lower than the next hex in
+            // direction
             if (srcHex.getLevel() >= destHex.getLevel()) {
                 return null;
             } else if (GUIP.getHexInclines()
@@ -2437,7 +2575,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Generates a fill gradient which is rotated and aligned properly for the drawing area for a
+     * Generates a fill gradient which is rotated and aligned properly for the
+     * drawing area for a
      * hex shadow effect in a lower hex.
      */
     private GradientPaint getElevationShadowGP(Coords src, int direction) {
@@ -2454,7 +2593,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         ldiff = Math.min(ldiff * 5, 15);
 
         Color c1 = new Color(30, 30, 50, 255); // dark end of shadow
-        Color c2 = new Color(50, 50, 70, 0);   // light end of shadow
+        Color c2 = new Color(50, 50, 70, 0); // light end of shadow
 
         Point2D p1 = new Point2D.Double(41.5, -25 + ldiff);
         Point2D p2 = new Point2D.Double(41.5, 8.0 + ldiff);
@@ -2469,7 +2608,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * @return The absolute position of the upper-left hand corner of the hex graphic
+     * @return The absolute position of the upper-left hand corner of the hex
+     *         graphic
      */
     private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
@@ -2501,7 +2641,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     Point getHexLocation(Coords c) {
-        return getHexLocation(c.getX(), c.getY(), false);
+        return c == null ? null : getHexLocation(c.getX(), c.getY(), false);
     }
 
     /**
@@ -2605,7 +2745,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing, int elevation) {
         Integer entityId = entity.getId();
-        List<Integer> spriteKey = getIdAndLoc(entityId, -1);
+        ArrayList<Integer> spriteKey = getIdAndLoc(entityId, -1);
         EntitySprite sprite = entitySpriteIds.get(spriteKey);
         IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
         // We can ignore secondary locations for now, as we don't have moving
@@ -2613,8 +2753,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         PriorityQueue<EntitySprite> newSprites;
         PriorityQueue<IsometricSprite> isoSprites;
-        HashMap<List<Integer>, EntitySprite> newSpriteIds;
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds;
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds;
 
         // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
@@ -2642,7 +2782,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         MovingEntitySprite mSprite = movingEntitySpriteIds.get(entityId);
-        List<MovingEntitySprite> newMovingSprites = new ArrayList<>(movingEntitySprites);
+        ArrayList<MovingEntitySprite> newMovingSprites = new ArrayList<>(movingEntitySprites);
         HashMap<Integer, MovingEntitySprite> newMovingSpriteIds = new HashMap<>(movingEntitySpriteIds);
         // Remove any old movement sprite
         if (mSprite != null) {
@@ -2664,26 +2804,21 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
-     * the old sprite with the new! Try to prevent annoying
-     * ConcurrentModificationExceptions
-     */
-    public void redrawEntity(Entity entity) {
-        redrawEntity(entity, null);
-    }
-
-    /**
-     * Convenience method for returning a Key value for the entitySpriteIds and isometricSprite
-     * maps. The List contains as the first element the Entity ID and as the second element its
-     * location ID: either -1 if the Entity has no secondary locations, or the index of its
+     * Convenience method for returning a Key value for the entitySpriteIds and
+     * isometricSprite
+     * maps. The List contains as the first element the Entity ID and as the second
+     * element its
+     * location ID: either -1 if the Entity has no secondary locations, or the index
+     * of its
      * secondary location.
      *
-     * @param entityId The Entity ID
-     * @param secondaryLoc the secondary loc index, or -1 for Entities without secondary positions
+     * @param entityId     The Entity ID
+     * @param secondaryLoc the secondary loc index, or -1 for Entities without
+     *                     secondary positions
      * @return
      */
-    private List<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
-        List<Integer> idLoc = new ArrayList<>(2);
+    private ArrayList<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
+        ArrayList<Integer> idLoc = new ArrayList<>(2);
         idLoc.add(entityId);
         idLoc.add(secondaryLoc);
         return idLoc;
@@ -2696,11 +2831,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * DropShips taking off (airborne DropShips lose their secondary hexes). Try
      * to prevent annoying ConcurrentModificationExceptions
      */
-    public void redrawEntity(Entity entity, Entity oldEntity) {
+    public void redrawEntity(Entity entity) {
         Integer entityId = entity.getId();
-        if (oldEntity == null) {
-            oldEntity = entity;
-        }
+
+        // Remove sprites from backing sprite collections before modifying the
+        // entitySprites and isometricSprites. Otherwise orphaned overTerrainSprites
+        // or behindTerrainHexSprites can result.
+        removeSprites(entitySprites);
+        removeSprites(isometricSprites);
 
         // If the entity we are updating doesn't have a position, ensure we
         // remove all of its old sprites
@@ -2716,7 +2854,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
 
-            //  Update ID -> Sprite map
+            // Update ID -> Sprite map
             spriteIter = entitySpriteIds.values().iterator();
             while (spriteIter.hasNext()) {
                 EntitySprite sprite = spriteIter.next();
@@ -2748,9 +2886,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // Create a copy of the sprite list
         Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
-        HashMap<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(entitySpriteIds);
+        HashMap<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(entitySpriteIds);
         Queue<IsometricSprite> isoSprites = new PriorityQueue<>(isometricSprites);
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
+        HashMap<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
         // Remove the sprites we are going to update
         EntitySprite sprite = entitySpriteIds.get(getIdAndLoc(entityId, -1));
@@ -2763,7 +2901,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             isoSprites.remove(isoSprite);
         }
 
-        for (int secondaryPos : oldEntity.getSecondaryPositions().keySet()) {
+        for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
             sprite = entitySpriteIds.get(getIdAndLoc(entityId, secondaryPos));
             if (sprite != null) {
                 newSprites.remove(sprite);
@@ -2812,8 +2950,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Update Sprite state with new collections
-        removeSprites(entitySprites);
-        removeSprites(isometricSprites);
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;
@@ -2824,7 +2960,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         // Remove C3 sprites
-        for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext(); ) {
+        for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
             if ((c3sprite.entityId == entity.getId()) || (c3sprite.masterId == entity.getId())) {
                 i.remove();
@@ -2836,7 +2972,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             addC3Link(entity);
         }
 
-        for (Iterator<VTOLAttackSprite> iter = vtolAttackSprites.iterator(); iter.hasNext(); ) {
+        for (Iterator<VTOLAttackSprite> iter = vtolAttackSprites.iterator(); iter.hasNext();) {
             final VTOLAttackSprite s = iter.next();
             if (s.getEntity().getId() == entity.getId()) {
                 iter.remove();
@@ -2859,21 +2995,21 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
 
         updateEcmList();
-        highlightSelectedEntity();
+        highlightSelectedEntity(getSelectedEntity());
         scheduleRedraw();
     }
 
     /**
      * Clears all old entity sprites out of memory and sets up new ones.
      */
-    void redrawAllEntities() {
+    public void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
         // Prevent IllegalArgumentException
         numEntities = Math.max(1, numEntities);
         Queue<EntitySprite> newSprites = new PriorityQueue<>(numEntities);
         Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(numEntities);
-        Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
-        Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
+        Map<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
+        Map<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
 
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
@@ -2962,14 +3098,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             addSprites(isometricSprites);
         }
 
-
         wreckSprites = newWrecks;
         isometricWreckSprites = newIsometricWrecks;
 
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
         // Re-highlight a selected entity, if present
-        highlightSelectedEntity();
+        highlightSelectedEntity(getSelectedEntity());
 
         scheduleRedraw();
     }
@@ -2990,7 +3125,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Centers the board on the position of the selected unit, if any. Uses smooth centering if activated
+     * Centers the board on the position of the selected unit, if any. Uses smooth
+     * centering if activated
      * in the client settings.
      */
     public void centerOnSelected() {
@@ -2998,8 +3134,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Centers the board on the position of the given unit. Uses smooth centering if activated
-     * in the client settings. The given entity may be null, in which case nothing happens.
+     * Centers the board on the position of the given unit. Uses smooth centering if
+     * activated
+     * in the client settings. The given entity may be null, in which case nothing
+     * happens.
      *
      * @param entity The unit to center on.
      */
@@ -3063,7 +3201,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
     }
 
-    /** Moves the board one step towards the final
+    /**
+     * Moves the board one step towards the final
      * position in during soft centering.
      */
     private synchronized void centerOnHexSoftStep(long deltaTime) {
@@ -3096,7 +3235,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     private void adjustVisiblePosition(@Nullable Coords c, @Nullable Point dispPoint, double ihdx,
-                                       double ihdy) {
+            double ihdy) {
         if ((c == null) || (dispPoint == null)) {
             return;
         }
@@ -3114,10 +3253,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Centers the board to a point
+     *
      * @param xrel the x position relative to board width.
      * @param yrel the y position relative to board height.
-     * Both xrel and yrel should be between 0 and 1.
-     * The method will clip both values to this range.
+     *             Both xrel and yrel should be between 0 and 1.
+     *             The method will clip both values to this range.
      */
     public void centerOnPointRel(double xrel, double yrel) {
         // restrict both values to between 0 and 1
@@ -3137,14 +3277,17 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Returns the currently visible area of the board.
+     *
      * @return an array of 4 double values indicating the relative size,
-     * where the first two values indicate the x and y position of the upper left
-     * corner of the visible area and the second two values the x and y position of
-     * the lower right corner.
-     * So when the whole board is visible, the values should be 0, 0, 1, 1.
-     * When the lower right corner of the board is visible
-     * and 90% of width and height: 0.1, 0.1, 1, 1
-     * Due to board padding the values can be outside of [0;1]
+     *         where the first two values indicate the x and y position of the upper
+     *         left
+     *         corner of the visible area and the second two values the x and y
+     *         position of
+     *         the lower right corner.
+     *         So when the whole board is visible, the values should be 0, 0, 1, 1.
+     *         When the lower right corner of the board is visible
+     *         and 90% of width and height: 0.1, 0.1, 1, 1
+     *         Due to board padding the values can be outside of [0;1]
      */
     public double[] getVisibleArea() {
         double[] values = new double[4];
@@ -3210,15 +3353,15 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         refreshMoveVectors(entity, md, col);
 
-        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
+        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if ((null != previousStep)
                     && ((step.getType() == MoveStepType.UP)
-                    || (step.getType() == MoveStepType.DOWN)
-                    || (step.getType() == MoveStepType.ACC)
-                    || (step.getType() == MoveStepType.DEC)
-                    || (step.getType() == MoveStepType.ACCN)
-                    || (step.getType() == MoveStepType.DECN))) {
+                            || (step.getType() == MoveStepType.DOWN)
+                            || (step.getType() == MoveStepType.ACC)
+                            || (step.getType() == MoveStepType.DEC)
+                            || (step.getType() == MoveStepType.ACCN)
+                            || (step.getType() == MoveStepType.DECN))) {
                 // Mark the previous elevation change sprite hidden
                 // so that we can draw a new one in it's place without
                 // having overlap.
@@ -3230,11 +3373,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     // because costs will overlap and we only want the current
                     // facing
                     && (game.useVectorMove()
-                    // A LAM converting from AirMech to Biped uses two convert steps and we
-                    // only want to show the last.
-                    || (step.getType() == MoveStepType.CONVERT_MODE
-                    && previousStep.getType() == MoveStepType.CONVERT_MODE)
-                    || step.getType() == MoveStepType.BOOTLEGGER)) {
+                            // A LAM converting from AirMek to Biped uses two convert steps and we
+                            // only want to show the last.
+                            || (step.getType() == MoveStepType.CONVERT_MODE
+                                    && previousStep.getType() == MoveStepType.CONVERT_MODE)
+                            || step.getType() == MoveStepType.BOOTLEGGER)) {
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
 
@@ -3247,14 +3390,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Add Aerospace ground map flight path indicators on the last step based on how much
-     * aerodyne movement is left.  This will add sprites along the forward path for the
-     * remaining velocity and indicate what point along it's forward path the unit can turn.
+     * Add Aerospace ground map flight path indicators on the last step based on how
+     * much
+     * aerodyne movement is left. This will add sprites along the forward path for
+     * the
+     * remaining velocity and indicate what point along it's forward path the unit
+     * can turn.
      *
      * @param md - Current MovePath that represents the current units movement state
      */
     private void displayFlightPathIndicator(MovePath md) {
-        // Don't attempt displaying Flight Path Indicators if using advanced aero movement.
+        // Don't attempt displaying Flight Path Indicators if using advanced aero
+        // movement.
         if (this.game.useVectorMove()) {
             return;
         }
@@ -3264,9 +3411,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             return;
         }
 
-        // If the unit has remaining aerodyne velocity display the flight path indicators for remaining velocity.
+        // If the unit has remaining aerodyne velocity display the flight path
+        // indicators for remaining velocity.
         if ((md.getFinalVelocityLeft() > 0) && !md.nextForwardStepOffBoard()) {
-            List<MoveStep> fpiSteps = new Vector<MoveStep>();
+            ArrayList<MoveStep> fpiSteps = new ArrayList<MoveStep>();
 
             // Cloning the current movement path because we don't want to change it's state.
             MovePath fpiPath = md.clone();
@@ -3282,10 +3430,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
 
-            // For each hex in the entities forward trajectory, add a flight turn indicator sprite.
+            // For each hex in the entities forward trajectory, add a flight turn indicator
+            // sprite.
             for (MoveStep ms : fpiSteps) {
-//                fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms, fpiPath.isEndStep(ms)));
-                fpiSprites.add(new FlightPathIndicatorSprite(this, fpiSteps, fpiSteps.indexOf(ms), fpiPath.isEndStep(ms)));
+                // fpiSprites.add(new FlightPathIndicatorSprite(this, ms.getPosition(), ms,
+                // fpiPath.isEndStep(ms)));
+                fpiSprites.add(
+                        new FlightPathIndicatorSprite(this, fpiSteps, fpiSteps.indexOf(ms), fpiPath.isEndStep(ms)));
             }
         }
     }
@@ -3352,10 +3503,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param c the given coords
      * @return any entities flying over the given coords
      */
-    public List<Entity> getEntitiesFlyingOver(Coords c) {
-        List<Entity> entities = new ArrayList<>();
+    public ArrayList<Entity> getEntitiesFlyingOver(Coords c) {
+        ArrayList<Entity> entities = new ArrayList<>();
         for (FlyOverSprite fsprite : flyOverSprites) {
-            // Spaceborne units shouldn't count here. They show up incorrectly in the firing display when sensors are in use.
+            // Spaceborne units shouldn't count here. They show up incorrectly in the firing
+            // display when sensors are in use.
             if (fsprite.getEntity().getPassedThrough().contains(c) && !fsprite.getEntity().isSpaceborne()) {
                 entities.add(fsprite.getEntity());
             }
@@ -3459,11 +3611,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
         // no re-use possible, add a new one
         // don't add a sprite for an artillery attack made by the other player
-        if (aa instanceof WeaponAttackAction) {
-            WeaponAttackAction waa = (WeaponAttackAction) aa;
+        if (aa instanceof WeaponAttackAction waa) {
+            int ownerId = waa.getEntity(game).getOwner().getId();
+            int teamId = waa.getEntity(game).getOwner().getTeam();
+
             if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(this, aa));
-            } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
+            } else if (ownerId == localPlayer.getId() || teamId == localPlayer.getTeam()) {
                 attackSprites.add(new AttackSprite(this, aa));
             }
         } else {
@@ -3472,7 +3626,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         rebuildAllSpriteDescriptions(attackerId);
     }
 
-    /** adding a new EntityAction may affect the ToHits of other attacks
+    /**
+     * adding a new EntityAction may affect the ToHits of other attacks
      * so rebuild. The underlying data is cached when possible, so the should
      * o the minumum amount of work needed
      */
@@ -3493,7 +3648,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             return;
         }
         int entityId = e.getId();
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext(); ) {
+        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
             AttackSprite sprite = i.next();
             if (sprite.getEntityId() == entityId) {
                 i.remove();
@@ -3507,14 +3662,14 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      */
     public void refreshAttacks() {
         clearAllAttacks();
-        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
             if (ea instanceof AttackAction) {
                 addAttack((AttackAction) ea);
             }
         }
 
-        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
             if (ea instanceof PhysicalAttackAction) {
                 addAttack((AttackAction) ea);
@@ -3589,20 +3744,20 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             StringBuffer message = new StringBuffer();
             LosEffects le;
             if ((ae == null) || (te == null)) {
-                boolean mechInFirst = GUIP.getMechInFirst();
-                boolean mechInSecond = GUIP.getMechInSecond();
+                boolean mekInFirst = GUIP.getMekInFirst();
+                boolean mekInSecond = GUIP.getMekInSecond();
 
                 LosEffects.AttackInfo ai = LosEffects.prepLosAttackInfo(
-                        game, ae, te, c1, c2, mechInFirst, mechInSecond);
+                        game, ae, te, c1, c2, mekInFirst, mekInSecond);
 
                 le = LosEffects.calculateLos(game, ai);
                 message.append(Messages.getString("BoardView1.Attacker",
-                        mechInFirst ? Messages.getString("BoardView1.Mech")
-                                : Messages.getString("BoardView1.NonMech"),
+                        mekInFirst ? Messages.getString("BoardView1.Mek")
+                                : Messages.getString("BoardView1.NonMek"),
                         c1.getBoardNum()));
                 message.append(Messages.getString("BoardView1.Target",
-                        mechInSecond ? Messages.getString("BoardView1.Mech")
-                                : Messages.getString("BoardView1.NonMech"),
+                        mekInSecond ? Messages.getString("BoardView1.Mek")
+                                : Messages.getString("BoardView1.NonMek"),
                         c2.getBoardNum()));
             } else {
                 le = LosEffects.calculateLOS(game, ae, te);
@@ -3888,7 +4043,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * Determine if the tile manager's images have been loaded.
      *
      * @return <code>true</code> if all images have been loaded.
-     * <code>false</code> if more need to be loaded.
+     *         <code>false</code> if more need to be loaded.
      */
     public boolean isTileImagesLoaded() {
         return tileManager.isLoaded();
@@ -4018,9 +4173,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         highlight(new Coords(x, y));
     }
 
-    public synchronized void highlightSelectedEntity() {
+    public synchronized void highlightSelectedEntity(Entity e) {
         for (EntitySprite sprite : entitySprites) {
-            sprite.setSelected(sprite.entity.equals(getSelectedEntity()));
+            sprite.setSelected(sprite.entity.equals(e));
         }
     }
 
@@ -4089,7 +4244,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     break;
                 case BOARD_HEX_DOUBLECLICK:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers, mouseButton));
+                            BoardViewEvent.BOARD_HEX_DOUBLE_CLICKED, modifiers, mouseButton));
                     break;
                 case BOARD_HEX_DRAG:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
@@ -4106,13 +4261,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     /**
      * Notifies listeners about the specified mouse action.
      *
-     * @param coords          - coords the Coords.
-     * @param mtype           - Board view event type
-     * @param modifiers       - mouse event modifiers mask such as SHIFT_DOWN_MASK etc.
-     * @param mouseButton     - mouse button associated with this event
-     *                           0 = no button
-     *                           1 = Button 1
-     *                           2 = Button 2
+     * @param coords      - coords the Coords.
+     * @param mtype       - Board view event type
+     * @param modifiers   - mouse event modifiers mask such as SHIFT_DOWN_MASK etc.
+     * @param mouseButton - mouse button associated with this event
+     *                    0 = no button
+     *                    1 = Button 1
+     *                    2 = Button 2
      */
     public void mouseAction(Coords coords, int mtype, int modifiers, int mouseButton) {
         mouseAction(coords.getX(), coords.getY(), mtype, modifiers, mouseButton);
@@ -4121,7 +4276,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
-        game.getBoard().initializeAllAutomaticTerrain(GUIP.getHexInclines());
+        game.getBoard().initializeAllAutomaticTerrain();
         clearHexImageCache();
         clearShadowMap();
         boardPanel.repaint();
@@ -4169,11 +4324,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         public void gameEntityChange(GameEntityChangeEvent e) {
             final Vector<UnitLocation> mp = e.getMovePath();
             final Entity en = e.getEntity();
-            final GameOptions gopts = game.getOptions();
+            final var gopts = game.getOptions();
 
             updateEcmList();
 
-            // For Entities that have converted to another mode, check for a different sprite
+            // For Entities that have converted to another mode, check for a different
+            // sprite
             if (game.getPhase().isMovement() && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
@@ -4219,7 +4375,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (b != null) {
                 b.addBoardListener(BoardView.this);
             }
-            game.getBoard().initializeAllAutomaticTerrain(GUIP.getHexInclines());
+            game.getBoard().initializeAllAutomaticTerrain();
             clearHexImageCache();
             updateBoard();
             clearShadowMap();
@@ -4235,8 +4391,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             if (GUIP.getGameSummaryBoardView()
                     && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
-                    || e.getOldPhase().isTargeting() || e.getOldPhase().isFiring()
-                    || e.getOldPhase().isPhysical())) {
+                            || e.getOldPhase().isTargeting() || e.getOldPhase().isFiring()
+                            || e.getOldPhase().isPhysical())) {
                 File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -4246,7 +4402,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    logger.error(ex, "");
                 }
             }
 
@@ -4352,12 +4508,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     public synchronized void selectEntity(Entity e) {
         checkFoVHexImageCacheClear();
         updateEcmList();
-        highlightSelectedEntity();
+        highlightSelectedEntity(e);
     }
 
     /**
-     *  Updates maps that determine how to shade hexes affected by E(C)CM. This
-     *  is expensive, so precalculate only when entity changes occur
+     * Updates maps that determine how to shade hexes affected by E(C)CM. This
+     * is expensive, so precalculate only when entity changes occur
      **/
     public void updateEcmList() {
         Map<Coords, Color> newECMHexes = new HashMap<>();
@@ -4366,7 +4522,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Map<Coords, Color> newECCMCenters = new HashMap<>();
 
         // Compute info about all E(C)CM on the board
-        final List<ECMInfo> allEcmInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
+        final ArrayList<ECMInfo> allEcmInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
         // First, mark the sources of E(C)CM
         // Used for highlighting hexes and tooltips
@@ -4432,7 +4588,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     && ecmInfo.getEntity().isHidden()) {
                 continue;
             }
-
 
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();
@@ -4509,8 +4664,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     private void processAffectedCoords(Coords c, ECMEffects ecm,
-                                       ECMEffects eccm, Map<Coords, Color> newECMHexes,
-                                       Map<Coords, Color> newECCMHexes) {
+            ECMEffects eccm, Map<Coords, Color> newECMHexes,
+            Map<Coords, Color> newECCMHexes) {
         Color hexColorECM = null;
         if (ecm != null) {
             hexColorECM = ecm.getHexColor();
@@ -4550,8 +4705,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         Entity choice = null;
 
         // Get the available choices.
-        List<Entity> entities = game.getEntitiesVector(pos);
-
+        java.util.List<Entity> entities = game.getEntitiesVector(pos);
 
         // Do we have a single choice?
         if (entities.size() == 1) {
@@ -4598,7 +4752,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (!bvSkinSpec.backgrounds.isEmpty()) {
                 file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(0)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(file.getAbsolutePath());
                     bvBgShouldTile = bvSkinSpec.tileBackground;
@@ -4607,13 +4761,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new MegaMekFile(Configuration.widgetsDir(), bvSkinSpec.backgrounds.get(1)).getFile();
                 if (!file.exists()) {
-                    LogManager.getLogger().error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
+                    logger.error("BoardView1 Error: icon doesn't exist: " + file.getAbsolutePath());
                 } else {
                     scrollPaneBgImg = ImageUtil.loadImageFromFile(file.getAbsolutePath());
                 }
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error loading BoardView background images!", ex);
+            logger.error(ex, "Error loading BoardView background images!");
         }
 
         // Place the board viewer in a set of scrollbars.
@@ -4648,7 +4802,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }
         };
-        scrollpane.setBorder(new MegamekBorder(bvSkinSpec));
+        scrollpane.setBorder(new MegaMekBorder(bvSkinSpec));
         scrollpane.setLayout(new ScrollPaneLayout());
         // we need to use the simple scroll mode because otherwise the
         // IDisplayables that are drawn in fixed positions in the viewport
@@ -4800,10 +4954,10 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Return a scaled version of the input.  If the useCache flag is set, the
+     * Return a scaled version of the input. If the useCache flag is set, the
      * scaled image will be stored in an image cache for later retrieval.
      *
-     * @param base     The image to get a scaled copy of.  The current zoom level
+     * @param base     The image to get a scaled copy of. The current zoom level
      *                 is used to determine the scale.
      * @param useCache This flag determines whether the scaled image should
      *                 be stored in a cache for later retrieval.
@@ -4817,7 +4971,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         if (zoomIndex == BASE_ZOOM_INDEX) {
             return base;
         }
-
 
         Image scaled;
         if (useCache) {
@@ -4834,7 +4987,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 try {
                     tracker.waitForID(0);
                 } catch (InterruptedException e) {
-                    LogManager.getLogger().error("", e);
+                    logger.error(e, "");
                 }
                 if (tracker.isErrorAny()) {
                     return null;
@@ -4854,7 +5007,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             try {
                 tracker.waitForID(1);
             } catch (InterruptedException e) {
-                LogManager.getLogger().error("", e);
+                logger.error(e, "");
             }
             tracker.removeImage(scaled);
             // Cache the image if the flag is set
@@ -4946,6 +5099,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
     /**
      * Clear a specific list of Coords from the hex image cache.
+     *
      * @param coords
      */
     public void clearHexImageCache(Set<Coords> coords) {
@@ -4955,7 +5109,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     }
 
     /**
-     * Check to see if the HexImageCache should be cleared because of field-of-view changes.
+     * Check to see if the HexImageCache should be cleared because of field-of-view
+     * changes.
      */
     public void checkFoVHexImageCacheClear() {
         boolean darken = shouldFovDarken();
@@ -4969,8 +5124,9 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return HEX_POLY;
     }
 
-    /** Displays a dialog and changes the theme of all
-     *  board hexes to the user-chosen theme.
+    /**
+     * Displays a dialog and changes the theme of all
+     * board hexes to the user-chosen theme.
      */
     public @Nullable String changeTheme() {
         if (game == null) {
@@ -5075,19 +5231,19 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
-    FovHighlightingAndDarkening getFovHighlighting() {
+    public FovHighlightingAndDarkening getFovHighlighting() {
         return fovHighlightingAndDarkening;
     }
 
-    List<WreckSprite> getWreckSprites() {
+    public ArrayList<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
 
-    List<IsometricWreckSprite> getIsoWreckSprites() {
+    public ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
         return isometricWreckSprites;
     }
 
-    List<AttackSprite> getAttackSprites() {
+    ArrayList<AttackSprite> getAttackSprites() {
         return attackSprites;
     }
 

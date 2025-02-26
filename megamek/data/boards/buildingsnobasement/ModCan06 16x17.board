@@ -1,8 +1,10 @@
 size 16 17
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
 tag "Woods (Auto)"
+tag "Hangar (Auto)"
 hex 0101 4 "" ""
 hex 0201 4 "woods:1;foliage_elev:2" ""
 hex 0301 2 "" ""

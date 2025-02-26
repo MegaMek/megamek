@@ -91,6 +91,15 @@ public final class FontHandler {
     }
 
     /**
+     * @return The Noto Symbols 2 font. This font has icons that mesh well in inline text with the
+     * Noto Sans font.
+     */
+    public static Font notoSymbol2Font() {
+        ensureInitialization();
+        return new Font("Noto Sans Symbols 2", Font.PLAIN, 12);
+    }
+
+    /**
      * @return The Noto Sans font which is included with the distribution and can be safely used everywhere.
      * It is advertised to have a wide language support.
      *
@@ -113,10 +122,13 @@ public final class FontHandler {
 
         logger.info("Loading fonts from Java's GraphicsEnvironment");
         for (String fontName : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            allFontNames.add(fontName);
-            Font font = Font.decode(fontName);
-            if (font.canDisplayUpTo(SYMBOL_TEST_STRING) == -1) {
-                nonSymbolFontNames.add(fontName);
+            // Skip Aakar specifically; it causes graphical artefacts when present and selected as the default font.
+            if (!fontName.toLowerCase().contains("aakar")) {
+                allFontNames.add(fontName);
+                Font font = Font.decode(fontName);
+                if (font.canDisplayUpTo(SYMBOL_TEST_STRING) == -1) {
+                    nonSymbolFontNames.add(fontName);
+                }
             }
         }
         initialized = true;
@@ -150,7 +162,7 @@ public final class FontHandler {
                 errors.add("    Failed to read font " + fontFile);
             }
         }
-        logger.warn("Could not register some fonts\n{}", String.join("\n", errors));
+        logger.debug("Could not register some fonts\n{}", String.join("\n", errors));
     }
 
     private static void ensureInitialization() {

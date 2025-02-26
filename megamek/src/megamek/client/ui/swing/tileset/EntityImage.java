@@ -37,8 +37,6 @@ import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
-import org.apache.logging.log4j.LogManager;
-
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
@@ -55,9 +53,11 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
+import megamek.logging.MMLogger;
 
 /** Handles the rotated and damaged and preview images for a unit. */
 public class EntityImage {
+    private static final MMLogger logger = MMLogger.create(EntityImage.class);
 
     // Control values for applying bigger and smaller smoke
     private static final int SMOKE_THREE = 70;
@@ -112,7 +112,7 @@ public class EntityImage {
                 grabImagePixels(overlay.getImage(), pOverlays[i]);
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for the camo overlay." + e.getMessage());
+            logger.error("Failed to grab pixels for the camo overlay." + e.getMessage());
         }
     }
 
@@ -124,7 +124,7 @@ public class EntityImage {
             DecalImages = new DirectoryItems(DECAL_PATH, new ImageFileFactory());
         } catch (Exception e) {
             DecalImages = null;
-            LogManager.getLogger().warn("Failed to find the damage decal images." + e.getMessage());
+            logger.warn("Failed to find the damage decal images." + e.getMessage());
         }
         dmgEmpty = TilesetManager.LoadSpecificImage(DECAL_PATH, FILE_DAMAGEDECAL_EMPTY.toString());
     }
@@ -162,50 +162,54 @@ public class EntityImage {
     private final boolean isTank;
     private final int unitHeight;
     private final int unitElevation;
+    private final boolean withShadows;
 
     public static EntityImage createIcon(Image base, Camouflage camouflage, Entity entity) {
-        return createIcon(base, null, camouflage, entity, -1, true);
+        return createIcon(base, null, camouflage, entity, -1, true, true);
+    }
+
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Entity entity, boolean withShadows) {
+        return createIcon(base, null, camouflage, entity, -1, true, withShadows);
     }
 
     public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Entity entity) {
-        return createIcon(base, null, camouflage, entity, -1, true);
+        return createIcon(base, null, camouflage, entity, -1, true, true);
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
             Entity entity, int secondaryPos) {
-        return createIcon(base, wreck, camouflage, entity, secondaryPos, false);
+        return createIcon(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview) {
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         if (entity instanceof FighterSquadron) {
-            return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview);
+            return new FighterSquadronIcon(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         } else {
-            return new EntityImage(base, wreck, camouflage, entity, secondaryPos, preview);
+            return new EntityImage(base, wreck, camouflage, entity, secondaryPos, preview, withShadows);
         }
     }
 
-    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        this(base, null, camouflage, entity, -1, true);
+        this(base, null, camouflage, entity, -1, true, true);
     }
 
-    @SuppressWarnings("unused") // Used by MHQ
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
             Entity entity, int secondaryPos) {
-        this(base, wreck, camouflage, entity, secondaryPos, false);
+        this(base, wreck, camouflage, entity, secondaryPos, false, true);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage,
-            Entity entity, int secondaryPos, boolean preview) {
-        this(base, wreck, camouflage, null, entity, secondaryPos, preview);
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
+        this(base, wreck, camouflage, null, entity, secondaryPos, preview, withShadows);
     }
 
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-            Entity entity, int secondaryPos, boolean preview) {
+            Entity entity, int secondaryPos, boolean preview, boolean withShadows) {
         this.base = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
+        this.withShadows = withShadows;
         this.dmgLevel = calculateDamageLevel(entity);
         // hack: gun emplacements are pretty beefy but have weight 0
         this.weight = entity instanceof GunEmplacement ? SMOKE_THREE + 1 : entity.getWeight();
@@ -288,7 +292,7 @@ public class EntityImage {
 
             // Generate rotated images for the unit and for a wreck
             fImage = rotateImage(fImage, i);
-            if (GUIP.getShadowMap() && isSingleHex) {
+            if (GUIP.getShadowMap() && isSingleHex && withShadows) {
                 facings[i] = applyDropShadow(fImage);
             } else {
                 facings[i] = fImage;
@@ -383,22 +387,22 @@ public class EntityImage {
         final int colour = colourCamouflage ? PlayerColour.parseFromString(getCamouflage().getFilename()).getHex() : -1;
 
         // Prepare the images for access
-        int[] pMech = new int[IMG_SIZE];
+        int[] pMek = new int[IMG_SIZE];
         int[] pCamo = new int[IMG_SIZE];
         try {
-            grabImagePixels(image, pMech);
+            grabImagePixels(image, pMek);
             if (!colourCamouflage && hasCamouflage) {
                 grabImagePixels(getCamouflage().getImage(), pCamo);
             }
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo.", ex);
+            logger.error(ex, "Failed to grab pixels for an image to apply the camo.");
             return image;
         }
 
         if (hasCamouflage) {
             // Overlay the camo or color
             for (int i = 0; i < IMG_SIZE; i++) {
-                int pixel = pMech[i];
+                int pixel = pMek[i];
                 int alpha = (pixel >> 24) & 0xff;
                 int red = (pixel >> 16) & 0xff;
                 int green = (pixel >> 8) & 0xff;
@@ -439,11 +443,11 @@ public class EntityImage {
                     int red2 = red1 * blue / 255;
                     int green2 = green1 * blue / 255;
                     int blue2 = blue1 * blue / 255;
-                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
+                    pMek[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
                 }
             }
         }
-        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
+        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMek, 0, IMG_WIDTH);
         Image result = Toolkit.getDefaultToolkit().createImage(producer);
         return ImageUtil.createAcceleratedImage(result);
     }
@@ -563,7 +567,7 @@ public class EntityImage {
             grabImagePixels(image, pUnit);
             grabImagePixels(decal, pDmgD);
         } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
+            logger.error("Failed to grab pixels for an image to apply the decal. " + e.getMessage());
             return image;
         }
 
@@ -604,7 +608,7 @@ public class EntityImage {
 
         // Get the smoke image for heavier damage; is transparent for lighter damage
         if (smoke == null) {
-            LogManager.getLogger().error("Smoke decal image is null.");
+            logger.error("Smoke decal image is null.");
             return image;
         }
 
@@ -648,7 +652,7 @@ public class EntityImage {
                     return null;
             }
         } catch (Exception e) {
-            LogManager.getLogger().error("Could not load decal image.", e);
+            logger.error(e, "Could not load decal image.");
         }
 
         return null;
@@ -685,7 +689,7 @@ public class EntityImage {
             // Use the same smoke image for all positions of multi-hex units (pos = 0)!
             return getIM(path, entity.getShortName(), 0);
         } catch (Exception e) {
-            LogManager.getLogger().error("Could not load smoke/fire image.", e);
+            logger.error(e, "Could not load smoke/fire image.");
         }
         return null;
     }

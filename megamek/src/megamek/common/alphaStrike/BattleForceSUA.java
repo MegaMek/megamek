@@ -55,7 +55,7 @@ public enum BattleForceSUA {
     // Placeholders for additional unit info not otherwise present in the AS element
     TRI, QUAD, AERODYNESC
     ;
-    
+
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
     private static final String[] AS_SUA_SORTED;
 
@@ -94,9 +94,14 @@ public enum BattleForceSUA {
         return transportBayDoors.getOrDefault(this, UNKNOWN);
     }
 
-    /** @return True when this SUA is an artillery SUA such as ARTAIS. */
+    /** @return True when this SUA is an artillery SUA such as ARTAIS, including artillery cannon SUAs. */
     public boolean isArtillery() {
         return isAnyOf(ARTAIS, ARTAC, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC);
+    }
+
+    /** @return True when this SUA is an artillery cannon SUA such as ARTSC for the Sniper Cannon. */
+    public boolean isArtilleryCannon() {
+        return isAnyOf(ARTTC, ARTSC, ARTLTC);
     }
 
     @Override
@@ -123,8 +128,8 @@ public enum BattleForceSUA {
 
     /** @return True when this SUA uses an Integer as its value. */
     public boolean usesIntegerObject() {
-        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO,
-                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI)
+        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO, MFB,
+                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI, ATAC)
                 || isArtillery();
     }
 

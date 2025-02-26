@@ -29,7 +29,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
     private static final long serialVersionUID = -7243477723032010917L;
@@ -43,7 +43,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
      * @param g
      */
     public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, Game g, GameManager m) {
+            WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
@@ -101,8 +101,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
-        //Determine what ammo we're firing for reporting and (later) damage
-        Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
+        // Determine what ammo we're firing for reporting and (later) damage
+        Mounted<?> ammoUsed = ae.getEquipment(aaa.getAmmoId());
         final AmmoType atype = (AmmoType) ammoUsed.getType();
         // Report weapon attack and its to-hit value.
         Report r = new Report(3124);
@@ -162,7 +162,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -185,7 +185,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             bMissed = true;
         }
 
-        //Set up the damage
+        // Set up the damage
         nDamPerHit = atype.getRackSize();
 
         // copperhead gets 10 damage less than standard
@@ -200,8 +200,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             return false;
         }
 
-        //this has to be called here or it triggers before the TAG shot and we have no entityTarget
-        //mounting AMS
+        // this has to be called here or it triggers before the TAG shot and we have no
+        // entityTarget
+        // mounting AMS
         if (atype != null
                 && atype.getAmmoType() == AmmoType.T_ARROW_IV) {
             gameManager.assignAMS();
@@ -210,7 +211,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             int hits = 1;
             int nCluster = 1;
             if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
-                //Do point defenses shoot down this homing missile? (Copperheads don't count)
+                // Do point defenses shoot down this homing missile? (Copperheads don't count)
                 hits = handleAMS(vPhaseReport, ammoUsed);
 
                 if (bMissed && !missReported) {
@@ -281,7 +282,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             Coords coords = target.getPosition();
             int ratedDamage = 5; // splash damage is 5 from all launchers
 
-            //If AMS shoots down a missile, it shouldn't deal any splash damage
+            // If AMS shoots down a missile, it shouldn't deal any splash damage
             if (hits == 0) {
                 ratedDamage = 0;
             }
@@ -396,13 +397,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
                     "no tag in 8 hex radius of target hex");
         } else if (allowed.size() == 1) {
-            //Just use target 0...
+            // Just use target 0...
             newTarget = allowed.get(0).target;
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
         } else {
-            //The player gets to select the target
+            // The player gets to select the target
             List<Integer> targetIds = new ArrayList<>();
             List<Integer> targetTypes = new ArrayList<>();
             for (TagInfo target : allowed) {
@@ -432,19 +433,25 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     }
 
     /**
-     * This is a unified method that handles single AMS and AMS Bay counterfire against Arrow IV homing missiles
-     * Artillery bays resolve each weapon individually and don't use Aero AV, so we can safely do this
-     * @param vPhaseReport The report for this game phase, be it offboard (Indirect) or firing (Direct)
-     * @param ammoUsed The ammoType used by this bay - as only homing shots can be intercepted by AMS
+     * This is a unified method that handles single AMS and AMS Bay counterfire
+     * against Arrow IV homing missiles
+     * Artillery bays resolve each weapon individually and don't use Aero AV, so we
+     * can safely do this
+     * 
+     * @param vPhaseReport The report for this game phase, be it offboard (Indirect)
+     *                     or firing (Direct)
+     * @param ammoUsed     The ammoType used by this bay - as only homing shots can
+     *                     be intercepted by AMS
      * @return 1 hit if this missile survives any AMS fire, 0 if it is destroyed
      */
-    protected int handleAMS(Vector<Report> vPhaseReport, Mounted ammoUsed) {
+    protected int handleAMS(Vector<Report> vPhaseReport, Mounted<?> ammoUsed) {
 
         int hits = 1;
         if (((AmmoType) ammoUsed.getType()).getAmmoType() == AmmoType.T_ARROW_IV
                 || ((AmmoType) ammoUsed.getType()).getAmmoType() == BombType.B_HOMING) {
 
-            //this has to be called here or it fires before the TAG shot and we have no target
+            // this has to be called here or it fires before the TAG shot and we have no
+            // target
             gameManager.assignAMS();
             calcCounterAV();
             // Report AMS/Pointdefense failure due to Overheating.
@@ -455,12 +462,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                             || pdBayEngaged
                             || pdBayEngagedCap
                             || pdBayEngagedMissile))) {
-                Report r = new Report (3359);
+                Report r = new Report(3359);
                 r.subject = subjectId;
                 r.indent();
                 vPhaseReport.addElement(r);
             }
-            //PD/AMS bays should engage using AV and missile armor per SO Errata
+            // PD/AMS bays should engage using AV and missile armor per SO Errata
             if (amsBayEngagedCap || pdBayEngagedCap) {
                 CapMissileArmor = ((WeaponType) ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
                 CapMissileAMSMod = calcCapMissileAMSMod();
@@ -480,7 +487,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     r.add(CapMissileAMSMod);
                     vPhaseReport.add(r);
                     toHit.addModifier(CapMissileAMSMod, "damage from AMS");
-                    // If the damage was enough to make us miss, record it for reporting and set 0 hits
+                    // If the damage was enough to make us miss, record it for reporting and set 0
+                    // hits
                     if (roll.getIntValue() < toHit.getValue()) {
                         bMissed = true;
                         nDamPerHit = 0;
@@ -488,7 +496,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     }
                 }
             } else if (amsEngaged || apdsEngaged) {
-                //Single AMS/APDS should continue to engage per TW rules, which have not changed
+                // Single AMS/APDS should continue to engage per TW rules, which have not
+                // changed
                 bSalvo = true;
                 Report r = new Report(3235);
                 r.subject = subjectId;
@@ -522,8 +531,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     }
 
     /**
-     * Checks to see if the basic conditions needed for point defenses to work are in place
-     * Artillery weapons need to change this slightly compared to other types of missiles
+     * Checks to see if the basic conditions needed for point defenses to work are
+     * in place
+     * Artillery weapons need to change this slightly compared to other types of
+     * missiles
      */
     @Override
     protected boolean checkPDConditions() {
@@ -538,7 +549,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     }
 
     /**
-     * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
+     * Sets the appropriate AMS Bay reporting flag depending on what type of missile
+     * this is
      */
     @Override
     protected void setAMSBayReportingFlag() {
@@ -546,7 +558,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
     }
 
     /**
-     * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
+     * Sets the appropriate PD Bay reporting flag depending on what type of missile
+     * this is
      */
     @Override
     protected void setPDBayReportingFlag() {

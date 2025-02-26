@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.BuildingType;
 
 /**
  * @author Torren + Coelocanth
@@ -51,7 +52,7 @@ public class CityBuilder {
     /**
      * This function will generate a city with a grid lay out. 4 rounds running
      * North and South and 4 roads running east west
-     * 
+     *
      * @author Torren (Jason Tighe)
      * @return
      */
@@ -147,7 +148,7 @@ public class CityBuilder {
                     totalCF = Compute.randomInt(totalCF + 1) + mapSettings.getCityMinCF();
                 }
 
-                int type = getBuildingTypeByCF(totalCF);
+                BuildingType type = getBuildingTypeByCF(totalCF);
 
                 buildingList.add(new BuildingTemplate(type, coordList, totalCF, floors, -1));
             }
@@ -360,7 +361,7 @@ public class CityBuilder {
     private void addBridge(Hex hex, int exits, int altitude, int cf) {
         int bridgeElevation = altitude - hex.getLevel();
 
-        hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf), true, (exits & 63)));
+        hex.addTerrain(new Terrain(Terrains.BRIDGE, getBuildingTypeByCF(cf).getTypeValue(), true, (exits & 63)));
         hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, bridgeElevation));
         hex.addTerrain(new Terrain(Terrains.BRIDGE_CF, cf));
     }
@@ -383,7 +384,7 @@ public class CityBuilder {
 
     /**
      * Build a bridge across an obstacle
-     * 
+     *
      * @todo: use a bridge not a road when bridges are working
      * @param start
      * @param direction
@@ -436,6 +437,11 @@ public class CityBuilder {
                     + Compute.randomInt(1 + mapSettings.getCityMaxCF()
                             - mapSettings.getCityMinCF());
 
+            if (cf == 0) {
+                // some city settings can lead to 0 CF bridges; use a default CF in this case
+                cf = 40;
+            }
+
             for (Enumeration<Coords> e = hexes.elements(); e.hasMoreElements();) {
                 Coords c = e.nextElement();
                 addBridge(board.getHex(c), exits, elev1, cf);
@@ -484,19 +490,19 @@ public class CityBuilder {
 
     /**
      * Utility function for setting building type from CF table
-     * 
+     *
      * @param cf
      * @return building type
      */
-    public static int getBuildingTypeByCF(int cf) {
+    public static BuildingType getBuildingTypeByCF(int cf) {
         if (cf <= 15) {
-            return Building.LIGHT;
+            return BuildingType.LIGHT;
         } else if (cf <= 40) {
-            return Building.MEDIUM;
+            return BuildingType.MEDIUM;
         } else if (cf <= 90) {
-            return Building.HEAVY;
+            return BuildingType.HEAVY;
         } else {
-            return Building.HARDENED;
+            return BuildingType.HARDENED;
         }
     }
 

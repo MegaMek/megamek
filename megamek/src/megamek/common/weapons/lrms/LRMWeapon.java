@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -24,7 +24,7 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMAntiTSMHandler;
@@ -38,13 +38,16 @@ import megamek.common.weapons.LRMSwarmHandler;
 import megamek.common.weapons.LRMSwarmIHandler;
 import megamek.common.weapons.MissileMineClearanceHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.Serial;
 
 /**
  * @author Sebastian Brocks
  */
 public abstract class LRMWeapon extends MissileWeapon {
 
+    @Serial
     private static final long serialVersionUID = 8755275511561446251L;
 
     public LRMWeapon() {
@@ -61,7 +64,7 @@ public abstract class LRMWeapon extends MissileWeapon {
 
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.2;
         } else {
             return super.getTonnage(entity, location, size);
@@ -69,10 +72,49 @@ public abstract class LRMWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        return getLRMHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_LRM;
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
+    @Override
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
+
+        // Indirect Fire
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
+    }
+
+    @Override
+    public String getSortingName() {
+        if (sortingName != null) {
+            return sortingName;
+        } else {
+            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            if (name.contains("I-OS")) {
+                oneShotTag = "XIOS ";
+            }
+            return "LRM " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
+        }
+    }
+
+    public static AttackHandler getLRMHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
             return new LRMFragHandler(toHit, waa, game, manager);
         }
@@ -80,10 +122,10 @@ public abstract class LRMWeapon extends MissileWeapon {
             return new LRMAntiTSMHandler(toHit, waa, game, manager);
         }
         if ((atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))
-                || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
-                || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
-                || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO))
-                || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+            || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))
+            || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))
+            || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO))
+            || (atype.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
             return new LRMScatterableHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_SWARM)) {
@@ -105,42 +147,5 @@ public abstract class LRMWeapon extends MissileWeapon {
             return new MissileMineClearanceHandler(toHit, waa, game, manager);
         }
         return new LRMHandler(toHit, waa, game, manager);
-    }
-
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_LRM;
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        return true;
-    }
-
-    @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
-
-        // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            addMode("");
-            addMode("Indirect");
-        } else {
-            removeMode("");
-            removeMode("Indirect");
-        }
-    }
-
-    @Override
-    public String getSortingName() {
-        if (sortingName != null) {
-            return sortingName;
-        } else {
-            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
-            if (name.contains("I-OS")) {
-                oneShotTag = "XIOS ";
-            }
-            return "LRM " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
-        }
     }
 }

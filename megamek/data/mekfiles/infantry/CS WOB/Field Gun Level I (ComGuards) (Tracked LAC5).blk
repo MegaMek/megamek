@@ -1,0 +1,64 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Level I (ComGuards)
+</Name>
+
+<Model>
+(Tracked LAC5)
+</Model>
+
+<year>
+3068
+</year>
+
+<originalBuildYear>
+3068
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+Light Auto Cannon/5
+IS Ammo LAC/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+Light Auto Cannon/5
+IS Ammo LAC/5
+</Field Guns Equipment>
+
+<notes>
+Squad/platoon size from TechManual. Armor kit from Tactical Operations. Intro date from official creation of ComStar Guards and Militia (ComGuards).
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

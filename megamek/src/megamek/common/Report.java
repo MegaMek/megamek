@@ -19,19 +19,21 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
+import static megamek.client.ui.swing.util.UIUtil.uiGray;
 
-import javax.swing.*;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import static megamek.client.ui.swing.util.UIUtil.uiGray;
+import javax.swing.JTextPane;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * This class defines a single server report. It holds information such as the
@@ -39,7 +41,8 @@ import static megamek.client.ui.swing.util.UIUtil.uiGray;
  * formatting information.
  * <p>
  * Typically, the report will be created by the relevant section in the
- * <code>Server</code>, and added to the phase {@link Report} <code>Vector</code>. The actual text
+ * <code>Server</code>, and added to the phase {@link Report}
+ * <code>Vector</code>. The actual text
  * of the report must also be added to the <i>report-messages.properties</i>
  * file.
  * <p>
@@ -66,11 +69,14 @@ import static megamek.client.ui.swing.util.UIUtil.uiGray;
  * <p>
  * The example above might produce a report such as this when the
  * <code>getText</code> method was called:
- * <p> " Crusader (Bob) does 6 damage to the tank."
+ * <p>
+ * " Crusader (Bob) does 6 damage to the tank."
  *
  * @author Ryan McConnell (oscarmm)
  */
 public class Report implements ReportEntry {
+    private static final MMLogger logger = MMLogger.create(Report.class);
+
     /*
      * Note: some fields are marked transient because they are only used by the
      * server (or only the client). This shaves a few bytes off the packet size,
@@ -119,7 +125,7 @@ public class Report implements ReportEntry {
     /**
      * Number of spaces to use per indentation level.
      */
-    private static final int DEFAULT_INDENTATION = 4;
+    public static final int DEFAULT_INDENTATION = 4;
 
     /**
      * Prefix for entity hyperlinks
@@ -209,7 +215,8 @@ public class Report implements ReportEntry {
      * Default constructor, note that using this means the
      * <code>messageId</code> field must be explicitly set.
      */
-    public Report() { }
+    public Report() {
+    }
 
     /**
      * Create a new report associated with the given report text.
@@ -255,23 +262,25 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Returns a new report associated with the given report text (ID) and having the
+     * Returns a new report associated with the given report text (ID) and having
+     * the
      * type Report.PUBLIC.
      *
-     * @param id   the int value of the report from report-messages.properties
-     * @return     A new Report
+     * @param id the int value of the report from report-messages.properties
+     * @return A new Report
      */
     public static Report publicReport(int id) {
         return new Report(id, PUBLIC);
     }
 
     /**
-     * Returns a new report associated with the given report text (ID) and having the
+     * Returns a new report associated with the given report text (ID) and having
+     * the
      * given subject (Entity ID). The Report will be the default type Report.HIDDEN.
      *
      * @param id        the int value of the report from report-messages.properties
      * @param subjectId The Entity ID of the subject entity
-     * @return          A new Report
+     * @return A new Report
      */
     public static Report subjectReport(int id, int subjectId) {
         return new Report(id).subject(subjectId);
@@ -298,7 +307,8 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Set the report to not add a newline at the end, so that the current line of text can be continued
+     * Set the report to not add a newline at the end, so that the current line of
+     * text can be continued
      * with another report.
      *
      * @return This Report to allow chaining
@@ -483,7 +493,7 @@ public class Report implements ReportEntry {
     }
 
     public void obsureImg() {
-        imageCode = "<span id='" + HIDDEN_ENTITY_NUM +  "'></span>";
+        imageCode = "<span id='" + HIDDEN_ENTITY_NUM + "'></span>";
     }
 
     /**
@@ -513,7 +523,9 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a
+     * parameter of 1.
+     *
      * @return This Report to allow chaining
      */
     public Report indent() {
@@ -562,7 +574,7 @@ public class Report implements ReportEntry {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            LogManager.getLogger().error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+            logger.error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
                     + index + ") for a report with ID " + messageId
                     + ". Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megamek.log for details]";
@@ -575,7 +587,7 @@ public class Report implements ReportEntry {
      *
      * @return a String with the final report
      */
-    public String getText() {
+    public String text() {
         // The raw text of the message, with tags.
         String raw = ReportMessages.getString(String.valueOf(messageId));
 
@@ -584,7 +596,7 @@ public class Report implements ReportEntry {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            LogManager.getLogger().error("No message found for ID " + messageId);
+            logger.error("No message found for ID " + messageId);
             text.append("[Reporting Error for message ID ").append(messageId).append("]");
         } else {
             int i = 0;
@@ -690,7 +702,7 @@ public class Report implements ReportEntry {
         try {
             v.elementAt(v.size() - 1).newlines++;
         } catch (Exception ex) {
-            LogManager.getLogger().error("Cannot add a new line", ex);
+            logger.error("Cannot add a new line", ex);
         }
     }
 
@@ -705,12 +717,18 @@ public class Report implements ReportEntry {
         Font font = new Font(GUIP.getReportFontType(), Font.PLAIN, UIUtil.FONT_SCALE1);
         int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
 
-        styleSheet.addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        styleSheet
+                .addRule("pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a { color: " + hexColor(GUIP.getReportLinkColor()) + " }");
         styleSheet.addRule("span.warning { color: " + hexColor(GUIP.getWarningColor()) + " }");
         styleSheet.addRule("span.success { color: " + hexColor(GUIP.getReportSuccessColor()) + " }");
         styleSheet.addRule("span.miss { color: " + hexColor(GUIP.getReportMissColor()) + " }");
         styleSheet.addRule("span.info { color: " + hexColor(GUIP.getReportInfoColor()) + " }");
+        styleSheet.addRule("span.large { font-size: large; }");
+        styleSheet.addRule("span.medium { font-size: medium; }");
+        styleSheet.addRule("span.small { font-size: small; }");
+        styleSheet.addRule("span.x-small { font-size: x-small; }");
+        styleSheet.addRule("span.xx-small { font-size: xx-small; }");
     }
 
     public String span(String name, String text) {
@@ -807,7 +825,8 @@ public class Report implements ReportEntry {
     }
 
     /**
-     * Sets the indentation for all reports of the given reports list to the given amount
+     * Sets the indentation for all reports of the given reports list to the given
+     * amount
      * by calling {@link #indent(int)}
      *
      * @param reports A list of reports to be affected

@@ -14,30 +14,26 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.*;
-import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.GameManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Vector;
+import megamek.common.event.GamePlayerStrategicActionEvent;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Numien, based work by Sebastian Brocks
  */
 public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
+    private static final MMLogger logger = MMLogger.create(ArtilleryCannonWeaponHandler.class);
+
     private static final long serialVersionUID = 1L;
     boolean handledAmmoAndReport = false;
 
-    /**
-     * This constructor can only be used for deserialization.
-     */
-    protected ArtilleryCannonWeaponHandler() {
-        super();
-    }
-
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -47,7 +43,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         if (ae == null) {
-            LogManager.getLogger().error("Artillery Entity is null!");
+            logger.error("Artillery Entity is null!");
             return true;
         }
 
@@ -55,7 +51,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean isFlak = targetIsEntity && Compute.isFlakAttack(ae, (Entity) target);
         boolean asfFlak = isFlak && target.isAirborne();
-        Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
+        Mounted<?> ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
 
         // Report weapon attack and its to-hit value.
@@ -161,7 +157,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
-        if(null != ammoType) {
+        if (null != ammoType) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
                 int radius;
                 if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
@@ -175,6 +171,10 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
                 // The appropriate term here is "Bwahahahahaha..."
+                gameManager.drawNukeHitOnBoard(targetPos);
+                gameManager.getGame().processGameEvent(
+                    new GamePlayerStrategicActionEvent(gameManager,
+                        new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
@@ -194,7 +194,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                             targetPos, atype, targetPos, false, ae, null, target.getElevation(),
                             vPhaseReport, gameManager);
                 } else {
-                    AreaEffectHelper.processFuelAirDamage(targetPos,
+                    AreaEffectHelper.processFuelAirDamage(targetPos, target.getElevation(),
                             ammoType, ae, vPhaseReport, gameManager);
                 }
 
@@ -218,17 +218,20 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, gameManager);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game,
+                    gameManager);
         }
 
         gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
-            subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-            asfFlak, -1);
+                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                asfFlak);
 
-        // artillery may unintentionally clear minefields, but only if it wasn't trying to
+        // artillery may unintentionally clear minefields, but only if it wasn't trying
+        // to
         // TODO : Does this apply to arty cannons?
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, gameManager);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game,
+                    gameManager);
         }
 
         return false;

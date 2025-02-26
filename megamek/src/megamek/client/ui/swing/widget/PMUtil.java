@@ -13,17 +13,19 @@
  */
 package megamek.client.ui.swing.widget;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.awt.Image;
 import java.awt.MediaTracker;
 
 import javax.swing.JComponent;
 
+import megamek.logging.MMLogger;
+
 /**
  * Set of useful function.
  */
 public final class PMUtil {
+    private static final MMLogger logger = MMLogger.create(PMUtil.class);
+
     /**
      * Ensures that Images is completely loaded
      */
@@ -33,12 +35,12 @@ public final class PMUtil {
         try {
             mt.waitForID(0);
         } catch (InterruptedException e) {
-            LogManager.getLogger().error("", e);
+            logger.error("", e);
             return false;
         }
 
         if (mt.isErrorID(0)) {
-            LogManager.getLogger().warn("Could not load image");
+            logger.warn("Could not load image");
             return false;
         }
 

@@ -110,23 +110,21 @@ public class CreateImageAtlases {
      * @param dir
      */
     void processDirectory(File dir) {
-        String message = String.format("Processing: %s", dir.toString());
-        logger.info(message);
+        logger.info("Processing: {}", dir);
 
-        File[] imageFiles = dir.listFiles((dir1, name) -> {
-            // Ignore other atlas files, just in case
-            return ((name.toLowerCase().endsWith(".png") ||
-                    name.toLowerCase().endsWith(".gif") ||
-                    name.toLowerCase().endsWith(".jpg") ||
-                    name.toLowerCase().endsWith(".jpeg"))
-                    && !name.endsWith("_atlas.png"));
-        });
+        File[] imageFiles = dir.listFiles((dir1, name) -> ((name.toLowerCase().endsWith(".png") ||
+                name.toLowerCase().endsWith(".gif") ||
+                name.toLowerCase().endsWith(".jpg") ||
+                name.toLowerCase().endsWith(".jpeg"))
+                && !name.endsWith("_atlas.png")));
 
         int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));
+
         // No images, nothing to do
         if (numRows <= 0) {
             return;
         }
+
         BufferedImage atlas = new BufferedImage(imagesPerRow * hexWidth, numRows * hexHeight,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics g = atlas.getGraphics();
@@ -154,12 +152,13 @@ public class CreateImageAtlases {
 
             // Error checking
             if (currentImg.getHeight() != hexHeight || currentImg.getWidth() != hexWidth) {
-                message = String.format("Skipping image %s because dimensions don't match. Image is %d x %d",
+                logger.info(
+                        "Skipping image {} because dimensions don't match expected size. Image is {} x {} ( expected {} x {} )",
                         imgFile,
                         currentImg.getWidth(),
-                        currentImg.getHeight());
-
-                logger.info(message);
+                        currentImg.getHeight(),
+                        hexWidth,
+                        hexHeight);
                 improperImgDimsCount++;
                 continue;
             }
@@ -211,7 +210,8 @@ public class CreateImageAtlases {
      *
      * or from the jar file with
      *
-     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases <optional filename>
+     * java -cp MegaMek.jar megamek.utilities.CreateImageAtlases %lt;optional
+     * filename%gt;
      *
      * @param args
      */
@@ -242,8 +242,7 @@ public class CreateImageAtlases {
             logger.error(e, "Failed to write out list of atlased images!");
         }
 
-        String message = String.format("SKipped %d images due to improper dimensions.",
+        logger.info("Skipped {} images due to improper dimensions.",
                 atlasCreator.improperImgDimsCount);
-        logger.info(message);
     }
 }

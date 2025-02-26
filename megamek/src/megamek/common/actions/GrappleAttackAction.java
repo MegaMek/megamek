@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
@@ -35,9 +35,9 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * @param game The current {@link Game}
+     * @param game       The current {@link Game}
      * @param attackerId the attacking entity id
-     * @param target the attack's target
+     * @param target     the attack's target
      * @return the to hit number for the current grapple attack
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -46,30 +46,31 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * Calculates ToHitData for a grapple attack.
-     * 
-     * @param game The current {@link Game}
+     *
+     * @param game        The current {@link Game}
      * @param attackerId
      * @param target
      * @param grappleSide
      * @param isChainWhip
-     *            Flag that determines if the attack is coming from a chain
-     *            whip. If true, ignore illegal cases, as this comes from a
-     *            bonus attack for a chain whip, and the attack should never be
-     *            illegal. See TO pg 289.
+     *                    Flag that determines if the attack is coming from a chain
+     *                    whip. If true, ignore illegal cases, as this comes from a
+     *                    bonus attack for a chain whip, and the attack should never
+     *                    be
+     *                    illegal. See TO pg 289.
      * @return
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int grappleSide,
-                                  boolean isChainWhip) {
+            boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
-        
+
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
-        
+
         if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
-        
+
         Entity te = (Entity) target;
-        
+
         // Set the base BTH
         int base = ae.getCrew().getPiloting();
 
@@ -78,80 +79,80 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         setCommonModifiers(toHit, game, ae, target);
 
-        if ((ae instanceof Mech) && grappleSide == Entity.GRAPPLE_BOTH) {
+        if ((ae instanceof Mek) && grappleSide == Entity.GRAPPLE_BOTH) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
+            if (ae.hasFunctionalArmAES(Mek.LOC_RARM) && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
                 toHit.addModifier(-1, "AES modifer");
             }
 
-        } else if (ae instanceof Mech && grappleSide == Entity.GRAPPLE_RIGHT) {
+        } else if (ae instanceof Mek && grappleSide == Entity.GRAPPLE_RIGHT) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mech.LOC_RARM)) {
+            if (ae.hasFunctionalArmAES(Mek.LOC_RARM)) {
                 toHit.addModifier(-1, "AES modifer");
             }
 
         } else {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
+            if (ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
                 toHit.addModifier(-1, "AES modifer");
             }
 
         }
 
-        if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mech)) {
-            Mech attacker = (Mech) ae;
-            Mech teMech = (te instanceof Mech) ? (Mech) te : null;
+        if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mek)) {
+            Mek attacker = (Mek) ae;
+            Mek teMek = (te instanceof Mek) ? (Mek) te : null;
             if (attacker.hasActiveTSM(false)
-                    && ((teMech == null) || !teMech.hasActiveTSM(false)
-                            || teMech.hasActiveTSM(false))) {
+                    && ((teMek == null) || !teMek.hasActiveTSM(false)
+                            || teMek.hasActiveTSM(false))) {
                 toHit.addModifier(-2, "TSM Active Bonus");
             }
         }
@@ -159,11 +160,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
+        if ((te instanceof ProtoMek) && !(ae instanceof ProtoMek)) {
             wmod = ae.getWeightClass() * -1;
-        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
+        } else if ((ae instanceof ProtoMek) && !(te instanceof ProtoMek)) {
             wmod = te.getWeightClass();
-        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
+        } else if ((te instanceof ProtoMek) && (ae instanceof ProtoMek)) {
             wmod = 0;
         }
 
@@ -173,11 +174,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // done!
         return toHit;
     }
-    
+
     /**
      * Various modifiers to check to see if the grapple attack is illegal.
-     * 
-     * @param game The current {@link Game}
+     *
+     * @param game        The current {@link Game}
      * @param ae
      * @param target
      * @param grappleSide
@@ -192,7 +193,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 
-        // LAM AirMechs can only grapple when grounded.
+        // LAM AirMeks can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot grapple while airborne");
         }
@@ -206,9 +207,9 @@ public class GrappleAttackAction extends PhysicalAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                     && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
-                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "A friendly unit can never be the target of a direct attack.");
             }
@@ -221,11 +222,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation() + targHex.getLevel();
         // final int targetHeight = targetElevation + target.getHeight();
 
-        // non-mechs can't grapple or be grappled
-        if ((!(ae instanceof BipedMech) && !(ae instanceof Protomech))
-                || (!(target instanceof Mech) && !(target instanceof Protomech))) {
+        // non-meks can't grapple or be grappled
+        if ((!(ae instanceof BipedMek) && !(ae instanceof ProtoMek))
+                || (!(target instanceof Mek) && !(target instanceof ProtoMek))) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only biped mechs can grapple 'Mechs and ProtoMechs");
+                    "Only biped meks can grapple 'Meks and ProtoMeks");
         }
 
         Entity te = (Entity) target;
@@ -239,29 +240,29 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         // requires 2 good arms
         if (grappleSide == Entity.GRAPPLE_BOTH) {
-            if (ae.isLocationBad(Mech.LOC_LARM)
-                    || ae.isLocationBad(Mech.LOC_RARM)) {
+            if (ae.isLocationBad(Mek.LOC_LARM)
+                    || ae.isLocationBad(Mek.LOC_RARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-                    || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)
+                    || !ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         } else if (grappleSide == Entity.GRAPPLE_LEFT) {
-            if (ae.isLocationBad(Mech.LOC_LARM)) {
+            if (ae.isLocationBad(Mek.LOC_LARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         } else {
-            if (ae.isLocationBad(Mech.LOC_RARM)) {
+            if (ae.isLocationBad(Mek.LOC_RARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
             }
         }
@@ -293,7 +294,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         // check if attacker has fired any weapons
         if (!counter) {
-            for (Mounted mounted : ae.getWeaponList()) {
+            for (Mounted<?> mounted : ae.getWeaponList()) {
                 if (mounted.isUsedThisRound()) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Fired weapons");
                 }

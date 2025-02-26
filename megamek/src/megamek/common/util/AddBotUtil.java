@@ -13,6 +13,14 @@
  */
 package megamek.common.util;
 
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.swing.JFrame;
+
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -24,11 +32,6 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -116,11 +119,11 @@ public class AddBotUtil {
         }
 
         Player target = null;
-        for (final Enumeration<Player> i = game.getPlayers(); i.hasMoreElements();) {
-            final Player player = i.nextElement();
+        for (Player player : game.getPlayersList()) {
             if (player.getName().equals(playerName.toString())) {
                 target = player;
             }
+
         }
 
         if (null == target) {
@@ -190,7 +193,7 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -231,7 +234,7 @@ public class AddBotUtil {
 
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
@@ -276,7 +279,7 @@ public class AddBotUtil {
         final Game game = client.getGame();
         Objects.requireNonNull(game);
 
-        Optional<Player> possible = game.getPlayersVector().stream()
+        Optional<Player> possible = game.getPlayersList().stream()
                 .filter(p -> p.getName().equals(playerName)).findFirst();
 
         if (possible.isEmpty()) {

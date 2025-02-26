@@ -23,7 +23,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FlamerHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -34,17 +34,17 @@ public abstract class FlamerWeapon extends EnergyWeapon {
 
     public FlamerWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_FLAMER).or(F_BURST_FIRE);
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_FLAMER).or(F_BURST_FIRE);
         ammoType = AmmoType.T_NA;
         atClass = CLASS_POINT_DEFENSE;
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new FlamerHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
         return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;

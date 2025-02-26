@@ -19,74 +19,132 @@
 
 package megamek.common.containers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.*;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import megamek.logging.MMLogger;
 
 public class MunitionTree {
+    private static final MMLogger logger = MMLogger.create(MunitionTree.class);
+
     // Validated munition names that will work in ADF files.
     // TODO: validate all these strings!
-    public static final ArrayList<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Dead-Fire", "Standard", "Swarm-I", "Swarm", "Heat-Seeking", "Semi-guided",
-            "Artemis-capable", "Narc-capable", "Follow The Leader", "Fragmentation",
-            "Thunder", "Thunder-Active", "Thunder-Augmented", "Thunder-Vibrabomb",
-            "Thunder-Inferno", "Anti-TSM", "Listen-Kill", "Smoke", "Mine Clearance"
-    ));
+    public static final List<String> LRM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Dead-Fire",
+            "Standard",
+            "Swarm-I",
+            "Swarm",
+            "Heat-Seeking",
+            "Semi-guided",
+            "Artemis-capable",
+            "Narc-capable",
+            "Follow The Leader",
+            "Fragmentation",
+            "Thunder",
+            "Thunder-Active",
+            "Thunder-Augmented",
+            "Thunder-Vibrabomb",
+            "Thunder-Inferno",
+            "Anti-TSM",
+            "Listen-Kill",
+            "Smoke",
+            "Mine Clearance"));
 
-    public static final ArrayList<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Dead-Fire", "Standard", "Tandem-Charge", "Inferno", "Heat-Seeking",
-            "Artemis-capable", "Narc-capable", "Fragmentation", "Acid",
-            "Anti-TSM", "Listen-Kill", "Mine Clearance", "Smoke"
-    ));
+    public static final List<String> SRM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Dead-Fire",
+            "Standard",
+            "Tandem-Charge",
+            "Inferno",
+            "Heat-Seeking",
+            "Artemis-capable",
+            "Narc-capable",
+            "Fragmentation",
+            "Acid",
+            "Anti-TSM",
+            "Listen-Kill",
+            "Mine Clearance",
+            "Smoke"));
 
-    public static final ArrayList<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Precision", "Standard", "Armor-Piercing", "Caseless", "Flak", "Tracer", "Flechette"
-    ));
+    public static final List<String> AC_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Precision",
+            "Standard",
+            "Armor-Piercing",
+            "Caseless",
+            "Flak",
+            "Tracer",
+            "Flechette"));
 
-    public static final ArrayList<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
-            "HE", "ER", "Standard"
-    ));
+    public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of(
+            "HE",
+            "ER",
+            "Standard"));
 
-    public static final ArrayList<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Fuel-Air", "Standard", "ADA", "Cluster", "Inferno-IV", "Homing",
-            "Thunder", "Thunder Vibrabomb-IV", "Illumination", "Smoke", "Laser Inhibiting", "Davy Crockett-M"
-    ));
+    public static final List<String> ARROW_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Fuel-Air",
+            "Standard",
+            "ADA",
+            "Cluster",
+            "Inferno-IV",
+            "Homing",
+            "Thunder",
+            "Thunder Vibrabomb-IV",
+            "Illumination",
+            "Smoke",
+            "Laser Inhibiting",
+            "Davy Crockett-M"));
 
-    public static final ArrayList<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Fuel-Air", "Standard", "Cluster", "Copperhead",
-            "FASCAM", "Flechette", "Illumination", "Smoke", "Davy Crockett-M"
+    public static final List<String> ARTILLERY_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Fuel-Air",
+            "Standard",
+            "Cluster",
+            "Copperhead",
+            "FASCAM",
+            "Flechette",
+            "Illumination",
+            "Smoke",
+            "Davy Crockett-M"));
 
-    ));
+    public static final List<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Fuel-Air",
+            "Standard"));
 
-    public static final ArrayList<String> ARTILLERY_CANNON_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Fuel-Air", "Standard"
-    ));
+    public static final List<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Standard",
+            "Semi-Guided",
+            "Anti-personnel",
+            "Airburst",
+            "Flare",
+            "Smoke"));
 
-    public static final ArrayList<String> MEK_MORTAR_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Standard", "Semi-Guided", "Anti-personnel", "Airburst", "Flare", "Smoke"
-    ));
-
-    public static final ArrayList<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(
-            "Narc Explosive", "Standard"
-    ));
+    public static final List<String> NARC_MUNITION_NAMES = new ArrayList<>(List.of(
+            "Narc Explosive",
+            "Standard"));
 
     // Shorter, guaranteed to work in lookups
-    public static final ArrayList<String> BOMB_MUNITION_NAMES = new ArrayList<>(
-            Arrays.asList(BombType.bombInternalNames)
-    );
+    public static final List<String> BOMB_MUNITION_NAMES = new ArrayList<>(
+            Arrays.asList(BombType.bombInternalNames));
 
     private static String HEADER = String.join(
             System.getProperty("line.separator"),
-            "# ADF (Autoconfiguration Data File) from MegaMek.",
+            "# ADF (AutoConfiguration Data File) from MegaMek.",
             "# Lines are formatted as",
-            "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Muntion1[:Munition2[:...]]][::AmmoType2...]'",
+            "#      '<Chassis>:<Model>:<Pilot>::<Weapon type>:Munition1[:Munition2[:...]]][::AmmoType2...]'",
             "# Values for <Chassis>, <Model>, <Pilot>, and <Weapon Type> may be 'any', or actual values.",
             "# Values for <Weapon Type> may also be specific or general, e.g. 'AC/20' ~ 'AC', 'SRM6' ~ 'SRM'",
             "# e.g. 'Shadow Hawk:any:Grayson Carlyle::LRM:Swarm::SRM:Inferno::AC:Precision:Flak'.",
@@ -97,8 +155,7 @@ public class MunitionTree {
             "# An 'any:any:any::...' directive will be applied to any and all units, but is superseded by more",
             "# particular entries.  If no match is found at the <Pilot> level, the 'any' entry at that level will",
             "# be tried first, and onwards up until 'any:any:any' (if defined).",
-            "######################################################################################################"
-    );
+            "######################################################################################################");
 
     private LoadNode root = new LoadNode();
 
@@ -110,8 +167,9 @@ public class MunitionTree {
     }
 
     /**
-     * Constructor for reading in files containing loadout imperatives.
-     * @param fd
+     * Constructor for reading in files containing load out imperatives.
+     *
+     * @param fName
      */
     public MunitionTree(String fName) throws IllegalArgumentException {
         File fd = new File(fName);
@@ -132,6 +190,7 @@ public class MunitionTree {
 
     /**
      * TODO: Implement
+     *
      * @param br
      */
     public void readFromXML(BufferedReader br) {
@@ -139,12 +198,12 @@ public class MunitionTree {
     }
 
     public void readFromADFFilename(String fName) {
-        try (BufferedReader br = new BufferedReader(new FileReader(fName))){
+        try (BufferedReader br = new BufferedReader(new FileReader(fName))) {
             readFromADF(br);
         } catch (FileNotFoundException e) {
-            LogManager.getLogger().error("File not found: " + fName, e);
+            logger.error("File not found: " + fName, e);
         } catch (IOException e) {
-            LogManager.getLogger().error("Failed to read file: " + fName, e);
+            logger.error("Failed to read file: " + fName, e);
         }
     }
 
@@ -166,12 +225,11 @@ public class MunitionTree {
                     imperative = parts[idx];
                     imperatives.put(
                             imperative.substring(0, imperative.indexOf(':')),
-                            imperative.substring(imperative.indexOf(':') + 1)
-                    );
+                            imperative.substring(imperative.indexOf(':') + 1));
                 }
                 insertImperatives(keys[0], keys[1], keys[2], imperatives);
             } catch (IndexOutOfBoundsException e) {
-                LogManager.getLogger().error("Failed to read an imperative!", e);
+                logger.error("Failed to read an imperative!", e);
             }
         }
     }
@@ -182,7 +240,7 @@ public class MunitionTree {
             try {
                 fd.createNewFile();
             } catch (IOException e) {
-                LogManager.getLogger().error("Failed to create new file: " + fName, e);
+                logger.error("Failed to create new file: " + fName, e);
                 return;
             }
         }
@@ -190,9 +248,9 @@ public class MunitionTree {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fName))) {
             writeToADFFormat(bw);
         } catch (FileNotFoundException e) {
-            LogManager.getLogger().error("File not found: " + fName, e);
+            logger.error("File not found: " + fName, e);
         } catch (IOException e) {
-            LogManager.getLogger().error("Failed to write file: " + fName, e);
+            logger.error("Failed to write file: " + fName, e);
         }
     }
 
@@ -207,31 +265,34 @@ public class MunitionTree {
 
     /**
      * Convert List of Entities into a set of specific imperatives for each unit.
-     * Used for backing up original loadout.
+     * Used for backing up original load out.
+     *
      * @param el
      */
-    public void loadEntityList(ArrayList<Entity> el) {
-        for (Entity e: el) {
+    public void loadEntityList(List<Entity> el) {
+        for (Entity e : el) {
             HashMap<String, String> imperatives = new HashMap<>();
-            for (Mounted m : e.getAmmo()) {
+            for (Mounted<?> m : e.getAmmo()) {
                 AmmoType aType = (AmmoType) m.getType();
                 String baseName = aType.getBaseName();
-                String sName = aType.getShortName();
-                String munition = (aType.getSubMunitionName().equals(baseName)) ? "Standard" : aType.getSubMunitionName();
+                String munition = (aType.getSubMunitionName().equals(baseName)) ? "Standard"
+                        : aType.getSubMunitionName();
                 if (!(imperatives.containsKey(baseName))) {
                     imperatives.put(baseName, munition);
                 } else {
                     imperatives.put(baseName, imperatives.get(baseName) + ':' + munition);
                 }
             }
+
             root.insert(imperatives, e.getFullChassis(), e.getModel(), e.getCrew().getName(0));
         }
     }
 
-    // Can take multiple separate ammoType strings (e.g. "Standard", "HE", "ER") or one
-    // pre-defined imperative set in priority order ("Standard:HE:ER")
+    // Can take multiple separate ammoType strings (e.g. "Standard", "HE", "ER") or
+    // one pre-defined imperative set in priority order ("Standard:HE:ER")
     public void insertImperative(
-            String chassis, String variant, String pilot, String binType, String... ammoTypes) throws IllegalArgumentException {
+            String chassis, String variant, String pilot, String binType, String... ammoTypes)
+            throws IllegalArgumentException {
 
         // Need ammoTypes populated
         if (ammoTypes.length == 0) {
@@ -240,23 +301,23 @@ public class MunitionTree {
 
         HashMap<String, String> imperatives = new HashMap<>();
 
-        imperatives.put(binType, String.join(":",ammoTypes));
+        imperatives.put(binType, String.join(":", ammoTypes));
         insertImperatives(chassis, variant, pilot, imperatives);
     }
 
     public void insertImperatives(
-            String chassis, String variant, String pilot, HashMap<String, String> imperatives){
+            String chassis, String variant, String pilot, HashMap<String, String> imperatives) {
 
         // Start insertions from root
         root.insert(imperatives, chassis, variant, pilot);
     }
 
     public void insertMangledImperatives(
-            String chassis, String variant, String pilot, HashMap<String, String> imperatives){
+            String chassis, String variant, String pilot, HashMap<String, String> imperatives) {
         // switch imperative keys to lowercase to avoid case-based matching issues
         // strip out extraneous characters for ammo with sizes, e.g. LRM[ -/]15 -> LRM15
         HashMap<String, String> lcImp = new HashMap<String, String>(imperatives.size());
-        for (Map.Entry<String, String> e: imperatives.entrySet()) {
+        for (Map.Entry<String, String> e : imperatives.entrySet()) {
             lcImp.put(e.getKey().toLowerCase().replaceAll(LoadNode.SIZE_REGEX, ""), e.getValue());
         }
 
@@ -265,7 +326,7 @@ public class MunitionTree {
     }
 
     public HashMap<String, Integer> getCountsOfAmmosForKey(
-        String chassis, String variant, String pilot, String binType) {
+            String chassis, String variant, String pilot, String binType) {
         return root.retrieveAmmoCounts(chassis, variant, pilot, binType);
     }
 
@@ -276,6 +337,7 @@ public class MunitionTree {
 
     /**
      * Return the entire imperative string that would act on the provided key set
+     *
      * @param chassis
      * @param variant
      * @param pilot
@@ -283,7 +345,7 @@ public class MunitionTree {
      * @return
      */
     public String getEffectiveImperative(
-        String chassis, String variant, String pilot, String binType) {
+            String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
         if (null != node) {
             return node.getImperative(binType).get(1);
@@ -292,7 +354,9 @@ public class MunitionTree {
     }
 
     /**
-     * Return the actual, or effective, desired count of ammo bins for the given binType and ammoType
+     * Return the actual, or effective, desired count of ammo bins for the given
+     * binType and ammoType
+     *
      * @param chassis
      * @param variant
      * @param pilot
@@ -306,11 +370,11 @@ public class MunitionTree {
     }
 }
 
-
 // Node used to construct munition loading tree
 class LoadNode {
     private HashMap<String, LoadNode> children = new HashMap<String, LoadNode>();
-    // Imperatives in the form of: "<binType/weaponType>:<desiredAmmo1>[:desiredAmmo2[:...]]"
+    // Imperatives in the form of:
+    // "<binType/weaponType>:<desiredAmmo1>[:desiredAmmo2[:...]]"
     private HashMap<String, String> imperatives = new HashMap<String, String>();
     private HashMap<String, HashMap<String, Integer>> counts = new HashMap<String, HashMap<String, Integer>>();
     private boolean dirty = false;
@@ -339,6 +403,7 @@ class LoadNode {
 
     /**
      * Testing version of LoadNode, for imperative lookups
+     *
      * @param imperatives
      */
     LoadNode(HashMap<String, String> imperatives) {
@@ -347,11 +412,12 @@ class LoadNode {
 
     /**
      * LoadNode that recursively populates a leaf of the lookup tree.
+     *
      * @param imperatives
      * @param keys
      */
     LoadNode(HashMap<String, String> imperatives, String... keys) {
-        if (keys.length > 0){
+        if (keys.length > 0) {
             children.put(keys[0], new LoadNode(imperatives, Arrays.copyOfRange(keys, 1, keys.length)));
         } else {
             updateImperatives(imperatives);
@@ -359,7 +425,7 @@ class LoadNode {
     }
 
     private void updateImperatives(HashMap<String, String> imperatives) {
-        for (String key: imperatives.keySet()) {
+        for (String key : imperatives.keySet()) {
             if (this.imperatives.containsKey(key)) {
                 dirty = true;
             }
@@ -368,7 +434,9 @@ class LoadNode {
     }
 
     /**
-     * Utilizes recursion and variable length argument list to insert a set of imperatives at arbitrary depth
+     * Utilizes recursion and variable length argument list to insert a set of
+     * imperatives at arbitrary depth
+     *
      * @param imperatives
      * @param keys
      */
@@ -386,23 +454,24 @@ class LoadNode {
     }
 
     public LoadNode retrieve(String... keys) {
-        // Recursive retrieval method.  Either:
+        // Recursive retrieval method. Either:
         // 1. we are the end of the chain (keys.length == 0), or
         // 2. we contain the first key, or
         // 2.5 we contain the first key but it returns no results, so
         // 3. we contain an "any" entry, or
         // 4. we return null (no matches)
         LoadNode ln = null;
-        if (keys.length == 0){
+        if (keys.length == 0) {
             ln = this;
-        } else if (children.containsKey(keys[0])){
+        } else if (children.containsKey(keys[0])) {
             ln = children.get(keys[0]).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
 
-            // Found a defined branch without a match or an "any" so try our own "any" branch
+            // Found a defined branch without a match or an "any" so try our own "any"
+            // branch
             if (ln == null && children.containsKey(ANY_KEY)) {
                 ln = children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
             }
-        } else if (children.containsKey(ANY_KEY)){
+        } else if (children.containsKey(ANY_KEY)) {
             ln = children.get(ANY_KEY).retrieve(Arrays.copyOfRange(keys, 1, keys.length));
         }
         return ln;
@@ -454,7 +523,9 @@ class LoadNode {
     }
 
     /**
-     * Does the string conversions necessary to look up "parent" types, e.g AC for AC-20 (or LAC-5)
+     * Does the string conversions necessary to look up "parent" types, e.g AC for
+     * AC-20 (or LAC-5)
+     *
      * @param binType
      * @return
      */
@@ -487,7 +558,8 @@ class LoadNode {
             }
         }
 
-        String actualLookup = candidates.stream().filter(candidate -> imperatives.containsKey(candidate)).findFirst().orElse(null);
+        String actualLookup = candidates.stream().filter(candidate -> imperatives.containsKey(candidate)).findFirst()
+                .orElse(null);
         String actualImperative = imperatives.getOrDefault(actualLookup, null);
         return (actualImperative == null) ? new ArrayList<>() : Arrays.asList(actualLookup, actualImperative);
     }
@@ -511,6 +583,7 @@ class LoadNode {
 
     /**
      * Method for retrieving counts of all imperatives defined for a given binType.
+     *
      * @param binType
      * @return HashMap <String AmmoType, count of bins requested>
      */
@@ -533,8 +606,11 @@ class LoadNode {
     }
 
     /**
-     * Given a set of desired ammo types from an imperative, breaks the string up and
-     * constructs a HashMap of <String AmmoType name, count of bins requested> Entries.
+     * Given a set of desired ammo types from an imperative, breaks the string up
+     * and
+     * constructs a HashMap of <String AmmoType name, count of bins requested>
+     * Entries.
+     *
      * @param iString
      * @return HashMap c
      */
@@ -551,12 +627,17 @@ class LoadNode {
     /**
      * Recursive text format dumper.
      * Cases:
-     * 1. This is a leaf.  Three keys have been passed in; these form the start of the line.
-     *    Print one line starting with the three keys in "chassis:model:pilot::" format.
-     *    Each line contains all imperatives in "ammoType:munition1[:munition2[...]]::ammoType2..."
-     *    format.
-     * 2. This is a node.  1~2 keys have been passed in; pass these to leaves.
-     * 3. This is the root.  Iterate over all child keys and pass them to the children.
+     * 1. This is a leaf. Three keys have been passed in; these form the start of
+     * the line.
+     * Print one line starting with the three keys in "chassis:model:pilot::"
+     * format.
+     * Each line contains all imperatives in
+     * "ammoType:munition1[:munition2[...]]::ammoType2..."
+     * format.
+     * 2. This is a node. 1~2 keys have been passed in; pass these to leaves.
+     * 3. This is the root. Iterate over all child keys and pass them to the
+     * children.
+     *
      * @param keys
      * @return
      */

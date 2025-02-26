@@ -122,6 +122,13 @@ public class Hex implements Serializable {
     }
 
     /**
+     * @return A HashSet that contains an id for each terrain present in this hex.
+     */
+    public Set<Integer> getTerrainTypesSet() {
+        return new HashSet<>(terrains.keySet());
+    }
+
+    /**
      * Resets the theme to what was specified in the board file.
      */
     public void resetTheme() {
@@ -399,6 +406,19 @@ public class Hex implements Serializable {
 
     /**
      * @param types the terrains to check
+     * @return if at least one of the specified terrains are represented in the hex at any level.
+     * @see Hex#containsTerrain(int, int)
+     * @see Hex#containsTerrain(int)
+     * @see Hex#containsAllTerrainsOf(int...)
+     */
+    public boolean containsAnyTerrainOf(Set<Integer> types) {
+        Set<Integer> keys = new HashSet<>(terrains.keySet());
+        keys.retainAll(types);
+        return !keys.isEmpty();
+    }
+
+    /**
+     * @param types the terrains to check
      * @return <code>true</code> if all the specified terrains are represented in the hex at any level.
      * @see Hex#containsTerrain(int, int)
      * @see Hex#containsAllTerrainsOf(int...)
@@ -414,10 +434,55 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return if there is pavement, a road or a bridge in the hex.
+     * @return True if there is pavement, a paved road or a bridge in the hex.
      */
     public boolean hasPavement() {
-        return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
+        if (containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.BRIDGE)){
+            return true;
+        }
+        else {
+            return hasPavedRoad();
+        }
+    }
+
+    /**
+     * If there's a road on this tile and it's paved, return true
+     * @return
+     */
+    public boolean hasPavedRoad() {
+        if (containsTerrain(Terrains.ROAD)){
+            return !Arrays.asList(Terrains.ROAD_LVL_DIRT, Terrains.ROAD_LVL_GRAVEL).contains(terrainLevel(Terrains.ROAD));
+            //Return false if the road is dirt or gravel
+        }
+        return false;
+    }
+
+    /**
+     * @return True if there is pavement, a road or a bridge in the hex.
+     */
+    public boolean hasPavementOrRoad() {
+        return containsAnyTerrainOf(Terrains.PAVEMENT, Terrains.ROAD, Terrains.BRIDGE);
+    }
+
+    /**
+     * @return True if there is any woods or jungle in this hex, including foliage (i.e., height 1 woods/jungle).
+     */
+    public boolean hasVegetation() {
+        return containsAnyTerrainOf(Terrains.WOODS, Terrains.JUNGLE);
+    }
+
+    /**
+     * @return The height of woods or jungle in this hex (1, 2 or 3), or 0 if there isn't any.
+     */
+    public int vegetationCeiling() {
+        return containsTerrain(Terrains.FOLIAGE_ELEV) ? terrainLevel(Terrains.FOLIAGE_ELEV) : 0;
+    }
+
+    /**
+     * @return True if there is water in this hex of at least depth 1 (i.e., not depth 0)
+     */
+    public boolean hasDepth1WaterOrDeeper() {
+        return containsTerrain(Terrains.WATER) && (terrainLevel(Terrains.WATER) >= 1);
     }
 
     /**
@@ -504,11 +569,8 @@ public class Hex implements Serializable {
     /**
      * Adds terrain modifiers to PSRs made in this hex
      */
-    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll,
-                                        boolean enteringRubble) {
-        for (Integer i : terrains.keySet()) {
-            terrains.get(i).pilotingModifier(moveMode, roll, enteringRubble);
-        }
+    public void applyTerrainPilotingModifiers(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
+        terrains.values().forEach(t -> t.applyPilotingModifier(moveMode, roll, enteringRubble));
     }
 
     /**
@@ -544,19 +606,32 @@ public class Hex implements Serializable {
                 || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
     }
 
+    /**
+     * Returns true if the hex is valid for takeoff - either clear, has pavement, or a road
+     * @return
+     */
     public boolean isClearForTakeoff() {
-        for (final Integer i : terrains.keySet()) {
-            if (containsTerrain(i) && (i != Terrains.PAVEMENT) && (i != Terrains.ROAD) && (i != Terrains.FLUFF)
-                    && (i != Terrains.ARMS) && (i != Terrains.LEGS) && (i != Terrains.SNOW) && (i != Terrains.MUD)
-                    && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
-                return false;
-            }
+        if (hasPavementOrRoad()) {
+            return true;
         }
-        return true;
+        return getBaseTerrainType() == 0;
     }
 
     public boolean isClearForLanding() {
         return !containsTerrain(Terrains.IMPASSABLE);
+    }
+
+    /**
+     * Returns the "Base Terrain" for the hex, or 0 if it is clear
+     * @return
+     */
+    public int getBaseTerrainType() {
+        for (int terrain : terrains.keySet()) {
+            if (Terrains.isBaseTerrain(terrain)) {
+                return terrain;
+            }
+        }
+        return 0;
     }
 
     public int getFireTurn() {

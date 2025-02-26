@@ -1,0 +1,107 @@
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-27
+<UnitType>
+SupportVTOL
+</UnitType>
+
+<Name>
+Trireme Infantry Transport
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+3309
+</mul id:>
+
+<year>
+3086
+</year>
+
+<originalBuildYear>
+3086
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+None
+</role>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+battlearmorbay:4.5:1:1::-1:0
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+44
+</armor_type>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
+
+<armor>
+15
+15
+15
+11
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<barrating>
+3
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>
+

@@ -18,7 +18,7 @@ import megamek.common.EquipmentTypeLookup;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -53,7 +53,7 @@ public class CLBAMortarLight extends Weapon {
         cost = 2100;
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTARTYPE_INDIRECT)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
@@ -74,11 +74,11 @@ public class CLBAMortarLight extends Weapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {
@@ -88,7 +88,7 @@ public class CLBAMortarLight extends Weapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted linked) {
+    public double getBattleForceDamage(int range, Mounted<?> linked) {
         return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.276 : 0;
     }
 

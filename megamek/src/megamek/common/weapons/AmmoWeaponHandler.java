@@ -1,40 +1,53 @@
 /*
  * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.CriticalSlot;
+import megamek.common.Game;
+import megamek.common.HitData;
+import megamek.common.IBomber;
+import megamek.common.Mounted;
+import megamek.common.Report;
+import megamek.common.Roll;
+import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
- * @since Sep 24, 2004
  */
 public class AmmoWeaponHandler extends WeaponHandler {
-
+    @Serial
     private static final long serialVersionUID = -4934490646657484486L;
-    Mounted ammo;
 
-    protected AmmoWeaponHandler() {
-        // deserialization only
-    }
+    private static final MMLogger logger = MMLogger.create(AmmoWeaponHandler.class);
 
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    Mounted<?> ammo;
+
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
@@ -44,7 +57,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         checkAmmo();
         if (ammo == null) {
             // Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
-            LogManager.getLogger().error("Handler can't find any ammo! Oh no!", new Exception());
+            logger.error("Handler can't find any ammo! Oh no!", new Exception());
             return;
         }
 
@@ -70,8 +83,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * For ammo weapons, this number can be less than the full number if the
-     * amount of ammo is not high enough
+     * For ammo weapons, this number can be less than the full number if the amount of ammo is not high enough.
      *
      * @return the number of weapons of this type firing (for squadron weapon groups)
      */
@@ -82,10 +94,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             return weapon.getNWeapons();
         }
         int totalShots = ae.getTotalAmmoOfType(ammo.getType());
-        return Math.min(
-                weapon.getNWeapons(),
-                (int) Math.floor((double) totalShots
-                        / (double) weapon.getCurrentShots()));
+        return Math.min(weapon.getNWeapons(), (int) Math.floor((double) totalShots / (double) weapon.getCurrentShots()));
     }
 
     @Override
@@ -101,8 +110,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // don't have neg ammo feed problem quirk
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
-        // attack roll was a 2, may explode
-        } else if (roll.getIntValue() <= 2) {
+        } else if ((roll.getIntValue() <= 2) && !ae.isConventionalInfantry()) {
+            // attack roll was a 2, may explode
             Roll diceRoll = Compute.rollD6(2);
 
             Report r = new Report(3173);
@@ -131,8 +140,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
                 return false;
             }
-        // attack roll was not 2, won't explode
         } else {
+            // attack roll was not 2, won't explode
             return false;
         }
 
@@ -152,7 +161,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
-            Mounted mounted = slot1.getMount();
+            Mounted<?> mounted = slot1.getMount();
             if (mounted.equals(weapon)) {
                 ae.hitAllCriticals(wloc, i);
                 break;

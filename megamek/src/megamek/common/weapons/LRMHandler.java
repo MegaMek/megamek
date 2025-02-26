@@ -1,18 +1,25 @@
 /*
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -24,7 +31,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mech;
+import megamek.common.Mek;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -35,37 +42,24 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class LRMHandler extends MissileWeaponHandler {
+    @Serial
     private static final long serialVersionUID = -9160255801810263821L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         this(t, w, g, m, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m,
-            int salvoMod) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m, int salvoMod) {
         super(t, w, g, m);
         nSalvoBonus = salvoMod;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     * megamek.common.Entity, boolean)
-     */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget) {
@@ -97,11 +91,6 @@ public class LRMHandler extends MissileWeaponHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -132,10 +121,10 @@ public class LRMHandler extends MissileWeaponHandler {
         int nMissilesModifier = getClusterModifiers(false);
 
         boolean bMekTankStealthActive = false;
-        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+        if ((ae instanceof Mek) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        Mounted mLinker = weapon.getLinkedBy();
+        Mounted<?> mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
@@ -145,115 +134,111 @@ public class LRMHandler extends MissileWeaponHandler {
             bECMAffected = true;
         }
 
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+        if (!weapon.curMode().equals("Indirect")) {
+            if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
-                && !weapon.curMode().equals("Indirect")) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                Report r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekTankStealthActive) {
-                // stealth prevents bonus
-                Report r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                nMissilesModifier += 2;
-            }
-
-        } else if (((mLinker != null)
-                && (mLinker.getType() instanceof MiscType)
-                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_PROTO))
                 && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                Report r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekTankStealthActive) {
-                // stealth prevents bonus
-                Report r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                nMissilesModifier += 1;
-            }
-
-
-        } else if (((mLinker != null)
-                && (mLinker.getType() instanceof MiscType)
-                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                MiscType.F_ARTEMIS_V))
-                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                Report r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekTankStealthActive) {
-                // stealth prevents bonus
-                Report r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                nMissilesModifier += 3;
-            }
-        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
-            if (bECMAffected) {
-                // ECM prevents bonus
-                Report r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else if (bMekTankStealthActive) {
-                // stealth prevents bonus
-                Report r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            } else {
-                nMissilesModifier += 2;
-            }
-        } else if ((entityTarget != null)
-                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
-                        .isINarcedBy(ae.getOwner().getTeam()))) {
-            // only apply Narc bonus if we're not suffering ECM effect
-            // and we are using narc ammo, and we're not firing indirectly.
-            // narc capable missiles are only affected if the narc pod, which
-            // sits on the target, is ECM affected
-            boolean bTargetECMAffected = false;
-            bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                    target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_NLRM))
-                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))
-                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
-                            "Indirect"))) {
-                if (bTargetECMAffected) {
+                if (bECMAffected) {
                     // ECM prevents bonus
                     Report r = new Report(3330);
                     r.subject = subjectId;
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
+                } else if (bMekTankStealthActive) {
+                    // stealth prevents bonus
+                    Report r = new Report(3335);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
                 } else {
                     nMissilesModifier += 2;
+                }
+            } else if (((mLinker != null)
+                && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
+                if (bECMAffected) {
+                    // ECM prevents bonus
+                    Report r = new Report(3330);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else if (bMekTankStealthActive) {
+                    // stealth prevents bonus
+                    Report r = new Report(3335);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else {
+                    nMissilesModifier += 1;
+                }
+            } else if (((mLinker != null)
+                && (mLinker.getType() instanceof MiscType)
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_V))
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
+                if (bECMAffected) {
+                    // ECM prevents bonus
+                    Report r = new Report(3330);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else if (bMekTankStealthActive) {
+                    // stealth prevents bonus
+                    Report r = new Report(3335);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else {
+                    nMissilesModifier += 3;
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+                if (bECMAffected) {
+                    // ECM prevents bonus
+                    Report r = new Report(3330);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else if (bMekTankStealthActive) {
+                    // stealth prevents bonus
+                    Report r = new Report(3335);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else {
+                    nMissilesModifier += 2;
+                }
+            } else if ((entityTarget != null)
+                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
+                .isINarcedBy(ae.getOwner().getTeam()))) {
+                // only apply Narc bonus if we're not suffering ECM effect
+                // and we are using narc ammo, and we're not firing indirectly.
+                // narc capable missiles are only affected if the narc pod, which
+                // sits on the target, is ECM affected
+                boolean bTargetECMAffected = false;
+                bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
+                    target.getPosition(), target.getPosition());
+                if (((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_SRM)
+                    || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM))
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
+                    if (bTargetECMAffected) {
+                        // ECM prevents bonus
+                        Report r = new Report(3330);
+                        r.subject = subjectId;
+                        r.newlines = 0;
+                        vPhaseReport.addElement(r);
+                    } else {
+                        nMissilesModifier += 2;
+                    }
                 }
             }
         }

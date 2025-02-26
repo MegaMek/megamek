@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,7 +20,12 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
-import megamek.common.*;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.LandAirMek;
+import megamek.common.Mek;
+import megamek.common.Tank;
 
 public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerator {
     //region Constructors
@@ -36,7 +41,7 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
 
         int bonus = 0;
         if (type.isClan()) {
-            if ((entity instanceof Mech) || (entity instanceof BattleArmor)) {
+            if ((entity instanceof Mek) || (entity instanceof BattleArmor)) {
                 bonus += 2;
             } else if ((entity instanceof Tank) || (entity instanceof Infantry)) {
                 bonus -= 2;
@@ -44,13 +49,13 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
         } else if (type.isManeiDomini()) {
             bonus++;
         } else if (type.isSociety()) {
-            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+            if ((entity instanceof Mek) || (entity instanceof Tank)) {
                 bonus -= 1;
             }
         }
 
         // Demands of dual training
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             bonus -= 2;
         }
 

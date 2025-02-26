@@ -1,5 +1,5 @@
 #  A MegaMek Scenario file
-# MegaMek Conversion by Phillip "bullseyesmith" Starke 
+# MegaMek Conversion by Phillip "bullseyesmith" Starke
 MMSVersion=1
 Name=First Run
 Description=Battletech 3rd Edition Training Scenario #1, pg. 36

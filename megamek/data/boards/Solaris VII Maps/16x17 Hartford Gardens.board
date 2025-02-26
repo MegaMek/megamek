@@ -1,8 +1,10 @@
 size 16 17
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Flat (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 0 "bldg_elev:5;building:4:8;bldg_cf:110" ""
 hex 0201 1 "" ""
 hex 0301 0 "bldg_elev:5;building:4:0;bldg_cf:110" ""

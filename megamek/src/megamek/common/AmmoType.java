@@ -14,20 +14,18 @@
  */
 package megamek.common;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
+import megamek.logging.MMLogger;
+import megamek.common.annotations.Nullable;
 import org.apache.commons.lang3.ArrayUtils;
 
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 
 public class AmmoType extends EquipmentType {
+
+    private static final MMLogger LOGGER = MMLogger.create(AmmoType.class);
 
     // ammo types
     public static final int T_NA = -1;
@@ -178,48 +176,46 @@ public class AmmoType extends EquipmentType {
     /**
      * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and
      * SRM 6, both fire SRM rounds), and conceptually can share ammo.
-     *
-     * NB: This is used in MekHQ.
      */
     public static final Set<Integer> ALLOWED_BY_TYPE = Set.of(ALLOWED_BY_TYPE_ARRAY);
 
     // ammo flags
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
-    public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only used by ProtoMeks
-    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo can be hotloaded
+    public static final AmmoTypeFlag F_MG = AmmoTypeFlag.F_MG;
+    public static final AmmoTypeFlag F_BATTLEARMOR = AmmoTypeFlag.F_BATTLEARMOR; // only used by BA squads
+    public static final AmmoTypeFlag F_PROTOMEK = AmmoTypeFlag.F_PROTOMEK; // only used by ProtoMeks
+    public static final AmmoTypeFlag F_HOTLOAD = AmmoTypeFlag.F_HOTLOAD; // Ammo can be hotloaded
 
-    // BA can't jump or make antimech until dumped
-    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4);
+    // BA can't jump or make anti-mek until dumped
+    public static final AmmoTypeFlag F_ENCUMBERING = AmmoTypeFlag.F_ENCUMBERING;
 
-    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
-    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
-    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
-    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda type
-    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear missile
-    public static final BigInteger F_SANTA_ANNA = BigInteger.valueOf(1).shiftLeft(14); // Santa Anna Missile
-    public static final BigInteger F_PEACEMAKER = BigInteger.valueOf(1).shiftLeft(15); // Peacemaker Missile
-    public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
-    public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Other Capital-Missile
-    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can be used to space bomb
+    public static final AmmoTypeFlag F_MML_LRM = AmmoTypeFlag.F_MML_LRM; // LRM type
+    public static final AmmoTypeFlag F_AR10_WHITE_SHARK = AmmoTypeFlag.F_AR10_WHITE_SHARK; // White shark type
+    public static final AmmoTypeFlag F_AR10_KILLER_WHALE = AmmoTypeFlag.F_AR10_KILLER_WHALE; // Killer Whale type
+    public static final AmmoTypeFlag F_AR10_BARRACUDA = AmmoTypeFlag.F_AR10_BARRACUDA; // barracuda type
+    public static final AmmoTypeFlag F_NUCLEAR = AmmoTypeFlag.F_NUCLEAR; // Nuclear missile
+    public static final AmmoTypeFlag F_SANTA_ANNA = AmmoTypeFlag.F_SANTA_ANNA; // Santa Anna Missile
+    public static final AmmoTypeFlag F_PEACEMAKER = AmmoTypeFlag.F_PEACEMAKER; // Peacemaker Missile
+    public static final AmmoTypeFlag F_TELE_MISSILE = AmmoTypeFlag.F_TELE_MISSILE; // Tele-Missile
+    public static final AmmoTypeFlag F_CAP_MISSILE = AmmoTypeFlag.F_CAP_MISSILE; // Other Capital-Missile
+    public static final AmmoTypeFlag F_SPACE_BOMB = AmmoTypeFlag.F_SPACE_BOMB; // can be used to space bomb
 
     // can be used to ground bomb
-    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13);
-    public static final BigInteger F_MML_SRM = BigInteger.valueOf(1).shiftLeft(14); // SRM type
+    public static final AmmoTypeFlag F_GROUND_BOMB = AmmoTypeFlag.F_GROUND_BOMB;
+    public static final AmmoTypeFlag F_MML_SRM = AmmoTypeFlag.F_MML_SRM; // SRM type
 
     // Numbers 14-15 out of order. See nuclear missiles, above
 
     // For tag, rl pods, missiles and the like
-    public static final BigInteger F_OTHER_BOMB = BigInteger.valueOf(1).shiftLeft(16);
+    public static final AmmoTypeFlag F_OTHER_BOMB = AmmoTypeFlag.F_OTHER_BOMB;
 
     // Used by MHQ for loading ammo bins
-    public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(17);
+    public static final AmmoTypeFlag F_CRUISE_MISSILE = AmmoTypeFlag.F_CRUISE_MISSILE;
 
     // Used by MHQ for loading ammo bins
-    public static final BigInteger F_SCREEN = BigInteger.valueOf(1).shiftLeft(18);
+    public static final AmmoTypeFlag F_SCREEN = AmmoTypeFlag.F_SCREEN;
 
     // Used for Internal Bomb Bay bombs; to differentiate them from
-    public static final BigInteger F_INTERNAL_BOMB = BigInteger.valueOf(1).shiftLeft(19);
+    public static final AmmoTypeFlag F_INTERNAL_BOMB = AmmoTypeFlag.F_INTERNAL_BOMB;
 
     // ammo munitions, used for custom load outs
     // N.B. We use EnumSet<Munitions> allow "incendiary"
@@ -341,7 +337,18 @@ public class AmmoType extends EquipmentType {
         M_FAE
     }
 
-    private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<Vector<AmmoType>>(NUM_TYPES);
+    public static final EnumSet<AmmoType.Munitions> SMOKE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_SMOKE, AmmoType.Munitions.M_SMOKE_WARHEAD);
+    public static final EnumSet<AmmoType.Munitions> FLARE_MUNITIONS = EnumSet.of(AmmoType.Munitions.M_FLARE);
+    public static final EnumSet<AmmoType.Munitions> MINE_MUNITIONS = EnumSet.of(
+        AmmoType.Munitions.M_THUNDER,
+        AmmoType.Munitions.M_THUNDER_ACTIVE,
+        AmmoType.Munitions.M_THUNDER_AUGMENTED,
+        AmmoType.Munitions.M_THUNDER_INFERNO,
+        AmmoType.Munitions.M_THUNDER_VIBRABOMB,
+        AmmoType.Munitions.M_FASCAM
+    );
+
+    private static Vector<Vector<AmmoType>> m_vaMunitions = new Vector<>(NUM_TYPES);
 
     public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {
         return m_vaMunitions.get(nAmmoType);
@@ -372,12 +379,19 @@ public class AmmoType extends EquipmentType {
             T_THUMPER,
             T_ARROW_IV
     };
+
     private int[] ARTILLERY_CANNON_TYPES = {
             T_LONG_TOM_CANNON,
             T_SNIPER_CANNON,
             T_THUMPER_CANNON
     };
+
     private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD);
+
+    public static final Map<String, Integer> blastRadius;
+    static {
+        blastRadius = new HashMap<>();
+    }
 
     public AmmoType() {
         criticals = 1;
@@ -403,8 +417,8 @@ public class AmmoType extends EquipmentType {
 
         AmmoType otherAmmoType = (AmmoType) other;
 
-        // There a couple of flags that need to be checked before we check
-        // on getAmmoType() strictly.
+        // There a couple of flags that need to be checked before we check on
+        // getAmmoType() strictly.
         if (is(T_MML)) {
             if (hasFlag(F_MML_LRM) != otherAmmoType.hasFlag(F_MML_LRM)) {
                 return false;
@@ -430,8 +444,8 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
-     * Gets a value indicating whether this {@code AmmoType} is compatible
-     * with another {@code AmmoType}.
+     * Gets a value indicating whether this {@code AmmoType} is compatible with
+     * another {@code AmmoType}.
      *
      * NB: this roughly means the same ammo type and munition type, but not rack
      * size.
@@ -484,9 +498,24 @@ public class AmmoType extends EquipmentType {
         return ammoType;
     }
 
+    public int getToHitModifier() {
+        return toHitModifier;
+    }
+
+    @Override
+    public boolean hasFlag(EquipmentFlag flag) {
+        if (flag instanceof AmmoTypeFlag) {
+            return super.hasFlag(flag);
+        } else {
+            LOGGER.warn("Incorrect flag check: make sure to test only AmmoTypeFlags on an AmmoType.");
+            return false;
+        }
+    }
+
     /**
      * Analog to WeaponType.getFireTNRoll(), but based on munitions.
      * See TO:AR pg 42
+     *
      * @return
      */
     public int getFireTN() {
@@ -519,7 +548,7 @@ public class AmmoType extends EquipmentType {
      * TW/TO/IO rules.
      *
      * Arrow IV missiles with M_CLUSTER, M_ADA, or M_STANDARD (not M_HOMING) count
-     * as Flak (TO:AU&E pp166-167, 224)
+     * as Flak (TO:AU&amp;E pp166-167, 224)
      *
      * @return counts true if this ammo can be considered Flak in some situations
      */
@@ -681,7 +710,7 @@ public class AmmoType extends EquipmentType {
      * @param mounted
      * @return
      */
-    public static AmmoType getOneshotAmmo(Mounted mounted) {
+    public static AmmoType getOneshotAmmo(Mounted<?> mounted) {
         WeaponType wt = (WeaponType) mounted.getType();
         if (wt.getAmmoType() == -1) {
             return null;
@@ -1664,13 +1693,13 @@ public class AmmoType extends EquipmentType {
                         .setProductionFactions(F_TH)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371, TO"));
-
+        // Tandem Charge Updated to alight with fluff text in TacOps.
         munitions.add(new MunitionMutator("Tandem-Charge", 2, Munitions.M_TANDEM_CHARGE,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
                         .setTechRating(RATING_E)
-                        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-                        .setISAdvancement(2757, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
-                        .setISApproximate(true, false, false, false, false)
+                        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E)
+                        .setISAdvancement(2757, DATE_NONE, DATE_NONE, 2784, 3062)
+                        .setISApproximate(true, false, false, true, true)
                         .setPrototypeFactions(F_TH)
                         .setProductionFactions(F_FS).setReintroductionFactions(F_FS)
                         .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
@@ -1998,8 +2027,8 @@ public class AmmoType extends EquipmentType {
 
         munitions.add(new MunitionMutator("Follow The Leader", 2, Munitions.M_FOLLOW_THE_LEADER,
                 new TechAdvancement(TECH_BASE_IS).setTechRating(RATING_E)
-                        .setAvailability(RATING_F, RATING_X, RATING_E, RATING_X)
-                        .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, 3046)
+                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
+                        .setISAdvancement(2750, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
                         .setISApproximate(true, false, false, true, false)
                         .setPrototypeFactions(F_TH)
                         .setReintroductionFactions(F_FS, F_LC)
@@ -2080,9 +2109,9 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Thunder", 1, Munitions.M_THUNDER,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
                         .setTechRating(RATING_E)
-                        .setAvailability(RATING_D, RATING_X, RATING_D, RATING_D)
+                        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
                         .setISAdvancement(2618, 2620, 2650, 2840, 3052)
-                        .setISApproximate(true, false, false, false, false)
+                        .setISApproximate(true, false, false, true, false)
                         .setPrototypeFactions(F_TH)
                         .setProductionFactions(F_TH).setReintroductionFactions(F_LC, F_FS)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
@@ -3429,6 +3458,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 1);
         return ammo;
     }
 
@@ -3455,6 +3485,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 2);
         return ammo;
     }
 
@@ -3481,6 +3512,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 3);
         return ammo;
     }
 
@@ -3507,6 +3539,7 @@ public class AmmoType extends EquipmentType {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        blastRadius.put(ammo.getInternalName(), 4);
         return ammo;
     }
 
@@ -4394,7 +4427,8 @@ public class AmmoType extends EquipmentType {
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
                 .setISAdvancement(2590, 2595, 3040, 2840, 3035)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, false, true)
+                .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_FS);
         return ammo;
     }
@@ -7051,7 +7085,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 8.33;
         ammo.bv = 0.016;
@@ -7077,7 +7111,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 16.67;
         ammo.bv = 0.033;
@@ -7103,7 +7137,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 24.99;
         ammo.bv = 0.05;
@@ -7129,7 +7163,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 33.32;
         ammo.bv = 0.067;
@@ -7155,7 +7189,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 49.98;
         ammo.bv = 0.1;
@@ -7181,7 +7215,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 58.31;
         ammo.bv = 0.117;
@@ -7207,7 +7241,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 66.64;
         ammo.bv = 0.133;
@@ -7233,7 +7267,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 74.97;
         ammo.bv = 0.15;
@@ -7259,7 +7293,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 91.63;
         ammo.bv = 0.183;
@@ -7285,7 +7319,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 99.96;
         ammo.bv = 0.2;
@@ -7311,7 +7345,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 108.29;
         ammo.bv = 0.216;
@@ -7337,7 +7371,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 116.62;
         ammo.bv = 0.233;
@@ -7363,7 +7397,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 133.28;
         ammo.bv = 0.266;
@@ -7389,7 +7423,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 141.61;
         ammo.bv = 0.283;
@@ -7415,7 +7449,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 149.94;
         ammo.bv = 0.3;
@@ -7441,7 +7475,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-        ammo.flags = ammo.flags.or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_PROTOMEK);
         ammo.shots = 1;
         ammo.kgPerShot = 158.27;
         ammo.bv = 0.316;
@@ -7474,7 +7508,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.02;
         ammo.kgPerShot = 8.33;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7502,7 +7536,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 16.66;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7530,7 +7564,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.kgPerShot = 24.99;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7558,7 +7592,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 33.32;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7586,7 +7620,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 9;
         ammo.kgPerShot = 49.98;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7614,7 +7648,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.kgPerShot = 58.31;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7642,7 +7676,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.kgPerShot = 66.64;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7670,7 +7704,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.kgPerShot = 74.97;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7698,7 +7732,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 91.63;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7726,7 +7760,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 99.96;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7754,7 +7788,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 20;
         ammo.kgPerShot = 108.29;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7782,7 +7816,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.kgPerShot = 116.62;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7810,7 +7844,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 133.28;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7838,7 +7872,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 141.61;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7866,7 +7900,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 149.94;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -7894,7 +7928,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 158.27;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8095,7 +8129,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 2;
         ammo.kgPerShot = 10;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8146,7 +8180,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.kgPerShot = 30;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8197,7 +8231,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 50;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -8593,7 +8627,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    // Clan ProtoMech Streak Launchers
+    // Clan ProtoMek Streak Launchers
     private static AmmoType createCLStreakSRM1Ammo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Streak SRM 1 Ammo";
@@ -8608,7 +8642,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 10;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -8634,7 +8668,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.kgPerShot = 30;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -8660,7 +8694,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 13;
         ammo.kgPerShot = 50;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * SRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "230, TM";
@@ -9145,7 +9179,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9173,7 +9207,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.kgPerShot = 16.66;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9201,7 +9235,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.kgPerShot = 24.99;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9229,7 +9263,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.kgPerShot = 33.32;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9282,7 +9316,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 9;
         ammo.kgPerShot = 49.98;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9310,7 +9344,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.kgPerShot = 58.31;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9338,7 +9372,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.kgPerShot = 66.64;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9366,7 +9400,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.kgPerShot = 74.97;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9419,7 +9453,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 91.63;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9447,7 +9481,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 18;
         ammo.kgPerShot = 99.96;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9475,7 +9509,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 20;
         ammo.kgPerShot = 108.29;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9503,7 +9537,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.kgPerShot = 116.62;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9556,7 +9590,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 133.28;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9584,7 +9618,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 141.61;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9612,7 +9646,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 149.94;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9640,7 +9674,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 158.27;
         /*
-         * Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But
+         * Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But
          * LRM Tech Base and Avail Ratings.
          */
         ammo.rulesRefs = "231, TM";
@@ -9693,7 +9727,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -9743,7 +9777,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -9793,7 +9827,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression.
         // But SRM Tech Base and Avail Ratings.
         ammo.rulesRefs = "231, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12000,11 +12034,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 100;
         ammo.kgPerShot = 10;
         ammo.bv = 1;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12024,11 +12058,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -12049,11 +12083,11 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
+        ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMEK);
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
-        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. But MG
+        // Per Herb all ProtoMek launcher use the ProtoMek Chassis progression. But MG
         // Tech Base and Avail Ratings.
         ammo.rulesRefs = "228, TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
@@ -13693,8 +13727,10 @@ public class AmmoType extends EquipmentType {
     }
 
     public static boolean canClearMinefield(AmmoType at) {
-        // first the normal munition types
         if (at != null) {
+            if (at.getMunitionType().contains(Munitions.M_MINE_CLEARANCE)) {
+                return true;
+            }
             // LRM-20's, RL-20's, and MRM 20, 30, and 40 can clear minefields
             if (((at.getAmmoType() == T_LRM) || (at.getAmmoType() == T_LRM_IMP)
                     || (at.getAmmoType() == T_LRM_STREAK)
@@ -14305,6 +14341,7 @@ public class AmmoType extends EquipmentType {
                     && (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
             }
+
             // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;
@@ -14353,7 +14390,7 @@ public class AmmoType extends EquipmentType {
      * @param weaponType The weapon the ammo is to be used with.
      * @return TRUE if the ammo and weapon are compatible.
      */
-    public static boolean isAmmoValid(Mounted ammo, WeaponType weaponType) {
+    public static boolean isAmmoValid(Mounted<?> ammo, WeaponType weaponType) {
         if (ammo == null) {
             return false;
         } else if (!(ammo.getType() instanceof AmmoType)) {
@@ -14437,5 +14474,11 @@ public class AmmoType extends EquipmentType {
 
         return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch || ar10Match) && !caselessMismatch
                 && !staticFeedMismatch;
+    }
+
+    @Override
+    public boolean isArmorable() {
+        // Coolant pods are implemented as ammo, but are not ammo bins for rules purposes
+        return getAmmoType() == AmmoType.T_COOLANT_POD;
     }
 }

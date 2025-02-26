@@ -29,7 +29,8 @@ import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.options.*;
 
 /** @author Cord Awtry */
-public class DialogOptionComponent extends FixedYPanel implements ItemListener, ActionListener, Comparable<DialogOptionComponent> {
+public class DialogOptionComponent extends FixedYPanel implements ItemListener,
+    FocusListener, ActionListener, Comparable<DialogOptionComponent> {
 
     private static final long serialVersionUID = -4190538980884459746L;
 
@@ -39,7 +40,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     private JComboBox<String> choice;
     private JTextField textField;
     private final DialogOptionListener dialogOptionListener;
-    
+
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
 
@@ -110,6 +111,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                         }
                     }
                 });
+                textField.addFocusListener(this);
                 textField.setEnabled(editable);
                 if (!option.isLabelBeforeTextField()) {
                     add(Box.createHorizontalStrut(2));
@@ -131,11 +133,11 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         result.append("</DIV></html>");
         return result.toString();
     }
-    
+
     public boolean hasChanged() {
         return !option.getValue().equals(getValue()) || hasOptionChanged;
     }
-    
+
     public void setOptionChanged(boolean v) {
         hasOptionChanged = v;
     }
@@ -164,6 +166,8 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                 break;
             case IOption.INTEGER:
             case IOption.FLOAT:
+                textField.setText(v + "");
+                break;
             case IOption.STRING:
                 textField.setText((String) v);
                 break;
@@ -234,9 +238,9 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                 return choice.getSelectedIndex() == 0;
             default:
                 return textField.getText().equals(String.valueOf(option.getDefault()));
-        }        
+        }
     }
-    
+
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
@@ -276,4 +280,11 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         return option.getDisplayableName();
     }
 
+    @Override
+    public void focusGained(FocusEvent e) { }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        dialogOptionListener.optionClicked(this, option, true);
+    }
 }

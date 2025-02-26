@@ -16,19 +16,19 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.Server;
 
 /**
  * This command allows a player to allow another player to switch teams.
- * 
+ *
  * @author arlith
  */
 public class AllowTeamChangeCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
-    public AllowTeamChangeCommand(Server server, GameManager gameManager) {
+    public AllowTeamChangeCommand(Server server, TWGameManager gameManager) {
         super(server, "allowTeamChange", "Allows a player to switch their team "
                 + "Usage: /allowTeamChange used in respond to another " +
                 "Player's request to change teams.  All players assigned to" +
@@ -38,7 +38,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -59,7 +59,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
         boolean changeTeam = true;
         int voteCount = 0;
         int eligiblePlayerCount = 0;
-        for (Player p : server.getGame().getPlayersVector()) {
+        for (Player p : server.getGame().getPlayersList()) {
             if (p.getTeam() != Player.TEAM_UNASSIGNED) {
                 changeTeam &= p.getVotedToAllowTeamChange();
                 if (p.getVotedToAllowTeamChange()) {
@@ -69,7 +69,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
             }
         }
 
-        GameManager gameManager = (GameManager) server.getGameManager();
+        TWGameManager gameManager = (TWGameManager) server.getGameManager();
 
         // Inform all players about the vote
         server.sendServerChat(player.getName() + " has voted to allow "

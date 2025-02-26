@@ -25,9 +25,10 @@ public class CLERLaserMediumPrototype extends LaserWeapon {
 
     public CLERLaserMediumPrototype() {
         super();
-        name = "Prototype ER Medium Laser";
+        name = "Prototype ER Medium Laser (CP)";
         setInternalName("CLERMediumLaserPrototype");
-        shortName = "ER Medium Laser (P)";
+        shortName = "ER Medium Laser (CP)";
+        addLookupName("Prototype ER Medium Laser");
         heat = 5;
         damage = 5;
         shortRange = 4;

@@ -14,9 +14,9 @@
  */
 package megamek.common.weapons.primitive;
 
-import megamek.common.*;
 import megamek.common.AmmoType;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -24,7 +24,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -66,8 +66,10 @@ public class ISAC2Primitive extends ACWeapon {
         maxRange = RANGE_LONG;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = damage;
-        // IO Doesn't strictly define when these weapons stop production. Checked with Herb, and
-        // they would always be around. This to cover some of the back worlds in the Periphery.
+        // IO Doesn't strictly define when these weapons stop production. Checked with
+        // Herb, and
+        // they would always be around. This to cover some of the back worlds in the
+        // Periphery.
         rulesRefs = "118, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
@@ -83,12 +85,12 @@ public class ISAC2Primitive extends ACWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+            TWGameManager manager) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted ignore) {
+    public double getBattleForceDamage(int range, Mounted<?> ignore) {
         return range == AlphaStrikeElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

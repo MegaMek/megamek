@@ -13,5 +13,3 @@ While it is active, she does not share the /singleblind sight with her teammates
 You should get a failure message and it should not work if you attempt to assign it to a human. If you somehow manage to assign it or otherwise give it to a human player, please report it so it can be fixed.
 
 Relating to this PR - https://github.com/MegaMek/megamek/pull/3780
-
-

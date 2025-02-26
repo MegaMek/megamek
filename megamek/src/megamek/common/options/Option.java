@@ -18,12 +18,15 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Vector;
 
 @XmlRootElement(name = "gameoption")
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class Option implements IOption, Serializable {
+
+    @Serial
     private static final long serialVersionUID = 8310472250031962888L;
     @XmlElement(name = "optionname")
     private String name;
@@ -31,31 +34,32 @@ public class Option implements IOption, Serializable {
     private Object defaultValue;
     @XmlElement(name = "optionvalue")
     private Object value;
-    private AbstractOptions owner;
+    private IGameOptions owner;
 
     private transient IOptionInfo info;
 
-    public Option(AbstractOptions owner, String name, String defaultValue) {
+    public Option(IGameOptions owner, String name, String defaultValue) {
         this(owner, name, STRING, defaultValue);
     }
 
-    public Option(AbstractOptions owner, String name, boolean defaultValue) {
+    public Option(IGameOptions owner, String name, boolean defaultValue) {
         this(owner, name, BOOLEAN, defaultValue);
     }
 
-    public Option(AbstractOptions owner, String name, int defaultValue) {
+    public Option(IGameOptions owner, String name, int defaultValue) {
         this(owner, name, INTEGER, defaultValue);
     }
 
-    public Option(AbstractOptions owner, String name, float defaultValue) {
+    public Option(IGameOptions owner, String name, float defaultValue) {
         this(owner, name, FLOAT, defaultValue);
     }
 
-    public Option(AbstractOptions owner, String name, Vector<String> defaultValue) {
+    @SuppressWarnings("unused")
+    public Option(IGameOptions owner, String name, Vector<String> defaultValue) {
         this(owner, name, CHOICE, "");
     }
 
-    public Option(AbstractOptions owner, String name, int type, Object defaultValue) {
+    public Option(IGameOptions owner, String name, int type, Object defaultValue) {
         this.owner = owner;
         this.name = name;
         this.type = type;
@@ -74,7 +78,7 @@ public class Option implements IOption, Serializable {
     }
 
     @Override
-    public AbstractOptions getOwner() {
+    public IGameOptions getOwner() {
         return owner;
     }
 
@@ -221,19 +225,13 @@ public class Option implements IOption, Serializable {
     }
 
     private boolean isValidValue(Object object) {
-        switch (type) {
-            case STRING:
-            case CHOICE:
-                return object instanceof String;
-            case BOOLEAN:
-                return object instanceof Boolean;
-            case INTEGER:
-                return object instanceof Integer;
-            case FLOAT:
-                return object instanceof Float;
-            default:
-                return false;
-        }
+        return switch (type) {
+            case STRING, CHOICE -> object instanceof String;
+            case BOOLEAN -> object instanceof Boolean;
+            case INTEGER -> object instanceof Integer;
+            case FLOAT -> object instanceof Float;
+            default -> false;
+        };
     }
 
     /**
@@ -244,7 +242,7 @@ public class Option implements IOption, Serializable {
             info = owner.getOptionInfo(name);
         }
     }
-    
+
     @Override
     public String toString() {
         return "Option - " + getName() + ": " + getValue();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -109,7 +109,7 @@ public abstract class AbstractSkillGenerator {
      * generator, but does not assign those new skills to that entity
      * @param entity the Entity to generate a random skill array for
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
+     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
      */
     public int[] generateRandomSkills(final Entity entity) {
         return generateRandomSkills(entity, false);
@@ -122,7 +122,7 @@ public abstract class AbstractSkillGenerator {
      * @param entity the Entity to generate a random skill array for
      * @param forceClan forces the type to be clan if the entity is a clan unit
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
+     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
      */
     public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
         return generateRandomSkills(entity, entity.getCrew().isClanPilot(), forceClan);
@@ -136,15 +136,15 @@ public abstract class AbstractSkillGenerator {
      * @param clanPilot if the crew to generate a random skills array for are a clan crew
      * @param forceClan forces the type to be clan if the crew are a clan crew
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
+     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
      */
     public abstract int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
                                                final boolean forceClan);
 
     /**
      * This cleans up the return value before the final return, and by doing so to handling two
-     * specific use cases. The first is handling Infantry Anti-'Mech skill generation properly by
-     * directly tying it into entity being Anti-'Mech trained. The second is the force close option,
+     * specific use cases. The first is handling Infantry Anti-'Mek skill generation properly by
+     * directly tying it into entity being Anti-'Mek trained. The second is the force close option,
      * which forces piloting to be gunnery plus one
      * @param entity the entity the skill is being generated for
      * @param skills the skill array to cleanup before the final return
@@ -155,7 +155,7 @@ public abstract class AbstractSkillGenerator {
         // based on whether the unit has anti-mek training, which gets set in the BLK file.
         // We therefore check if they are anti-mek trained before setting
         if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-            skills[1] = Infantry.ANTI_MECH_SKILL_NO_GEAR;
+            skills[1] = Infantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (isForceClose()) {
             skills[1] = skills[0] + 1;
         }

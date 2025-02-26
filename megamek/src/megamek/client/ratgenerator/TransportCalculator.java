@@ -1,5 +1,20 @@
-/**
+/*
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ratgenerator;
 
@@ -9,36 +24,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.ASFBay;
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.HeavyVehicleBay;
-import megamek.common.InfantryBay;
-import megamek.common.LightVehicleBay;
-import megamek.common.MechBay;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.ProtomechBay;
-import megamek.common.SmallCraftBay;
-import megamek.common.SuperHeavyVehicleBay;
-import megamek.common.UnitType;
+import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
 
 /**
- * Generates dropships and jumpships to fulfill transport requirements for a unit.
+ * Generates dropships and jumpships to fulfill transport requirements for a
+ * unit.
  *
  * @author Neoancient
  *
  */
 public class TransportCalculator {
 
-    // In order to determine the transport capacity of generated units we need to load the
-    // Entity and look at the bays and docking hardpoints. Since this is a relatively expensive
+    // In order to determine the transport capacity of generated units we need to
+    // load the
+    // Entity and look at the bays and docking hardpoints. Since this is a
+    // relatively expensive
     // operation we will cache the results.
-    private static final Map<MechSummary, Map<Integer, Integer>> bayTypeCache = new HashMap<>();
-    private static final Map<MechSummary, Integer> hardpointCache = new HashMap<>();
+    private static final Map<MekSummary, Map<Integer, Integer>> bayTypeCache = new HashMap<>();
+    private static final Map<MekSummary, Integer> hardpointCache = new HashMap<>();
 
     public static void dispose() {
         bayTypeCache.clear();
@@ -57,16 +61,17 @@ public class TransportCalculator {
      * Determines number of each type of unit based on transport requirements.
      *
      * @return The number of units of each type mapped to its UnitType.
-     *         UnitType.VTOL is used for light vehicle bays and UnitType.NAVAL for superheavy vehicles.
+     *         UnitType.VTOL is used for light vehicle bays and UnitType.NAVAL for
+     *         superheavy vehicles.
      */
     private Map<Integer, Integer> getUnitTypeCounts() {
         Map<Integer, Integer> unitCounts = new HashMap<>();
         List<Entity> allUnits = new ArrayList<>();
         fd.addAllEntities(allUnits);
         for (Entity en : allUnits) {
-            if (en.hasETypeFlag(Entity.ETYPE_MECH)) {
+            if (en.hasETypeFlag(Entity.ETYPE_MEK)) {
                 unitCounts.merge(UnitType.MEK, 1, Integer::sum);
-            } else if (en.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            } else if (en.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
                 unitCounts.merge(UnitType.PROTOMEK, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_TANK)) {
                 if (en.getWeight() > 100) {
@@ -79,7 +84,8 @@ public class TransportCalculator {
             } else if (en.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
                 unitCounts.merge(UnitType.BATTLE_ARMOR, 1, Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-                // Here we need to count the transport weight of the platoon rather than just the number
+                // Here we need to count the transport weight of the platoon rather than just
+                // the number
                 unitCounts.merge(UnitType.INFANTRY, InfantryBay.PlatoonType.getPlatoonType(en).getWeight(),
                         Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
@@ -94,26 +100,29 @@ public class TransportCalculator {
     }
 
     /**
-     * Generates dropships to provide enough capacity to transport the given ratio of the formation.
+     * Generates dropships to provide enough capacity to transport the given ratio
+     * of the formation.
      *
-     * @param ratio            The ratio of dropships to generate to the total needs of the unit
-     * @return                 A list of generated dropships
+     * @param ratio The ratio of dropships to generate to the total needs of the
+     *              unit
+     * @return A list of generated dropships
      */
-    public List<MechSummary> calcDropships(double ratio) {
+    public List<MekSummary> calcDropships(double ratio) {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(), UnitType.DROPSHIP,
                 fd.getYear(), fd.getRating(), null, ModelRecord.NETWORK_NONE,
                 EnumSet.noneOf(EntityMovementMode.class), EnumSet.noneOf(MissionRole.class),
                 0);
-        List<MechSummary> retVal = new ArrayList<>();
+        List<MekSummary> retVal = new ArrayList<>();
         Map<Integer, Integer> currentCapacity = new HashMap<>();
         for (Integer unitType : unitCounts.keySet()) {
-            // We counted dropships so we include them in the jumpship calculation, but we're
+            // We counted dropships so we include them in the jumpship calculation, but
+            // we're
             // not looking for transport bays for them.
             if (UnitType.DROPSHIP == unitType) {
                 continue;
             }
             while (unitCounts.get(unitType) * ratio > currentCapacity.getOrDefault(unitType, 0)) {
-                MechSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType));
+                MekSummary dropship = table.generateUnit(ms -> hasBayFor(ms, unitType));
                 if (null == dropship) {
                     break; // Could not find any transport for the unit type; skip
                 }
@@ -127,25 +136,27 @@ public class TransportCalculator {
     }
 
     /**
-     * Generates jumpships to provide enough docking collars to transport the given ratio of dropships.
+     * Generates jumpships to provide enough docking collars to transport the given
+     * ratio of dropships.
      *
-     * @param ratio            The ratio of jumpships to generate to the total needs of the unit
+     * @param ratio            The ratio of jumpships to generate to the total needs
+     *                         of the unit
      * @param transportCollars The number of dropships generated for transport
-     * @return                 A list of generated jumpships
+     * @return A list of generated jumpships
      */
-    public List<MechSummary> calcJumpships(double ratio, int transportCollars) {
+    public List<MekSummary> calcJumpShips(double ratio, int transportCollars) {
         UnitTable table = UnitTable.findTable(fd.getFactionRec(), UnitType.JUMPSHIP,
                 fd.getYear(), fd.getRating(), null, ModelRecord.NETWORK_NONE,
                 EnumSet.noneOf(EntityMovementMode.class), EnumSet.noneOf(MissionRole.class),
                 0);
-        List<MechSummary> retVal = new ArrayList<>();
+        List<MekSummary> retVal = new ArrayList<>();
         int currentCapacity = 0;
         if (unitCounts.containsKey(UnitType.DROPSHIP)) {
             transportCollars += unitCounts.get(UnitType.DROPSHIP);
         }
         while (transportCollars * ratio > currentCapacity) {
             // It's possible to have a jumpship with no docking collars, e.g. for scout use
-            MechSummary jumpship = table.generateUnit(ms -> countHardpoints(ms) > 0);
+            MekSummary jumpship = table.generateUnit(ms -> countHardpoints(ms) > 0);
             if (null == jumpship) {
                 break; // Could not find any transport for the unit type; skip
             }
@@ -158,11 +169,11 @@ public class TransportCalculator {
     /**
      * Determines whether a potential transport has capacity for the type of unit.
      *
-     * @param ms        A potential tranporting unit
-     * @param unitType  The unit to be carried
-     * @return          True if the unit can be carried by the transporting unit.
+     * @param ms       A potential tranporting unit
+     * @param unitType The unit to be carried
+     * @return True if the unit can be carried by the transporting unit.
      */
-    private boolean hasBayFor(MechSummary ms, int unitType) {
+    private boolean hasBayFor(MekSummary ms, int unitType) {
         if (getBayCount(ms, unitType) > 0) {
             return true;
         }
@@ -175,7 +186,7 @@ public class TransportCalculator {
         return false;
     }
 
-    private int getBayCount(MechSummary ms, int unitType) {
+    private int getBayCount(MekSummary ms, int unitType) {
         if (bayTypeCache.containsKey(ms) || countBays(ms)) {
             return bayTypeCache.get(ms).getOrDefault(unitType, 0);
         }
@@ -183,14 +194,16 @@ public class TransportCalculator {
     }
 
     /**
-     * Loads the entity, counts the unit type transport capacity, and adds to the cache.
+     * Loads the entity, counts the unit type transport capacity, and adds to the
+     * cache.
      *
-     * @param ms  The unit to load
-     * @return    true if the Entity can be loaded and counted, false if there was an EntityLoadingException
+     * @param ms The unit to load
+     * @return true if the Entity can be loaded and counted, false if there was an
+     *         EntityLoadingException
      */
-    private boolean countBays(MechSummary ms) {
+    private boolean countBays(MekSummary ms) {
         try {
-            Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             bayTypeCache.put(ms, countBays(entity));
             return true;
         } catch (EntityLoadingException ex) {
@@ -201,15 +214,16 @@ public class TransportCalculator {
     /**
      * Counts the unit type transport capacity, and adds to the cache.
      *
-     * @param entity  The transporting unit
-     * @return        true if the Entity can be loaded and counted, false if there was an EntityLoadingException
+     * @param entity The transporting unit
+     * @return true if the Entity can be loaded and counted, false if there was an
+     *         EntityLoadingException
      */
     private Map<Integer, Integer> countBays(Entity entity) {
         Map<Integer, Integer> bayCount = new HashMap<>();
         for (Bay bay : entity.getTransportBays()) {
-            if (bay instanceof MechBay) {
+            if (bay instanceof MekBay) {
                 bayCount.merge(UnitType.MEK, (int) bay.getCapacity(), Integer::sum);
-            } else if (bay instanceof ProtomechBay) {
+            } else if (bay instanceof ProtoMekBay) {
                 bayCount.merge(UnitType.PROTOMEK, (int) bay.getCapacity(), Integer::sum);
             } else if (bay instanceof HeavyVehicleBay) {
                 bayCount.merge(UnitType.TANK, (int) bay.getCapacity(), Integer::sum);
@@ -234,11 +248,11 @@ public class TransportCalculator {
      * Loads the Entity and counts the number of docking hardpoints.
      *
      * @param ms The unit to load
-     * @return   The number of docking hardpoints on the unit.
+     * @return The number of docking hardpoints on the unit.
      */
-    private int countHardpoints(MechSummary ms) {
+    private int countHardpoints(MekSummary ms) {
         try {
-            Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             int hardpoints = entity.getDockingCollars().size();
             // TODO: count dropshuttle bays
             hardpointCache.put(ms, hardpoints);

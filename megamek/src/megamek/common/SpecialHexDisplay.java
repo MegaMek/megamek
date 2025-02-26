@@ -15,23 +15,25 @@
 package megamek.common;
 
 import java.awt.Image;
+import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
 
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import static megamek.client.ui.swing.tileset.TilesetManager.FILENAME_ORBITAL_BOMBARDMENT_INCOMING_IMAGE;
 
 /**
  * @author dirk
  */
 public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
-
+    public static final int LARGE_EXPLOSION_IMAGE_RADIUS = 4;
     public enum Type {
-        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif").toString()) {
+        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), "artyauto.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -42,7 +44,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(), "artyadj.gif").toString()) {
+        ARTILLERY_ADJUSTED(new MegaMekFile(Configuration.hexesDir(), "artyadj.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -53,76 +55,111 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(), "artyinc.gif").toString()),
-        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(), "artytarget.gif").toString()) {
+        ARTILLERY_INCOMING(new MegaMekFile(Configuration.hexesDir(), "artyinc.gif")),
+        ARTILLERY_TARGET(new MegaMekFile(Configuration.hexesDir(), "artytarget.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), "artyhit.gif").toString()) {
+        ARTILLERY_HIT(new MegaMekFile(Configuration.hexesDir(), "artyhit.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_DRIFT(new MegaMekFile(Configuration.hexesDir(), "artydrift.gif").toString()) {
+        ARTILLERY_DRIFT(new MegaMekFile(Configuration.hexesDir(), "artydrift.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_MISS(new MegaMekFile(Configuration.hexesDir(), "artymiss.gif").toString()) {
+        ARTILLERY_MISS(new MegaMekFile(Configuration.hexesDir(), "artymiss.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        BOMB_HIT(new MegaMekFile(Configuration.hexesDir(), "bombhit.gif").toString()) {
+        BOMB_HIT(new MegaMekFile(Configuration.hexesDir(), "bombhit.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        BOMB_DRIFT(new MegaMekFile(Configuration.hexesDir(), "bombdrift.gif").toString()) {
+        BOMB_DRIFT(new MegaMekFile(Configuration.hexesDir(), "bombdrift.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        BOMB_MISS(new MegaMekFile(Configuration.hexesDir(), "bombmiss.gif").toString()) {
+        BOMB_MISS(new MegaMekFile(Configuration.hexesDir(), "bombmiss.gif")) {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), "note.png").toString()) {
+        PLAYER_NOTE(new MegaMekFile(Configuration.hexesDir(), "note.png")) {
             @Override
-            public boolean drawBefore() {
+            public boolean drawAfter() {
                 return true;
+            }
+        },
+        NUKE_INCOMING(new MegaMekFile(Configuration.hexesDir(), "nukeinc.gif")),
+        NUKE_HIT(new MegaMekFile(Configuration.nukeHexesDir(), "hit")) {
+            @Override
+            public boolean drawBefore() {
+                return false;
             }
 
             @Override
-            public boolean drawAfter() {
+            public boolean useFolderStructure() {
+                return true;
+            }
+        },
+        ORBITAL_BOMBARDMENT_INCOMING(new MegaMekFile(Configuration.hexesDir(), "artyinc.gif")),
+        ORBITAL_BOMBARDMENT(new MegaMekFile(Configuration.orbitalBombardmentHexesDir(), "hit")) {
+            @Override
+            public boolean drawBefore() {
+                return false;
+            }
+
+            @Override
+            public boolean useFolderStructure() {
                 return true;
             }
         };
 
         private transient Image defaultImage;
-        private final String defaultImagePath;
+        private final MegaMekFile defaultImagePath;
 
-        Type(String iconPath) {
+        Type(MegaMekFile iconPath) {
             defaultImagePath = iconPath;
         }
 
         public void init() {
-            if (defaultImagePath != null) {
-                defaultImage = ImageUtil.loadImageFromFile(defaultImagePath);
+            if (defaultImagePath == null) {
+                return;
             }
+            defaultImage = ImageUtil.loadImageFromFile(defaultImagePath);
+        }
 
+        public boolean useFolderStructure() {
+            return false;
         }
 
         public Image getDefaultImage() {
+            return defaultImage;
+        }
+
+        /**
+         * Get the image for this type of special hex display.
+         * @param imageName The name of the image to get
+         * @return  The image
+         */
+        public Image getImage(String imageName) {
+            if (this.useFolderStructure()) {
+                return ImageUtil.loadImageFromFile(new MegaMekFile(defaultImagePath.getFile(), imageName));
+            }
             return defaultImage;
         }
 
@@ -156,8 +193,8 @@ public class SpecialHexDisplay implements Serializable {
     private String info;
     private Type type;
     private int round;
-
     private Player owner;
+    private String imageSignature;
 
     private int obscured = SHD_OBSCURED_ALL;
 
@@ -176,6 +213,15 @@ public class SpecialHexDisplay implements Serializable {
         this.round = round;
         this.owner = owner;
         this.obscured = obscured;
+    }
+
+    public SpecialHexDisplay(Type type, int round, Player owner, String info, int obscured, String imageSignature) {
+        this.type = type;
+        this.info = info;
+        this.round = round;
+        this.owner = owner;
+        this.obscured = obscured;
+        this.imageSignature = imageSignature;
     }
 
     public boolean thisRound(int testRound) {
@@ -221,6 +267,13 @@ public class SpecialHexDisplay implements Serializable {
         return type;
     }
 
+    public Image getDefaultImage() {
+        if (type.useFolderStructure()) {
+            return type.getImage(imageSignature);
+        }
+        return type.getDefaultImage();
+    }
+
     public void setType(Type type) {
         this.type = type;
     }
@@ -244,22 +297,24 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * Determines whether this special hex should be obscured from the given <code>Player</code>.
+     * Determines whether this special hex should be obscured from the given
+     * <code>Player</code>.
      *
-     * @param other
-     * @return
+     * @param other     The player to check for
+     * @return True if the special hex should be obscured
      */
     public boolean isObscured(Player other) {
+        if (owner == null) {
+            return false;
+        }
         if ((obscured == SHD_OBSCURED_OWNER) && owner.equals(other)) {
             return false;
         } else if ((obscured == SHD_OBSCURED_TEAM) && (other != null)
                 && (owner.getTeam() == other.getTeam())) {
             return false;
-        } else if (obscured == SHD_OBSCURED_ALL) {
-            return false;
-        } else {
-            return true;
         }
+
+        return obscured != SHD_OBSCURED_ALL;
     }
 
     public void setObscured(int obscured) {
@@ -268,13 +323,16 @@ public class SpecialHexDisplay implements Serializable {
 
     /**
      * Determine whether the current SpecialHexDisplay should be displayed
-     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always display
-     * in the appropriate phase.  Other bomb- or artillery-related graphics are optional.
-     * @param phase
-     * @param curRound
-     * @param playerChecking
-     * @param guiPref
-     * @return
+     * Note Artillery Hits and Bomb Hits (direct hits on their targets) will always
+     * display
+     * in the appropriate phase. Other bomb- or artillery-related graphics are
+     * optional.
+     *
+     * @param phase             The current phase of the game
+     * @param curRound          The current round
+     * @param playerChecking    The player checking the display
+     * @param guiPref           The GUI preferences
+     * @return True if the image should be displayed
      */
     public boolean drawNow(GamePhase phase, int curRound, Player playerChecking, GUIPreferences guiPref) {
         boolean shouldDisplay = thisRound(curRound)
@@ -289,7 +347,7 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         // Arty icons for the owner are drawn in BoardView1.drawArtillery
-        //  and shouldn't be drawn twice
+        // and shouldn't be drawn twice
         if (isOwner(playerChecking)
                 && (type == Type.ARTILLERY_AUTOHIT
                         || type == Type.ARTILLERY_ADJUSTED
@@ -304,10 +362,12 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         // Hide icons the player doesn't want to see
-        // Check user settings and Hide some "hits" because they are actually drifts that did damage
+        // Check user settings and Hide some "hits" because they are actually drifts
+        // that did damage
         if (guiPref != null) {
             switch (type) {
-                case ARTILLERY_HIT -> shouldDisplay &= !this.info.contains(Messages.getString("ArtilleryMessage.drifted"));
+                case ARTILLERY_HIT ->
+                    shouldDisplay &= !this.info.contains(Messages.getString("ArtilleryMessage.drifted"));
                 case ARTILLERY_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_MISSES);
                 case ARTILLERY_DRIFT -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_ARTILLERY_DRIFTS);
                 case BOMB_MISS -> shouldDisplay &= guiPref.getBoolean(GUIPreferences.SHOW_BOMB_MISSES);
@@ -319,8 +379,8 @@ public class SpecialHexDisplay implements Serializable {
     }
 
     /**
-     * @param toPlayer
-     * @return
+     * @param toPlayer  The player to check
+     * @return True if the player is the owner of this Special Hex Display
      */
     public boolean isOwner(Player toPlayer) {
         return (owner == null) || owner.equals(toPlayer);
@@ -346,7 +406,7 @@ public class SpecialHexDisplay implements Serializable {
 
     @Override
     public String toString() {
-        return "SHD: " + type.name() + ", " + "round " + round + ", by "
-                + owner.getName();
+        return "SHD: " + type.name() + ", " + "round " + round + (owner != null ? ", by "
+                + owner.getName() : "");
     }
 }

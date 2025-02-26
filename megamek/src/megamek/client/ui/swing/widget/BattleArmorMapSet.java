@@ -15,6 +15,15 @@
  */
 package megamek.client.ui.swing.widget;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Vector;
+
+import javax.swing.JComponent;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -23,13 +32,9 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
-
 /**
  * Class which keeps set of all areas required to represent Battle Armor unit in
- * MechDisplay.ArmorPanel class.
+ * MekDisplay.ArmorPanel class.
  */
 public class BattleArmorMapSet implements DisplayMapSet {
     // Picture with figure
@@ -54,7 +59,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIP.getUnitDisplayMechArmorLargeFontSize());
+            GUIP.getUnitDisplayMekArmorLargeFontSize());
 
     /**
      * This constructor can only be called from the addNotify method

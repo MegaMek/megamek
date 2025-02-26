@@ -172,7 +172,12 @@ This is required to distinguish between different unit types that have the same 
 
 'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the ComStar copy.
 
-'availability' node: a comma-separated list of availability codes for the current year. The format is FKEY:AV[+|-][:YEAR], in which FKEY is the faction key, AV is the rating from 1-10, + or - (optional) adjusts av based on rating, and :YEAR optionally provides an introduction year for the faction. If given, the designated unit will not appear in the year range before the one given. This is used frequently for the reformation of the Free Worlds League. Units that were in use by one or more of the former Free Worlds states but not available to the former FWL independents have FWL:(av rating):3139 in 3135.xml, which prevents them from showing up for FWL during 3135-3138. A value of zero is a special case which indicates unavailable even if available to a parent faction. Sometimes a unit may be available to all IS factions except X, for example, and it is easier to add "IS:6,X:0" than to list all IS factions.
+'availability' node: a comma-separated list of availability codes for the current year. The format is FKEY[!RATING]:AV[+|-][:YEAR], in which
+    FKEY is the faction key
+	!RATING is the optional specific equipment rating, typically A through F but depends on faction and factions.xml.  Multiples may be used e.g. FS!A:8!B:7!C:2.  Any rating not provided is considered to be 0 (unavailable).  Not compatible with +/- adjustment or :YEAR modifiers.
+	AV is the rating from 1-10, + or - (optional) adjusts av based on rating
+	:YEAR optionally provides an introduction year for the faction. If given, the designated unit will not appear in the year range before the one given. This is used frequently for the reformation of the Free Worlds League. Units that were in use by one or more of the former Free Worlds states but not available to the former FWL independents have FWL:(av rating):3139 in 3131.xml, which prevents them from showing up for FWL during 3135-3138.
+	A value of zero is a special case which indicates unavailable even if available to a parent faction. Sometimes a unit may be available to all IS factions except X, for example, and it is easier to add "IS:6,X:0" than to list all IS factions.
 
 'model' node: There is one model node for each variant in use during the year range.
 
@@ -305,9 +310,9 @@ This is required to distinguish between different unit types that have the same 
                 for easy air transport.
 
         anti_mek
-        Use: infantry with equipment for making anti-Mech attacks
+        Use: infantry with equipment for making anti-Mek attacks
         Unit types: Infantry
-        Notes: typically applied to foot, jump, or motorized infantry that are built with anti-Mech
+        Notes: typically applied to foot, jump, or motorized infantry that are built with anti-Mek
                 equipment, may be applied to units which do not have the gear but are still allowed
                 to make such attacks
 
@@ -402,13 +407,13 @@ This is required to distinguish between different unit types that have the same 
         Unit types: Small Craft, Dropship
         Notes: use troop_carrier role on WarShips
 
-        mech_carrier
-        Use: unit has bays for transporting Mechs
+        mek_carrier
+        Use: unit has bays for transporting Meks
         Unit types: Dropship
         Notes: use troop_carrier role on WarShips
 
-        protomech_carrier
-        Use: unit has bays for transporting ProtoMechs
+        protomek_carrier
+        Use: unit has bays for transporting ProtoMeks
         Unit types: Dropship
         Notes: use troop_carrier role on WarShips
 

@@ -14,15 +14,14 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.UltraWeaponHandler;
-import megamek.server.GameManager;
-import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -33,7 +32,7 @@ public abstract class UACWeapon extends AmmoWeapon {
 
     public UACWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_BALLISTIC).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_AC_ULTRA;
         String[] modeStrings = {MODE_AC_SINGLE, MODE_UAC_ULTRA};
@@ -43,17 +42,17 @@ public abstract class UACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new UltraWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;

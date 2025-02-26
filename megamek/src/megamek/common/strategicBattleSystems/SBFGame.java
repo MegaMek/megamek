@@ -18,6 +18,14 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Vector;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.swing.sbf.SelectDirection;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -30,16 +38,16 @@ import megamek.common.event.UnitChangedGameEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.SBFRuleOptions;
 import megamek.common.planetaryconditions.PlanetaryConditions;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import megamek.logging.MMLogger;
+import megamek.server.sbf.SBFActionHandler;
 
 /**
- * This is an SBF game's game object that holds all game information. As of 2024, this is under construction.
+ * This is an SBF game's game object that holds all game information. As of
+ * 2024, this is under construction.
  */
 public final class SBFGame extends AbstractGame implements PlanetaryConditionsUsing,
         SBFRuleOptionsUser {
+    private static final MMLogger logger = MMLogger.create(SBFGame.class);
 
     private final SBFRuleOptions options = new SBFRuleOptions();
     private GamePhase phase = GamePhase.UNKNOWN;
@@ -48,6 +56,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     private final SBFFullGameReport gameReport = new SBFFullGameReport();
     private final List<SBFTurn> turnList = new ArrayList<>();
     private final SBFVisibilityHelper visibilityHelper = new SBFVisibilityHelper(this);
+    private final List<SBFActionHandler> actionHandlers = new ArrayList<>();
 
     /**
      * Contains all units that have left the game by any means.
@@ -94,7 +103,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     @Override
-    public boolean isForceVictory() { //TODO This should not be part of IGame! too specific
+    public boolean isForceVictory() { // TODO This should not be part of IGame! too specific
         return false;
     }
 
@@ -114,9 +123,10 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     @Override
     public boolean isCurrentPhasePlayable() {
         return switch (phase) {
-            case INITIATIVE, END, TARGETING, PHYSICAL, OFFBOARD, OFFBOARD_REPORT, SBF_DETECTION, SBF_DETECTION_REPORT -> false;
+            case INITIATIVE, END, TARGETING, PHYSICAL, OFFBOARD, OFFBOARD_REPORT, SBF_DETECTION, SBF_DETECTION_REPORT ->
+                false;
             case DEPLOYMENT, PREMOVEMENT, MOVEMENT, PREFIRING, FIRING, DEPLOY_MINEFIELDS, SET_ARTILLERY_AUTOHIT_HEXES ->
-                    hasMoreTurns();
+                hasMoreTurns();
             default -> true;
         };
     }
@@ -206,7 +216,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     @Override
     public void setPlanetaryConditions(@Nullable PlanetaryConditions conditions) {
         if (conditions == null) {
-            LogManager.getLogger().error("Can't set the planetary conditions to null!");
+            logger.error("Can't set the planetary conditions to null!");
         } else {
             planetaryConditions.alterConditions(conditions);
         }
@@ -214,7 +224,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     public void addUnit(InGameObject unit) { // This is a server-side method!
         if (!isSupportedUnitType(unit)) {
-            LogManager.getLogger().error("Tried to add unsupported object [{}] to the game!", unit);
+            logger.error("Tried to add unsupported object [{}] to the game!", unit);
             return;
         }
 
@@ -252,7 +262,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param reports the new reports to add
      */
-    public void addReports(List<Report> reports) {
+    public void addReports(List<SBFReportEntry> reports) {
         gameReport.add(getCurrentRound(), reports);
     }
 
@@ -270,12 +280,13 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
      *
      * @param newReports The new reports to keep as this game's reports
      */
-    public void replaceAllReports(Map<Integer, List<Report>> newReports) {
+    public void replaceAllReports(Map<Integer, List<SBFReportEntry>> newReports) {
         gameReport.replaceAllReports(newReports);
     }
 
     /**
-     * Sets the current list of turns to the given one, replacing any currently present turns.
+     * Sets the current list of turns to the given one, replacing any currently
+     * present turns.
      *
      * @param newTurns The new list of turns to use
      */
@@ -285,7 +296,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the current list of turns. The returned list is unmodifiable but not a deep copy. If you're
+     * Returns the current list of turns. The returned list is unmodifiable but not
+     * a deep copy. If you're
      * not the SBFGameManager, don't even think about changing any of the turns.
      */
     @Override
@@ -345,12 +357,13 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     public boolean hasEligibleFormation(SBFFormationTurn turn) {
-        //TODO: called from turn and asks back in turn... circular, improve this
+        // TODO: called from turn and asks back in turn... circular, improve this
         return (turn != null) && getActiveFormations().stream().anyMatch(f -> turn.isValidEntity(f, this));
     }
 
     /**
-     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed
+     * Returns the list of formations that are in the game's InGameObject list, i.e.
+     * that aren't destroyed
      * or otherwise removed from play.
      *
      * @return The currently active formations
@@ -363,7 +376,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the list of formations that are in the game's InGameObject list, i.e. that aren't destroyed
+     * Returns the list of formations that are in the game's InGameObject list, i.e.
+     * that aren't destroyed
      * or otherwise removed from play.
      *
      * @return The currently active formations
@@ -373,7 +387,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
                 .filter(f -> f.getPosition() != null)
                 .filter(f -> f.getPosition().equals(location))
                 .collect(Collectors.toList());
-        //TODO: cache when receiving units at the Client
+        // TODO: cache when receiving units at the Client
     }
 
     public boolean isHostileActiveFormationAt(BoardLocation location, SBFFormation formation) {
@@ -387,7 +401,6 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
         return player.isEnemyOf(getPlayer(formation.getOwnerId()));
     }
 
-
     // check current turn, phase, formatzion
     private boolean isEligibleForAction(SBFFormation formation) {
         return (getTurn() instanceof SBFFormationTurn)
@@ -395,48 +408,61 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * @return the first formation in the list of formations that is alive and eligible for the current game phase.
+     * @return the first formation in the list of formations that is alive and
+     *         eligible for the current game phase.
      */
     public Optional<SBFFormation> getNextEligibleFormation() {
         return getNextEligibleFormation(BTObject.NONE);
     }
 
     /**
-     * @return the preceding formation in the list of formations that is alive and eligible for the current game phase.
+     * @return the preceding formation in the list of formations that is alive and
+     *         eligible for the current game phase.
      */
     public Optional<SBFFormation> getPreviousEligibleFormation() {
         return getPreviousEligibleFormation(BTObject.NONE);
     }
 
     /**
-     * @return the next in the list of formations that is alive and eligible for the current game phase,
-     * counting from the given current formation id. If no matching formation can be found for the given id,
-     * returns the first eligible formation in the list of formations that is alive and eligible.
+     * @return the next in the list of formations that is alive and eligible for the
+     *         current game phase,
+     *         counting from the given current formation id. If no matching
+     *         formation can be found for the given id,
+     *         returns the first eligible formation in the list of formations that
+     *         is alive and eligible.
      */
     public Optional<SBFFormation> getNextEligibleFormation(int currentFormationID) {
         return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.NEXT_UNIT);
     }
 
     /**
-     * @return the previous in the list of formations that is alive and eligible for the current game phase,
-     * counting from the given current formation id. If no matching formation can be found for the given id,
-     * returns the last eligible formation from the list of formations that is alive and eligible.
+     * @return the previous in the list of formations that is alive and eligible for
+     *         the current game phase,
+     *         counting from the given current formation id. If no matching
+     *         formation can be found for the given id,
+     *         returns the last eligible formation from the list of formations that
+     *         is alive and eligible.
      */
     public Optional<SBFFormation> getPreviousEligibleFormation(int currentFormationID) {
         return getEligibleFormationImpl(currentFormationID, phase, SelectDirection.PREVIOUS_UNIT);
     }
 
     /**
-     * Based on the given search direction, returns the formation that precedes or follows the given
-     * formation ID in the list of active formations eligible for action in the given game phase.
+     * Based on the given search direction, returns the formation that precedes or
+     * follows the given
+     * formation ID in the list of active formations eligible for action in the
+     * given game phase.
      *
-     * @param currentFormationID the start point of the formation search. Need not match an actual formation
-     * @param phase the phase to check
-     * @param direction the selection to seek the next or previous formation
-     * @return the formation that precedes or follows the given formation ID, if one can be found
+     * @param currentFormationID the start point of the formation search. Need not
+     *                           match an actual formation
+     * @param phase              the phase to check
+     * @param direction          the selection to seek the next or previous
+     *                           formation
+     * @return the formation that precedes or follows the given formation ID, if one
+     *         can be found
      */
     private Optional<SBFFormation> getEligibleFormationImpl(int currentFormationID, GamePhase phase,
-                                                            SelectDirection direction) {
+            SelectDirection direction) {
         List<SBFFormation> eligibleFormations = getActiveFormations().stream()
                 .filter(this::isEligibleForAction)
                 .collect(Collectors.toList());
@@ -446,14 +472,16 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
             Optional<SBFFormation> currentFormation = getFormation(currentFormationID);
             int index = currentFormation.map(eligibleFormations::indexOf).orElse(-1);
             if (index == -1) {
-                // when no current unit is found, the next unit is the first, the previous unit is the last
+                // when no current unit is found, the next unit is the first, the previous unit
+                // is the last
                 index = direction.isNextUnit() ? 0 : eligibleFormations.size() - 1;
             } else {
-                // must add the list size to safely get the previous unit because -1 % 5 == -1 (not 4)
+                // must add the list size to safely get the previous unit because -1 % 5 == -1
+                // (not 4)
                 index += eligibleFormations.size() + (direction.isNextUnit() ? 1 : -1);
                 index %= eligibleFormations.size();
             }
-                return Optional.ofNullable(eligibleFormations.get(index));
+            return Optional.ofNullable(eligibleFormations.get(index));
         }
     }
 
@@ -478,7 +506,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     }
 
     /**
-     * Returns the Player that has to act in the given turn. The result should rarely be empty.
+     * Returns the Player that has to act in the given turn. The result should
+     * rarely be empty.
      *
      * @param turn The SBFTurn to check
      * @return The Player whose turn it is
@@ -490,8 +519,8 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
     /**
      * Sets the current turn index
      *
-     * @param turnIndex The new turn index.
-     * @param prevPlayerId  The ID of the player who triggered the turn index change.
+     * @param turnIndex    The new turn index.
+     * @param prevPlayerId The ID of the player who triggered the turn index change.
      */
     public void setTurnIndex(int turnIndex, int prevPlayerId) {
         setTurnIndex(turnIndex);
@@ -504,5 +533,26 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
 
     public void forget(int unitId) {
         inGameObjects.remove(unitId);
+    }
+
+    public void addActionHandler(SBFActionHandler handler) {
+        if (actionHandlers.contains(handler)) {
+            logger.error("Tried to re-add action handler {}!", handler);
+        } else {
+            actionHandlers.add(handler);
+        }
+    }
+
+    public void removeActionHandler(SBFActionHandler handler) {
+        if (!actionHandlers.remove(handler)) {
+            logger.error("Tried to remove non-existent action handler {}!", handler);
+        }
+    }
+
+    /**
+     * @return The currently active action handlers.
+     */
+    public List<SBFActionHandler> getActionHandlers() {
+        return actionHandlers;
     }
 }

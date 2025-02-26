@@ -1,53 +1,44 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
+import java.util.Vector;
+
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
-
-import java.util.Vector;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
  */
 public class SRMTandemChargeHandler extends SRMHandler {
+    @Serial
     private static final long serialVersionUID = 6292692766500970690L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
-    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
         sSalvoType = " tandem charge missile(s) ";
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
     }
 
-    /**
-     * Handle damage against an entity, called once per hit by default.
-     * 
-     * @param entityTarget
-     * @param vPhaseReport
-     * @param bldg
-     * @param hits
-     * @param nCluster
-     * @param bldgAbsorbs
-     */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -89,8 +80,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
         // damage absorption by the partial cover, if it would have happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
-                
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
+
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs,
                 vPhaseReport, bldg, targetStickingOutOfBuilding);
 
 
@@ -115,11 +106,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
-            
+
             if (bDirect && !target.isConventionalInfantry()) {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
@@ -131,7 +122,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 if (critRoll >= 10) {
                     hit = new HitData(loc, false, HitData.EFFECT_CRITICAL);
                 }
-            } else if ((target instanceof Tank) || (target instanceof Mech)) {
+            } else if ((target instanceof Tank) || (target instanceof Mek)) {
 
                 if (bGlancing || bLowProfileGlancing) {
                     // this will be either -4 or -8

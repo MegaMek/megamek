@@ -23,11 +23,11 @@ import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ThunderBoltWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -61,7 +61,7 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new ThunderBoltWeaponHandler(toHit, waa, game, manager);
     }
 
@@ -69,13 +69,13 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
     public boolean hasIndirectFire() {
         return true;
     }
-    
+
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {

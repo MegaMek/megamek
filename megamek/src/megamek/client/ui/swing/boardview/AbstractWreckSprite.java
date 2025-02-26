@@ -42,16 +42,16 @@ public abstract class AbstractWreckSprite extends Sprite {
     protected Rectangle modelRect;
 
     protected int secondaryPos;
-    
+
     public AbstractWreckSprite(BoardView boardView1) {
         super(boardView1);
     }
-    
+
     @Override
     public Rectangle getBounds() {
         // Start with the hex and add the label
         bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
-        
+
         // Move to board position, save this origin for correct drawing
         Point hexOrigin = bounds.getLocation();
         Point ePos;
@@ -65,22 +65,32 @@ public abstract class AbstractWreckSprite extends Sprite {
         return bounds;
     }
 
+    public Entity getEntity() {
+        return entity;
+    }
+
     /**
      * Creates the sprite for this entity. It is an extra pain to create
      * transparent images in AWT.
      */
     @Override
     public void prepare() {
+        if (entity.getPosition() != null && entity.getGame() != null && entity.getGame().getBoard() != null
+            && entity.getGame().getBoard().getHex(entity.getPosition()) != null &&
+            entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
+           return; //Don't show wrecks for "Ultra Sublevels" - The unit fell through the map!
+        }
+
         // create image for buffer
         image = ImageUtil.createAcceleratedImage(HexTileset.HEX_W, HexTileset.HEX_H);
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        
+
         // if the entity is underwater or would sink underwater, we want to make the wreckage translucent
         // so it looks like it sunk
         boolean entityIsUnderwater = (entity.relHeight() < 0) ||
                 ((entity.relHeight() >= 0) && entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)) &&
                 !EntityWreckHelper.entityOnBridge(entity);
-        
+
         if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
@@ -88,44 +98,44 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         // draw the 'destroyed decal' where appropriate
         boolean displayDestroyedDecal = EntityWreckHelper.displayDestroyedDecal(entity);
-        
+
         if (displayDestroyedDecal) {
             Image destroyed = bv.tileManager.bottomLayerWreckMarkerFor(entity, 0);
             if (null != destroyed) {
                 graph.drawImage(destroyed, 0, 0, this);
             }
         }
-        
+
         // draw the 'fuel leak' decal where appropriate
         boolean drawFuelLeak = EntityWreckHelper.displayFuelLeak(entity);
-        
+
         if (drawFuelLeak) {
             Image fuelLeak = bv.tileManager.bottomLayerFuelLeakMarkerFor(entity);
             if (null != fuelLeak) {
                 graph.drawImage(fuelLeak, 0, 0, this);
             }
         }
-        
+
         // draw the 'tires' or 'tracks' decal where appropriate
         boolean drawMotiveWreckage = EntityWreckHelper.displayMotiveDamage(entity);
-        
+
         if (drawMotiveWreckage) {
             Image motiveWreckage = bv.tileManager.bottomLayerMotiveMarkerFor(entity);
             if (null != motiveWreckage) {
                 graph.drawImage(motiveWreckage, 0, 0, this);
             }
         }
-        
+
         // Draw wreck image, if we've got one.
         Image wreck;
-        
+
         if (EntityWreckHelper.displayDevastation(entity)) {
             // objects in space should not have craters
             wreck = entity.getGame().getBoard().inSpace() ?
                     bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
                     bv.tileManager.getCraterFor(entity, secondaryPos);
         } else {
-            wreck = EntityWreckHelper.useExplicitWreckImage(entity) ? 
+            wreck = EntityWreckHelper.useExplicitWreckImage(entity) ?
                         bv.tileManager.wreckMarkerFor(entity, secondaryPos) :
                         bv.tileManager.imageFor(entity, secondaryPos);
         }
@@ -133,12 +143,12 @@ public abstract class AbstractWreckSprite extends Sprite {
         if (null != wreck) {
             graph.drawImage(wreck, 0, 0, this);
         }
-        
+
         if (entityIsUnderwater) {
             graph.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
         }
-        
+
         // create final image
         image = bv.getScaledImage(image, false);
         graph.dispose();
@@ -151,7 +161,7 @@ public abstract class AbstractWreckSprite extends Sprite {
     public boolean isInside(Point point) {
         return false;
     }
-    
+
     public Coords getPosition() {
         if (secondaryPos < 0 || secondaryPos >= entity.getSecondaryPositions().size()) {
             return entity.getPosition();
@@ -159,11 +169,11 @@ public abstract class AbstractWreckSprite extends Sprite {
             return entity.getSecondaryPositions().get(secondaryPos);
         }
     }
-    
+
     @Override
     public StringBuffer getTooltip() {
         StringBuffer result = new StringBuffer();
-        result.append(Messages.getString("BoardView1.Tooltip.Wreckof"));
+        result.append(Messages.getString("BoardView1.Tooltip.Wreckof") + " ");
         result.append(entity.getChassis());
         result.append(MessageFormat.format(" ({0})", entity.getOwner().getName()));
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {

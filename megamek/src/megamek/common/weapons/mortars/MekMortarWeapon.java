@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
@@ -34,7 +34,7 @@ import megamek.common.weapons.MekMortarAntiPersonnelHandler;
 import megamek.common.weapons.MekMortarFlareHandler;
 import megamek.common.weapons.MekMortarHandler;
 import megamek.common.weapons.MekMortarSmokeHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Jason Tighe
@@ -48,13 +48,13 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_MEK_MORTAR;
         damage = DAMAGE_BY_CLUSTERTABLE;
         atClass = CLASS_MORTAR;
-        flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MECH_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MEK_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
 
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
@@ -92,11 +92,11 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {

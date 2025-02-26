@@ -19,7 +19,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HyperLaserHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -50,14 +50,18 @@ public class ISRISCHyperLaser extends LaserWeapon {
         cost = 750000;
         shortAV = 20;
         medAV = 20;
+        longAV = 20;
+        extAV = 20;
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
         rulesRefs = "93, IO";
         this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
+        //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
-                .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
+                .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+                .setISAdvancement(3134, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_RS).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
@@ -71,7 +75,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
+                                              TWGameManager manager) {
         return new HyperLaserHandler(toHit, waa, game, manager);
     }
 }

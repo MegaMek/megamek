@@ -128,6 +128,9 @@ base -6 "" "volcano" "largeTextures/textureVolcano-6.jpg"
 
 include "StandardIncludes/StandardThemes.tileinc"
 
+include "StandardIncludes/StandardUltraSublevel.tileinc"
+include "StandardIncludes/StandardHazardousLiquid.tileinc"
+
 super * "water:0" "" "bloodwolf/hq_boring/blue_water_0.png;bloodwolf/hq_boring/blue_water_0.png(0,72-84,-72);bloodwolf/hq_boring/blue_water_0.png(84,0--84,72);bloodwolf/hq_boring/blue_water_0.png(84,72--84,-72)"
 
 super * "swamp:1" "desert" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_0.png(0,72-84,-72);bloodwolf/hq_boring/swamp_0.png(84,0--84,72);bloodwolf/hq_boring/swamp_0.png(84,72--84,-72)"
@@ -321,3 +324,4 @@ base 2 "tundra:1" "" "tundra/tundra_2.gif"
 base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
 base * "impassable:1" "" "largeTextures/BigRock.jpg"
+super * "deployment_zone:*" "" "saxarba/misc/blank.png"

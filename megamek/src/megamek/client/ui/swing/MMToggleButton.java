@@ -19,34 +19,33 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
+import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 
 import javax.swing.*;
 import java.awt.*;
 
-/** 
- * A JToggleButton that shows a check mark and cross mark to make its 
- * selection status clearer. 
- * 
+/**
+ * A JToggleButton that shows a check mark and cross mark to make its
+ * selection status clearer.
+ *
  * @author Simon (Juliez)
  */
 public class MMToggleButton extends JToggleButton {
-    
-    private static final long serialVersionUID = 3726089213745832469L;
-    
+
     private static final String CHECK = "#90FF90>\u2713 ";
     private static final String CROSS = "#FF9090>\u2717 ";
     private static final String INTRO = "<HTML><NOBR><FONT COLOR=";
     private static final String CLOSE = "</FONT>";
     private static final int MARK_LENGTH = CHECK.length() + INTRO.length() + CLOSE.length();
-    
+
     public MMToggleButton(String text) {
         super();
         setText(text);
         // The standard UI font doesn't show unicode characters (on Win10)
-        setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, getFont().getSize()));
+        new FlatLafStyleBuilder().font(MMConstants.FONT_DIALOG).apply(this);
         addActionListener(event -> setText(getText()));
     }
-    
+
     @Override
     public void setText(String text) {
         if (text.length() > MARK_LENGTH && text.startsWith(INTRO)) {
@@ -59,11 +58,11 @@ public class MMToggleButton extends JToggleButton {
         }
         super.setText(text);
     }
-    
+
     @Override
     public void setSelected(boolean b) {
         super.setSelected(b);
         setText(getText());
     }
-    
+
 }

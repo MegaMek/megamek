@@ -24,7 +24,8 @@ public class ISBAGaussRifleMagshot extends Weapon {
     public ISBAGaussRifleMagshot() {
         super();
         name = "Gauss Rifle [Magshot]";
-        setInternalName("ISBAMagshotGR");
+        setInternalName("ISBAMagshotGaussRifle");
+        addLookupName("ISBAMagshotGR");
         damage = 2;
         shortRange = 3;
         mediumRange = 6;
@@ -35,7 +36,7 @@ public class ISBAGaussRifleMagshot extends Weapon {
         bv = 15;
         cost = 10500;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_DIRECT_FIRE)
-                .or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "255, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

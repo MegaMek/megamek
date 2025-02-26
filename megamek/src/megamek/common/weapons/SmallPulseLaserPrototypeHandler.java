@@ -18,7 +18,7 @@ import megamek.common.Game;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author David Nawton
@@ -37,7 +37,7 @@ public class SmallPulseLaserPrototypeHandler extends EnergyWeaponHandler {
      * @param m
      */
     public SmallPulseLaserPrototypeHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+            TWGameManager m) {
         super(t, w, g, m);
     }
 

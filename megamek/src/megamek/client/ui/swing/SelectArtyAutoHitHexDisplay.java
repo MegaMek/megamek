@@ -13,16 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.event.BoardViewEvent;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.*;
-import megamek.common.containers.PlayerIDandList;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.options.OptionsConstants;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -31,8 +22,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.common.Board;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.containers.PlayerIDandList;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
@@ -85,7 +89,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     // buttons
-    protected Map<ArtyAutoHitCommand,MegamekButton> buttons;
+    protected Map<ArtyAutoHitCommand,MegaMekButton> buttons;
 
     private Player p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
@@ -127,7 +131,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         buttons = new HashMap<>((int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
         for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
             String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
+            MegaMekButton newButton = new MegaMekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
@@ -144,12 +148,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             String tt = cmd.getHotKeyDesc();
             if (!tt.isEmpty()) {
                 String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt = UIUtil.fontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
                 tt += "<BR>";
             }
             if (Messages.keyExists(ttKey)) {
                 String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+                tt += msg_key;
             }
             if (!tt.isEmpty()) {
                 String b = "<BODY>" + tt + "</BODY>";
@@ -160,8 +164,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         ArtyAutoHitCommand[] commands = ArtyAutoHitCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);

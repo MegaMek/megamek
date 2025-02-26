@@ -13,10 +13,9 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
-
 import megamek.common.SimpleTechLevel;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Andrew Hunter
@@ -57,7 +56,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.26 : 0;
     }
 }

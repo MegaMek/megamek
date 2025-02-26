@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,12 +36,15 @@ import megamek.common.weapons.SRMInfernoHandler;
 import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
+
+import java.io.Serial;
 
 /**
  * @author Sebastian Brocks
  */
 public abstract class SRMWeapon extends MissileWeapon {
+    @Serial
     private static final long serialVersionUID = 3636219178276978444L;
 
     public SRMWeapon() {
@@ -53,7 +56,7 @@ public abstract class SRMWeapon extends MissileWeapon {
 
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.25;
         } else {
             return super.getTonnage(entity, location, size);
@@ -61,10 +64,40 @@ public abstract class SRMWeapon extends MissileWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              GameManager manager) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-                .getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        return getSRMHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
+        return super.getBattleForceDamage(range, fcs) * 2;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        return super.getBattleForceDamage(range, baSquadSize) * 2;
+    }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SRM;
+    }
+
+    @Override
+    public String getSortingName() {
+        if (sortingName != null) {
+            return sortingName;
+        } else {
+            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            if (name.contains("I-OS")) {
+                oneShotTag = "OSI ";
+            }
+            return "SRM " + oneShotTag + rackSize;
+        }
+    }
+
+    public static AttackHandler getSRMHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
             return new SRMFragHandler(toHit, waa, game, manager);
         }
@@ -90,34 +123,5 @@ public abstract class SRMWeapon extends MissileWeapon {
             return new MissileMineClearanceHandler(toHit, waa, game, manager);
         }
         return new SRMHandler(toHit, waa, game, manager);
-
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        return super.getBattleForceDamage(range, fcs) * 2;
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, int baSquadSize) {
-        return super.getBattleForceDamage(range, baSquadSize) * 2;
-    }
-
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_SRM;
-    }
-
-    @Override
-    public String getSortingName() {
-        if (sortingName != null) {
-            return sortingName;
-        } else {
-            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
-            if (name.contains("I-OS")) {
-                oneShotTag = "OSI ";
-            }
-            return "SRM " + oneShotTag + rackSize;
-        }
     }
 }

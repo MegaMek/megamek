@@ -13,13 +13,15 @@
  */
 package megamek.common;
 
-import megamek.common.enums.AimingMode;
-import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 
+import megamek.common.enums.AimingMode;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
+
 public class SuperHeavyTank extends Tank {
+    private static final MMLogger logger = MMLogger.create(SuperHeavyTank.class);
+
     private static final long serialVersionUID = 1310142644005330511L;
     // locations
     public static final int LOC_FRONTRIGHT = 2;
@@ -33,17 +35,16 @@ public class SuperHeavyTank extends Tank {
     public static final int LOC_TURRET_2 = 8;
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
+    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RRRS", "RRLS", "RR", "TU", "FT" };
+            "RRRS", "RRLS", "RR", "TU", "FT" };
 
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -68,7 +69,7 @@ public class SuperHeavyTank extends Tank {
         return LOC_TURRET_2;
     }
 
-    //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
+    // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
     private static final TechAdvancement TA_SUPERHEAVY_TANK = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(F_LC)
@@ -83,7 +84,7 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
-                                   int cover) {
+            int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRearSide = false;
@@ -303,7 +304,7 @@ public class SuperHeavyTank extends Tank {
         } else if ((fa == 270) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARLEFT;
         } else if ((fa == 210) && (leftBetter == 0)) {
-            return  ToHitData.SIDE_REAR;
+            return ToHitData.SIDE_REAR;
         } else if ((fa == 150) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARRIGHT;
         } else if ((fa == 90) && (leftBetter == 1)) {
@@ -350,10 +351,10 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public int getWeaponArc(int wn) {
-        final Mounted mounted = getEquipment(wn);
+        final Mounted<?> mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if ((mounted.getType() instanceof WeaponType) 
+        if ((mounted.getType() instanceof WeaponType)
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
@@ -418,31 +419,31 @@ public class SuperHeavyTank extends Tank {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTRIGHT) < 1) && (getOArmor(LOC_FRONTRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_FRONTLEFT) < 1) && (getOArmor(LOC_FRONTLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARRIGHT) < 1) && (getOArmor(LOC_REARRIGHT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REARLEFT) < 1) && (getOArmor(LOC_REARLEFT) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(LOC_TURRET) < 1) && (getOArmor(LOC_TURRET) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(LOC_TURRET_2) < 1) && (getOArmor(LOC_TURRET_2) > 0))) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            logger.debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            logger.debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -451,16 +452,17 @@ public class SuperHeavyTank extends Tank {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined
+        // weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            logger.debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
 
         return false;
     }
-    
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
@@ -468,6 +470,6 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public int getGenericBattleValue() {
-        return (int) Math.round(Math.exp(2.681 + 0.681*Math.log(getWeight())));
+        return (int) Math.round(Math.exp(2.681 + 0.681 * Math.log(getWeight())));
     }
 }

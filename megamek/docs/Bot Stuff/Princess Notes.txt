@@ -119,12 +119,10 @@ Princess will replace the named player.
 
 3)
 Running Separate Instances of MegaMek
-Once you have your basic game set up, start a second game (called an instance to reduce confusion) of MegaMek. 'Connect as a Computer Player', then set up the Behaviors as you want. If the units the bot is supposed to use are already in the first instance, you can go back to that and click on each mech (or shift-click for multiple ones) and change teams as you wish.
+Once you have your basic game set up, start a second game (called an instance to reduce confusion) of MegaMek. 'Connect as a Computer Player', then set up the Behaviors as you want. If the units the bot is supposed to use are already in the first instance, you can go back to that and click on each mek (or shift-click for multiple ones) and change teams as you wish.
 
 Note1: You don't have to operate in this fashion, you can have one game run all the bot clients you wish. The only time you HAVE to run a separate instance is when you will want to change Behaviors for the bot client(s). I prefer to use this fashion for larger or longer games as it allows you to have separate logs and save games. I believe it does speed up Princess' decision making to have separate instances open.
 Note2: The more bots you have running and the more units each one controls, the more memory MM will use. Running separate instances will compound this memory issue. This doesn't really seem to be a problem with modern machines.
 Note3: Multiple Princess bots within one instance of MM can be on the same C3 or C3i network.
 
 My suggestion is to run a bot for each role or sub-group you want to stay together and/or work under the same rules.
-
-

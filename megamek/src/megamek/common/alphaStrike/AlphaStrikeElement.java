@@ -75,6 +75,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private String model = "";
     private int mulId = -1;
     private int pointValue;
+    private int basePointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
 
     private String forceString = "";
@@ -193,6 +194,10 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
         return pointValue;
     }
 
+    public int getBasePointValue() {
+        return basePointValue;
+    }
+
     @Override
     public int getFullArmor() {
         return fullArmor;
@@ -201,6 +206,24 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     @Override
     public int getCurrentArmor() {
         return currentArmor;
+    }
+
+    public double getArmorPercentage() {
+        if (fullArmor == 0) {
+            return 0d;
+        }
+        return (double) currentArmor / fullArmor;
+    }
+
+    public double getStructurePercentage() {
+        if (fullStructure == 0) {
+            return 0d;
+        }
+        return (double) currentStructure / fullStructure;
+    }
+
+    public double getHealthPercentage() {
+        return (getArmorPercentage() + getStructurePercentage()) / 2;
     }
 
     @Override
@@ -387,6 +410,13 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
      */
     public void setPointValue(int newPointValue) {
         pointValue = newPointValue;
+    }
+
+    /**
+     * Sets the AS element's Base Point Value (PV) (no pilot skill).
+     */
+    public void setBasePointValue(int basePointValue) {
+        this.basePointValue = basePointValue;
     }
 
     /**
@@ -658,7 +688,6 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
                     + "; " + AlphaStrikeHelper.getSpecialsExportString(", ", this);
         }
     }
-
 
     /**
      * Returns the game round that this element is to be deployed in. Note that deployment technically

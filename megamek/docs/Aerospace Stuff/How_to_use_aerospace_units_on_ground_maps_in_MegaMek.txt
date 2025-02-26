@@ -5,7 +5,7 @@ Here are the basics of using aerospace units in MegaMek, mostly for ground comba
 the map.  Each thrust point you have gives you 16 hexes.
 
 -When you click on a hex, you will see several different numbers.  The number in the very upper right corner of the hex
-is your turn number.  When the turn indicator turns yellow, you can turn one hexside, but it will cost you thrust points.
+is your turn number.  When the turn indicator turns yellow, you can turn one hex-side, but it will cost you thrust points.
 When it turns green you can turn for free.  The big number in the center of the hex that looks like "(#//#)" tells you
 how many hexes you have traveled out of how many hexes you must move.  The number below that one indicates the altitude
 level you are flying at.
@@ -31,7 +31,7 @@ onto the map, you will not be able to attack.  To be able to fly off the map, th
 
 -Aerospace units can take off and land.  To use grounded aerospace units on a map, set their starting altitude to zero in the MegaMek lobby.
 
--'Mechs can be hot-dropped from dropships on the ground map, or they, as well as other ground units, can be unloaded after the dropship has landed.
+-'Meks can be hot-dropped from DropShips on the ground map, or they, as well as other ground units, can be unloaded after the dropship has landed.
 
 *NOTE:  The bot can use aerospace fighters on the ground map, but cannot use them on the space map yet.
 
@@ -39,7 +39,6 @@ onto the map, you will not be able to attack.  To be able to fly off the map, th
 
 
 Written by BATTLEMASTER IIC
-
 
 Created 1:03 AM 8/22/2009
 Revised 6:54 PM 3/1/2011

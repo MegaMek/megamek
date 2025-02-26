@@ -19,10 +19,6 @@
  */
 package megamek.common;
 
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.options.GameOptions;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,14 +26,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.Test;
+
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.options.GameOptions;
+
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 10/30/13 9:25 AM
  */
-public class CrewTest {
+class CrewTest {
 
     @Test
-    public void testInfantryCrewFatigue() {
+    void testInfantryCrewFatigue() {
         Infantry inf = mock(Infantry.class);
         Crew crew = getInfantryCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
@@ -71,8 +72,8 @@ public class CrewTest {
     }
 
     @Test
-    public void testMekCrewFatigue() {
-        Mech inf = mock(Mech.class);
+    void testMekCrewFatigue() {
+        Mek inf = mock(Mek.class);
         Crew crew = getMekCrewWithCombatTurns(17);
         when(inf.getCrew()).thenReturn(crew);
         inf.getCrew().setGunnery(5);
@@ -121,7 +122,7 @@ public class CrewTest {
     }
 
     @Test
-    public void testGetBVSkillMultiplier() {
+    void testGetBVSkillMultiplier() {
         int gunnery = 4;
         int piloting = 5;
 

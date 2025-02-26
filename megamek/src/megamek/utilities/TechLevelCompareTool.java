@@ -25,9 +25,9 @@ import java.util.TreeSet;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
+import megamek.common.MekFileParser;
+import megamek.common.MekSummary;
+import megamek.common.MekSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
@@ -54,10 +54,10 @@ public class TechLevelCompareTool {
     static Set<EquipmentType> miscSet = new TreeSet<>((e1, e2) -> e1.getName().compareTo(e2.getName()));
 
     private static final String EQUIPMENT_TYPE_FORMATTED_STRING = "\t%s (%s)";
-    private static int badMechs = 0;
+    private static int badMeks = 0;
 
     public static void main(String[] args) {
-        MechSummaryCache msc = MechSummaryCache.getInstance();
+        MekSummaryCache msc = MekSummaryCache.getInstance();
 
         while (!msc.isInitialized()) {
             try {
@@ -69,11 +69,11 @@ public class TechLevelCompareTool {
 
         logger.info("Any output you see from here are errors with the units.");
 
-        for (MechSummary ms : msc.getAllMechs()) {
+        for (MekSummary ms : msc.getAllMeks()) {
             Entity en = null;
 
             try {
-                en = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                en = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
             } catch (EntityLoadingException ignored) {
                 String message = String.format("Could not load entity %s", ms.getName());
                 logger.error(message);
@@ -110,7 +110,7 @@ public class TechLevelCompareTool {
                 }
             }
 
-            badMechs++;
+            badMeks++;
         }
     }
 
@@ -135,7 +135,7 @@ public class TechLevelCompareTool {
             logger.info(message);
         }
 
-        message = String.format("Failed: %d/%d", badMechs, MechSummaryCache.getInstance().getAllMechs().length);
+        message = String.format("Failed: %d/%d", badMeks, MekSummaryCache.getInstance().getAllMeks().length);
         logger.info(message);
 
     }

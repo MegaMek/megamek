@@ -14,19 +14,24 @@
  */
 package megamek.client.ui;
 
-import megamek.client.Client;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
-import megamek.common.options.OptionsConstants;
-import megamek.server.GameManager;
-import megamek.server.Server;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import megamek.client.Client;
+import megamek.client.bot.princess.PathRanker;
+import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
+import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.Internationalization;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
+import megamek.server.totalwarfare.TWGameManager;
+
+
 public class SharedUtility {
+    private final static MMLogger logger = MMLogger.create(SharedUtility.class);
+    private static int CRIT_VALUE = 100;
 
     public static String doPSRCheck(MovePath md) {
         return (String) doPSRCheck(md, true);
@@ -34,8 +39,10 @@ public class SharedUtility {
 
     @SuppressWarnings(value = "unchecked")
     public static List<TargetRoll> getPSRList(MovePath md) {
-        // certain types of entities, such as airborne aero units, do not require many of the checks
-        // carried out in the full PSR Check. So, we call a method that skips most of those.
+        // certain types of entities, such as airborne aero units, do not require many
+        // of the checks
+        // carried out in the full PSR Check. So, we call a method that skips most of
+        // those.
         if (md.getEntity().isAirborne() && md.getEntity().isAero()) {
             return (List<TargetRoll>) getAeroSpecificPSRList(md, false);
         } else {
@@ -45,7 +52,8 @@ public class SharedUtility {
 
     /**
      * Function that carries out PSR checks specific only to airborne aero units
-     * @param md The path to check
+     *
+     * @param md           The path to check
      * @param stringResult Whether to return the report as a string
      * @return Collection of PSRs that will be required for this activity
      */
@@ -113,7 +121,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT
                     && (entity.isFighter())) {
-                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
+                rollTarget = TWGameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
         }
@@ -246,7 +254,7 @@ public class SharedUtility {
             }
 
             // check for leap
-            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mek)
                     && !entity.isAirborne() && (step.getClearance() <= 0) // Don't check airborne LAMs
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
@@ -254,11 +262,22 @@ public class SharedUtility {
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            2 * leapDistance,
+                            Messages.getString("TacOps.leaping.leg_damage")
+                        )
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            leapDistance,
+                            Messages.getString("TacOps.leaping.fall_damage"))
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
@@ -328,6 +347,26 @@ public class SharedUtility {
                         .getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
+            }
+
             // check for sideslip
             if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -339,55 +378,56 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // check if we've moved into swamp; skip Liquid Magma bog-down check if not jumping into the last hex
+            // check if we've moved into swamp; skip Liquid Magma bog-down check if not
+            // jumping into the last hex
             if (level != 2 || jumpedIntoMagma) {
                 rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
                         lastPos, curPos, lastElevation, isPavementStep);
                 checkNag(rollTarget, nagReport, psrList);
+            }
 
-                // Check if used more MPs than Mech/Vehicle would have w/o gravity
-                if (!i.hasMoreElements() && !firstStep) {
-                    if ((entity instanceof Mech) || (entity instanceof Tank)) {
-                        if ((moveType == EntityMovementType.MOVE_WALK)
-                                || (moveType == EntityMovementType.MOVE_VTOL_WALK)
-                                || (moveType == EntityMovementType.MOVE_RUN)
-                                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                                || (moveType == EntityMovementType.MOVE_SPRINT)
-                                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-                            int limit = entity.getRunningGravityLimit();
-                            if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
-                                limit++;
+            // Check if used more MPs than Mek/Vehicle would have w/o gravity
+            if (!i.hasMoreElements() && !firstStep) {
+                if ((entity instanceof Mek) || (entity instanceof Tank)) {
+                    if ((moveType == EntityMovementType.MOVE_WALK)
+                            || (moveType == EntityMovementType.MOVE_VTOL_WALK)
+                            || (moveType == EntityMovementType.MOVE_RUN)
+                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                            || (moveType == EntityMovementType.MOVE_SPRINT)
+                            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                        int limit = entity.getRunningGravityLimit();
+                        if (step.isOnlyPavementOrRoad() && entity.isEligibleForPavementOrRoadBonus()) {
+                            limit++;
+                        }
+                        if (step.getMpUsed() > limit) {
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                            checkNag(rollTarget, nagReport, psrList);
+                        }
+                    } else if (moveType == EntityMovementType.MOVE_JUMP) {
+                        int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
+                        int gravWalkMP = entity.getWalkMP();
+                        if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                            checkNag(rollTarget, nagReport, psrList);
+                        } else if ((game.getPlanetaryConditions().getGravity() > 1)
+                                && ((origWalkMP - gravWalkMP) > 0)) {
+                            rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
+                            entity.addPilotingModifierForTerrain(rollTarget, step);
+                            int gravMod = game.getPlanetaryConditions()
+                                    .getGravityPilotPenalty();
+                            if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                                rollTarget.addModifier(gravMod, game
+                                        .getPlanetaryConditions().getGravity()
+                                        + "G gravity");
                             }
-                            if (step.getMpUsed() > limit) {
-                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                                checkNag(rollTarget, nagReport, psrList);
-                            }
-                        } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                            int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
-                            int gravWalkMP = entity.getWalkMP();
-                            if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
-                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                                checkNag(rollTarget, nagReport, psrList);
-                            } else if ((game.getPlanetaryConditions().getGravity() > 1)
-                                    && ((origWalkMP - gravWalkMP) > 0)) {
-                                rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
-                                entity.addPilotingModifierForTerrain(rollTarget, step);
-                                int gravMod = game.getPlanetaryConditions()
-                                        .getGravityPilotPenalty();
-                                if ((gravMod != 0) && !game.getBoard().inSpace()) {
-                                    rollTarget.addModifier(gravMod, game
-                                            .getPlanetaryConditions().getGravity()
-                                            + "G gravity");
-                                }
-                                rollTarget.append(new PilotingRollData(entity
-                                        .getId(), 0, "jumped in high gravity"));
-                                SharedUtility.checkNag(rollTarget, nagReport,
-                                        psrList);
-                            }
-                            if (step.getMpUsed() > entity.getSprintMP(MPCalculationSetting.NO_GRAVITY)) {
-                                rollTarget = entity.checkMovedTooFast(step, overallMoveType);
-                                checkNag(rollTarget, nagReport, psrList);
-                            }
+                            rollTarget.append(new PilotingRollData(entity
+                                    .getId(), 0, "jumped in high gravity"));
+                            SharedUtility.checkNag(rollTarget, nagReport,
+                                    psrList);
+                        }
+                        if (step.getMpUsed() > entity.getSprintMP(MPCalculationSetting.NO_GRAVITY)) {
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
+                            checkNag(rollTarget, nagReport, psrList);
                         }
                     }
                 }
@@ -399,11 +439,12 @@ public class SharedUtility {
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
-            boolean mechAffectedByCliff = (entity instanceof Mech || entity instanceof Protomech)
+            boolean mekAffectedByCliff = (entity instanceof Mek || entity instanceof ProtoMek)
                     && moveType != EntityMovementType.MOVE_JUMP
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
-            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
+            // Everything that does not have a 1 or 2 level drop shouldn't be handled as a
+            // cliff
             int stepHeight = curElevation + curHex.getLevel()
                     - (lastElevation + prevHex.getLevel());
             boolean isUpCliff = !lastPos.equals(curPos)
@@ -420,17 +461,17 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Mechs moving down a cliff
+            // Meks moving down a cliff
             // QuadVees in vee mode ignore PSRs to avoid falls, IO p.133
             // ProtoMeks as Meks
-            if (mechAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
+            if (mekAffectedByCliff && !quadveeVehMode && isDownCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), -stepHeight - 1, "moving down a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            // Mechs moving up a cliff
-            if (mechAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
+            // Meks moving up a cliff
+            if (mekAffectedByCliff && !quadveeVehMode && isUpCliff && !isPavementStep) {
                 rollTarget = entity.getBasePilotingRoll(moveType);
                 rollTarget.append(new PilotingRollData(entity.getId(), stepHeight, "moving up a sheer cliff"));
                 checkNag(rollTarget, nagReport, psrList);
@@ -438,10 +479,10 @@ public class SharedUtility {
 
             // Handle non-infantry moving into a building.
             int buildingMove = entity.checkMovementInBuilding(step, prevStep, curPos, lastPos);
-            if ((buildingMove > 1) && !(entity instanceof Protomech)) {
+            if ((buildingMove > 1) && !(entity instanceof ProtoMek)) {
                 // Get the building being entered.
                 Building bldg = null;
-                String reason ="entering";
+                String reason = "entering";
                 if ((buildingMove & 2) == 2) {
                     bldg = game.getBoard().getBuildingAt(curPos);
                 }
@@ -461,22 +502,26 @@ public class SharedUtility {
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
+                    && !(md.isJumping() && (entity.getJumpType() == Mek.JUMP_BOOSTER))
                     && (lastHex.getLevel() + lastElevation != (curHex.getLevel() + step.getElevation()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV) + curHex
-                            .getLevel()) == (prevHex.getLevel() + (prevHex
-                            .containsTerrain(Terrains.BRIDGE) ? prevHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
+                                    .terrainLevel(Terrains.BRIDGE_ELEV)
+                                    + curHex
+                                            .getLevel()) == (prevHex.getLevel()
+                                                    + (prevHex
+                                                            .containsTerrain(Terrains.BRIDGE)
+                                                                    ? prevHex
+                                                                            .terrainLevel(Terrains.BRIDGE_ELEV)
+                                                                    : 0))))) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType), nagReport, psrList);
             }
 
             // Check for Ejecting
-            if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mech)) {
-                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
+            if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mek)) {
+                rollTarget = TWGameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -488,7 +533,7 @@ public class SharedUtility {
                         && (targ instanceof Infantry)
                         && (((Entity) targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
-                    rollTarget = GameManager.getEjectModifiers(game, (Entity) targ, 0,
+                    rollTarget = TWGameManager.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
                     // Factor in Elevation
                     if (entity.getElevation() > 0) {
@@ -500,7 +545,7 @@ public class SharedUtility {
 
             if (step.isTurning()) {
                 rollTarget = entity.checkTurnModeFailure(overallMoveType,
-                        prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
+                        prevStep == null ? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -527,7 +572,7 @@ public class SharedUtility {
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
-        //if we sprinted with MASC or a supercharger, then we need a PSR
+        // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASCXorSupercharger(overallMoveType, md.getMpUsed());
         checkNag(rollTarget, nagReport, psrList);
 
@@ -576,6 +621,16 @@ public class SharedUtility {
             } else if ((level == 2) && (lastElevation == 0)) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
+
+            if ((hex.containsTerrain(Terrains.HAZARDOUS_LIQUID)) && (lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
+            if ((hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
+            }
         }
 
         if (entity.isAirborne() && entity.isAero()) {
@@ -616,7 +671,7 @@ public class SharedUtility {
      * @param psrList
      */
     private static void checkNag(PilotingRollData rollTarget, StringBuffer nagReport,
-                                 List<TargetRoll> psrList) {
+            List<TargetRoll> psrList) {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             psrList.add(rollTarget);
             nagReport.append(Messages.getString("MovementDisplay.addNag",
@@ -689,7 +744,8 @@ public class SharedUtility {
         if (!entity.isAero() && !(entity instanceof EjectedCrew)) {
             return md;
         }
-        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move steps and be done with it
+        // Ejected crew/pilots and lifeboats can't move, so just add the inherited move
+        // steps and be done with it
         if ((entity instanceof EjectedCrew)
                 || ((entity instanceof EscapePods) && (entity.getOriginalWalkMP() <= 0))) {
             return addSteps(md, client);
@@ -790,8 +846,9 @@ public class SharedUtility {
         MoveStep lastStep = md.getLastStep();
         if ((lastStep != null)
                 && ((lastStep.getType() == MoveStepType.LAUNCH) || (lastStep
-                        .getType() == MoveStepType.RECOVER) || (lastStep
-                        .getType() == MoveStepType.UNDOCK))) {
+                        .getType() == MoveStepType.RECOVER)
+                        || (lastStep
+                                .getType() == MoveStepType.UNDOCK))) {
             md.removeLastStep();
         }
 
@@ -910,12 +967,55 @@ public class SharedUtility {
         return retVal;
     }
 
-    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets,
-                                                       @Nullable String chosenDisplayName) {
+    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets, @Nullable String chosenDisplayName) {
         if ((chosenDisplayName == null) || (targets == null)) {
             return null;
         } else {
             return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElse(null);
         }
     }
+
+    public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data) {
+        // Rough guess based on normal pilots
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue();
+        double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
+            * (fallHeight + 1);
+        logger.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
+        return fallDamage * (1 - odds);
+    }
+
+    /** Per TacOps p 20, a leap carries the following risks:
+     * 1. risk of damaging each leg by distance leaped (3 or more per leg); mod is 2 x distance leaped.
+     * 1.a 1 critical roll _per leg_.
+     * 1.b 1 _additional_ critical per leg that takes internal structure damage due to leaping damage.
+     * 2. risk of falling; mod is distance leaped.
+     * @param movingEntity
+     * @param data
+     * @return
+     */
+    public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
+        int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue() / 2;
+        double legDamage = fallHeight * (legMultiplier);
+        logger.trace("Predicting Leap damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
+        int[] legLocations = {BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM};
+
+        // Add required crits; say the effective leg "damage" from a crit is 20 for now.
+        legDamage += legMultiplier * CRIT_VALUE;
+        logger.trace("Adding {} leg critical chances as {} additional damage", legMultiplier, legMultiplier * CRIT_VALUE);
+
+        // Add additional crits for each leg that would take internal damage
+        for (int i=0;i<legMultiplier; i++) {
+            if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
+                logger.trace("Adding additional critical for leg {} due to internal structure damage", i);
+                legDamage += CRIT_VALUE;
+            }
+        }
+
+        // Calculate odds of receiving this damage and return
+        return legDamage * (1 - odds);
+    }
+
 }

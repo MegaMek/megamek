@@ -14,15 +14,23 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.*;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
+import megamek.common.FuelType;
+import megamek.common.SuperHeavyTank;
+import megamek.common.Tank;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * @author njrkrynn
  * @since April 6, 2002, 2:06 AM
  */
-public class BLKTankFile extends BLKFile implements IMechLoader {
+public class BLKTankFile extends BLKFile implements IMekLoader {
+    private static final MMLogger logger = MMLogger.create(BLKTankFile.class);
 
     private boolean superheavy = false;
 
@@ -140,7 +148,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = Math.max(10, (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
+        int engineRating = Math.max(10,
+                (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
         if (dataFile.getDataAsInt("cruiseMP")[0] == 0) {
             engineRating = engineCode == BLKFile.NONE ? 0 : 10;
         }
@@ -184,25 +193,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             t.initializeArmor(fullArmor[x], x);
         }
 
-        boolean patchworkArmor = false;
-        if (dataFile.exists("armor_type")) {
-            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
-                patchworkArmor = true;
-            } else {
-                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-            }
-        } else {
-            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
-        if (patchworkArmor) {
-            for (int i = 1; i < t.locations(); i++) {
-                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-            }
-        }
+        setupArmorTypeAndTechLevel(t);
 
         t.autoSetInternal();
 
@@ -237,8 +228,6 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             }
         }
 
-
-
         loadEquipment(t, "Body", Tank.LOC_BODY);
 
         if (dataFile.exists("omni")) {
@@ -262,9 +251,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
-                                + ": Could not parse ICE fuel type "
-                                + dataFile.getDataAsString("fuelType")[0]);
+                logger.error("While loading " + t.getShortNameRaw()
+                        + ": Could not parse ICE fuel type "
+                        + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }
@@ -279,5 +268,39 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         t.recalculateTechAdvancement();
         loadQuirks(t);
         return t;
+    }
+
+    private void setupArmorTypeAndTechLevel(Tank t) {
+        boolean patchworkArmor = false;
+        if (dataFile.exists("armor_type")) {
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                var armorTypeId = dataFile.getDataAsInt("armor_type")[0];
+                t.setArmorType(armorTypeId);
+                var armorType = ArmorType.of(armorTypeId, t.isClan());
+                var techLevel = -1;
+                if (dataFile.exists("armor_tech_level")) {
+                    techLevel = dataFile.getDataAsInt("armor_tech_level")[0];
+                } else {
+                    techLevel = armorType.getStaticTechLevel().getCompoundTechLevel(t.isClan());
+                }
+                t.setArmorTechLevel(techLevel);
+            }
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (patchworkArmor) {
+            for (int i = 1; i < t.locations(); i++) {
+                var armorTypeId = dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0];
+                var armorType = ArmorType.of(armorTypeId, t.isClan());
+                t.setArmorType(armorTypeId, i);
+                var techLevel = armorType.getStaticTechLevel().getCompoundTechLevel(t.isClan());
+                t.setArmorTechLevel(techLevel, i);
+            }
+        }
     }
 }

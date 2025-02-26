@@ -20,9 +20,10 @@ package megamek.server.sbf;
 
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFMovePath;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManagerHelper {
+    private static final MMLogger logger = MMLogger.create(SBFMovementProcessor.class);
 
     void processMovement(SBFMovePath movePath, SBFFormation formation) {
         if (!validatePermitted(movePath, formation)) {
@@ -30,6 +31,7 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
         }
 
         formation.setPosition(movePath.getLastPosition());
+        formation.setJumpUsedThisTurn(movePath.getJumpUsed());
         formation.setDone(true);
         gameManager.sendUnitUpdate(formation);
         gameManager.endCurrentTurn(formation);
@@ -37,13 +39,13 @@ record SBFMovementProcessor(SBFGameManager gameManager) implements SBFGameManage
 
     private boolean validatePermitted(SBFMovePath movePath, SBFFormation formation) {
         if (!game().getPhase().isMovement()) {
-            LogManager.getLogger().error("Server got movement packet in wrong phase!");
+            logger.error("Server got movement packet in wrong phase!");
             return false;
         } else if (movePath.isIllegal()) {
-            LogManager.getLogger().error("Illegal move path!");
+            logger.error("Illegal move path!");
             return false;
         } else if (formation.isDone()) {
-            LogManager.getLogger().error("Formation already done!");
+            logger.error("Formation already done!");
             return false;
         }
         return true;

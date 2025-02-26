@@ -14,8 +14,10 @@
 package megamek.common.preference;
 
 import megamek.MMConstants;
+import megamek.common.Configuration;
 import megamek.common.MovePath;
-import org.apache.logging.log4j.LogManager;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +26,9 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 public class ClientPreferences extends PreferenceStoreProxy {
-    //region Variable Declarations
+    private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
+
+    // region Variable Declarations
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
     public static final String LAST_PLAYER_NAME = "LastPlayerName";
@@ -32,16 +36,20 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String LAST_SERVER_PORT = "LastServerPort";
     public static final String LOCALE = "Locale";
     public static final String MAP_TILESET = "MapTileset";
+    public static final String MINIMAP_THEME = "MinimapTheme";
+    public static final String STRATEGIC_VIEW_THEME = "StrategicViewTheme";
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
-    public static final String MECH_DIRECTORY = "MechDirectory";
+    public static final String MEK_DIRECTORY = "MekDirectory";
     public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
+    public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String DATA_LOGGING = "DataLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
@@ -61,26 +69,37 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+    public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
+    public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
+    public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
 
-    /** A user-specified directory, typically outside the MM directory, where content may be loaded from. */
+    /**
+     * A user-specified directory, typically outside the MM directory, where content
+     * may be loaded from.
+     */
     public static final String USER_DIR = "UserDir";
 
-    //endregion Variable Declarations
+    public static final String MML_PATH = "MmlPath";
 
-    //region Constructors
+    // endregion Variable Declarations
+
+    // region Constructors
     public ClientPreferences(IPreferenceStore store) {
         this.store = store;
         store.setDefault(LAST_CONNECT_ADDR, MMConstants.LOCALHOST);
         store.setDefault(LAST_CONNECT_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(LAST_SERVER_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(MAP_TILESET, "saxarba.tileset");
+        store.setDefault(MINIMAP_THEME, "default.theme");
+        store.setDefault(STRATEGIC_VIEW_THEME, "gbc green.theme");
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
-        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
+        store.setDefault(MEK_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mekfiles");
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
+        store.setDefault(AUTO_RESOLVE_GAMELOG_FILENAME, "simulation.html");
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -97,11 +116,16 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
+        store.setDefault(MML_PATH, "");
+        store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
+        store.setDefault(DATA_LOGGING, false);
+        store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
-    //endregion Constructors
+    // endregion Constructors
 
     public boolean getPrintEntityChange() {
         return store.getBoolean(PRINT_ENTITY_CHANGE);
@@ -123,7 +147,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public boolean useGPinUnitSelection() {
         return store.getBoolean(USE_GP_IN_UNIT_SELECTION);
     }
-    
+
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
@@ -164,8 +188,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(LOG_DIRECTORY);
     }
 
-    public String getMechDirectory() {
-        return store.getString(MECH_DIRECTORY);
+    public String getMekDirectory() {
+        return store.getString(MEK_DIRECTORY);
     }
 
     protected PrintWriter mekHitLocLog = null;
@@ -192,6 +216,14 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public String getGameLogFilename() {
         return store.getString(GAMELOG_FILENAME);
+    }
+
+    public String getAutoResolveGameLogFilename() {
+        return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
+    }
+
+    public boolean dataLoggingEnabled() {
+        return store.getBoolean(DATA_LOGGING);
     }
 
     public boolean stampFilenames() {
@@ -233,7 +265,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public void setUseGpInUnitSelection(boolean state) {
         store.setValue(USE_GP_IN_UNIT_SELECTION, state);
     }
-    
+
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }
@@ -274,12 +306,20 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(GAMELOG_FILENAME, name);
     }
 
+    public void setAutoResolveGameLogFilename(String name) {
+        store.setValue(AUTO_RESOLVE_GAMELOG_FILENAME, name);
+    }
+
     public void setPrintEntityChange(boolean print) {
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }
 
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);
+    }
+
+    public void setDataLogging(boolean state) {
+        store.setValue(DATA_LOGGING, state);
     }
 
     public void setStampFormat(String format) {
@@ -326,6 +366,33 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(START_SEARCHLIGHTS_ON, value);
     }
 
+    public void setEnableExperimentalBotFeatures(boolean value) {
+        store.setValue(ENABLE_EXPERIMENTAL_BOT_FEATURES, value);
+    }
+
+    public boolean getEnableExperimentalBotFeatures() {
+        return store.getBoolean(ENABLE_EXPERIMENTAL_BOT_FEATURES);
+    }
+
+    public void setStrategicViewTheme(String theme) {
+        store.setValue(STRATEGIC_VIEW_THEME, theme);
+    }
+
+    public File getStrategicViewTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(STRATEGIC_VIEW_THEME)).getFile();
+    }
+
+    public void setMinimapTheme(String theme) {
+        if (theme == null) {
+            return;
+        }
+        store.setValue(MINIMAP_THEME, theme);
+    }
+
+    public File getMinimapTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(MINIMAP_THEME)).getFile();
+    }
+
     protected Locale locale = null;
 
     public void setLocale(String l) {
@@ -364,7 +431,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
                 mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
             } catch (Throwable t) {
-                LogManager.getLogger().error("", t);
+                logger.error("", t);
                 mekHitLocLog = null;
             }
         }
@@ -386,7 +453,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getInt(MAP_HEIGHT);
     }
 
-    /** @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash. */
+    /**
+     * @return The absolute user directory path (usually outside of MM). Does not
+     *         end in a slash or backslash.
+     */
     public String getUserDir() {
         return store.getString(USER_DIR);
     }
@@ -397,5 +467,29 @@ public class ClientPreferences extends PreferenceStoreProxy {
             userDir = userDir.substring(0, userDir.length() - 1);
         }
         store.setValue(USER_DIR, userDir);
+    }
+
+    public String getMmlPath() {
+        return store.getString(MML_PATH);
+    }
+
+    public void setMmlPath(String mmlPath) {
+        store.setValue(MML_PATH, mmlPath.isBlank() ? "" : new File(mmlPath).getAbsolutePath());
+    }
+
+    public boolean askForVictoryList() {
+        return store.getBoolean(NAG_ASK_FOR_VICTORY_LIST);
+    }
+
+    public void setAskForVictoryList(boolean value) {
+        store.setValue(NAG_ASK_FOR_VICTORY_LIST, value);
+    }
+
+    public void setShowAutoResolvePanel(boolean value) {
+        store.setValue(SHOW_AUTO_RESOLVE_PANEL, value);
+    }
+
+    public boolean getShowAutoResolvePanel() {
+        return store.getBoolean(SHOW_AUTO_RESOLVE_PANEL);
     }
 }

@@ -28,7 +28,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la";
     public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra";
     public static final String QUIRK_POS_COMBAT_COMPUTER = "combat_computer";
-    public static final String QUIRK_POS_COMMAND_MECH = "command_mech";
+    public static final String QUIRK_POS_COMMAND_MEK = "command_mech";
     public static final String QUIRK_POS_COMPACT = "compact_mech";
     public static final String QUIRK_POS_COWL = "cowl";
     // TODO - Code directional torso mount for play
@@ -218,11 +218,12 @@ public class OptionsConstants {
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter";
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek";
     public static final String UNOFF_SMALL_PILOT = "small_pilot";
+    public static final String UNOFF_ADV_ATMOSPHERIC_CONTROL = "unoff_adv_atmospheric_control";
 
     // EDGE
     public static final String EDGE = "edge";
     // different edge triggers
-    // Mech Triggers
+    // Mek Triggers
     public static final String EDGE_WHEN_HEADHIT = "edge_when_headhit";
     public static final String EDGE_WHEN_TAC = "edge_when_tac";
     public static final String EDGE_WHEN_KO = "edge_when_ko";
@@ -273,9 +274,9 @@ public class OptionsConstants {
     public static final String BASE_TURN_TIMER_FIRING = "turn_timer_firing";
     public static final String BASE_TURN_TIMER_PHYSICAL = "turn_timer_physical";
     public static final String BASE_TURN_TIMER_ALLOW_EXTENSION = "turn_timer_allow_extension";
-    public static final String BASE_SKIP_INELIGABLE_MOVEMENT = "skip_ineligable_movement";
-    public static final String BASE_SKIP_INELIGABLE_FIRING = "skip_ineligable_firing";
-    public static final String BASE_SKIP_INELIGABLE_PHYSICAL = "skip_ineligable_physical";
+    public static final String BASE_SKIP_INELIGIBLE_MOVEMENT = "skip_ineligable_movement";
+    public static final String BASE_SKIP_INELIGIBLE_FIRING = "skip_ineligable_firing";
+    public static final String BASE_SKIP_INELIGIBLE_PHYSICAL = "skip_ineligable_physical";
     public static final String BASE_PUSH_OFF_BOARD = "push_off_board";
     public static final String BASE_TEAM_INITIATIVE = "team_initiative";
     public static final String BASE_AUTOSAVE_MSG = "autosave_msg";
@@ -288,7 +289,7 @@ public class OptionsConstants {
     public static final String BASE_DUMPING_FROM_ROUND = "dumping_from_round";
     public static final String BASE_SET_ARTY_PLAYER_HOMEEDGE = "set_arty_player_homeedge";
     public static final String BASE_SET_DEFAULT_TEAM_1 = "set_default_team_1";
-    public static final String BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0 = "set_player_deployment_to_player0";
+    public static final String BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0 = "set_player_deployment_to_player0";
     public static final String BASE_RESTRICT_GAME_COMMANDS = "restrict_game_commands";
     public static final String BASE_DISABLE_LOCAL_SAVE = "disable_local_save";
     public static final String BASE_BRIDGECF = "bridgeCF";
@@ -332,6 +333,7 @@ public class OptionsConstants {
     public static final String ADVANCED_MINEFIELDS = "minefields";
     public static final String ADVANCED_HIDDEN_UNITS = "hidden_units";
     public static final String ADVANCED_BLACK_ICE= "black_ice";
+    public static final String ADVANCED_LIGHTNING_STORM_TARGETS_UNITS= "lightning_storm_targets_units";
     public static final String ADVANCED_DOUBLE_BLIND = "double_blind";
     public static final String ADVANCED_SINGLE_BLIND_BOTS = "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS = "tacops_sensors";
@@ -365,7 +367,7 @@ public class OptionsConstants {
     public static final String ADVANCED_NO_IGNITE_CLEAR = "no_ignite_clear";
     public static final String ADVANCED_ALL_HAVE_EI_COCKPIT = "all_have_ei_cockpit";
     public static final String ADVANCED_EXTREME_TEMPERATURE_SURVIVAL = "extreme_temperature_survival";
-    public static final String ADVANCED_ARMED_MECHWARRIORS = "armed_mechwarriors";
+    public static final String ADVANCED_ARMED_MEKWARRIORS = "armed_mekwarriors";
     public static final String ADVANCED_PILOTS_VISUAL_RANGE_ONE = "pilots_visual_range_one";
     public static final String ADVANCED_PILOTS_CANNOT_SPOT = "pilots_cannot_spot";
     public static final String ADVANCED_METAL_CONTENT = "metal_content";
@@ -410,7 +412,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS = "tacops_vehicle_arcs";
 
     public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
-    public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS = "tacops_advanced_mech_hit_locations";
+    public static final String ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS = "tacops_advanced_mek_hit_locations";
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE = "tacops_coolant_failure";
     public static final String ADVCOMBAT_TACOPS_BA_VS_BA = "tacops_ba_vs_ba";
     public static final String ADVCOMBAT_NO_TAC = "no_tac";
@@ -499,6 +501,7 @@ public class OptionsConstants {
     public static final String ADVAERORULES_ALLOW_LARGE_SQUADRONS = "allow_large_squadrons";
     public static final String ADVAERORULES_SINGLE_NO_CAP = "single_no_cap";
     public static final String ADVAERORULES_AERO_ARTILLERY_MUNITIONS = "aero_artillery_munitions";
+    public static final String ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE = "crashed_dropships_survive";
     public static final String ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE = "expanded_kf_drive_damage";
     public static final String INIT_INF_MOVE_EVEN = "inf_move_even";
     public static final String INIT_INF_DEPLOY_EVEN = "inf_deploy_even";
@@ -523,7 +526,6 @@ public class OptionsConstants {
     public static final String RPG_ARTILLERY_SKILL = "artillery_skill";
     public static final String RPG_TOUGHNESS = "toughness";
     public static final String RPG_CONDITIONAL_EJECTION = "conditional_ejection";
-    public static final String RPG_MANUAL_SHUTDOWN = "manual_shutdown";
     public static final String RPG_BEGIN_SHUTDOWN = "begin_shutdown";
 
     private OptionsConstants() { }

@@ -49,11 +49,11 @@ VICTORY CONDITIONS
 The scenario ends when one side is completely destroyed, has withdrawn, or otherwise leaves the map.
 
 As soon as one of these conditions is fulfilled, calculate each sides point total and consult the Victory Level Table.
-  +20 Points per each Davion or ComStar 'Mech destroyed
-  +20 Points if Lt.-Gen. Giggins' 'Mech is destroyed
-  -20 Points per each Lyran 'Mech destroyed
-  -15 Points, each Lyran 'Mech forced to withdraw
-  -10 Points for each operational Davion or ComStar 'Mech on Monte Diablo at the end of the game.
+  +20 Points per each Davion or ComStar 'Mek destroyed
+  +20 Points if Lt.-Gen. Giggins' 'Mek is destroyed
+  -20 Points per each Lyran 'Mek destroyed
+  -15 Points, each Lyran 'Mek forced to withdraw
+  -10 Points for each operational Davion or ComStar 'Mek on Monte Diablo at the end of the game.
 
 
 SPECIAL RULES
@@ -64,7 +64,7 @@ The following special rules apply during this scenario:
     The Forced Withdrawal rule is in effect for the Lyran Forces. Lyran forces must retreat off their home map edges if they take Crippling Damage. Withdrawing units may not make physical attacks against enemy units. Withdrawing units may fire at enemy units if the enemy unit lies in their front arc and are between the withdrawing unit and the withdrawing unit's home map edge. Davion and ComStar units may not withdraw.
 
 ·Crippling Damage
-    A BattleMech is considered crippled when: A side torso location is destroyed, the 'Mech takes 2 engine critical hits, it takes 4 or more pilot hits, or all of its weapons are destroyed. Any ammunition fed weapon is considered destroyed when its ammunition is depleted. If a 'Mech's weapons are destroyed and it can no longer move, it is considered destroyed.
+    A BattleMek is considered crippled when: A side torso location is destroyed, the 'Mek takes 2 engine critical hits, it takes 4 or more pilot hits, or all of its weapons are destroyed. Any ammunition fed weapon is considered destroyed when its ammunition is depleted. If a 'Mek's weapons are destroyed and it can no longer move, it is considered destroyed.
 
 
 VICTORY POINT TABLE

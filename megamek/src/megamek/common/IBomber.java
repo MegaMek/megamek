@@ -26,8 +26,9 @@ import megamek.common.equipment.BombMounted;
 import megamek.common.options.OptionsConstants;
 
 /**
- * Common interface for all entities capable of carrying bombs and making bomb attacks, includig Aero,
- * LandAirMech, and VTOL.
+ * Common interface for all entities capable of carrying bombs and making bomb
+ * attacks, includig Aero,
+ * LandAirMek, and VTOL.
  *
  * @author Neoancient
  */
@@ -38,24 +39,26 @@ public interface IBomber {
     String ALT_BOMB_ATTACK = "AltBombAttack";
 
     /**
-     * Set count of internal bombs used; this is used to reset, revert, or increase count
+     * Set count of internal bombs used; this is used to reset, revert, or increase
+     * count
      * of internal bombs a unit has dropped during a turn.
+     *
      * @param b
      */
     void setUsedInternalBombs(int b);
 
     /**
      * Increase count of internal bombs used this turn.
+     *
      * @param b
      */
     void increaseUsedInternalBombs(int b);
 
     /**
      * @return the number of internal bombs used by this bomber during a turn, for
-     * IBB internal hit calculations.
+     *         IBB internal hit calculations.
      */
     int getUsedInternalBombs();
-
 
     /**
      * @return The total number of bomb points that the bomber can carry.
@@ -63,7 +66,8 @@ public interface IBomber {
     int getMaxBombPoints();
 
     /**
-     * Fighters and VTOLs can carry any size bomb up to the maximum number of points per location (internal/external),
+     * Fighters and VTOLs can carry any size bomb up to the maximum number of points
+     * per location (internal/external),
      * but LAMs are limited to the number of bays in a single location.
      *
      * @return The largest single bomb that can be carried internally.
@@ -81,32 +85,37 @@ public interface IBomber {
     }
 
     /**
-     * @return The number of each internally-mounted bomb type that was selected prior to deployment
+     * @return The number of each internally-mounted bomb type that was selected
+     *         prior to deployment
      */
     int[] getIntBombChoices();
 
     /**
-     * @return The number of each externally-mounted bomb type that was selected prior to deployment
+     * @return The number of each externally-mounted bomb type that was selected
+     *         prior to deployment
      */
     int[] getExtBombChoices();
 
     /**
      * Sets the bomb type selections prior to deployment.
      *
-     * @param bc An array with the count of each bomb type as the value of the bomb type's index
+     * @param bc An array with the count of each bomb type as the value of the bomb
+     *           type's index
      */
     void setIntBombChoices(int[] bc);
 
     /**
      * Sets the bomb type selections for external mounts.
-     * @param bc An array with the count of each bomb type as the value of the bomb type's index
+     *
+     * @param bc An array with the count of each bomb type as the value of the bomb
+     *           type's index
      */
     void setExtBombChoices(int[] bc);
 
     /**
      * @return summed combination of internal and external choices
      */
-    default int[] getBombChoices(){
+    default int[] getBombChoices() {
         int[] intArr = getIntBombChoices();
         int[] extArr = getExtBombChoices();
         IntStream range = IntStream.range(0, Math.min(intArr.length, extArr.length));
@@ -116,6 +125,7 @@ public interface IBomber {
 
     /**
      * Backwards compatibility bomb choice setter that only affects external stores.
+     *
      * @param ebc
      */
     default void setBombChoices(int[] ebc) {
@@ -128,21 +138,25 @@ public interface IBomber {
     void clearBombChoices();
 
     /**
-     * @return The calculates movement factoring in the load of bombs currently on unit, t is current movement
+     * @return The calculates movement factoring in the load of bombs currently on
+     *         unit, t is current movement
      */
     int reduceMPByBombLoad(int t);
 
     /**
      * @param cost The cost of the bomb to be mounted
-     * @return A location with sufficient space to mount the bomb, or Entity.LOC_NONE if the unit does not have the space.
+     * @return A location with sufficient space to mount the bomb, or
+     *         Entity.LOC_NONE if the unit does not have the space.
      */
     int availableBombLocation(int cost);
 
     /**
-     * Used by VTOLs and LAMs in airmech mode to declare the target hex for a bomb attack during the movement
+     * Used by VTOLs and LAMs in airmek mode to declare the target hex for a bomb
+     * attack during the movement
      * phase.
      */
-    default void setVTOLBombTarget(Targetable target) {}
+    default void setVTOLBombTarget(Targetable target) {
+    }
 
     default Targetable getVTOLBombTarget() {
         return null;
@@ -165,7 +179,8 @@ public interface IBomber {
 
     /**
      *
-     * @return the number of externally-mounted ordnance points (useful for MP calculations)
+     * @return the number of externally-mounted ordnance points (useful for MP
+     *         calculations)
      */
     default int getExternalBombPoints() {
         return getBombPoints(true);
@@ -177,7 +192,7 @@ public interface IBomber {
      */
     default int getInternalBombsDamageTotal() {
         int total = 0;
-        for (Mounted bomb: getBombs()) {
+        for (Mounted<?> bomb : getBombs()) {
             if (bomb.isInternalBomb()) {
                 total += bomb.getExplosionDamage();
             }
@@ -191,26 +206,29 @@ public interface IBomber {
      */
     default int getBombPoints(boolean externalOnly) {
         int points = 0;
-        for (Mounted bomb : getBombs()) {
+        for (Mounted<?> bomb : getBombs()) {
             if (bomb.getUsableShotsLeft() > 0) {
-                // Add points if A) not external only, and any kind of bomb, or B) external only, and not internal bomb
-                points += !(externalOnly && bomb.isInternalBomb()) ?
-                        BombType.getBombCost(((BombType) bomb.getType()).getBombType()) : 0;
+                // Add points if A) not external only, and any kind of bomb, or B) external
+                // only, and not internal bomb
+                points += !(externalOnly && bomb.isInternalBomb())
+                        ? BombType.getBombCost(((BombType) bomb.getType()).getBombType())
+                        : 0;
             }
         }
         return points;
     }
 
-
     /**
-     * Iterate through the bomb choices that were configured prior to deployment and add the corresponding
+     * Iterate through the bomb choices that were configured prior to deployment and
+     * add the corresponding
      * equipment.
      */
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
         Integer[] iSorted = new Integer[BombType.B_NUM];
-        // Apply the largest bombs first because we need to fit larger bombs into a single location
+        // Apply the largest bombs first because we need to fit larger bombs into a
+        // single location
         // in LAMs.
         for (int i = 0; i < iSorted.length; i++) {
             iSorted[i] = i;
@@ -270,14 +288,15 @@ public interface IBomber {
 
     /**
      * Helper to apply equipment-type bombs, either externally or internally.
-     * @param type of bomb equipment.
-     * @param loc location where mounted.
+     *
+     * @param type     of bomb equipment.
+     * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */
-    private void applyBombEquipment(int type, int loc, boolean internal){
+    private void applyBombEquipment(int type, int loc, boolean internal) {
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombInternalName(type));
-            Mounted m = ((Entity) this).addEquipment(et, loc, false);
+            Mounted<?> m = ((Entity) this).addEquipment(et, loc, false);
             m.setInternalBomb(internal);
         } catch (LocationFullException ignored) {
 
@@ -287,11 +306,12 @@ public interface IBomber {
 
     /**
      * Helper to apply weapon-type bombs, either externally or internally.
-     * @param type of bomb equipment.
-     * @param loc location where mounted.
+     *
+     * @param type     of bomb equipment.
+     * @param loc      location where mounted.
      * @param internal mounted internally or not.
      */
-    private void applyBombWeapons(int type, int loc, boolean internal){
+    private void applyBombWeapons(int type, int loc, boolean internal) {
         Mounted<?> m;
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombWeaponName(type));

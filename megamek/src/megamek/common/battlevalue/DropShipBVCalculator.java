@@ -31,37 +31,37 @@ public class DropShipBVCalculator extends LargeAeroBVCalculator {
     }
 
     @Override
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_NOSE);
     }
 
     @Override
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_AFT);
     }
 
     @Override
-    protected Predicate<Mounted> leftWeaponFilter() {
+    protected Predicate<Mounted<?>> leftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && !weapon.isRearMounted();
     }
 
     @Override
-    protected Predicate<Mounted> leftAftWeaponFilter() {
+    protected Predicate<Mounted<?>> leftAftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && weapon.isRearMounted();
     }
 
     @Override
-    protected Predicate<Mounted> rightWeaponFilter() {
+    protected Predicate<Mounted<?>> rightWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && !weapon.isRearMounted();
     }
 
     @Override
-    protected Predicate<Mounted> rightAftWeaponFilter() {
+    protected Predicate<Mounted<?>> rightAftWeaponFilter() {
         return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && weapon.isRearMounted();
     }
 
     @Override
-    protected int bvLocation(Mounted equipment) {
+    protected int bvLocation(Mounted<?> equipment) {
         if (equipment.getLocation() == Dropship.LOC_NOSE) {
             return BVLOC_NOSE;
         } else if ((equipment.getLocation() == Dropship.LOC_LWING) && !equipment.isRearMounted()) {

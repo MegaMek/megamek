@@ -19,14 +19,22 @@
  */
 package megamek.common.pathfinder;
 
-import org.apache.logging.log4j.LogManager;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.PriorityQueue;
 
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
  * This class provides a skeletal implementation of pathfinder algorithm in a
  * given directed graph.
- * 
+ *
  * It uses a generalisation of Dijkstra algorithm. User must provide methods
  * that allow traversing the graph and evaluating paths. All needed methods have
  * been encapsulated and separated in classes:
@@ -40,22 +48,23 @@ import java.util.*;
  * <li>StopCondition - responsible for halting if user does not want to
  * traverse whole graph.</li>
  * </ul>
- * 
+ *
  * @author Saginatio
- * 
+ *
  * @param <N> the type of nodes in the graph.
  * @param <C> the type of computed lowest cost for a node. If needed this type
  *            can contain information for recreating the path.
  * @param <E> the type of directed edges used by the graph.
  */
 public class AbstractPathFinder<N, C, E> {
+    private static final MMLogger logger = MMLogger.create(AbstractPathFinder.class);
 
     // after switching to java 8 and including java.util.function some of this
-    //subclasses should be removed
+    // subclasses should be removed
 
     /**
      * Factory for retrieving neighbouring edges.
-     * 
+     *
      * @param <E> the type of directed edges used by the graph.
      */
     public interface AdjacencyMap<E> {
@@ -68,14 +77,14 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * Represents a function for retrieving destination node of an edge.
-     * 
+     *
      * @param <N> the type of nodes in the graph
      * @param <E> the type of directed edges used by the graph
      */
     public interface DestinationMap<N, E> {
         /**
          * Returns a destination node of a given edge.
-         * 
+         *
          * @param e a directed edge
          * @return the destination node of the given edge
          */
@@ -84,16 +93,16 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * Represents a function that relaxes an edge.
-     * 
+     *
      * @param <C> the type of computed lowest cost for a node
      * @param <E> the type of directed edges used by the graph
      */
     public interface EdgeRelaxer<C, E> {
         /**
          * Relaxes an edge.
-         * 
-         * @param v best value till now. Might be null.
-         * @param e candidate for the new best value
+         *
+         * @param v          best value till now. Might be null.
+         * @param e          candidate for the new best value
          * @param comparator edge comparator
          * @return new best value or null if no relaxation happened
          */
@@ -101,13 +110,14 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * Represents a function that allows removing unwanted objects from a collection.
+     * Represents a function that allows removing unwanted objects from a
+     * collection.
      */
     public static abstract class Filter<T> {
         /**
          * Returns filtered collection by removing those objects that fail
          * {@link #shouldStay} test.
-         * 
+         *
          * @param collection collection to be filtered
          * @return filtered collection
          */
@@ -123,7 +133,7 @@ public class AbstractPathFinder<N, C, E> {
 
         /**
          * Tests if the object should stay in the collection.
-         * 
+         *
          * @param object tested object
          * @return true if the object should stay in the collection
          */
@@ -132,7 +142,7 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * The stop condition that is processed after every successful relaxation.
-     * 
+     *
      * @param <E> the type of directed edges used by the graph
      */
     public interface StopCondition<E> {
@@ -217,13 +227,14 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * @param edgeDestinationMap functional interface for retrieving destination
-     *            node of an edge.
-     * @param edgeRelaxer functional interface for calculating relaxed cost.
-     * @param edgeAdjacencyMap functional interface for retrieving neighbouring
-     *            edges.
-     * @param edgeComparator implementation of path comparator. Each path is
-     *            defined by its last edge. <i>(path:= edge concatenated with
-     *            best path to the source of the edge)</i>
+     *                           node of an edge.
+     * @param edgeRelaxer        functional interface for calculating relaxed cost.
+     * @param edgeAdjacencyMap   functional interface for retrieving neighbouring
+     *                           edges.
+     * @param edgeComparator     implementation of path comparator. Each path is
+     *                           defined by its last edge. <i>(path:= edge
+     *                           concatenated with
+     *                           best path to the source of the edge)</i>
      */
     public AbstractPathFinder(DestinationMap<N, E> edgeDestinationMap, EdgeRelaxer<C, E> edgeRelaxer,
             AdjacencyMap<E> edgeAdjacencyMap, Comparator<E> edgeComparator) {
@@ -245,7 +256,7 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * Adds an EdgeFilter. If this method is invoked multiple times: an edge is
      * removed from the graph iff at least one filter removes it.
-     * 
+     *
      * @see Filter
      */
     public void addFilter(Filter<E> edgeFilter) {
@@ -265,7 +276,7 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * Computes shortest paths to nodes in the graph.
-     * 
+     *
      * @param startingEdges a collection of possible starting edges.
      */
     public void run(Collection<E> startingEdges) {
@@ -298,16 +309,20 @@ public class AbstractPathFinder<N, C, E> {
                 }
             }
         } catch (OutOfMemoryError ex) {
-            LogManager.getLogger().error("Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.", ex);
+            logger.error(
+                    "Not enough memory to analyse all options. Try setting time limit to lower value, or increase java memory limit.",
+                    ex);
+        } catch (IllegalArgumentException ex) {
+            logger.debug("Lost sight of a unit while plotting predicted paths", ex);
         } catch (Exception ex) {
             // Do something, don't just swallow the exception, good lord
-            LogManager.getLogger().error("", ex);
+            logger.error("", ex);
         }
     }
 
     /**
      * Computes shortest paths to nodes in the graph.
-     * 
+     *
      * @param start a starting edge.
      */
     public void run(E start) {
@@ -323,7 +338,8 @@ public class AbstractPathFinder<N, C, E> {
 
     /**
      * @param node
-     * @return calculated cost for this node or null if this node has not been reached.
+     * @return calculated cost for this node or null if this node has not been
+     *         reached.
      */
     protected C getCostOf(N node) {
         return pathsCosts.get(node);
@@ -332,7 +348,7 @@ public class AbstractPathFinder<N, C, E> {
     /**
      * Returns the cost map. <b>Important:</b> Neither the returned map, nor its
      * elements, should be modified.
-     * 
+     *
      * @return map Node to LowestCost
      */
     protected Map<N, C> getPathCostMap() {
@@ -345,17 +361,18 @@ public class AbstractPathFinder<N, C, E> {
     public void setAdjacencyMap(AdjacencyMap<E> edgeNeighborsFactory) {
         this.adjacencyMap = Objects.requireNonNull(edgeNeighborsFactory);
     }
-    
+
     public AdjacencyMap<E> getAdjacencyMap() {
         return adjacencyMap;
     }
 
     /**
      * Sets comparator.
-     * 
+     *
      * @param comparator implementation of path comparator. Each path is
-     *            uniquely defined by its last edge. <i>(path:= an edge
-     *            concatenated with the best path to the source of the edge)</i>
+     *                   uniquely defined by its last edge. <i>(path:= an edge
+     *                   concatenated with the best path to the source of the
+     *                   edge)</i>
      */
     public void setComparator(Comparator<E> comparator) {
         this.comparator = Objects.requireNonNull(comparator);

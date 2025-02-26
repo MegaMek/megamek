@@ -15,8 +15,8 @@ package megamek.server.commands;
 
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Coelocanth
@@ -24,10 +24,10 @@ import megamek.server.Server;
  */
 public class FixElevationCommand extends ServerCommand {
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /** Creates new FixElevationCommand */
-    public FixElevationCommand(Server server, GameManager gameManager) {
+    public FixElevationCommand(Server server, TWGameManager gameManager) {
         super(server, "fixelevation",
                 "Fix elevation of any units that are messed up");
         this.gameManager = gameManager;
@@ -43,7 +43,7 @@ public class FixElevationCommand extends ServerCommand {
             if (entity.fixElevation()) {
                 Building bldg = gameManager.getGame().getBoard().getBuildingAt(entity.getPosition());
                 if (bldg != null) {
-                    gameManager.checkForCollapse(bldg, gameManager.getGame().getPositionMap(), entity.getPosition(), true, gameManager.getvPhaseReport());
+                    gameManager.checkForCollapse(bldg, gameManager.getGame().getPositionMap(), entity.getPosition(), true, gameManager.getMainPhaseReport());
                 }
                 server.sendServerChat(entity.getDisplayName()
                         + " elevation fixed, see megamek.log for details & report a bug if you know how this happened");

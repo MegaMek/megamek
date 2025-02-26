@@ -15,8 +15,9 @@ allprojects {
 
 subprojects {
     group = 'org.megamek'
-    version = '0.50.0-SNAPSHOT'
+    version = '0.50.04-SNAPSHOT'
 }
+
 
 // A properties_local.gradle file can be used to override any of the above options. For instance,
 // rootProject.ext.mmGitRoot = 'file:///path/to/local/repo' will cause the release target to clone a

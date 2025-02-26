@@ -31,10 +31,22 @@ public enum PacketCommand {
     PLAYER_REMOVE,
     PLAYER_UPDATE,
     PLAYER_TEAM_CHANGE,
+
+    /**
+     * A packet replacing a Client's knowledge of all bot settings (S -> C) or updating the Server on a single
+     * bot's settings (C -> S). Does not invoke any actual changes to bots.
+     */
     PRINCESS_SETTINGS,
+
+    /** A Server to Client packet instructing a Princess Client to replace its settings. */
+    CHANGE_PRINCESS_SETTINGS,
 
     /** A packet setting a Client's ready status (S -> C) or updating the Server on the Client's status (C -> S). */
     PLAYER_READY,
+
+    /** A packet telling the server to pause / unpause packet handling (to interrupt a Princess-only game) */
+    PAUSE,
+    UNPAUSE,
 
     CHAT,
     ENTITY_ADD,
@@ -139,6 +151,7 @@ public enum PacketCommand {
     ENTITY_MOUNTED_FACING_CHANGE,
     SENDING_AVAILABLE_MAP_SIZES,
     ENTITY_LOAD,
+    ENTITY_TOW,
     ENTITY_NOVA_NETWORK_CHANGE,
     RESET_ROUND_DEPLOYMENT,
     SENDING_TAG_INFO,
@@ -151,6 +164,12 @@ public enum PacketCommand {
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
     GAME_VICTORY_EVENT,
+
+    /** A Server to Client packet instructing the Client to show a message (e.g. story message) to the player. */
+    SCRIPTED_MESSAGE,
+
+    /** An SBF packet instructing the Client to replace the pending actions with the sent actions (possibly none). */
+    ACTIONS,
 
     /** A packet containing other packets to be processed in the order they are stored. */
     MULTI_PACKET;

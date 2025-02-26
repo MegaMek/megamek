@@ -1,0 +1,168 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-10-12
+chassis:Catapult
+model:CPLT-K2 (Kasigi)
+
+Config:Biped
+techbase:Inner Sphere
+era:3052
+source:Force Manual Kurita
+rules level:2
+role:Sniper
+
+quirk:no_arms
+quirk:weak_head_1
+
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:18 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:24
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:4
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview: The Catapult, though a well-designed BattleMech, has had a tumultuous existence. Produced by Hollis Incorporated in record numbers for the SLDF, the Terran Hegemony ultimately decided to forgo contract renewal, leaving Hollis with a BattleMech line but no customer. When the facility was eventually retooled to produce the BattleMaster, they chose to completely abandon their Catapult chassis, and its numbers began to decline. The attrition of the Succession Wars left the Draconis Combine with many Catapults but no parts for them. Contracting Yori Mech Works, a production line was eventually built and new Catapults began entering the DCMS by 3033. The Capellan Confederation would follow suit and the Catapult would finally claim the popularity that it deserved.
+capabilities: Carrying two LRM launchers in its "ears" and four medium lasers in its body, the Catapult was a fire support 'Mech akin to the slightly larger Archer. The inclusion of jump jets, though, and the placement of the lasers allowed many Catapults to be their own bodyguards. Many Catapult MechWarriors choose to fire all of their LRM missiles at their chosen targets before closing in to exploit any armor breaches with their lasers. This does make the Catapult slightly more flexible than many traditional support 'Mechs, although its limited ammunition stores can hamper it in extended ranged battles.
+deployment: While visible in every military of note, the Capellan Confederation and Draconis Combine would lay claim to the lion's share of the design. When production for the Catapult began in both states, the divide only increased, with many states losing all of their examples of the design by the conclusion of the Jihad. A Kuritan innovation, the CPLT-K2 would replace both LRM "ears" with twin PPCs. This, combined with strengthed armor and twin machine guns, would turn the -K2 into a powerful line 'Mech suited to the Samurai mentality of many Combine MechWarriors. The formation of the Free Rasalhague Republic would see it enter service in the young state as well, though more advanced version of the -K2 would eventually lead to its disappearance.
+systemmanufacturer:CHASSIS:Hollis
+systemmode:CHASSIS:Mark II
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:260
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy
+systemmanufacturer:COMMUNICATIONS:O/P
+systemmode:COMMUNICATIONS:Com-211
+systemmanufacturer:TARGETING:O/P
+systemmode:TARGETING:1078
+

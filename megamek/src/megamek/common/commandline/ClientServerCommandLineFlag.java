@@ -13,18 +13,19 @@
  */
 package megamek.common.commandline;
 
+import java.util.Locale;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.Locale;
+import megamek.logging.MMLogger;
 
 public enum ClientServerCommandLineFlag {
-    //region Enum Declarations
+    // region Enum Declarations
     HELP(Messages.getString("MegaMek.Help")),
     USEDEFAULTS(Messages.getString("MegaMek.Help.UseDefaults")),
-    PORT(Messages.getFormattedString("MegaMek.Help.Port", MMConstants.MIN_PORT, MMConstants.MAX_PORT, MMConstants.DEFAULT_PORT)),
+    PORT(Messages.getFormattedString("MegaMek.Help.Port", MMConstants.MIN_PORT, MMConstants.MAX_PORT,
+            MMConstants.DEFAULT_PORT)),
     DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir())),
     // server or host only options
     ANNOUNCE(Messages.getString("MegaMek.Help.Announce"), true, false, true),
@@ -35,14 +36,14 @@ public enum ClientServerCommandLineFlag {
     PLAYERNAME(Messages.getString("MegaMek.Help.PlayerName"), false, true, true),
     // client only options
     SERVER(Messages.getFormattedString("MegaMek.Help.Server", MMConstants.LOCALHOST), false, true, false);
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
     private final String helpText;
     private final boolean serverArg;
     private final boolean clientArg;
     private final boolean hostArg;
 
-    //region Constructors
+    // region Constructors
     ClientServerCommandLineFlag(final String helpText) {
         this(helpText, true, true, true);
     }
@@ -53,14 +54,15 @@ public enum ClientServerCommandLineFlag {
         this.clientArg = clientArg;
         this.hostArg = hostArg;
     }
-    //endregion Constructors
+    // endregion Constructors
 
     public static ClientServerCommandLineFlag parseFromString(final String text) {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error(String.format("Failed to parse the ClientServerCommandLineFlag from '%s'", text));
-            throw(ex);
+            MMLogger.create(ClientServerCommandLineFlag.class)
+                    .error(String.format("Failed to parse the ClientServerCommandLineFlag from '%s'", text));
+            throw (ex);
         }
     }
 

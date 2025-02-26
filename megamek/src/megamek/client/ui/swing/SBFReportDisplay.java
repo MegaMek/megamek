@@ -13,14 +13,18 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
-
-import java.awt.event.ActionEvent;
-import java.util.*;
 
 public class SBFReportDisplay extends StatusBarPhaseDisplay {
 
@@ -72,7 +76,7 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
     }
 
     // buttons
-    private Map<ReportCommand, MegamekButton> buttons;
+    private Map<ReportCommand, MegaMekButton> buttons;
 
     private static final String RD_REPORTDISPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
@@ -113,8 +117,8 @@ public class SBFReportDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected ArrayList<MegamekButton> getButtonList() {
-        ArrayList<MegamekButton> buttonList = new ArrayList<>();
+    protected ArrayList<MegaMekButton> getButtonList() {
+        ArrayList<MegaMekButton> buttonList = new ArrayList<>();
         ReportCommand[] commands = ReportCommand.values();
         CommandComparator comparator = new CommandComparator();
         Arrays.sort(commands, comparator);

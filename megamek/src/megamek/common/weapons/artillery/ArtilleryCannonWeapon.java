@@ -16,12 +16,12 @@ package megamek.common.weapons.artillery;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryCannonWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -33,7 +33,7 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
     public ArtilleryCannonWeapon() {
         super();
         damage = DAMAGE_ARTILLERY;
-        flags = flags.or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_BALLISTIC).or(F_MEK_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         atClass = CLASS_AC;
     }
 
@@ -57,18 +57,18 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         // AmmoType atype = (AmmoType)
         // game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         return new ArtilleryCannonWeaponHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {

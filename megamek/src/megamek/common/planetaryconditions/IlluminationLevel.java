@@ -18,7 +18,6 @@
  */
 package megamek.common.planetaryconditions;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
@@ -26,15 +25,13 @@ import megamek.common.Terrains;
 
 import java.util.Objects;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
-
 public enum IlluminationLevel {
-    //region Enum Declarations
+    // region Enum Declarations
     NONE(""),
     FIRE("\uD83D\uDD25"),
     FLARE("\uD83C\uDF86"),
     SEARCHLIGHT("\uD83D\uDD26");
-    //endregion Enum Declarations
+    // endregion Enum Declarations
 
     private final String indicator;
 
@@ -42,7 +39,7 @@ public enum IlluminationLevel {
         this.indicator = indicator;
     }
 
-    //region Boolean Comparison Methods
+    // region Boolean Comparison Methods
     public boolean isNone() {
         return this == NONE;
     }
@@ -58,18 +55,22 @@ public enum IlluminationLevel {
     public boolean isSearchlight() {
         return this == SEARCHLIGHT;
     }
-    //endregion Boolean Comparison Methods
+    // endregion Boolean Comparison Methods
 
     public String getIndicator() {
         return indicator;
     }
 
     /**
-     * @return the level of illumination for a given coords. Different light sources affect how much
-     * the nighttime penalties are reduced.
-     * Note: this method should be used for determining if a Coords/Hex is illuminated, not
-     * Game::getIlluminatedPositions, as that just returns the hexes that are effected by
-     * searchlights, whereas this one considers searchlights as well as other light sources.
+     * @return the level of illumination for a given coords. Different light sources
+     *         affect how much
+     *         the nighttime penalties are reduced.
+     *         Note: this method should be used for determining if a Coords/Hex is
+     *         illuminated, not
+     *         Game::getIlluminatedPositions, as that just returns the hexes that
+     *         are effected by
+     *         searchlights, whereas this one considers searchlights as well as
+     *         other light sources.
      */
     public static IlluminationLevel determineIlluminationLevel(final Game game, final Coords coords) {
         // fix for NPE when recovering spacecraft while in visual range of enemy

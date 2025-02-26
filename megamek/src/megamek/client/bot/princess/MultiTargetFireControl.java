@@ -1,15 +1,20 @@
 /*
- * MegaMek - Copyright (C) 2019 Megamek Team
+ * Copyright (c) 2019-2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package megamek.client.bot.princess;
@@ -19,27 +24,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Mounted;
+import megamek.common.Targetable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 /**
  * Princess-Bot fire control class used to calculate firing plans for units that
  * can shoot at multiple targets without incurring a penalty.
+ *
  * @author NickAragua
  *
  */
 public class MultiTargetFireControl extends FireControl {
+    private final static MMLogger logger = MMLogger.create(MultiTargetFireControl.class);
 
     public MultiTargetFireControl(Princess owningPrincess) {
         super(owningPrincess);
     }
 
     /**
-     * Calculates the best firing plan for a particular entity, assuming that everybody has already moved.
+     * Calculates the best firing plan for a particular entity, assuming that
+     * everybody has already moved.
      * Assumes no restriction on number of units that may be targeted.
      */
     @Override
@@ -49,17 +59,19 @@ public class MultiTargetFireControl extends FireControl {
             final Map<WeaponMounted, Double> ammoConservation) {
         FiringPlan bestPlan = new FiringPlan();
 
-        // optimal firing patterns for units such as dropships, Thunderbolts with multi-trac
+        // optimal firing patterns for units such as DropShips, Thunderbolts with
+        // multi-trac
         // units with 'multi-tasker' quirk, multi-gunner vehicles, etc.
-        // are different (and easier to calculate) than optimal firing patterns for other units
+        // are different (and easier to calculate) than optimal firing patterns for
+        // other units
         // because there is no secondary target penalty.
         //
         // So, the basic algorithm is as follows:
         // For each weapon, calculate the easiest shot.
         // Then, solve the backpack problem.
-        
+
         List<WeaponMounted> weaponList;
-        
+
         if (shooter.usesWeaponBays()) {
             weaponList = shooter.getWeaponBayList();
         } else {
@@ -68,7 +80,8 @@ public class MultiTargetFireControl extends FireControl {
 
         int originalFacing = shooter.getSecondaryFacing();
 
-        // check all valid secondary facings (turret rotations/torso twists) and arm/flip combination
+        // check all valid secondary facings (turret rotations/torso twists) and
+        // arm/flip combination
         // to see if there's a better firing plan
         List<Integer> facingChanges = getValidFacingChanges(shooter);
         facingChanges.add(0); // "no facing change"
@@ -107,8 +120,10 @@ public class MultiTargetFireControl extends FireControl {
 
     /**
      * Get me the best shot that this particular weapon can take.
+     *
      * @param weapon Weapon to fire.
-     * @return The weapon fire info with the most expected damage. Null if no such thing.
+     * @return The weapon fire info with the most expected damage. Null if no such
+     *         thing.
      */
     WeaponFireInfo getBestShot(Entity shooter, WeaponMounted weapon) {
         WeaponFireInfo bestShot = null;
@@ -116,8 +131,9 @@ public class MultiTargetFireControl extends FireControl {
         for (Targetable target : getTargetableEnemyEntities(shooter, owner.getGame(), owner.getFireControlState())) {
             WeaponFireInfo betterShot = null;
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
-            if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
-                LogManager.getLogger().info(target.getDisplayName() + " is broken - ignoring");
+            if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID,
+                    owner.getBehaviorSettings().isForcedWithdrawal())) {
+                logger.info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
@@ -135,14 +151,16 @@ public class MultiTargetFireControl extends FireControl {
                 for (AmmoMounted ammo : ammos) {
                     WeaponFireInfo shot = buildWeaponFireInfo(shooter, target, weapon, ammo, owner.getGame(), false);
 
-                    // this is a better shot if it has a chance of doing damage and the damage is better than the previous best shot
+                    // this is a better shot if it has a chance of doing damage and the damage is
+                    // better than the previous best shot
                     if ((shot.getExpectedDamage() > 0) &&
                             ((betterShot == null) || (shot.getExpectedDamage() > betterShot.getExpectedDamage()))) {
                         betterShot = shot;
                     }
                 }
             }
-            // Now do the same comparison for the better shot of all these shots to determine the *best* shot
+            // Now do the same comparison for the better shot of all these shots to
+            // determine the *best* shot
             if ((betterShot != null && betterShot.getExpectedDamage() > 0) &&
                     ((bestShot == null) || (betterShot.getExpectedDamage() > bestShot.getExpectedDamage()))) {
                 bestShot = betterShot;
@@ -154,38 +172,44 @@ public class MultiTargetFireControl extends FireControl {
 
     /**
      * calculates the 'utility' of a firing plan. This particular function
-     * ignores any characteristics of the firing plan that depend on having a single target.
+     * ignores any characteristics of the firing plan that depend on having a single
+     * target.
      *
      * @param firingPlan
-     *            The {@link FiringPlan} to be calculated.
+     *                          The {@link FiringPlan} to be calculated.
      * @param overheatTolerance
-     *            How much overheat we're willing to forgive.
+     *                          How much overheat we're willing to forgive.
      * @param shooterIsAero
-     *            Set TRUE if the shooter is an Aero unit. Overheating Aeros
-     *            take stiffer penalties.
+     *                          Set TRUE if the shooter is an Aero unit. Overheating
+     *                          Aero's
+     *                          take stiffer penalties.
      */
     @Override
     void calculateUtility(final FiringPlan firingPlan,
-                          final int overheatTolerance,
-                          final boolean shooterIsAero) {
+            final int overheatTolerance,
+            final boolean shooterIsAero) {
         int overheat = 0;
         if (firingPlan.getHeat() > overheatTolerance) {
             overheat = firingPlan.getHeat() - overheatTolerance;
         }
 
         double modifier = 1;
-        // eliminated calls to calcCommandUtility, calcStrategicBuildingTargetUtility, calcPriorityUnitTargetUtility
+        // eliminated calls to calcCommandUtility, calcStrategicBuildingTargetUtility,
+        // calcPriorityUnitTargetUtility
 
         double expectedDamage = firingPlan.getExpectedDamage();
         double utility = 0;
         utility += DAMAGE_UTILITY * expectedDamage;
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
-        // eliminated calcTargetPotentialDamageMultiplier, calcDamageAllocationUtility, calcCivilianTargetDisutility
-        // Multiply the combined damage/crit/kill utility for a target by a log-scaled factor based on the target's damage potential.
+        // eliminated calcTargetPotentialDamageMultiplier, calcDamageAllocationUtility,
+        // calcCivilianTargetDisutility
+        // Multiply the combined damage/crit/kill utility for a target by a log-scaled
+        // factor based on the target's damage potential.
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
-        // eliminated ejected pilot disutility, as it's superflous - we will ignore ejected mechwarriors altogether.
+        // eliminated ejected pilot disutility, as it's super flows - we will ignore
+        // ejected MekWarriors altogether.
         firingPlan.setUtility(utility);
     }
 
@@ -200,12 +224,12 @@ public class MultiTargetFireControl extends FireControl {
             }
         }
 
-        boolean shooterIsLarge =
-                shooter.hasETypeFlag(Entity.ETYPE_DROPSHIP) ||
+        boolean shooterIsLarge = shooter.hasETypeFlag(Entity.ETYPE_DROPSHIP) ||
                 shooter.hasETypeFlag(Entity.ETYPE_JUMPSHIP) ||
                 shooter.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT);
 
-        // the logic is significantly different when heat is generated by firing arc, rather than by individual weapon/bay
+        // the logic is significantly different when heat is generated by firing arc,
+        // rather than by individual weapon/bay
         if (!owner.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY) && shooterIsLarge) {
             retVal = calculatePerArcFiringPlan(shooter, shotList);
         } else {
@@ -217,9 +241,11 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * Worker function that calculates a firing plan for a shooter under the "heat per weapon arc" rules
+     * Worker function that calculates a firing plan for a shooter under the "heat
+     * per weapon arc" rules
      * (which are the default), given a list of optimal shots for each weapon.
-     * @param shooter The unit doing the shooting.
+     *
+     * @param shooter  The unit doing the shooting.
      * @param shotList The list of optimal weapon shots.
      * @return An optimal firing plan.
      */
@@ -234,6 +260,19 @@ public class MultiTargetFireControl extends FireControl {
         // damage values by arc: arc #, arc damage
         Map<Integer, Double> arcDamage = new HashMap<>();
 
+        int heatCapacity = shooter.getHeatCapacity();
+        // account for artillery fired during the Targeting (offboard) phase; we reduce the heat capacity and treat
+        // the arc's heat as 0 because this arc has already fired - so it can be included in the solution for "free"
+        for ( WeaponMounted weapon : shooter.getWeaponList().stream().filter(Mounted::isUsedThisRound).toList()) {
+            int arc = weapon.isRearMounted() ? -shooter.getWeaponArc(weapon.getLocation()) : shooter.getWeaponArc(weapon.getLocation());
+            if (!arcShots.containsKey(arc)) {
+                heatCapacity -= shooter.getHeatInArc(weapon.getLocation(), weapon.isRearMounted());
+                arcShots.put(arc, new ArrayList<>());
+                arcHeat.put(arc, 0);
+                arcDamage.put(arc, 1.0);
+            }
+        }
+
         // assemble the data we'll need to solve the backpack problem
         for (WeaponFireInfo shot : shotList) {
             int arc = shooter.getWeaponArc(shooter.getEquipmentNum(shot.getWeapon()));
@@ -244,7 +283,8 @@ public class MultiTargetFireControl extends FireControl {
 
             if (!arcShots.containsKey(arc)) {
                 arcShots.put(arc, new ArrayList<>());
-                arcHeat.put(arc, shooter.getHeatInArc(shot.getWeapon().getLocation(), shot.getWeapon().isRearMounted()));
+                arcHeat.put(arc,
+                        shooter.getHeatInArc(shot.getWeapon().getLocation(), shot.getWeapon().isRearMounted()));
                 arcDamage.put(arc, 0.0);
             }
 
@@ -254,30 +294,32 @@ public class MultiTargetFireControl extends FireControl {
 
         // initialize the backpack
         Map<Integer, Map<Integer, List<Integer>>> arcBackpack = new HashMap<>();
-        for (int x = 0; x < arcShots.keySet().size(); x++) {
+        for (int x = 0; x <= arcShots.keySet().size(); x++) {
             arcBackpack.put(x, new HashMap<>());
 
-            for (int y = 0; y < shooter.getHeatCapacity(); y++) {
+            for (int y = 0; y <= heatCapacity; y++) {
                 arcBackpack.get(x).put(y, new ArrayList<>());
             }
         }
 
-        double[][] damageBackpack = new double[arcShots.keySet().size()][shooter.getHeatCapacity()];
+        double[][] damageBackpack = new double[arcShots.keySet().size() + 1][heatCapacity + 1];
         Integer[] arcHeatKeyArray = new Integer[arcHeat.keySet().size()];
         System.arraycopy(arcHeat.keySet().toArray(), 0, arcHeatKeyArray, 0, arcHeat.keySet().size());
 
         // now, we essentially solve the backpack problem, where the arcs are the items:
-        // arc expected damage is the "value", and arc heat is the "weight", while the backpack capacity is the unit's heat capacity.
+        // arc expected damage is the "value", and arc heat is the "weight", while the
+        // backpack capacity is the unit's heat capacity.
         // while we're at it, we assemble the list of arcs fired for each cell
-        for (int arcIndex = 0; arcIndex < arcHeatKeyArray.length; arcIndex++) {
-            for (int heatIndex = 0; heatIndex < shooter.getHeatCapacity(); heatIndex++) {
-                int previousArc = arcIndex > 0 ? arcHeatKeyArray[arcIndex - 1] : 0;
+        for (int arcIndex = 0; arcIndex <= arcHeatKeyArray.length; arcIndex++) {
+            for (int heatIndex = 0; heatIndex <= heatCapacity; heatIndex++) {
+                int currentArc = arcIndex > 0 ? arcHeatKeyArray[arcIndex - 1] : 0;
 
                 if (arcIndex == 0 || heatIndex == 0) {
                     damageBackpack[arcIndex][heatIndex] = 0;
-                } else if (arcHeat.get(previousArc) <= heatIndex) {
-                    int previousHeatIndex = heatIndex - arcHeat.get(previousArc);
-                    double currentArcDamage = arcDamage.get(previousArc) + damageBackpack[arcIndex - 1][previousHeatIndex];
+                } else if (arcHeat.get(currentArc) <= heatIndex) {
+                    int previousHeatIndex = heatIndex - arcHeat.get(currentArc);
+                    double currentArcDamage = arcDamage.get(currentArc)
+                            + damageBackpack[arcIndex - 1][previousHeatIndex];
                     double accumulatedPreviousArcDamage = damageBackpack[arcIndex - 1][heatIndex];
 
                     if (currentArcDamage > accumulatedPreviousArcDamage) {
@@ -285,8 +327,9 @@ public class MultiTargetFireControl extends FireControl {
                         // so let's do it
                         damageBackpack[arcIndex][heatIndex] = currentArcDamage;
                         // make sure we don't accidentally update the cell we're examining
-                        List<Integer> appendedArcList = new ArrayList<>(arcBackpack.get(arcIndex - 1).get(previousHeatIndex));
-                        appendedArcList.add(previousArc);
+                        List<Integer> appendedArcList = new ArrayList<>(
+                                arcBackpack.get(arcIndex - 1).get(previousHeatIndex));
+                        appendedArcList.add(currentArc);
                         arcBackpack.get(arcIndex).put(heatIndex, appendedArcList);
                     } else {
                         // we *can* add this arc to the list, but it won't take us past the damage
@@ -303,10 +346,11 @@ public class MultiTargetFireControl extends FireControl {
             }
         }
 
-        // now, we look at the bottom right cell, which contains our optimal firing solution
+        // now, we look at the bottom right cell, which contains our optimal firing
+        // solution
         // unless there is no firing solution at all, in which case we skip this part
         if (!arcBackpack.isEmpty()) {
-            for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(shooter.getHeatCapacity() - 1)) {
+            for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(heatCapacity - 1)) {
                 retVal.addAll(arcShots.get(arc));
             }
         }
@@ -315,23 +359,28 @@ public class MultiTargetFireControl extends FireControl {
     }
 
     /**
-     * Worker function that calculates a firing plan for a shooter under the "individual weapon heat" rules,
+     * Worker function that calculates a firing plan for a shooter under the
+     * "individual weapon heat" rules,
      * given a list of optimal shots for each weapon.
-     * @param shooter The unit doing the shooting.
+     *
+     * @param shooter  The unit doing the shooting.
      * @param shotList The list of optimal weapon shots.
      * @return An optimal firing plan.
      */
-    FiringPlan calculateIndividualWeaponFiringPlan(Entity shooter, List<WeaponFireInfo> shotList, boolean shooterIsLarge) {
+    FiringPlan calculateIndividualWeaponFiringPlan(Entity shooter, List<WeaponFireInfo> shotList,
+            boolean shooterIsLarge) {
         FiringPlan retVal = new FiringPlan();
 
-        // the 'heat capacity' is affected negatively by having existing heat and by being an aerospace fighter
-        // it is affected positively by being a mech (you can overheat a little)
+        // the 'heat capacity' is affected negatively by having existing heat and by
+        // being an aerospace fighter
+        // it is affected positively by being a mek (you can overheat a little)
         // and by having the combat computer quirk
         int heatCapacityModifier = -shooter.getHeat();
         heatCapacityModifier += shooter.isAero() ? 0 : 4;
         heatCapacityModifier += shooter.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER) ? 4 : 0;
 
-        // if firing every gun won't bring heat above the shooter's heat capacity (this includes non-heat-tracking units)
+        // if firing every gun won't bring heat above the shooter's heat capacity (this
+        // includes non-heat-tracking units)
         // then we just return every shot to save ourselves a backpack problem
         int alphaStrikeHeat = 0;
         for (WeaponFireInfo shot : shotList) {
@@ -346,8 +395,10 @@ public class MultiTargetFireControl extends FireControl {
             return retVal;
         }
 
-        // if we are a "large" craft that can't overheat, we simply cannot fire more weapons than heat capacity
-        // if we are an aerospace fighter or ground-based unit that tracks heat, we totally can overheat and the "heat capacity"
+        // if we are a "large" craft that can't overheat, we simply cannot fire more
+        // weapons than heat capacity
+        // if we are an aerospace fighter or ground-based unit that tracks heat, we
+        // totally can overheat and the "heat capacity"
         int actualHeatCapacity = shooter.getHeatCapacity();
 
         if (!shooterIsLarge) {
@@ -368,7 +419,8 @@ public class MultiTargetFireControl extends FireControl {
 
         // like the above method, we solve the backpack problem here:
         // WeaponFireInfo are the items
-        // expected damage is the "value", heat is the "weight", backpack capacity is the unit's heat capacity
+        // expected damage is the "value", heat is the "weight", backpack capacity is
+        // the unit's heat capacity
         // while we're at it, we assemble the list of shots fired for each cell
         for (int shotIndex = 0; shotIndex <= shotList.size(); shotIndex++) {
             for (int heatIndex = 0; heatIndex < actualHeatCapacity; heatIndex++) {
@@ -385,7 +437,8 @@ public class MultiTargetFireControl extends FireControl {
                         // so let's do it
                         damageBackpack[shotIndex][heatIndex] = currentShotDamage;
                         // make sure we don't accidentally update the cell we're examining
-                        List<Integer> appendedShotList = new ArrayList<>(shotBackpack.get(shotIndex - 1).get(previousHeatIndex));
+                        List<Integer> appendedShotList = new ArrayList<>(
+                                shotBackpack.get(shotIndex - 1).get(previousHeatIndex));
                         appendedShotList.add(shotIndex - 1);
                         shotBackpack.get(shotIndex).put(heatIndex, appendedShotList);
                     } else {
@@ -403,7 +456,8 @@ public class MultiTargetFireControl extends FireControl {
             }
         }
 
-        // now, we look at the bottom right cell, which contains our optimal firing solution
+        // now, we look at the bottom right cell, which contains our optimal firing
+        // solution
         for (int shotIndex : shotBackpack.get(shotBackpack.size() - 1).get(actualHeatCapacity - 1)) {
             retVal.add(shotList.get(shotIndex));
         }

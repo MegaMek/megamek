@@ -1,4 +1,4 @@
-Warden Clan Front-Line Heavy Mechs (Steel Viper),
+Warden Clan Front-Line Heavy Meks (Steel Viper),
 Loki (Hellbringer) A,1
 Crossbow B,2
 Crossbow Prime,3

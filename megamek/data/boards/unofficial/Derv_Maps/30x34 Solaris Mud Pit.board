@@ -1,6 +1,7 @@
 size 30 34
 tag "Water (Auto)"
 tag "Swamp (Auto)"
+tag "Impassable (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "impassable:1:0" ""
 hex 0201 0 "impassable:1:0" ""

@@ -18,25 +18,33 @@
  */
 package megamek.client.ui.baseComponents;
 
-import megamek.MegaMek;
-import megamek.client.ui.enums.ValidationState;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import megamek.MegaMek;
+import megamek.client.ui.enums.ValidationState;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
 /**
- * This is the Base Dialog for a dialog with buttons where the Ok button requires data validation
- * in MegaMek. It extends Base Button Dialog, and adds a Validate button to the button panel. It
+ * This is the Base Dialog for a dialog with buttons where the Ok button
+ * requires data validation
+ * in MegaMek. It extends Base Button Dialog, and adds a Validate button to the
+ * button panel. It
  * also includes an enum tracker for the result of the validation.
  *
- * Inheriting classes must call initialize() in their constructors and override createCenterPane()
+ * Inheriting classes must call initialize() in their constructors and override
+ * createCenterPane()
  * and validateAction();
  *
- * The resources associated with this dialog need to contain at least the following keys:
+ * The resources associated with this dialog need to contain at least the
+ * following keys:
  * - "Ok.text" - text for the Ok button
  * - "Ok.toolTipText" - toolTipText for the Ok button
  * - "Validate.text" - text for the Validate button
@@ -44,18 +52,22 @@ import java.util.ResourceBundle;
  * - "Cancel.text" - text for the Cancel button
  * - "Cancel.toolTipText" - toolTipText for the Cancel button
  *
- * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any changes here MUST be
+ * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any
+ * changes here MUST be
  * verified there.
  */
 public abstract class AbstractValidationButtonDialog extends AbstractButtonDialog {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(AbstractValidationButtonDialog.class);
+
+    // region Variable Declarations
     private ValidationState state;
     private JButton okButton;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     /**
-     * This creates a modal AbstractValidationButtonDialog using the default resource bundle. This
+     * This creates a modal AbstractValidationButtonDialog using the default
+     * resource bundle. This
      * is the normal constructor to use for an AbstractValidationButtonDialog.
      */
     protected AbstractValidationButtonDialog(final JFrame frame, final String name, final String title) {
@@ -63,22 +75,24 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     }
 
     /**
-     * This creates an AbstractValidationButtonDialog using the default resource bundle. It allows
+     * This creates an AbstractValidationButtonDialog using the default resource
+     * bundle. It allows
      * one to create non-modal button dialogs.
      */
     protected AbstractValidationButtonDialog(final JFrame frame, final boolean modal,
-                                             final String name, final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
+            final String name, final String title) {
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
                 MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
-     * This creates an AbstractValidationButtonDialog using the specified resource bundle. This is
+     * This creates an AbstractValidationButtonDialog using the specified resource
+     * bundle. This is
      * not recommended by default.
      */
     protected AbstractValidationButtonDialog(final JFrame frame, final boolean modal,
-                                             final ResourceBundle resources, final String name,
-                                             final String title) {
+            final ResourceBundle resources, final String name,
+            final String title) {
         super(frame, modal, resources, name, title);
         setState(ValidationState.PENDING);
     }
@@ -87,14 +101,14 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
      * Allows a dialog to be passed in as the owner
      */
     protected AbstractValidationButtonDialog(final JDialog owner, final JFrame frame, final boolean modal,
-                                             final ResourceBundle resources, final String name,
-                                             final String title) {
+            final ResourceBundle resources, final String name,
+            final String title) {
         super(owner, frame, modal, resources, name, title);
         setState(ValidationState.PENDING);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public ValidationState getState() {
         return state;
     }
@@ -110,9 +124,9 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     public void setOkButton(final JButton okButton) {
         this.okButton = okButton;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region Initialization
+    // region Initialization
     /**
      * @return the created Button Panel
      */
@@ -128,13 +142,16 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
                 resources.getString("Cancel.toolTipText"), this::cancelActionPerformed));
         return panel;
     }
-    //endregion Initialization
+    // endregion Initialization
 
-    //region Button Actions
+    // region Button Actions
     /**
-     * This is the default Action Event Listener for the Ok Button's action. It performs data
-     * validation, then only triggers the AbstractButtonDialog's Ok Button's action if the data
+     * This is the default Action Event Listener for the Ok Button's action. It
+     * performs data
+     * validation, then only triggers the AbstractButtonDialog's Ok Button's action
+     * if the data
      * was successfully validated
+     *
      * @param evt the event triggering this
      */
     @Override
@@ -144,15 +161,18 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
         if (getState().isSuccess()) {
             super.okButtonActionPerformed(evt);
         } else if (getState().isPending()) {
-            LogManager.getLogger().error("Received a Pending validation state after performing validation, returning without closing the dialog.");
+            logger.error(
+                    "Received a Pending validation state after performing validation, returning without closing the dialog.");
         }
     }
 
     /**
-     * This runs revalidation on the dialog, which sets the validation state to pending before calling
+     * This runs revalidation on the dialog, which sets the validation state to
+     * pending before calling
      * validateButtonActionPerformed to perform the data validation.
      *
-     * @param evt the event triggering this, or null if you want to put the output into a popup, if
+     * @param evt the event triggering this, or null if you want to put the output
+     *            into a popup, if
      *            applicable
      */
     protected void revalidateAction(final @Nullable ActionEvent evt) {
@@ -161,9 +181,12 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     }
 
     /**
-     * This performs data validation on the dialog if the current validation state is pending or
+     * This performs data validation on the dialog if the current validation state
+     * is pending or
      * warning, or if this is manually triggered.
-     * @param evt the event triggering this, or null if you want to put the output into a popup, if
+     *
+     * @param evt the event triggering this, or null if you want to put the output
+     *            into a popup, if
      *            applicable
      */
     protected void validateButtonActionPerformed(final @Nullable ActionEvent evt) {
@@ -173,13 +196,15 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     }
 
     /**
-     * This validates the data contained within this dialog, returning the determined state (with
-     * SUCCESS being returned if all warnings are skipped). The Ok Button can be accessed through
+     * This validates the data contained within this dialog, returning the
+     * determined state (with
+     * SUCCESS being returned if all warnings are skipped). The Ok Button can be
+     * accessed through
      * a getter, so the tooltip can be changed and it can be enabled/disabled.
      *
      * @param display put any outputs into a popup, if applicable
      * @return the determined validation state of the dialog.
      */
     protected abstract ValidationState validateAction(final boolean display);
-    //endregion Button Actions
+    // endregion Button Actions
 }

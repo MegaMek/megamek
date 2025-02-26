@@ -1,7 +1,8 @@
 size 32 34
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
 tag "MediumForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "grass"

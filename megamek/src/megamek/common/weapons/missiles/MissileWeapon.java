@@ -29,7 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
@@ -44,31 +44,31 @@ public abstract class MissileWeapon extends AmmoWeapon {
     public MissileWeapon() {
         super();
         damage = DAMAGE_BY_CLUSTERTABLE;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON)
                 .or(F_AERO_WEAPON).or(F_MISSILE);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         return new MissileWeaponHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         return getBattleForceDamage(range, null);
     }
-    
+
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (range > getLongRange()) {
             return 0;
         }

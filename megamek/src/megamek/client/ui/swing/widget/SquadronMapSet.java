@@ -14,19 +14,28 @@
  */
 package megamek.client.ui.swing.widget;
 
-import megamek.MMConstants;
-import megamek.common.*;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JComponent;
+
+import megamek.MMConstants;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
+import megamek.common.Game;
+import megamek.common.IAero;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit
- * in MechDisplay.ArmorPanel class.
+ * in MekDisplay.ArmorPanel class.
  */
 public class SquadronMapSet implements DisplayMapSet {
 

@@ -82,14 +82,16 @@ public enum KeyCommandBind {
     UD_GENERAL("udGeneral", VK_F1),
     UD_PILOT("udPilot", VK_F2),
     UD_ARMOR("udArmor", VK_F3),
-    UD_SYSTEMS("udSystems", VK_F4),
-    UD_WEAPONS("udWeapons", VK_F5),
+    UD_WEAPONS("udWeapons", VK_F4),
+    UD_SYSTEMS("udSystems", VK_F5),
     UD_EXTRAS("udExtras", VK_F6),
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
     TOGGLE_MOVEMODE("toggleJump", VK_J),
     TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
     PREV_MODE("prevMode", VK_KP_DOWN),
     NEXT_MODE("nextMode", VK_KP_UP),
+    PAUSE("pause", VK_P, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    UNPAUSE("unpause", VK_P, CTRL_DOWN_MASK | ALT_DOWN_MASK),
 
     // --------- The following binds are used by the CommonMenuBar:
     // Toggles isometric view on/off
@@ -120,7 +122,8 @@ public enum KeyCommandBind {
     SENSOR_RANGE(true, "sensorRange", VK_C),
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
-    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK);
+    EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
+    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK);
 
     /** The command associated with this binding. */
     public String cmd;

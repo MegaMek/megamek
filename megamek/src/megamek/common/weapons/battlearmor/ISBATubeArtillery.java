@@ -15,7 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.EquipmentTypeLookup;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
@@ -41,7 +41,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         bv = 27;
         cost = 200000;
         rulesRefs = "284, TO";
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
+        flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
         damage = DAMAGE_BY_CLUSTERTABLE;
         atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
@@ -62,11 +62,11 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Indirect Fire
-        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+        if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             addMode("");
             addMode("Indirect");
         } else {

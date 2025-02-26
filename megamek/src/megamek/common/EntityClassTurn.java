@@ -30,14 +30,14 @@ public class EntityClassTurn extends GameTurn {
     /** The constant to represent Infantry (and Battle Armor) entities. */
     public static final int CLASS_INFANTRY = 1;
 
-    /** The constant to represent Protomech entities. */
-    public static final int CLASS_PROTOMECH = 2;
+    /** The constant to represent Protomek entities. */
+    public static final int CLASS_PROTOMEK = 2;
 
     /** The constant to represent Tank entities. */
     public static final int CLASS_TANK = 4;
 
-    /** The constant to represent Mech entities. */
-    public static final int CLASS_MECH = 8;
+    /** The constant to represent Mek entities. */
+    public static final int CLASS_MEK = 8;
 
     /** The constant to represent Gun Emplacement entities. */
     public static final int CLASS_GUN_EMPLACEMENT = 16;
@@ -136,14 +136,14 @@ public class EntityClassTurn extends GameTurn {
             return CLASS_AERO;
         } else if (entity instanceof Infantry) {
             return CLASS_INFANTRY;
-        } else if (entity instanceof Protomech) {
-            return CLASS_PROTOMECH;
+        } else if (entity instanceof ProtoMek) {
+            return CLASS_PROTOMEK;
         } else if (entity instanceof GunEmplacement) {
             return CLASS_GUN_EMPLACEMENT;
         } else if ((entity instanceof Tank) || entity.isAero()) {
             return CLASS_TANK;
-        } else if (entity instanceof Mech) {
-            return CLASS_MECH;
+        } else if (entity instanceof Mek) {
+            return CLASS_MEK;
         } else {
             return 0;
         }

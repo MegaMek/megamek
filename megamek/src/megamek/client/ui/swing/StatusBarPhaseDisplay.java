@@ -19,24 +19,46 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 
+import megamek.client.AbstractClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.*;
-import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.util.KeyBindReceiver;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.TurnTimer;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.MegaMekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
-import megamek.common.preference.*;
-
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+import megamek.common.annotations.Nullable;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase has a panel of control
@@ -133,18 +155,35 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         KeyBindParser.addPreferenceChangeListener(this);
 
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.UNPAUSE.cmd,
+            () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
     }
 
+    private void pauseGameWhenOnlyBotUnitsRemain() {
+        if (isIgnoringEvents() || !isVisible()) {
+            return;
+        }
+        IGame game = getClientgui().getClient().getGame();
+        List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
+        boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
+        if (liveUnitsRemaining) {
+            clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
+        } else {
+            clientgui.getClient().sendChat("Requesting game pause.");
+            ((AbstractClient) clientgui.getClient()).sendPause();
+        }
+    }
 
     /** Returns the list of buttons that should be displayed. */
-    protected abstract List<MegamekButton> getButtonList();
+    protected abstract List<MegaMekButton> getButtonList();
 
     /** set button that should be displayed. */
     protected abstract void setButtons();
 
-    protected MegamekButton createButton(String cmd, String keyPrefix) {
+    protected MegaMekButton createButton(String cmd, String keyPrefix) {
         String title = Messages.getString(keyPrefix + cmd);
-        MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+        MegaMekButton newButton = new MegaMekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
         newButton.addActionListener(this);
         newButton.setActionCommand(cmd);
         newButton.setEnabled(false);
@@ -160,12 +199,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         String toolTip = hotKeyDesc;
         if (!toolTip.isEmpty()) {
             String title = Messages.getString(keyPrefix + cmd);
-            toolTip = guiScaledFontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
+            toolTip = UIUtil.fontHTML(uiLightViolet()) + title + ": " + toolTip + "</FONT>";
             toolTip += "<BR>";
         }
         if (Messages.keyExists(ttKey)) {
             String msg_key = Messages.getString(ttKey);
-            toolTip += guiScaledFontHTML() + msg_key + "</FONT>";
+            toolTip += msg_key;
         }
         if (!toolTip.isEmpty()) {
             String b = "<BODY>" + toolTip + "</BODY>";
@@ -186,7 +225,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         var buttonsPanel = new JPanel();
         buttonsPanel.setOpaque(false);
         buttonsPanel.setLayout(new GridLayout(BUTTON_ROWS, buttonsPerRow));
-        List<MegamekButton> buttonList = getButtonList();
+        List<MegaMekButton> buttonList = getButtonList();
 
         // Unless it's the first group of buttons, skip any button group if all of its buttons are disabled
         if (currentButtonGroup > 0) {
@@ -208,7 +247,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         int endIndex = startIndex + buttonsPerGroup - 1;
         for (int index = startIndex; index <= endIndex; index++) {
             if ((index < buttonList.size()) && buttonList.get(index) != null) {
-                MegamekButton button = buttonList.get(index);
+                MegaMekButton button = buttonList.get(index);
                 button.setPreferredSize(MIN_BUTTON_SIZE);
                 buttonsPanel.add(button);
                 ToolTipManager.sharedInstance().registerComponent(button);
@@ -221,7 +260,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
-        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -261,12 +299,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
 
-    private void adaptToGUIScale() {
-        UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
-        UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
-        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
-    }
-
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {
@@ -276,8 +308,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
-
-        adaptToGUIScale();
     }
 
     @Override
@@ -318,6 +348,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         IGame game = clientgui.getClient().getGame();
         List<String> nextPlayerNames = new ArrayList<>();
         int turnIndex = game.getTurnIndex();
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous((Game) clientgui.getClient().getGame())) {
+            turnIndex--;
+        }
         List<? extends PlayerTurn> gameTurns = game.getTurnsList();
         for (int i = turnIndex + 1; (i < gameTurns.size()) && (nextPlayerNames.size() < playerCountToShow); i++) {
             nextPlayerNames.add(game.getPlayer(gameTurns.get(i).playerId()).getName());
@@ -353,5 +386,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 setStatusBarText(game.getPhase().toString());
             }
         }
+    }
+
+    protected String playerNameOrUnknown(@Nullable Player player) {
+        return (player == null) ? "Unknown" : player.getName();
     }
 }

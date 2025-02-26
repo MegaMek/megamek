@@ -31,7 +31,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           build-scan-publish: true
           build-scan-terms-of-use-url: "https://gradle.com/terms-of-service"
@@ -39,7 +39,7 @@ jobs:
 
       - name: Build with Gradle
         working-directory: megamek
-        run: ./gradlew build  --stacktrace --scan
+        run: ./gradlew build  -x checkstyleMain -x checkstyleTest --stacktrace --scan
 
       - name: Upload Test Logs on Failure
         uses: actions/upload-artifact@v4
@@ -49,17 +49,11 @@ jobs:
           path: ./megamek/megamek/build/reports/
 
       - name: CodeCov.io Coverage Report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           directory: ./megamek/megamek/build/reports/jacoco/test
           fail_ci_if_error: false
           verbose: true
-
-      #      - name: Upload Zip Artifacts
-      #        uses: actions/upload-artifact@v4
-      #        with:
-      #          name: mm-release-zip-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-      #          path: ./megamek/megamek/build/distributions/*.zip
 
       - name: Upload TarGZ Release
         uses: actions/upload-artifact@v4

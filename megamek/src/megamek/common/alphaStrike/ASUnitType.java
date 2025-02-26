@@ -29,9 +29,9 @@ public enum ASUnitType {
 
     /** Returns the AlphaStrike element type for the given entity or UNKNOWN if it has no AS equivalent. */
     public static ASUnitType getUnitType(Entity en) {
-        if (en instanceof Mech) {
-            return ((Mech) en).isIndustrial() ? IM : BM;
-        } else if (en instanceof Protomech) {
+        if (en instanceof Mek) {
+            return ((Mek) en).isIndustrial() ? IM : BM;
+        } else if (en instanceof ProtoMek) {
             return PM;
         } else if (en instanceof Tank) {
             return en.isSupportVehicle() ? SV : CV;

@@ -18,6 +18,14 @@
  */
 package megamek.client.ui.swing.tooltip;
 
+import static megamek.client.ui.swing.util.UIUtil.spanCSS;
+import static megamek.client.ui.swing.util.UIUtil.tdCSS;
+
+import java.awt.Color;
+import java.text.MessageFormat;
+import java.util.Objects;
+import java.util.Set;
+
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
@@ -25,32 +33,38 @@ import megamek.common.InGameObject;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
 import megamek.common.annotations.Nullable;
-import megamek.common.strategicBattleSystems.*;
-
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.Objects;
-import java.util.Set;
-
-import static megamek.client.ui.swing.util.UIUtil.*;
+import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.strategicBattleSystems.SBFGame;
+import megamek.common.strategicBattleSystems.SBFIGotSomethingUnitPlaceholder;
+import megamek.common.strategicBattleSystems.SBFPartialScanUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFSomethingOutThereUnitPlaceHolder;
+import megamek.common.strategicBattleSystems.SBFUnit;
 
 public final class SBFInGameObjectTooltip {
+
+    public static final int TOOLTIP_BASE_WIDTH = 420;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final String SHORT = "&nbsp;";
     private static final Set<String> ABBREV_NAME_PARTS_UNIT = Set.of("Lance", "Squadron", "Wing", "Flight");
+    private static final int BASE_UNIT_NAME_WIDTH = 110;
 
     public static String styles() {
         float base = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
         int labelSize = (int) (0.8 * base);
         int valueSize = (int) (1.1 * base);
         int nameSize = (int) (1.3 * base);
+        int nameWidth = UIUtil.scaleForGUI(BASE_UNIT_NAME_WIDTH);
 
         return ".value { font-family:Exo; font-size:20; }" +
                 ".label { font-family:Noto Sans; font-size:" + labelSize + "; color:gray; }" +
                 ".idnum { font-family:Exo; font-size:" + labelSize + "; color:gray; text-align:right; }" +
-                ".unitname { padding-right:10; font-family:Noto Sans; font-size:" + valueSize + "; }" +
+                ".unitname { white-space:nowrap; padding-right:10; font-family:Noto Sans; font-size:"
+                + valueSize + "; width: " + nameWidth + "; }" +
                 ".valuecell { padding-right:10; font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
+                ".armornodmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; }" +
+                ".valuedmg { font-family:Exo; font-size:" + valueSize + "; text-align: center; color: #FAA; }" +
+                ".valuedeemph { font-family:Exo; font-size:" + labelSize + "; color:gray; }" +
                 ".pvcell { font-family:Exo; font-size:" + nameSize + "; text-align: right; }" +
                 ".speccell { font-family:Exo; font-size:" + labelSize + "; }" +
                 ".fullwidth { width:100%; }" +
@@ -58,17 +72,56 @@ public final class SBFInGameObjectTooltip {
                 "th, td { padding:0 2; }";
     }
 
-    public static String getTooltip(InGameObject unit, @Nullable IGame game) {
+    public static String getTooltip(InGameObject unit, @Nullable SBFGame game) {
         StringBuilder result = new StringBuilder();
         Player owner = (game != null) ? game.getPlayer(unit.getOwnerId()) : null;
         Color ownerColor = (owner != null) ? owner.getColour().getColour() : Color.BLACK;
         String styleColor = Integer.toHexString(ownerColor.getRGB() & 0xFFFFFF);
-        result.append("<div style=\"padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
+        int width = UIUtil.scaleForGUI(TOOLTIP_BASE_WIDTH);
+        result.append("<div style=\"width:").append(width)
+                .append("; padding:0 10; border:2; margin: 5 0; border-style:solid; border-color:")
                 .append(styleColor).append(";\">");
+        result.append(nameLines(unit, game));
+        result.append(formationStats(unit));
+        if (unit instanceof SBFFormation formation) {
+            result.append(unitsStats(formation));
+        }
+
+//        Predicate<EntityAction> thisFormation = a -> a.getEntityId() == unit.getId();
+//        List<EntityAction> actions = game.getActionsVector().stream().filter(thisFormation).toList();
+//        for (EntityAction action : actions) {
+//            if (action instanceof SBFStandardUnitAttack attack) {
+//                result.append("Attacking! Unit: " + attack.getUnitNumber() + " Target: " + attack.getTargetId());
+//            }
+//        }
+
+        result.append("</div>");
+        return result.toString();
+    }
+
+    public static String getBaseTooltip(InGameObject unit, @Nullable SBFGame game) {
+        StringBuilder result = new StringBuilder();
+        int width = UIUtil.scaleForGUI(TOOLTIP_BASE_WIDTH) - 4;
+        result.append("<div style='width:").append(width).append("; padding:0 10; margin: 5 0; '>");
         result.append(nameLines(unit, game));
         result.append(formationStats(unit));
         result.append("</div>");
         return result.toString();
+    }
+
+    /**
+     * Returns the Color of the owner of the unit (InGameObject) or Color.GRAY, if it cannot be found.
+     *
+     * @param unit The unit
+     * @param game The game of that unit
+     * @return The owning player's color or GRAY
+     */
+    public static Color ownerColor(@Nullable InGameObject unit, @Nullable IGame game) {
+        try {
+            return game.getPlayer(unit.getOwnerId()).getColour().getColour();
+        } catch (NullPointerException exception) {
+            return Color.GRAY;
+        }
     }
 
     private static StringBuilder nameLines(InGameObject unit, @Nullable IGame game) {
@@ -118,8 +171,12 @@ public final class SBFInGameObjectTooltip {
     }
 
     private static Stats statsOf(SBFFormation f) {
+        String jumpEntry = "" + f.getJumpMove();
+        if (f.getJumpUsedThisTurn() > 0) {
+            jumpEntry += " (used: " + f.getJumpUsedThisTurn() + ")";
+        }
         return new Stats("" + f.getType(), "" + f.getSize(), "" + f.getMorale(),
-                "" + f.getMovement(), f.getMovementCode(), "" + f.getJumpMove(),
+                "" + f.getMovement(), f.getMovementCode(), jumpEntry,
                 "" + f.getTrspMovement(), f.getTrspMovementCode(), "" + f.getTactics(),
                 "" + f.getTmm(), f.getSpecialsDisplayString(f), "" + f.getSkill());
     }
@@ -162,12 +219,8 @@ public final class SBFInGameObjectTooltip {
                 .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("valuecell", stats.spec));
         result.append("</TR></TABLE>");
-        if (unit instanceof SBFFormation formation) {
-            result.append(unitsStats(formation));
-        }
         return result;
     }
-
 
     private static StringBuilder unitsStats(SBFFormation formation) {
         StringBuilder result = new StringBuilder();
@@ -177,14 +230,20 @@ public final class SBFInGameObjectTooltip {
         return result;
     }
 
-    private static StringBuilder unitLine(SBFUnit unit) {
+    public static StringBuilder unitLine(SBFUnit unit) {
         StringBuilder result = new StringBuilder();
+
+        String armorCss = unit.hasArmorDamage() ? "valuedmg" : "armornodmg";
+        String oa = unit.hasArmorDamage() ? "/ " + unit.getArmor() : "";
+        String dmgCss = unit.getDamageCrits() > 0 ? "valuedmg" : "armornodmg";
+
         result.append("<TR>");
         result.append(tdCSS("unitname", abbrevUnitName(unit.getName())))
                 .append(tdCSS("label", "Armor"))
-                .append(tdCSS("valuecell", unit.getArmor()))
+                .append(tdCSS(armorCss, unit.getCurrentArmor()))
+                .append(tdCSS("valuedeemph", oa))
                 .append(tdCSS("label", "Dmg"))
-                .append(tdCSS("valuecell", unit.getDamage().toString()))
+                .append(tdCSS(dmgCss, unit.getCurrentDamage().toString()))
                 .append(tdCSS("label", "SPEC"))
                 .append(tdCSS("speccell", unit.getSpecialsDisplayString(unit)));
         result.append("</TR>");
@@ -203,8 +262,10 @@ public final class SBFInGameObjectTooltip {
 
     private static String abbrevUnitName(String unitName) {
         String result = unitName;
-        for (String token : ABBREV_NAME_PARTS_UNIT) {
-            result = result.replace(" " + token, " " + token.charAt(0) + ".");
+        if (unitName.length() > 11) {
+            for (String token : ABBREV_NAME_PARTS_UNIT) {
+                result = result.replace(" " + token, " " + token.charAt(0) + ".");
+            }
         }
         return result;
     }

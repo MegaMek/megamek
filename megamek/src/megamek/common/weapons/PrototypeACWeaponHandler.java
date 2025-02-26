@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,21 +19,23 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Sebastian Brocks
  */
 public class PrototypeACWeaponHandler extends ACWeaponHandler {
+    @Serial
     private static final long serialVersionUID = 1562727719699124106L;
 
-    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
@@ -42,8 +44,8 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
         if (doAmmoFeedProblemCheck(vPhaseReport)) {
             return true;
         }
-        
-        if (roll.getIntValue() == 2) {
+
+        if ((roll.getIntValue() == 2) && !ae.isConventionalInfantry()) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

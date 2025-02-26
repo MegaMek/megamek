@@ -1,16 +1,21 @@
 /*
-* MegaMek - Copyright (C) 2018 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2018-2024 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package megamek.client.bot.princess;
 
@@ -21,7 +26,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 
-public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPathRanker {
+public class NewtonianAerospacePathRanker extends BasicPathRanker {
 
     public static final int REMAINS_ON_BOARD = -1;
 
@@ -34,24 +39,29 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
      */
     @Override
     public Entity findClosestEnemy(Entity me, Coords position, Game game) {
-        int range = 9999;
+        int range = Integer.MAX_VALUE;
         Entity closest = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
-        for (Entity e : enemies) {
-            // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-            if (getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+        var ignoredTargets = getOwner().getBehaviorSettings().getIgnoredUnitTargets();
+        var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
+        for (Entity enemy : enemies) {
+            // targets that are withdrawing and are not priorities are ignored
+            // targets in the ignore list are ignored
+            // therefore... a priority target in the ignore list is ignored
+            if ((!priorityTargets.contains(enemy.getId()) && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(), getOwner().getForcedWithdrawal()))
+                || ignoredTargets.contains(enemy.getId())) {
                 continue;
             }
 
             // If a unit has not moved, assume it will move away from me.
             int unmovedDistMod = 0;
-            if (e.isSelectableThisTurn() && !e.isImmobile()) {
-                unmovedDistMod = e.getWalkMP();
+            if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
+                unmovedDistMod = enemy.getWalkMP();
             }
 
-            if ((position.distance(e.getPosition()) + unmovedDistMod) < range) {
-                range = position.distance(e.getPosition());
-                closest = e;
+            if ((position.distance(enemy.getPosition()) + unmovedDistMod) < range) {
+                range = position.distance(enemy.getPosition());
+                closest = enemy;
             }
         }
         return closest;

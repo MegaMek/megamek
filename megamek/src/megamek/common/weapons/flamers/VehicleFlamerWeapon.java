@@ -25,7 +25,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VehicleFlamerCoolHandler;
 import megamek.common.weapons.VehicleFlamerHandler;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * @author Andrew Hunter
@@ -41,7 +41,7 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
      */
     public VehicleFlamerWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_PROTO_WEAPON)
+        flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_PROTO_WEAPON)
                 .or(F_FLAMER).or(F_ENERGY).or(F_BURST_FIRE);
         ammoType = AmmoType.T_VEHICLE_FLAMER;
         atClass = CLASS_POINT_DEFENSE;
@@ -49,7 +49,7 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, GameManager manager) {
+            WeaponAttackAction waa, Game game, TWGameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
 

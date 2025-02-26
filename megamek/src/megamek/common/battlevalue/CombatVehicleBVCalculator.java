@@ -41,9 +41,9 @@ public class CombatVehicleBVCalculator extends BVCalculator {
             return 0;
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, entity instanceof VTOL,
-                entity instanceof VTOL, entity.getGame()).getValue();
+                entity instanceof VTOL || (entity.getMovementMode() == EntityMovementMode.WIGE),
+                entity.getGame()).getValue();
         tmmRan += (entity.hasStealth()) ? 2 : 0;
-        tmmRan += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
         return tmmRan;
     }
 
@@ -54,7 +54,6 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         }
         int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
         tmmJumped += (entity.hasStealth()) ? 2 : 0;
-        tmmJumped += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
         return tmmJumped;
     }
 
@@ -78,7 +77,7 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         }
 
         if (!entity.isSupportVehicle()) {
-            for (Mounted m : entity.getMisc()) {
+            for (Mounted<?> m : entity.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_FULLY_AMPHIBIOUS)) {
                     typeModifier += 0.2;
                 } else if (m.getType().hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
@@ -97,17 +96,17 @@ public class CombatVehicleBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected Predicate<Mounted> rearWeaponFilter() {
+    protected Predicate<Mounted<?>> rearWeaponFilter() {
         return weapon -> weapon.getLocation() == rearLocation();
     }
 
     @Override
-    protected Predicate<Mounted> frontWeaponFilter() {
+    protected Predicate<Mounted<?>> frontWeaponFilter() {
         return weapon -> weapon.getLocation() == Tank.LOC_FRONT;
     }
 
     @Override
-    protected boolean isNominalRear(Mounted weapon) {
+    protected boolean isNominalRear(Mounted<?> weapon) {
         return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) && !(weapon.getLocation() == Tank.LOC_TURRET)
                 && !(weapon.getLocation() == Tank.LOC_TURRET_2);
     }
@@ -137,7 +136,8 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         if (entity.getMovementMode().isTrain()) {
             runMP = entity.getWalkMP(MPCalculationSetting.BV_CALCULATION);
         }
-        // trailers have original run MP of 0, but should count at 1 for speed factor calculation
+        // trailers have original run MP of 0, but should count at 1 for speed factor
+        // calculation
         if (entity.getOriginalRunMP() == 0) {
             runMP = 1;
         }

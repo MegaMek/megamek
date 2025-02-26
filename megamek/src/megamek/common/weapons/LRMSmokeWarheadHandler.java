@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -21,34 +21,23 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.GameManager;
+import megamek.server.totalwarfare.TWGameManager;
 import megamek.server.SmokeCloud;
 
+import java.io.Serial;
 import java.util.Vector;
 
 /**
  * @author FogHat
  */
 public class LRMSmokeWarheadHandler extends LRMHandler {
+    @Serial
     private static final long serialVersionUID = -30934685350251837L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) {
         super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     * megamek.common.Entity, boolean)
-     */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();

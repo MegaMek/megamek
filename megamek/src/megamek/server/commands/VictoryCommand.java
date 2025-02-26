@@ -14,12 +14,12 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
-import megamek.server.GameManager;
 import megamek.server.Server;
+import megamek.server.totalwarfare.TWGameManager;
 
 /**
  * Causes automatic victory at the end of the current turn.
- * 
+ *
  * @author Ben
  * @since July 11, 2002, 2:24 PM
  */
@@ -27,23 +27,23 @@ public class VictoryCommand extends ServerCommand {
 
     public static final String commandName = "victory";
     public static final String helpText = "Causes automatic victory for the issuing player or his/her team at the " +
-                                          "end of this turn. Must be acknowledged by all opponents using the " +
-                                          "/defeat command. Usage: /victory <password>";
+        "end of this turn. Must be acknowledged by all opponents using the " +
+        "/defeat command. Usage: /victory <password>";
     public static final String restrictedUse = "Observers are restricted from declaring victory.";
     public static final String badPassword = "The password is incorrect.  Usage: /victory <password>";
     private static final String declareIndividual = " declares individual victory at the end of the turn. This must " +
-                                                    "be acknowledged by all opponents using the /defeat command or " +
-                                                    "no victory will occur.";
+        "be acknowledged by all opponents using the /defeat command or " +
+        "no victory will occur.";
     private static final String declareTeam = " declares team victory at the end of the turn. This must be " +
-                                              "acknowledged by all opponents using the /defeat command or no " +
-                                              "victory will occur.";
+        "acknowledged by all opponents using the /defeat command or no " +
+        "victory will occur.";
 
-    private final GameManager gameManager;
+    private final TWGameManager gameManager;
 
     /**
      * Creates new VictoryCommand
      */
-    public VictoryCommand(Server server, GameManager gameManager) {
+    public VictoryCommand(Server server, TWGameManager gameManager) {
         super(server, commandName, helpText);
         this.gameManager = gameManager;
     }
@@ -59,7 +59,7 @@ public class VictoryCommand extends ServerCommand {
         }
 
         if (!server.isPassworded()
-                || (args.length > 1 && server.isPassword(args[1]))) {
+            || (args.length > 1 && server.isPassword(args[1]))) {
             reset(connId);
         } else {
             server.sendServerChat(connId, badPassword);        }
@@ -75,17 +75,13 @@ public class VictoryCommand extends ServerCommand {
 
     private void reset(int connId) {
         Player player = server.getPlayer(connId);
-        /*
-         * // are we cancelling victory? if (server.getGame().isForceVictory()) {
-         * server.sendServerChat(player.getName() + " cancels the force
-         * victory."); server.cancelVictory(); return; }
-         */// okay, declare force victory
+
         if (player.getTeam() == Player.TEAM_NONE) {
             server.sendServerChat(getDeclareIndividual(player.getName()));
         } else {
             server.sendServerChat(getDeclareTeam(player.getName()));
         }
-        gameManager.forceVictory(player);
+        gameManager.forceVictory(player, false, false);
     }
 
 }

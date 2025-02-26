@@ -195,8 +195,9 @@ public class EntityActionLog implements Collection<EntityAction> {
      */
     private void addWeaponAttackAction(WeaponAttackAction attack) {
         ToHitData toHit = attack.toHit(game, true);
-        String table = toHit.getTableDesc();
-        final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' ' + table : "");
+        String tableDesc = toHit.getTableDesc();
+        tableDesc = !tableDesc.isEmpty() ? ' ' + tableDesc : "";
+        final String toHitDesc = toHit.getValueAsString() + tableDesc;
         final Entity entity = game.getEntity(attack.getEntityId());
         final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
         Entity ammoCarrier = game.getEntity(attack.getAmmoCarrier());
@@ -212,14 +213,14 @@ public class EntityActionLog implements Collection<EntityAction> {
         while (i.hasNext()) {
             String s = i.next();
             if (s.startsWith(weaponName)) {
-                i.set(s + ", " + buffer);
+                i.set(s + ", " + toHitDesc);
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            descriptions.add( weaponName + ammoName + Messages.getString("BoardView1.needs") + buffer);
+            descriptions.add( weaponName + ammoName + Messages.getString("BoardView1.needs") + ' ' + toHitDesc);
         }
     }
 }

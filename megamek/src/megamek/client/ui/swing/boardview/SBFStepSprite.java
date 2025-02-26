@@ -18,18 +18,21 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Compute;
+import megamek.common.Game;
+import megamek.common.MiscType;
+import megamek.common.MoveStep;
+import megamek.common.ToHitData;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 public class SBFStepSprite extends Sprite {
 
@@ -58,7 +61,7 @@ public class SBFStepSprite extends Sprite {
         isIllegal = step.isIllegal() || movePath.isIllegal();
 
         // step is the size of the hex that this step is in
-        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().getCoords()), this.bv.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(step.getDestination().coords()), this.bv.hex_size);
         image = null;
         baseScaleImage = null;
     }
@@ -127,7 +130,7 @@ public class SBFStepSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         bounds = new Rectangle(0, 0, bv.hex_size.width, bv.hex_size.height);
-        Point ePos = bv.getHexLocation(step.getDestination().getCoords());
+        Point ePos = bv.getHexLocation(step.getDestination().coords());
         bounds.setLocation(ePos.x, ePos.y);
         return bounds;
     }
@@ -250,9 +253,9 @@ public class SBFStepSprite extends Sprite {
         StringBuilder subscriptStringBuf = new StringBuilder();
 
         int distance = step.getDistance();
-        boolean isVTOL = false; //step.getEntity().;
+        boolean airborneNonAerospace = false; //step.getEntity().;
 
-        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
+        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, airborneNonAerospace, game);
         subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
         subscriptStringBuf.append(toHitData.getValue());
 

@@ -22,9 +22,11 @@ import megamek.client.IClient;
 import megamek.client.commands.ClientCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.MMNarrativeStoryDialog;
 import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
+import megamek.common.event.GameScriptedMessageEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -53,6 +55,9 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
     protected static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     protected final JFrame frame = new JFrame(Messages.getString("ClientGUI.title"));
+
+    /** Temporarily stores story dialogs so they can be shown one after the other */
+    private final List<JDialog> queuedStoryDialogs = new ArrayList<>();
 
     protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
@@ -187,4 +192,24 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
         return "Unknown Client Command.";
     }
 
+    protected void showScriptedMessage(GameScriptedMessageEvent event) {
+        queuedStoryDialogs.add(new MMNarrativeStoryDialog(frame, event));
+        showDialogs();
+    }
+
+    /**
+     * Shows a queued story dialog if no other is shown at this time. Normally, not more than one modal dialog (and its child dialogs) can
+     * be shown at any one time as Swing blocks access to buttons outside a first modal dialog. In MM, this is different as the server may
+     * send multiple story dialog packets which will all be processed and shown without user input. This method prevents that behavior so
+     * that only one story dialog is shown at one time. Note that when story dialogs trigger at the same time, their order is likely to be
+     * the order they were added to the game but packet transport can make them arrive at the client in a different order.
+     */
+    private void showDialogs() {
+        if (!UIUtil.isModalDialogDisplayed()) {
+            while (!queuedStoryDialogs.isEmpty()) {
+                JDialog dialog = queuedStoryDialogs.remove(0);
+                dialog.setVisible(true);
+            }
+        }
+    }
 }

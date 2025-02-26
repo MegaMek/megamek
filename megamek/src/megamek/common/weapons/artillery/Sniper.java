@@ -14,6 +14,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -27,13 +28,12 @@ public class Sniper extends ArtilleryWeapon {
         super();
 
         name = "Sniper";
-        setInternalName("ISSniper");
+        setInternalName(EquipmentTypeLookup.SNIPER_ARTY);
         addLookupName("ISSniperArtillery");
         addLookupName("IS Sniper");
         addLookupName("CLSniper");
         addLookupName("CLSniperArtillery");
         addLookupName("Clan Sniper");
-        flags = flags.or(F_AERO_WEAPON);
         heat = 10;
         rackSize = 20;
         ammoType = AmmoType.T_SNIPER;

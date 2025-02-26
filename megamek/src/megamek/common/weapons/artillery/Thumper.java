@@ -14,6 +14,7 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -26,13 +27,12 @@ public class Thumper extends ArtilleryWeapon {
     public Thumper() {
         super();
         name = "Thumper";
-        setInternalName("ISThumper");
+        setInternalName(EquipmentTypeLookup.THUMPER_ARTY);
         addLookupName("ISThumperArtillery");
         addLookupName("IS Thumper");
         addLookupName("CLThumper");
         addLookupName("CLThumperArtillery");
         addLookupName("Clan Thumper");
-        flags = flags.or(F_AERO_WEAPON);
         heat = 5;
         rackSize = 15;
         ammoType = AmmoType.T_THUMPER;

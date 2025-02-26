@@ -18,6 +18,7 @@ package megamek.common.util;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
+import megamek.common.enums.BuildingType;
 import megamek.common.planetaryconditions.Weather;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.util.generator.ElevationGenerator;
@@ -195,7 +196,7 @@ public class BoardUtilities {
                     mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
-        
+
         // Add foliage (1 elevation high woods)
         count = mapSettings.getMinFoliageSpots();
         if (mapSettings.getMaxFoliageSpots() > 0) {
@@ -220,7 +221,7 @@ public class BoardUtilities {
                     mapSettings.getMinJungleSize(),
                     mapSettings.getMaxJungleSize(), reverseHex, true);
         }
-        
+
         // Add the rough
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
@@ -396,7 +397,7 @@ public class BoardUtilities {
     }
 
     private static void placeBuilding(Board board, BuildingTemplate building) {
-        int type = building.getType();
+        BuildingType type = building.getType();
         int cf = building.getCF();
         int height = building.getHeight();
         ArrayList<Hex> hexes = new ArrayList<>();
@@ -415,7 +416,7 @@ public class BoardUtilities {
             // remove everything
             hex.removeAllTerrains();
             hex.addTerrain(new Terrain(Terrains.PAVEMENT, 1));
-            hex.addTerrain(new Terrain(Terrains.BUILDING, type, true, exits));
+            hex.addTerrain(new Terrain(Terrains.BUILDING, type.getTypeValue(), true, exits));
             hex.addTerrain(new Terrain(Terrains.BLDG_CF, cf));
             hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, height));
             hexes.add(hex);
@@ -559,7 +560,7 @@ public class BoardUtilities {
             field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
         }
     }
-    
+
     /**
      * Places randomly some connected foliage.
      *
@@ -609,7 +610,7 @@ public class BoardUtilities {
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
 
-        
+
     }
 
     /**
@@ -1121,9 +1122,11 @@ public class BoardUtilities {
                 Coords c = new Coords(x, y);
                 Hex hex = board.getHex(c);
 
-                //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
-                if (weatherCond.isModerateRain()) {
-                    if ((hex.terrainsPresent() == 0) || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))) {
+                //moderate rain - mud in clear hexes, depth 0 water, and dirt roads
+                if (weatherCond.isModerateRainOrLightningStorm()) {
+                    if ((hex.terrainsPresent() == 0)
+                            || (hex.containsTerrain(Terrains.WATER) && (hex.depth() == 0))
+                            || (hex.containsTerrain(Terrains.ROAD) && hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
@@ -1131,14 +1134,16 @@ public class BoardUtilities {
                     }
                 }
 
-                //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
+                //heavy rain - mud in all hexes except buildings, depth 1+ water, pavement, and standard roads
                 //rapids in all depth 1+ water
                 if (weatherCond.isHeavyRainOrGustingRain()) {
                     if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(new Terrain(Terrains.RAPIDS, 1));
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
                             && !hex.containsTerrain(Terrains.PAVEMENT)
-                            && !hex.containsTerrain(Terrains.ROAD)) {
+                            && ( !hex.containsTerrain(Terrains.ROAD)
+                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
+                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                         if (hex.containsTerrain(Terrains.WATER)) {
                             hex.removeTerrain(Terrains.WATER);
@@ -1156,7 +1161,9 @@ public class BoardUtilities {
                         hex.removeTerrain(Terrains.WATER);
                     } else if (!hex.containsTerrain(Terrains.BUILDING)
                             && !hex.containsTerrain(Terrains.PAVEMENT)
-                            && !hex.containsTerrain(Terrains.ROAD)) {
+                            && ( !hex.containsTerrain(Terrains.ROAD)
+                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_GRAVEL
+                                || hex.terrainLevel(Terrains.ROAD) == Terrains.ROAD_LVL_DIRT)) {
                         hex.addTerrain(new Terrain(Terrains.MUD, 1));
                     }
                 }
@@ -1699,7 +1706,7 @@ public class BoardUtilities {
             return closerNorthThanSouth ? CardinalEdge.NORTH : CardinalEdge.SOUTH;
         }
     }
-    
+
     /**
      * Figures out the "opposite" edge for the given entity.
      * @param entity Entity to evaluate

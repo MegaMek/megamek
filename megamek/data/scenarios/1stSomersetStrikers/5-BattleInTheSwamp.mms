@@ -8,11 +8,11 @@ Maps=Map Set 4/16x17 River Delta 2
 Factions=BlackVision,1stSomersetStrikers
 Location_BlackVision=N
 Location_1stSomersetStrikers=S
-# Black Vision, Falcon Star: 
+# Black Vision, Falcon Star:
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2
 Unit_BlackVision_2=Elemental Battle Armor [Laser],Point Commander Yartak,4,4
 Unit_BlackVision_3=Elemental Battle Armor [Laser],Elemental Harris,4,4
-# Strikers Lance: 
+# Strikers Lance:
 Unit_1stSomersetStrikers_1=Axman AXM-2N,Major Adam Steiner,2,2
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4
 Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,4,3

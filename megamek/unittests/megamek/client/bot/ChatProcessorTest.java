@@ -36,9 +36,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 /**
@@ -46,9 +45,8 @@ import static org.mockito.Mockito.*;
  * Date: 8/17/13
  * Time: 9:32 AM
  */
-public class ChatProcessorTest {
+class ChatProcessorTest {
 
-    private static BotClient mockBotHal;
     private static final Game MOCK_GAME = mock(Game.class);
 
     private static Player mockBotPlayerHal;
@@ -57,7 +55,7 @@ public class ChatProcessorTest {
     private static Player mockHumanPlayerKirk;
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         mockHumanPlayerDave = mock(Player.class);
         mockHumanPlayerKirk = mock(Player.class);
         mockBotPlayerHal = mock(Player.class);
@@ -96,9 +94,9 @@ public class ChatProcessorTest {
         playerVector.add(mockBotPlayerHal);
         playerVector.add(mockHumanPlayerKirk);
         playerVector.add(mockBotPlayerVGer);
-        when(MOCK_GAME.getPlayersVector()).thenReturn(playerVector);
+        when(MOCK_GAME.getPlayersList()).thenReturn(playerVector);
 
-        mockBotHal = mock(BotClient.class);
+        BotClient mockBotHal = mock(BotClient.class);
         when(mockBotHal.getLocalPlayer()).thenReturn(mockBotPlayerHal);
         when(mockBotHal.getGame()).thenReturn(MOCK_GAME);
 
@@ -108,7 +106,7 @@ public class ChatProcessorTest {
     }
 
     @Test
-    public void testAdditionalPrincessCommands() {
+    void testAdditionalPrincessCommands() {
         final ChatProcessor testChatProcessor = new ChatProcessor();
 
         final Board mockBoard = mock(Board.class);
@@ -118,7 +116,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent by a teammate.
         GamePlayerChatEvent mockChatEvent = mock(GamePlayerChatEvent.class);
         String chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName()
-                + ": " + ChatCommands.FLEE.getAbbreviation() + ": " + CardinalEdge.NORTH.getIndex();
+            + ": " + ChatCommands.FLEE.getAbbreviation() + ": " + CardinalEdge.NORTH.getIndex();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         Princess mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -131,7 +129,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent by the enemy.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerKirk.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.FLEE.getAbbreviation();
+            + ChatCommands.FLEE.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerKirk);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -144,7 +142,7 @@ public class ChatProcessorTest {
         // Test the 'flee' command sent to a different bot player.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerHal.getName() + ": "
-                + ChatCommands.FLEE.getAbbreviation();
+            + ChatCommands.FLEE.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -154,59 +152,11 @@ public class ChatProcessorTest {
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertFalse(mockPrincess.getFallBack());
 
-        // Test the 'verbose' command.
-        mockChatEvent = mock(GamePlayerChatEvent.class);
-        chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.VERBOSE.getAbbreviation();
-        when(mockChatEvent.getMessage()).thenReturn(chatMessage);
-        when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
-        mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
-        doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
-        doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
-        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-
-        // Test the 'verbose' command with no arguments.
-        mockChatEvent = mock(GamePlayerChatEvent.class);
-        chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.VERBOSE.getAbbreviation();
-        when(mockChatEvent.getMessage()).thenReturn(chatMessage);
-        when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
-        mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
-        doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
-        doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
-        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-
-        // Test the 'verbose' command with an invalid log level.
-        mockChatEvent = mock(GamePlayerChatEvent.class);
-        chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.VERBOSE.getAbbreviation() + " : blah";
-        when(mockChatEvent.getMessage()).thenReturn(chatMessage);
-        when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
-        mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
-        doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
-        doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
-        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-
-        // Test a good 'verbose' command with extra data after log level argument.
-        mockChatEvent = mock(GamePlayerChatEvent.class);
-        chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName()
-                + ": " + ChatCommands.VERBOSE.getAbbreviation() + " blah";
-        when(mockChatEvent.getMessage()).thenReturn(chatMessage);
-        when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
-        mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
-        doReturn(MOCK_GAME).when(mockPrincess).getGame();
-        doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
-        doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
-        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-
         // Test the 'behavior' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BEHAVIOR.getAbbreviation() + " : "
-                + BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
+            + ChatCommands.BEHAVIOR.getAbbreviation() + " : "
+            + BehaviorSettingsFactory.COWARDLY_BEHAVIOR_DESCRIPTION;
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -216,12 +166,12 @@ public class ChatProcessorTest {
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(BehaviorSettingsFactory.getInstance().COWARDLY_BEHAVIOR,
-                mockPrincess.getBehaviorSettings());
+            mockPrincess.getBehaviorSettings());
 
         // Test the 'behavior' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BEHAVIOR.getAbbreviation();
+            + ChatCommands.BEHAVIOR.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -231,12 +181,12 @@ public class ChatProcessorTest {
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
-                mockPrincess.getBehaviorSettings());
+            mockPrincess.getBehaviorSettings());
 
         // Test the 'behavior' command with an invalid behavior name
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BEHAVIOR.getAbbreviation() + " : blah";
+            + ChatCommands.BEHAVIOR.getAbbreviation() + " : blah";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -246,12 +196,12 @@ public class ChatProcessorTest {
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
-                mockPrincess.getBehaviorSettings());
+            mockPrincess.getBehaviorSettings());
 
         // Test the 'caution' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.CAUTION.getAbbreviation() + " : +++";
+            + ChatCommands.CAUTION.getAbbreviation() + " : +++";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -265,7 +215,7 @@ public class ChatProcessorTest {
         // Test the 'caution' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.CAUTION.getAbbreviation();
+            + ChatCommands.CAUTION.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -279,7 +229,7 @@ public class ChatProcessorTest {
         // Test the 'caution' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.CAUTION.getAbbreviation() + " : +4";
+            + ChatCommands.CAUTION.getAbbreviation() + " : +";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -293,7 +243,7 @@ public class ChatProcessorTest {
         // Test the 'avoid' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AVOID.getAbbreviation() + " : --";
+            + ChatCommands.AVOID.getAbbreviation() + " : --";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -304,10 +254,25 @@ public class ChatProcessorTest {
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(3, mockPrincess.getBehaviorSettings().getSelfPreservationIndex());
 
+        // Test the 'avoid' command.
+        mockChatEvent = mock(GamePlayerChatEvent.class);
+
+        chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
+            + ChatCommands.AVOID.getAbbreviation() + " : 2";
+        when(mockChatEvent.getMessage()).thenReturn(chatMessage);
+        when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
+        mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
+        doReturn(MOCK_GAME).when(mockPrincess).getGame();
+        mockPrincess.setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
+        doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
+        doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
+        testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
+        assertEquals(2, mockPrincess.getBehaviorSettings().getSelfPreservationIndex());
+
         // Test the 'avoid' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AVOID.getAbbreviation();
+            + ChatCommands.AVOID.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -321,7 +286,7 @@ public class ChatProcessorTest {
         // Test the 'avoid' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AVOID.getAbbreviation() + " : +5";
+            + ChatCommands.AVOID.getAbbreviation() + " : 6";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -335,7 +300,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AGGRESSION.getAbbreviation() + " : ++";
+            + ChatCommands.AGGRESSION.getAbbreviation() + " : ++";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -349,7 +314,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AGGRESSION.getAbbreviation();
+            + ChatCommands.AGGRESSION.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -363,7 +328,7 @@ public class ChatProcessorTest {
         // Test the 'aggression' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.AGGRESSION.getAbbreviation() + " : blah";
+            + ChatCommands.AGGRESSION.getAbbreviation() + " : blah";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -377,7 +342,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.HERDING.getAbbreviation() + " : -";
+            + ChatCommands.HERDING.getAbbreviation() + " : -";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -391,7 +356,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.HERDING.getAbbreviation();
+            + ChatCommands.HERDING.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -405,7 +370,7 @@ public class ChatProcessorTest {
         // Test the 'herding' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.HERDING.getAbbreviation() + " : -4";
+            + ChatCommands.HERDING.getAbbreviation() + " : -a";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -419,7 +384,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BRAVERY.getAbbreviation() + " : +++";
+            + ChatCommands.BRAVERY.getAbbreviation() + " : +++";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -433,7 +398,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BRAVERY.getAbbreviation();
+            + ChatCommands.BRAVERY.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -447,7 +412,7 @@ public class ChatProcessorTest {
         // Test the 'brave' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.BRAVERY.getAbbreviation() + " : -2";
+            + ChatCommands.BRAVERY.getAbbreviation() + " : -p";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -461,7 +426,7 @@ public class ChatProcessorTest {
         // Test the 'target' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.TARGET.getAbbreviation() + " : 1234";
+            + ChatCommands.TARGET.getAbbreviation() + " : 1234";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -477,7 +442,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.TARGET.getAbbreviation();
+            + ChatCommands.TARGET.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -492,7 +457,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with an invalid hex number.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.TARGET.getAbbreviation() + " : blah";
+            + ChatCommands.TARGET.getAbbreviation() + " : blah";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -507,7 +472,7 @@ public class ChatProcessorTest {
         // Test the 'priority' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.PRIORITIZE.getAbbreviation() + " : 12";
+            + ChatCommands.PRIORITIZE.getAbbreviation() + " : 12";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -523,7 +488,7 @@ public class ChatProcessorTest {
         // Test the 'target' command with a too large hex number.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-                + ChatCommands.TARGET.getAbbreviation() + " : 12345";
+            + ChatCommands.TARGET.getAbbreviation() + " : 12345";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -537,7 +502,7 @@ public class ChatProcessorTest {
 
         // Test a chat message not directed at Princess.
         mockChatEvent = mock(GamePlayerChatEvent.class);
-        chatMessage = "MovementDisplay: tried to select non-existant entity: -1";
+        chatMessage = "MovementDisplay: tried to select non-existent entity: -1";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(null);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));

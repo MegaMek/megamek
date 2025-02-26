@@ -14,11 +14,13 @@
  */
 package megamek.server;
 
-import org.apache.logging.log4j.LogManager;
-
 import java.util.TimerTask;
 
+import megamek.logging.MMLogger;
+
 public class ConnectionWatchdog extends TimerTask {
+    private static final MMLogger logger = MMLogger.create(ConnectionWatchdog.class);
+
     private Server server;
     private int id;
     private int failCount;
@@ -42,11 +44,11 @@ public class ConnectionWatchdog extends TimerTask {
             return;
         }
 
-        LogManager.getLogger().error("Bark Bark");
+        logger.error("Bark Bark");
         if (failCount > 120) {
             server.getPendingConnection(id).close();
             cancel();
-            LogManager.getLogger().error("Growl\n\n\n\n\n");
+            logger.error("Growl\n\n\n\n\n");
             return;
         }
 

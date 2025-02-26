@@ -18,37 +18,42 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JSplitPane;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JSplitPanePreference monitors the location of the split divider on a JSplitPane.
+ * JSplitPanePreference monitors the location of the split divider on a
+ * JSplitPane.
  * It sets the saved value when a dialog is loaded and changes it as it changes.
  *
- * Call preferences.manage(new JSplitPanePreference(JSplitPane)) to use this preference, on a
+ * Call preferences.manage(new JSplitPanePreference(JSplitPane)) to use this
+ * preference, on a
  * JSplitPane that has called setName
  */
 public class JSplitPanePreference extends PreferenceElement implements PropertyChangeListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JSplitPanePreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JSplitPane> weakReference;
     private int dividerLocation;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JSplitPanePreference(final JSplitPane splitPane) throws Exception {
         super(splitPane.getName());
         setDividerLocation(splitPane.getDividerLocation());
         weakReference = new WeakReference<>(splitPane);
         splitPane.addPropertyChangeListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JSplitPane> getWeakReference() {
         return weakReference;
     }
@@ -60,9 +65,9 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
     public void setDividerLocation(final int dividerLocation) {
         this.dividerLocation = dividerLocation;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return Integer.toString(getDividerLocation());
@@ -71,7 +76,7 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JSplitPanePreference because of a null or blank input value");
+            logger.error("Cannot create a JSplitPanePreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -90,9 +95,9 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region PropertyChangeListener
+    // region PropertyChangeListener
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
         final JSplitPane element = getWeakReference().get();
@@ -100,5 +105,5 @@ public class JSplitPanePreference extends PreferenceElement implements PropertyC
             setDividerLocation(element.getDividerLocation());
         }
     }
-    //endregion PropertyChangeListener
+    // endregion PropertyChangeListener
 }

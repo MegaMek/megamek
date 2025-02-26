@@ -22,16 +22,13 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
+import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
-import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -41,6 +38,9 @@ import java.util.Vector;
  * @author Ben
  */
 public class GameOptions extends BasicGameOptions {
+    private static final MMLogger logger = MMLogger.create(GameOptions.class);
+
+    @Serial
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml";
 
@@ -66,7 +66,6 @@ public class GameOptions extends BasicGameOptions {
 
         IBasicOptionGroup victory = addGroup("victory");
         addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false);
-        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true);
         addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1);
         addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false);
         addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100);
@@ -95,6 +94,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
         addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_LIGHTNING_STORM_TARGETS_UNITS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false);
@@ -127,7 +127,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MECHWARRIORS, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MEKWARRIORS, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false);
@@ -174,7 +174,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS, false);
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false);
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MEK_HIT_LOCATIONS, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false);
@@ -267,7 +267,9 @@ public class GameOptions extends BasicGameOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_CRASHED_DROPSHIPS_SURVIVE, false);
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false);
+        addOption(advAeroRules, OptionsConstants.UNOFF_ADV_ATMOSPHERIC_CONTROL, false);
 
         IBasicOptionGroup initiative = addGroup("initiative");
         addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false);
@@ -280,7 +282,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false);
         addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false);
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false);
+        //addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false);
         addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false);
@@ -297,7 +299,6 @@ public class GameOptions extends BasicGameOptions {
         addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
         addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
         addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
-        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false);
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
@@ -323,9 +324,9 @@ public class GameOptions extends BasicGameOptions {
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print, logMessages));
             }
-            LogManager.getLogger().info(logMessages.toString());
+            logger.info(logMessages.toString());
         } catch (Exception e) {
-            LogManager.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
+            logger.error("Error loading XML for game options: {}", e.getMessage(), e);
         }
 
         return changedOptions;
@@ -365,12 +366,11 @@ public class GameOptions extends BasicGameOptions {
 
                         option = tempOption;
                     } catch (Exception ex) {
-                        LogManager.getLogger().error(String.format(
-                                "Error trying to load option '%s' with a value of '%s'!", name, value));
+                        logger.warn("Error trying to load option {} with a value of {}!", name, value);
                     }
                 }
             } else {
-                LogManager.getLogger().warn("Invalid option '" + name + "' when trying to load options file!");
+                logger.warn("Invalid option '{}' when trying to load options file!", name);
             }
         }
 
@@ -385,7 +385,7 @@ public class GameOptions extends BasicGameOptions {
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      *
      * @param options <code>Vector</code> of <code>IBasicOption</code>
-     * @param file
+     * @param file string with the name of the file
      */
     public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
@@ -398,11 +398,12 @@ public class GameOptions extends BasicGameOptions {
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
 
-            JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class, new GameOptionsXML(options));
+            JAXBElement<GameOptionsXML> element = new JAXBElement<>(new QName("options"), GameOptionsXML.class,
+                    new GameOptionsXML(options));
 
             marshaller.marshal(element, new File(file));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed writing Game Options XML", ex);
+            logger.error("Failed writing Game Options XML", ex);
         }
     }
 
@@ -417,7 +418,7 @@ public class GameOptions extends BasicGameOptions {
     }
 
     private static class GameOptionsInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new GameOptionsInfo();
+        private static final AbstractOptionsInfo instance = new GameOptionsInfo();
 
         protected GameOptionsInfo() {
             super("GameOptionsInfo");
@@ -454,18 +455,18 @@ public class GameOptions extends BasicGameOptions {
         }
     }
 
-    //region MekHQ I/O
+    // region MekHQ I/O
     /**
      * This is used by MekHQ to write the game options to the standard file
      *
-     * @param pw the PrintWriter to write to
+     * @param pw     the PrintWriter to write to
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
         MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
-        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
+        for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements();) {
             final IOptionGroup group = groups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
                 final IOption option = options.nextElement();
                 MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
@@ -477,14 +478,16 @@ public class GameOptions extends BasicGameOptions {
     }
 
     /**
-     * This is used to fill a GameOptions object from an XML node list written using writeToXML.
+     * This is used to fill a GameOptions object from an XML node list written using
+     * writeToXML.
+     *
      * @param nl the node list to parse
      */
     public void fillFromXML(final NodeList nl) {
         for (int x = 0; x < nl.getLength(); x++) {
             try {
                 final Node wn = nl.item(x);
-                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes())  {
+                if ((wn.getNodeType() != Node.ELEMENT_NODE) || !wn.hasChildNodes()) {
                     continue;
                 }
 
@@ -524,9 +527,9 @@ public class GameOptions extends BasicGameOptions {
                     }
                 }
             } catch (Exception e) {
-                LogManager.getLogger().error("Failed to parse Game Option Node", e);
+                logger.error("Failed to parse Game Option Node", e);
             }
         }
     }
-    //endregion MekHQ I/O
+    // endregion MekHQ I/O
 }

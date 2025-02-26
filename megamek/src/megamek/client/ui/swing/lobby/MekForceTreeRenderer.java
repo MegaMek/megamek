@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 package megamek.client.ui.swing.lobby;
 
 import megamek.MMConstants;
@@ -30,50 +30,50 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
+import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 
 /** A specialized renderer for the Mek Force tree. */
 public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
+    private static final MMLogger logger = MMLogger.create(MekForceTreeRenderer.class);
 
+    @Serial
     private static final long serialVersionUID = -2002064111324279609L;
     private final String UNKNOWN_UNIT = new MegaMekFile(Configuration.miscImagesDir(),
             "unknown_unit.gif").toString();
 
-    private ChatLounge lobby;
-    private boolean isSelected;
-    private Color selectionColor = Color.BLUE;
+    private final ChatLounge lobby;
     private Entity entity;
     private Player localPlayer;
-    private JTree tree;
+    private final JTree tree;
     private int row;
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
             boolean leaf, int row, boolean hasFocus) {
 
-        isSelected = sel;
         Game game = lobby.getClientgui().getClient().getGame();
         localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
-        selectionColor = UIManager.getColor("Tree.selectionBackground");
+        Color selectionColor = UIManager.getColor("Tree.selectionBackground");
         setOpaque(true);
-        
-        if (isSelected) {
+
+        if (sel) {
             setBackground(new Color(selectionColor.getRGB()));
         } else {
             setForeground(null);
             setBackground(null);
         }
-        
+
         if (value instanceof Entity) {
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
             setFont(scaledFont);
             entity = (Entity) value;
-            this.row = row; 
+            this.row = row;
             Player owner = entity.getOwner();
             if (lobby.isCompact()) {
                 setText(LobbyMekCellFormatter.formatUnitCompact(entity, lobby, true));
@@ -94,11 +94,10 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
-        } else if (value instanceof Force) {
+        } else if (value instanceof Force force) {
             entity = null;
             Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
             setFont(scaledFont);
-            Force force = (Force) value;
             if (lobby.isCompact()) {
                 setText(LobbyMekCellFormatter.formatForceCompact(force, lobby));
             } else {
@@ -106,7 +105,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             }
             setIcon(null);
         }
-        return this; 
+        return this;
     }
 
     @Override
@@ -126,7 +125,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             int width = height * image.getWidth(null) / image.getHeight(null);
             setIcon(new ImageIcon(ImageUtil.getScaledImage(image, width, height)));
         } else {
-            LogManager.getLogger().error("Trying to resize a unit icon of height or width 0!");
+            logger.debug("Trying to resize a unit icon of height or width 0!");
             setIcon(null);
         }
     }

@@ -13,13 +13,7 @@
  */
 package megamek.client.ui.swing.util;
 
-import org.apache.logging.log4j.LogManager;
-
-import javax.imageio.ImageIO;
-import javax.swing.text.Element;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.ImageView;
-import java.awt.*;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -27,12 +21,23 @@ import java.util.Base64;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import javax.imageio.ImageIO;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.ImageView;
+
+import megamek.logging.MMLogger;
+
 public class BASE64ImageView extends ImageView {
+    private static final MMLogger logger = MMLogger.create(BASE64ImageView.class);
+
     private URL url;
 
     /**
-     * Returns a unique url for the image. It's created by getting the code location and adding the element to it.
-     * This doesn't strictly need to be an actual url, it just needs to be unique and properly formatted.
+     * Returns a unique url for the image. It's created by getting the code location
+     * and adding the element to it.
+     * This doesn't strictly need to be an actual url, it just needs to be unique
+     * and properly formatted.
      *
      * @param elmnt the html element containing the base64 src
      */
@@ -63,10 +68,10 @@ public class BASE64ImageView extends ImageView {
         if (b64 != null) {
             BufferedImage newImage = null;
             try (ByteArrayInputStream bais = new ByteArrayInputStream(
-                        Base64.getDecoder().decode(b64.getBytes()))) {
+                    Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error("", ex);
             }
             return newImage;
         } else {
@@ -75,8 +80,10 @@ public class BASE64ImageView extends ImageView {
     }
 
     /**
-     * Returns a unique url for the image. It's created by getting the code location and adding the element to it.
-     * This doesn't strictly need to be an actual url, it just needs to be unique and properly formatted.
+     * Returns a unique url for the image. It's created by getting the code location
+     * and adding the element to it.
+     * This doesn't strictly need to be an actual url, it just needs to be unique
+     * and properly formatted.
      *
      * @return the generated url for the image
      */
@@ -89,7 +96,7 @@ public class BASE64ImageView extends ImageView {
             try {
                 this.url = new URL("file:/" + this.getElement().toString());
             } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+                logger.error("", e);
             }
 
             return this.url;
@@ -102,7 +109,7 @@ public class BASE64ImageView extends ImageView {
         return src != null && src.contains("base64,");
     }
 
-    //returns the string without the base64 text
+    // returns the string without the base64 text
     private String getBASE64Image() {
         String src = (String) getElement().getAttributes()
                 .getAttribute(HTML.Attribute.SRC);

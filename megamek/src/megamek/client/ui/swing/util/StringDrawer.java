@@ -18,35 +18,46 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.common.annotations.Nullable;
-
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 
+import megamek.common.annotations.Nullable;
+
 /**
- * This is a helper class to ease the process of drawing Strings in Java Graphics2D.
- * <BR><BR>
- * Use: Construct a new StringDrawer with the target String as parameter. The constructor
- * and most other methods return the StringDrawer so further settings can be chained to
- * the constructor call, such as {@link #at(int, int)} setting the position, or {@link #color(Color)}
- * setting the fill color of the drawn text. The chain can be finished by using {@link #draw(Graphics)} which
- * will draw the string using its settings.
- * <BR><BR>
+ * This is a helper class to ease the process of drawing Strings in Java
+ * Graphics2D.
+ *
+ * Use: Construct a new StringDrawer with the target String as parameter. The
+ * constructor and most other methods return the StringDrawer so further
+ * settings can be chained to the constructor call, such as
+ * {@link #at(int, int)} setting the position, or {@link #color(Color)}
+ * setting the fill color of the drawn text. The chain can be finished by using
+ * {@link #draw(Graphics)} which will draw the string using its settings.
+ *
  * Example:
- * <BR><code>new StringDrawer("My Text").at(836, 470).center().font(myFont).draw(g);</code>
- * <BR><BR>
- * This class also provides a StringDrawerConfig class that can be used in a similar way to assemble
- * settings to a config that can then be used in the StrinDrawer chain to apply those settings using
- * {@link #useConfig(StringDrawerConfig)}. Note that all settings applied from a config in this way
- * can be overridden again by calling a different setting afterwards.
- * <BR><BR>
+ *
+ * <code>new StringDrawer("My Text").at(836, 470).center().font(myFont).draw(g);</code>
+ *
+ * This class also provides a StringDrawerConfig class that can be used in a
+ * similar way to assemble settings to a config that can then be used in the
+ * StringDrawer chain to apply those settings using
+ * {@link #useConfig(StringDrawerConfig)}. Note that all settings applied from a
+ * config in this way can be overridden again by calling a different setting
+ * afterwards.
+ *
  * Example:
  * <code>
- * <BR>StringDrawer.StringDrawerConfig myConfig = new StringDrawer.StringDrawerConfig().rightAlign().centerY()
+ * StringDrawer.StringDrawerConfig myConfig = new StringDrawer.StringDrawerConfig().rightAlign().centerY()
  *                 .color(Color.RED).font(myFont);
- * <BR><BR>new StringDrawer("Another Text").at(736, 553).useConfig(myConfig).draw(g);
+ * new StringDrawer("Another Text").at(736, 553).useConfig(myConfig).draw(g);
  * </code>
  *
  * @author Simon (Juliez)
@@ -75,8 +86,8 @@ public class StringDrawer {
     private boolean drawHelpLine = false;
 
     /**
-     * Returns a new StringDrawer with the given text to draw. Note that the StringDrawer can be used
-     * multiple times but the text cannot be changed.
+     * Returns a new StringDrawer with the given text to draw. Note that the
+     * StringDrawer can be used multiple times but the text cannot be changed.
      *
      * @param text The text to draw when using {@link #draw(Graphics)}
      */
@@ -85,8 +96,9 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the coordinates to draw the text at. The exact placement depends on other settings
-     * such as given by {@link #center()}, {@link #centerX()}, or {@link #rightAlign()}.
+     * Sets the coordinates to draw the text at. The exact placement depends on
+     * other settings such as given by {@link #center()}, {@link #centerX()}, or
+     * {@link #rightAlign()}.
      *
      * @param x The x coordinate to place the text at
      * @param y The y coordinate to place the text at
@@ -99,8 +111,9 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the coordinates to draw the text at. The exact placement depends on other settings
-     * such as given by {@link #center()}, {@link #centerX()}, or {@link #rightAlign()}.
+     * Sets the coordinates to draw the text at. The exact placement depends on
+     * other settings such as given by {@link #center()}, {@link #centerX()}, or
+     * {@link #rightAlign()}.
      *
      * @param point The Point with the x and y coordinates to place the text at
      * @return The StringDrawer itself
@@ -110,8 +123,9 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the fill color to draw the text with. Unless {@link #outline(Color, float)} is used,
-     * this the fill color fills the entire text.
+     * Sets the fill color to draw the text with. Unless
+     * {@link #outline(Color, float)} is used, this the fill color fills the entire
+     * text.
      *
      * @param color The fill color of the text
      * @return The StringDrawer itself
@@ -122,9 +136,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to center the text on the coordinate given by {@link #at(int, int)}.
-     * This is equivalent to calling both {@link #centerX()} and {@link #centerY()}. Note that
-     * vertical centering works in a special fashion explained in {@link #centerY()}.
+     * Sets the StringDrawer to center the text on the coordinate given by
+     * {@link #at(int, int)}. This is equivalent to calling both {@link #centerX()}
+     * and {@link #centerY()}. Note that vertical centering works in a special
+     * fashion explained in {@link #centerY()}.
      *
      * @return The StringDrawer itself
      * @see #absoluteCenter()
@@ -134,9 +149,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to center the text horizontally on the x coordinate given by
-     * {@link #at(int, int)}. Note that StringDrawer uses GlyphVectors to draw the Strings. As
-     * a result, leading or trailing spaces of the text will be ignored for centering purposes.
+     * Sets the StringDrawer to center the text horizontally on the x coordinate
+     * given by {@link #at(int, int)}. Note that StringDrawer uses GlyphVectors to
+     * draw the Strings. As a result, leading or trailing spaces of the text will be
+     * ignored for centering purposes.
      *
      * @return The StringDrawer itself
      */
@@ -147,15 +163,16 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to center the text vertically on the y coordinate given by
-     * {@link #at(int, int)}.
-     * <BR><BR>
-     * Note: Vertical text centering does *not* use the actual text to perform centering as this
-     * would make it very difficult to keep a common baseline for multiple consecutive texts when these
-     * texts contain characters with varying ascent and descent, such as "A1" and "jg". Instead,
-     * vertical centering is done using a placeholder text of capital letters. Therefore, vertical
-     * centering will center the text approximately at half the ascent (roughly half the height of
-     * capital letters).
+     * Sets the StringDrawer to center the text vertically on the y coordinate given
+     * by {@link #at(int, int)}.
+     *
+     * Note: Vertical text centering does *not* use the actual text to perform
+     * centering as this would make it very difficult to keep a common baseline for
+     * multiple consecutive texts when these texts contain characters with varying
+     * ascent and descent, such as "A1" and* "jg". Instead, vertical centering is
+     * done using a placeholder text of capital letters. Therefore, vertical
+     * centering will center the text approximately at half the ascent (roughly half
+     * the height of capital letters).
      *
      * @return The StringDrawer itself
      * @see #absoluteCenterY()
@@ -167,12 +184,12 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to center the text vertically on the y coordinate given by
-     * {@link #at(int, int)}.
-     * <BR><BR>
-     * Note: In contrast to {@link #centerY()}, this centers the text based on its own vertical size.
-     * This is useful when e.g. centering a single letter or symbol and when no alignment with other
-     * text is required.
+     * Sets the StringDrawer to center the text vertically on the y coordinate given
+     * by {@link #at(int, int)}.
+     *
+     * Note: In contrast to {@link #centerY()}, this centers the text based on its
+     * own vertical size. This is useful when e.g. centering a single letter or
+     * symbol and when no alignment with other text is required.
      *
      * @return The StringDrawer itself
      * @see #centerY()
@@ -185,10 +202,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to center the text on the coordinate given by {@link #at(int, int)}.
-     * This is equivalent to calling both {@link #centerX()} and {@link #absoluteCenterY()}. Note that
-     * vertical centering works based on the text's own vertical size as explained in
-     * {@link #absoluteCenterY()}.
+     * Sets the StringDrawer to center the text on the coordinate given by
+     * {@link #at(int, int)}. This is equivalent to calling both {@link #centerX()}
+     * and {@link #absoluteCenterY()}. Note that vertical centering works based on
+     * the text's own vertical size as explained in {@link #absoluteCenterY()}.
      *
      * @return The StringDrawer itself
      * @see #center()
@@ -199,8 +216,8 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to right-align the text horizontally at the coordinate given by
-     * {@link #at(int, int)}.
+     * Sets the StringDrawer to right-align the text horizontally at the coordinate
+     * given by {@link #at(int, int)}.
      *
      * @return The StringDrawer itself
      */
@@ -211,9 +228,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to left-align the text horizontally at the coordinate given by
-     * {@link #at(int, int)}. This is the default setting. This method can be used to override
-     * other alignment settings given by a previous {@link #useConfig(StringDrawerConfig)}.
+     * Sets the StringDrawer to left-align the text horizontally at the coordinate
+     * given by {@link #at(int, int)}. This is the default setting. This method can
+     * be used to override other alignment settings given by a previous
+     * {@link #useConfig(StringDrawerConfig)}.
      *
      * @return The StringDrawer itself
      */
@@ -234,13 +252,15 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to use the given fontSize when drawing the String. When drawing the string,
-     * a new Font object will be created using this fontSize and either the font given through
-     * {@link #font(Font)} or, when no font is given, the current font. Note that when this
-     * method is used, and a font is also specified, the fontSize given here takes precedence even
-     * when {@link #font(Font)} is called later. Also note that {@link #maxWidth(int)} may scale down
-     * the resulting font size even when this method is used (in other words, this method sets the
-     * maximum possible font size). Values for fontSize <= 0 are ignored.
+     * Sets the StringDrawer to use the given fontSize when drawing the String. When
+     * drawing the string, a new Font object will be created using this fontSize and
+     * either the font given through {@link #font(Font)} or, when no font is given,
+     * the current font. Note that when this method is used, and a font is also
+     * specified, the fontSize given here takes precedence even when
+     * {@link #font(Font)} is called later. Also note that {@link #maxWidth(int)}
+     * may scale down the resulting font size even when this method is used (in
+     * other words, this method sets the maximum possible font size). Values for
+     * fontSize &lt;= 0 are ignored.
      *
      * @return The StringDrawer itself
      */
@@ -250,8 +270,9 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to give the text an outline of the given color and line width. Note
-     * that the outline is drawn first so its width may appear smaller than expected.
+     * Sets the StringDrawer to give the text an outline of the given color and line
+     * width. Note that the outline is drawn first so its width may appear smaller
+     * than expected.
      *
      * @param color The color to draw the outline in
      * @param width The brush stroke width to use
@@ -264,11 +285,12 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to give the text a second outline of the given color and line width. Note
-     * that the second outline is drawn first (before {@link #outline(Color, float)}) so its width may appear
-     * smaller than expected and a width value greater than that of the first outline should be
-     * used. Apart from the order of drawing this outline and {@link #outline(Color, float)} are
-     * equivalent.
+     * Sets the StringDrawer to give the text a second outline of the given color
+     * and line width. Note that the second outline is drawn first (before
+     * {@link #outline(Color, float)}) so its width may appear smaller than expected
+     * and a width value greater than that of the first outline should be used.
+     * Apart from the order of drawing this outline and
+     * {@link #outline(Color, float)} are equivalent.
      *
      * @param color The color to draw the outline in
      * @param width The brush stroke width to use
@@ -281,9 +303,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to keep the text within the given maximum pixel width. If the text would appear
-     * wider, a smaller font size is calculated and used instead. Note that the width is not strictly
-     * enforced, the result may still be wider or smaller in the range of a few pixels.
+     * Sets the StringDrawer to keep the text within the given maximum pixel width.
+     * If the text would appear wider, a smaller font size is calculated and used
+     * instead. Note that the width is not strictly enforced, the result may still
+     * be wider or smaller in the range of a few pixels.
      *
      * @param maxWidth The maximum width the text should have
      * @return The StringDrawer itself
@@ -294,7 +317,8 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to draw a line showing the extent of the maximum width if such a width is set.
+     * Sets the StringDrawer to draw a line showing the extent of the maximum width
+     * if such a width is set.
      *
      * @return The StringDrawer itself
      */
@@ -304,12 +328,14 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to scale the text horizontally by the given scaleX value. Values bigger than
-     * 1 stretch the text, values smaller than 1 compress it. Note that the maxWidth value is not scaled
-     * so scaleX < 1 will make the text fit maxWidth easier while scaleX > 1 will make it more easily reach
+     * Sets the StringDrawer to scale the text horizontally by the given scaleX
+     * value. Values bigger than 1 stretch the text, values smaller than 1 compress
+     * it. Note that the maxWidth value is not scaled so scaleX &lt; 1 will make the
+     * text fit maxWidth easier while scaleX &gt; 1 will make it more easily reach
      * maxWidth.
      *
-     * @param scaleX the horizontal stretch or compression factor to apply to the text
+     * @param scaleX the horizontal stretch or compression factor to apply to the
+     *               text
      * @return The StringDrawer itself
      */
     public StringDrawer scaleX(float scaleX) {
@@ -318,8 +344,10 @@ public class StringDrawer {
     }
 
     /**
-     * Sets the StringDrawer to use the values of the given style StringDrawerConfig. This uses the values
-     * font, color, outline and dual outline, centering and right-align and rotation angle.
+     * Sets the StringDrawer to use the values of the given style
+     * StringDrawerConfig. This uses the values font, color, outline and dual
+     * outline, centering and right-align and rotation
+     * angle.
      *
      * @param style The StringDrawerConfig to use
      * @return The StringDrawer itself
@@ -353,13 +381,14 @@ public class StringDrawer {
     }
 
     /**
-     * Draws the String with applied settings to the given Graphics g (obtained from a
-     * BufferedImage, JComponent, SVG context or other source). Note that when the
-     * text is empty or null, no action at all is taken. The settings of
-     * the Graphics context (brush, color, transform, font) are preserved. The returned
-     * Rectangle gives the size of the drawn string including leading and trailing white space.
-     * Note that when no font is actively set, the used font depends on what is currently set in the
-     * Graphics object. The same is true for the text color.
+     * Draws the String with applied settings to the given Graphics g (obtained from
+     * a BufferedImage, JComponent, SVG context or other source). Note that when the
+     * text is empty or null, no action at all is taken. The settings of the
+     * Graphics context (brush, color, transform, font) are preserved. The returned
+     * Rectangle gives the size of the drawn string including leading and trailing
+     * white space. Note that when no font is actively set, the used font depends on
+     * what is currently set in the Graphics object. The same is true for the text
+     * color.
      *
      * @param g The Graphics context to draw to.
      * @return A Rectangle containing the size of the drawn string
@@ -394,11 +423,12 @@ public class StringDrawer {
             bounds = gv.getPixelBounds(null, 0, 0);
         }
 
-        // Use the size of a pure uppercase placeholder text for Y-centering to keep the same baseline for any text
-        // unless absoluteCentering is used
+        // Use the size of a pure uppercase placeholder text for Y-centering to keep the
+        // same baseline for any text unless absoluteCentering is used
         Rectangle centeringBounds = bounds;
         if (!absoluteCenter) {
-            GlyphVector gvUpperCase = g2D.getFont().createGlyphVector(frc, absoluteCenter ? text : VERTICAL_CENTER_PLACEHOLDER);
+            GlyphVector gvUpperCase = g2D.getFont().createGlyphVector(frc,
+                    absoluteCenter ? text : VERTICAL_CENTER_PLACEHOLDER);
             centeringBounds = gvUpperCase.getPixelBounds(null, 0, 0);
         }
 
@@ -438,7 +468,6 @@ public class StringDrawer {
         transformedG.setColor(fillColor);
         transformedG.fill(gv.getOutline(posX, posY));
         transformedG.dispose();
-
 
         if (drawHelpLine) {
             Graphics2D untransformedG = (Graphics2D) g.create();
@@ -534,10 +563,12 @@ public class StringDrawer {
         }
 
         /**
-         * Sets the Configuration to scale the text horizontally by the given scaleX value. Values bigger than
-         * 1 stretch the text, values smaller than 1 compress it.
+         * Sets the Configuration to scale the text horizontally by the given scaleX
+         * value. Values bigger than 1 stretch the text, values smaller than 1 compress
+         * it.
          *
-         * @param scaleX the horizontal stretch or compression factor to apply to the text
+         * @param scaleX the horizontal stretch or compression factor to apply to the
+         *               text
          * @return The StringDrawerConfig itself
          */
         public StringDrawerConfig scaleX(float scaleX) {

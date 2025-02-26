@@ -14,8 +14,10 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
+import java.util.*;
+
 import megamek.client.bot.princess.Princess;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -23,20 +25,22 @@ import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.pathfinder.DestructionAwareDestinationPathfinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
-import org.apache.logging.log4j.LogManager;
-
-import java.io.Serializable;
-import java.util.*;
+import megamek.logging.MMLogger;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Holds movement path for an entity.
  */
 public class MovePath implements Cloneable, Serializable {
+    private static final MMLogger logger = MMLogger.create(MovePath.class);
+
     private static final long serialVersionUID = -4258296679177532986L;
 
     private Set<Coords> coordsSet = null;
     private final transient Object COORD_SET_LOCK = new Object();
     private transient CachedEntityState cachedEntityState;
+    private final Coords waypoint;
 
     public Game getGame() {
         return game;
@@ -52,24 +56,123 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public enum MoveStepType {
-        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA,
-        FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC,
-        LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON,
-        CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
-        SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
-        RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE, CHAFF, PICKUP_CARGO, DROP_CARGO;
+        NONE(false, "???"),
+        FORWARDS(true, "F"),
+        BACKWARDS(true, "B"),
+        TURN_LEFT(false, "L"),
+        TURN_RIGHT(false, "R"),
+        GET_UP(false, "Up"),
+        GO_PRONE(false, "Prone"),
+        START_JUMP(false, "StrJump"),
+        CHARGE(false, "Ch"),
+        DFA(false, "DFA"),
+        FLEE(false, "Flee"),
+        LATERAL_LEFT(true, "ShL"),
+        LATERAL_RIGHT(true, "ShR"),
+        LATERAL_LEFT_BACKWARDS(true, "ShLB"),
+        LATERAL_RIGHT_BACKWARDS(true, "ShRB"),
+        UNJAM_RAC(false, "Unjam"),
+        LOAD(false, "Load"),
+        UNLOAD(false, "Unload"),
+        EJECT(false, "Eject"),
+        CLEAR_MINEFIELD(false, "ClearMinefield"),
+        UP(false, "U"),
+        DOWN(false, "D"),
+        SEARCHLIGHT(false, "SLight"),
+        LAY_MINE(false, "LayMine"),
+        HULL_DOWN(false, "HullDown"),
+        CLIMB_MODE_ON(false, "CM+"),
+        CLIMB_MODE_OFF(false, "CM-"),
+        SWIM(false, "Swim"),
+        DIG_IN(false, "DigIn"),
+        FORTIFY(false, "Fortify"),
+        SHAKE_OFF_SWARMERS(false, "ShakeOffSwarmers"),
+        TAKEOFF(false, "Takeoff"),
+        VTAKEOFF(false, "Vertical Takeoff"),
+        LAND(false, "Landing"),
+        ACC(false, "Acc"),
+        DEC(false, "Dec"),
+        EVADE(false, "Evade"),
+        SHUTDOWN(false, "Shutdown"),
+        STARTUP(false, "Startup"),
+        SELF_DESTRUCT(false, "SelfDestruct"),
+        ACCN(false, "AccN"),
+        DECN(false, "DecN"),
+        ROLL(false, "Roll"),
+        OFF(false, "Fly Off"),
+        RETURN(false, "Fly Off (Return)"),
+        LAUNCH(false, "Launch"),
+        THRUST(false, "Thrust"),
+        YAW(false, "Yaw"),
+        CRASH(false, "Crash"),
+        RECOVER(false, "Recover"),
+        RAM(false, "Ram"),
+        HOVER(false, "Hover"),
+        MANEUVER(false, "Maneuver"),
+        LOOP(false, "Loop"),
+        CAREFUL_STAND(false, "Up"),  // note: same human-readable label as GET_UP!!!
+        JOIN(false, "Join"),
+        DROP(false, "Drop"),
+        VLAND(false, "Vertical Landing"),
+        MOUNT(false, "Mount"),
+        UNDOCK(false, "Undock"),
+        TAKE_COVER(false, "TakeCover"),
+        CONVERT_MODE(false, "ConvMode"),
+        BOOTLEGGER(false, "Bootlegger"),
+        TOW(false, "Tow"),
+        DISCONNECT(false, "Disconnect"),
+        BRACE(false, "Brace"),
+        CHAFF(false, "Chaff"),
+        PICKUP_CARGO(false, "Pickup Cargo"),
+        DROP_CARGO(false, "Drop Cargo");
+
+        private final boolean entersNewHex;
+        private final String humanReadableLabel;
+
+        // Constructor for the enum constants
+        MoveStepType(boolean entersNewHex, String humanReadableLabel) {
+            this.entersNewHex = entersNewHex;
+            this.humanReadableLabel = humanReadableLabel;
+        }
 
         /**
-         * Whether this move step type will result in the unit entering a new hex
+         * Returns whether this move step causes the unit to enter a new hex.
          */
         public boolean entersNewHex() {
-            return this == FORWARDS ||
-                    this == BACKWARDS ||
-                    this == LATERAL_LEFT ||
-                    this == LATERAL_RIGHT ||
-                    this == LATERAL_LEFT_BACKWARDS ||
-                    this == LATERAL_RIGHT_BACKWARDS;
+            return entersNewHex;
+        }
+
+        /**
+         * Returns the human‑readable label for this move step.
+         */
+        public String getHumanReadableLabel() {
+            return humanReadableLabel;
+        }
+
+        // Reverse lookup map from human-readable label to enum constant.
+        private static final Map<String, MoveStepType> LABEL_TO_ENUM = new HashMap<>();
+
+        static {
+            for (MoveStepType type : values()) {
+                // If duplicate labels exist (e.g. GET_UP and CAREFUL_STAND both return "Up"),
+                // only the first one encountered will be stored.
+                LABEL_TO_ENUM.putIfAbsent(type.getHumanReadableLabel(), type);
+            }
+        }
+
+        /**
+         * Returns the MoveStepType corresponding to the given human-readable label.
+         *
+         * @param label the label to look up (e.g., "F", "Up", "L", etc.)
+         * @return the corresponding MoveStepType
+         * @throws IllegalArgumentException if no matching type is found
+         */
+        public static MoveStepType fromLabel(String label) {
+            MoveStepType type = LABEL_TO_ENUM.get(label);
+            if (type == null) {
+                type = valueOf(label);
+            }
+            return type;
         }
     }
 
@@ -109,19 +212,50 @@ public class MovePath implements Cloneable, Serializable {
 
     // whether this movePath take us directly over an enemy unit
     // useful for debugging aircraft on ground maps
-    //private boolean fliesOverEnemy;
+    // private boolean fliesOverEnemy;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
     // is this move path being done using careful movement?
     private boolean careful = true;
+    private boolean gravityConcern = false;
+    private final float gravity;
 
     /**
      * Generates a new, empty, movement path object.
      */
     public MovePath(final Game game, final Entity entity) {
+        this(game, entity, null);
+    }
+
+    /**
+     * Generates a new, empty, movement path object.
+     */
+    public MovePath(Game game, Entity entity, @Nullable Coords waypoint) {
         this.setEntity(entity);
         this.setGame(game);
+        this.waypoint = waypoint;
+        // Do we care about gravity when adding steps?
+        gravity = game.getPlanetaryConditions().getGravity();
+        gravityConcern = ((gravity > 1.0F && cachedEntityState.getJumpMPNoGravity() > 0
+            || (gravity < 1.0F && cachedEntityState.getRunMP() > cachedEntityState.getRunMPNoGravity()))
+            && game.getBoard().onGround() && !entity.isAirborne());
+    }
+
+    /**
+     * Checks if there is a waypoint referenced by this MovePath.
+     * @return true if there is a waypoint, false otherwise.
+     */
+    public boolean hasWaypoint() {
+        return waypoint != null;
+    }
+
+    /**
+     * Returns the waypoint referenced by this MovePath.
+     * @return the waypoint, or null if there is none.
+     */
+    public @Nullable Coords getWaypoint() {
+        return waypoint;
     }
 
     public Entity getEntity() {
@@ -146,7 +280,7 @@ public class MovePath implements Cloneable, Serializable {
         sb.append("Final Coords: " + this.getFinalCoords());
         sb.append(System.lineSeparator());
 
-        for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements();) {
             sb.append(i.nextElement().toString());
             sb.append(' ');
         }
@@ -207,10 +341,11 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public MovePath addStep(final MoveStepType type, final Map<Integer, Integer> additionalIntData) {
-    	return addStep(new MoveStep(this, type, additionalIntData));
+        return addStep(new MoveStep(this, type, additionalIntData));
     }
-    
-    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver, final int maneuverType) {
+
+    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver,
+            final int maneuverType) {
         return addStep(new MoveStep(this, type, noCost, isManeuver, maneuverType));
     }
 
@@ -223,28 +358,29 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean canShift() {
-        return ((getEntity() instanceof QuadMech
+        return ((getEntity() instanceof QuadMek
                 // QuadVee cannot shift in vee mode
                 && !(getEntity() instanceof QuadVee
                         && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
-                            || getEntity().isConvertingNow())))
+                                || getEntity().isConvertingNow())))
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
-                //  speed to perform a lateral shift
+                // speed to perform a lateral shift
                 || (getEntity().isUsingManAce()
-                    && ((getEntity() instanceof BipedMech)
-                        || ((getEntity() instanceof VTOL)
-                        && (getMpUsed() <= getCachedEntityState().getWalkMP()))))
+                        && ((getEntity() instanceof BipedMek)
+                                || ((getEntity() instanceof VTOL)
+                                        && (getMpUsed() <= getCachedEntityState().getWalkMP()))))
                 || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)
                         && getEntity() instanceof Tank
                         && (getEntity().getMovementMode() == EntityMovementMode.VTOL
-                        || getEntity().getMovementMode() == EntityMovementMode.HOVER))
-                || ((getEntity() instanceof TripodMech)
-                    && (((Mech) getEntity()).countBadLegs() == 0)))
+                                || getEntity().getMovementMode() == EntityMovementMode.HOVER))
+                || ((getEntity() instanceof TripodMek)
+                        && (((Mek) getEntity()).countBadLegs() == 0)))
                 && !isJumping();
     }
 
     /**
      * Returns true if this MovePath contains a lateral shift
+     *
      * @return
      */
     public boolean containsLateralShift() {
@@ -295,7 +431,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     protected MovePath addStep(final MoveStep step, boolean compile) {
         if (step == null) {
-            LogManager.getLogger().error("", new RuntimeException("Received NULL MoveStep"));
+            logger.error("", new RuntimeException("Received NULL MoveStep"));
             return this;
         }
 
@@ -346,9 +482,12 @@ public class MovePath implements Cloneable, Serializable {
             step.setDanger(true);
         }
 
-        // If we are using turn modes, go back through the path and mark danger for any turn
-        // that now exceeds turn mode requirement. We want to show danger on the previous step
-        // so the StepSprite will show danger. Hiding the previous step instead would make turning costs
+        // If we are using turn modes, go back through the path and mark danger for any
+        // turn
+        // that now exceeds turn mode requirement. We want to show danger on the
+        // previous step
+        // so the StepSprite will show danger. Hiding the previous step instead would
+        // make turning costs
         // show in the turning hex for units tracking turn mode, unlike other units.
         if (entity.usesTurnMode() && (getMpUsed() > 5)) {
             int turnMode = getMpUsed() / 5;
@@ -363,7 +502,8 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // If running on pavement we don't know to mark the danger steps if we turn before expending
+        // If running on pavement we don't know to mark the danger steps if we turn
+        // before expending
         // enough MP to require running movement.
         if (steps.size() > 1) {
             MoveStep lastStep = steps.get(steps.size() - 1);
@@ -381,17 +521,36 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // if we're an aerospace unit on a ground map and have passed over a hostile unit
-        // record this fact - it is useful for debugging thus we leave the commented out code here
-        // but for performance reasons, we don't actually do it.
-        /*if (step.useAeroAtmosphere(game, entity)
-                && game.getBoard().onGround()
-                && (step.getPosition() != null)
-                && (game.getFirstEnemyEntity(step.getPosition(), entity) != null)) {
-            fliesOverEnemy = true;
-        }*/
+        // Gravity check: only applies to ground moves by ground units
+        if (gravityConcern && getMpUsed() != 0) {
+            int usedMP = getMpUsed();
+            int runMP = cachedEntityState.getRunMPNoGravity();
+            int jumpMP = cachedEntityState.getJumpMPNoGravity();
+            if (gravity < 1.0) {
+                // Only dangerous if we move too far
+                step.setDanger(step.isDanger() || (usedMP > runMP || (step.isJumping() && usedMP > jumpMP)));
+            } else {
+                // Dangerous if we jump _at all_
+                step.setDanger(step.isDanger() || (step.isJumping()));
+            }
+        }
 
-        // having checked for illegality and other things, add it to the set of contained step types
+        // if we're an aerospace unit on a ground map and have passed over a hostile
+        // unit
+        // record this fact - it is useful for debugging thus we leave the commented out
+        // code here
+        // but for performance reasons, we don't actually do it.
+        /*
+         * if (step.useAeroAtmosphere(game, entity)
+         * && game.getBoard().onGround()
+         * && (step.getPosition() != null)
+         * && (game.getFirstEnemyEntity(step.getPosition(), entity) != null)) {
+         * fliesOverEnemy = true;
+         * }
+         */
+
+        // having checked for illegality and other things, add it to the set of
+        // contained step types
         containedStepTypes.add(step.getType());
 
         return this;
@@ -399,7 +558,8 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Perform all the possible "is this illegal" checks.
-     * Short-circuits to omit unnecessary checks once the move has been declared illegal
+     * Short-circuits to omit unnecessary checks once the move has been declared
+     * illegal
      */
     private void performIllegalCheck(MoveStep step, Coords start, Coords land) {
         // can't do anything after loading
@@ -418,7 +578,7 @@ public class MovePath implements Cloneable, Serializable {
         } else {
             // if we're jumping without a mechanical jump booster (?)
             // or we're acting like a spheroid DropShip in the atmosphere
-            if ((isJumping() && (getEntity().getJumpType() != Mech.JUMP_BOOSTER)) ||
+            if ((isJumping() && (getEntity().getJumpType() != Mek.JUMP_BOOSTER)) ||
                     (Compute.useSpheroidAtmosphere(game, getEntity()) && (step.getType() != MoveStepType.HOVER))) {
                 int distance = start.distance(land);
 
@@ -476,22 +636,25 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        // Make sure we are not turning or changing elevation while strafing, and that we are not
+        // Make sure we are not turning or changing elevation while strafing, and that
+        // we are not
         // starting a second group of hexes during the same round
         if (step.isStrafingStep() && steps.size() > 1) {
             MoveStep last = steps.get(steps.size() - 2);
-            // If the previous step is a strafing step, make sure we have the same facing and elevation
+            // If the previous step is a strafing step, make sure we have the same facing
+            // and elevation
             // and we are not exceeding the maximum five hexes.
             if (last.isStrafingStep()) {
                 if (step.getFacing() != last.getFacing()
-                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor()
-                            != last.getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
+                        || (step.getElevation() + getGame().getBoard().getHex(step.getPosition()).floor() != last
+                                .getElevation() + getGame().getBoard().getHex(last.getPosition()).floor())
                         || steps.stream().filter(MoveStep::isStrafingStep).count() > 5) {
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     return;
                 }
             } else {
-                // If the previous step is not a strafing step, make sure that the new step is the only strafing
+                // If the previous step is not a strafing step, make sure that the new step is
+                // the only strafing
                 // step we have in the path.
                 for (int i = 0; i < steps.size() - 2; i++) {
                     if (steps.get(i).isStrafingStep()) {
@@ -512,9 +675,12 @@ public class MovePath implements Cloneable, Serializable {
             return;
         }
 
-        // If a tractor connects a new trailer this round, it can't do anything but add more trailers
-        // This prevents the tractor from moving before its MP, stacking limitations and prohibited terrain can be updated by its trailers
-        // It makes sense, too. You can't just connect a trailer and drive off with it in <10 seconds.
+        // If a tractor connects a new trailer this round, it can't do anything but add
+        // more trailers
+        // This prevents the tractor from moving before its MP, stacking limitations and
+        // prohibited terrain can be updated by its trailers
+        // It makes sense, too. You can't just connect a trailer and drive off with it
+        // in <10 seconds.
         if (contains(MoveStepType.TOW) && !(step.getType() == MoveStepType.TOW)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
@@ -545,10 +711,10 @@ public class MovePath implements Cloneable, Serializable {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
-        
+
         // if we have a PICKUP, then we can't do anything else after it
         if (contains(MoveStepType.PICKUP_CARGO)) {
-        	step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
     }
 
@@ -585,7 +751,7 @@ public class MovePath implements Cloneable, Serializable {
             } else if (null != step.getMinefield()) {
                 step = new MoveStep(this, step.getType(), step.getMinefield());
             } else if (null != step.getAdditionalData() && step.getAdditionalData().size() > 0) {
-            	step = new MoveStep(this, step.getType(), step.getAdditionalData());
+                step = new MoveStep(this, step.getType(), step.getAdditionalData());
             } else {
                 step = new MoveStep(this, step.getType());
             }
@@ -595,16 +761,16 @@ public class MovePath implements Cloneable, Serializable {
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload/disconnect, or go prone.
         Coords pos = getEntity().getPosition();
-        boolean isMech = getEntity() instanceof Mech;
+        boolean isMek = getEntity() instanceof Mek;
         int elev = getEntity().getElevation();
-        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMech, elev)) {
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMek, elev)) {
             // There is an enemy, can't go out and back in, and go out again
             boolean left = false;
             boolean returned = false;
             for (MoveStep step : steps) {
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition())
-                        || !(step.getElevation() == getEntity().getElevation())) {
+                            || !(step.getElevation() == getEntity().getElevation())) {
                         // we left the location
                         left = true;
                         continue;
@@ -613,7 +779,7 @@ public class MovePath implements Cloneable, Serializable {
                 }
                 if (!returned) {
                     if (step.getPosition().equals(getEntity().getPosition())
-                        && (step.getElevation() == getEntity().getElevation())) {
+                            && (step.getElevation() == getEntity().getElevation())) {
                         // we returned to the location
                         returned = true;
                         continue;
@@ -633,8 +799,8 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
 
-        if (getEntity() instanceof LandAirMech
-                && !((LandAirMech) getEntity()).canConvertTo(getFinalConversionMode())) {
+        if (getEntity() instanceof LandAirMek
+                && !((LandAirMek) getEntity()).canConvertTo(getFinalConversionMode())) {
             steps.forEach(s -> {
                 if (s.getType() == MoveStepType.CONVERT_MODE) {
                     s.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -659,9 +825,9 @@ public class MovePath implements Cloneable, Serializable {
 
             if (getEntity().isConvertingNow() && !this.contains(MoveStepType.CONVERT_MODE)) {
                 getEntity().setConvertingNow(false);
-                // Mechs using tracks have the movement mode set at the beginning of the turn, so
+                // Meks using tracks have the movement mode set at the beginning of the turn, so
                 // it will need to be reset.
-                if (getEntity() instanceof Mech && ((Mech) getEntity()).hasTracks()) {
+                if (getEntity() instanceof Mek && ((Mek) getEntity()).hasTracks()) {
                     getEntity().toggleConversionMode();
                 }
             }
@@ -669,12 +835,13 @@ public class MovePath implements Cloneable, Serializable {
             // Treat multiple convert steps as a single command
             if (step1.getType() == MoveStepType.CONVERT_MODE) {
                 while (!steps.isEmpty()
-                    && steps.get(steps.size() - 1).getType() == MoveStepType.CONVERT_MODE) {
-                steps.removeElementAt(steps.size() - 1);
-            }
+                        && steps.get(steps.size() - 1).getType() == MoveStepType.CONVERT_MODE) {
+                    steps.removeElementAt(steps.size() - 1);
+                }
             }
 
-            // if this step is part of a maneuver, undo the whole maneuver, all the way to the beginning.
+            // if this step is part of a maneuver, undo the whole maneuver, all the way to
+            // the beginning.
             if (step1.isManeuver()) {
                 int stepIndex = steps.size() - 1;
 
@@ -708,19 +875,22 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Given a set of coordinates and a facing, is the entity taking this path in a valid
+     * Given a set of coordinates and a facing, is the entity taking this path in a
+     * valid
      * position to execute a brace?
      */
     public boolean isValidPositionForBrace(Coords coords, int facing) {
-        // situation: can't brace off of jumps; can't brace if you're not a mek with arms/protomech
+        // situation: can't brace off of jumps; can't brace if you're not a mek with
+        // arms/protomek
         if (isJumping() || contains(MoveStepType.GO_PRONE) || !getEntity().canBrace()) {
             return false;
         }
 
-        // for mechs, the check is complicated - you have to be directly in front of a hex with either
+        // for meks, the check is complicated - you have to be directly in front of a
+        // hex with either
         // a) level 1 level higher than your hex level
         // b) building/bridge ceiling 1 level higher than your hex level (?)
-        if (getEntity() instanceof Mech) {
+        if (getEntity() instanceof Mek) {
             boolean onBoard = getGame().getBoard().contains(coords);
             Coords nextPosition = coords.translated(facing);
             boolean nextHexOnBoard = getGame().getBoard().contains(nextPosition);
@@ -732,10 +902,12 @@ public class MovePath implements Cloneable, Serializable {
             Hex nextHex = getGame().getBoard().getHex(nextPosition);
             Hex currentHex = getGame().getBoard().getHex(coords);
 
-            int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
-                    currentHex.ceiling() : currentHex.floor();
-            int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV) ?
-                    nextHex.ceiling() : nextHex.floor();
+            int curHexLevel = currentHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV)
+                    ? currentHex.ceiling()
+                    : currentHex.floor();
+            int nextHexLevel = nextHex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.BRIDGE_ELEV)
+                    ? nextHex.ceiling()
+                    : nextHex.floor();
 
             return onBoard && nextHexOnBoard && (nextHexLevel == curHexLevel + 1);
         }
@@ -756,7 +928,8 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Helper function that rebuilds the "contained step types" from scratch.
-     * Loops over all the steps in the path, so should only be used when removing or replacing steps.
+     * Loops over all the steps in the path, so should only be used when removing or
+     * replacing steps.
      */
     private void regenerateStepTypes() {
         containedStepTypes.clear();
@@ -767,6 +940,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Check for any of the specified type of step in the path
+     *
      * @param type The step type to check for
      * @return Whether or not this step type is contained within this path
      */
@@ -775,8 +949,10 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Convenience function to determine whether this path results in the unit explicitly moving off board
+     * Convenience function to determine whether this path results in the unit
+     * explicitly moving off board
      * More relevant for aircraft
+     *
      * @return Whether or not this path will result in the unit moving off board
      */
     public boolean fliesOffBoard() {
@@ -789,7 +965,7 @@ public class MovePath implements Cloneable, Serializable {
      * Check for MASC use
      */
     public boolean hasActiveMASC() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (step.isUsingMASC()) {
                 return true;
@@ -802,7 +978,7 @@ public class MovePath implements Cloneable, Serializable {
      * Check for Supercharger use
      */
     public boolean hasActiveSupercharger() {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (step.isUsingSupercharger()) {
                 return true;
@@ -812,8 +988,9 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return the final coordinates if a mech were to perform all the steps in this path, or
-     * null if there's an issue with determining the coords
+     * @return the final coordinates if a mek were to perform all the steps in this
+     *         path, or
+     *         null if there's an issue with determining the coords
      */
     public @Nullable Coords getFinalCoords() {
         if (getGame().useVectorMove()) {
@@ -829,7 +1006,7 @@ public class MovePath implements Cloneable, Serializable {
      * Returns the starting {@link Coords} of this path.
      */
     public @Nullable Coords getStartCoords() {
-        for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements();) {
             final MoveStep step = e.nextElement();
             final Coords coords = step.getPosition();
             if (coords != null) {
@@ -840,7 +1017,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Returns the final facing if a mech were to perform all the steps in this
+     * Returns the final facing if a mek were to perform all the steps in this
      * path.
      */
     public int getFinalFacing() {
@@ -902,6 +1079,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * get final elevation relative to the tops of any buildings in the hex
+     *
      * @return
      */
     public int getFinalClearance() {
@@ -927,6 +1105,19 @@ public class MovePath implements Cloneable, Serializable {
                     getGame().getBoard().getHex(step.getPosition()).getLevel());
         }
         return maxElev;
+    }
+
+    /**
+     * returns if the unit had any altitude above 0 during the movement path
+     */
+    public boolean isAirborne() {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
+            if (step.getAltitude() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -968,8 +1159,10 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * If the path contains mode conversions, this will determine the movement mode at the end
-     * of movement. Note that LAMs converting from AirMech to Biped mode require two convert commands.
+     * If the path contains mode conversions, this will determine the movement mode
+     * at the end
+     * of movement. Note that LAMs converting from AirMek to Biped mode require two
+     * convert commands.
      *
      * @return The movement mode resulting from any mode conversions in the path.
      */
@@ -1020,9 +1213,9 @@ public class MovePath implements Cloneable, Serializable {
 
     /* Debug method */
     public void printAllSteps() {
-        LogManager.getLogger().debug("*Steps*");
+        logger.debug("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
-            LogManager.getLogger().debug("  " + i + ": " + getStep(i) + ", "
+            logger.debug("  " + i + ": " + getStep(i) + ", "
                     + getStep(i).getMovementType(i == (steps.size() - 1)));
         }
     }
@@ -1068,7 +1261,8 @@ public class MovePath implements Cloneable, Serializable {
         final MoveStep step3 = getStep(index + 2);
 
         if (step1.oppositeTurn(step3)
-                && ((step2.getType() == MovePath.MoveStepType.BACKWARDS) || (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
+                && ((step2.getType() == MovePath.MoveStepType.BACKWARDS)
+                        || (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
             final MoveStepType stepType = step1.getType();
             final MoveStepType direction = step2.getType();
             // remove all old steps
@@ -1166,6 +1360,21 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
+     * Returns the linear distance between the first and last hexes in the path.
+     */
+    public int getDistanceTravelled() {
+        var currentEntityPosition = getEntity().getPosition();
+        if (currentEntityPosition == null) {
+            return 0;
+        }
+        var finalCoords = getFinalCoords();
+        if (finalCoords == null) {
+            return 0;
+        }
+        return currentEntityPosition.distance(finalCoords);
+    }
+
+    /**
      * Returns true if the entity is jumping or if it's a flying lam.
      */
     public boolean isJumping() {
@@ -1181,8 +1390,8 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Extend the current path to the destination <code>Coords</code>, moving
-     * only in one direction.  This method works by applying the supplied move
-     * step as long as it moves closer to the destination.  If the destination
+     * only in one direction. This method works by applying the supplied move
+     * step as long as it moves closer to the destination. If the destination
      * cannot be reached solely by the provided movestep, the pathfinder will
      * quit once it gets as closer as it can.
      *
@@ -1191,7 +1400,7 @@ public class MovePath implements Cloneable, Serializable {
      * @param direction the direction of movement.
      */
     public void findSimplePathTo(final Coords dest, final MoveStepType type,
-                                 int direction, int facing) {
+            int direction, int facing) {
         Coords src = getFinalCoords();
         Coords currStep = src;
         Coords nextStep = currStep.translated(direction);
@@ -1201,7 +1410,7 @@ public class MovePath implements Cloneable, Serializable {
             nextStep = currStep.translated(direction);
         }
 
-        // Did we reach the destination?  If not, try another direction
+        // Did we reach the destination? If not, try another direction
         if (!currStep.equals(dest)) {
             int dir = currStep.direction(dest);
             // Java does mod different from how we want...
@@ -1215,7 +1424,7 @@ public class MovePath implements Cloneable, Serializable {
                     break;
                 case 2:
                     // TODO: backwards lateral shifts are switched:
-                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS, currStep.direction(dest), facing);
                     break;
                 case 3:
@@ -1223,7 +1432,7 @@ public class MovePath implements Cloneable, Serializable {
                     break;
                 case 4:
                     // TODO: backwards lateral shifts are switched:
-                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                    // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS, currStep.direction(dest), facing);
                     break;
                 case 5:
@@ -1244,13 +1453,14 @@ public class MovePath implements Cloneable, Serializable {
 
         ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game);
 
-        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
+        AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition = new AbstractPathFinder.StopConditionTimeout<>(
+                timeLimit);
         pf.addStopCondition(timeoutCondition);
 
         pf.run(this.clone());
         MovePath finPath = pf.getComputedPath(dest);
         // this can be used for debugging the "destruction aware pathfinder"
-        //MovePath finPath = calculateDestructionAwarePath(dest);
+        // MovePath finPath = calculateDestructionAwarePath(dest);
 
         if (timeoutCondition.timeoutEngaged || finPath == null) {
             /*
@@ -1258,7 +1468,8 @@ public class MovePath implements Cloneable, Serializable {
              * found. Lets try to fix it by taking the path that ended closest
              * to the target and greedily extend it.
              */
-            MovePath bestMp = Collections.min(pf.getAllComputedPaths().values(), new ShortestPathFinder.MovePathGreedyComparator(dest));
+            MovePath bestMp = Collections.min(pf.getAllComputedPaths().values(),
+                    new ShortestPathFinder.MovePathGreedyComparator(dest));
             pf = ShortestPathFinder.newInstanceOfGreedy(dest, type, game);
             pf.run(bestMp);
             finPath = pf.getComputedPath(dest);
@@ -1272,7 +1483,7 @@ public class MovePath implements Cloneable, Serializable {
             finPath.compile(game, entity, false);
             this.steps = finPath.steps;
         } else {
-            LogManager.getLogger().error("Unable to find a path to the destination hex! \tMoving "
+            logger.error("Unable to find a path to the destination hex! \tMoving "
                     + getEntity() + "from " + getFinalCoords() + " to " + dest);
         }
     }
@@ -1284,16 +1495,16 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // for aero units move must use up all their velocity
-        if (getEntity().isAero()) {
-            IAero a = (IAero) getEntity();
+        // but only if it is actually IAero, because anything could return isAero() == true but not implement IAero
+        if (getEntity().isAero() && getEntity() instanceof IAero aero) {
             if (getLastStep() == null) {
-                if ((a.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
+                if ((aero.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
                     return false;
                 }
             } else {
                 if ((getLastStep().getVelocityLeft() > 0) && !getGame().useVectorMove()
                         && !(getLastStep().getType() == MovePath.MoveStepType.FLEE
-                        || getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
+                                || getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
                     return false;
                 }
             }
@@ -1302,7 +1513,6 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() == null) {
             return true;
         }
-
         if (getLastStep().getType() == MoveStepType.CHARGE) {
             return getSecondLastStep().isLegal(this);
         }
@@ -1323,7 +1533,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     @SuppressWarnings("unused")
     private void notSoLazyPathfinder(final Coords dest, final MoveStepType type,
-                                     final int timeLimit) {
+            final int timeLimit) {
         final int MAX_CANDIDATES = 100;
         final long endTime = System.currentTimeMillis() + timeLimit;
 
@@ -1332,8 +1542,7 @@ public class MovePath implements Cloneable, Serializable {
             step = MoveStepType.FORWARDS;
         }
 
-        final MovePathComparator mpc =
-                new MovePathComparator(dest, step == MoveStepType.BACKWARDS);
+        final MovePathComparator mpc = new MovePathComparator(dest, step == MoveStepType.BACKWARDS);
 
         MovePath bestPath = clone();
 
@@ -1349,7 +1558,7 @@ public class MovePath implements Cloneable, Serializable {
         int loopcount = 0;
 
         // Keep looping while we have candidates to explore, and certain stop
-        //  conditions aren't met (time-limit, destination found, etc)
+        // conditions aren't met (time-limit, destination found, etc)
         while (!candidates.isEmpty() && keepLooping) {
             final MovePath candidatePath = candidates.poll();
             final Coords startingPos = candidatePath.getFinalCoords();
@@ -1363,9 +1572,8 @@ public class MovePath implements Cloneable, Serializable {
             }
 
             // Get next possible steps
-            final Iterator<MovePath> adjacent =
-                    candidatePath.getNextMoves(step == MoveStepType.BACKWARDS,
-                            step == MoveStepType.FORWARDS).iterator();
+            final Iterator<MovePath> adjacent = candidatePath.getNextMoves(step == MoveStepType.BACKWARDS,
+                    step == MoveStepType.FORWARDS).iterator();
             // Evaluate possible next steps
             while (adjacent.hasNext()) {
                 final MovePath expandedPath = adjacent.next();
@@ -1384,9 +1592,9 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
             // If we're doing a special movement, like charging or DFA, we will
-            //  have to take extra steps to see if we can finish off the move
-            //  this is because getNextMoves only considers turning and
-            //  forward/backward movement
+            // have to take extra steps to see if we can finish off the move
+            // this is because getNextMoves only considers turning and
+            // forward/backward movement
             if (type == MoveStepType.CHARGE ||
                     type == MoveStepType.DFA) {
                 MovePath expandedPath = candidatePath.clone();
@@ -1405,7 +1613,6 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
 
-
             loopcount++;
             if (((loopcount % 256) == 0) && keepLooping && !candidates.isEmpty()) {
                 final MovePath front = candidates.peek();
@@ -1415,7 +1622,7 @@ public class MovePath implements Cloneable, Serializable {
 
                 if (System.currentTimeMillis() > endTime) {
                     keepLooping = false;
-                    LogManager.getLogger().warn("Time limit reached searching for path!");
+                    logger.warn("Time limit reached searching for path!");
                 }
             }
         }
@@ -1493,8 +1700,8 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // If the unit is prone or hull-down it limits movement options, unless
-        //  it's a tank; tanks can just drive out of hull-down and they cannot
-        //  be prone.
+        // it's a tank; tanks can just drive out of hull-down and they cannot
+        // be prone.
         if (getFinalProne() || (getFinalHullDown() && !(getEntity() instanceof Tank))) {
             if ((last != null) && (last.getType() != MoveStepType.TURN_RIGHT)) {
                 result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
@@ -1518,11 +1725,13 @@ public class MovePath implements Cloneable, Serializable {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
+                    && (!forward
+                            || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
+                    && (!forward
+                            || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
                 result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS));
             }
         }
@@ -1549,7 +1758,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     @Override
     public MovePath clone() {
-        final MovePath copy = new MovePath(getGame(), getEntity());
+        final MovePath copy = new MovePath(getGame(), getEntity(), getWaypoint());
         copyFields(copy);
         return copy;
     }
@@ -1574,15 +1783,15 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Returns true if a jump using mechanical jump boosters would cause falling
-     * damage.  Mechanical jump boosters are only designed to handle the stress
+     * damage. Mechanical jump boosters are only designed to handle the stress
      * of falls from a height equal to their jumpMP; if a jump has a fall that
      * is further than the jumpMP of the unit, fall damage applies.
      *
      * @return
      */
     public boolean shouldMechanicalJumpCauseFallDamage() {
-        if (isJumping() && (getEntity().getJumpType() == Mech.JUMP_BOOSTER) &&
-            (getJumpMaxElevationChange() > getEntity().getJumpMP())) {
+        if (isJumping() && (getEntity().getJumpType() == Mek.JUMP_BOOSTER) &&
+                (getJumpMaxElevationChange() > getEntity().getJumpMP())) {
             return true;
         }
         return false;
@@ -1607,12 +1816,12 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Returns the distance between the highest elevation in the jump path and
-     * the elevation at the landing point.  This gives the largest distance the
+     * the elevation at the landing point. This gives the largest distance the
      * unit has fallen during the jump.
      */
     public int getJumpMaxElevationChange() {
         return getMaxElevation() -
-               getGame().getBoard().getHex(getFinalCoords()).getLevel();
+                getGame().getBoard().getHex(getFinalCoords()).getLevel();
     }
 
     /**
@@ -1628,23 +1837,31 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
-     * land unless it has taken off in the same phase, jumped, or it is a LAM or glider ProtoMech that is using hover
+     * Airborne WiGEs that move less than five hexes (four for glider protomek) in a
+     * movement phase must
+     * land unless it has taken off in the same phase, jumped, or it is a LAM or
+     * glider ProtoMek that is using hover
      * movement.
      *
-     * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
-     *                              moved. This should be true when plotting movement in the client and
-     *                              false when the server checks for automatic landing at the end of movement.
-     * @return whether the unit is an airborne WiGE that must land at the end of movement.
+     * @param includeMovePathHexes Whether to include the hexes plotted in this
+     *                             MovePath in the total distance
+     *                             moved. This should be true when plotting movement
+     *                             in the client and
+     *                             false when the server checks for automatic
+     *                             landing at the end of movement.
+     * @return whether the unit is an airborne WiGE that must land at the end of
+     *         movement.
      */
     public boolean automaticWiGELanding(boolean includeMovePathHexes) {
         if (getEntity().getMovementMode() != EntityMovementMode.WIGE
                 || getEntity().isAirborne()) {
             return false;
         }
-        // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.
-        if ((getEntity() instanceof LandAirMech)
-                && (((LandAirMech) getEntity()).getConversionModeFor(getFinalConversionMode()) == LandAirMech.CONV_MODE_MECH)) {
+        // A LAM converting from AirMek to Mek mode automatically lands at the end of
+        // movement.
+        if ((getEntity() instanceof LandAirMek)
+                && (((LandAirMek) getEntity())
+                        .getConversionModeFor(getFinalConversionMode()) == LandAirMek.CONV_MODE_MEK)) {
             if (getLastStep() != null) {
                 return getLastStep().getClearance() > 0;
             } else {
@@ -1655,16 +1872,19 @@ public class MovePath implements Cloneable, Serializable {
         if (isJumping()) {
             return false;
         }
-        // If movement has been interrupted (such as by a sideslip) and remaining movement points have
-        // been spent, this MovePath only contains the hexes moved after the interruption. The hexes already
-        // moved this turn are in delta_distance. WHen the server checks at the end of movement, delta_distance
+        // If movement has been interrupted (such as by a sideslip) and remaining
+        // movement points have
+        // been spent, this MovePath only contains the hexes moved after the
+        // interruption. The hexes already
+        // moved this turn are in delta_distance. WHen the server checks at the end of
+        // movement, delta_distance
         // already includes the hexes in this MovePath.
         int moved = getEntity().delta_distance;
         if (includeMovePathHexes) {
             moved += getHexesMoved();
         }
         if ((moved >= 5)
-                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMECH)
+                || (getEntity().hasETypeFlag(Entity.ETYPE_PROTOMEK)
                         && moved == 4)) {
             return false;
         }
@@ -1681,7 +1901,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return Whether the entire path is submerged. A unit is only considered submerged when entirely undewater.
+     * @return Whether the entire path is submerged. A unit is only considered
+     *         submerged when entirely undewater.
      */
     public boolean isAllUnderwater(Game game) {
         for (MoveStep step : steps) {
@@ -1748,7 +1969,7 @@ public class MovePath implements Cloneable, Serializable {
             return priorPos;
         }
 
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
+        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             if (!step.getPosition().equals(finalPos)) {
                 priorPos = step.getPosition();
@@ -1798,15 +2019,18 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Convenience method to determine whether this path is happening on a ground map with an atmosphere
+     * Convenience method to determine whether this path is happening on a ground
+     * map with an atmosphere
      */
     public boolean isOnAtmosphericGroundMap() {
         return getEntity().isOnAtmosphericGroundMap();
     }
 
     /**
-     * Searches the movement path for the first step that has the given position and sets it as
-     * a VTOL bombing step. If found, any previous bombing step is cleared. If the coordinates are not
+     * Searches the movement path for the first step that has the given position and
+     * sets it as
+     * a VTOL bombing step. If found, any previous bombing step is cleared. If the
+     * coordinates are not
      * part of the path nothing is changed.
      *
      * @param pos The <code>Coords</code> of the hex to be bombed.
@@ -1834,9 +2058,12 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Searches the path for the first <code>MoveStep</code> that matches the given position and sets it
-     * as a strafing step. In cases where there are multiple steps with the same coordinates, we want the
-     * first one because it is the one that enters the hex. In the rare case where the path crosses
+     * Searches the path for the first <code>MoveStep</code> that matches the given
+     * position and sets it
+     * as a strafing step. In cases where there are multiple steps with the same
+     * coordinates, we want the
+     * first one because it is the one that enters the hex. In the rare case where
+     * the path crosses
      * itself, select the one closest to the end of the path.
      *
      * FIXME: this does not deal with paths that cross themselves
@@ -1862,7 +2089,8 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return A list of entity ids for all units that have previously be plotted to be dropped/launched.
+     * @return A list of entity ids for all units that have previously be plotted to
+     *         be dropped/launched.
      */
     public Set<Integer> getDroppedUnits() {
         Set<Integer> dropped = new HashSet<>();
@@ -1877,6 +2105,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Convenience function encapsulating logic for whether, if we continue forward
      * along the current path in the current direction, we will run off the board
+     *
      * @return
      */
     public boolean nextForwardStepOffBoard() {
@@ -1902,19 +2131,23 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Debugging method that calculates a destruction-aware move path to the destination coordinates
+     * Debugging method that calculates a destruction-aware move path to the
+     * destination coordinates
      */
     @SuppressWarnings("unused")
     public MovePath calculateDestructionAwarePath(Coords dest) {
         // code that's useful to test the destruction-aware pathfinder
         DestructionAwareDestinationPathfinder dpf = new DestructionAwareDestinationPathfinder();
-        // the destruction aware pathfinder takes either a CardinalEdge or an explicit set of coordinates
+        // the destruction aware pathfinder takes either a CardinalEdge or an explicit
+        // set of coordinates
         Set<Coords> destinationSet = new HashSet<>();
         destinationSet.add(dest);
 
         // debugging code that can be used to find a path to a specific edge
         Princess princess = new Princess("test", "test", 2020);
-        //Set<Coords> destinationSet = princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST, true);
+        // Set<Coords> destinationSet =
+        // princess.getClusterTracker().getDestinationCoords(entity, CardinalEdge.WEST,
+        // true);
 
         long marker1 = System.currentTimeMillis();
         MovePath finPath = dpf.findPathToCoords(entity, destinationSet, false, princess.getClusterTracker());
@@ -1922,5 +2155,57 @@ public class MovePath implements Cloneable, Serializable {
         long marker3 = marker2 - marker1;
 
         return finPath;
+    }
+
+    /**
+     *
+     * @return maximum movement based on the current movement type
+     *   include sprint if available
+     */
+    public int getMaxMP() {
+        int maxMP;
+
+        if (contains(MoveStepType.START_JUMP) || contains(MoveStepType.DFA)) {
+            maxMP = getEntity().getJumpMP();
+        } else if (contains(MoveStepType.BACKWARDS)) {
+            maxMP = getEntity().getWalkMP();
+        } else {
+            if ((getLastStep() != null) &&
+                getLastStep().canUseSprint(game)) {
+                maxMP = getEntity().getSprintMP();
+            } else {
+                maxMP = getEntity().getRunMP();
+            }
+        }
+
+        return maxMP;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+
+        if (!(object instanceof MovePath movePath)) return false;
+
+        return new EqualsBuilder()
+            .append(entity, movePath.entity)
+            .append(careful, movePath.careful)
+            .append(gravityConcern, movePath.gravityConcern)
+            .append(gravity, movePath.gravity)
+            .append(steps, movePath.steps)
+            .append(containedStepTypes, movePath.containedStepTypes)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+            .append(entity)
+            .append(steps)
+            .append(containedStepTypes)
+            .append(careful)
+            .append(gravityConcern)
+            .append(gravity)
+            .toHashCode();
     }
 }

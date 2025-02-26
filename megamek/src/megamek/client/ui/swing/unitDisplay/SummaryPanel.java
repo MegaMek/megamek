@@ -18,17 +18,32 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import java.awt.Dimension;
+import java.awt.Image;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.widget.*;
-import megamek.common.*;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
+import megamek.common.Configuration;
+import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
+import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.util.fileUtils.MegaMekFile;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
@@ -55,7 +70,6 @@ public class SummaryPanel extends PicMap {
         unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
         panel.add(unitInfo);
     }
-
 
     private void setBackGround() {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
@@ -122,7 +136,7 @@ public class SummaryPanel extends PicMap {
     /**
      * @param entity The Entity to display info for
      */
-    public void displayMech(Entity entity) {
+    public void displayMek(Entity entity) {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
         String txt = "";
 
@@ -131,30 +145,47 @@ public class SummaryPanel extends PicMap {
         } else if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             txt = padLeft(Messages.getString("BoardView1.sensorReturn"));
         } else {
-            // This is html tables inside tables to maintain transparency to the bg image but
-            // also allow cells do have bg colors
-            StringBuilder hexTxt = new StringBuilder();
-            hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
-            hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
             String col;
             String row;
+            String rows = "";
+            // This is html tables inside tables to maintain transparency to the bg image but
+            // also allow cells do have bg colors
+            String pilotTip = PilotToolTip.getPilotTipDetailed(entity, true).toString();
+            col = UIUtil.tag("TD", "", pilotTip);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+
+            String unitTip = UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer).toString();
+            col = UIUtil.tag("TD", "", unitTip);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
 
             if (mhex != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame()));
-                col = "<TD>" + sb + "</TD>";
-                row = "<TR>" + col + "</TR>";
-                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIPreferences.hexColor(GUIP.getUnitToolTipTerrainBGColor())
-                        + " width=100%>" + row + "</TABLE>");
-                sb.append(HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP));
+                String terrainTip = HexTooltip.getTerrainTip(mhex, GUIP, entity.getGame());
+                String attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                col = UIUtil.tag("TD", attr, terrainTip);
+                row = UIUtil.tag("TR", "", col);
+                rows += row;
+
+                String hexTip = HexTooltip.getHexTip(mhex, unitDisplay.getClientGUI().getClient(), GUIP);
+                if (!hexTip.isEmpty()) {
+                    attr = String.format("FACE=Dialog BGCOLOR=%s", UIUtil.toColorHexString(GUIP.getUnitToolTipTerrainBGColor()));
+                    col = UIUtil.tag("TD", attr, hexTip);
+                    row = UIUtil.tag("TR", "", col);
+                    rows += row;
+                }
             }
 
-            String t = PilotToolTip.getCrewAdvs(entity, true).toString();
-            col = "<TD>" + t + "</TD>";
-            row = "<TR>" + col + "</TR>";
-            hexTxt.append("<TABLE width=100%>" + row + "</TABLE>");
-            txt = padLeft(hexTxt.toString());
+            String edgeTip = PilotToolTip.getCrewAdvs(entity, true).toString();
+            col = UIUtil.tag("TD", "", edgeTip);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+
+            String table = UIUtil.tag("TABLE", "CELLSPACING=0 CELLPADDING=0 width=100%", rows);
+            txt = padLeft(table);
+            //txt = table;
         }
 
         unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
@@ -162,15 +193,11 @@ public class SummaryPanel extends PicMap {
     }
 
     private String padLeft(String html) {
-        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
-        String col = "";
-        String row = "";
-        String tbody = "";
-        String table = "";
-        col = "<TD>" + html + "</TD>";
-        row = "<TR>" + col + "</TR>";
-        tbody = "<TBODY>" + row + "</TBODY>";
-        table = "<TABLE CELLSPACING=" + dist + " CELLPADDING=" + dist + " WIDTH=100%>" + tbody + "</TABLE>";
+        int dist = 4;
+        String col = UIUtil.tag("TD", "", html);
+        String row = UIUtil.tag("TR", "", col);
+        String attr = String.format("CELLSPACING=0 CELLPADDING=%s width=100%%", dist);
+        String table = UIUtil.tag("TABLE", attr, row);
         return table;
     }
 

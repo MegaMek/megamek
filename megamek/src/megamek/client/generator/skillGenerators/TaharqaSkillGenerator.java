@@ -21,7 +21,7 @@ package megamek.client.generator.skillGenerators;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.LandAirMech;
+import megamek.common.LandAirMek;
 import megamek.common.enums.SkillLevel;
 
 public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
@@ -37,11 +37,10 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
      * @param clanPilot if the crew to generate a random skills array for are a clan crew
      * @param forceClan forces the type to be clan if the crew are a clan crew
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
-     * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
+     * pairing if applicable [(Gunnery, Anti-'Mek) for infantry]
      */
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
-                                      final boolean forceClan) {
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot, final boolean forceClan) {
         int bonus;
         switch (getLevel()) {
             case ULTRA_GREEN:
@@ -68,7 +67,7 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
                 break;
         }
 
-        if (entity instanceof LandAirMech) {
+        if (entity instanceof LandAirMek) {
             bonus += 3;
         }
 

@@ -1,11 +1,14 @@
 size 50 50
 option exit_roads_to_pavement false
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "Woods (Auto)"
+tag "GunEmplacement (Auto)"
 hex 0101 -1 "" "grass"
 hex 0201 -1 "" "grass"
 hex 0301 -1 "" "grass"

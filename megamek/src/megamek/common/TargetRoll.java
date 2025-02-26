@@ -180,6 +180,11 @@ public class TargetRoll implements Serializable {
     }
 
     /**
+     * Does not do anything, necessary because Java does not have a "noop" function.
+     */
+    public void doNothing() {}
+
+    /**
      * Adds a new modifier of the given value and description, which is or is not cumulative.
      *
      * @param value The modifier value, e.g. +2 or -1
@@ -279,5 +284,14 @@ public class TargetRoll implements Serializable {
         }
         modifiers.add(modifier);
         recalculate();
+    }
+
+    /**
+     * @return True when this roll cannot succeed regardless of numbers, i.e. is impossible or automatically fails.
+     * Returns false otherwise, i.e. when the roll does not contain these finalizing conditions,
+     * even if the total roll modifier is above 12.
+     */
+    public boolean cannotSucceed() {
+        return (getValue() == IMPOSSIBLE) || (getValue() == AUTOMATIC_FAIL);
     }
 }

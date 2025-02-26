@@ -18,23 +18,30 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.util.UIUtil;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+
+import megamek.logging.MMLogger;
+
 /**
- * This is a basic help dialog that can display HTML pages and also reacts to hyperlink clicks.
+ * This is a basic help dialog that can display HTML pages and also reacts to
+ * hyperlink clicks.
+ *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @author Simon (Juliez)
  */
 public class HelpDialog extends JDialog {
+    private final static MMLogger logger = MMLogger.create(HelpDialog.class);
 
     protected static final String CLOSE_ACTION = "closeAction";
 
@@ -49,18 +56,18 @@ public class HelpDialog extends JDialog {
         try {
             mainView.setPage(helpURL);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
+            logger.error(ex, "");
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
 
-        //Listen for the user clicking on hyperlinks.
+        // Listen for the user clicking on hyperlinks.
         mainView.addHyperlinkListener(e -> {
             try {
                 if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
                     mainView.setPage(e.getURL());
                 }
             } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
+                logger.error(ex, "");
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         });
@@ -69,7 +76,6 @@ public class HelpDialog extends JDialog {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(new EmptyBorder(10, 10, 10, 10));
         add(scrollPane);
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
 
         // Escape keypress
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);

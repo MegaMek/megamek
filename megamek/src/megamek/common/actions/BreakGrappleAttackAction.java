@@ -15,8 +15,8 @@ package megamek.common.actions;
 
 import megamek.common.Entity;
 import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Protomech;
+import megamek.common.Mek;
+import megamek.common.ProtoMek;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -49,6 +49,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
     /**
      * To-hit number
+     * 
      * @param game The current {@link Game}
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target) {
@@ -61,7 +62,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
         }
 
-        // LAM AirMechs can only grapple when grounded.
+        // LAM AirMeks can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot grapple while airborne");
         }
@@ -70,17 +71,17 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         if ((impossible != null) && !impossible.equals("Locked in Grapple")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
-        
+
         if ((ae.getGrappled() != Entity.NONE) && ae.isChainWhipGrappled()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, 
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "cannot break free from a chain whip grapple");
         }
 
         ToHitData toHit;
 
-        // non-mechs can't grapple or be grappled
-        if (!(ae instanceof Mech) && !(ae instanceof Protomech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
+        // non-meks can't grapple or be grappled
+        if (!(ae instanceof Mek) && !(ae instanceof ProtoMek)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only meks and protomeks can be grappled");
         }
 
         if (ae.getGrappled() != target.getId()) {
@@ -102,46 +103,46 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
 
         setCommonModifiers(toHit, game, ae, target);
 
-        if (ae instanceof Mech) {
+        if (ae instanceof Mek) {
             // damaged or missing actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_LARM)) {
                 toHit.addModifier(2, "Left lower arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_LARM)) {
                 toHit.addModifier(1, "Left hand actuator destroyed");
             }
 
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_SHOULDER, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_UPPER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right upper arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_LOWER_ARM, Mek.LOC_RARM)) {
                 toHit.addModifier(2, "Right lower arm actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+            if (!ae.hasWorkingSystem(Mek.ACTUATOR_HAND, Mek.LOC_RARM)) {
                 toHit.addModifier(1, "Right hand actuator destroyed");
             }
-            if (ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
-                toHit.addModifier(-1,"AES modifer");
+            if (ae.hasFunctionalArmAES(Mek.LOC_RARM) && ae.hasFunctionalArmAES(Mek.LOC_LARM)) {
+                toHit.addModifier(-1, "AES modifer");
             }
         }
         Entity te = (Entity) target;
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
+        if ((te instanceof ProtoMek) && !(ae instanceof ProtoMek)) {
             wmod = ae.getWeightClass() * -1;
-        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
+        } else if ((ae instanceof ProtoMek) && !(te instanceof ProtoMek)) {
             wmod = te.getWeightClass();
-        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
+        } else if ((te instanceof ProtoMek) && (ae instanceof ProtoMek)) {
             wmod = 0;
         }
 

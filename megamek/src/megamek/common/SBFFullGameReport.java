@@ -18,17 +18,19 @@
  */
 package megamek.common;
 
+import megamek.common.strategicBattleSystems.SBFReportEntry;
+
 import java.util.*;
 
 /**
  * This class gathers the full game report for an SBF game.
  */
-public class SBFFullGameReport implements FullGameReport<Report> {
+public class SBFFullGameReport implements FullGameReport<SBFReportEntry> {
 
-    private final Map<Integer, List<Report>> fullReport = new HashMap<>();
+    private final Map<Integer, List<SBFReportEntry>> fullReport = new HashMap<>();
 
     @Override
-    public void add(int round, List<Report> reports) {
+    public void add(int round, List<SBFReportEntry> reports) {
         if ((reports != null) && !reports.isEmpty()) {
             fullReport.computeIfAbsent(round, k -> new ArrayList<>()).addAll(reports);
         }
@@ -40,7 +42,7 @@ public class SBFFullGameReport implements FullGameReport<Report> {
     }
 
     @Override
-    public List<Report> get(int round) {
+    public List<SBFReportEntry> get(int round) {
         return fullReport.getOrDefault(round, new ArrayList<>());
     }
 
@@ -49,19 +51,19 @@ public class SBFFullGameReport implements FullGameReport<Report> {
         fullReport.clear();
     }
 
-    public void replaceAllReports(Map<Integer, List<Report>> newReports) {
+    public void replaceAllReports(Map<Integer, List<SBFReportEntry>> newReports) {
         clear();
         fullReport.putAll(newReports);
     }
 
 
-    public Map<Integer, List<Report>> createFilteredReport(Player recipient) {
+    public Map<Integer, List<SBFReportEntry>> createFilteredReport(Player recipient) {
         // In SBF, double blind is always in effect, presenting radar blips;
         //TODO  But it is optional to hide units entirely; may check this game option
-        Map<Integer, List<Report>> filteredReports = new HashMap<>();
+        Map<Integer, List<SBFReportEntry>> filteredReports = new HashMap<>();
         for (int round : fullReport.keySet()) {
-            List<Report> filteredRoundReports = new ArrayList<>();
-            for (Report r : fullReport.get(round)) {
+            List<SBFReportEntry> filteredRoundReports = new ArrayList<>();
+            for (SBFReportEntry r : fullReport.get(round)) {
                 //TODO cannot filter at this time, as Report uses Entity
 //                if (r.isObscuredRecipient(recipient.getName())) {
 //                    r = filterReport(r, null, true);

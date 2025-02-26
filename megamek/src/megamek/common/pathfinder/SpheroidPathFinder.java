@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2019-2024 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,26 +16,33 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.common.pathfinder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.client.bot.princess.PathRanker;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.IAero;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
-
-import java.util.*;
+import megamek.logging.MMLogger;
 
 /**
- * This set of classes is intended to be used by AI players to generate paths for units behaving
- * like spheroid DropShips in atmosphere. Remarkably similar to a jumping infantry unit.
+ * This set of classes is intended to be used by AI players to generate paths
+ * for units behaving like spheroid DropShips in atmosphere. Remarkably similar
+ * to a jumping infantry unit.
+ *
  * @author NickAragua
  */
 public class SpheroidPathFinder {
+    private static final MMLogger logger = MMLogger.create(SpheroidPathFinder.class);
+
     private Game game;
     private int direction;
     private List<MovePath> spheroidPaths;
@@ -44,7 +51,7 @@ public class SpheroidPathFinder {
 
     private SpheroidPathFinder(Game game) {
         // Default to heading north
-        this(game,0);
+        this(game, 0);
     }
 
     private SpheroidPathFinder(Game game, int direction) {
@@ -54,6 +61,7 @@ public class SpheroidPathFinder {
 
     /**
      * We want to be able to set the direction the entity should turn to face
+     *
      * @param direction
      */
     public void setDirection(int direction) {
@@ -70,11 +78,15 @@ public class SpheroidPathFinder {
 
     /**
      * Computes paths to nodes in the graph.
-     * This is an incredibly compute- and memory-intensive process, so we are trimming it down:
-     * 1) A Princess spheroid on the ground map can face any direction if it hovers in place.
-     * 2) A Princess spheroid on the ground map must choose one facing per path endpoint.
+     * This is an incredibly compute- and memory-intensive process, so we are
+     * trimming it down:
+     * 1) A Princess spheroid on the ground map can face any direction if it hovers
+     * in place.
+     * 2) A Princess spheroid on the ground map must choose one facing per path
+     * endpoint.
      *
-     * The facing will either be the current facing, or a direction determined by the unit's state.
+     * The facing will either be the current facing, or a direction determined by
+     * the unit's state.
      *
      * @param startingEdge the starting node. Should be empty.
      */
@@ -87,18 +99,21 @@ public class SpheroidPathFinder {
                 return;
             }
 
-            // total number of paths should be ~217 * n on a ground map or 7 * n on a low atmo map
+            // total number of paths should be ~217 * n on a ground map or 7 * n on a low
+            // atmosphere map
             // where n is the number of possible altitude changes
             List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(startingEdge);
             MovePath hoverPath = generateHoverPath(startingEdge);
             for (MovePath altitudePath : altitudePaths) {
-                // since we are considering paths across multiple altitudes that cross the same coordinates
-                // we want to clear this out before every altitude to avoid discarding altitude changing paths
-                // so that our dropships can maneuver vertically if necessary.
-                // Each path will end with turns to face this.direction.
+                // since we are considering paths across multiple altitudes that cross the same
+                // coordinates we want to clear this out before every altitude to avoid
+                // discarding altitude changing paths so that our DropShips can maneuver
+                // vertically if necessary. Each path will end with turns to face
+                // this.direction.
                 visitedCoords.clear();
 
-                // we don't really want to consider a non-hovering path, we will add it as a special case
+                // we don't really want to consider a non-hovering path, we will add it as a
+                // special case
                 if (altitudePath.length() != 0) {
                     spheroidPaths.addAll(generateChildren(altitudePath));
                 } else {
@@ -126,16 +141,16 @@ public class SpheroidPathFinder {
                 spheroidPaths.add(fleePath);
             }
         } catch (OutOfMemoryError ex) {
-            // Some implementations can run out of memory if they consider and save in memory too
-            // many paths. Usually we can recover from this by ending prematurely while preserving
-            // already computed results.
-            final String memoryMessage = "Not enough memory to analyse all options."
+            // Some implementations can run out of memory if they consider and save in
+            // memory too many paths. Usually we can recover from this by ending prematurely
+            // while preserving already computed results.
+            final String memoryMessage = "Not enough memory to analyze all options."
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
 
-            LogManager.getLogger().error(memoryMessage, ex);
+            logger.error(memoryMessage, ex);
         } catch (Exception ex) {
-            LogManager.getLogger().error("", ex); // do something, don't just swallow the exception, good lord
+            logger.error("", ex); // do something, don't just swallow the exception, good lord
         }
     }
 
@@ -147,7 +162,8 @@ public class SpheroidPathFinder {
         MovePath hoverPath = startingPath.clone();
         hoverPath.addStep(MoveStepType.HOVER);
 
-        // If we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
+        // If we can hover, then hover. If not (due to battle damage or whatever), then
+        // we fall down.
         if (!hoverPath.isMoveLegal()) {
             hoverPath.removeLastStep();
         }
@@ -157,8 +173,9 @@ public class SpheroidPathFinder {
 
     /**
      * Recursive method that generates the possible child paths from the given path.
-     * Eliminates paths to hexes we've already visited.
-     * Generates *shortest* paths to destination hexes
+     * Eliminates paths to hexes we've already visited. Generates *shortest* paths
+     * to destination hexes
+     *
      * @param startingPath
      * @return
      */
@@ -166,9 +183,9 @@ public class SpheroidPathFinder {
         List<MovePath> retval = new ArrayList<>();
 
         // terminator conditions:
-        // we've visited this hex already
-        // we've moved further than 1 hex on a low-atmo map
-        // we've moved further than 8 hexes on a ground map
+        // - we've visited this hex already
+        // - we've moved further than 1 hex on a low-atmo map
+        // - we've moved further than 8 hexes on a ground map
         if (visitedCoords.contains(startingPath.getFinalCoords()) ||
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
             return retval;
@@ -177,15 +194,16 @@ public class SpheroidPathFinder {
         visitedCoords.add(startingPath.getFinalCoords());
 
         // generate all possible children, add them to list
-        // for units acting as in-atmo spheroid JumpShips, facing changes are free, so children are always
-        // forward, left-forward, left-left-forward, right-forward, right-right-forward, right-right-right-forward
-        // there is never a reason to "back up"
-        // there are also very little built-in error control, since these things are flying
+        // for units acting as in-atmosphere spheroid JumpShips, facing changes are
+        // free, so children are always forward, left-forward, left-left-forward,
+        // right-forward, right-right-forward, right-right-right-forward there is never
+        // a reason to "back up" there are also very little built-in error control,
+        // since these things are flying
         for (int direction = 0; direction <= 5; direction++) {
             MovePath childPath = startingPath.clone();
 
             // for each child, we first turn in the appropriate direction
-            for (MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
+            for (MoveStepType stepType : AeroPathUtil.getTurns().get(direction)) {
                 childPath.addStep(stepType);
             }
 
@@ -193,7 +211,7 @@ public class SpheroidPathFinder {
             if (childPath.getMpUsed() == startingPath.getEntity().getRunMP() - 1) {
                 // End this path with turns to face our desired final direction
                 int diff = (6 + (direction - startingPath.getFinalFacing())) % 6;
-                for (MoveStepType stepType : AeroPathUtil.TURNS.get(diff)) {
+                for (MoveStepType stepType : AeroPathUtil.getTurns().get(diff)) {
                     startingPath.addStep(stepType);
                 }
             } else {
@@ -201,8 +219,9 @@ public class SpheroidPathFinder {
                 childPath.addStep(MoveStepType.FORWARDS);
             }
 
-            // having generated the child, we add it and (recursively) any of its children to the list of children to be returned
-            // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
+            // having generated the child, we add it and (recursively) any of its children
+            // to the list of children to be returned of course, if it winds up not being
+            // legal anyway for some other reason, then we discard it and move on
             if (!childPath.isMoveLegal()) {
                 continue;
             }

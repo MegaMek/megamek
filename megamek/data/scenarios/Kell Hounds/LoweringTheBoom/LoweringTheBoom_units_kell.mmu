@@ -1,0 +1,85 @@
+#
+#  Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+#
+#  This file is part of MegaMek.
+#
+#  MegaMek is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  MegaMek is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+#
+# Based on Battlecorps Scenario 3011, Lowering the Boom, originally published in FASA's "Kell Hounds" sourcebook
+
+- fullname: Wolverine WVR-6R
+  id: 201
+  deploymentround: 2
+  crew:
+    name: Maj. Salome Ward
+    portrait: Female/MekWarrior/MW_F_34.png
+    piloting: 4
+    gunnery: 3
+
+- fullname: Shadow Hawk SHD-2H
+  id: 202
+  crew:
+    name: Lee Kennedy
+    portrait: Male/MekWarrior/MW_M_20.png
+    piloting: 4
+    gunnery: 4
+
+- fullname: Dervish DV-6M
+  id: 203
+  deploymentround: 2
+  ammo:
+    LT:
+      - slot: 3
+        shots: 4
+    RT:
+      - slot: 3
+        shots: 4
+  crew:
+    name: Brian Martell
+    portrait: Male/MekWarrior/MW_M_90.png
+    piloting: 4
+    gunnery: 4
+
+- fullname: Trebuchet TBT-5N
+  id: 204
+  deploymentround: 2
+  crew:
+    name: Judith Nesmith
+    portrait: Female/MekWarrior/MW_F_4.png
+    piloting: 4
+    gunnery: 4
+
+- fullname: Phoenix Hawk PXH-1
+  id: 205
+  crew:
+    name: Nathan Mack
+    portrait: Male/MekWarrior/MW_M_64.png
+    piloting: 4
+    gunnery: 4
+
+- fullname: Phoenix Hawk PXH-1
+  id: 206
+  crew:
+    name: Stuart O'Grady
+    portrait: Male/MekWarrior/MW_M_16.png
+    piloting: 4
+    gunnery: 4
+
+- fullname: Jenner JR7-D
+  id: 207
+  crew:
+    name: Sarah Jette
+    portrait: Female/MekWarrior/MW_F_45.png
+    piloting: 4
+    gunnery: 4

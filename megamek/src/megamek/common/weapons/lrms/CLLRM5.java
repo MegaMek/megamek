@@ -52,9 +52,9 @@ public class CLLRM5 extends LRMWeapon {
                 .setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY);
     }
-    
+
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
             return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.4 : 0;
         } else if (isArtemisV(fcs)) {

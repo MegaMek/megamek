@@ -1,20 +1,24 @@
 /*
- * MegaMek -
- * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.*;
@@ -62,7 +66,7 @@ public class MoveCommand extends ClientCommand {
                         + "#move BACK [x y] = Start walking backwards, can be followed by a coordinate.\n"
                         + "#move WALK [x y] = Start walking/running forwards, this is the default. Can be followed by a coordinate.\n"
                         + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordinate.\n"
-                        + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if commited.\n"
+                        + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if committed.\n"
                         + "#move GETUP = Attempt to stand up. Will require a piloting roll.\n"
                         + "#move CAREFUL = Attempt to stand up. Will require a piloting roll.\n"
                         + "#move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.\n";
@@ -109,7 +113,7 @@ public class MoveCommand extends ClientCommand {
                     gear = GEAR_TURN;
                 } else if (args[1].equalsIgnoreCase("CLIP")) {
                     cmd.clipToPossible();
-                    return "Path cliped to whats actually possible. "
+                    return "Path clipped to whats actually possible. "
                             + ce().toString() + " is now in gear "
                             + gearName(gear) + " heading towards "
                             + cmd.getFinalCoords().toFriendlyString()
@@ -120,26 +124,24 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         cmd.addStep(MoveStepType.GET_UP);
-                        return "Mech will try to stand up. this requires a piloting roll.";
+                        return "Mek will try to stand up. this requires a piloting roll.";
                     }
 
-                    return "Trying to get up but the mech is not prone.";
+                    return "Trying to get up but the Mek is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
                             .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
-                        return "Mech will try to stand up. this requires a piloting roll.";
+                        return "Mek will try to stand up. this requires a piloting roll.";
                     }
 
-                    return "Trying to get up but the mech is not prone.";
+                    return "Trying to get up but the Mek is not prone.";
                 } else {
-                    target = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                            .parseInt(args[2]) - 1);
+                    target = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
                 }
 
                 if (target == null && args.length > 3) {
-                    target = new Coords(Integer.parseInt(args[2]) - 1, Integer
-                            .parseInt(args[3]) - 1);
+                    target = new Coords(Integer.parseInt(args[2]) - 1, Integer.parseInt(args[3]) - 1);
                 }
 
                 currentMove(target);
@@ -187,9 +189,9 @@ public class MoveCommand extends ClientCommand {
         } else if (intGear == GEAR_CHARGE) {
             return "charging";
         } else if (intGear == GEAR_DFA) {
-            return "death from aboveing";
+            return "death from above-ing";
         } else if (intGear == GEAR_SWIM) {
-            return "swiming";
+            return "swimming";
         } else if (intGear == GEAR_JUMP) {
             return "jumping";
         }

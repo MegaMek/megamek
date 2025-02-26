@@ -1,0 +1,74 @@
+name: "Request for Enhancement"
+description: >
+  Request an enhancement for MegaMek. Be sure you've confirmed it's not a duplicate 
+  and that you've checked on the Discord if your request is already known.
+title: "[RFE]"
+labels:
+  - (RFE) Enhancement
+  
+body:
+  - type: dropdown
+    id: enhancement-type
+    attributes:
+      label: "Enhancement Type *"
+      description: "Select the category of enhancement you are requesting."
+      options:
+        - "New Feature"
+        - "Improvement to Existing Feature"
+        - "Implementation of Missing Official Rule"
+        - "Implementation of Errata"
+    validations:
+      required: true
+
+  - type: textarea
+    id: brief-description
+    attributes:
+      label: "Brief Description of Enhancement *"
+      description: |
+        Please describe the feature or improvement you’d like to see. 
+        If it's based on any official rules or errata, mention that here.
+      placeholder: "Describe your enhancement here..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-use-cases
+    attributes:
+      label: "Use Cases or Rationale"
+      description: |
+        Elaborate on why this enhancement is needed or valuable:
+        - What problem does it solve?
+        - How does it improve gameplay or user experience?
+        - Are there any related rulebook references or official errata?
+      placeholder: "1. ...\n2. ...\n3. ..."
+
+  - type: textarea
+    id: attached-files
+    attributes:
+      label: "Attach Files"
+      description: |
+        Provide any relevant files, images, or logs that illustrate your idea or 
+        help explain how it should work.
+      placeholder: "Drag and drop or click to upload relevant files."
+
+  - type: input
+    id: custom-megamek-version
+    attributes:
+      label: "MegaMek Suite Version *"
+      description: "Which version of MegaMek (or related tool) are you currently using?"
+      placeholder: "Example 0.50.02"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: final-checks
+    attributes:
+      label: "Final Verification"
+      description: "Before submitting, please confirm the following:"
+      options:
+        - label: "I confirm this request hasn't already been submitted (checked the tracker)"
+          required: true
+        - label: "I've discussed or asked about this enhancement on MegaMek Discord"
+          required: true
+        - label: "I’m opening this on the correct repo (MegaMek, MegaMekLab, or MekHQ)"
+          required: true

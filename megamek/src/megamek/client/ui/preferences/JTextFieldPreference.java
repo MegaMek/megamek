@@ -18,37 +18,42 @@
  */
 package megamek.client.ui.preferences;
 
-import megamek.codeUtilities.StringUtility;
-import org.apache.logging.log4j.LogManager;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.lang.ref.WeakReference;
 
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import megamek.codeUtilities.StringUtility;
+import megamek.logging.MMLogger;
+
 /**
- * JTextFieldPreference monitors the text value of a JTextField. It sets the saved value when a
+ * JTextFieldPreference monitors the text value of a JTextField. It sets the
+ * saved value when a
  * dialog is loaded and changes it as it changes.
  *
- * Call preferences.manage(new JTextFieldPreference(JTextField)) to use this preference, on a
+ * Call preferences.manage(new JTextFieldPreference(JTextField)) to use this
+ * preference, on a
  * JTextField that has called setName
  */
 public class JTextFieldPreference extends PreferenceElement implements DocumentListener {
-    //region Variable Declarations
+    private final static MMLogger logger = MMLogger.create(JTextFieldPreference.class);
+
+    // region Variable Declarations
     private final WeakReference<JTextField> weakReference;
     private String text;
-    //endregion Variable Declarations
+    // endregion Variable Declarations
 
-    //region Constructors
+    // region Constructors
     public JTextFieldPreference(final JTextField textField) throws Exception {
         super(textField.getName());
         setText(textField.getText());
         weakReference = new WeakReference<>(textField);
         textField.getDocument().addDocumentListener(this);
     }
-    //endregion Constructors
+    // endregion Constructors
 
-    //region Getters/Setters
+    // region Getters/Setters
     public WeakReference<JTextField> getWeakReference() {
         return weakReference;
     }
@@ -60,9 +65,9 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
     public void setText(final String text) {
         this.text = text;
     }
-    //endregion Getters/Setters
+    // endregion Getters/Setters
 
-    //region PreferenceElement
+    // region PreferenceElement
     @Override
     protected String getValue() {
         return getText();
@@ -71,7 +76,7 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
     @Override
     protected void initialize(final String value) throws Exception {
         if (StringUtility.isNullOrBlank(value)) {
-            LogManager.getLogger().error("Cannot create a JTextFieldPreference because of a null or blank input value");
+            logger.error("Cannot create a JTextFieldPreference because of a null or blank input value");
             throw new Exception();
         }
 
@@ -89,9 +94,9 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
             getWeakReference().clear();
         }
     }
-    //endregion PreferenceElement
+    // endregion PreferenceElement
 
-    //region DocumentListener
+    // region DocumentListener
     @Override
     public void insertUpdate(final DocumentEvent evt) {
         final JTextField element = getWeakReference().get();
@@ -115,5 +120,5 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
             setText(element.getText());
         }
     }
-    //endregion DocumentListener
+    // endregion DocumentListener
 }

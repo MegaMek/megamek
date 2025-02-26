@@ -171,24 +171,31 @@ public class Dropship extends SmallCraft {
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
-        if (isAirborne()) {
+        if (currElevation != 0) {
             return hex.containsTerrain(Terrains.IMPASSABLE);
         }
         // Check prohibited terrain
         // treat grounded Dropships like wheeled tanks,
         // plus buildings are prohibited
         boolean isProhibited = hexContainsProhibitedTerrain(hex);
+        // Also check for any crushable entities
+        isProhibited |= game.getEntities(c).hasNext();
+        if (isProhibited) {
+            return true;
+        }
 
         HashMap<Integer, Integer> elevations = new HashMap<>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++) {
             Coords secondaryCoord = c.translated(dir);
             Hex secondaryHex = game.getBoard().getHex(secondaryCoord);
+            boolean occupied = game.getEntities(secondaryCoord).hasNext();
             if (secondaryHex == null) {
                 // Don't allow landed dropships to hang off the board
                 isProhibited = true;
             } else {
                 isProhibited |= hexContainsProhibitedTerrain(secondaryHex);
+                isProhibited |= occupied;
 
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)) {
@@ -222,6 +229,8 @@ public class Dropship extends SmallCraft {
         int elevMinCount = 2;
         // Check elevation difference and make sure that the counts of different
         // elevations will allow for a legal deployment to exist
+        // TODO: get updated ruling; this code causes a hex with one single lower- or higher-level neighbor
+        // to be disqualified, but it would seem that a single lower-level neighbor should be fine.
         if ((elevDifference > 1) || (elevations.get(elevs[0]) < elevMinCount)
                 || (elevations.get(elevs[1]) < elevMinCount)) {
             return true;
@@ -498,7 +507,14 @@ public class Dropship extends SmallCraft {
     @Override
 
     public void setPosition(Coords position) {
+        // When a Dropship changes from being 1 hex to 7 getOccupiedCoords will return
+        // its changed secondary hexes. Instead, let's grab the cached ones for this to
+        // make sure we properly set out new positions.
         HashSet<Coords> oldPositions = getOccupiedCoords();
+        if (game != null) {
+            oldPositions = game.getEntityPositions(this);
+        }
+
         super.setPosition(position, false);
         if ((getAltitude() == 0) && (null != game) && !game.getBoard().inSpace() && (position != null)) {
             secondaryPositions.put(0, position);
@@ -766,4 +782,5 @@ public class Dropship extends SmallCraft {
     public int getGenericBattleValue() {
         return (int) Math.round(Math.exp(6.5266 + 0.2497*Math.log(getWeight())));
     }
+
 }

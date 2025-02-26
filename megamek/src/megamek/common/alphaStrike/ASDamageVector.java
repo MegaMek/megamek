@@ -82,30 +82,22 @@ public class ASDamageVector implements Serializable {
      * ASDamageVector was constructed to include the given range.
      */
     public boolean usesDamage(ASRange range) {
-        switch (range) {
-            case EXTREME:
-                return rangeBands == 4;
-            case LONG:
-                return rangeBands >= 3;
-            case MEDIUM:
-                return rangeBands >= 2;
-            default:
-                return true;
-        }
+        return switch (range) {
+            case EXTREME -> rangeBands == 4;
+            case LONG -> rangeBands >= 3;
+            case MEDIUM -> rangeBands >= 2;
+            default -> true;
+        };
     }
 
     /** Returns the ASDamage of this ASDamageVector for the given range, so the S, M, L, or E damage. */
     public ASDamage getDamage(ASRange range) {
-        switch (range) {
-            case EXTREME:
-                return E;
-            case LONG:
-                return L;
-            case MEDIUM:
-                return M;
-            default:
-                return S;
-        }
+        return switch (range) {
+            case EXTREME -> E;
+            case LONG -> L;
+            case MEDIUM -> M;
+            default -> S;
+        };
     }
 
     /**
@@ -379,5 +371,18 @@ public class ASDamageVector implements Serializable {
         } catch (IllegalArgumentException exception) {
             return false;
         }
+    }
+
+    /**
+     * Returns a new damage vector where the damage value of all ranges are reduced by the given reduction, down
+     * to a minimum of 0. A 5/2/1 reduced by 1 becomes 4/1/0. A 5/2/1 reduced by 3 becomes 2/0/0. Note that
+     * negative reduction can be used but will also increase 0 values.
+     *
+     * @param damageReduction The amount of damage to deduct.
+     * @return A new ASDamageVector with reduced damage
+     */
+    public ASDamageVector reducedBy(int damageReduction) {
+        return create(S.damage - damageReduction, M.damage - damageReduction, L.damage - damageReduction,
+                E.damage - damageReduction, rangeBands);
     }
 }

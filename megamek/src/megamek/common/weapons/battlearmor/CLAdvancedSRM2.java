@@ -21,6 +21,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.Mounted;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+
 /**
  * @author Sebastian Brocks
  */
@@ -39,7 +40,8 @@ public class CLAdvancedSRM2 extends AdvancedSRMWeapon {
         longRange = 12;
         extremeRange = 16;
         bv = 30;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
+                .andNot(F_PROTO_WEAPON);
         tonnage = .09;
         criticals = 2;
         cost = 30000;
@@ -56,7 +58,7 @@ public class CLAdvancedSRM2 extends AdvancedSRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.4 : 0;
     }
 }

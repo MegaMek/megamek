@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3049-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>5,5</pctOmni>
@@ -5529,7 +5526,7 @@
                 <availability>MH:5</availability>
             </model>
             <model name='(SRM 3049+)'>
-                <availability>MH!A:3</availability>
+                <availability>MH!A:4</availability>
             </model>
         </chassis>
         <chassis name='Kallon UL-series Construction Vehicle' unitType='Tank'>
@@ -6533,7 +6530,7 @@
                 <availability>MH:5+</availability>
             </model>
             <model name='(Laser 3049+)'>
-                <availability>MH!A:2</availability>
+                <availability>MH!A:3</availability>
             </model>
             <model name='(MG)'>
                 <availability>MH:4</availability>
@@ -7265,7 +7262,7 @@
             <model name='(SRM)'>
                 <availability>MH:5+</availability>
             </model>
-            <model name='(SRM)'>
+            <model name='(SRM 3049+)'>
                 <availability>MH!A:2</availability>
             </model>
         </chassis>

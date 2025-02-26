@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3082-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='BAN'>
 			<pctOmni>10</pctOmni>
@@ -6226,7 +6223,7 @@
 			<availability>HL:2,IS:3,CS:2-,WOB:2-,WOB.SD:0,Periphery:3,MH:0</availability>
 			<model name='(Arrow IV)'>
 				<roles>missile_artillery</roles>
-				<availability>CC:5,MOC:3,RA.OA:1,PIR:2,IS:4,CS:0,MH:2</availability>
+				<availability>CC:5,MOC:3,RA.OA:1,PIR:2,IS:4,CS:0</availability>
 			</model>
 			<model name='(Sniper)'>
 				<roles>artillery</roles>

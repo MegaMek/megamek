@@ -3893,7 +3893,7 @@
 			<availability>HL:2,IS:3,CS:0,WOB:2,Periphery:3,MH:0</availability>
 			<model name='(Arrow IV)'>
 				<roles>missile_artillery</roles>
-				<availability>CC:5,MOC:1,IS:4,MH:1,CIR:1</availability>
+				<availability>CC:5,MOC:1,IS:4,CIR:1</availability>
 			</model>
 			<model name='(Sniper)'>
 				<roles>artillery</roles>

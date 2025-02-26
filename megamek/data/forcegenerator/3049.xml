@@ -3408,7 +3408,7 @@
             </model>
         </chassis>
         <chassis name='Field Gun Century (MHAF)' unitType='Infantry'>
-            <availability>MH:5</availability>
+            <availability>MH!A:6!B:5!C:5!D:4!F:4</availability>
             <model name='(Motorized AC10)'>
                 <roles>field_gun</roles>
                 <availability>MH:3+</availability>

@@ -1,15 +1,20 @@
 /*
- * MegaMek - Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.bot.princess.commands;
 
@@ -46,18 +51,19 @@ public class ArtilleryCommand implements ChatCommand {
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        ArtilleryCommandAndControl.ArtilleryOrder order = arguments.getEnum(ORDER, ArtilleryCommandAndControl.ArtilleryOrder.class);
-        ArtilleryCommandAndControl.SpecialAmmo ammo = arguments.getEnum(AMMO, ArtilleryCommandAndControl.SpecialAmmo.class);
-        NotRequiredMultiHexNumberArgument multiHexNumberArgument = arguments.get(TARGET, NotRequiredMultiHexNumberArgument.class);
-        ArtilleryCommandAndControl artilleryCommandAndControl = princess.getArtilleryCommandAndControl();
+        var artilleryOrder = arguments.getEnum(ORDER, ArtilleryCommandAndControl.ArtilleryOrder.class);
+        var specialAmmo = arguments.getEnum(AMMO, ArtilleryCommandAndControl.SpecialAmmo.class);
+        var multiHexNumberArgument = arguments.get(TARGET, NotRequiredMultiHexNumberArgument.class);
+        var artilleryCommandAndControl = princess.getArtilleryCommandAndControl();
+
         artilleryCommandAndControl.reset();
-        if (!order.equals(ArtilleryCommandAndControl.ArtilleryOrder.AUTO) && !order.equals(ArtilleryCommandAndControl.ArtilleryOrder.HALT)) {
+        if (!artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.AUTO) && !artilleryOrder.equals(ArtilleryCommandAndControl.ArtilleryOrder.HALT)) {
             if (multiHexNumberArgument.getValue().isEmpty()) {
                 princess.sendChat(Messages.getString("Princess.command.artillery.noTargets"));
                 return;
             }
             artilleryCommandAndControl.addArtilleryTargets(multiHexNumberArgument.getValue());
         }
-        artilleryCommandAndControl.setArtilleryOrder(order, ammo);
+        artilleryCommandAndControl.setArtilleryOrder(artilleryOrder, specialAmmo);
     }
 }

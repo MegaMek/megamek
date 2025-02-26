@@ -269,7 +269,9 @@ public class ArtilleryTargetingControl {
         boolean homingAvailable = getHomingAvailable(shooter);
         // if we're not in auto mode, we're going to shoot at the targets we've been
         // given.
-        if (!owner.getArtilleryCommandAndControl().isArtilleryAuto()) {
+        if (owner.getArtilleryCommandAndControl().isArtilleryVolley()
+            || owner.getArtilleryCommandAndControl().isArtilleryBarrage()
+            || owner.getArtilleryCommandAndControl().isArtillerySingle()) {
             for (Coords coords : owner.getArtilleryCommandAndControl().getArtilleryTargets()) {
                 targetSet.add(new HexTarget(coords, Targetable.TYPE_HEX_ARTILLERY));
             }
@@ -537,7 +539,7 @@ public class ArtilleryTargetingControl {
 
                     if (artilleryCommandAndControl.isArtillerySingle()) {
                         artilleryCommandAndControl.setArtilleryOrder(ArtilleryCommandAndControl.ArtilleryOrder.HALT);
-                        artilleryCommandAndControl.removeArtilleryTarget(aaa.getCoords());
+                        artilleryCommandAndControl.removeArtilleryTargets();
                     }
 
                     if (ammo.equipmentNum > NO_AMMO) {

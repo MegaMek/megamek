@@ -1,18 +1,21 @@
 /*
  * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.client.bot.princess;
 
 import megamek.common.Coords;
@@ -20,6 +23,11 @@ import megamek.common.Entity;
 
 import java.util.*;
 
+/**
+ * ArtilleryCommandAndControl class represents the artillery command and control for the bot.
+ * It keeps track of the artillery order given to it.
+ * @author Luana Coppio
+ */
 public class ArtilleryCommandAndControl {
 
     public enum ArtilleryOrder {
@@ -34,19 +42,13 @@ public class ArtilleryCommandAndControl {
         NONE,
         SMOKE,
         FLARE,
-        MINE,
-        HOMING
+        MINE
     }
 
     private ArtilleryOrder artilleryOrder = ArtilleryOrder.AUTO;
     private final Vector<Coords> artilleryTargets = new Vector<>();
     private final Set<Integer> shooterUnits = new HashSet<>();
     private SpecialAmmo ammo = SpecialAmmo.NONE;
-    private int roundOrder = -1;
-
-    public void addArtilleryTarget(Coords target) {
-        artilleryTargets.add(target);
-    }
 
     public void addArtilleryTargets(Collection<Coords> targets) {
         artilleryTargets.addAll(targets);
@@ -56,32 +58,12 @@ public class ArtilleryCommandAndControl {
         return artilleryTargets.contains(position);
     }
 
-    public Optional<Coords> peekTarget() {
-        return artilleryTargets.isEmpty() ? Optional.empty() : Optional.of(artilleryTargets.get(artilleryTargets.size() - 1));
-    }
-
-    public boolean hasTargets() {
-        return !artilleryTargets.isEmpty();
-    }
-
-    public int getTargetCount() {
-        return artilleryTargets.size();
-    }
-
-    public Optional<Coords> poolArtilleryTarget() {
-        int size = artilleryTargets.size();
-        if (size == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(artilleryTargets.remove(size - 1));
-    }
-
     public void removeArtilleryTarget(Coords coords) {
         artilleryTargets.remove(coords);
     }
 
-    public Coords getArtilleryTarget() {
-        return artilleryTargets.stream().findAny().orElse(null);
+    public void removeArtilleryTargets() {
+        artilleryTargets.clear();
     }
 
     public Set<Coords> getArtilleryTargets() {
@@ -118,14 +100,6 @@ public class ArtilleryCommandAndControl {
         shooterUnits.clear();
     }
 
-    public int getRoundOrder() {
-        return roundOrder;
-    }
-
-    public void setArtilleryAmmo(SpecialAmmo ammo) {
-        this.ammo = ammo;
-    }
-
     public boolean isSmokeAmmo() {
         return ammo == SpecialAmmo.SMOKE;
     }
@@ -138,14 +112,16 @@ public class ArtilleryCommandAndControl {
         return ammo == SpecialAmmo.MINE;
     }
 
-    public boolean isHomingAmmo() {
-        return ammo == SpecialAmmo.HOMING;
-    }
-
     public boolean isSpecialAmmo() {
         return ammo != SpecialAmmo.NONE;
     }
 
+    /**
+     * Add the shooter is already in the list of shooters.
+     * Used to make sure that in case we are doing a volley we know which units are already shooting.
+     * @param shooter the shooter unit
+     * @return false if the shooter is already in the list of shooters, true otherwise
+     */
     public boolean setShooter(Entity shooter) {
         return shooterUnits.add(shooter.getId());
     }

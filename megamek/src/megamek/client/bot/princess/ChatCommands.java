@@ -119,7 +119,7 @@ public enum ChatCommands {
 
     public String getDescription() {
         return (chatCommand.defineArguments().isEmpty() ?
-            "" : chatCommand.getArgumentsRepr() + " : " + chatCommand.getArgumentsDescription() + " ") + description;
+            "" : chatCommand.getArgumentsDescription() + " ") + description;
     }
 
     public String getCommand() {

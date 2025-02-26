@@ -21,6 +21,8 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
@@ -83,6 +85,7 @@ public class MMLoggerTest {
         verifyLog(Level.DEBUG, "Debug message: test", e);
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testErrorLogging() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -94,6 +97,7 @@ public class MMLoggerTest {
         verifyLog(Level.ERROR, "Error message: test");
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testErrorLoggingWithStringFormat() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -105,6 +109,7 @@ public class MMLoggerTest {
         verifyLog(Level.ERROR, "Error message: test");
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testDeprecatedErrorLoggingWithExceptionNoParams() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -117,6 +122,7 @@ public class MMLoggerTest {
         verifyLog(Level.ERROR, "Error message: noparameter accepted", e);
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testErrorLoggingWithException() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -135,6 +141,7 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal without dialog without exception");
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testFatalLoggingWithDialog() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -146,6 +153,7 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal with dialog with exception");
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testDeprecatedFatalLoggingWithDialog() {
         if (GraphicsEnvironment.isHeadless()) {
@@ -164,6 +172,7 @@ public class MMLoggerTest {
         verifyLog(Level.FATAL, "Fatal without dialog with exception", e);
     }
 
+    @EnabledIfEnvironmentVariable(named = "GUITests", matches = "true")
     @Test
     public void testDeprecatedFatalLoggingWithException() {
         if (GraphicsEnvironment.isHeadless()) {

@@ -44,6 +44,11 @@ public final class CargoBay extends Bay implements InfantryTransporter {
     }
 
     @Override
+    public double spaceForUnit(Entity unit) {
+        return unit.getWeight();
+    }
+
+    @Override
     public String getUnusedString(boolean showRecovery) {
         StringBuffer returnString = new StringBuffer("Cargo Space "
                 + numDoorsString() + " - ");

@@ -73,6 +73,16 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
     }
 
     @Override
+    public double spaceForUnit(Entity unit) {
+        PlatoonType type = PlatoonType.getPlatoonType(unit);
+        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
+            return type.getWeight() * ((Infantry) unit).getSquadCount();
+        } else {
+            return type.getWeight();
+        }
+    }
+
+    @Override
     public double getUnusedSlots() {
         return currentSpace / platoonType.getWeight() - getBayDamage();
     }

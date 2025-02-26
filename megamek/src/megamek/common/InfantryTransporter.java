@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * Classes that implement this interface have the ability to load, carry, and
@@ -80,21 +81,14 @@ public interface InfantryTransporter extends Serializable {
         }
     }
 
-    default public double spaceForUnit(Entity unit) {
-        PlatoonType type = PlatoonType.getPlatoonType(unit);
-        if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry) unit).getSquadCount();
-        } else {
-            return type.getWeight();
-        }
-    }
-
     /**
      * @return the number of unused spaces in this transporter.
      */
     double getUnused();
     int getCurrentDoors();
     int getNumberLoadedThisTurn();
+    Vector<Entity> getLoadedUnits();
+    double spaceForUnit(Entity unit);
 
     /**
      * Determines if this object can accept the given unit. The unit may not be

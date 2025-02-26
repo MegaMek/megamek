@@ -102,7 +102,8 @@ import org.apache.commons.lang3.SystemUtils;
 import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
+        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView,
+    IHasMenuBar, IHasCurrentPanel {
     private final static MMLogger logger = MMLogger.create(ClientGUI.class);
 
     // region Variable Declarations

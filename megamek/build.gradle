@@ -438,6 +438,16 @@ task testAi(type: JavaExec, dependsOn: jar) {
     jvmArgs = mmJvmOptions
 }
 
+task splitImage(type: JavaExec, dependsOn: jar) {
+    description = 'Split Image into hexagons'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.ImageHexSlicer'
+    args(project.hasProperty("splitImageArgs") ? project.property("splitImageArgs").split(' ') : "")
+
+    jvmArgs = mmJvmOptions
+}
+
 tasks.withType(Checkstyle) {
     minHeapSize = "200m"
     maxHeapSize = "1g"

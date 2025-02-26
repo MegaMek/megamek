@@ -33,6 +33,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -88,6 +89,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 import megamek.server.props.OrbitalBombardment;
+import org.apache.commons.collections4.EnumerationUtils;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -269,18 +271,21 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
     private Set<Integer> animatedImages = new HashSet<>();
 
     // Move units step by step
-    private ArrayList<MovingUnit> movingUnits = new ArrayList<>();
+    private List<MovingUnit> movingUnits = new ArrayList<>();
 
     private long moveWait = 0;
 
     // moving entity sprites
-    private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
-    private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
-    private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
+    private List<MovingEntitySprite> movingEntitySprites = new ArrayList<>();
+    private Map<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<>();
+    private List<GhostEntitySprite> ghostEntitySprites = new ArrayList<>();
 
     // wreck sprites
-    private ArrayList<WreckSprite> wreckSprites = new ArrayList<>();
-    private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
+    private List<WreckSprite> wreckSprites = new ArrayList<>();
+    private List<IsometricWreckSprite> isometricWreckSprites = new ArrayList<>();
+
+    private List<ScorchedGroundSprite> scorchedGroundSprites = new ArrayList<>();
+    private List<IsometricScorchedGroundSprite> isometricScorchedGroundSprites = new ArrayList<>();
 
     private Coords rulerStart;
     private Coords rulerEnd;
@@ -767,6 +772,8 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 for (Sprite s : isometricWreckSprites) {
                     s.prepare();
                 }
+                isometricScorchedGroundSprites.forEach(Sprite::prepare);
+                scorchedGroundSprites.forEach(Sprite::prepare);
                 break;
 
             case GUIPreferences.USE_CAMO_OVERLAY:
@@ -905,6 +912,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         // draw wrecks
         if (GUIP.getShowWrecks() && !useIsometric()) {
+            drawSprites(g, scorchedGroundSprites);
             drawSprites(g, wreckSprites);
         }
 
@@ -1219,10 +1227,34 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
      * @param g               The Graphics object for this board.
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
-    private synchronized void drawIsometricWreckSpritesForHex(Coords c,
-            Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
+    private synchronized void drawIsometricWreckSpritesForHex(Coords c, Graphics g, List<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
+            Coords cp = sprite.getPosition();
+            if (cp.equals(c) && view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+                if (!sprite.isReady()) {
+                    sprite.prepare();
+                }
+                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, boardPanel, false);
+            }
+        }
+    }
+
+    /**
+     * Draws the ScorchedGroundSprite for the given hex. This function is used by the
+     * isometric rendering process so that sprites are drawn in the order that
+     * hills are rendered to create the appearance that the sprite is behind the
+     * hill.
+     *
+     * @param c               The Coordinates of the hex that the sprites should be
+     *                        drawn
+     *                        for.
+     * @param g               The Graphics object for this board.
+     * @param spriteArrayList The complete list of all IsometricScorchedGroundSprite on the board.
+     */
+    private synchronized void drawIsometricScorchedGroundForHex(Coords c, Graphics g, List<IsometricScorchedGroundSprite> spriteArrayList) {
+        Rectangle view = g.getClipBounds();
+        for (IsometricScorchedGroundSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
@@ -1521,7 +1553,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     boardGraphics.drawImage(getScaledImage(orbitalBombardmentImage, true), p2.x, p2.y, boardPanel);
                 }
             }
-
+            for (Coords c2 : c.allAtDistanceOrLess(orbitalBombardment.getRadius())) {
+                var hex = game.getBoard().getHex(c2);
+                hex.setTheme("volcano");
+                hexImageCache.get(c2).needsUpdating = true;
+            }
         }
     }
 
@@ -1701,6 +1737,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         if (!ignoreUnits) {
             // draw wrecks
             if (GUIP.getShowWrecks() && !useIsometric()) {
+                drawSprites(boardGraph, scorchedGroundSprites);
                 drawSprites(boardGraph, wreckSprites);
             }
 
@@ -1835,6 +1872,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     if (hex != null) {
                         if (!saveBoardImage) {
                             if (GUIP.getShowWrecks()) {
+                                drawIsometricScorchedGroundForHex(c, g, isometricScorchedGroundSprites);
                                 drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                             }
                         }
@@ -3006,14 +3044,18 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int numEntities = game.getNoOfEntities();
         // Prevent IllegalArgumentException
         numEntities = Math.max(1, numEntities);
-        Queue<EntitySprite> newSprites = new PriorityQueue<>(numEntities);
-        Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(numEntities);
-        Map<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
-        Map<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
+
+        ArrayList<ScorchedGroundSprite> newScorchedGround = new ArrayList<>();
+        ArrayList<IsometricScorchedGroundSprite> newIsometricScorchedGround = new ArrayList<>();
+        Enumeration<MultiHexScorchDecalPosition> scorchedGround = game.getScorchedGround();
+        while (scorchedGround.hasMoreElements()) {
+            MultiHexScorchDecalPosition decal = scorchedGround.nextElement();
+            newScorchedGround.add(new ScorchedGroundSprite(this, decal));
+            newIsometricScorchedGround.add(new IsometricScorchedGroundSprite(this, decal));
+        }
 
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
-
         Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = e.nextElement();
@@ -3035,6 +3077,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                 }
             }
         }
+
+        Queue<EntitySprite> newSprites = new PriorityQueue<>(numEntities);
+        Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(numEntities);
+        Map<ArrayList<Integer>, EntitySprite> newSpriteIds = new HashMap<>(numEntities);
+        Map<ArrayList<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(numEntities);
 
         clearC3Networks();
         clearFlyOverPaths();
@@ -3100,6 +3147,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
 
         wreckSprites = newWrecks;
         isometricWreckSprites = newIsometricWrecks;
+
+        scorchedGroundSprites.clear();
+        scorchedGroundSprites.addAll(newScorchedGround);
+        isometricScorchedGroundSprites.clear();
+        isometricScorchedGroundSprites.addAll(newIsometricScorchedGround);
 
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
@@ -5235,11 +5287,11 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return fovHighlightingAndDarkening;
     }
 
-    public ArrayList<WreckSprite> getWreckSprites() {
+    public List<WreckSprite> getWreckSprites() {
         return wreckSprites;
     }
 
-    public ArrayList<IsometricWreckSprite> getIsoWreckSprites() {
+    public List<IsometricWreckSprite> getIsoWreckSprites() {
         return isometricWreckSprites;
     }
 

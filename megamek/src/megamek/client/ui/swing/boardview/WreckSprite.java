@@ -22,7 +22,7 @@ import java.awt.*;
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
  * and an identification label.
  */
-class WreckSprite extends AbstractWreckSprite {   
+public class WreckSprite extends AbstractWreckSprite {
     public WreckSprite(BoardView boardView1, final Entity entity, int secondaryPos) {
         super(boardView1);
         this.entity = entity;

@@ -23,7 +23,7 @@ import java.awt.image.ImageObserver;
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
  * and an identification label.
  */
-class IsometricWreckSprite extends AbstractWreckSprite {
+public class IsometricWreckSprite extends AbstractWreckSprite {
 
     /**
      * Isometric wreck sprite constructor, calculates boundaries

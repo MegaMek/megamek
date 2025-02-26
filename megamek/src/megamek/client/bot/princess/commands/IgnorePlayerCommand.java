@@ -25,7 +25,7 @@ import megamek.server.commands.arguments.TeamArgument;
 import java.util.List;
 
 /**
- * Command to ignore a target unit for the bot.
+ * Command to ignore all units from a target player.
  * @author Luana Coppio
  */
 public class IgnorePlayerCommand implements ChatCommand {

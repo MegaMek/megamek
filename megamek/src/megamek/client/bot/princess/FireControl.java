@@ -193,6 +193,8 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE_PATH = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
             "target not under flight path");
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
+    static final TargetRollModifier TH_AAA_AT_GROUND_TARGET = new TargetRollModifier(+4, "AAA/LAA vs non-flying ground target");
+    static final TargetRollModifier TH_AAA_TOO_LOW = new TargetRollModifier(+4, "AAA/LAA from below 4 Altitude");
     private static final TargetRollModifier TH_STABLE_WEAPON = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
     static final TargetRollModifier TH_NO_TARGETS_IN_BLAST = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "no targets in blast zone!");
@@ -927,74 +929,85 @@ public class FireControl {
         // ammo mods
         if (AmmoType.T_NA != weaponType.getAmmoType()
                 && (null != firingAmmo)
-                && (firingAmmo.getType() instanceof AmmoType)) {
-            final AmmoType ammoType = (AmmoType) firingAmmo.getType();
-            if (null != ammoType) {
-                // Set of munitions we'll consider for Flak targeting
-                EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_CLUSTER,
-                        AmmoType.Munitions.M_FLAK);
-                EnumSet<AmmoType.Munitions> ArtyOnlyMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_FLECHETTE,
-                        AmmoType.Munitions.M_FAE);
-                EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_HOMING);
-                if (0 != ammoType.getToHitModifier()) {
-                    toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
-                }
-                // Air-defense Arrow IV handling; can only fire at airborne targets
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                    if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                        toHit.addModifier(TH_WEAPON_ADA);
-                    } else {
-                        toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
-                    }
-                }
-                // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
+                && (firingAmmo.getType() instanceof AmmoType ammoType)) {
+            // Set of munitions we'll consider for Flak targeting
+            EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_CLUSTER,
+                    AmmoType.Munitions.M_FLAK);
+            EnumSet<AmmoType.Munitions> ArtyOnlyMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_FLECHETTE,
+                    AmmoType.Munitions.M_FAE);
+            EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_HOMING);
+            if (0 != ammoType.getToHitModifier()) {
+                toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
+            }
+            // Air-defense Arrow IV handling; can only fire at airborne targets
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                    if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
-                            || ammoType.countsAsFlak()) {
-                        toHit.addModifier(TH_WEAPON_FLAK);
-                    } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
-                        toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
-                    }
+                    toHit.addModifier(TH_WEAPON_ADA);
+                } else {
+                    toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
-                // Handle homing munitions
-                if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
-                    if (game.getPhase().isOffboard()) {
-                        final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
-                                .append(shooter.getDisplayName());
-
-                        // Check all friends with TAG for proximity to enemies.
-                        Entity friendlySpotter = Compute.findTAGSpotter(game, shooter, target, true);
-
-                        if (friendlySpotter != null) {
-                            // If we've got one friendly TAGger in range, roll them bones!
-                            msg.append("\nSurvey says we've got friendly TAG unit ")
-                                    .append(friendlySpotter.getDisplayName())
-                                    .append(" nearby; fingers crossed!");
-                            toHit.addModifier(TH_HOMING_TARGET_TAGGED);
-                        } else {
-                            // Can't hit without TAG support on-site!
-                            msg.append("\nUnfortunately we have no friends near the target...");
-                            toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
-                        }
-
-                        logger.debug(msg.toString());
-                    }
+            }
+            // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
+            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
+                if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
+                        || ammoType.countsAsFlak()) {
+                    toHit.addModifier(TH_WEAPON_FLAK);
+                } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
+                    toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
+            }
+            // Handle homing munitions
+            if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
+                if (game.getPhase().isOffboard()) {
+                    final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
+                            .append(shooter.getDisplayName());
 
-                // Guesstimate Heat-Seeking Ammo mods
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
-                    if (targetState.getHeat() > 0) {
-                        // Hot target good
-                        toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
+                    // Check all friends with TAG for proximity to enemies.
+                    Entity friendlySpotter = Compute.findTAGSpotter(game, shooter, target, true);
+
+                    if (friendlySpotter != null) {
+                        // If we've got one friendly TAGger in range, roll them bones!
+                        msg.append("\nSurvey says we've got friendly TAG unit ")
+                                .append(friendlySpotter.getDisplayName())
+                                .append(" nearby; fingers crossed!");
+                        toHit.addModifier(TH_HOMING_TARGET_TAGGED);
                     } else {
-                        // Cold target bad
-                        toHit.addModifier(1, TH_AMMO_MOD);
+                        // Can't hit without TAG support on-site!
+                        msg.append("\nUnfortunately we have no friends near the target...");
+                        toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
+                    }
+
+                    logger.debug(msg.toString());
+                }
+            }
+
+            // Guesstimate Heat-Seeking Ammo mods
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
+                if (targetState.getHeat() > 0) {
+                    // Hot target good
+                    toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
+                } else {
+                    // Cold target bad
+                    toHit.addModifier(1, TH_AMMO_MOD);
+                }
+            }
+
+            // Guesstimate Air-to-Air missile mods; targetState values are less accurate but workable
+            if ((ammoType.getAmmoType() == AmmoType.T_AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.T_LAA_MISSILE)) {
+                if (!targetState.isAirborneAero()) {
+                    // Mod for firing at non-flying ground
+                    if (!targetState.isAirborne()) {
+                        toHit.addModifier(TH_AAA_AT_GROUND_TARGET);
+                    }
+                    if (shooter.getAltitude() < 4) {
+                        toHit.addModifier(TH_AAA_TOO_LOW);
                     }
                 }
             }
+
         }
 
         // targeting computer

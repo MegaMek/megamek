@@ -62,6 +62,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #6601:Pintle turret and flags (MML #1741)
 + PR #6602: Feat: Separate gif game sumary from minimap game summary
 + Fix #6593: Counter-battery icon hidden in double blind
++ PR #6606: Improve Deployment-Phase Towing Logic
++ PR #6611: Add VTOL/WiGE exemption for AAA and LAA missiles
++ PR #6505: Remove XStream from Image Atlas Generation
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

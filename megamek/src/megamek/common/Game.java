@@ -18,6 +18,8 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.Version;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.ui.swing.boardview.BaseScorchedGroundSprite;
+import megamek.client.ui.swing.boardview.MultiHexScorchDecalPosition;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -73,6 +75,11 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      * Track entities removed from the game (probably by death)
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
+
+    /**
+     * Track coords of the game board that have been scorched by weapons fire
+     */
+    private Vector<MultiHexScorchDecalPosition> scorchedGround = new Vector<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
@@ -3524,5 +3531,15 @@ public final class Game extends AbstractGame implements Serializable, PlanetaryC
      */
     public Optional<Player> playerForPlayername(String playerName) {
         return getPlayersList().stream().filter(p -> p.getName().equals(playerName)).findFirst();
+    }
+
+    public void addScorchedGround(MultiHexScorchDecalPosition decal) {
+        if (!scorchedGround.contains(decal)) {
+            scorchedGround.add(decal);
+        }
+    }
+
+    public Enumeration<MultiHexScorchDecalPosition> getScorchedGround() {
+        return scorchedGround.elements();
     }
 }

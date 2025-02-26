@@ -52,6 +52,10 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
+import javax.imageio.ImageIO;
+
+import static megamek.utilities.ImageHexSlicer.cutImageIntoHexGrid;
+
 /**
  * Handles loading and manipulating images from both the mek tileset and the
  * terrain tileset.
@@ -92,7 +96,7 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     // mek images
     private MekTileset wreckTileset = new MekTileset(
-            new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
+        new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
     private List<EntityImage> mekImageList = new ArrayList<>();
     private Map<ArrayList<Integer>, EntityImage> mekImages = new HashMap<>();
     private Map<String, Image> wreckageDecals = new HashMap<>();
@@ -103,7 +107,9 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     private Image minefieldSign;
 
-    /** An opaque hex shape used to limit draw operations to the exact hex shape. */
+    /**
+     * An opaque hex shape used to limit draw operations to the exact hex shape.
+     */
     private Image hexMask;
 
     private Image artilleryAutohit;
@@ -120,7 +126,9 @@ public class TilesetManager implements IPreferenceChangeListener {
      */
     private Map<Color, Image> ecmStaticImages = new HashMap<>();
 
-    /** Creates new TilesetManager. */
+    /**
+     * Creates new TilesetManager.
+     */
     public TilesetManager(IGame game) throws IOException {
         this.game = game;
         hexTileset = new HexTileset(game);
@@ -133,7 +141,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
             logger.error("Error loading tileset "
-                    + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
+                + PreferenceManager.getClientPreferences().getMapTileset() + " Reverting to default hexset!");
             if (new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()) {
                 hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
             } else {
@@ -144,7 +152,9 @@ public class TilesetManager implements IPreferenceChangeListener {
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
-    /** React to changes in the settings. */
+    /**
+     * React to changes in the settings.
+     */
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // A new Hex Tileset has been selected
@@ -165,7 +175,9 @@ public class TilesetManager implements IPreferenceChangeListener {
         }
     }
 
-    /** Retrieve an icon for the unit (used in the Unit Overview). */
+    /**
+     * Retrieve an icon for the unit (used in the Unit Overview).
+     */
     public Image iconFor(Entity entity) {
         EntityImage entityImage = getFromCache(entity, -1);
         if (entityImage == null) {
@@ -176,7 +188,9 @@ public class TilesetManager implements IPreferenceChangeListener {
         return entityImage.getIcon();
     }
 
-    /** Retrieve a wreck icon for the unit. */
+    /**
+     * Retrieve a wreck icon for the unit.
+     */
     public Image wreckMarkerFor(Entity entity, int secondaryPos) {
         EntityImage entityImage = getFromCache(entity, secondaryPos);
         if (entityImage == null) {
@@ -186,7 +200,9 @@ public class TilesetManager implements IPreferenceChangeListener {
         return entityImage.getWreckFacing(entity.getFacing());
     }
 
-    /** Retrieves the "devastated" decoration for the given entity */
+    /**
+     * Retrieves the "devastated" decoration for the given entity
+     */
     public Image getCraterFor(Entity entity, int secondaryPos) {
         Image marker;
 
@@ -205,7 +221,9 @@ public class TilesetManager implements IPreferenceChangeListener {
         return marker;
     }
 
-    /** Retrieves the "destroyed" decoration for the given entity */
+    /**
+     * Retrieves the "destroyed" decoration for the given entity
+     */
     public Image bottomLayerWreckMarkerFor(Entity entity, int secondaryPos) {
         Image marker;
 
@@ -233,6 +251,26 @@ public class TilesetManager implements IPreferenceChangeListener {
         }
 
         return marker;
+    }
+
+    public Image bottomLayerExplosionMarker(int x, int y, int size) {
+        String filename = "crater_decal_very_large.png";
+        File wreckDir = new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS);
+        File wreckDecalDir = new File(wreckDir, DIR_NAME_BOTTOM_DECALS);
+        String key = "crater_" + x + "_" + y + "_" + size;
+        if (!wreckageDecals.containsKey(key)) {
+            try {
+                BufferedImage sourceImage = ImageIO.read(new File(wreckDecalDir, filename));
+                var imageHexSliced = cutImageIntoHexGrid(sourceImage, size, size, false);
+                for (var hexTile : imageHexSliced) {
+                    wreckageDecals.put("crater_" + hexTile.getCoords().getX() + "_" + hexTile.getCoords().getY() + "_" + size,
+                        hexTile.getImage());
+                }
+            } catch (IOException e) {
+                logger.error(e, "Error loading image: " + filename);
+            }
+        }
+        return wreckageDecals.get(key);
     }
 
     /** Retrieves the "destroyed" decoration for the given entity */

@@ -760,7 +760,6 @@ public class Board implements Serializable {
                     }
                 }
             }
-
         }
 
         for (Coords coord : needsUpdate) {

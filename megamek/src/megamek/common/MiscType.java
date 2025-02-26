@@ -6858,7 +6858,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_SC_EQUIPMENT)
+                .or(F_SC_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.industrial = true;
         misc.tankslots = 1;

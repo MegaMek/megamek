@@ -6,6 +6,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.InfantryTransporter.PlatoonType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +30,6 @@ class CargoBayTest {
     static Team team2 = new Team(1);
     static Player player1 = new Player(0, "Test1");
     static Player player2 = new Player(1, "Test2");
-    static AmmoType mockLTAmmoType = (AmmoType) EquipmentType.get("ISLongTom Ammo");
-    static AmmoType mockSniperAmmoType = (AmmoType) EquipmentType.get("ISSniper Ammo");
-    static AmmoType mockBombHEAmmoType = (AmmoType) EquipmentType.get("HEBomb");
-    static AmmoType mockBombFAEAmmoType = (AmmoType) EquipmentType.get("FABombSmall Ammo");
 
     @BeforeAll
     static void setUpAll() {
@@ -134,6 +131,19 @@ class CargoBayTest {
         Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
         unit.setMovementMode(mode);
         assertTrue(bay.canUnloadUnits());
+    }
+
+    @ParameterizedTest()
+    @EnumSource(names = {"INF_LEG", "INF_MOTORIZED", "INF_JUMP", "INF_UMU", "HOVER", "SUBMARINE", "TRACKED", "VTOL", "WHEELED"})
+    void testCargoBaySpaceUsage(EntityMovementMode mode) {
+        Infantry unit = createInfantry(mode.name(), "", "John Q. Test");
+        unit.setMovementMode(mode);
+        unit.setSquadSize(7);
+        unit.setSquadCount(4);
+        double space = unit.getWeight();
+        CargoBay bay = new CargoBay(space, 1, 1);
+        bay.load(unit);
+        assertEquals(0, bay.getUnused());
     }
 
     @Test

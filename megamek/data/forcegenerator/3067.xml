@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3067-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,4,10,20</pctOmni>
@@ -12778,7 +12775,7 @@
             </model>
         </chassis>
 		<chassis name='Motorized Sub Platoon' unitType='Infantry'>
-			<availability>IS:1,FS:3,Periphery:1</availability>
+			<availability>IS:1,FS:3,Periphery:1,MH:0</availability>
 			<model name='(Laser SCUBA)'>
 				<roles>specops</roles>
 				<availability>IS:9</availability>

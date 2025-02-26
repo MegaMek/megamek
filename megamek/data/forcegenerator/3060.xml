@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Era 3060-->
-<ratgen
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="forceGeneratorSchema.xsd"
->
+<ratgen>
 	<factions>
 		<faction key='ARDC'>
 			<pctOmni>0,0,2,5,10</pctOmni>
@@ -4872,11 +4869,15 @@
             </model>
             <model name='(Tracked AC5 3049+)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
-                <availability>MH:3+</availability>
+                <availability>MH!A:3!B:2</availability>
             </model>
             <model name='(Tracked LBX10)'>
                 <roles>anti_aircraft,field_gun,fire_support</roles>
                 <availability>MH!A:5</availability>
+            </model>
+            <model name='(Tracked Light Gauss)'>
+                <roles>field_gun,fire_support</roles>
+                <availability>MH!A:3</availability>
             </model>
             <model name='(Wheeled AC10)'>
                 <roles>field_gun,urban</roles>
@@ -4884,7 +4885,7 @@
             </model>
             <model name='(Wheeled AC10 3049+)'>
                 <roles>field_gun,urban</roles>
-                <availability>MH:3+</availability>
+                <availability>MH!A:3!B:2</availability>
             </model>
             <model name='(Wheeled AC2)'>
                 <roles>anti_aircraft,field_gun,fire_support,urban</roles>
@@ -4896,7 +4897,7 @@
             </model>
             <model name='(Wheeled AC5 3049+)'>
                 <roles>anti_aircraft,field_gun,fire_support,urban</roles>
-                <availability>MH!A:4!B:3!C:2</availability>
+                <availability>MH!A:4!B:3</availability>
             </model>
             <model name='(Wheeled Heavy Cannon)'>
                 <roles>field_gun,fire_support,urban</roles>

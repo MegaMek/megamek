@@ -5098,7 +5098,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Remove first movement modifier
+        // We may wish to log these removed mods
         TargetRollModifier oldMoveMod = toHit.removeModifier("target (did not |)move(d \\S* hex)?");
+        TargetRollModifier oldAeroSideMod = toHit.removeModifier("attack against (side|nose)");
         toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
         toHit.append(Compute.getTargetTerrainModifier(game,
                 game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getId()), eistatus,

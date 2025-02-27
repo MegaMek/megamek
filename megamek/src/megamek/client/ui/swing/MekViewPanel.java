@@ -28,7 +28,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,10 +50,7 @@ import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -76,7 +72,6 @@ public class MekViewPanel extends JPanel {
     private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
 
     public static final int DEFAULT_WIDTH = 360;
-    public static final int DEFAULT_HEIGHT = 600;
 
     public MekViewPanel() {
         this(-1, -1, true);
@@ -104,9 +99,6 @@ public class MekViewPanel extends JPanel {
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         var textPanel = new JPanel(new GridLayout(1, 1));
-        textPanel.setAlignmentY(0);
-        textPanel.setMinimumSize(new Dimension(width, height));
-        textPanel.setPreferredSize(new Dimension(width, height));
         if (width != -1) {
             textPanel.setMinimumSize(new Dimension(width, height));
             textPanel.setPreferredSize(new Dimension(width, height));
@@ -120,12 +112,6 @@ public class MekViewPanel extends JPanel {
         imageControlsPanel.setAlignmentX(0.5f);
         fluffImageLabel.setAlignmentX(0.5f);
         imageInfoLabel.setAlignmentX(0.5f);
-        var fluffPanel = new FixedXPanel();
-        if (width != -1) {
-            fluffPanel.setMinimumSize(new Dimension(width, height));
-            fluffPanel.setPreferredSize(new Dimension(width, height));
-        }
-        fluffPanel.add(lblMek);
 
         Box fluffPanel = Box.createVerticalBox();
         fluffPanel.setAlignmentY(0);
@@ -165,9 +151,9 @@ public class MekViewPanel extends JPanel {
     }
 
     @SuppressWarnings("unused") // Used in MHQ
-    public void setMech(Entity entity, boolean useAlternateCost) {
-        MechView mechView = new MechView(entity, false, useAlternateCost);
-        setMech(entity, mechView);
+    public void setMek(Entity entity, boolean useAlternateCost) {
+        MekView mechView = new MekView(entity, false, useAlternateCost);
+        setMek(entity, mechView);
     }
 
     public void setMek(Entity entity, String fontName) {

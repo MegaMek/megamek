@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+
 package megamek.common;
 
 import megamek.client.Client;
@@ -6,7 +20,6 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.InfantryTransporter.PlatoonType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

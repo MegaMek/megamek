@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,11 +17,11 @@ import java.io.Serializable;
 import java.util.Vector;
 
 /**
- * Classes that implement this interface have the ability to load, carry, and
- * unload units in the game. It is anticipated that classes will exist for
- * passenger compartments, battle armor steps, Mek bays, Aerospace hangers, and
- * vehicle garages. Other possible classes include cargo bays and Dropship
- * docks.
+ * Classes that implement this interface have the ability to load, carry, drop, and
+ * unload Infantry units in the game.
+ * This interface includes a subset of the Bay.java class methods and Transporter interface.
+ * @see megamek.common.Bay
+ * @see megamek.common.Transporter
  */
 public interface InfantryTransporter extends Serializable {
 

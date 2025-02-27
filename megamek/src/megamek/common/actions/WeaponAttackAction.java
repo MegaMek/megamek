@@ -1331,9 +1331,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return Messages.getString("WeaponAttackAction.CantShootThruBuilding");
         }
 
-        // if LOS is blocked, block the shot except in the case of indirect artillery
-        // fire
-        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect) {
+        // if LOS is blocked, block the shot except in the case of artillery fire
+        if ((losMods.getValue() == TargetRoll.IMPOSSIBLE) && !isArtilleryIndirect && !isArtilleryDirect) {
             return losMods.getDesc();
         }
 
@@ -1901,11 +1900,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
                 } else if ((wtype.getAmmoType() == AmmoType.T_ARROW_IV)
                         && atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                    // Air-Defense Arrow IV can only target airborne enemy units between 1 and 51
-                    // hexes away
-                    // (same ground map/Low Altitude hex, 1 LAH, or 2 Low Altitude hexes away) and
-                    // below
-                    // altitude 8.
+                    // Air-Defense Arrow IV can only target airborne enemy units between 1 and 51 hexes away
+                    // (same ground map/Low Altitude hex, 1 LAH, or 2 Low Altitude hexes away) and below altitude 8.
                     if (!(target.isAirborne() || target.isAirborneVTOLorWIGE())) {
                         return Messages.getString("WeaponAttackAction.AaaGroundAttack");
                     }
@@ -1921,8 +1917,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // from passing the next test erroneously.
             } else if (wtype instanceof CapitalMissileWeapon
                     && Compute.isGroundToGround(ae, target)) {
-                // Grounded units firing capital missiles at ground targets must do so as
-                // artillery
+                // Grounded units firing capital missiles at ground targets must do so as artillery
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
@@ -1987,10 +1982,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if (boardRange > maxRange) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
-                // Indirect shots cannot be made at less than 17 hexes range unless
-                // the attacker is airborne or has no line-of-sight
-                if (((distance <= Board.DEFAULT_BOARD_HEIGHT) && !ae.isAirborne())
-                        && !(losMods.getValue() == TargetRoll.IMPOSSIBLE)) {
+                // Indirect (=targeting phase) shots cannot be made at less than 17 hexes range unless
+                // the attacker is airborne
+                if (((distance <= Board.DEFAULT_BOARD_HEIGHT) && !ae.isAirborne())) {
                     return Messages.getString("WeaponAttackAction.TooShortForIndirectArty");
                 }
                 if (isHoming) {
@@ -5230,7 +5224,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // All other direct fire artillery attacks
         toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
         toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-        toHit.append(losMods);
+        // without LOS, it is a short-range indirect attack that ignores LOS modifiers, TO:AR p.153
+        if (!losMods.cannotSucceed()) {
+            toHit.append(losMods);
+        }
         toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         // actuator & sensor damage to attacker
         if (weapon != null) {

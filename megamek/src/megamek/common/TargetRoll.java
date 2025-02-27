@@ -23,6 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 /**
  * Keeps track of a target for a roll. Allows adding modifiers with
@@ -202,6 +205,34 @@ public class TargetRoll implements Serializable {
      */
     public void addModifier(TargetRollModifier modifier) {
         addModifierImpl(modifier);
+    }
+
+    /**
+     * Base removal method
+     * @param modifier
+     */
+    public void removeModifier(TargetRollModifier modifier) {
+        modifiers.remove(modifier);
+        recalculate();
+    }
+
+    /**
+     * Attempts to remove and return (if needed) the first mod that matches
+     * the provided string
+     * @param fragment of mod description to match
+     * @return
+     */
+    public TargetRollModifier removeModifier(String fragment) {
+        Pattern pattern = Pattern.compile(fragment);
+        int index = IntStream.range(0, modifiers.size())
+            .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
+            .findFirst().orElse(-1);
+        if (index == -1) {
+            return null;
+        }
+        TargetRollModifier mod = modifiers.get(index);
+        removeModifier(mod);
+        return mod;
     }
 
     /**

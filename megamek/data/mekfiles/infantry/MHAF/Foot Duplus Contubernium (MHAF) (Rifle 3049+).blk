@@ -1,4 +1,4 @@
-#Saved from version 0.50.03-SNAPSHOT on 2025-02-05
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-27
 <UnitType>
 Infantry
 </UnitType>
@@ -10,10 +10,6 @@ Foot Duplus Contubernium (MHAF)
 <Model>
 (Rifle 3049+)
 </Model>
-
-<mul id:>
-7226
-</mul id:>
 
 <year>
 3049

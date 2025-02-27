@@ -1352,7 +1352,12 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_FUEL)) {
             return (int) Math.ceil(getTonnage(entity));
-        } else if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
+        } else if (hasFlag(F_CARGO)) {
+            if (entity.isAero()) {
+                return 0;
+            }
+            return (int) Math.ceil(size);
+        } else if (hasFlag(F_LIQUID_CARGO) || hasFlag(F_COMMUNICATIONS)) {
             return (int) Math.ceil(size);
         }
         // right, well I'll just guess then
@@ -6855,7 +6860,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Cargo Container (10 tons)";
         misc.setInternalName(misc.name);
         misc.tonnage = 10;
-        misc.criticals = 1;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MEK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)

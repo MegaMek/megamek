@@ -13,19 +13,18 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Font;
-
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.Configuration;
 import megamek.common.EntityMovementType;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -215,6 +214,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
+    public static final String GIF_GAME_SUMMARY_MINIMAP = "GifGameSummaryMinimap";
+    public static final String SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP = "ShowUnitDisplayNamesOnMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
@@ -288,6 +289,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_SYMBOLS_DISPLAY_MODE = "MinimapSymbolsDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDisplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDisplayNonReportPhase";
+    public static final String MINI_MAP_SHOW_SENSOR_RANGE = "MinimapShowSensorRange";
+    public static final String MINI_MAP_SHOW_FACING_ARROW = "MinimapShowFacingArrow";
+    public static final String MINI_MAP_PAINT_BORDERS = "MinimapPaintBorders";
+    public static final String MINI_MAP_MOVE_PATH_PERSISTENCE = "MinimapMovePathPersistence";
     public static final String FIRE_DISPLAY_TAB_DURING_PHASES = "FireDisplayTabDuringPhases";
     public static final String MOVE_DISPLAY_TAB_DURING_PHASES = "MoveDisplayTabDuringPhases";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -371,6 +376,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SBFSHEET_HEADERFONT = "SBFSheetHeaderFont";
     public static final String SBFSHEET_VALUEFONT = "SBFSheetValueFont";
     public static final String SUMMARY_FONT = "SummaryCardFont";
+
+    public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
+    public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
+    public static final String BOT_COMMANDS_WIDTH = "BotCommandsWidth";
+    public static final String BOT_COMMANDS_HEIGHT = "BotCommandsHeight";
+    public static final String BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE = "BotCommandsAutoDisplayNonReportPhase";
+    public static final String BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE = "BotCommandsAutoDisplayReportPhase";
+
 
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -672,6 +686,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_MAP_ENABLED, true);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, 0);
         store.setDefault(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, 1);
+        store.setDefault(MINI_MAP_SHOW_SENSOR_RANGE, true);
+        store.setDefault(MINI_MAP_SHOW_FACING_ARROW, true);
+        store.setDefault(MINI_MAP_PAINT_BORDERS, true);
+        store.setDefault(MINI_MAP_MOVE_PATH_PERSISTENCE, 2);
+        store.setDefault(GIF_GAME_SUMMARY_MINIMAP, true);
+        store.setDefault(GAME_SUMMARY_MINIMAP, false);
+        store.setDefault(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, false);
         store.setDefault(MOVE_DISPLAY_TAB_DURING_PHASES, true);
         store.setDefault(FIRE_DISPLAY_TAB_DURING_PHASES, true);
 
@@ -1058,6 +1079,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getGameSummaryMinimap() {
         return store.getBoolean(GAME_SUMMARY_MINIMAP);
+    }
+
+    public boolean getGifGameSummaryMinimap() {
+        return store.getBoolean(GIF_GAME_SUMMARY_MINIMAP);
+    }
+
+    public boolean showUnitDisplayNamesOnMinimap() {
+        return store.getBoolean(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP);
     }
 
     public boolean getEntityOwnerLabelColor() {
@@ -1700,6 +1729,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
+    public void setBotCommandAutoDisplayReportPhase(int i) {
+        store.setValue(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, i);
+    }
+
+    public void setBotCommandAutoDisplayNonReportPhase(int i) {
+        store.setValue(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, i);
+    }
+
     public void toggleForceDisplay() {
         store.setValue(FORCE_DISPLAY_ENABLED, !getBoolean(FORCE_DISPLAY_ENABLED));
     }
@@ -1897,6 +1934,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
+    public void setGifGameSummaryMinimap(boolean state) {
+        store.setValue(GIF_GAME_SUMMARY_MINIMAP, state);
+    }
+
+    public void setShowUnitDisplayNamesOnMinimap(boolean state) {
+        store.setValue(SHOW_UNIT_DISPLAY_NAMES_ON_MINIMAP, state);
+    }
+
     public void setEntityOwnerLabelColor(boolean i) {
         store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
@@ -2060,6 +2105,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void toggleMinimapEnabled() {
         setMinimapEnabled(!getMinimapEnabled());
     }
+
+    public void toggleBotCommandsEnabled() {
+        setBotCommandsEnabled(!getBotCommandsEnabled());
+    }
+
+    public int getBotCommandsAutoDisplayNonReportPhase() {
+        return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE);
+    }
+    public int getBotCommandsAutoDisplayReportPhase() {
+        return store.getInt(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE);
+    }
+
 
     public void setMinimapPosX(int i) {
         store.setValue(MINI_MAP_POS_X, i);
@@ -2332,6 +2389,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
             ToolTipManager.sharedInstance().setDismissDelay(i);
         }
     }
+
 
     public void setTooltipDistSuppression(int i) {
         store.setValue(TOOLTIP_DIST_SUPRESSION, i);
@@ -3010,6 +3068,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(PLAYERS_REMAINING_TO_SHOW);
     }
 
+    public boolean getBotCommandsEnabled() {
+        return getBoolean(BOT_COMMANDS_ENABLED);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(MINI_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -3222,6 +3284,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(PLAYERS_REMAINING_TO_SHOW, i);
     }
 
+    public void setBotCommandsEnabled(boolean state) {
+        store.setValue(BOT_COMMANDS_ENABLED, state);
+    }
+
+    public void setBotCommandsPosX(int i) {
+        store.setValue(BOT_COMMANDS_POS_X, i);
+    }
+
+    public void setBotCommandsPosY(int i) {
+        store.setValue(BOT_COMMANDS_POS_Y, i);
+    }
+
+    public int getBotCommandsPosX() {
+        return getInt(BOT_COMMANDS_POS_X);
+    }
+
+    public int getBotCommandsPosY() {
+        return getInt(BOT_COMMANDS_POS_Y);
+    }
+
+    public void setBotCommandsHeight(int i) {
+        store.setValue(BOT_COMMANDS_HEIGHT, i);
+    }
+
+    public int getBotCommandsHeight() {
+        return getInt(BOT_COMMANDS_HEIGHT);
+    }
+
+    public void setBotCommandsWidth(int i) {
+        store.setValue(BOT_COMMANDS_WIDTH, i);
+    }
+
+    public int getBotCommandsWidth() {
+        return getInt(BOT_COMMANDS_WIDTH);
+    }
+
     /**
      * Toggles the state of the user preference for the Keybinds overlay.
      */
@@ -3359,5 +3457,42 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static boolean isSupportedLookAndFeel(UIManager.LookAndFeelInfo lookAndFeelInfo) {
         return lookAndFeelInfo.getClassName().toLowerCase().contains("formdev");
+    }
+
+    public File[] getMinimapThemes() {
+        // List all .theme files inside the minimap themes folder
+        return Configuration.minimapThemesDir().listFiles((dir, name) -> name.endsWith(".theme"));
+    }
+
+    public boolean getDrawFacingArrowsOnMiniMap() {
+        return getBoolean(MINI_MAP_SHOW_SENSOR_RANGE);
+    }
+
+    public boolean getDrawSensorRangeOnMiniMap() {
+        return getBoolean(MINI_MAP_SHOW_FACING_ARROW);
+    }
+
+    public void setDrawFacingArrowsOnMiniMap(boolean state) {
+        store.setValue(MINI_MAP_SHOW_SENSOR_RANGE, state);
+    }
+
+    public void setDrawSensorRangeOnMiniMap(boolean state) {
+        store.setValue(MINI_MAP_SHOW_FACING_ARROW, state);
+    }
+
+    public boolean paintBorders() {
+        return getBoolean(MINI_MAP_PAINT_BORDERS);
+    }
+
+    public void setPaintBorders(boolean state) {
+        store.setValue(MINI_MAP_PAINT_BORDERS, state);
+    }
+
+    public int getMovePathPersistenceOnMiniMap() {
+        return getInt(MINI_MAP_MOVE_PATH_PERSISTENCE);
+    }
+
+    public void setMovePathPersistenceOnMiniMap(int rounds) {
+        store.setValue(MINI_MAP_MOVE_PATH_PERSISTENCE, rounds);
     }
 }

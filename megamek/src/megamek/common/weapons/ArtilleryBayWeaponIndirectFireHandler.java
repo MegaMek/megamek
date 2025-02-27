@@ -21,10 +21,12 @@ import java.util.Vector;
 
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.NukeDetonatedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.event.GamePlayerStrategicActionEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
@@ -417,12 +419,18 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!bMissed) {
                 // Keep blasting the target hex with each weapon in the bay that fired
                 while (nweaponsHit > 0) {
+                    gameManager.getGame().processGameEvent(
+                        new GamePlayerStrategicActionEvent(gameManager,
+                            new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                     gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
                     nweaponsHit--;
                 }
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
+                    gameManager.getGame().processGameEvent(
+                        new GamePlayerStrategicActionEvent(gameManager,
+                            new NukeDetonatedAction(ae.getId(), ae.getOwnerId(), AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                     gameManager.doNuclearExplosion(c, 1, vPhaseReport);
                 }
             }
@@ -542,7 +550,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             while (nweaponsHit > 0) {
                 gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                         subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
-                        asfFlak, -1);
+                        asfFlak);
                 nweaponsHit--;
             }
         } else {
@@ -564,7 +572,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
                 handleArtilleryDriftMarker(origPos, c, aaa,
                         gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
-                                altitude, mineClear, vPhaseReport, asfFlak, -1));
+                                altitude, mineClear, vPhaseReport, asfFlak));
             }
 
         }

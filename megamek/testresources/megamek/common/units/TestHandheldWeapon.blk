@@ -1,0 +1,39 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+HandheldWeapon
+</UnitType>
+<Name>
+Test
+</Name>
+<model>
+HHW
+</model>
+<Year>
+3145
+</Year>
+<Type>
+IS Level 3
+</Type>
+<Gun Equipment>
+ISUltraAC2
+ISUltraAC2 Ammo:Shots6#
+</Gun Equipment>
+<tonnage>
+12.0
+</tonnage>
+<armor>
+10
+</armor>
+<armor_type>
+0
+</armor_type>
+<armor_tech_level>
+0
+</armor_tech_level>

@@ -1,10 +1,14 @@
 size 25 25
 option exit_roads_to_pavement false
 tag "LightUrban (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
+tag "Fortress (Auto)"
 hex 0101 -5 "bldg_elev:2;bldg_class:1:0;pavement:1;building:1:15;bldg_cf:60" ""
 hex 0201 -5 "bldg_elev:2;bldg_class:1:0;pavement:1;building:1:57;bldg_cf:60" ""
 hex 0301 -5 "pavement:1;road:1:9" ""

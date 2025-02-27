@@ -229,7 +229,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public boolean canFlee() {
+    public boolean canFlee(Coords pos) {
         return false;
     }
 
@@ -409,4 +409,5 @@ public class GunEmplacement extends Tank {
         // they have no weight so we use the mean across all GEs
         return 205;
     }
+
 }

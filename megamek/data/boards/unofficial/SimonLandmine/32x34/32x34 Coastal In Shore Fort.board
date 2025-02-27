@@ -2,6 +2,7 @@ size 32 34
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "HighHills (Auto)"
+tag "HardenedBuilding (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 2 "" "grass"

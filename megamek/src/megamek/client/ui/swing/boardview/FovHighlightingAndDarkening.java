@@ -50,7 +50,7 @@ import megamek.logging.MMLogger;
 /**
  * A helper class for highlighting and darkening hexes.
  */
-class FovHighlightingAndDarkening {
+public class FovHighlightingAndDarkening {
     private static final MMLogger logger = MMLogger.create(FovHighlightingAndDarkening.class);
 
     private final BoardView boardView1;
@@ -265,6 +265,14 @@ class FovHighlightingAndDarkening {
     }
 
     GameListener cacheGameListner;
+
+    /**
+     * Returns the cached all ECM info.
+     * @return the cached all ECM info, nullable
+     */
+    public @Nullable List<ECMInfo> getCachedECMInfo() {
+        return cachedAllECMInfo;
+    }
 
     /**
      * Checks for los effects, preferably from cache, if not getLosEffects

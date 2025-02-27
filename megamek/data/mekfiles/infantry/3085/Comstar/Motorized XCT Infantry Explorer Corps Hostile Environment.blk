@@ -1,17 +1,12 @@
-#building block data file
-<BlockVersion>
-1
-</BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+#Saved from version 0.50.02-SNAPSHOT on 2024-12-30
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Motorized XCT Infantry
 </Name>
+
 <Model>
 Explorer Corps Hostile Environment
 </Model>
@@ -19,24 +14,15 @@ Explorer Corps Hostile Environment
 <mul id:>
 2241
 </mul id:>
-<squad_size>
-6
-</squad_size>
-<squadn>
-3
-</squadn>
-<Primary>
-InfantryMauser960
-</Primary>
-<Secondary>
-InfantryHellbore
-</Secondary>
-<secondn>
-1
-</secondn>
-<armorKit>
-ISEnvironmentSuitHostile
-</armorKit>
+
+<year>
+3058
+</year>
+
+<originalBuildYear>
+3058
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -44,12 +30,47 @@ IS Level 3
 <role>
 Scout
 </role>
-<year>
-3058				
-</year>
-<era>
-TRO: 3085
-</era>
+
 <motion_type>
 Motorized
 </motion_type>
+
+<Troopers Equipment>
+Environment Suit, Hostile
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Laser Rifle (Mauser 960)
+</Primary>
+
+<Secondary>
+Laser (Hellbore Assault)
+</Secondary>
+
+<encumberingarmor>
+true
+</encumberingarmor>
+
+<spacesuit>
+true
+</spacesuit>
+
+<specialization>
+2048
+</specialization>
+

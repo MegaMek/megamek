@@ -44,6 +44,10 @@ public enum PacketCommand {
     /** A packet setting a Client's ready status (S -> C) or updating the Server on the Client's status (C -> S). */
     PLAYER_READY,
 
+    /** A packet telling the server to pause / unpause packet handling (to interrupt a Princess-only game) */
+    PAUSE,
+    UNPAUSE,
+
     CHAT,
     ENTITY_ADD,
     ENTITY_REMOVE,
@@ -147,6 +151,7 @@ public enum PacketCommand {
     ENTITY_MOUNTED_FACING_CHANGE,
     SENDING_AVAILABLE_MAP_SIZES,
     ENTITY_LOAD,
+    ENTITY_TOW,
     ENTITY_NOVA_NETWORK_CHANGE,
     RESET_ROUND_DEPLOYMENT,
     SENDING_TAG_INFO,

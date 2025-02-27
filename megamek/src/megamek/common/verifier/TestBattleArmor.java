@@ -23,6 +23,8 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -662,7 +664,7 @@ public class TestBattleArmor extends TestEntity {
         // Count used crits, AM/AP weaps for each squad member and location
         for (Mounted<?> m : ba.getEquipment()) {
             // BA Tasers should be mounted individually
-            if (m.getType().hasFlag(WeaponType.F_TASER)
+            if ((m instanceof WeaponMounted) && m.getType().hasFlag(WeaponType.F_TASER)
                     && m.getLocation() == BattleArmor.LOC_SQUAD) {
                 buff.append("BA Tasers should be mounted individually " +
                         "instead of as a squad weapon!");
@@ -691,7 +693,7 @@ public class TestBattleArmor extends TestEntity {
             }
 
             // Manipulators don't take up slots in BA
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 critSize = 0;
             }
 
@@ -783,13 +785,13 @@ public class TestBattleArmor extends TestEntity {
             }
 
             // Ensure that jump boosters are mounted in the body
-            if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
+            if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
                 buff.append("Jump Boosters must be mounted in the body!\n");
             }
 
             // Ensure partial wing are mounted in the body
-            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)
+            if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_PARTIAL_WING)
                     && (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)) {
                 buff.append("Partial wing must be mounted in the body!\n");
             }
@@ -799,7 +801,7 @@ public class TestBattleArmor extends TestEntity {
                 if ((m.getType() instanceof WeaponType)) {
                     numAMWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
-                if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                     numAPWeapons[m.getLocation()][m.getBaMountLoc()]++;
                 }
             } else {
@@ -809,13 +811,13 @@ public class TestBattleArmor extends TestEntity {
                             && !(m.getType() instanceof InfantryWeapon)) {
                         numAMWeapons[t][m.getBaMountLoc()]++;
                     }
-                    if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
+                    if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
                         numAPWeapons[t][m.getBaMountLoc()]++;
                     }
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+            if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
                 if ((m.getLinked() != null)
                         && (m.getLinked().getType() instanceof InfantryWeapon)) {
                     numGloveMountedAPWeapons++;
@@ -921,18 +923,15 @@ public class TestBattleArmor extends TestEntity {
                 }
 
                 // Weapons mounted in a DWP don't get assigned a location
-                if (((m.getLinked() != null) && m.getLinked().getType()
-                        .hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))
-                        || ((m.getLinkedBy() != null) && m.getLinkedBy()
-                                .getType()
-                                .hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+                if (((m.getLinked() instanceof MiscMounted)
+                    && m.getLinked().getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))
+                        || ((m.getLinkedBy() instanceof MiscMounted)
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
                     continue;
                 }
 
                 // Ammo mounted in a DWP doesn't get assigned a location
-                if ((m.getType() instanceof AmmoType)
-                        && (m.getLinkedBy() != null)
-                        && m.getLinkedBy().isDWPMounted()) {
+                if ((m.getType() instanceof AmmoType) && (m.getLinkedBy() != null) && m.getLinkedBy().isDWPMounted()) {
                     continue;
                 }
 
@@ -949,7 +948,7 @@ public class TestBattleArmor extends TestEntity {
         BAManipulator laManipType = BAManipulator.NONE;
         BAManipulator raManipType = BAManipulator.NONE;
         for (Mounted<?> m : ba.getEquipment()) {
-            if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            if ((m instanceof MiscMounted) && m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                     numLAManipulators++;
                     laManipType = BAManipulator.getManipulator(m.getType().getInternalName());
@@ -1034,7 +1033,7 @@ public class TestBattleArmor extends TestEntity {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
@@ -1062,7 +1061,7 @@ public class TestBattleArmor extends TestEntity {
         correct &= correctManipulators(buff);
 
         correct &= correctMovement(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;

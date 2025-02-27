@@ -18,6 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @XmlAccessorType(value = XmlAccessType.NONE)
 public class BasicOption implements IBasicOption, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 916639704995096673L;
 
     @XmlElement(name = "optionname")
@@ -43,6 +45,7 @@ public class BasicOption implements IBasicOption, Serializable {
     /**
      * Constructor that satisfies JAXB.
      */
+    @SuppressWarnings("unused")
     public BasicOption() {
     }
 

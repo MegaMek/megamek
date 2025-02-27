@@ -140,9 +140,12 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    logger.info("%s: Calculated %d / %d turns for phase %s",
+                    logger.info(
+                        String.format("%s: Calculated %d / %d turns for phase %s",
                             getName(), calculatedTurnsThisPhase,
-                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase());
+                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase()
+                        )
+                    );
                 }
                 calculatedTurnsThisPhase = 0;
             }
@@ -360,9 +363,9 @@ public abstract class BotClient extends Client {
             currentTurnEnemyEntities = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()
-                        && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
-
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (entity.getCrew() != null) && !entity.getCrew().isDead()
+                    && !entity.isHidden()) {
                     currentTurnEnemyEntities.add(entity);
                 }
             }
@@ -434,6 +437,7 @@ public abstract class BotClient extends Client {
                 case PREFIRING:
                     break;
                 case FIRING:
+                    postMovementProcessing();
                     initFiring();
                     break;
                 case PHYSICAL:
@@ -469,6 +473,8 @@ public abstract class BotClient extends Client {
             logger.error(t, "changePhase");
         }
     }
+
+    protected abstract void postMovementProcessing();
 
     private void runEndGame() {
         // Make a list of the player's living units.
@@ -654,7 +660,6 @@ public abstract class BotClient extends Client {
             return dest;
         }
 
-        logger.error("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
     }
@@ -676,7 +681,9 @@ public abstract class BotClient extends Client {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent)
-                        && !deployed_ent.isLocationProhibited(c)
+                        && !deployed_ent.isLocationProhibited(c,
+                            ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE())
+                                ? deployed_ent.getElevation() : 0))
                         && !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -61,16 +61,16 @@ public class InfantrySupportMortarHeavyInfernoWeapon extends InfantryWeapon {
 	}
 
 	@Override
-	public void adaptToGameOptions(GameOptions gOp) {
+	public void adaptToGameOptions(IGameOptions gameOptions) {
 		removeMode("");
 		removeMode(MODE_MISSILE_INDIRECT);
 		removeMode(MODE_INDIRECT_HEAT);
 		// add heat options
-		super.adaptToGameOptions(gOp);
+		super.adaptToGameOptions(gameOptions);
 
 		// Indirect Fire
-		if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-			if (gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
+		if (gameOptions.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+			if (gameOptions.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
 				addMode("");
 				addMode(MODE_MISSILE_INDIRECT);
 			} else {

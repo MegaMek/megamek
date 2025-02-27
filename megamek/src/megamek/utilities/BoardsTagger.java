@@ -21,23 +21,14 @@ package megamek.utilities;
 import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import megamek.common.Board;
-import megamek.common.Building;
-import megamek.common.Configuration;
-import megamek.common.Hex;
+import megamek.common.*;
+import megamek.common.enums.BuildingType;
 import megamek.logging.MMLogger;
 
 /**
@@ -93,7 +84,17 @@ public class BoardsTagger {
         TAG_WATER("Water"),
         TAG_ICE("IceTerrain"),
         TAG_FLAT("Flat"),
-        TAG_SNOWTERRAIN("SnowTerrain");
+        TAG_SNOWTERRAIN("SnowTerrain"),
+        TAG_HANGAR("Hangar"),
+        TAG_FORTRESS("Fortress"),
+        TAG_GUNEMPLACEMENT("GunEmplacement"),
+        TAG_HEAVYBUILDING("HeavyBuilding"),
+        TAG_HARDENEDBUILDING("HardenedBuilding"),
+        TAG_ARMOREDBUILDING("ArmoredBuilding"),
+        TAG_IMPASSABLE("Impassable"),
+        TAG_ELEVATOR("Elevator"),
+        TAG_MULTIPLETHEME("MultipleTheme"),
+        TAG_UNDERWATERBRIDGE("UnderWaterBridge");
 
         private String tagName;
         private static final Map<String, Tags> internalTagMap;
@@ -126,8 +127,17 @@ public class BoardsTagger {
 
     public static void main(String... args) {
         try {
+            Map<String, List<String>> boardCheckSum = new HashMap<>();
+
             File boardDir = Configuration.boardsDir();
-            scanForBoards(boardDir);
+            scanForBoards(boardDir, boardCheckSum);
+
+            boardCheckSum.forEach((key, value) -> {
+                if (value.size() > 1) {
+                    String message = key + " : " + value.stream().sorted().collect(Collectors.joining(", "));
+                    logger.info(message);
+                }
+            });
         } catch (Exception ex) {
             logger.error(ex, "Board tagger cannot scan boards");
             System.exit(64);
@@ -140,19 +150,21 @@ public class BoardsTagger {
      * Recursively scans the supplied file/directory for any boards and auto-tags
      * them.
      */
-    private static void scanForBoards(File file) throws IOException {
+    private static void scanForBoards(File file, Map<String, List<String>> boardCheckSum) throws IOException {
         if (file.isDirectory()) {
             String[] fileList = file.list();
             for (String filename : fileList) {
                 File filepath = new File(file, filename);
                 if (filepath.isDirectory()) {
-                    scanForBoards(new File(file, filename));
+                    scanForBoards(new File(file, filename), boardCheckSum);
                 } else {
                     tagBoard(filepath);
+                    checkSum(boardCheckSum, filepath);
                 }
             }
         } else {
             tagBoard(file);
+            checkSum(boardCheckSum, file);
         }
     }
 
@@ -214,6 +226,16 @@ public class BoardsTagger {
         int water = 0;
         int ice = 0;
         int snowTerrain = 0;
+        int hangar = 0;
+        int fortress = 0;
+        int gunEnplacement = 0;
+        int heavyBuilding = 0;
+        int hardenedBuilding = 0;
+        int armoredBuilding = 0;
+        int impassable = 0;
+        int elevator = 0;
+        int multipleTheme = 0;
+        int underWaterBridge = 0;
 
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
@@ -255,12 +277,27 @@ public class BoardsTagger {
                 water += hex.containsTerrain(WATER) ? 1 : 0;
                 if (hex.containsTerrain(BUILDING)
                         && (!hex.containsTerrain(BLDG_CLASS) || hex.terrainLevel(BLDG_CLASS) == Building.STANDARD)
-                        && ((hex.terrainLevel(BUILDING) == Building.LIGHT)
-                                || (hex.terrainLevel(BUILDING) == Building.MEDIUM))) {
+                        && ((hex.terrainLevel(BUILDING) == BuildingType.LIGHT.getTypeValue())
+                                || (hex.terrainLevel(BUILDING) == BuildingType.MEDIUM.getTypeValue()))) {
                     stdBuildings++;
                     int height = hex.terrainLevel(BLDG_ELEV);
                     lowBuildings += (height <= 2) ? 1 : 0;
                     highBuildings += (height > 2) ? 1 : 0;
+                }
+                if (hex.containsTerrain(BUILDING)) {
+                    hangar += hex.terrainLevel(BLDG_CLASS) == Building.HANGAR ? 1 : 0;
+                    fortress += hex.terrainLevel(BLDG_CLASS) == Building.FORTRESS ? 1 : 0;
+                    gunEnplacement += hex.terrainLevel(BLDG_CLASS) == Building.GUN_EMPLACEMENT ? 1 : 0;
+                    heavyBuilding += hex.terrainLevel(BUILDING) == BuildingType.HEAVY.getTypeValue() ? 1 : 0;
+                    hardenedBuilding += hex.terrainLevel(BUILDING) == BuildingType.HARDENED.getTypeValue() ? 1 : 0;
+                    armoredBuilding += hex.containsTerrain(BLDG_ARMOR) && hex.terrainLevel(Terrains.BLDG_ARMOR) > 0 ? 1 : 0;
+                }
+                impassable += hex.containsTerrain(IMPASSABLE) ? 1 : 0;
+                elevator += hex.containsTerrain(ELEVATOR) ? 1 : 0;
+                if (hex.containsTerrain(WATER)
+                    && hex.containsTerrain(BRIDGE)
+                    && (hex.terrainLevel(BRIDGE_ELEV) < hex.terrainLevel(WATER))) {
+                    underWaterBridge++;
                 }
             }
         }
@@ -312,6 +349,25 @@ public class BoardsTagger {
         matchingTags.put(Tags.TAG_HEAVYURBAN, (stdBuildings >= normSide * 4) && (roads > normSide / 3));
         matchingTags.put(Tags.TAG_SNOWTERRAIN, (snowTerrain > normSide * 2));
         matchingTags.put(Tags.TAG_FLAT, (levelExtent <= 2) && (weighedLevels < normSide * 5));
+        matchingTags.put(Tags.TAG_HANGAR, hangar > 10);
+        matchingTags.put(Tags.TAG_FORTRESS, fortress > 10);
+        matchingTags.put(Tags.TAG_GUNEMPLACEMENT, gunEnplacement > 10);
+        matchingTags.put(Tags.TAG_HEAVYBUILDING, heavyBuilding > 10);
+        matchingTags.put(Tags.TAG_HARDENEDBUILDING, hardenedBuilding > 10);
+        matchingTags.put(Tags.TAG_ARMOREDBUILDING, armoredBuilding > 10);
+        matchingTags.put(Tags.TAG_IMPASSABLE, impassable > 0);
+        matchingTags.put(Tags.TAG_ELEVATOR, elevator > 0);
+
+        multipleTheme = 0;
+        multipleTheme += deserts > 0 ? 1 : 0;
+        multipleTheme += lunar > 0 ? 1 : 0;
+        multipleTheme += grass > 0 ? 1 : 0;
+        multipleTheme += tropical > 0 ? 1 : 0;
+        multipleTheme += mars > 0 ? 1 : 0;
+        multipleTheme += snowTheme > 0 ? 1 : 0;
+        multipleTheme += volcanic > 0 ? 1 : 0;
+        matchingTags.put(Tags.TAG_MULTIPLETHEME, multipleTheme > 1);
+        matchingTags.put(Tags.TAG_UNDERWATERBRIDGE, underWaterBridge > 0);
 
         // Remove (see below) any auto tags that might be present so that auto tags that
         // no longer apply
@@ -345,6 +401,39 @@ public class BoardsTagger {
                 String message = String.format("Could not save board: %s", boardFile);
                 logger.error(ex, message);
             }
+        }
+    }
+
+    private static void checkSum(Map<String, List<String>> boardCheckSum,  File boardFile) {
+        MessageDigest md;
+
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+
+            String line;
+            List<String> lines = new ArrayList<>();
+
+            // remove tag lines
+            try (BufferedReader br = new BufferedReader(new FileReader(boardFile));) {
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith("tag ")) {
+                        lines.add(line);
+                    }
+                }
+            } catch (Exception e) {
+                logger.error(e, "Error Calculating Hash");
+            }
+
+            String sortedLines = lines.stream().sorted().collect(Collectors.joining());
+
+            md.update(sortedLines.getBytes(), 0, sortedLines.length());
+            HexFormat hexFormat = HexFormat.of();
+            String cs = hexFormat.formatHex(md.digest()).toUpperCase();
+            boardCheckSum.putIfAbsent(cs, new ArrayList<>());
+
+            boardCheckSum.get(cs).add(boardFile.getPath());
+        } catch (NoSuchAlgorithmException e) {
+            logger.error(e, "SHA-256 Algorithm Can't be Found");
         }
     }
 }

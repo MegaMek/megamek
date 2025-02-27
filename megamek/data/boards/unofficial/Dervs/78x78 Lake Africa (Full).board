@@ -1,11 +1,15 @@
 size 78 78
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Roads (Auto)"
-tag "DesertTheme (Auto)"
 tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
+tag "Roads (Auto)"
+tag "MultipleTheme (Auto)"
+tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
 tag "LowHills (Auto)"
+tag "Hangar (Auto)"
+tag "HeavyBuilding (Auto)"
 hex 0101 3 "" "desert"
 hex 0201 3 "" "desert"
 hex 0301 3 "" "desert"

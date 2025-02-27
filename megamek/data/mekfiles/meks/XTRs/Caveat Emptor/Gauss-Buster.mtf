@@ -1,5 +1,6 @@
-chassis:Gauss-Buster MilitiaMech
-model:
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Gauss-Buster
+model:MilitiaMech
 mul id:8100
 
 Config:Biped
@@ -9,11 +10,9 @@ source:XTR: Caveat Emptor
 rules level:5
 role:Sniper
 
-
-quirk:easy_maintain
-quirk:stable
 quirk:illegal_design
-
+quirk:stable
+quirk:easy_maintain
 
 mass:50
 engine:150 ICE Engine(IS)

@@ -56,13 +56,13 @@ class TestSupportVehicleTest {
         // Rating E should return CV slots for IS FF
         st.setArmorTechRating(ITechnology.RATING_E);
         assertEquals(
-                2,
-                ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(st));
+            2,
+            ArmorType.of(T_ARMOR_FERRO_FIBROUS, false).getSupportVeeSlots(st));
 
         // Rating F should return CV slots for Clan FF
         st.setArmorTechRating(ITechnology.RATING_F);
         assertEquals(
-                1,
-                ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(st));
+            1,
+            ArmorType.of(T_ARMOR_FERRO_FIBROUS, true).getSupportVeeSlots(st));
     }
 }

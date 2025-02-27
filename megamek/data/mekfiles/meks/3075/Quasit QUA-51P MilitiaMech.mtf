@@ -1,0 +1,152 @@
+generator:MegaMek Suite 0.50.1-SNAPSHOT on 2024-11-09
+chassis:Quasit
+model:QUA-51P MilitiaMech
+mul id:2608
+
+Config:Biped
+techbase:Inner Sphere
+era:3074
+source:TRO: 3075
+rules level:2
+role:Scout
+
+
+mass:45
+engine:225 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:5
+jump mp:0
+
+armor:Heavy Industrial(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:13
+RT armor:13
+CT armor:20
+HD armor:8
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:2
+Plasma Rifle, Right Arm
+Machine Gun, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISPlasmaRifleAmmo
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Machine Gun
+IS Machine Gun Ammo - Half
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Environmental Sealing
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

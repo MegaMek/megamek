@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
+import java.io.Serial;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -29,7 +30,7 @@ import static java.util.stream.Collectors.toList;
  * @author Taharqa (Jay Lawson)
  */
 public class WeaponQuirks extends AbstractOptions {
-
+    @Serial
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks";
 
@@ -84,72 +85,62 @@ public class WeaponQuirks extends AbstractOptions {
         return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
     }
 
-    public static boolean isQuirkLegalFor(IOption quirk, Entity en,
-            EquipmentType etype) {
+    public static boolean isQuirkDisallowed(IOption quirk, Entity en,
+                                                EquipmentType equipmentType) {
         String qName = quirk.getName();
         // There may be some non-WeaponType quirks, specifically melee weapons
-        if (!(etype instanceof WeaponType) && !etype.hasFlag(MiscType.F_CLUB)) {
-            return false;
-        } else if (etype.hasFlag(MiscType.F_CLUB)) {
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
-                return false;
+        if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(MiscType.F_CLUB)) {
+            return true;
+        } else if ((equipmentType instanceof MiscType) && equipmentType.hasFlag(MiscType.F_CLUB)) {
+            return qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD);
+        }
+        if (!(equipmentType instanceof WeaponType weaponType)) {
+            throw new IllegalArgumentException("EquipmentType must be a WeaponType");
+        }
+
+        if (!(weaponType instanceof AmmoWeapon)) {
+            switch (qName) {
+                case OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS,
+                     OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED,
+                     OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD -> {
+                    return true;
+                }
             }
+        }
+
+        if (!(weaponType instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             return true;
         }
-
-        // Anything else is a WeaponType
-        WeaponType wtype = (WeaponType) etype;
-
-        if (!(wtype instanceof AmmoWeapon)) {
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
-                return false;
-            }
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
-                return false;
-            }
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
-                return false;
-            }
-        }
-
-        if (!(wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
-            return false;
-        }
-
-/*        if ((wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
-            return false;
-        }*/
 
         if (en instanceof ProtoMek) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
-                return false;
+                return true;
             }
         }
 
+        boolean hasBadCoolingQuirk = qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+            || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING);
         if (en instanceof Tank || en instanceof BattleArmor || en instanceof ProtoMek) {
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
-                return false;
+            if (hasBadCoolingQuirk) {
+                return true;
             }
         }
 
         if (en.isConventionalInfantry()) {
-            return false;
+            return true;
         }
 
-        if (wtype.getHeat() == 0) {
-            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
-                || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
-                return false;
+        if (weaponType.getHeat() == 0) {
+            if (hasBadCoolingQuirk) {
+                return true;
             }
         }
 
@@ -158,45 +149,45 @@ public class WeaponQuirks extends AbstractOptions {
                 || en instanceof Aero
                 || en instanceof GunEmplacement)  {
 
-                return false;
+                return true;
             }
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
             if ((en instanceof ProtoMek) || (en instanceof Jumpship)) {
-                return false;
+                return true;
             }
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT)) {
             if ((en instanceof Aero) || (en instanceof BattleArmor) || (en instanceof Tank)) {
-                return false;
+                return true;
             }
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON)) {
             if (en instanceof Aero) {
-                return false;
+                return true;
             }
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)) {
             if (en instanceof Aero) {
-                return false;
+                return true;
             }
         }
 
         if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             if (en instanceof Jumpship) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new WeaponQuirksInfo();
+        private static final AbstractOptionsInfo instance = new WeaponQuirksInfo();
 
         public static AbstractOptionsInfo getInstance() {
             return instance;

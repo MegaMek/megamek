@@ -32,7 +32,7 @@ import megamek.server.totalwarfare.TWGameManager;
 /**
  * This class contains computations carried out by the Server class.
  * Methods put in here should be static and self-contained.
- * 
+ *
  * @author NickAragua
  */
 public class ServerHelper {
@@ -40,7 +40,7 @@ public class ServerHelper {
      * Determines if the given entity is an infantry unit in the given hex is "in
      * the open"
      * (and thus subject to double damage from attacks)
-     * 
+     *
      * @param te                         Target entity.
      * @param te_hex                     Hex where target entity is located.
      * @param game                       The current {@link Game}
@@ -515,6 +515,23 @@ public class ServerHelper {
     }
 
     /**
+     * Check for movement into hazardous liquid and apply damage.
+     */
+    public static void checkEnteringHazardousLiquid(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
+
+            if (hex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (elevation <= 0)) {
+                int depth = hex.containsTerrain(Terrains.WATER) ? hex.terrainLevel(Terrains.WATER) : 0;
+                gameManager.doHazardousLiquidDamage(entity, false, depth);
+            }
+    }
+
+    public static void checkEnteringUltraSublevel(Hex hex, int elevation, Entity entity, TWGameManager gameManager) {
+        if (hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && (elevation <= 0)) {
+            gameManager.doUltraSublevelDamage(entity);
+        }
+    }
+
+    /**
      * Check for black ice when moving into pavement hex.
      */
     public static boolean checkEnteringBlackIce(TWGameManager gameManager, Coords curPos, Hex curHex,
@@ -558,7 +575,7 @@ public class ServerHelper {
 
     /**
      * Checks for minefields within the entity's active probe range.
-     * 
+     *
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
@@ -638,6 +655,12 @@ public class ServerHelper {
         // if no probe, save ourselves a few loops
         if (probeRange <= 0) {
             return false;
+        }
+
+        if (detector.isAerospace() && game.getBoard().onGround()) {
+            // Aerospace with BAP on the ground map detect hidden units to 1 hex on either
+            // side of their flight path; see https://bg.battletech.com/forums/index.php?topic=84054.0
+            probeRange = 1;
         }
 
         // Get all hidden units in probe range
@@ -739,7 +762,7 @@ public class ServerHelper {
      * of consecutive use, IO p.89. The first round of use means consecutiveRounds =
      * 1; this is
      * the minimum as 0 rounds of use would not trigger a roll.
-     * 
+     *
      * @param consecutiveRounds The rounds the RHS has been used
      * @return The roll target number to avoid failure
      */

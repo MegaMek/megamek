@@ -1,9 +1,10 @@
 size 42 92
 tag "Rough (Auto)"
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
 tag "Cliffs (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
 tag "Swamp (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 tag "DenseForest (Auto)"

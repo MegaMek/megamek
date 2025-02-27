@@ -19,7 +19,7 @@ import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
@@ -73,22 +73,22 @@ public abstract class PPCWeapon extends EnergyWeapon {
             if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
-            if (getToHitModifier() != 0) {
-                damage -= damage * getToHitModifier() * 0.05;
+            if (getToHitModifier(null) != 0) {
+                damage -= damage * getToHitModifier(null) * 0.05;
             }
         }
         return damage / 10.0;
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
+    public void adaptToGameOptions(IGameOptions gameOptions) {
+        super.adaptToGameOptions(gameOptions);
 
         // Modes for disengaging PPC field inhibitors according to TacOps, p.103.
         // The benefit is removing the minimum range, so only PPCs with a minimum range
         // get the modes.
         if (minimumRange > 0) {
-            if (gOp.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                 addMode("Field Inhibitor ON");
                 addMode("Field Inhibitor OFF");
             } else {

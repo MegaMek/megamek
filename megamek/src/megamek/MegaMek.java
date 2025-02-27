@@ -20,26 +20,6 @@
  */
 package megamek;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.ObjectInputFilter;
-import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import io.sentry.Sentry;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
@@ -54,7 +34,25 @@ import megamek.common.net.marshalling.SanityInputFilter;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 import megamek.server.DedicatedServer;
+import megamek.utilities.GifWriter;
+import megamek.utilities.PrincessFineTuning;
 import megamek.utilities.RATGeneratorEditor;
+
+import javax.swing.*;
+import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * This is the primary MegaMek class.
@@ -87,12 +85,14 @@ public class MegaMek {
             options.setRelease(SuiteConstants.VERSION.toString());
         });
 
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
         // First, create a global default exception handler
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             final String name = t.getClass().getName();
             final String message = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION, name);
             final String title = String.format(MMLoggingConstants.UNHANDLED_EXCEPTION_TITLE, name);
-            logger.error(t, message, title);
+            logger.errorDialog(t, message, title);
         });
 
         // Second, let's handle logging
@@ -109,6 +109,9 @@ public class MegaMek {
                     parser.help()));
             System.exit(1);
         }
+
+        // log jvm parameters
+        logger.info(ManagementFactory.getRuntimeMXBean().getInputArguments());
 
         String[] restArgs = parser.getRestArgs();
 
@@ -134,7 +137,14 @@ public class MegaMek {
             startQuickLoad(restArgs);
             return;
         }
-
+        if (parser.writeGif()) {
+            startGifWriter(restArgs);
+            return;
+        }
+        if (parser.aiFineTuning()) {
+            startPrincessFineTuning(restArgs);
+            return;
+        }
         if (parser.ratGenEditor()) {
             RATGeneratorEditor.main(restArgs);
         } else {
@@ -341,6 +351,18 @@ public class MegaMek {
             mmg.start(false);
             mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
         });
+    }
+
+    private static void startGifWriter(String... args) {
+        try {
+            GifWriter.createGifFromGameSummary(args[0]);
+        } catch (IOException e) {
+            logger.error(e, "Error creating GIF");
+        }
+    }
+
+    private static void startPrincessFineTuning(String... args) {
+        PrincessFineTuning.main(args);
     }
 
     /**

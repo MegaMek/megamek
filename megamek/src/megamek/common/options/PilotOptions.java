@@ -14,6 +14,7 @@
 
 package megamek.common.options;
 
+import java.io.Serial;
 import java.util.Vector;
 
 /**
@@ -22,6 +23,7 @@ import java.util.Vector;
  * @author Cord
  */
 public class PilotOptions extends AbstractOptions {
+    @Serial
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages";
     public static final String EDGE_ADVANTAGES = "edgeAdvantages";
@@ -191,12 +193,12 @@ public class PilotOptions extends AbstractOptions {
     }
 
     private static class PilotOptionsInfo extends AbstractOptionsInfo {
-        private static boolean initliazed = false;
-        private static AbstractOptionsInfo instance = new PilotOptionsInfo();
+        private static boolean initialized = false;
+        private static final AbstractOptionsInfo instance = new PilotOptionsInfo();
 
         public static AbstractOptionsInfo getInstance() {
-            if (!initliazed) {
-                initliazed = true;
+            if (!initialized) {
+                initialized = true;
                 // Create a new dummy PilotOptions; ensures values initialized
                 // Otherwise, could have issues when loading saved games
                 new PilotOptions();

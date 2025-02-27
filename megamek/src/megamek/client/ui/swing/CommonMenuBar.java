@@ -133,6 +133,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
+    private final JCheckBoxMenuItem viewBotCommands = new JCheckBoxMenuItem(getString("CommonMenuBar.viewBotCommands"));
     private final JMenuItem viewResetWindowPositions = new JMenuItem(getString("CommonMenuBar.viewResetWindowPos"));
     private final JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(
             getString("CommonMenuBar.viewToggleIsometric"));
@@ -304,6 +305,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY);
         GUIP.setForceDisplayEnabled(false);
         viewForceDisplay.setSelected(false);
+        initMenuItem(viewBotCommands, menu, VIEW_BOT_COMMANDS, VK_G);
+        GUIP.setBotCommandsEnabled(false);
+        viewBotCommands.setSelected(false);
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
@@ -356,11 +360,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
         toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
-        /*
-         * TODO: moveTraitor = createMenuItem(menu,
-         * getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);
-         */
-
         // Create the Help menu
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);
@@ -407,6 +406,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
         gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
+        viewBotCommands.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.BOT_COMMANDS));
     }
 
     @Override
@@ -528,7 +528,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardRecent.setEnabled((isBoardEditor || isMainMenu) && !RecentBoardList.getRecentBoards().isEmpty());
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled((isLobby || isInGame) && isNotVictory);
+        fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
         fileUnitsReinforceRAT.setEnabled((isLobby || isInGame) && isNotVictory);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
@@ -559,10 +559,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMovementEnvelope.setEnabled(isInGameBoardView);
         viewTurnDetailsOverlay.setEnabled(isInGameBoardView);
         viewMovModEnvelope.setEnabled(isInGameBoardView);
-        gameRoundReport.setEnabled((isInGame));
+        gameRoundReport.setEnabled(isInGame);
         viewMekDisplay.setEnabled(isInGameBoardView);
         viewForceDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
+        viewBotCommands.setEnabled(isInGame);
     }
 
     /**
@@ -616,6 +617,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
         } else if (e.getName().equals(RecentBoardList.RECENT_BOARDS_UPDATED)) {
             initializeRecentBoardsMenu();
+        } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
+            viewBotCommands.setSelected(GUIP.getBotCommandsEnabled());
         }
     }
 

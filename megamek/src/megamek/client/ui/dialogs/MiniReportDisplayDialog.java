@@ -19,8 +19,7 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
@@ -30,12 +29,12 @@ import java.awt.event.WindowEvent;
 
 public class MiniReportDisplayDialog extends JDialog {
     //region Variable Declarations
-    private final ClientGUI clientGUI;
+    private final IClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
-    public MiniReportDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
+    public MiniReportDisplayDialog(final JFrame frame, final IClientGUI clientGUI) {
         super(frame, "", false);
         this.setTitle(Messages.getString("MiniReportDisplay.title"));
 
@@ -79,10 +78,16 @@ public class MiniReportDisplayDialog extends JDialog {
     @Override
     protected void processKeyEvent(KeyEvent evt) {
         evt.setSource(clientGUI);
-        clientGUI.getMenuBar().dispatchEvent(evt);
+        if (clientGUI instanceof IHasMenuBar hasMenuBar) {
+            hasMenuBar.getMenuBar().dispatchEvent(evt);
+        }
+
         // Make the source be the ClientGUI and not the dialog
         // This prevents a ClassCastException in ToolTipManager
-        clientGUI.getCurrentPanel().dispatchEvent(evt);
+        if (clientGUI instanceof IHasCurrentPanel hasCurrentPanel) {
+            hasCurrentPanel.getCurrentPanel().dispatchEvent(evt);
+        }
+
         if (!evt.isConsumed()) {
             super.processKeyEvent(evt);
         }

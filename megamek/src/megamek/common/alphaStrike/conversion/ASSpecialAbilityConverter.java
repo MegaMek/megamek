@@ -181,6 +181,9 @@ public class ASSpecialAbilityConverter {
             if (miscType.hasFlag(F_CASPAR)) {
                 assign(misc, SDCS);
             }
+            if (miscType.hasFlag(F_SASRCS)) {
+                assign(misc, ECM);
+            }
         } else if (miscType.hasFlag(F_DRONE_CARRIER_CONTROL)) {
             assign(misc, DCC, (int) misc.getSize());
         } else if (miscType.hasFlag(F_REMOTE_DRONE_COMMAND_CONSOLE)) {
@@ -290,6 +293,8 @@ public class ASSpecialAbilityConverter {
             assign(misc, MHQ, 1);
         } else if (miscType.hasFlag(F_SPACE_MINE_DISPENSER)) {
             assign(misc, MDS, 2);
+        } else if (miscType.hasFlag(F_ATAC)) {
+            assign(misc, ATAC, misc.getSize());
         }
 
         // TODO : Variable Range targeting (VRT) is not implemented: assign(misc, VRT);
@@ -443,9 +448,11 @@ public class ASSpecialAbilityConverter {
                 assign("Fighter Bay", AT, (int) ((ASFBay) t).getCapacity());
                 assign("Fighter Bay", ATxD, ((ASFBay) t).getDoors());
                 processMFB(t);
-            } else if (t instanceof CargoBay) {
-                assign("Cargo Bay", CT, ((CargoBay) t).getCapacity());
-                assign("Cargo Bay", CTxD, ((CargoBay) t).getDoors());
+            } else if ((t instanceof CargoBay) || (t instanceof LiquidCargoBay)
+                || (t instanceof RefrigeratedCargoBay) || (t instanceof InsulatedCargoBay)) {
+                // ASC p.122: assign CT/CK for all cargo that is not specifically for units
+                assign("Cargo Bay", CT, ((Bay) t).getCapacity());
+                assign("Cargo Bay", CTxD, ((Bay) t).getDoors());
             } else if (t instanceof DockingCollar) {
                 assign("Docking Collar", DT, 1);
             } else if (t instanceof InfantryBay) {
@@ -472,6 +479,9 @@ public class ASSpecialAbilityConverter {
                 assign("Heavy Vehicle Bay", VTH, (int) ((HeavyVehicleBay) t).getCapacity());
                 assign("Heavy Vehicle Bay", VTHxD, ((HeavyVehicleBay) t).getDoors());
                 processMFB(t);
+            } else if (t instanceof NavalRepairFacility) {
+                // per personal communication from the rules team, repair facilities give MFB and therefore, large craft receive it
+                processMFB(t);
             }
         }
     }
@@ -481,7 +491,7 @@ public class ASSpecialAbilityConverter {
      * assign MFB.
      */
     protected void processMFB(Transporter transporter) {
-        assign(transporter.toString(), MFB);
+        assign(transporter.toString(), MFB, 1);
     }
 
     /** Returns true when the given Mounted blocks ENE. */

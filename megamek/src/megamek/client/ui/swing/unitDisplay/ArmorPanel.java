@@ -146,12 +146,6 @@ class ArmorPanel extends PicMap {
             minTopMargin = minMekTopMargin;
             minBottomMargin = minMekBottomMargin;
             minRightMargin = minMekRightMargin;
-        } else if (en instanceof ArmlessMek) {
-            ams = armless;
-            minLeftMargin = minMekLeftMargin;
-            minTopMargin = minMekTopMargin;
-            minBottomMargin = minMekBottomMargin;
-            minRightMargin = minMekRightMargin;
         } else if (en instanceof Mek) {
             ams = mek;
             minLeftMargin = minMekLeftMargin;
@@ -242,7 +236,7 @@ class ArmorPanel extends PicMap {
         }
 
         if (ams == null) {
-            logger.error("The armor panel is null");
+            logger.info("The armor panel is null");
             return;
         }
         ams.setEntity(en);

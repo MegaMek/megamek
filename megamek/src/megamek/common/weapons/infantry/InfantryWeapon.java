@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.AmmoMounted;
-import megamek.common.options.GameOptions;
+import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
@@ -275,9 +275,9 @@ public abstract class InfantryWeapon extends Weapon {
     }
 
     @Override
-    public void adaptToGameOptions(GameOptions gOp) {
+    public void adaptToGameOptions(IGameOptions gameOptions) {
         if (isFlameBased()) {
-            if (!gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
+            if (!gameOptions.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
                 addMode(MODE_FLAMER_DAMAGE);
                 addMode(MODE_FLAMER_HEAT);
             } else {

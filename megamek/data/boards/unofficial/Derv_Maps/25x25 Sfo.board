@@ -1,7 +1,8 @@
 size 25 25
 option exit_roads_to_pavement false
-tag "Water (Auto)"
 tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "UnderWaterBridge (Auto)"
 tag "Roads (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "" "grass"

@@ -440,6 +440,16 @@ public class TestMek extends TestEntity {
                 return false;
             }
         }
+        if (mt.hasFlag(MiscType.F_CHAIN_DRAPE)) {
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_LT) != 3) {
+                buff.append("incorrect number of chain drape crits in left torso\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, mounted, Mek.LOC_RT) != 3) {
+                buff.append("incorrect number of chain drape crits in right torso\n");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -663,7 +673,7 @@ public class TestMek extends TestEntity {
         if (!getEntity().hasPatchworkArmor()
                 && (getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor())) {
             correct = false;
-            buff.append("Too many armor points allocated");
+            buff.append("Too many armor points allocated.\n");
         }
 
         return correct;
@@ -698,7 +708,7 @@ public class TestMek extends TestEntity {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
@@ -740,7 +750,7 @@ public class TestMek extends TestEntity {
             correct = correct && checkMiscSpreadAllocation(mek, misc, buff);
         }
         correct = correct && correctMovement(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -1061,6 +1071,13 @@ public class TestMek extends TestEntity {
                                     && (misc.getSubType() == MiscType.S_BACKHOE)
                                     || (misc.getSubType() == MiscType.S_COMBINE)))) {
                 buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
+
+            if ((misc.hasFlag(MiscType.F_CHAIN_DRAPE_APRON) || misc.hasFlag(MiscType.F_CHAIN_DRAPE_PONCHO))
+                && (mek.isQuadMek() || mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+                ) {
+                buff.append("Quad meks and meks with torso cockpits may only mount a chain drape as a Cape");
                 illegal = true;
             }
         }

@@ -36,4 +36,9 @@ public class RoundTrigger implements Trigger {
     public boolean isTriggered(IGame game, TriggerSituation event) {
         return game.getCurrentRound() == gameRound;
     }
+
+    @Override
+    public String toString() {
+        return "GameRound: " + gameRound;
+    }
 }

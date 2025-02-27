@@ -45,6 +45,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 
+import megamek.client.AbstractClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyBindReceiver;
@@ -54,10 +55,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegaMekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.IGame;
-import megamek.common.KeyBindParser;
-import megamek.common.Player;
-import megamek.common.PlayerTurn;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -157,8 +155,25 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         KeyBindParser.addPreferenceChangeListener(this);
 
         MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.EXTEND_TURN_TIMER, this, this::extendTimer);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseGameWhenOnlyBotUnitsRemain);
+        MegaMekGUI.getKeyDispatcher().registerCommandAction(KeyCommandBind.UNPAUSE.cmd,
+            () -> ((AbstractClient) clientgui.getClient()).sendUnpause());
     }
 
+    private void pauseGameWhenOnlyBotUnitsRemain() {
+        if (isIgnoringEvents() || !isVisible()) {
+            return;
+        }
+        IGame game = getClientgui().getClient().getGame();
+        List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
+        boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
+        if (liveUnitsRemaining) {
+            clientgui.getClient().sendChat("Pausing the game only works when only bot units remain.");
+        } else {
+            clientgui.getClient().sendChat("Requesting game pause.");
+            ((AbstractClient) clientgui.getClient()).sendPause();
+        }
+    }
 
     /** Returns the list of buttons that should be displayed. */
     protected abstract List<MegaMekButton> getButtonList();
@@ -333,6 +348,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         IGame game = clientgui.getClient().getGame();
         List<String> nextPlayerNames = new ArrayList<>();
         int turnIndex = game.getTurnIndex();
+        if (clientgui.getClient().getGame().getPhase().isSimultaneous((Game) clientgui.getClient().getGame())) {
+            turnIndex--;
+        }
         List<? extends PlayerTurn> gameTurns = game.getTurnsList();
         for (int i = turnIndex + 1; (i < gameTurns.size()) && (nextPlayerNames.size() < playerCountToShow); i++) {
             nextPlayerNames.add(game.getPlayer(gameTurns.get(i).playerId()).getName());

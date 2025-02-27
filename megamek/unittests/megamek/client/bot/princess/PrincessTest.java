@@ -19,27 +19,6 @@
  */
 package megamek.client.bot.princess;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import megamek.client.bot.princess.PathRanker.PathRankerType;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
@@ -47,6 +26,17 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -80,25 +70,31 @@ class PrincessTest {
 
     @Test
     void testCalculateAdjustment() {
-        when(mockPrincess.calculateAdjustment(anyString())).thenCallRealMethod();
-
         // Test a +3 adjustment.
-        assertEquals(3, mockPrincess.calculateAdjustment("+++"));
+        assertEquals(3, Princess.calculateAdjustment("+++"));
+        assertEquals(2, Princess.calculateAdjustment("++3"));
+        assertEquals(2, Princess.calculateAdjustment("3++"));
 
         // Test a -2 adjustment.
-        assertEquals(-2, mockPrincess.calculateAdjustment("--"));
+        assertEquals(-2, Princess.calculateAdjustment("--"));
 
         // Test an adjustment with some bad characters.
-        assertEquals(1, mockPrincess.calculateAdjustment("+4"));
+        assertEquals(1, Princess.calculateAdjustment("+p"));
 
-        // Test an adjustment with nothing but bad characters.
-        assertEquals(0, mockPrincess.calculateAdjustment("5"));
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(5, Princess.calculateAdjustment("5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(-5, Princess.calculateAdjustment("-5"));
+
+        // Test an adjustment with a number should set the value to the number.
+        assertEquals(22, Princess.calculateAdjustment("+22"));
 
         // Test an empty ticks argument.
-        assertEquals(0, mockPrincess.calculateAdjustment(""));
+        assertEquals(0, Princess.calculateAdjustment(""));
 
         // Test a null ticks argument.
-        assertEquals(0, mockPrincess.calculateAdjustment(null));
+        assertEquals(0, Princess.calculateAdjustment(null));
     }
 
     @Test
@@ -406,7 +402,6 @@ class PrincessTest {
 
         // Unit is capable of fleeing.
         Entity mockMek = mock(BipedMek.class);
-        when(mockMek.canFlee()).thenReturn(true);
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);
@@ -420,6 +415,7 @@ class PrincessTest {
         when(mockPrincess.getHomeEdge(any(Entity.class))).thenReturn(CardinalEdge.NORTH);
         Game mockGame = mock(Game.class);
         when(mockPrincess.getGame()).thenReturn(mockGame);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
 
         // In its current state, the entity does not need to flee the board.
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
@@ -448,11 +444,11 @@ class PrincessTest {
         assertTrue(mockPrincess.mustFleeBoard(mockMek));
 
         // Make the unit incapable of fleeing.
-        when(mockMek.canFlee()).thenReturn(false);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(false);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
 
         // The unit can flee, but is no longer on the board edge.
-        when(mockMek.canFlee()).thenReturn(true);
+        when(mockMek.canFlee(mockMek.getPosition())).thenReturn(true);
         when(mockRanker.distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class),
                 any(Game.class))).thenReturn(1);
         assertFalse(mockPrincess.mustFleeBoard(mockMek));
@@ -589,7 +585,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 11s
@@ -627,7 +623,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(12) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 12s
@@ -664,7 +660,7 @@ class PrincessTest {
         double target = Compute.oddsAbove(10) / 100.0;
         bin1.setShotsLeft(7);
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // Default toHitThreshold for 3+ rounds for this level should allow firing on
         // 11s
@@ -695,7 +691,7 @@ class PrincessTest {
         // For max aggro, shoot OS weapons at TN 10 or better
         double target = Compute.oddsAbove(8) / 100.0;
         Map<WeaponMounted, Double> conserveMap = mockPrincess.calcAmmoConservation(mek1);
-        assertTrue(conserveMap.get(wpn1) <= target);
+        assertTrue(conserveMap.get((WeaponMounted) wpn1) <= target);
 
         // For default aggro, shoot OS weapons at TN 9 or better
         when(mockBehavior.getHyperAggressionIndex()).thenReturn(5);

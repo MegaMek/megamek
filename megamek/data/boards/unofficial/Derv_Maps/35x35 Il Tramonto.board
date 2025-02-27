@@ -1,6 +1,7 @@
 size 35 35
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
+tag "MultipleTheme (Auto)"
 tag "HighHills (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "grass"

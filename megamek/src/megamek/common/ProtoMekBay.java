@@ -17,7 +17,7 @@ package megamek.common;
  * Represents a volume of space set aside for carrying ProtoMeks aboard large spacecraft and mobile
  * structures
  */
-public final class ProtoMekBay extends Bay {
+public final class ProtoMekBay extends UnitBay {
     private static final long serialVersionUID = 927162989742234173L;
 
     /**

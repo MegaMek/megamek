@@ -1,0 +1,58 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-04
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun demi-I (WOBM)
+</Name>
+
+<Model>
+(Motorized UAC10)
+</Model>
+
+<year>
+3057
+</year>
+
+<originalBuildYear>
+3057
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+Word of Blake Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISUltraAC10
+IS Ultra AC/10 Ammo
+</Field Guns Equipment>
+
+<notes>
+Squad/platoon size from TechManual. Armor kit from Tactical Operations. Intro date from official creation of ComStar Guards and Militia (ComGuards).
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

@@ -25,7 +25,7 @@ import java.text.MessageFormat;
 
 /** Contains static methods that show common info/error messages for the lobby. */
 public final class LobbyErrors {
-    
+
     private static final String SINGLE_OWNER = "For this action, the selected units must have a single owner.";
     private static final String CONFIG_ENEMY = "Cannot configure units of other players except units of your bots.";
     private static final String VIEW_HIDDEN = "Cannot view or set details on hidden units.";
@@ -47,55 +47,61 @@ public final class LobbyErrors {
     private static final String FORCE_EMPTY = "Please select only empty forces.";
     private static final String FORCE_ASSIGN_ONLYTEAM = "Can only reassign a force to a teammate when reassigning without units.";
     private static final String FORCE_ATTACH_TOSUB = "Cannot attach a force to its own subforce.";
+    private static final String PLAYER_DONE = "Cannot edit units while your status is Done.";
     private static final String SBF_CONVERSIONERROR = "At least some of the forces you selected cannot be " +
             "converted to SBF Formations. Please select only the topmost forces to be converted, no subforces. " +
             "A converted force must conform to the rules given in Interstellar Operations. Conversion " +
             "will typically work with companies created in the Force Generator.";
+    private static final String NO_DUAL_TOW = "Both units must have an open appropriate tow hitch.";
 
     public static void showOnlyOwnBot(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_OWN_BOT);
     }
-    
+
     public static void showOnlySingleEntityOrForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, SINGLE_UNIT_OR_FORCE);
     }
-    
+
     public static void showSingleOwnerRequired(JFrame owner) {
         JOptionPane.showMessageDialog(owner, SINGLE_OWNER);
     }
-    
+
     public static void showForceNoAttachSubForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_ATTACH_TOSUB);
     }
-    
+
     public static void showOnlyTeam(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_TEAM);
     }
-    
+
     public static void showOnlyC3M(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_C3M);
     }
-    
+
     public static void showNoDualLoad(JFrame owner) {
         JOptionPane.showMessageDialog(owner, NO_DUAL_LOAD);
     }
-    
+
+    public static void showNoDualTow(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, NO_DUAL_TOW);
+    }
+
     public static void showNoSuchBay(JFrame owner) {
         JOptionPane.showMessageDialog(owner, NO_BAY);
     }
-    
+
     public static void showSquadronTooMany(JFrame owner) {
         JOptionPane.showMessageDialog(owner, Messages.getString("FighterSquadron.toomany"));
     }
-    
+
     public static void showOnlyFighter(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_FIGHTERS);
     }
-    
+
     public static void showLoadOnlyAllied(JFrame owner) {
         JOptionPane.showMessageDialog(owner, LOAD_ONLY_ALLIED);
     }
-    
+
     public static void showExceedC3Capacity(JFrame owner) {
         JOptionPane.showMessageDialog(owner, EXCEED_C3_CAPACITY);
     }
@@ -107,41 +113,45 @@ public final class LobbyErrors {
     public static void showCannotConfigEnemies(JFrame owner) {
         JOptionPane.showMessageDialog(owner, CONFIG_ENEMY);
     }
-    
+
     public static void showCannotViewHidden(JFrame owner) {
         JOptionPane.showMessageDialog(owner, VIEW_HIDDEN);
     }
-    
+
     public static void showSingleUnit(JFrame owner, String action) {
         JOptionPane.showMessageDialog(owner, MessageFormat.format(SINGLE_UNIT, action));
     }
-    
+
     public static void showTenUnits(JFrame owner) {
         JOptionPane.showMessageDialog(owner, TEN_UNITS);
     }
-    
+
     public static void showHeatTracking(JFrame owner) {
         JOptionPane.showMessageDialog(owner, HEAT_TRACKING);
     }
-    
+
     public static void showOnlyMeks(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ONLY_MEKS);
     }
-    
+
     public static void showOnlyTeammate(JFrame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_ASSIGN_ONLYTEAM);
     }
-    
+
     public static void showOnlyEntityOrForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, ENTITY_OR_FORCE);
     }
-    
+
     public static void showOnlyEmptyForce(JFrame owner) {
         JOptionPane.showMessageDialog(owner, FORCE_EMPTY);
     }
 
     public static void showSBFConversion(JFrame owner) {
         JOptionPane.showMessageDialog(owner, SBF_CONVERSIONERROR);
+    }
+
+    public static void showCannotEditWhileDone(JFrame owner) {
+        JOptionPane.showMessageDialog(owner, PLAYER_DONE);
     }
 
     private LobbyErrors() { }

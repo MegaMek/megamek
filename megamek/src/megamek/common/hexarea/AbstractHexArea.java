@@ -36,7 +36,7 @@ abstract class AbstractHexArea implements HexArea {
      * @return True if this shape is, by itself, finite and small enough and absolute (independent of a board) that its coords can be given
      * directly. If false, its coords cannot be retrieved, only {@link #containsCoords(Coords, Board)} can be used. Always call this method
      * and only if it returns true, call {@link #getCoords()}.
-     * @apiNote By default, this method returns false. It may be overridden to return true for finite, small shapes, such as a hex circle of
+     * By default, this method returns false. It may be overridden to return true for finite, small shapes, such as a hex circle of
      * diameter 4. In that case, getCoords must also be overriden to return the coords of this shape.
      */
     boolean isSmall() {
@@ -51,10 +51,9 @@ abstract class AbstractHexArea implements HexArea {
     /**
      * Returns all coords of this shape, if it is finite and small enough and an absolute shape. Only use this when {@link #isSmall()}
      * returns true - it will throw an exception otherwise.
-     *
+     *Throws an exception by default. Override together with {@link #isSmall()} for small board-independent shapes.
      * @return All Coords of this shape
      * @throws IllegalStateException when this method is called on a shape where {@link #isSmall()} returns false
-     * @apiNote Throws an exception by default. Override together with {@link #isSmall()} for small board-independent shapes.
      */
     Set<Coords> getCoords() {
         throw new IllegalStateException("Can only be used on small, finite shapes.");

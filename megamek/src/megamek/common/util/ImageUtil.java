@@ -43,6 +43,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
 /**
@@ -239,6 +240,24 @@ public final class ImageUtil {
         }
         return failStandardImage();
     }
+
+
+    /**
+     * Loads and returns the image of the given fileName. This method does not make
+     * sure the image
+     * is fully loaded, this must be done by the caller when necessary (the simplest
+     * way is to
+     * create a new ImageIcon with the image). If the image cannot be loaded for any
+     * reason,
+     * the method returns a placeholder image but not null.
+     *
+     * @param file The image as a MegaMekFile
+     * @return The image if possible, a placeholder image otherwise
+     */
+    public static Image loadImageFromFile(MegaMekFile file) {
+        return loadImageFromFile(file.toString());
+    }
+
 
     private ImageUtil() {
     }

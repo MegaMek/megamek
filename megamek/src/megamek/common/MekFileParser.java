@@ -200,6 +200,8 @@ public class MekFileParser {
                     loader = new BLKWarshipFile(bb);
                 } else if (sType.equals("SpaceStation")) {
                     loader = new BLKSpaceStationFile(bb);
+                } else if (sType.equals("HandheldWeapon")) {
+                    loader = new BLKHandheldWeaponFile(bb);
                 } else {
                     throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }
@@ -316,7 +318,7 @@ public class MekFileParser {
                     }
                 }
                 if (m.getLinked() == null) {
-                    throw new EntityLoadingException("Unable to match " + m.getName() + " to laser for "
+                    logger.error("Unable to match " + m.getName() + " to laser for "
                             + ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
@@ -378,7 +380,7 @@ public class MekFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException("Unable to match Artemis to launcher for " + ent.getShortName());
+                    logger.error("Unable to match Artemis to launcher for " + ent.getShortName());
                 }
             } else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType().hasFlag(MiscType.F_VOIDSIG))
                     && (ent instanceof Mek)) {
@@ -395,7 +397,7 @@ public class MekFileParser {
                 if (m.getLinked() == null) {
                     // This mek has stealth armor but no ECM. Probably
                     // an improperly created custom.
-                    throw new EntityLoadingException(
+                    logger.error(
                             "Unable to find an ECM Suite for " + ent.getShortName()
                                     + ".  Meks with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
@@ -461,7 +463,7 @@ public class MekFileParser {
 
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
-                    throw new EntityLoadingException(
+                    logger.error(
                             "Unable to match Apollo to launcher for " + ent.getShortName());
                 }
             } // End link-Apollo
@@ -512,8 +514,8 @@ public class MekFileParser {
                         || ((Mek) ent).hasTSM(true)
                         || (!ent.getMPBoosters().isNone() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
-                    throw new EntityLoadingException(
-                            "Unable to load AES due to incompatible systems for " + ent.getShortName());
+                    logger.error(
+                            "Loading AES with incompatible systems for " + ent.getShortName());
                 }
 
                 if ((m.getLocation() != Mek.LOC_LARM)
@@ -632,11 +634,10 @@ public class MekFileParser {
                         }
                     }
                 }
-
-                // huh. this shouldn't happen
-                Objects.requireNonNull(m.getLinked(),
-                        "No available PPC to match Capacitor for " + ent.getShortName() + "!");
-
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    logger.error("No available PPC to match Capacitor for " + ent.getShortName() + "!");
+                }
             }
         } // Check the next piece of equipment.
 

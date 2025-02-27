@@ -20,10 +20,12 @@
 MMSVersion: 2
 name: Death of the Legion
 planet: Mankova
-description: >
+description: |
   During a raid on Mankova by Gorman Toth and his pirate unit known as the Legion of Honor, Toth learned that
   a Star League depot had been found during strip mining. Thinking he had tricked the Kell Hounds into
   taking action elsewhere he went straight for it.
+  
+  *Goal: Playing as the Kell Hounds force, destroy the Pirate forces.*
 
 map:
   cols: 2
@@ -34,266 +36,20 @@ map:
 
 factions:
 
-- name: Mek Company, Kell Hounds
-  camo: Mercs/Kell Hounds.jpg
-  deploy: W
+  - name: Mek Company, Kell Hounds
+    camo: Mercs/Kell Hounds.jpg
+    deploy: W
 
-  units:
-    - fullname: Thunderbolt TDR-5S
-      id: 101
-      force: Command Lance|1
-      crew:
-        name: Lt. Col. Patrick M. Kell
-        portrait: Male/MekWarrior/MW_M_27.png
-        gunnery: 2
-        piloting: 3
+    units:
+      include: DeathOfTheLegion_units_kell.mmu
 
-    - fullname: Orion ON1-K
-      id: 102
-      force: Command Lance|1
-      crew:
-        name: Lt. Anne Finn
-        portrait: Female/MekWarrior/MW_F_41.png
-        gunnery: 3
-        piloting: 4
+  # OpFor
+  - name: Legion of Honor
+    camo: Pirates/Tortuga Fusiliers.jpg
+    deploy: S
 
-    - fullname: Marauder MAD-3R
-      id: 103
-      force: Command Lance|1
-      crew:
-        name: Sgt. Clarence Wilson
-        portrait: Male/MekWarrior/MW_M_103.png
-        callsign: Cat
-        gunnery: 2
-        piloting: 3
-
-    - fullname: Crusader CRD-3R
-      id: 104
-      force: Command Lance|1
-      crew:
-        name: Bethany Connor
-        portrait: Female/MekWarrior/MW_F_48.png
-        gunnery: 4
-        piloting: 5
-
-    - fullname: Wolverine WVR-6R
-      id: 105
-      force: Assault Lance|2
-      crew:
-        name: Maj. Salome Ward
-        portrait: Female/MekWarrior/MW_F_46.png
-        gunnery: 2
-        piloting: 3
-
-    - fullname: Catapult CPLT-C1
-      id: 106
-      force: Assault Lance|2
-      crew:
-        name: Lt. Mike Fitzhugh
-        portrait: Male/MekWarrior/MW_M_88.png
-        gunnery: 3
-        piloting: 4
-
-    - fullname: Trebuchet TBT-5N
-      id: 107
-      force: Assault Lance|2
-      crew:
-        name: Sgt. Diane McWilliams
-        portrait: Female/MekWarrior/MW_F_85.png
-        gunnery: 3
-        piloting: 4
-
-    - fullname: Rifleman RFL-3N
-      id: 108
-      force: Assault Lance|2
-      crew:
-        name: Mary Lasker
-        portrait: Female/MekWarrior/MW_F_5.png
-        gunnery: 4
-        piloting: 5
-
-    - fullname: Valkyrie VLK-QA
-      id: 109
-      force: Scout Lance|3
-      crew:
-        name: Cpt. Daniel W. Allard
-        portrait: Male/MekWarrior/MW_M_37.png
-        gunnery: 3
-        piloting: 4
-
-    - fullname: Commando COM-2D
-      id: 110
-      force: Scout Lance|3
-      crew:
-        name: Lt. Austin Brand
-        portrait: Male/MekWarrior/MW_M_5.png
-        gunnery: 3
-        piloting: 4
-
-    - fullname: Wasp WSP-1A
-      id: 111
-      force: Scout Lance|3
-      crew:
-        name: Sgt. Margaret Lang
-        callsign: Meg
-        portrait: Female/MekWarrior/MW_F_1.png
-        gunnery: 4
-        piloting: 5
-
-    - fullname: Jenner JR7-D
-      id: 112
-      force: Scout Lance|3
-      crew:
-        name: Eddie Baker
-        portrait: Male/MekWarrior/MW_M_65.png
-        gunnery: 4
-        piloting: 5
-
-# OpFor
-- name: Legion of Honor
-  camo: Pirates/Tortuga Fusiliers.jpg
-  deploy: S
-
-  units:
-    - fullname: Marauder MAD-3R
-      id: 201
-      force: Leader Lance|11
-      at: [ 27, 13 ]
-      facing: 5
-      remaining:
-        armor:
-          LA: 15
-      crits:
-        LA: 4
-      crew:
-        name: Gorman Toth
-        gunnery: 4
-        piloting: 3
-
-    - fullname: JagerMech JM6-S
-      id: 202
-      at: [ 28, 12 ]
-      facing: 4
-      force: Leader Lance|11
-      remaining:
-        armor:
-          HD: 5
-      crew:
-        name: Maj. Adolf Rillan
-        gunnery: 4
-        piloting: 4
-
-    - fullname: Centurion CN9-A
-      id: 203
-      at: [ 25, 12 ]
-      facing: 5
-      force: Leader Lance|11
-      crew:
-        name: Joe Toomb
-        callsign: Blackjack
-        gunnery: 4
-        piloting: 5
-
-    - fullname: Assassin ASN-21
-      id: 204
-      facing: 5
-      at: [ 24, 11 ]
-      force: Leader Lance|11
-      crew:
-        name: Peter Manheim
-        callsign: Slippery Pete
-        gunnery: 4
-        piloting: 4
-
-    - fullname: Orion ON1-K
-      id: 205
-      facing: 4
-      at: [ 29, 12 ]
-      force: Attack Lance|12
-      crew:
-        name: Dan Glory
-        gunnery: 4
-        piloting: 4
-
-    - fullname: Rifleman RFL-3N
-      id: 206
-      at: [ 30, 11 ]
-      facing: 4
-      force: Attack Lance|12
-      remaining:
-        armor:
-          CT: 12
-      crits:
-        RA: 3
-      crew:
-        name: Sandra Fitzsimmons
-        gunnery: 5
-        piloting: 4
-
-    - fullname: Scorpion SCP-1N
-      id: 207
-      at: [ 31, 12 ]
-      facing: 5
-      force: Attack Lance|12
-      crew:
-        name: Marcus Worrus
-        gunnery: 4
-        piloting: 4
-
-    - fullname: Firestarter FS9-H
-      id: 208
-      at: [ 32, 12 ]
-      facing: 5
-      force: Attack Lance|12
-      crew:
-        name: Zeke Smuthers
-        callsign: Zippo
-        gunnery: 3
-        piloting: 5
-
-    - fullname: Valkyrie VLK-QA
-      id: 209
-      at: [ 23, 11 ]
-      facing: 5
-      force: Probe Lance|13
-      crew:
-        name: Roxanne Devers
-        piloting: 4
-        gunnery: 4
-
-    - fullname: Spider SDR-5V
-      id: 210
-      at: [ 21, 10 ]
-      facing: 5
-      force: Probe Lance|13
-      crew:
-        name: Lancelot Smith
-        gunnery: 5
-        piloting: 4
-
-    - fullname: Stinger STG-3R
-      id: 211
-      at: [ 20, 9 ]
-      facing: 4
-      force: Probe Lance|13
-      crits:
-        LA: 5
-        RA: 6
-      crew:
-        name: Dorothy Gail
-        gunnery: 5
-        piloting: 5
-
-    - fullname: Locust LCT-1V
-      id: 212
-      at: [ 19, 10 ]
-      facing: 4
-      force: Probe Lance|13
-      crew:
-        name: Sam Norgales
-        gunnery: 4
-        piloting: 4
-
+    units:
+      include: DeathOfTheLegion_units_legion.mmu
 
 messages:
   - header: Situation
@@ -446,8 +202,8 @@ messages:
 
   - header: Pilot Message
     text: |
-      *Sgt. Clarence Wilson:* Sir, Jump Infantry is reporting several of the pirates who've fled have been caught and captured
-      or destroyed.
+      *Sgt. Clarence Wilson:* Sir, Jump Infantry is reporting several of the pirates who've fled have been caught 
+      and captured or destroyed.
     image: portraits/Male/MekWarrior/MW_M_103.png
     trigger:
       type: and

@@ -19,13 +19,19 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
+import megamek.client.bot.princess.PathRanker;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.Internationalization;
 import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
 import megamek.server.totalwarfare.TWGameManager;
 
+
 public class SharedUtility {
+    private final static MMLogger logger = MMLogger.create(SharedUtility.class);
+    private static int CRIT_VALUE = 100;
 
     public static String doPSRCheck(MovePath md) {
         return (String) doPSRCheck(md, true);
@@ -46,7 +52,7 @@ public class SharedUtility {
 
     /**
      * Function that carries out PSR checks specific only to airborne aero units
-     * 
+     *
      * @param md           The path to check
      * @param stringResult Whether to return the report as a string
      * @return Collection of PSRs that will be required for this activity
@@ -256,11 +262,22 @@ public class SharedUtility {
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            2 * leapDistance,
+                            Messages.getString("TacOps.leaping.leg_damage")
+                        )
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
+                    rollTarget.append(
+                        new PilotingRollData(
+                            entity.getId(),
+                            leapDistance,
+                            Messages.getString("TacOps.leaping.fall_damage"))
+                    );
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
@@ -330,6 +347,26 @@ public class SharedUtility {
                         .getString("MovementDisplay.MagmaLiquidMoving"));
             }
 
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.HAZARDOUS_LIQUID) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
+            // Check for Hazardous Liquid
+            if (curHex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && (step.getElevation() <= 0)
+                && (moveType != EntityMovementType.MOVE_JUMP)
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !(curPos.equals(lastPos))) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
+            }
+
             // check for sideslip
             if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -359,7 +396,7 @@ public class SharedUtility {
                             || (moveType == EntityMovementType.MOVE_SPRINT)
                             || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                         int limit = entity.getRunningGravityLimit();
-                        if (step.isOnlyPavement() && entity.isEligibleForPavementBonus()) {
+                        if (step.isOnlyPavementOrRoad() && entity.isEligibleForPavementOrRoadBonus()) {
                             limit++;
                         }
                         if (step.getMpUsed() > limit) {
@@ -583,6 +620,16 @@ public class SharedUtility {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaCrustJumpLanding"));
             } else if ((level == 2) && (lastElevation == 0)) {
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
+            }
+
+            if ((hex.containsTerrain(Terrains.HAZARDOUS_LIQUID)) && (lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.HazardousLiquidMoving"));
+            }
+
+            if ((hex.containsTerrain(Terrains.ULTRA_SUBLEVEL) && lastElevation == 0)) {
+                nagReport.append(Internationalization
+                    .getTextAt("megamek.client.messages", "MovementDisplay.UltraSublevel"));
             }
         }
 
@@ -920,12 +967,55 @@ public class SharedUtility {
         return retVal;
     }
 
-    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets,
-            @Nullable String chosenDisplayName) {
+    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets, @Nullable String chosenDisplayName) {
         if ((chosenDisplayName == null) || (targets == null)) {
             return null;
         } else {
             return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElse(null);
         }
     }
+
+    public static double predictLeapFallDamage(Entity movingEntity, TargetRoll data) {
+        // Rough guess based on normal pilots
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue();
+        double fallDamage = Math.round(movingEntity.getWeight() / 10.0)
+            * (fallHeight + 1);
+        logger.trace("Predicting Leap fall damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
+        return fallDamage * (1 - odds);
+    }
+
+    /** Per TacOps p 20, a leap carries the following risks:
+     * 1. risk of damaging each leg by distance leaped (3 or more per leg); mod is 2 x distance leaped.
+     * 1.a 1 critical roll _per leg_.
+     * 1.b 1 _additional_ critical per leg that takes internal structure damage due to leaping damage.
+     * 2. risk of falling; mod is distance leaped.
+     * @param movingEntity
+     * @param data
+     * @return
+     */
+    public static double predictLeapDamage(Entity movingEntity, TargetRoll data) {
+        int legMultiplier = (movingEntity.isQuadMek()) ? 4 : 2;
+        double odds = Compute.oddsAbove(data.getValue(), false) / 100d;
+        int fallHeight = data.getModifiers().get(data.getModifiers().size()-1).getValue() / 2;
+        double legDamage = fallHeight * (legMultiplier);
+        logger.trace("Predicting Leap damage for {} at {}% odds, {} fall height", movingEntity.getDisplayName(), odds, fallHeight);
+        int[] legLocations = {BipedMek.LOC_LLEG, BipedMek.LOC_RLEG, QuadMek.LOC_LARM, QuadMek.LOC_RARM};
+
+        // Add required crits; say the effective leg "damage" from a crit is 20 for now.
+        legDamage += legMultiplier * CRIT_VALUE;
+        logger.trace("Adding {} leg critical chances as {} additional damage", legMultiplier, legMultiplier * CRIT_VALUE);
+
+        // Add additional crits for each leg that would take internal damage
+        for (int i=0;i<legMultiplier; i++) {
+            if (movingEntity.getArmor(legLocations[i]) < fallHeight) {
+                logger.trace("Adding additional critical for leg {} due to internal structure damage", i);
+                legDamage += CRIT_VALUE;
+            }
+        }
+
+        // Calculate odds of receiving this damage and return
+        return legDamage * (1 - odds);
+    }
+
 }

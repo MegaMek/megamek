@@ -20,6 +20,7 @@
 package megamek.server.victory;
 
 import megamek.common.Game;
+import megamek.common.IGame;
 import megamek.common.Player;
 
 import java.io.Serializable;
@@ -43,7 +44,7 @@ public interface BvVictoryCondition extends VictoryCondition, Serializable {
                 .mapToInt(Player::getBV).sum();
     }
 
-    default int getEnemyInitialBV(Game game, Player player) {
+    default int getEnemyInitialBV(IGame game, Player player) {
         return game.getPlayersList().stream()
                 .filter(Player::isNotObserver)
                 .filter(p -> p.isEnemyOf(player))

@@ -1,0 +1,5 @@
+# Standard Hazard Liquid Pools
+
+super * "hazardous_liquid:*;water:1" "" "hazardous_liquid/green2_toxic_water.png"
+super * "hazardous_liquid:*;water:*" "" "hazardous_liquid/green1_toxic_water.png"
+super * "hazardous_liquid:*;" "" "hazardous_liquid/green2_toxic_water.png"

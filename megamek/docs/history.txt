@@ -1,6 +1,226 @@
 MEGAMEK VERSION HISTORY:
 ----------------
-0.50.01-SNAPSHOT
+0.50.04-SNAPSHOT
++ PR #6494: Cap splashscreen button width
++ PR #6489: PPC Capacitors must all be linked to a PPC
++ PR #6500: Issue 6499: Better nudging for aeros that fail maneuvers and scatter off board
++ PR #6476: Issue 6303: RFE - Hazardous Liquid Pool
++ PR #6475: Changes every single BigInteger in MegaMek for an Enum
++ Fix #6491: AX SRM Hardened and Ballistic Reinforced Armor Fix
++ PR #6492: RAT Data update - IS faction light Mek review 2900-3049
++ PR #6495: Feat: Gif all the things
++ PR #6497: Action Logger
++ PR #6498: Feat: log bot actions for debugging
++ PR #6486: Piracy, new behaviors, and a new test platform to build upon
++ PR #6506: fix: bad naming for log file
++ MHQ #4985: add bounds check for unit editor dialog when number of recorded crits exceeds number of possible crits in a location
++ Fix #6127: softlock during invalid Pointblank Shot
++ PR #6503: fix: stop creating empty logs for the bot path ranker when its disabled
++ MML #1662: Fixed issue with Mek exporting to text
++ Fix #6511: Prevent cast class exception when switching Princess's ammo.
++ PR #6502: Implement Ultra Sublevel as part of RFE 6303
++ PR #1720: Fix MML Poor Sealing Quirk for Support and Combat Vehicles
++ PR #6531: More ai tools
++ PR #6527: Feat/GIF your game
++ PR #6529: Fix: check if it is a narcpod before trying to access getPosition
++ PR #6531: Fix MML #1721: legacy infantry blk files
++ PR #6533: Feat: Hide acar on the front of the megamek lounge
++ PR #6536: Data updates - Praise Blake and pass the ammunition, ComStar and WOB infantry
++ Fix #6537: Improved name search for diacritics
++ PR #6541: MML #1536: Unify armorable equipment tests in MM
++ Fix #6535: Fixed so correctDupeName() used to change name on initial connection
++ Fix #6544: Arrow IV Laser Inhibiting Smoke Fix
++ Fix #6553: Prevent NPE when opening Map Editor
++ Fix #6546: AS conversion updates (MFB, CT, ATAC, SASRCS)
++ PR #6556: Allow units with unlinked weapon enhancements to load as invalid instead of failing to load
++ PR #6557: Fix Megameklab #1523
++ Fix #6146: Interim fix for Princess bombing airborne units
++ PR #6549: Towing from MM lobby
++ PR #6560: Refactor in Mek (Remove Armlessmek, unify some code in Biped and Tripod, modernize code)
++ PR #6561: Official Hazardous Liquid Pool Maps
++ Fix #6532: Make sure target entity's are on the board before checking for hex/terrain-based defender SPAs
++ PR #6565: Prevent NPE when closing Counterbattery popup without a choice
++ Fix #6515: added check if player was done to validateUpdate
++ Fix #6509: add -1 check to getColoredPlayerNameWithTeam
++ Fix #6570: Support Multiple Trailers from Lobby
++ Fix #6577: Fix duplicate LoS effects for to-hit
++ MML #1527: Armor validation #6583
++ Fix #6441: QuadVee fall fix
++ PR #6594: Add Chain Drape (Construction Only) MML #1739
++ Fix #6461: clean up ASF / VTOL / Hover / WiGE deployment hex display
++ PR ##6584: Final Fix for 6146: princess bombing flying infantry
++ Fix #6569: Trailers towed on a tow hitch are no longer returned as an unloadable unit
++ PR #6589: Feature: adds bot waypoint control to send certain units towards certain positions on the map
++ PR #6590: make ejected and other removed units show up transparent on minimap
++ PR #6592: small fixes that were missed from a previous code review
++ PR #6591: feat: MMLogger using parametrized message and string formatter
++ Fix #6595: Improvements for Dataset Logger and its javadocs
++ PR #6596: Feat: Disable ACAR for all clients if using real-blind-drop
++ PR #6597: Feat: refactored princess chat commands to use a modular approach
++ Fix #6598: Fixed everything that there was to fix on the minimap
++ Fix #6600: Fix a parsing error and turns it into a singleton using enum
++ Fix #6601:Pintle turret and flags (MML #1741)
++ PR #6602: Feat: Separate gif game sumary from minimap game summary
++ Fix #6593: Counter-battery icon hidden in double blind
++ PR #6606: Improve Deployment-Phase Towing Logic
++ PR #6611: Add VTOL/WiGE exemption for AAA and LAA missiles
++ PR #6505: Remove XStream from Image Atlas Generation
++ PR #6617: Preliminary handheld weapon support
+
+0.50.03 (2025-02-02 2030 UTC)
++ PR #6335: default the directory filter to Select All in Advanced Board Search 
++ PR #6335: cleanup duplicate boards
++ PR #6328: Building type enum
++ PR #6340: MML tabbed UI docs update
++ PR #6341: update status display for sim fire, sim physicial to show remaining players
++ Fix MML #1674: Fix Tank armor and invalid builds
++ PR #6348: RFE Add Ability to Link Units in MekHQ (Fix MekHQ #3650)
++ PR #6349: MekHQ MegaMek options search bar resets all changes (fix MekHQ #5621)
++ PR #6350: Updating gravel road hexes to improve visuals
++ Fix #6345: Updated more pavement checks to consider dirt & gravel roads not paved
++ Fix #6339: 16x17 Battle of Stanrey -3- Up-Right.board does not match the complete version
++ PR #6356: Revised dirt road art
++ PR #6372: Abstract Combat Auto Resolution Beta 2025.1
++ Fix #6374: Fixes a class cast bug and an error in the argument parsing algorithm
++ PR #6376: Makes the end command work
++ Fix #6368: Allow princess to flee at end of movement
++ PR #6381: Added Static Access to Resource Bundle
++ PR #6382: Rolled Back #6381
++ Fix #5730: damage applier now forces unit devastation, more closely protects meks against unintended devastation
++ PR #6402: Feature: ACAR strategic objectives
++ PR #6407: Feature: ACAR formations reintroduced
++ Data #6408: Grabbing the Bull by the horns adding Taurian infantry
++ Fix #6385: Incorrect TMM bonus for WiGE
++ Fix #6395:  Add knowledge of smoke zero damage to princess
++ PR #6409: Campaign Options IIC - MegaMek Portion
++ PR #6415: fixes an error where force consolidation would not set the correct owner of the force
++ PR #6411: Don't load mml scratch files into unit cache
++ PR #6414: Warnings on Campaign Load - MegaMek Portion 
++ Fix #6412: Fix TacOps "Standing Still" modifier description
++ Fix 6373: Fixed "unit that starts and ends a Movement Phase in liquid magma takes an additional damage" so it doesn't apply to units above the magma
++ PR #6427 & #6428: Fix for Princess not ignoring Hidden and Ignored units. - Scoppio
++ PR #6431: Fix Artemis derivatives getting bonus on indirect fire
++ PR #6430: Renamed Directory ProtomMek Pilots to ProtoMek Pilots in MegaMek to match MekHQ
++ Fix #6359: LAMs now properly consider if they're in fighter mode or not when deploying.
++ PR #6418: new feature: Headless client, Commander GUI, Bot Commands panel
++ PR #6433: Princess - Chat Commands fix
++ PR #6420: Fluff Hex and Minor Map Adjustments
++ Fix #6390: Units switching from multi-hex to single-hex and vice-versa
++ Fix #6389: Dropships in Movement phase cannot Assault Drop more units per turn than possible
++ PR #6432: Fix/princess should favor moving #6432
++ Fix #2457: Aero units on ground maps should use TO:AR visual range tables
++ PR #6436: Feat: minimap preview and selection option
++ Fix #1072: Can bomb and strafe the ground even if no LOS
++ PR #6442: Unit Tests for WeaponAttackAction to help test megamek
++ Fix #6434: pilot rolls reported before all attacks (also #3890)
++ PR #6443: Fix for ranked path entries being overwritten
++ Fix #6299: Fix 6299 skid building damage and displaced messages out of order
++ Fix #6444: fix issue where closing window closes the unit display
++ PR #6450: Allow the print-unit-list code to run with MegaMekLab.jar
++ PR #6453: Change keys List from ArrayList to thread-safe Vector
++ Fix #5870: princess engaging targets outside visual range in heavy fog
++ PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
++ Fix #3837: illegal stacking in buildings after skid and failed accidental charge
++ Fix #6421: NullPointerException in LobbyMekCellFormatter.java
++ PR #6446: feature: added sensor range on minimap, added facing arrow on minimap
++ Fix #3837: illegal stacking in buildings after skid and failed accidental charge
++ fix #6421: fix npe issue
++ PR #6459: feature: quick and simple hazard check for hex
++ Fix #6451: Bot command display hotkey text and description missing in key bind menu
++ Fix #6464: defaultminimap renamed to default, fixed error when persisting selected theme
++ PR #6462: Convert from StringBuilder to Logger
++ PR #6468: Fix NPE clicking on board with no unit selected
++ PR #6469: Fix: removes a double call for next-unit
++ PR #6470: Fix: minimap summary npe fix
++ PR #6471: Feat: Mini-Map Improvements (Hex Border options, facing arrows, sensor range)
++ PR #6474: makes Princess move way more than she otherwise would on no-contact
++ PR #6478: fix: a couple of signs in the wrong place on the scoring equation
++ PR #6477, PR#6481: Fix 5590: princess firing on 13s due to intervening trees, etc
++ PR #6479: fix: removes an argument and early exit from hyperaggression
++ PR #6481: Fix 5590 part 2: stop Princess choosing zero damage attacks completely
++ PR #6488: Fix MML #1705 - update drone remote systems unit availability
++ PR #6487: Update MASH equipment to use size values
++ PR #6485: Fix: fixes html tags showing on tooltips
++ PR #6484: Fix: stop dropShadow from being calculated for force display tree
++ PR #6504: Feat/Mini-map move path
++ PR #6519: Fix MML#1487 - Unit selector redundant scrollpanes
++ PR #6522: Force generator update - individual equipment availability values
++ PR #6523: Feat: Use median of the 5 closest enemies for facing mod
++ PR #6526: Fix MML#1692 - Allow Arty correctly on DS/SC
++ Fix #6524: NullPointerException at beginning of firing phase (Unjam related)
++ Fix #5429, #6493: Fix various Arrow IV issues
+
+
+0.50.02 (2024-12-30 2130 UTC)
++ PR #6183: New GM Commands, princess commands on map menu, graphics for some explosions
++ PR #6186: Allow pausing a Princess-only game
++ PR #6190: Allow printing unit list from MM
++ Fix #433: Add an advanced search for boards to the lobby
++ Fix #5086: Updated SRMAXHandler to ignore specialty armors
++ PR #6209: Implement RISC laser pulse module
++ Fix #6211: Added null check for lastUnitMember
++ PR #6203, #6266: Dev Tools: to Find duplicate boards, log to console with environment variable mm.profile=dev
++ PR #6181: Rename TroopSpace to InfantryCompartment
++ Fix #6217: Too many gunners for aerospace in MekHQ
++ Fix #6069: Stops bays from loading BA and protomek ammunition
++ PR #6221: Corrects weight and critical slots for BNIU
++ PR #6222: Adds the players team in the BV report
++ PR #6223: Allows GM to control any bot in the game via Map Menu
++ Fix #5397: Allow Capital Missiles to switch modes instantly
++ Fix #4315: IR sensors should be able to detect units without heat scale
++ PR #6228: Victory and MM scenarios updates victory handling to recognize victory/draw by scenario events correctly
++ PR #6216: Add additional board auto tags
++ PR #6208: Megamek side of MekHQ CombatMaths PR #5155
++ PR #6230: Allow fleeing at end of movement
++ Fix #3018: Fixes Battle Armor Plasma Rifles not applying TacOps Optional Rules
++ Fix #3827: Fixes target's side's ECM not effecting sensor spottingFixes
++ Fix: Disable Simultaneous Movement due to numerous issues
++ PR #6250: Adds an automatic board tag for underwater bridges
++ Fix #6224, #6248: Aircraft that fly off are now nudged back onto the board to be targetable before actually leaving the map
++ PR #6244: Force generator math updates
++ PR #6245: add new chat commands, updates a bit the commands gui, give nukes to GMs
++ Fix #1618, #5595: Implement dirt and gravel roads
++ Fix #6247: NPE with TacOps Energy Weapons when Changing Firing Mode
++ Fix #6240: Era-illegal asf bombs
++ Fix #6264: Destroyed Infantry no longer have negative weight
++ PR #6268: Cleanup board names
++ Fix #1437: Check for stacking for elevation 0 Aeros during deployment
++ Fix #6261: Allow aerospace to flee with remaining movement
++ PR #6265: Config interface extracted
++ PR #6278: GM Command Refactoring
++ Fix #4259: Fixing Dropship Heat-by-Arc for Players and Princess
++ PR #6282: fix error with wrong type cast on GM commands for nukes and kick
++ Fix #6281: Entities can no longer spot if evading (TO:AR, 16-17)
++ PR #6284: FixeD NPE when checking if ejection is possible
++ Fix #6259: error spam and deployment hang with combined arms forces
++ PR #6294: Added reference to the log file inside gameLogger
++ PR #6289: Allows gunEmplacement to be converted to Alpha Strike
++ Fix #6079: Reworded destroyed aero bay door to avoid indefinite article usage
++ Fix #6252: Offboard Artillery cannot unjam critted weapons
++ Fix #6290: When setting internal for infantry restore field weapons if applicable
++ Fix #6273: Prevent flak from making aimed shots on immobile targets
++ Fix #3360: Fixed takeoff logic and preventing smoke-assisted landings
++ Fix #5115: Added Nova CEWS to getExtraC3BV
++ PR #6306: Fixed dirt and gravel roads landing modifiers and interactioins with moderate+ rain
++ Fix #6305: Partial cover from water and hull down bonus
++ Fix #6271: Fixes offboard units placed in north and west
++ Fix #2090: /nova chat command updated to link with non-enemy units as long as one is owned
++ PR #6295: Princess improvement to consider leap damage along with path optimization
++ Fix #6297: Fixes movement path sprite rendering under unit sprites in non-isometric mode
++ Fix #6277: Fixes /kick command for players and bots
++ Fix #6032: Filter out Aakar font from Java font family names
++ Fix #6309: Fix typo and log errors
++ Fix #6293: Prevent NPE when using non-scheduled Nuke
++ Fix MML #1667: incorrect cargo bay minimum doors
++ PR #6321: add indicators heat in the weapon display
++ Fix #6324: Prevent NPE when laser bays get mode count
++ PR #6326 Log jvm parameter
++ Fix #6313: Prevent NPE when opening player settings dialog in-game
++ PR #6330: Prevent annoying NPEs for players clicking around the board while waiting for turn interrupts to be resolved (point blank shots etc)
++ Fix #6368: Allow fleeing when sprinting and when starting movement
+
+
+0.50.01 (2024-11-10 1800 UTC)
 + PR #5962, #5964, #5966, #5974, #5931, #5983, #6154, #6159: Internal code changes (TWGameManager, extract processMovement, allow more classes for InputFilter, Victory, move test scenarios to testresources),
     Protomek code modernization
 + PR #6004, #6018: Internal changes (Entity cleanup, added JavaDoc building in Actions, editor configuration)
@@ -83,6 +303,13 @@ MEGAMEK VERSION HISTORY:
 + Fix #6169: Seperated physical modifiers from base and show them in toHit tooltip
 + Fix #5956: Ice-related skidding PSR checks now should only happen when the unit is actually moving on the ice
 + Fix #6144: LAMs in fighter mode now use the correct hit location table
++ PR #6180: Fix/blkfile parser encoding
++ Fix #6179: Fix loading of old resizable equipment
++ Fix #6052: Teach Princess to not always unjam RAC's immediately
++ Fix #6192: Fix beast-mounted infantry bonus damage.
++ PR #6194: Map Set 8 rename to use lowercase x and small updates to boards
++ PR #6195: Correct issue with lobby map help, path and dialog sizing
++ Data: Fixes for #6184, #6155, #6141,#6134,#6129,#6047,#6044,#6036,#6035,#6022,#5580,#5554, #3919
 
 0.50.0 (2024-09-01 2000 UTC) (THIS MARKS THE START OF JAVA 17 AS THE MINIMUM REQUIRED)
 + PR #5649: Use UTF encoding for reading MTF files (This might fix the issues #5648 and #5647)

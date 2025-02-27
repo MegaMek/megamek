@@ -438,6 +438,26 @@ public class Sensor implements Serializable {
         Coords pos = en.getPosition();
         ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, true,
                 allECMInfo);
+        return getECMSensorRangeModifier(ecmInfo);
+    }
+
+    /**
+     * Computes the sensor check modifier for ECM.
+     *
+     * @param targetEntity
+     * @param allECMInfo  A collection of ECMInfo for all entities, this value
+     *                    can be null and it will be computed when it's
+     *                    needed, however passing in the pre-computed
+     *                    collection is much faster
+     * @return
+     */
+    public int getModForTargetECM(Entity targetEntity, List<ECMInfo> allECMInfo) {
+        // how many ECM fields are affecting the target entity?
+        ECMInfo ecmInfo = ComputeECM.getFriendlyECMEffects(targetEntity, allECMInfo);
+        return getECMSensorRangeModifier(ecmInfo);
+    }
+
+    public int getECMSensorRangeModifier(ECMInfo ecmInfo){
         double ecm, ecmAngel;
         ecm = ecmAngel = 0;
         if (ecmInfo != null) {
@@ -489,10 +509,11 @@ public class Sensor implements Serializable {
 
         // If you have infrared, then each increment of 5 heat will increase the range
         if ((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
-            // If the target isn't overheating then you can't detect it
-            if (target.heat < 1) {
-                return 0;
-            }
+
+            // Issue #4315, TO:AR errata changed this. As long as the unit is activated, it can be detected via IR.
+            // Removed check for heat 1 or higher.
+            // Note: This does not check if a unit is activating after a scenario begins.
+            // That is a much larger concern to do with Transport Bays (Extended), TO: AR P.185/186
 
             range += target.heat / 5;
 

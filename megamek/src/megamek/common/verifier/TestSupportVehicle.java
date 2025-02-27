@@ -20,7 +20,6 @@
  */
 package megamek.common.verifier;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -32,6 +31,7 @@ import java.util.stream.Collectors;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ArmorType;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -887,13 +887,14 @@ public class TestSupportVehicle extends TestEntity {
         return 0.0;
     }
 
+    private static final EquipmentBitSet EXCLUDE = MiscType.F_BASIC_FIRECONTROL.asEquipmentBitSet().or(MiscType.F_ADVANCED_FIRECONTROL)
+                .or(MiscType.F_CHASSIS_MODIFICATION);
+
     @Override
     protected boolean includeMiscEquip(MiscType eq) {
         // fire control is counted with control system weight and chassis mods are part
         // of the structure weight
-        final BigInteger exclude = MiscType.F_BASIC_FIRECONTROL.or(MiscType.F_ADVANCED_FIRECONTROL)
-                .or(MiscType.F_CHASSIS_MODIFICATION);
-        return !eq.hasFlag(exclude);
+        return !eq.hasFlag(EXCLUDE);
     }
 
     @Override
@@ -992,7 +993,7 @@ public class TestSupportVehicle extends TestEntity {
             return true;
         }
 
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation()).append("\n");
             correct = false;
@@ -1015,7 +1016,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (occupiedSlotCount() > totalSlotCount()) {
+        if (!ignoreSlotCount() && (occupiedSlotCount() > totalSlotCount())) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(occupiedSlotCount() - totalSlotCount()));
             buff.append(" slot(s) too many.\n");
@@ -1037,6 +1038,8 @@ public class TestSupportVehicle extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+
+        correct &= correctArmorOverAllocation(supportVee, buff);
 
         if (supportVee.hasBARArmor(supportVee.firstArmorIndex())) {
             int bar = supportVee.getBARRating(supportVee.firstArmorIndex());
@@ -1210,7 +1213,7 @@ public class TestSupportVehicle extends TestEntity {
             correct = false;
         }
 
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
 
@@ -1460,7 +1463,7 @@ public class TestSupportVehicle extends TestEntity {
 
             if (!(mount.getType() instanceof AmmoType)
                     && (EquipmentType.getArmorType(mount.getType()) == EquipmentType.T_ARMOR_UNKNOWN)
-                    && !mount.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    && !((mount instanceof MiscMounted) && mount.getType().hasFlag(MiscType.F_JUMP_JET))) {
                 buff.append(StringUtil.makeLength(mount.getName(), 30));
                 buff.append(mount.getType().getSupportVeeSlots(supportVee)).append("\n");
             }

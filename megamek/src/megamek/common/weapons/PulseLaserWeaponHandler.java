@@ -19,21 +19,33 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.options.OptionsConstants;
 import megamek.server.totalwarfare.TWGameManager;
+
+import java.util.Vector;
 
 public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5701939682138221449L;
 
     public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m) {
         super(toHit, waa, g, m);
+    }
+
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (super.doChecks(vPhaseReport)) {
+            return true;
+        }
+
+        WeaponMounted laser = waa.getEntity(game).getWeapon(waa.getWeaponId());
+
+        if ((roll.getIntValue() == 2) && laser.curMode().getName().startsWith("Pulse")) {
+            vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(), laser.getLocation(), laser.getLinkedBy()));
+        }
+        return false;
     }
 
     @Override
@@ -70,7 +82,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn / 3.0);
-        }        
+        }
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
@@ -81,7 +93,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-        
+
         toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
         return (int) Math.ceil(toReturn);
     }

@@ -67,6 +67,7 @@ public final class HexAreaDeserializer {
     private static final String HEX_LEVEL = "hexlevel";
     private static final String MIN_LEVEL = "minlevel";
     private static final String MAX_LEVEL = "maxlevel";
+    private static final String ALL = "all";
 
     /**
      * Parses a HexArea from the given YAML node. The node should be below the "area:" level.
@@ -101,6 +102,8 @@ public final class HexAreaDeserializer {
             return parseTerrainArea(node.get(TERRAIN));
         } else if (node.has(HEX_LEVEL)) {
             return parseHexLevelArea(node.get(HEX_LEVEL));
+        } else if (node.has(ALL)) {
+            return new AllHexArea();
         } else {
             throw new IllegalStateException("Cannot parse area node!");
         }

@@ -145,12 +145,8 @@ public class TestInfantry extends TestEntity {
         if (skip()) {
             return true;
         }
-
-        // We currently have many unit introduction dates that are too early for their gear or anti-mek attacks
-        // enable this when dates have been straightened
-//        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
-//            correct = false;
-//        }
+        // Infantry has too many problems with intro date for its equipments therefore we are not testing the
+        // year of introduction of the equipments.
 
         int max = maxSecondaryWeapons(inf);
         if (inf.getSecondaryWeaponsPerSquad() > max) {
@@ -201,7 +197,7 @@ public class TestInfantry extends TestEntity {
             buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -383,7 +379,7 @@ public class TestInfantry extends TestEntity {
         report.addEmptyLine();
 
         InfantryMount mount = infantry.getMount();
-        int activeTroopers = infantry.getInternal(Infantry.LOC_INFANTRY);
+        int activeTroopers = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
         double weight;
 
         if (mount != null) {

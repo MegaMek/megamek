@@ -30,7 +30,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.R,PIR</parentFaction>
 	</faction>
-	<faction key='Blessed Order' name='Blessed Order' minor='false' clan='false' periphery='false'>
+	<faction key='BLORD' name='Blessed Order' minor='false' clan='false' periphery='false'>
 		<years>3128-3141</years>
 		<parentFaction>CS</parentFaction>
 	</faction>
@@ -193,7 +193,7 @@
 	</faction>
 	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'>
 		<years>2788-3081</years>
-		<ratingLevels>B,A</ratingLevels>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
@@ -245,8 +245,7 @@
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CGS,Periphery.Deep</parentFaction>
 	</faction>
-	<faction key='FC' name='Federated Commonwealth (Combined)' minor='false' clan='false'
-		periphery='false'>
+	<faction key='FC' name='Federated Commonwealth (Combined)' minor='false' clan='false' periphery='false'>
 		<years>3028-3057</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>FS,LA</parentFaction>
@@ -261,7 +260,7 @@
 	<faction key='FOR' name='Fiefdom of Randis' minor='true' clan='false' periphery='true'>
 		<years>2988-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>MERC,Periphery.OS</parentFaction>
+		<parentFaction>MERC,Periphery.HR</parentFaction>
 	</faction>
 	<faction key='FVC' name='Filtvelt Coalition' minor='false' clan='false' periphery='true'>
 		<years>3072-</years>
@@ -520,6 +519,13 @@
 		<ratingLevels>C,B,A</ratingLevels>
 		<parentFaction>CWE,ROS</parentFaction>
 	</faction>
+    <faction key='SL3.CSJ' name='Star League (Clan Smoke Jaguar)' minor='true' clan='true' periphery='false'>
+        <nameChange year='3060'>Fidelis</nameChange>
+        <nameChange year='3150'>Star League (Clan Smoke Jaguar)</nameChange>
+        <years>3060-</years>
+        <ratingLevels>C,B,A</ratingLevels>
+        <parentFaction>CLAN,ROS,SL3</parentFaction>
+    </faction>
 	<faction key='SLIE' name='Star League in Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
 		<parentFaction>SL</parentFaction>
@@ -614,7 +620,7 @@
 	</faction>
 	<faction key='WOB' name='Word of Blake' minor='false' clan='false' periphery='false'>
 		<years>3052-3081</years>
-		<ratingLevels>B,A</ratingLevels>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='FS.ACAD' name='Academy and Training Units' minor='false' clan='false'
@@ -1389,8 +1395,7 @@
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
-	<faction key='SL3.CJF' name='Star League (Clan Jade Falcon)' minor='true' clan='true'
-		periphery='false'>
+	<faction key='SL3.CJF' name='Star League (Clan Jade Falcon)' minor='true' clan='true' periphery='false'>
 		<years>3151-</years>
 		<ratingLevels>Front Line,Keshik</ratingLevels>
 		<parentFaction>CJF,CLAN.IS</parentFaction>
@@ -1454,8 +1459,7 @@
 		<ratingLevels>Provisional Garrison,Solahma</ratingLevels>
 		<parentFaction>CJF</parentFaction>
 	</faction>
-	<faction key='CC.VCR' name='Victoria Commonality Rangers' minor='false' clan='false'
-		periphery='false'>
+	<faction key='CC.VCR' name='Victoria Commonality Rangers' minor='false' clan='false' periphery='false'>
 		<years>3060-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>CC</parentFaction>
@@ -1469,6 +1473,14 @@
 		<years>3005-</years>
 		<parentFaction>MERC</parentFaction>
 	</faction>
+    <faction key='MERC.SI' name='Snord&apos;s Irregulars' minor='true' clan='false' periphery='false'>
+        <nameChange year='3039'>Cranston Snord&apos;s Irregulars</nameChange>
+        <nameChange year='3039'>Rhonda Snord&apos;s Irregulars</nameChange>
+        <nameChange year='3063'>Snord&apos;s Irregulars</nameChange>
+        <years>3007-</years>
+        <ratingLevels>F,D,C,B,A</ratingLevels>
+        <parentFaction>MERC</parentFaction>
+    </faction>
 	<faction key='LA.YR' name='York Regulars' minor='false' clan='false' periphery='false'>
 		<years>2700-2950</years>
 		<ratingLevels>F</ratingLevels>

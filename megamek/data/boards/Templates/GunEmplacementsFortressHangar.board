@@ -2,6 +2,12 @@ size 16 17
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Flat (Auto)"
+tag "ArmoredBuilding (Auto)"
+tag "HardenedBuilding (Auto)"
+tag "Hangar (Auto)"
+tag "GunEmplacement (Auto)"
+tag "HeavyBuilding (Auto)"
+tag "Fortress (Auto)"
 hex 0101 0 "" ""
 hex 0201 0 "" ""
 hex 0301 0 "" ""

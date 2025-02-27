@@ -367,7 +367,7 @@ public class QuadVee extends QuadMek {
     }
 
     @Override
-    public boolean isEligibleForPavementBonus() {
+    public boolean isEligibleForPavementOrRoadBonus() {
         // Since pavement bonus only applies if driving on pavement the entire turn,
         // there is no pavement bonus unless it spends the entire turn in vehicle mode.
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow;
@@ -376,7 +376,7 @@ public class QuadVee extends QuadMek {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
-        return getConversionMode() == CONV_MODE_MEK || (convertingNow && game.getPhase().isMovement());
+        return !isProne() || getConversionMode() == CONV_MODE_MEK || (convertingNow && game.getPhase().isMovement());
     }
 
     /**

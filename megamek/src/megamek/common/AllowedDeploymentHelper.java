@@ -187,7 +187,7 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> findAllowedVTOLElevations() {
         List<ElevationOption> result = new ArrayList<>();
-        if (entity instanceof VTOL) {
+        if (entity instanceof VTOL || entity.getMovementMode().isHoverVTOLOrWiGE()) {
             for (int elevation = 1; elevation < Math.max(10, hex.ceiling() + 1); elevation++) {
                 result.add(new ElevationOption(elevation, ELEVATION));
             }

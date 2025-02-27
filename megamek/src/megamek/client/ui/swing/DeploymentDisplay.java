@@ -131,6 +131,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
         butDone.setEnabled(false);
+
         setupButtonPanel();
     }
 
@@ -245,6 +246,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.updateFiringArc(ce());
             clientgui.showSensorRanges(ce());
             computeCFWarningHexes(ce());
+            computeTowLinkBreakageHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
@@ -256,6 +258,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void computeCFWarningHexes(Entity ce) {
         Game game = clientgui.getClient().getGame();
         List<Coords> warnList = CollapseWarning.findCFWarningsDeployment(game, ce, game.getBoard());
+        clientgui.showCollapseWarning(warnList);
+    }
+
+    private void computeTowLinkBreakageHexes(Entity ce) {
+        Game game = clientgui.getClient().getGame();
+        List<Coords> warnList = TowLinkWarning.findTowLinkIssues(game, ce, game.getBoard());
         clientgui.showCollapseWarning(warnList);
     }
 
@@ -533,8 +541,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 }
 
+                // entity.isAero will check if a unit is a LAM in Fighter mode
                 if ((entity instanceof IAero aero)
-                        && (!(entity instanceof LandAirMek lam) || (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER))) {
+                        && (entity.isAero())) {
                     entity.setAltitude(finalElevation);
                     if (finalElevation == 0) {
                         aero.land();

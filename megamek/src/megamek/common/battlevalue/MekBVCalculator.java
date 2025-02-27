@@ -180,8 +180,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)
-                    || (etype.hasFlag(WeaponType.F_B_POD)
-                            || (etype.hasFlag(WeaponType.F_M_POD)))) {
+                    || (etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
                 toSubtract = 1;
             }
 
@@ -203,9 +202,9 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 toSubtract = 1;
             }
 
-            // For weapons split between locations, subtract per critical slot
+            // For weapons split between locations, subtract per critical slot; on superheavy, consider the reduced slot count
             int criticals;
-            if (mounted.isSplit()) {
+            if (mounted.isSplit() || mek.isSuperHeavy()) {
                 criticals = 0;
                 for (int l = 0; l < entity.locations(); l++) {
                     if (((l == mounted.getLocation()) || (l == mounted.getSecondLocation()))
@@ -509,8 +508,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             mp = ((LandAirMek) mek).getAirMekFlankMP(MPCalculationSetting.BV_CALCULATION);
             if (mp == 0) {
                 return 0;
-            } else {
-                return 1 + Compute.getTargetMovementModifier(mp, false, false, entity.getGame()).getValue();
+            } else { // IO p. 192 - When determining TMM for a LAM, include the +1 "airborne modifier".
+                return Compute.getTargetMovementModifier(mp, false, true, entity.getGame()).getValue();
             }
         } else {
             if (mp == 0) {

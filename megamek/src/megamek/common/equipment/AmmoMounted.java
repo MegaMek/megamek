@@ -48,7 +48,7 @@ public class AmmoMounted extends Mounted<AmmoType> {
             setShotsLeft(at.getShots());
         }
     }
-    
+
     @Override
     public int getExplosionDamage() {
         int rackSize = getType().getRackSize();
@@ -125,5 +125,19 @@ public class AmmoMounted extends Mounted<AmmoType> {
     @Override
     public boolean isOneShotAmmo() {
         return isOneShot();
+    }
+
+    @Override
+    public boolean isGroundBomb() {
+        return getType().hasFlag(AmmoType.F_GROUND_BOMB);
+    }
+
+    @Override
+    public double getTonnage() {
+        if (getEntity() instanceof HandheldWeapon) {
+            return getType().getKgPerShot() * getSize() / 1000.0;
+        } else {
+            return super.getTonnage();
+        }
     }
 }

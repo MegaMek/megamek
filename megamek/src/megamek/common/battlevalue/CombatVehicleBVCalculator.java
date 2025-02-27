@@ -41,9 +41,9 @@ public class CombatVehicleBVCalculator extends BVCalculator {
             return 0;
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, entity instanceof VTOL,
-                entity instanceof VTOL, entity.getGame()).getValue();
+                entity instanceof VTOL || (entity.getMovementMode() == EntityMovementMode.WIGE),
+                entity.getGame()).getValue();
         tmmRan += (entity.hasStealth()) ? 2 : 0;
-        tmmRan += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
         return tmmRan;
     }
 
@@ -54,7 +54,6 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         }
         int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
         tmmJumped += (entity.hasStealth()) ? 2 : 0;
-        tmmJumped += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
         return tmmJumped;
     }
 

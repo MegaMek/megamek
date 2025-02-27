@@ -3,6 +3,7 @@ option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Water (Auto)"
 tag "Ocean (Auto)"
+tag "MultipleTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "water:2" "desert"
 hex 0201 0 "water:2" "desert"

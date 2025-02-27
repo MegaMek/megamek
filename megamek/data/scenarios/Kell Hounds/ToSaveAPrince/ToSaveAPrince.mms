@@ -20,10 +20,12 @@
 MMSVersion: 2
 name: To Save a Prince
 planet: Mallory's World
-description: >
+description: |
   Prince Ian Davion commands the Fourth Davion Guards in an attempt to repel the Combine invasion on
   Mallory's World. After Kurita successes against the planetary defenders, the prince summoned a Kell
   Hounds Regiment.
+  
+  *Goal: Playing as Zakahashi's Zombies, break through the Kell Hounds forces.*
 
 map:
   boardrows: 2
@@ -83,7 +85,7 @@ factions:
     force: 2nd Sword of Light|21||Zakahashi's Zombies|22||Assault Lance|23
     crew:
       name: Art Shrett
-      piloting: 3
+      piloting: 4
       gunnery: 5
 
   - fullname: Orion ON1-K

@@ -136,6 +136,10 @@ public abstract class AbstractClient implements IClient {
         return result;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     /** Shuts down threads and sockets */
     @Override
     public synchronized void die() {
@@ -166,7 +170,7 @@ public abstract class AbstractClient implements IClient {
             }
         }
 
-        logger.info("%s client shutdown complete.", getName());
+        logger.info("{} client shutdown complete.", getName());
     }
 
     /** The client has become disconnected from the server */
@@ -232,6 +236,16 @@ public abstract class AbstractClient implements IClient {
     @Override
     public synchronized void sendDone(boolean done) {
         send(new Packet(PacketCommand.PLAYER_READY, done));
+        flushConn();
+    }
+
+    public void sendPause() {
+        send(new Packet(PacketCommand.PAUSE));
+        flushConn();
+    }
+
+    public void sendUnpause() {
+        send(new Packet(PacketCommand.UNPAUSE));
         flushConn();
     }
 

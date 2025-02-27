@@ -36,17 +36,17 @@ class TWPhaseEndManager {
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
             case LOUNGE:
-                gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.EXCHANGE);
                 break;
             case EXCHANGE:
             case STARTING_SCENARIO:
-                gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTOHIT_HEXES);
                 break;
             case SET_ARTILLERY_AUTOHIT_HEXES:
                 gameManager.sendSpecialHexDisplayPackets();
-                gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 boolean hasMinesToDeploy = gameManager.getGame().getPlayersList().stream().anyMatch(Player::hasMinefields);
                 if (hasMinesToDeploy) {
                     gameManager.changePhase(GamePhase.DEPLOY_MINEFIELDS);
@@ -69,7 +69,7 @@ class TWPhaseEndManager {
             case INITIATIVE:
                 gameManager.resolveWhatPlayersCanSeeWhatUnits();
                 gameManager.detectSpacecraft();
-                gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                 gameManager.changePhase(GamePhase.INITIATIVE_REPORT);
                 break;
             case INITIATIVE_REPORT:
@@ -90,7 +90,7 @@ class TWPhaseEndManager {
                 break;
             case MOVEMENT:
                 gameManager.detectHiddenUnits();
-                ServerHelper.detectMinefields(gameManager.getGame(), gameManager.getvPhaseReport(), gameManager);
+                ServerHelper.detectMinefields(gameManager.getGame(), gameManager.getMainPhaseReport(), gameManager);
                 gameManager.updateSpacecraftDetection();
                 gameManager.detectSpacecraft();
                 gameManager.resolveWhatPlayersCanSeeWhatUnits();
@@ -106,13 +106,13 @@ class TWPhaseEndManager {
                 gameManager.checkForFlawedCooling();
                 gameManager.resolveCallSupport();
                 // check phase report
-                if (gameManager.getvPhaseReport().size() > 1) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if (gameManager.getMainPhaseReport().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.MOVEMENT_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.OFFBOARD);
                 }
@@ -135,20 +135,21 @@ class TWPhaseEndManager {
                 gameManager.assignAMS();
                 gameManager.handleAttacks();
                 gameManager.resolveScheduledNukes();
+                gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
                 gameManager.checkForFlawedCooling();
                 // check phase report
-                if (gameManager.getvPhaseReport().size() > 1) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if (gameManager.getMainPhaseReport().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.FIRING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
                     gameManager.sendReport();
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.PHYSICAL);
                 }
                 gameManager.sendGroundObjectUpdate();
@@ -169,13 +170,13 @@ class TWPhaseEndManager {
                 gameManager.checkForFlawedCooling();
                 gameManager.checkForChainWhipGrappleChecks();
                 // check phase report
-                if (gameManager.getvPhaseReport().size() > 1) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if (gameManager.getMainPhaseReport().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.PHYSICAL_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.END);
                 }
@@ -185,18 +186,18 @@ class TWPhaseEndManager {
                 gameManager.changePhase(GamePhase.END);
                 break;
             case TARGETING:
-                gameManager.getvPhaseReport().addElement(new Report(1035, Report.PUBLIC));
+                gameManager.getMainPhaseReport().addElement(new Report(1035, Report.PUBLIC));
                 gameManager.resolveAllButWeaponAttacks();
                 gameManager.resolveOnlyWeaponAttacks();
                 gameManager.handleAttacks();
                 // check reports
-                if (gameManager.getvPhaseReport().size() > 1) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if (gameManager.getMainPhaseReport().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.TARGETING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
-                    gameManager.getvPhaseReport().addElement(new Report(1205, Report.PUBLIC));
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getMainPhaseReport().addElement(new Report(1205, Report.PUBLIC));
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PREMOVEMENT);
                 }
@@ -225,13 +226,13 @@ class TWPhaseEndManager {
                 gameManager.sendTagInfoUpdates();
 
                 // check reports
-                if (gameManager.getvPhaseReport().size() > 1) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if (gameManager.getMainPhaseReport().size() > 1) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.OFFBOARD_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PREFIRING);
                 }
@@ -250,15 +251,15 @@ class TWPhaseEndManager {
                 boolean victory = gameManager.victory(); // note this may add reports
                 // check phase report
                 // HACK: hardcoded message ID check
-                if ((gameManager.getvPhaseReport().size() > 3) || ((gameManager.getvPhaseReport().size() > 1)
-                        && (gameManager.getvPhaseReport().elementAt(1).messageId != 1205))) {
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                if ((gameManager.getMainPhaseReport().size() > 3) || ((gameManager.getMainPhaseReport().size() > 1)
+                        && (gameManager.getMainPhaseReport().elementAt(1).messageId != 1205))) {
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.changePhase(GamePhase.END_REPORT);
                 } else {
                     // just the heat and end headers, so we'll add
                     // the <nothing> label
                     gameManager.addReport(new Report(1205, Report.PUBLIC));
-                    gameManager.getGame().addReports(gameManager.getvPhaseReport());
+                    gameManager.getGame().addReports(gameManager.getMainPhaseReport());
                     gameManager.sendReport();
                     if (victory) {
                         gameManager.changePhase(GamePhase.VICTORY);
@@ -271,9 +272,7 @@ class TWPhaseEndManager {
 
                 break;
             case END_REPORT:
-                if (gameManager.changePlayersTeam()) {
-                    gameManager.processTeamChangeRequest();
-                }
+                gameManager.processTeamChangeRequest();
                 if (gameManager.victory()) {
                     gameManager.changePhase(GamePhase.VICTORY);
                 } else {

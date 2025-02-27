@@ -1,14 +1,16 @@
 size 48 51
 option exit_roads_to_pavement false
 tag "Foliage (Auto)"
-tag "Water (Auto)"
 tag "SnowTheme (Auto)"
+tag "Water (Auto)"
 tag "Roads (Auto)"
 tag "Ocean (Auto)"
+tag "MultipleTheme (Auto)"
 tag "IceTerrain (Auto)"
 tag "LightForest (Auto)"
-tag "LowHills (Auto)"
 tag "Woods (Auto)"
+tag "LowHills (Auto)"
+tag "Hangar (Auto)"
 hex 0101 1 "" "snow"
 hex 0201 1 "" "snow"
 hex 0301 1 "" "snow"

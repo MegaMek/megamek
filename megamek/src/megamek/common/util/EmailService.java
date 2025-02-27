@@ -106,19 +106,17 @@ public class EmailService {
 
     }
 
-    private InternetAddress from;
-    private Map<Player, Integer> messageSequences = new HashMap<>();
-    private Properties mailProperties;
-    private Session mailSession;
+    private final InternetAddress from;
+    private final Map<Player, Integer> messageSequences = new HashMap<>();
+    private final Session mailSession;
 
-    private BlockingQueue<Message> mailQueue = new LinkedBlockingQueue<>();
-    private Thread mailWorker;
+    private final BlockingQueue<Message> mailQueue = new LinkedBlockingQueue<>();
+    private final Thread mailWorker;
     private boolean running = true;
 
     public EmailService(Properties mailProperties) throws Exception {
         this.from = InternetAddress.parse(
                 mailProperties.getProperty("megamek.smtp.from", ""))[0];
-        this.mailProperties = mailProperties;
 
         Authenticator auth = null;
         var login = mailProperties.getProperty("megamek.smtp.login", "").trim();

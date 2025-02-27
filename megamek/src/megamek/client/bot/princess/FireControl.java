@@ -163,6 +163,7 @@ public class FireControl {
     static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
             "stops swarming");
     static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range");
+    static final TargetRollModifier TH_OUT_OF_VISUAL = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of visual targeting range");
     static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
     static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
@@ -192,8 +193,11 @@ public class FireControl {
     static final TargetRollModifier TH_AIR_STRIKE_PATH = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
             "target not under flight path");
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
+    static final TargetRollModifier TH_AAA_AT_GROUND_TARGET = new TargetRollModifier(+4, "AAA/LAA vs non-flying ground target");
+    static final TargetRollModifier TH_AAA_TOO_LOW = new TargetRollModifier(+4, "AAA/LAA from below 4 Altitude");
     private static final TargetRollModifier TH_STABLE_WEAPON = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
+    static final TargetRollModifier TH_NO_TARGETS_IN_BLAST = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "no targets in blast zone!");
 
     /**
      * The possible fire control types.
@@ -256,16 +260,16 @@ public class FireControl {
      *
      * @param hexesMoved The number of hexes the target unit moved.
      * @param jumping    Set TRUE if the target jumped.
-     * @param vtol       Set TRUE if the target is a {@link VTOL}.
+     * @param airborneNonAerospace       Set TRUE if the target is a {@link VTOL} or other airborne, non-aerospace unit.
      * @param game       The current {@link Game}
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
     protected ToHitData getTargetMovementModifier(final int hexesMoved,
             final boolean jumping,
-            final boolean vtol,
+            final boolean airborneNonAerospace,
             final Game game) {
-        return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
+        return Compute.getTargetMovementModifier(hexesMoved, jumping, airborneNonAerospace, game);
     }
 
     /**
@@ -303,6 +307,11 @@ public class FireControl {
         final int maxRange = owner.getMaxWeaponRange(shooter, target.isAirborne());
         if (distance > maxRange) {
             return new ToHitData(TH_RNG_TOO_FAR);
+        }
+
+        final int maxVisRange = game.getPlanetaryConditions().getVisualRange(shooter, shooter.isUsingSearchlight());
+        if (distance > maxVisRange) {
+            return new ToHitData(TH_OUT_OF_VISUAL);
         }
 
         final ToHitData toHitData = new ToHitData();
@@ -348,8 +357,12 @@ public class FireControl {
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
+        LosEffects los = LosEffects.calculateLOS(game, shooter, target);
+
+        // We want to check the target hex _and_ the intervening hexes for woods, smoke, etc.
         final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
-        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
+        int woodsLevel = targetHex.terrainLevel(Terrains.WOODS) +
+            ((los.thruWoods()) ? los.getLightWoods() + los.getHeavyWoods() + los.getUltraWoods() : 0);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
         }
@@ -357,7 +370,9 @@ public class FireControl {
             toHitData.addModifier(woodsLevel, TH_WOODS);
         }
 
-        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        // final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
+        final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE) +
+            los.getLightSmoke() + los.getHeavySmoke();
         if (1 <= smokeLevel) {
             // Smoke level doesn't necessarily correspond to the to-hit modifier
             // even levels are light smoke, odd are heavy smoke
@@ -902,8 +917,8 @@ public class FireControl {
         toHit.append(getDamageWeaponMods(shooter, weapon));
 
         // weapon mods
-        if (0 != weaponType.getToHitModifier()) {
-            toHit.addModifier(weaponType.getToHitModifier(), TH_WEAPON_MOD);
+        if (0 != weaponType.getToHitModifier(weapon)) {
+            toHit.addModifier(weaponType.getToHitModifier(weapon), TH_WEAPON_MOD);
         }
 
         // Target size.
@@ -914,74 +929,85 @@ public class FireControl {
         // ammo mods
         if (AmmoType.T_NA != weaponType.getAmmoType()
                 && (null != firingAmmo)
-                && (firingAmmo.getType() instanceof AmmoType)) {
-            final AmmoType ammoType = (AmmoType) firingAmmo.getType();
-            if (null != ammoType) {
-                // Set of munitions we'll consider for Flak targeting
-                EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_CLUSTER,
-                        AmmoType.Munitions.M_FLAK);
-                EnumSet<AmmoType.Munitions> ArtyOnlyMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_FLECHETTE,
-                        AmmoType.Munitions.M_FAE);
-                EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
-                        AmmoType.Munitions.M_HOMING);
-                if (0 != ammoType.getToHitModifier()) {
-                    toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
-                }
-                // Air-defense Arrow IV handling; can only fire at airborne targets
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                    if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                        toHit.addModifier(TH_WEAPON_ADA);
-                    } else {
-                        toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
-                    }
-                }
-                // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
+                && (firingAmmo.getType() instanceof AmmoType ammoType)) {
+            // Set of munitions we'll consider for Flak targeting
+            EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_CLUSTER,
+                    AmmoType.Munitions.M_FLAK);
+            EnumSet<AmmoType.Munitions> ArtyOnlyMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_FLECHETTE,
+                    AmmoType.Munitions.M_FAE);
+            EnumSet<AmmoType.Munitions> homingMunitions = EnumSet.of(
+                    AmmoType.Munitions.M_HOMING);
+            if (0 != ammoType.getToHitModifier()) {
+                toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
+            }
+            // Air-defense Arrow IV handling; can only fire at airborne targets
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                    if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
-                            || ammoType.countsAsFlak()) {
-                        toHit.addModifier(TH_WEAPON_FLAK);
-                    } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
-                        toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
-                    }
+                    toHit.addModifier(TH_WEAPON_ADA);
+                } else {
+                    toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
-                // Handle homing munitions
-                if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
-                    if (game.getPhase().isOffboard()) {
-                        final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
-                                .append(shooter.getDisplayName());
-
-                        // Check all friends with TAG for proximity to enemies.
-                        Entity friendlySpotter = Compute.findTAGSpotter(game, shooter, target, true);
-
-                        if (friendlySpotter != null) {
-                            // If we've got one friendly TAGger in range, roll them bones!
-                            msg.append("\nSurvey says we've got friendly TAG unit ")
-                                    .append(friendlySpotter.getDisplayName())
-                                    .append(" nearby; fingers crossed!");
-                            toHit.addModifier(TH_HOMING_TARGET_TAGGED);
-                        } else {
-                            // Can't hit without TAG support on-site!
-                            msg.append("\nUnfortunately we have no friends near the target...");
-                            toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
-                        }
-
-                        logger.debug(msg.toString());
-                    }
+            }
+            // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
+            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
+                if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
+                        || ammoType.countsAsFlak()) {
+                    toHit.addModifier(TH_WEAPON_FLAK);
+                } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)) {
+                    toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
                 }
+            }
+            // Handle homing munitions
+            if (ammoType.getMunitionType().stream().anyMatch(homingMunitions::contains)) {
+                if (game.getPhase().isOffboard()) {
+                    final StringBuilder msg = new StringBuilder("Estimating to-hit for Homing artillery fire by ")
+                            .append(shooter.getDisplayName());
 
-                // Guesstimate Heat-Seeking Ammo mods
-                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
-                    if (targetState.getHeat() > 0) {
-                        // Hot target good
-                        toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
+                    // Check all friends with TAG for proximity to enemies.
+                    Entity friendlySpotter = Compute.findTAGSpotter(game, shooter, target, true);
+
+                    if (friendlySpotter != null) {
+                        // If we've got one friendly TAGger in range, roll them bones!
+                        msg.append("\nSurvey says we've got friendly TAG unit ")
+                                .append(friendlySpotter.getDisplayName())
+                                .append(" nearby; fingers crossed!");
+                        toHit.addModifier(TH_HOMING_TARGET_TAGGED);
                     } else {
-                        // Cold target bad
-                        toHit.addModifier(1, TH_AMMO_MOD);
+                        // Can't hit without TAG support on-site!
+                        msg.append("\nUnfortunately we have no friends near the target...");
+                        toHit.addModifier(TH_HOMING_TARGET_UNTAGGED);
+                    }
+
+                    logger.debug(msg.toString());
+                }
+            }
+
+            // Guesstimate Heat-Seeking Ammo mods
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) {
+                if (targetState.getHeat() > 0) {
+                    // Hot target good
+                    toHit.addModifier(-targetState.getHeat() / 5, TH_AMMO_MOD);
+                } else {
+                    // Cold target bad
+                    toHit.addModifier(1, TH_AMMO_MOD);
+                }
+            }
+
+            // Guesstimate Air-to-Air missile mods; targetState values are less accurate but workable
+            if ((ammoType.getAmmoType() == AmmoType.T_AAA_MISSILE) || (ammoType.getAmmoType() == AmmoType.T_LAA_MISSILE)) {
+                if (!targetState.isAirborneAero()) {
+                    // Mod for firing at non-flying ground
+                    if (!targetState.isAirborne()) {
+                        toHit.addModifier(TH_AAA_AT_GROUND_TARGET);
+                    }
+                    if (shooter.getAltitude() < 4) {
+                        toHit.addModifier(TH_AAA_TOO_LOW);
                     }
                 }
             }
+
         }
 
         // targeting computer
@@ -1106,6 +1132,20 @@ public class FireControl {
             }
             if (0 == firingAmmo.getUsableShotsLeft()) {
                 return new ToHitData(TH_WEAPON_NO_AMMO);
+            }
+
+            // If bombing with actual bombs, make sure the target isn't flying too high to catch in the blast!
+            if (weapon.isGroundBomb()
+                    && !(weapon.getType().hasFlag(WeaponType.F_TAG) || weapon.getType().hasFlag(WeaponType.F_MISSILE))
+            ) {
+                Hex hex = game.getBoard().getHex(target.getPosition());
+                // If somehow we get an off-board hex, it's impossible to hit.
+                if (hex == null) {
+                    return new ToHitData(TH_NULL_POSITION);
+                }
+                if (Compute.allEnemiesOutsideBlast(target, shooter, firingAmmo.getType(), false, false, false, game)) {
+                    return new ToHitData(TH_NO_TARGETS_IN_BLAST);
+                }
             }
         }
 
@@ -1334,7 +1374,7 @@ public class FireControl {
 
         double modifier = 1;
         modifier += calcCommandUtility(firingPlan.getTarget());
-        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
+        modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget(), firingPlan.getExpectedBuildingDamage());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
 
         double expectedDamage = firingPlan.getExpectedDamage();
@@ -1347,6 +1387,7 @@ public class FireControl {
         utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
         utility += TARGET_HP_FRACTION_DEALT_UTILITY
                 * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
+        utility -= firingPlan.getExpectedFriendlyDamage();
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -1354,7 +1395,7 @@ public class FireControl {
         firingPlan.setUtility(utility);
     }
 
-    protected double calcStrategicBuildingTargetUtility(final Targetable target) {
+    protected double calcStrategicBuildingTargetUtility(final Targetable target, final double expectedDamage) {
         if (!(target instanceof BuildingTarget)) {
             return 0;
         }
@@ -1364,7 +1405,7 @@ public class FireControl {
         final String coords = coordsFormat.format(targetCoords.getX() + 1)
                 + coordsFormat.format(targetCoords.getY() + 1);
         if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
-            return STRATEGIC_TARGET_UTILITY;
+            return STRATEGIC_TARGET_UTILITY + expectedDamage;
         }
         return 0;
     }
@@ -1374,7 +1415,7 @@ public class FireControl {
             return 0;
         }
 
-        final int id = ((Entity) target).getId();
+        final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
             return PRIORITY_TARGET_UTILITY;
         }
@@ -1470,21 +1511,23 @@ public class FireControl {
             return 100;
 
             // In cases that are not generally overkill (less than 50% of the target's total
-            // HP in
-            // damage), target as normal (don't want to spread damage in these cases).
+            // HP in damage), target as normal (don't want to spread damage in these cases).
             // Also want to disregard damage allocation weighting if the target is a
-            // building or
-            // infantry/BA (as they don't die until you do 100% damage to them normally).
-        } else if ((damageFraction < 0.5)
+            // building, or infantry/BA that won't be killed off in one shot.
+        }
+        if ((damageFraction < 0.5)
                 || (target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                || (owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+        ){
             return 0;
+        }
+        if ((owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
+            // Don't disincentivize possible overkill attacks against Infantry too much.
+            return Math.min(4.0, damageFraction);
         }
 
         // In the remaining case, namely 0.5 <= damage, return the fraction of target HP
-        // dealt as
-        // the penalty scaling factor (multiplied by the weight value to produce a
+        // dealt as the penalty scaling factor (multiplied by the weight value to produce a
         // penalty).
         return damageFraction;
     }
@@ -1544,31 +1587,6 @@ public class FireControl {
                                                                                                                // that
                                                                                                                // does 0
                                                                                                                // damage)).
-    }
-
-    /**
-     * calculates the 'utility' of a physical action.
-     *
-     * @param physicalInfo The {@link PhysicalInfo} to be calculated.
-     */
-    void calculateUtility(final PhysicalInfo physicalInfo) {
-        // If we can't hit, there's no point.
-        if (0.0 >= physicalInfo.getProbabilityToHit()) {
-            physicalInfo.setUtility(-10000);
-            return;
-        }
-
-        double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
-        utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
-        utility += KILL_UTILITY * physicalInfo.getKillProbability();
-        utility *= calcTargetPotentialDamageMultiplier(physicalInfo.getTarget());
-        utility -= (physicalInfo.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
-        utility += calcCommandUtility(physicalInfo.getTarget());
-        utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
-        utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
-        utility -= calcCivilianTargetDisutility(physicalInfo.getTarget());
-
-        physicalInfo.setUtility(utility);
     }
 
     /**
@@ -1978,7 +1996,7 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all bombs on target, if the shooter
      *         is capable of dropping bombs.
      */
-    private FiringPlan getDiveBombPlan(final Entity shooter,
+    protected FiringPlan getDiveBombPlan(final Entity shooter,
             final MovePath flightPath,
             final Targetable target,
             final Game game,
@@ -1991,6 +2009,38 @@ public class FireControl {
         BombMounted exampleBomb = null;
 
         // things that cause us to avoid calculating a bomb plan:
+        // 1. Target is flying Aerospace unit
+        // 2. Target is VTOL not above blast-causing terrain
+        // 3. Target is Submarine too far below surface level
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity entity = (Entity) target;
+            Hex hex = game.getBoard().getHex(entity.getPosition());
+            hexToBomb.setTargetLevel((hex != null) ? hex.getLevel() : 0);
+
+            if (entity.isAirborne()) {
+                return diveBombPlan;
+            }
+            if (entity.isAirborneVTOLorWIGE()) {
+                // If VTOL / WiGE movement and flying, can only be hit if over water
+                // or buildings, and only if within a specific level range
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
+            }
+            // Submarine units can be bombed, but bombs impact the water surface and transfers 1 to 2
+            // levels of depth downward.
+            if (entity.getMovementMode().isSubmarine()) {
+                if (hex == null || !hex.containsAnyTerrainOf(Terrains.WATER)) {
+                    return diveBombPlan;
+                }
+                if (entity.getElevation() < -2) {
+                    return diveBombPlan;
+                }
+                hexToBomb.setTargetLevel(hex.getLevel() + entity.getElevation());
+            }
+        }
+
         // not having any bombs (in the first place)
         final Iterator<WeaponMounted> weaponIter = shooter.getWeapons();
         if (null == weaponIter) {
@@ -2130,7 +2180,8 @@ public class FireControl {
                         continue;
                     }
                 }
-                if (bestShoot.getProbabilityToHit() > toHitThreshold) {
+                // Attack should have a chance to hit, and expect to do non-zero damage; otherwise skip it
+                if (bestShoot.getProbabilityToHit() > toHitThreshold && bestShoot.getExpectedDamage() > 0.0) {
                     myPlan.add(bestShoot);
                     continue;
                 }
@@ -2705,19 +2756,17 @@ public class FireControl {
 
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
-
             if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
                 logger.info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
 
+            final int playerId = enemy.getOwnerId();
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getId());
-
-            // Skip retreating enemies so long as they haven't fired on me while retreating.
-            final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
-            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getId(), playerId,
-                    owner.getForcedWithdrawal())) {
-                logger.info(enemy.getDisplayName() + " is broken - ignoring");
+            final boolean isEnemyBroken = honorUtil.isEnemyBroken(enemy.getId(), playerId, owner.getForcedWithdrawal());
+            // Only skip retreating enemies that are not priority targets so long as they haven't fired on me while retreating.
+            if (!priorityTarget && isEnemyBroken) {
+                logger.info(enemy.getDisplayName() + " is broken and not priority - ignoring");
                 continue;
             }
 
@@ -2727,7 +2776,8 @@ public class FireControl {
                     ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
 
-            if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
+            if ((bestPlan == null)
+                || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
             }
         }
@@ -2857,22 +2907,51 @@ public class FireControl {
 
             final AmmoMounted suggestedAmmo = info.getAmmo();
             final AmmoMounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon, suggestedAmmo);
-            // if we found preferred ammo but can't apply it to the weapon, log it and
-            // continue.
-            if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                logger.warn(shooter.getDisplayName() + " tried to load "
-                        + currentWeapon.getName() + " with ammo " +
-                        mountedAmmo.getDesc() + " but failed somehow.");
-                continue;
-                // if we didn't find preferred ammo after all, continue
-            } else if (mountedAmmo == null) {
+
+            // if we didn't find preferred ammo after all, continue
+            if (mountedAmmo == null) {
                 continue;
             }
-            final WeaponAttackAction action = info.getAction();
-            action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
-            action.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
-            action.setAmmoCarrier(mountedAmmo.getEntity().getId());
-            info.setAction(action);
+
+            // If the selected ammo would cause the shot to miss, skip loading it.
+            final WeaponAttackAction cloneWAA = new WeaponAttackAction(info.getAction());
+            cloneWAA.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            cloneWAA.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
+            cloneWAA.setAmmoCarrier(mountedAmmo.getEntity().getId());
+            if (cloneWAA.toHit(owner.getGame(), owner.getPrecognition().getECMInfo()).getValue() > 12) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.CauseMiss",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            // if we found preferred ammo but can't apply it to the weapon, log it and
+            // continue.
+            if (!shooter.loadWeapon(currentWeapon, mountedAmmo)) {
+                logger.warn(
+                    Messages.getString(
+                        "FireControl.LoadAmmo.FailureToLoad",
+                        shooter.getDisplayName(),
+                        currentWeapon.getName(),
+                        mountedAmmo.getDesc()
+                    )
+                );
+                continue;
+            }
+
+            /* If everything looks okay, update the action with the new values
+            *  Don't replace the old action with the clone - the clone doesn't
+            *  consider that the waa might have been a subclass of WeaponAttackAction
+            *  - like ArtilleryAttackAction. So instead update the changed values: */
+            info.getAction().setAmmoId(cloneWAA.getAmmoId());
+            info.getAction().setAmmoMunitionType(cloneWAA.getAmmoMunitionType());
+            info.getAction().setAmmoCarrier(cloneWAA.getAmmoCarrier());
+
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
                     shooter.getEquipmentNum(mountedAmmo), mountedAmmo.getSwitchedReason());
         }
@@ -3475,7 +3554,7 @@ public class FireControl {
                 if (!(weaponType instanceof MMLWeapon)) {
                     // Naively assume that easier-hitting is better
                     if (returnAmmo != null) {
-                        AmmoType returnAmmoType = (AmmoType) (returnAmmo.getType());
+                        AmmoType returnAmmoType = returnAmmo.getType();
                         returnAmmo = ((ammoType.getToHitModifier() > returnAmmoType.getToHitModifier()) ? ammo
                                 : returnAmmo);
                     } else {
@@ -3559,6 +3638,9 @@ public class FireControl {
             int weaponDamage = ((WeaponType) mounted.getType()).getDamage();
             if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = ((WeaponType) mounted.getType()).getRackSize();
+            }
+            if (weaponDamage == WeaponType.DAMAGE_ARTILLERY){
+                weaponDamage = 1; //Set it to something
             }
 
             if (weaponDamage > maxJammedDamage) {

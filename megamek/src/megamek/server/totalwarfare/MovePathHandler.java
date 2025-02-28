@@ -1839,10 +1839,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     TreeMap<Integer, Vector<Integer>> dropped = step.getLaunched();
                     Set<Integer> bays = dropped.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
-                    Bay currentBay;
+                    Transporter currentBay;
                     while (bayIter.hasNext()) {
                         int bayId = bayIter.next();
-                        currentBay = entity.getTransportBays().elementAt(bayId);
+                        currentBay = entity.getTransports().elementAt(bayId);
                         Vector<Integer> drops = dropped.get(bayId);
                         int nDropped = drops.size();
                         // ok, now lets drop them
@@ -1857,14 +1857,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             dropEntityReport = new Report(9374);
                             dropEntityReport.add(drop.getShortName(), true);
                             addReport(dropEntityReport);
-                            // Infantry don't have a chance to destory doors
+                            // Infantry don't have a chance to destroy doors, and
+                            // currently this applies to Bays only.
                             if (!drop.isInfantry() && Compute.d6(2) == 2) {
-                                r = new Report(9390);
-                                r.subject = entity.getId();
-                                r.indent(1);
-                                r.add(currentBay.getType());
-                                addReport(r);
-                                currentBay.destroyDoorNext();
+                                if (currentBay instanceof Bay cbBay) {
+                                    r = new Report(9390);
+                                    r.subject = entity.getId();
+                                    r.indent(1);
+                                    r.add(currentBay.getType());
+                                    addReport(r);
+                                    cbBay.destroyDoorNext();
+                                }
                             }
                             gameManager.dropUnit(drop, entity, curPos, step.getAltitude());
                         }

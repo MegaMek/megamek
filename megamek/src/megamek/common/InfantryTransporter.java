@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -86,11 +87,16 @@ public interface InfantryTransporter extends Serializable {
      * In practice, all are provided by Bay() or overridden in transports
      * that can carry infantry.
      */
+    boolean canLoad(Entity unit);
+    List<Entity> getDroppableUnits();
+    Vector<Entity> getLoadedUnits();
     double getUnused();
     double getUnusedSlots();
-    int getCurrentDoors();
-    Vector<Entity> getLoadedUnits();
+    String getType();
+    void load(Entity unit);
     double spaceForUnit(Entity unit);
-    boolean canLoad(Entity unit);
 
+    default int getCurrentDoors() {
+        return 0;
+    }
 }

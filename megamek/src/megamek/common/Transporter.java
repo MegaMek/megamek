@@ -152,4 +152,8 @@ public interface Transporter extends Serializable {
     default int getNumberUnloadedThisTurn() {
         return 0;
     };
+
+    default String getType() {
+        return "Unknown";
+    }
 }

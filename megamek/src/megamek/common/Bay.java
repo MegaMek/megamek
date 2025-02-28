@@ -310,10 +310,6 @@ public class Bay implements Transporter, ITechnology {
         return 0;
     }
 
-    public String getType() {
-        return "Unknown";
-    }
-
     /** Destroys a door for next turn. */
     public void destroyDoorNext() {
         if (getDoorsNext() > 0) {

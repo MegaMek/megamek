@@ -8755,6 +8755,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         result.addElement(e);
                     }
                 }
+            } else if (next instanceof InfantryCompartment nextCompartment) {
+                for (Entity e : nextCompartment.getDroppableUnits()) {
+                    result.addElement(e);
+                }
             }
         }
 

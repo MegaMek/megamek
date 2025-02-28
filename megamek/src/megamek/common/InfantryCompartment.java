@@ -225,11 +225,13 @@ public final class InfantryCompartment implements Transporter, InfantryTransport
      *         of space (such as infantry bays) this calculates the number of the default unit size
      *         that can fit into the remaining space.
      */
+    @Override
     public double getUnusedSlots() {
         return currentSpace;
     }
 
     /** @return A (possibly empty) list of units from this bay that can be assault-dropped. */
+    @Override
     public List<Entity> getDroppableUnits() {
         return troops.keySet().stream().map(game::getEntity).filter(Objects::nonNull).filter(Entity::canAssaultDrop).collect(toList());
     }

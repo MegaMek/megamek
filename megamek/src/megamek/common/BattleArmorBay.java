@@ -18,7 +18,7 @@ package megamek.common;
  * Represents a volume of space set aside for carrying Battle Armor squads aboard large spacecraft
  * and mobile structures
  */
-public final class BattleArmorBay extends Bay {
+public final class BattleArmorBay extends Bay implements InfantryTransporter {
     private static final long serialVersionUID = 7091227399812361916L;
 
     private boolean isClan = false;

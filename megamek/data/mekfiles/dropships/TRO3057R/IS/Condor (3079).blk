@@ -119,7 +119,7 @@ ISERMediumLaser
 </Aft Equipment>
 
 <Hull Equipment>
-MASH Core Component
+MASH Equipment:SIZE:1
 </Hull Equipment>
 
 <structural_integrity>

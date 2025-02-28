@@ -71,10 +71,13 @@ public abstract class LaserWeapon extends EnergyWeapon {
             return super.getModesCount();
         }
 
-        //Only works if laser pulse module's "Pulse" modes are added last.
-        synchronized (modes) {
-            return (int) modes.stream().filter(mode -> !mode.getName().startsWith("Pulse")).count();
+        if (hasModes()) {
+            //Only works if laser pulse module's "Pulse" modes are added last.
+            synchronized (modes) {
+                return (int) modes.stream().filter(mode -> !mode.getName().startsWith("Pulse")).count();
+            }
         }
+        return super.getModesCount();
     }
 
     @Override

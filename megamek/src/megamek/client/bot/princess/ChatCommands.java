@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,41 +18,91 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.Messages;
+import megamek.client.bot.princess.commands.*;
+
 /**
+ * <p>Represents the commands that the princess can execute.</p>
+ * <p>Each command has an abbreviation, a command, a syntax and a description.</p>
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
  * @since 10/24/2014 9:57 AM
  */
 public enum ChatCommands {
-    FLEE("fl", "princessName: flee", "Causes princess-controlled units to start fleeing the board, regardless of " +
-                                     "damage level or Forced Withdrawal setting."),
-    VERBOSE("ve", "princessName: verbose : <error/warning/info/debug>", "Sets princess's verbosity level."),
-    BEHAVIOR("be", "princessName: behavior : behaviorName", "Change's princess's behavior to the named behavior."),
-    CAUTION("ca", "princessName: caution : <+/->", "Modifies princess's Piloting Caution setting. Each '+' increases " +
-                                                   "it by 1 and each '-' decreases it by one."),
-    AVOID("av", "princessName: avoid : <+/->", "Modifies princess's Self Preservation setting. Each '+' increases it " +
-                                               "by 1 and each '-' decreases it by one."),
-    AGGRESSION("ag", "princessName: aggression : <+/->", "Modifies princess's Aggression setting. Each '+' increases " +
-                                                         "it by 1 and each '-' decreases it by one."),
-    HERDING("he", "princessName: herd : <+/->", "Modifies princess's Herding setting. Each '+' increases it by 1 and " +
-                                                "each '-' decreases it by one."),
-    BRAVERY("br", "princessName: brave : <+/->", "Modifies princess's Bravery setting. Each '+' increases it by 1 " +
-                                                 "and each '-' decreases it by one."),
-    TARGET("ta", "princessName: target : hexNumber", "Adds the specified hex to princess's list of Strategic Targets."),
-    PRIORITIZE("pr", "princessName: prioritize : unitId", "Adds the specified unit to princess's Priority Targets " +
-                                                          "list."),
-    SHOW_BEHAVIOR("sh", "princessName: showBehavior", "Princess will state the name of her current behavior."),
-    LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
-    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID."),
-    SHOW_DISHONORED("di", "princessName: dishonored", "Show the players on the dishonored enemies list.");
+    FLEE("fl", "flee",
+        Messages.getString("Princess.command.flee.description"),
+        new FleeCommand()),
+    @Deprecated(since="50.04", forRemoval = true)
+    VERBOSE("ve", "verbose",
+        Messages.getString("Princess.command.verbose.description"),
+        new VerboseCommand()),
+    BEHAVIOR("be", "behavior",
+        Messages.getString("Princess.command.behavior.description"),
+        new BehaviorCommand()),
+    CAUTION("ca",  "caution",
+        Messages.getString("Princess.command.caution.description"),
+        new CautionCommand()),
+    AVOID("av", "avoid",
+        Messages.getString("Princess.command.avoid.description"),
+        new AvoidCommand()),
+    AGGRESSION("ag", "aggression",
+        Messages.getString("Princess.command.aggression.description"),
+        new AggressionCommand()),
+    HERDING("he", "herding",
+        Messages.getString("Princess.command.herding.description"),
+        new HerdingCommand()),
+    BRAVERY("br", "bravery",
+        Messages.getString("Princess.command.bravery.description"),
+        new BraveryCommand()),
+    TARGET("ta", "target",
+        Messages.getString("Princess.command.targetGround.description"),
+        new TargetGroundCommand()),
+    PRIORITIZE("pr", "prioritize",
+        Messages.getString("Princess.command.priorityTarget.description"),
+        new PriorityTargetCommand()),
+    SHOW_BEHAVIOR("sh", "show-behavior",
+        Messages.getString("Princess.command.showBehavior.description"),
+        new ShowBehaviorCommand()),
+    LIST__COMMANDS("li", "list-commands",
+        Messages.getString("Princess.command.listCommands.description"),
+        new ListCommands()),
+    IGNORE_TARGET("ig", "ignore-target",
+        Messages.getString("Princess.command.ignoreTarget.description"),
+        new IgnoreTargetCommand()),
+    SHOW_DISHONORED("di", "show-dishonored",
+        Messages.getString("Princess.command.showDishonored.description"),
+        new ShowDishonoredCommand()),
+    CLEAR_IGNORED_TARGETS("cl", "clear-ignored-targets",
+        Messages.getString("Princess.command.clearIgnoredTargets.description"),
+        new ClearIgnoredTargetsCommand()),
+    BLOOD_FEUD("bf",  "blood-feud",
+        Messages.getString("Princess.command.bloodFeud.description"),
+        new BloodFeudCommand()),
+    ADD_WAYPOINT("aw", "add-waypoint",
+        Messages.getString("Princess.command.addWaypoint.description"),
+        new AddWaypointCommand()),
+    REMOVE_WAYPOINT("rw", "remove-waypoint",
+        Messages.getString("Princess.command.removeWaypoint.description"),
+        new RemoveWaypointCommand()),
+    CLEAR_WAYPOINT("cw", "clear-waypoints",
+        Messages.getString("Princess.command.clearWaypoints.description"),
+        new ClearWaypointsCommand()),
+    CLEAR_ALL_WAYPOINTS("nw", "clear-all-waypoints",
+        Messages.getString("Princess.command.clearAllWaypoints.description"),
+        new ClearAllWaypointsCommand()),
+    SET_WAYPOINT("sw", "set-waypoints",
+        Messages.getString("Princess.command.setWaypoints.description"),
+        new SetWaypointsCommand());
 
     private final String abbreviation;
-    private final String syntax;
+    private final String command;
     private final String description;
+    private final ChatCommand chatCommand;
 
-    ChatCommands(String abbreviation, String syntax, String description) {
+    ChatCommands(String abbreviation, String command, String description, ChatCommand chatCommand) {
         this.abbreviation = abbreviation;
-        this.syntax = syntax;
+        this.command = command;
         this.description = description;
+        this.chatCommand = chatCommand;
     }
 
     public String getAbbreviation() {
@@ -60,11 +110,21 @@ public enum ChatCommands {
     }
 
     public String getSyntax() {
-        return syntax;
+        return "princessName: " + getAbbreviation() + "/" + getCommand() +
+            (chatCommand.defineArguments().isEmpty() ? "" : ": " + chatCommand.getArgumentsRepr());
     }
 
     public String getDescription() {
-        return description;
+        return (chatCommand.defineArguments().isEmpty() ?
+            "" : chatCommand.getArgumentsRepr() + " : " + chatCommand.getArgumentsDescription() + " ") + description;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public ChatCommand getChatCommand() {
+        return chatCommand;
     }
 
     public static ChatCommands getByValue(String s) {

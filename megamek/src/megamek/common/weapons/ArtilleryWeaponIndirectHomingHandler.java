@@ -188,7 +188,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         AmmoType ammoType = (AmmoType) ammo.getType();
 
         // copperhead gets 10 damage less than standard
-        if (ammoType.getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (!(ammoType.getAmmoType() == AmmoType.T_ARROW_IV || ammoType.getAmmoType() == AmmoType.T_ARROW_IV_BOMB)) {
             nDamPerHit -= 10;
         }
 
@@ -201,6 +201,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         int hits = handleAMS(vPhaseReport);
 
         if (bMissed && !missReported) {
+            // Notify player of last-second miss that hits the hex instead
+            r = new Report(3201);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+
             reportMiss(vPhaseReport);
 
             // Works out fire setting, AMS shots, and whether continuation is
@@ -279,7 +285,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         // on the other hand, if the hex *is* the target, do full damage
         int hexDamage = targetingHex ? wtype.getRackSize() : ratedDamage * 2;
 
-        bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getAbsorbtion(coords) : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
@@ -294,9 +299,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                     continue; // don't splash the original target unless it's a miss
                 }
 
-                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs,
-                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType,
-                        coords, targetingHex, entityTarget, hex, hexDamage, vPhaseReport, gameManager);
+                AreaEffectHelper.artilleryDamageEntity(
+                    entity, ratedDamage, bldg, bldgAbsorbs,
+                    false, false, false, 0,
+                    coords, ammoType, coords, false,
+                    ae, hex, ae.getId(), vPhaseReport, gameManager);
             }
         }
         Report.addNewline(vPhaseReport);
@@ -385,6 +392,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
+            toHit = new ToHitData(4,Messages.getString("ArtilleryIndirectHomingHandler.HomingArtyMissChance"));
         } else {
             // The player gets to select the target
             List<Integer> targetIds = new ArrayList<>();
@@ -398,6 +406,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             target = newTarget;
             aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
+            toHit = new ToHitData(4,Messages.getString("ArtilleryIndirectHomingHandler.HomingArtyMissChance"));
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.actions.AirMekRamAttackAction;
 import megamek.common.actions.AttackAction;
@@ -43,6 +44,7 @@ import megamek.server.SmokeCloud;
 class MovePathHandler extends AbstractTWRuleHandler {
     private static final MMLogger logger = MMLogger.create(MovePathHandler.class);
 
+
     private final Entity entity;
     private final MovePath md;
     private final Map<UnitTargetPair, LosEffects> losCache;
@@ -50,7 +52,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private boolean sideslipped = false;
     private Coords lastPos;
     private Coords curPos;
-    private Hex firstHex; // Used to check for start/end magma damage
     private int curFacing;
     private int curVTOLElevation;
     private int curElevation;
@@ -241,7 +242,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         // okay, proceed with movement calculations
         lastPos = entity.getPosition();
         curPos = entity.getPosition();
-        firstHex = getGame().getBoard().getHex(curPos); // Used to check for start/end magma damage
+        boolean tookMagmaDamageAtStart = false; // Used to check for start/end magma damage
         curFacing = entity.getFacing();
         curVTOLElevation = entity.getElevation();
         lastElevation = entity.getElevation();
@@ -289,6 +290,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 .terrainLevel(Terrains.MAGMA) == 2)
                 && (entity.getElevation() == 0)) {
             gameManager.doMagmaDamage(entity, false);
+            tookMagmaDamageAtStart = true;
+        }
+
+        // check for starting in hazardous liquid
+        if ((getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.HAZARDOUS_LIQUID))
+                && (entity.getElevation() <= 0)) {
+            int depth = getGame().getBoard().getHex(entity.getPosition())
+                .containsTerrain(Terrains.WATER) ? getGame().getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) : 0;
+            gameManager.doHazardousLiquidDamage(entity, false, depth);
         }
 
         // set acceleration used to default
@@ -343,6 +354,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
         lastStepMoveType = md.getLastStepMovementType();
 
         processSteps();
+
+        // If a unit started & ended its turn in magma, let's damage it again (TO:AR 35) TODO: build report for end of move
+        if (tookMagmaDamageAtStart && prevHex.terrainLevel(Terrains.MAGMA) == 2
+                && !(entity.getElevation() > 0 || entity.getMovementMode() == EntityMovementMode.HOVER)) {
+            r = new Report(2404);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            addReport(r);
+            gameManager.doMagmaDamage(entity, false);
+        }
 
         // set entity parameters
         entity.setPosition(curPos);
@@ -656,7 +677,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
-                gameManager.getvPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
+                gameManager.getMainPhaseReport().addAll(gameManager.doEntityFallsInto(entity,
                         entity.getElevation(), md.getJumpPathHighestPoint(),
                         curPos, entity.getBasePilotingRoll(overallMoveType),
                         false, entity.getJumpMP()));
@@ -739,14 +760,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
             Building bldg = getGame().getBoard().getBuildingAt(curPos);
             if (bldg != null) {
                 gameManager.checkForCollapse(bldg, getGame().getPositionMap(), curPos, true,
-                        gameManager.getvPhaseReport());
+                        gameManager.getMainPhaseReport());
             }
 
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true,
-                        gameManager.getvPhaseReport(), gameManager);
+                        gameManager.getMainPhaseReport(), gameManager);
                 ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, gameManager);
+                ServerHelper.checkEnteringHazardousLiquid(curHex, entity.getElevation(), entity, gameManager);
+                ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -868,10 +891,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 r = new Report(2126);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                gameManager.getvPhaseReport().add(r);
-                gameManager.getvPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
+                gameManager.getMainPhaseReport().add(r);
+                gameManager.getMainPhaseReport().addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier,
                         false, -1, true));
-                Report.addNewline(gameManager.getvPhaseReport());
+                Report.addNewline(gameManager.getMainPhaseReport());
             }
 
         } // End entity-is-jumping
@@ -962,7 +985,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
 
             // let everyone know about what just happened
-            if (gameManager.getvPhaseReport().size() > 1) {
+            if (gameManager.getMainPhaseReport().size() > 1) {
                 gameManager.send(entity.getOwner().getId(), gameManager.createSpecialReportPacket());
             }
         } else {
@@ -976,7 +999,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.landAirMek((LandAirMek) entity, entity.getPosition(), elevation,
                                 entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
-                        gameManager.getvPhaseReport()
+                        gameManager.getMainPhaseReport()
                                 .addAll(gameManager.landGliderPM((ProtoMek) entity, entity.getPosition(),
                                         elevation, entity.delta_distance));
                     } else {
@@ -1056,7 +1079,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (entity.isAirborneVTOLorWIGE()) {
                     addReport(r);
                     gameManager.crashAirMek(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
-                            "side torso destroyed"), gameManager.getvPhaseReport());
+                            "side torso destroyed"), gameManager.getMainPhaseReport());
                 } else if (entity.isAirborne() && entity.isAero()) {
                     addReport(r);
                     addReport(gameManager.processCrash(entity, ((IAero) entity).getCurrentVelocity(),
@@ -1281,7 +1304,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             r.addDesc(entity);
                             r.subject = entity.getId();
                             r.add(e.getPosition().getBoardNum());
-                            gameManager.getvPhaseReport().addElement(r);
+                            gameManager.getMainPhaseReport().addElement(r);
                             continueTurnFromPBS = true;
 
                             curFacing = entity.getFacing();
@@ -1289,6 +1312,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             mpUsed = step.getMpUsed();
                             break;
                         }
+                    } else if (Compute.canDetectHidden(entity, dist, md.isEndStep(step))) {
+                        // There are a variety of other ways to detect a hidden unit.
+                        // Reveal the detected unit and add the report to the movement report.
+                        e.setHidden(false);
+                        gameManager.entityUpdate(e.getId());
+                        r = new Report(9960);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        r.add(e.getPosition().getBoardNum());
+                        addReport(r);
                     }
                 }
             }
@@ -1298,10 +1331,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 break;
             }
 
-            // Extra damage if first and last hex are magma
-            if (firstStep) {
-                firstHex = getGame().getBoard().getHex(curPos);
-            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
@@ -1561,7 +1590,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             a.setStraightMoves(a.getStraightMoves() + 1);
                             // make sure it didn't fly off the map
                             if (!getGame().getBoard().contains(curPos)) {
-                                curPos = curPos.translated(step.getFacing(), -1); //Return its position to on-map so it can be targeted this turn
+                                curPos = nudgeOntoBoard(curPos, step.getFacing());
                                 a.setCurrentVelocity(md.getFinalVelocity());
                                 gameManager.processLeaveMap(md, true, Compute.roundsUntilReturn(getGame(), entity));
                                 return;
@@ -2247,7 +2276,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // of basement it has
             if (isOnGround && curHex.containsTerrain(Terrains.BUILDING)) {
                 Building bldg = getGame().getBoard().getBuildingAt(curPos);
-                if (bldg.rollBasement(curPos, getGame().getBoard(), gameManager.getvPhaseReport())) {
+                if (bldg.rollBasement(curPos, getGame().getBoard(), gameManager.getMainPhaseReport())) {
                     gameManager.sendChangedHex(curPos);
                     Vector<Building> buildings = new Vector<>();
                     buildings.add(bldg);
@@ -2275,7 +2304,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            2 * leapDistance, "leaping (leg damage)"));
+                            2 * leapDistance, Messages.getString("TacOps.leaping.leg_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         // do leg damage
@@ -2298,7 +2327,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     rollTarget = entity.getBasePilotingRoll(stepMoveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                            leapDistance, "leaping (fall)"));
+                            leapDistance, Messages.getString("TacOps.leaping.fall_damage")));
                     if (0 < gameManager.doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false)) {
                         entity.setElevation(lastElevation);
@@ -2502,11 +2531,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
 
             // check for breaking magma crust unless we are jumping over the hex
+            // Let's check for hazardous liquid damage too
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
                 if (!curPos.equals(lastPos)) {
                     ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false,
-                            gameManager.getvPhaseReport(), gameManager);
+                            gameManager.getMainPhaseReport(), gameManager);
                     ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, gameManager);
+                    ServerHelper.checkEnteringHazardousLiquid(curHex, step.getElevation(), entity, gameManager);
+                    ServerHelper.checkEnteringUltraSublevel(curHex, entity.getElevation(), entity, gameManager);
                 }
             }
 
@@ -2528,19 +2560,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
-            // check for last move ending in magma TODO: build report for end of move
+            // check if we jumped into magma
             boolean jumpedIntoMagma = false;
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2) {
                 jumpedIntoMagma = (moveType == EntityMovementType.MOVE_JUMP);
-                if (firstHex.terrainLevel(Terrains.MAGMA) == 2) {
-                    r = new Report(2404);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    gameManager.doMagmaDamage(entity, false);
-                }
             }
-
             if (curHex.terrainLevel(Terrains.MAGMA) != 2 || jumpedIntoMagma) {
                 // check if we've moved into a swamp
                 rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
@@ -2643,11 +2667,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // check for revealed minefields;
             // unless we get errata about it, we assume that the check is done
             // every time we enter a new hex
-            if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
+            // Also perform per-step Hidden Unit checks if TacOps Advanced Active Probe is enabled.
+            // Aerospace BAP hidden unit detection also occurs here (with or without the above option)
+            if ((getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) || entity.isAerospace())
                     && !lastPos.equals(curPos)) {
-                if (ServerHelper.detectMinefields(getGame(), entity, curPos, gameManager.getvPhaseReport(), gameManager)
+                if (ServerHelper.detectMinefields(getGame(), entity, curPos, gameManager.getMainPhaseReport(), gameManager)
                         ||
-                        ServerHelper.detectHiddenUnits(getGame(), entity, curPos, gameManager.getvPhaseReport(),
+                        ServerHelper.detectHiddenUnits(getGame(), entity, curPos, gameManager.getMainPhaseReport(),
                                 gameManager)) {
                     detectedHiddenHazard = true;
 
@@ -2666,7 +2692,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 boolean boom = false;
                 if (isOnGround) {
                     boom = gameManager.checkVibrabombs(entity, curPos, false, lastPos, curPos,
-                            gameManager.getvPhaseReport());
+                            gameManager.getMainPhaseReport());
                 }
                 if (getGame().containsMinefield(curPos)) {
                     // set the new position temporarily, because
@@ -2674,7 +2700,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     // when moving from clear into mined woods
                     entity.setPosition(curPos);
                     if (gameManager.enterMinefield(entity, curPos, step.getElevation(),
-                            isOnGround, gameManager.getvPhaseReport())) {
+                            isOnGround, gameManager.getMainPhaseReport())) {
                         // resolve any piloting rolls from damage unless unit
                         // was jumping
                         if (stepMoveType != EntityMovementType.MOVE_JUMP) {
@@ -3400,14 +3426,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(bldg.getName());
-                gameManager.getvPhaseReport().add(r);
+                gameManager.getMainPhaseReport().add(r);
 
                 final int cf = bldg.getCurrentCF(pos);
                 final int numFloors = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
-                gameManager.getvPhaseReport().addAll(gameManager.damageBuilding(bldg, 150, " is crushed for ", pos));
+                gameManager.getMainPhaseReport().addAll(gameManager.damageBuilding(bldg, 150, " is crushed for ", pos));
                 int damage = (int) Math.round((cf / 10.0) * numFloors);
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                gameManager.getvPhaseReport().addAll(gameManager.damageEntity(entity, hit, damage));
+                gameManager.getMainPhaseReport().addAll(gameManager.damageEntity(entity, hit, damage));
             }
 
             // Track this step's location.
@@ -3440,5 +3466,54 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+    }
+
+    /**
+     * When something is improperly moved off board, like after a failed aero maneuver, we should move it back onto
+     * the board so exceptions don't get thrown.
+     * @param position entity's current position
+     * @param facing entity's current facing
+     * @return new coords that are on the board
+     */
+    private Coords nudgeOntoBoard(Coords position, int facing) {
+        Coords newPosition = position;
+
+        Game game = getGame();
+        Board board = game.getBoard();
+
+        // When nudging horizontally, let's try to use the facing so we wind up in a more accurate position -
+        // Unless the facing is north/south, then let's just pick a facing and nudge it back onto the board
+
+        // If we're to the left of the board, nudge right until we're on the board
+        while (newPosition.getX() < 0) {
+            if (facing == 4 || facing == 1) {
+                newPosition = newPosition.translated(1);
+            } else {
+                newPosition = newPosition.translated(2);
+            }
+        }
+
+        // If we're to the right of the board, nudge left until we're on the board
+        while (newPosition.getX() > (board.getWidth()-1)) {
+            if (facing == 2 || facing == 5) {
+                newPosition = newPosition.translated(5);
+            } else {
+                newPosition = newPosition.translated(4);
+            }
+        }
+
+
+        // If we're above the board, nudge down until we're on the board
+        while (newPosition.getY() < 0) {
+            newPosition = newPosition.translated(3);
+        }
+
+        // If we're below the board, nudge up until we're on the board
+        // Note that Height is 1-indexed, so we need to make it 0-indexed.
+        while (newPosition.getY() > (board.getHeight()-1) ) {
+            newPosition = newPosition.translated(0);
+        }
+
+        return newPosition;
     }
 }

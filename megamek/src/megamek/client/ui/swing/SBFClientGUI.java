@@ -18,32 +18,9 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.boardview.BoardViewSpriteHandler;
-import megamek.client.ui.swing.boardview.KeyBindingsOverlay;
-import megamek.client.ui.swing.boardview.MovePathSpriteHandler;
-import megamek.client.ui.swing.boardview.MovementEnvelopeSpriteHandler;
-import megamek.client.ui.swing.boardview.PlanetaryConditionsOverlay;
-import megamek.client.ui.swing.boardview.SBFBoardViewTooltip;
-import megamek.client.ui.swing.boardview.SBFFormationSpriteHandler;
+import megamek.client.ui.swing.boardview.*;
 import megamek.client.ui.swing.sbf.SBFFiringDisplay;
 import megamek.client.ui.swing.sbf.SBFMovementDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -57,6 +34,13 @@ import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.util.Distractable;
 import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     private static final MMLogger logger = MMLogger.create(SBFClientGUI.class);
@@ -518,4 +502,5 @@ public class SBFClientGUI extends AbstractClientGUI implements ActionListener {
     public void showMovePath(@Nullable SBFMovePath movePath) {
         movePathSpriteHandler.update(movePath);
     }
+
 }

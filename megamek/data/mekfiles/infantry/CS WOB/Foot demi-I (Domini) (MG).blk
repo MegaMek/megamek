@@ -1,0 +1,67 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-11
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Foot demi-I (Domini)
+</Name>
+
+<Model>
+(MG)
+</Model>
+
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Troopers Equipment>
+Word of Blake Infantry Kit
+AntiMekGear
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+4
+</secondn>
+
+<Primary>
+Laser Rifle (Mauser 1200 LSS)
+</Primary>
+
+<Secondary>
+Machine Gun (Support)
+</Secondary>
+
+<augmentation>
+artificial_pain_shunt
+dermal_armor
+tsm_implant
+</augmentation>
+

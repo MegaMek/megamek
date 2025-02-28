@@ -661,6 +661,36 @@ public class LobbyActions {
         }
     }
 
+    /**
+     *
+     * @param trailer Entity to be towed
+     * @param info
+     */
+    public void tow(Entity trailer, String info) {
+        StringTokenizer sTow = new StringTokenizer(info, ":");
+        int tractorId = Integer.parseInt(sTow.nextToken());
+        Entity tractor = game().getEntity(tractorId);
+        // Remove those entities from the candidates
+        // that are already carried by that tractor/trailer
+        if (trailer == null || tractor == null || trailer.getTractor() == tractorId
+            || tractor.getTowing() != Entity.NONE || tractor.getTractor() == trailer.getId()) {
+            return;
+        }
+
+        // If a unit of the selected units is currently
+        // towed by another, 2nd unit of the selected
+        // units, do not continue. The player should
+        // detach units first. This would require a
+        // server update detaching that second unit AND
+        // re-attaching it. Currently not possible as a single
+        // server update and updates for one unit shouldn't be chained.
+        if (tractor.getTowing() != Entity.NONE && trailer.getTractor() != Entity.NONE) {
+            LobbyErrors.showNoDualTow(frame());
+        }
+
+        lobby.towBy(trailer, tractorId);
+    }
+
     /** Asks for a new name for the provided forceId and applies it. */
     void forceRename(int forceId) {
         if (forceId == Force.NO_FORCE) {
@@ -1117,8 +1147,8 @@ public class LobbyActions {
     }
 
     /**
-     * Performs standard checks for updates (units must be present, visible and
-     * editable)
+     * Performs standard checks for updates (units must be present, visible,
+     * editable, and player is not done)
      * and returns false if that's not the case. Also shows an error message dialog.
      */
     private boolean validateUpdate(Collection<Entity> entities) {
@@ -1131,6 +1161,11 @@ public class LobbyActions {
         }
         if (!canSeeAll(entities)) {
             LobbyErrors.showCannotViewHidden(frame());
+            return false;
+        }
+        
+        if (localPlayer().isDone()) {
+            LobbyErrors.showCannotEditWhileDone(frame());
             return false;
         }
         return true;

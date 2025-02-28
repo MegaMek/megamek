@@ -104,6 +104,7 @@ public class MekTileset {
     private static final String SPACE_STATION_STRING = "default_space_station";
     private static final String FIGHTER_SQUADRON_STRING = "default_fighter_squadron";
     private static final String TELE_MISSILE_STRING = "default_tele_missile";
+    private static final String HANDHELD_WEAPON_STRING = "default_hhw";
     private static final String UNKNOWN_STRING = "default_unknown";
 
     private MekEntry default_ultra_light;
@@ -158,6 +159,7 @@ public class MekTileset {
     private MekEntry default_space_station;
     private MekEntry default_fighter_squadron;
     private MekEntry default_tele_missile;
+    private MekEntry default_handheld_weapon;
     private MekEntry default_unknown;
 
     private final HashMap<String, MekEntry> exact = new HashMap<>();
@@ -361,6 +363,8 @@ public class MekTileset {
             } else {
                 return default_aero;
             }
+        } else if (entity instanceof HandheldWeapon) {
+            return default_handheld_weapon;
         }
 
         return default_unknown;
@@ -444,6 +448,7 @@ public class MekTileset {
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase(Locale.ROOT));
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase(Locale.ROOT));
         default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase(Locale.ROOT));
+        default_handheld_weapon = exact.get(HANDHELD_WEAPON_STRING.toUpperCase(Locale.ROOT));
         default_unknown = exact.get(UNKNOWN_STRING.toUpperCase(Locale.ROOT));
     }
 

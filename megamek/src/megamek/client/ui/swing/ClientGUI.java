@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.JarFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -58,6 +59,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.BotCommandsPanel;
 import megamek.client.ui.dialogs.MiniReportDisplayDialog;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
@@ -87,15 +89,20 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+import org.apache.commons.lang3.SystemUtils;
+
+import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, IPreferenceChangeListener, MekDisplayListener {
+        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
     private final static MMLogger logger = MMLogger.create(ClientGUI.class);
 
     // region Variable Declarations
@@ -184,6 +191,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String VIEW_PLAYER_SETTINGS = "viewPlayerSettings";
     public static final String VIEW_PLAYER_LIST = "viewPlayerList";
     public static final String VIEW_RESET_WINDOW_POSITIONS = "viewResetWindowPos";
+    public static final String VIEW_BOT_COMMANDS = "viewBotCommands";
     // endregion view menu
 
     // region fire menu
@@ -229,6 +237,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     public static final String CG_FILEEXTENTIONMUL = ".mul";
     public static final String CG_FILEEXTENTIONXML = ".xml";
     public static final String CG_FILEEXTENTIONPNG = ".png";
+    public static final String CG_FILEEXTENTIONGIF = ".gif";
+    public static final String CG_FILEPATHGIF = "gif";
     public static final String CG_FILEFORMATNAMEPNG = "png";
 
     // a frame, to show stuff in
@@ -261,6 +271,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
     private final UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
 
+    private JDialog botCommandsDialog;
+
     public ForceDisplayPanel forceDisplayPanel;
     private ForceDisplayDialog forceDisplayDialog;
 
@@ -282,6 +294,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      */
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
+    private JFileChooser dlgSaveGifList;
     private final Client client;
 
     private File curfileBoardImage;
@@ -401,10 +414,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         registerCommand(new BotHelpCommand(this));
     }
 
+    @Override
     public BoardView getBoardView() {
         return bv;
     }
 
+    @Override
     public UnitDisplay getUnitDisplay() {
         return unitDisplay;
     }
@@ -441,6 +456,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         minimapW = miniMapDialog;
     }
 
+    public JDialog getBotCommandsDialog() {
+        return botCommandsDialog;
+    }
+
+    public void setBotCommandsDialog(JDialog botCommandsDialog) {
+        this.botCommandsDialog = botCommandsDialog;
+    }
+
     public MiniReportDisplay getMiniReportDisplay() {
         return miniReportDisplay;
     }
@@ -465,11 +488,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         this.playerListDialog = playerListDialog;
     }
 
-    /**
-     * Set to true to make the client disconnect without a warning popup.
-     *
-     * @param quietly When true, the client will disconnect without visible warning
-     */
+    @Override
     public void setDisconnectQuietly(boolean quietly) {
         disconnectQuietly = quietly;
     }
@@ -603,6 +622,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
 
+        setBotCommandsDialog(BotCommandsPanel.createBotCommandDialog(frame, this.getClient(), this.audioService, null));
         setMiniMapDialog(Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this));
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
@@ -619,11 +639,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         GUIP.addPreferenceChangeListener(this);
     }
 
-    /**
-     * Get the menu bar for this client.
-     *
-     * @return the <code>CommonMenuBar</code> of this client.
-     */
+    @Override
     public CommonMenuBar getMenuBar() {
         return menuBar;
     }
@@ -770,6 +786,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         if (setdlg != null) {
             setdlg.setBounds(0, 0, setdlg.getWidth(), setdlg.getHeight());
         }
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().setBounds(0, 0, getBotCommandsDialog().getWidth(), getBotCommandsDialog().getHeight());
+        }
     }
 
     /**
@@ -878,6 +897,9 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
+                break;
+            case VIEW_BOT_COMMANDS:
+                GUIP.toggleBotCommandsEnabled();
                 break;
             case VIEW_TOGGLE_HEXCOORDS:
                 GUIP.toggleCoords();
@@ -1071,6 +1093,14 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             GUIP.setRulerSizeWidth(ruler.getSize().width);
             GUIP.setRulerSizeHeight(ruler.getSize().height);
         }
+
+        // BotCommands Dialog
+        if ((getBotCommandsDialog() != null)
+            && ((getBotCommandsDialog().getSize().width * getBotCommandsDialog().getSize().height) > 0)) {
+            GUIP.setBotCommandsPosX(getBotCommandsDialog().getLocation().x);
+            GUIP.setBotCommandsPosY(getBotCommandsDialog().getLocation().y);
+        }
+
     }
 
     @Override
@@ -1190,6 +1220,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
 
         maybeShowMinimap();
+        maybeShowBotCommands();
         maybeShowUnitDisplay();
         maybeShowForceDisplay();
         maybeShowMiniReport();
@@ -1449,6 +1480,27 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    private void maybeShowBotCommands() {
+        GamePhase phase = getClient().getGame().getPhase();
+        if (phase.isReport()) {
+            int action = GUIP.getBotCommandsAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
+        } else if (phase.isOnMap()) {
+            int action = GUIP.getBotCommandsAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setBotCommandsEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setBotCommandsEnabled(false);
+            }
+        } else {
+            GUIP.setBotCommandsEnabled(false);
+        }
+    }
+
     /** Shows or hides the minimap based on the current menu setting. */
     private void maybeShowMinimap() {
         GamePhase phase = getClient().getGame().getPhase();
@@ -1615,6 +1667,12 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
 
         if (getUnitDisplayDialog() != null) {
             setUnitDisplayLocation(visible);
+        }
+    }
+
+    void setBotCommandsDialogVisible(boolean visible) {
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().setVisible(visible);
         }
     }
 
@@ -2070,6 +2128,79 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
+    private ProcessBuilder printToMegaMekLab(ArrayList<Entity> unitList, File mmlExecutable, boolean autodetected) {
+        boolean jarfile;
+        try (var ignored = new JarFile(mmlExecutable)) {
+            jarfile = true;
+        } catch (IOException ignored) {
+            jarfile = false;
+        }
+
+        File unitFile;
+        try {
+            unitFile = File.createTempFile("MegaMekPrint", ".mul");
+            EntityListFile.saveTo(unitFile, unitList);
+            unitFile.deleteOnExit();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        String[] command;
+
+        if (!jarfile) {
+            if (!mmlExecutable.canExecute()) {
+                if (autodetected) {
+                    logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
+                } else {
+                    logger.error("%s does not appear to be an executable! You may need to set execute permission or configure the path to the MegaMekLab executable in the settings.".formatted(mmlExecutable.getName()), "Error printing unit list");
+                }
+                return null;
+            }
+
+            if (mmlExecutable.getName().toLowerCase().contains("gradle")) {
+                // If the executable is `gradlew`/`gradelw.bat`, assume it's the gradle wrapper
+                // which comes in the MML git repo. Compile and run MML from source in order to print units.
+                command = new String[] {
+                    mmlExecutable.getAbsolutePath(),
+                    "run",
+                    "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
+                };
+            } else {
+                // Start mml normally. "--no-startup" tells MML to exit after the user closes the
+                // print dialog (by printing or cancelling)
+                command = new String[] {
+                    mmlExecutable.getAbsolutePath(),
+                    unitFile.getAbsolutePath(),
+                    "--no-startup"
+                };
+            }
+        } else {
+            if (!mmlExecutable.exists()) {
+                if (autodetected) {
+                    logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
+                } else {
+                    logger.error("%s does not appear to exist! Please configure the path to the MegaMekLab executable in the settings.".formatted(mmlExecutable.getName()), "Error printing unit list");
+                }
+                return null;
+            }
+
+            // The executable is a jarfile, so let's execute it.
+            var javaExecutable = ProcessHandle.current().info().command().orElse("java");
+            command = new String[] {
+                javaExecutable,
+                "-jar",
+                mmlExecutable.getAbsolutePath(),
+                unitFile.getAbsolutePath(),
+                "--no-startup"
+            };
+
+        }
+
+        return new ProcessBuilder(command)
+            .directory(mmlExecutable.getAbsoluteFile().getParentFile())
+            .inheritIO();
+    }
+
     /**
      * Request MegaMekLab to print out record sheets for the current player's selected units.
      * The method will try to find MML either automatically or based on a configured client setting.
@@ -2090,58 +2221,23 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         var autodetect = false;
         if (null == mmlPath || mmlPath.isBlank()) {
             autodetect = true;
-            if (System.getProperty("os.name").toLowerCase().contains("win")) {
-                mmlPath = "MegaMekLab.exe";
-            } else {
-                mmlPath = "MegaMekLab.sh";
-            }
+            mmlPath = "MegaMekLab.jar";
         }
 
-        var mml = new File(mmlPath);
-
-        if (!mml.canExecute()) {
-            if (autodetect) {
-                logger.error("Could not auto-detect MegaMekLab! Please configure the path to the MegaMekLab executable in the settings.", "Error printing unit list");
-            } else {
-                logger.error("%s does not appear to be an executable! Please configure the path to the MegaMekLab executable in the settings.".formatted(mml.getName()), "Error printing unit list");
-            }
+        var pb = printToMegaMekLab(unitList, new File(mmlPath), autodetect);
+        if (pb == null) {
             return;
         }
 
         try {
-            // Save unit list to a temporary file
-            var unitFile = File.createTempFile("MegaMekPrint", ".mul");
-            EntityListFile.saveTo(unitFile, unitList);
-
-            String[] command;
-            if (mml.getName().toLowerCase().contains("gradle")) {
-                // If the executable is `gradlew`/`gradelw.bat`, assume it's the gradle wrapper
-                // which comes in the MML git repo. Compile and run MML from source in order to print units.
-                command = new String[] {
-                    mml.getAbsolutePath(),
-                    "run",
-                    "--args=%s --no-startup".formatted(unitFile.getAbsolutePath())
-                };
-            } else {
-                // Start mml normally. "--no-startup" tells MML to exit after the user closes the
-                // print dialog (by printing or cancelling)
-                command = new String[] {
-                    mml.getAbsolutePath(),
-                    unitFile.getAbsolutePath(),
-                    "--no-startup"
-                };
-            }
-            // It takes a while for MML to start, so we change the text of the button
+            // It sometimes takes a while for MML to start, so we change the text of the button
             // to let the user know that something is happening
             button.setText(Messages.getString("ChatLounge.butPrintList.printing"));
 
-            logger.info("Running command: {}", String.join(" ", command));
+            logger.info("Running command: {}", String.join(" ", pb.command()));
 
 
-            var p = new ProcessBuilder(command)
-                .directory(mml.getAbsoluteFile().getParentFile())
-                .inheritIO()
-                .start();
+            var p = pb.start();
 
             // This thread's only purpose is to wait for the MML process to finish and change the button's text back to
             // its original value.
@@ -2158,8 +2254,71 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         } catch (Exception e) {
             // If something goes wrong, probably ProcessBuild.start if anything,
             // Make sure to set the button text back to what it started as no matter what.
-            logger.error(e, "Operation failed", "Error printing unit list");
             button.setText(Messages.getString("ChatLounge.butPrintList"));
+            logger.errorDialog(e, "Operation failed", "Error printing unit list");
+
+        }
+    }
+
+    private void saveGifGameSummary() {
+        String filename = StringUtil.addDateTimeStamp(client.getLocalPlayer().getName());
+        String gameUuid = client.getGame().getUUIDString();
+        File tempGifFile = new File(gameSummaryImagesMMDir(), gameUuid + CG_FILEEXTENTIONGIF);
+
+        // Build the "save gif" dialog, if necessary.
+        if (dlgSaveGifList == null) {
+            dlgSaveGifList = new JFileChooser(".");
+            dlgSaveGifList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+            dlgSaveGifList.setDialogTitle(Messages.getString("ClientGUI.saveGameSummaryGifFileDialog.title"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                Messages.getString("ClientGUI.descriptionGIFFiles"), CG_FILEPATHGIF);
+            dlgSaveGifList.setFileFilter(filter);
+        }
+
+        dlgSaveGifList.setSelectedFile(new File(filename + CG_FILEEXTENTIONGIF));
+
+        int returnVal = dlgSaveGifList.showSaveDialog(frame);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveGifList.getSelectedFile() == null)) {
+            // without a file there is no saving for the file, which them means we can't save the gif
+            // and instead we delete it
+            if (tempGifFile.delete()) {
+                logger.info("Game summary GIF deleted");
+            } else {
+                logger.error("Failed to delete game summary GIF");
+            }
+            return;
+        }
+
+        // Did the player select a file?
+        File gifFile = dlgSaveGifList.getSelectedFile();
+        if (gifFile != null) {
+            if (!gifFile.getName().toLowerCase().endsWith(CG_FILEEXTENTIONGIF)) {
+                try {
+                    gifFile = new File(gifFile.getCanonicalPath() + CG_FILEEXTENTIONGIF);
+                } catch (Exception ignored) {
+                    // without a file there is no saving for the file, which them means we can't save the gif
+                    // and instead we delete it
+                    if (tempGifFile.delete()) {
+                        logger.info("Game summary GIF deleted");
+                    } else {
+                        logger.error("Failed to delete game summary GIF");
+                    }
+                    return;
+                }
+            }
+
+            try {
+                if (tempGifFile.renameTo(gifFile)) {
+                    logger.info("Game summary GIF saved to {}", gifFile);
+                } else {
+                    logger.error("Failed to save game summary GIF to {}", gifFile);
+                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"),
+                        Messages.getString("ClientGUI.errorSavingFileGifMessage", gifFile.toString()));
+                }
+            } catch (Exception ex) {
+                logger.error(ex, "saveVictoryList");
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
+            }
         }
     }
 
@@ -2375,11 +2534,30 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                 }
             }
 
-            // Ask if you want to persist the final unit list from a battle encounter
-            if (doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
-                            Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
-                saveVictoryList();
+            if (PreferenceManager.getClientPreferences().askForVictoryList()) {
+                // Ask if you want to persist the final unit list from a battle encounter
+                if (doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
+                                Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
+                    saveVictoryList();
+                }
             }
+
+            if (GUIP.getGifGameSummaryMinimap()) {
+                // Ask if you want to persist the final unit list from a battle encounter
+                if (doYesNoDialog(Messages.getString("ClientGUI.SaveGifDialog.title"),
+                    Messages.getString("ClientGUI.SaveGifDialog.message"))) {
+                    saveGifGameSummary();
+                } else {
+                    String gameUuid = client.getGame().getUUIDString();
+                    File tempGifFile = new File(gameSummaryImagesMMDir(), gameUuid + CG_FILEEXTENTIONGIF);
+                    if (tempGifFile.delete()) {
+                        logger.info("Deleted temporary game summary GIF {}", tempGifFile);
+                    } else {
+                        logger.error("Failed to delete temporary game summary GIF {}", tempGifFile);
+                    }
+                }
+            }
+
 
             // save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<>();
@@ -2559,6 +2737,17 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
                         }
                         return;
                     }
+                    // Confirm if these units can be part of a PBS at all
+                    if (!Compute.canPointBlankShot(attacker, target)) {
+                        // If we are the correct client but the PBS is not legal, return a cancellation
+                        logger.error(
+                            "Received request to handle an illegal pointblank shot ({} @ {} -> {} @ {})",
+                            attacker.getDisplayName(), attacker.getPosition().toFriendlyString(),
+                            target.getDisplayName(), target.getPosition().toFriendlyString()
+                        );
+                        client.sendHiddenPBSCFRResponse(null);
+                        return;
+                    }
                     // If this is the client to handle the PBS, take care of it
                     bv.centerOnHex(attacker.getPosition());
                     bv.highlight(attacker.getPosition());
@@ -2689,6 +2878,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         return bv.getChatterBoxActive();
     }
 
+    @Override
     public Map<String, AbstractClient> getLocalBots() {
         return client.getBots();
     }
@@ -2918,14 +3108,7 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
         }
     }
 
-    /**
-     * The ClientGUI is split into the main panel (view) at the top, which takes up
-     * the majority of
-     * the view and the "current panel" which has different controls based on the
-     * phase.
-     *
-     * @return the panel for the current phase
-     */
+    @Override
     public JComponent getCurrentPanel() {
         return curPanel;
     }
@@ -2973,6 +3156,8 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
             audioService.loadSoundFiles();
         } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
             audioService.setVolume();
+        } else if (e.getName().equals(GUIPreferences.BOT_COMMANDS_ENABLED)) {
+            setBotCommandsDialogVisible(GUIP.getBotCommandsEnabled());
         }
     }
 

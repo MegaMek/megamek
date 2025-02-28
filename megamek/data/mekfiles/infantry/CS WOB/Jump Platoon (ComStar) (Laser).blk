@@ -1,0 +1,61 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-08
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Jump Platoon (ComStar)
+</Name>
+
+<Model>
+(Laser)
+</Model>
+
+<mul id:>
+1719
+</mul id:>
+
+<year>
+2825
+</year>
+
+<originalBuildYear>
+2825
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+AntiMekGear
+</Troopers Equipment>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Laser Rifle
+</Primary>
+

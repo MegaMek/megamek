@@ -505,4 +505,11 @@
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
+    <KeyBind>
+        <command>toggleBotCommandsDisplay</command> <!-- Ctrl+Shift-G -->
+        <keyCode>71</keyCode>
+        <modifier>192</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
 </KeyBindings>

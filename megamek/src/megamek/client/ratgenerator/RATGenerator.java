@@ -697,10 +697,16 @@ public class RATGenerator {
             unitWeights.merge(curModel, chassisWeightTotal, (a, b) -> 100.0 * a / b);
         }
 
-        // If there is more than one weight class being generated and the faction record
-        // (or parent) indicates a certain distribution of weight classes, adjust the
-        // generated unit weights conform to the given ratio.
-        if (weightClasses != null && weightClasses.size() > 1) {
+        // Adjust random weights based on faction weight class proportions if multiple
+        // weight classes are specified.
+        // Do not re-balance conventional infantry, battle armor, VTOLs, large craft,
+        // or other unit types. Also skip when generating tables for specific roles.
+        if ((weightClasses != null &&
+            weightClasses.size() > 1) &&
+            (unitType == UnitType.MEK ||
+                unitType == UnitType.TANK ||
+                unitType == UnitType.AEROSPACEFIGHTER) &&
+            (roles == null || roles.isEmpty())) {
 
             // Get standard weight class distribution for faction
             ArrayList<Integer> weightClassDistribution = fRec.getWeightDistribution(currentEra,
@@ -812,16 +818,13 @@ public class RATGenerator {
         // Only do this for Omni-capable unit types, which also covers those which are
         // commonly fitted with Clan or Star League/advanced technology.
         // Do not re-balance conventional infantry, battle armor, large craft, or other
-        // unit types. Also skip combat support and civilian specialist roles.
+        // unit types. Also skip when generating tables for specific roles.
         if (ratingLevel >= 0 &&
             (unitType == UnitType.MEK ||
                 unitType == UnitType.AEROSPACEFIGHTER ||
                 unitType == UnitType.TANK ||
                 unitType == UnitType.VTOL) &&
-            (roles == null ||
-                (!roles.contains(MissionRole.SUPPORT) ||
-                    !roles.contains(MissionRole.CIVILIAN) ||
-                    !roles.contains(MissionRole.ENGINEER)))){
+            ((roles == null) || roles.isEmpty())) {
             adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, currentEra, nextEra);
         }
 
@@ -1565,10 +1568,19 @@ public class RATGenerator {
             if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 chassisIndex.get(era).put(chassisKey, new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
+                // Create a separate availability rating for each provided faction
                 for (String code : codes) {
+
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
-                    cr.getIncludedFactions().add(code.split(":")[0]);
+                    // If it provides availability values based on equipment ratings,
+                    // generate index values in addition to letter values
+                    if (ar.hasMultipleRatings()) {
+                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                    }
+
+                    cr.getIncludedFactions().add(ar.getFaction());
                     chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
+
                 }
             } else if (wn2.getNodeName().equalsIgnoreCase("model")) {
                 parseModelNode(era, cr, wn2);
@@ -1609,10 +1621,19 @@ public class RATGenerator {
             } else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
                 modelIndex.get(era).put(mr.getKey(), new HashMap<>());
                 String[] codes = wn2.getTextContent().trim().split(",");
+                // Create a separate availability rating for each provided faction
                 for (String code : codes) {
+
                     AvailabilityRating ar = new AvailabilityRating(mr.getKey(), era, code);
-                    mr.getIncludedFactions().add(code.split(":")[0]);
+                    // If it provides availability values based on equipment ratings,
+                    // generate index values in addition to letter values
+                    if (ar.hasMultipleRatings()) {
+                        ar.setRatingByNumericLevel(factions.get(ar.getFaction()));
+                    }
+
+                    mr.getIncludedFactions().add(ar.getFaction());
                     modelIndex.get(era).get(mr.getKey()).put(ar.getFactionCode(), ar);
+
                 }
             }
         }

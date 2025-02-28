@@ -184,13 +184,13 @@ public class PathEnumerator {
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
-
+            Coords wayPoint = owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null);
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams
             // in air mode
             if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
-                MovePath startPath = new MovePath(getGame(), mover);
+                MovePath startPath = new MovePath(getGame(), mover, wayPoint);
                 apf.run(startPath);
                 paths.addAll(apf.getAllComputedPathsUncategorized());
 
@@ -223,32 +223,32 @@ public class PathEnumerator {
                 // space flight" rules being on
             } else if (mover.isAero() && game.useVectorMove()) {
                 NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
-                npf.run(new MovePath(game, mover));
+                npf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(npf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an aerospace unit on a space map
             } else if (mover.isAero() && game.getBoard().inSpace()) {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover));
+                apf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being a winged aerospace unit on a
                 // low-atmosphere map
             } else if (mover.isAero() && game.getBoard().inAtmosphere()
                     && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover));
+                apf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover acting like a spheroid aerospace unit in
                 // an atmosphere
             } else if (Compute.useSpheroidAtmosphere(game, mover)) {
                 int dir = AeroPathUtil.getSpheroidDir(game, mover);
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, dir);
-                spf.run(new MovePath(game, mover));
+                spf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an infantry unit of some kind,
                 // that's not airborne.
             } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
-                ipf.run(new MovePath(game, mover));
+                ipf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
 
                 // generate long-range paths appropriate to the bot's current state
@@ -258,26 +258,27 @@ public class PathEnumerator {
                 // such as an ejected pilot or a unit hot dropping from a DropShip, as these
                 // cannot move
             } else if (!mover.isAero() && mover.isAirborne()) {
-                paths.add(new MovePath(game, mover));
+                paths.add(new MovePath(game, mover, wayPoint));
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?
                 int maxMove = Math.min(mover.getRunMPwithoutMASC(), mover.getRunMP(MPCalculationSetting.NO_GRAVITY));
+
                 LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                         MoveStepType.FORWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(game, mover));
+                lpf.run(new MovePath(game, mover, wayPoint));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                         mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(getGame(), mover));
+                lpf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add all moves that involve the entity remaining prone
                 PronePathFinder ppf = new PronePathFinder();
-                ppf.run(new MovePath(getGame(), mover));
+                ppf.run(new MovePath(getGame(), mover, wayPoint));
                 paths.addAll(ppf.getPronePaths());
 
                 // add jumping moves
@@ -285,7 +286,7 @@ public class PathEnumerator {
                     ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
                             MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run((new MovePath(game, mover)).addStep(MoveStepType.START_JUMP));
+                    spf.run((new MovePath(game, mover, wayPoint)).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -358,9 +359,14 @@ public class PathEnumerator {
         // the opposite edge
         switch (getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
-            case MoveToDestination:
                 destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover),
-                        true);
+                    true);
+                break;
+            case MoveToDestination:
+                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                if (destinations.isEmpty()) {
+                    destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
+                }
                 break;
             case MoveToContact:
 
@@ -368,6 +374,7 @@ public class PathEnumerator {
                 // location
                 // we've seen for finding targets
                 List<Coords> enemyHotSpots = owner.getEnemyHotSpots();
+                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
                 if (enemyHotSpots != null && !enemyHotSpots.isEmpty()) {
                     destinations.addAll(enemyHotSpots);
                 } else {
@@ -386,7 +393,7 @@ public class PathEnumerator {
                     if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
                         continue;
                     }
-
+                    getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
                     destinations.add(target.getPosition());
                     // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());
@@ -431,7 +438,6 @@ public class PathEnumerator {
                     needsAdjust = true;
                     break;
                 } else {
-                    needsAdjust = false;
                     break;
                 }
             }
@@ -439,7 +445,7 @@ public class PathEnumerator {
         if (!needsAdjust) {
             return;
         }
-        MovePath adjusted = new MovePath(getGame(), path.getEntity());
+        MovePath adjusted = new MovePath(getGame(), path.getEntity(), path.getWaypoint());
         adjusted.addStep(MoveStepType.CLIMB_MODE_ON);
         adjusted.addSteps(path.getStepVector(), true);
         adjusted.addStep(MoveStepType.CLIMB_MODE_OFF);
@@ -547,5 +553,41 @@ public class PathEnumerator {
         }
 
         return mapHasBridges.get();
+    }
+
+    /**
+     * Find paths with a similar direction and step count to the provided path, within the selected unit's
+     * already-computed unit paths.
+     * @param moverId
+     * @param prunedPath
+     * @return
+     */
+    protected List<MovePath> getSimilarUnitPaths(int moverId, BulldozerMovePath prunedPath) {
+        int mpDelta = 2;
+        int distanceDelta = 2;
+
+        List<MovePath> paths = new ArrayList<>();
+        if (!getUnitPaths().containsKey(moverId)) {
+            return paths;
+        }
+        List<MovePath> unitPaths = getUnitPaths().get(moverId);
+
+        Coords target = prunedPath.getDestination();
+        int prunedDistance = target.distance(prunedPath.getFinalCoords());
+
+        for (MovePath movePath: unitPaths) {
+            // We want unit paths that use similar amounts of MP to get similarly close to the BMP's destination
+            if (Math.abs((target.distance(movePath.getFinalCoords()) - prunedDistance)) > distanceDelta) {
+                continue;
+            }
+
+            if (Math.abs(movePath.getMpUsed() - prunedPath.getMpUsed()) > mpDelta ) {
+                continue;
+            }
+
+            paths.add(movePath);
+        }
+
+        return paths;
     }
 }

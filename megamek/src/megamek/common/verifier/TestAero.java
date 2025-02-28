@@ -526,6 +526,8 @@ public class TestAero extends TestEntity {
             correct = false;
         }
 
+        correct &= correctArmorOverAllocation(aero, buff);
+
         return correct;
     }
 
@@ -634,9 +636,7 @@ public class TestAero extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
-                    || m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
-                    || m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
+            if (m.getType().hasFlag(WeaponType.F_DIVE_BOMB)
                     || m.getType().hasFlag(WeaponType.F_ALT_BOMB)
                     || m.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                 numBombs++;
@@ -711,11 +711,12 @@ public class TestAero extends TestEntity {
         if (skip()) {
             return true;
         }
-        if (!correctWeight(buff)) {
+        if (!allowOverweightConstruction() && !correctWeight(buff)) {
             buff.insert(0, printTechLevel() + printShortMovement());
             buff.append(printWeightCalculation());
             correct = false;
         }
+
         if (!engine.engineValid) {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
@@ -749,7 +750,7 @@ public class TestAero extends TestEntity {
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= !hasMismatchedLateralWeapons(buff);
         correct &= correctHeatSinks(buff);
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;
@@ -757,7 +758,7 @@ public class TestAero extends TestEntity {
 
     /**
      * Checks that the weapon loads in the wings match each other.
-     * 
+     *
      * @param buff The buffer that contains the collected error messages.
      * @return Whether the lateral weapons are mismatched.
      */
@@ -1236,7 +1237,7 @@ public class TestAero extends TestEntity {
     /**
      * One gunner is required for each capital weapon and each six standard scale
      * weapons, rounding up
-     * 
+     *
      * @return The vessel's minimum gunner requirements.
      */
     public static int requiredGunners(Aero aero) {

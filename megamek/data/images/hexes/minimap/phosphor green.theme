@@ -1,0 +1,25 @@
+#
+# Minimap configuration file
+# Lines starting with "#" (like this one) are comments
+
+# Pal 7 phosphor green
+background 0 0 0
+none 227 255 128
+sinkhole 214 247 105
+woods 200 233 93
+heavywoods 182 215 91
+ultraheavywoods 169 214 92
+rough 200 233 93
+rubble 214 247 105
+water 169 214 92
+pavement 200 233 93
+road 182 215 91
+fire 255 165 0
+smoke 182 215 91
+smokeandfire 214 247 105
+swamp 200 233 93
+building 182 215 91
+bridge 169 214 92
+
+# unit size: defines the size of the triangle for unit representation
+unitsize 6

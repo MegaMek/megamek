@@ -14,16 +14,7 @@
  */
 package megamek.common;
 
-import java.awt.Image;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -32,26 +23,11 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.AbstractAttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.DisplacementAttackAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.TeleMissileAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlevalue.BVCalculator;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
-import megamek.common.enums.MPBoosters;
-import megamek.common.enums.WeaponSortOrder;
-import megamek.common.equipment.AmmoMounted;
-import megamek.common.equipment.ArmorType;
-import megamek.common.equipment.BombMounted;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.WeaponMounted;
+import megamek.common.enums.*;
+import megamek.common.equipment.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.hexarea.HexArea;
@@ -63,13 +39,7 @@ import megamek.common.planetaryconditions.PlanetaryConditions;
 import megamek.common.planetaryconditions.Wind;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DiscordFormat;
-import megamek.common.weapons.AlamoMissileWeapon;
-import megamek.common.weapons.AltitudeBombAttack;
-import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
-import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.*;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -78,6 +48,14 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -89,6 +67,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private static final MMLogger logger = MMLogger.create(Entity.class);
 
     private static final long serialVersionUID = 1430806396279853295L;
+
+    public enum InvalidSourceBuildReason {
+        UNIT_OLDER_THAN_EQUIPMENT_INTRO_YEAR,
+        NOT_ENOUGH_SLOT_COUNT,
+        UNIT_OVERWEIGHT,
+        INVALID_OR_OUTDATED_BUILD,
+        INCOMPLETE_BUILD,
+        INVALID_ENGINE,
+        INVALID_CREW,
+    }
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
     public static final int UNLIMITED_JUMP_DOWN = 999;
@@ -141,6 +129,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final long ETYPE_QUADVEE = 1L << 27;
 
     public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
+
+    public static final long ETYPE_HANDHELD_WEAPON = 1L << 29;
 
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
@@ -396,6 +386,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private List<Integer> passedThroughFacing = new ArrayList<>();
 
+    private List<InvalidSourceBuildReason> invalidSourceBuildReasons = new ArrayList<>();
     /**
      * Stores the player selected hex ground to air targeting.
      * For ground to air, distance to target for the ground unit is determined
@@ -2107,6 +2098,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int calcElevation(Hex current, Hex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
+        if (next == null) {
+            return retVal;
+        }
         if (isAero()) {
             return retVal;
         }
@@ -2582,7 +2576,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return True if this is an airborne aircraft on a ground map.
      */
     public boolean isAirborneAeroOnGroundMap() {
-        return isAero() && isAirborne() && getGame().getBoard().onGround();
+        return isAero() && isAirborne() && getGame() != null && getGame().getBoard().onGround();
     }
 
     /**
@@ -2671,7 +2665,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         StringBuilder builder = new StringBuilder();
         builder.append(createShortName(duplicateMarker));
 
-        if (getOwner() != null) {
+        if (getOwner() != null && getOwner().getName() != null && !getOwner().getName().isBlank()) {
             builder.append(" (").append(getOwner().getName()).append(")");
         }
 
@@ -2855,6 +2849,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canUnjamRAC() {
         for (WeaponMounted mounted : getTotalWeaponList()) {
+
+            // Tanks can suffer a "weapon malfunction" critical. The weapon is marked
+            // as jammed but it should not be unjammed in the movement phase, it should
+            // be unjammed in the firing phase - that is, if this weapon is jammed from
+            // a weapon malfunction critical, we shouldn't unjam it using this method.
+            if (isVehicle() && this instanceof Tank tank) {
+                if (tank.getJammedWeapons().contains(mounted)) {
+                    continue;
+                }
+            }
+
             int ammotype = mounted.getType().getAmmoType();
             if ((ammotype == AmmoType.T_AC_ROTARY)
                     && mounted.isJammed() && !mounted.isDestroyed()) {
@@ -4477,7 +4482,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The list of found bombs
      * @see Mounted#isOperable()
      */
-    public List<BombMounted> getBombs(BigInteger flag) {
+    public List<BombMounted> getBombs(EquipmentFlag flag) {
         return getBombs().stream()
                 .filter(b -> b.getType().hasFlag(flag))
                 .filter(Mounted::isOperable)
@@ -4639,7 +4644,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param flag A MiscType.F_XXX
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag) {
+    public boolean hasWorkingMisc(EquipmentFlag flag) {
         return hasWorkingMisc(flag, -1);
     }
 
@@ -4650,7 +4655,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param secondary A MiscType.S_XXX or -1 for don't care
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag, long secondary) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary) {
         for (MiscMounted m : miscList) {
             if (m.isReady() && m.getType().hasFlag(flag)
                     && ((secondary == -1) || m.getType().hasSubType(secondary))) {
@@ -4660,11 +4665,64 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public boolean hasMisc(BigInteger flag) {
+    /**
+     * Returns true when the entity has a MiscType equipment with the given MiscTypeFlag, regardless of its state. Note that both the flags
+     * given in MiscType as well as the "actual" flags in MiscTypeFlag can be used.
+     *
+     * @param flag The MiscTypeFlag flag to look for, e.g. F_VTOL_EQUIPMENT
+     * @return True when the entity has a MiscType equipment with the given flag
+     * @see EquipmentType#hasFlag(EquipmentFlag)
+     * @see MiscType
+     * @see MiscTypeFlag
+     */
+    public boolean hasMisc(EquipmentFlag flag) {
         return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
     }
 
-    public List<MiscMounted> getMiscEquipment(BigInteger flag) {
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state. When available, use
+     * EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal name, even of weapons,
+     * can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @return True when the entity has a MiscType equipment of the given internalName
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMisc(String internalName) {
+        return miscList.stream().anyMatch(misc -> misc.is(internalName));
+    }
+
+    /**
+     * Returns the number of MiscType equipment of the given internalName, regardless of state.
+     * When available, use EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal
+     * name, even of weapons, can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @return the number of MiscType equipment of the given internalName on the unit
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public int countMisc(String internalName) {
+        return (int) miscList.stream().filter(misc -> misc.is(internalName)).count();
+    }
+
+    /**
+     * Returns true when the entity has a MiscType equipment of the given internalName, regardless of its state, in the given location.
+     * When available, use EquipmentTypeLookup internal names (or add one when it is not yet used for a MiscType). Note that any internal
+     * name, even of weapons, can be given but this method only searches misc equipment and will not find weapons.
+     *
+     * @param internalName The internal name of the misc, e.g. EquipmentTypeLookup.BA_MYOMER_BOOSTER
+     * @param location     The location, e.g. Mek.LOC_LT
+     * @return True when the entity has a MiscType equipment of the given internalName in the given location
+     * @see MiscType
+     * @see EquipmentTypeLookup
+     */
+    public boolean hasMisc(String internalName, int location) {
+        return miscList.stream().filter(misc -> misc.getLocation() == location).anyMatch(misc -> misc.is(internalName));
+    }
+
+    public List<MiscMounted> getMiscEquipment(EquipmentFlag flag) {
         return miscList.stream()
                 .filter(item -> item.getType().hasFlag(flag))
                 .collect(Collectors.toList());
@@ -4689,11 +4747,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param flag
      * @return
      */
-    public int countWorkingMisc(BigInteger flag) {
+    public int countWorkingMisc(EquipmentFlag flag) {
         return countWorkingMisc(flag, -1);
     }
 
-    public int countWorkingMisc(BigInteger flag, int location) {
+    public int countWorkingMisc(EquipmentFlag flag, int location) {
         int count = 0;
         OUTER: for (MiscMounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag)
@@ -4752,7 +4810,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param location  The location to check e.g. Mek.LOC_LARM
      * @return true if at least one ready item.
      */
-    public boolean hasWorkingMisc(BigInteger flag, long secondary, int location) {
+    public boolean hasWorkingMisc(EquipmentFlag flag, long secondary, int location) {
         // go through the location slot by slot, because of misc equipment that
         // is spreadable
         for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
@@ -7980,7 +8038,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (rv > 1) {
             Building bldgEntered;
             bldgEntered = game.getBoard().getBuildingAt(curPos);
-            if (bldgEntered.getType() == Building.WALL) {
+            if (bldgEntered.getType() == BuildingType.WALL) {
                 return 4;
             }
         }
@@ -8027,10 +8085,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         switch (bldg.getType()) {
-            case Building.LIGHT:
+            case LIGHT:
                 desc = "Light";
                 break;
-            case Building.MEDIUM:
+            case MEDIUM:
                 if (bldg.getBldgClass() != Building.HANGAR) {
                     mod = 1;
                     desc = "Medium";
@@ -8041,7 +8099,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.HEAVY:
+            case HEAVY:
                 mod = 2;
                 desc = "Heavy";
                 if (bldg.getBldgClass() == Building.HANGAR) {
@@ -8054,7 +8112,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.HARDENED:
+            case HARDENED:
                 mod = 5;
                 desc = "Hardened";
                 if (bldg.getBldgClass() == Building.HANGAR) {
@@ -8066,7 +8124,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     desc = desc + " Fortress";
                 }
                 break;
-            case Building.WALL:
+            case WALL:
                 mod = 12;
                 desc = "";
                 break;
@@ -8725,14 +8783,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * @return All Entities that can at this point be unloaded from any transports
      *         of this Entity which are
-     *         no Bays. This does not include any units that were loaded this turn.
-     *         Note that the returned list may be unmodifiable.
+     *         not Bays. This does not include any units that were loaded this turn.
+     *         Note that the returned list may be unmodifiable.This shouldn't return
+     *         towed entities, they're tracked separately.
      *
+     * @see #getLoadedTrailers()
      * @see #wasLoadedThisTurn()
      */
     public List<Entity> getUnitsUnloadableFromNonBays() {
         return transports.stream()
-                .filter(t -> !(t instanceof Bay))
+                .filter(t -> !(t instanceof Bay) && !(t instanceof TankTrailerHitch))
                 .flatMap(b -> b.getLoadedUnits().stream())
                 .filter(e -> !e.wasLoadedThisTurn())
                 .toList();
@@ -10272,7 +10332,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
                         + (game.getBoard().getWidth() % 2),
-                        -getOffBoardDistance()));
+                        -getOffBoardDistance() - 1));
                 setFacing(3);
                 break;
             case SOUTH:
@@ -10290,7 +10350,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 setFacing(5);
                 break;
             case WEST:
-                setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
+                setPosition(new Coords(-getOffBoardDistance() - 1, (game.getBoard()
                         .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 break;
@@ -13167,26 +13227,38 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        int xbv = 0;
-        if ((game != null)
-                && ((hasC3MM() && (calculateFreeC3MNodes() < 2))
+        // Nova CEWS is quirky and handled apart from the other C3
+        int extraBV = 0;
+        if (game != null) {
+            int totalForceBV = 0;
+            double multiplier = 0.05;
+            if ((hasC3MM() && (calculateFreeC3MNodes() < 2))
                         || (hasC3M() && (calculateFreeC3Nodes() < 3))
                         || (hasC3S() && (c3Master > NONE))
-                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5)))) {
-            int totalForceBV = 0;
-            totalForceBV += baseBV;
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
+                        || ((hasC3i() || hasNavalC3()) && (calculateFreeC3Nodes() < 5))) {
+                totalForceBV += baseBV;
+                for (Entity entity : game.getC3NetworkMembers(this)) {
+                    if (!equals(entity) && onSameC3NetworkAs(entity)) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (hasBoostedC3()) {
+                    multiplier = 0.07;
+                }
+
+            } else if (hasNovaCEWS()) { //Nova CEWS applies 5% to every mek with Nova on the team {
+                for (Entity entity : game.getEntitiesVector()) {
+                    if (!equals(entity) && entity.hasNovaCEWS() && !(entity.owner.isEnemyOf(this.owner))) {
+                        totalForceBV += entity.calculateBattleValue(true, true);
+                    }
+                }
+                if (totalForceBV > 0) { //But only if there's at least one other mek with Nova CEWS
+                    totalForceBV += baseBV;
                 }
             }
-            double multiplier = 0.05;
-            if (hasBoostedC3()) {
-                multiplier = 0.07;
-            }
-            xbv += (int) Math.round(totalForceBV * multiplier);
+            extraBV += (int) Math.round(totalForceBV * multiplier);
         }
-        return xbv;
+        return extraBV;
     }
 
     public boolean hasUnloadedUnitsFromBays() {
@@ -14433,7 +14505,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;
             } else {
-                range = (game.getOptions().booleanOption(
+                range = (game != null && game.getOptions().booleanOption(
                         OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                                 : type.getLongRange());
             }
@@ -15034,18 +15106,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void towUnit(int id) {
         Entity towed = game.getEntity(id);
         // Add this trailer to the connected list for all trailers already in this train
-        for (int tr : getAllTowedUnits()) {
+        List<Integer> otherTrailerIds = getAllTowedUnits();
+        List<Entity> otherTrailers = new ArrayList<>();
+        for (int tr : otherTrailerIds) {
             Entity trailer = game.getEntity(tr);
             trailer.connectedUnits.add(id);
+            otherTrailers.add(trailer);
         }
         addTowedUnit(id);
         towed.setTractor(getId());
+        Entity towingEnt = null;
         // Now, find the transporter and the actual towing entity (trailer or tractor)
-        Entity towingEnt = game.getEntity(towed.towedBy);
+        // If it's the only thing being towed, this entity is towing it
+
+        if (otherTrailers.isEmpty()) {
+            towingEnt = this;
+        } else {
+            for (Entity trailer : otherTrailers) {
+                if (trailer.getTowing() == Entity.NONE) {
+                    towingEnt = trailer;
+                }
+            }
+        }
         if (towingEnt != null) {
-            Transporter hitch = towingEnt.getHitchById(towed.getTargetBay());
-            if (hitch != null) {
-                hitch.load(towed);
+            for (Transporter transporter : towingEnt.getTransports()) {
+                if (transporter instanceof TankTrailerHitch hitch) {
+                    hitch.load(towed);
+                    towingEnt.setTowing(id);
+                    towed.setTowedBy(towingEnt.getId());
+                }
             }
         }
     }
@@ -15065,8 +15154,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Now, find and empty the transporter on the actual towing entity (trailer or
         // tractor)
         Entity towingEnt = game.getEntity(towed.getTowedBy());
-        towingEnt.connectedUnits.clear();
         if (towingEnt != null) {
+            towingEnt.connectedUnits.clear();
             Transporter hitch = towingEnt.getHitchCarrying(id);
             if (hitch != null) {
                 hitch.unload(towed);
@@ -15826,5 +15915,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void removeFleeZone() {
         fleeZone = HexArea.EMPTY_AREA;
         hasFleeZone = false;
+    }
+
+    public void setInvalidSourceBuildReasons(List<InvalidSourceBuildReason> invalidSourceBuildReasons) {
+        this.invalidSourceBuildReasons = invalidSourceBuildReasons;
+    }
+
+    public List<InvalidSourceBuildReason> getInvalidSourceBuildReasons() {
+        return invalidSourceBuildReasons;
+    }
+
+    public boolean canonUnitWithInvalidBuild() {
+        if (this.isCanon() && mulId > -1)
+        {
+            return !this.getInvalidSourceBuildReasons().isEmpty();
+        }
+        return false;
     }
 }

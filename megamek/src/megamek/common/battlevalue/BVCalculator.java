@@ -22,12 +22,7 @@ import static megamek.client.ui.swing.calculationReport.CalculationReport.format
 import static megamek.common.AmmoType.T_AMS;
 import static megamek.common.AmmoType.T_APDS;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
@@ -61,7 +56,7 @@ public abstract class BVCalculator {
     protected boolean ignoreC3;
     protected boolean ignoreSkill;
     protected Map<String, Double> ammoMap = new HashMap<>();
-    protected List<String> keys = new ArrayList<>();
+    protected List<String> keys = new Vector<>();
     protected Map<String, String> names = new HashMap<>();
     protected Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
     protected int runMP;
@@ -108,6 +103,8 @@ public abstract class BVCalculator {
             return new AeroBVCalculator(entity);
         } else if (entity instanceof GunEmplacement) {
             return new GunEmplacementBVCalculator(entity);
+        } else if (entity instanceof HandheldWeapon) {
+            return new HandheldWeaponBVCalculator(entity);
         } else { // Tank
             return new CombatVehicleBVCalculator(entity);
         }

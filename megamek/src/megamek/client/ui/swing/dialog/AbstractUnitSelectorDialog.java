@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -106,7 +107,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
     protected JComboBox<String> comboUnitType = new JComboBox<>();
     protected JComboBox<String> comboWeight = new JComboBox<>();
-    private JScrollPane techLevelScroll;
     private JPanel panelFilterButtons;
     protected JLabel labelImage = new JLabel(""); // inline to avoid potential null pointer issues
     protected JTable tableUnits;
@@ -213,7 +213,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         // region Unit Preview Pane
         panePreview = new EntityViewPane(frame, null);
         panePreview.setMinimumSize(new Dimension(0, 0));
-        panePreview.setPreferredSize(new Dimension(0, 0));
         // endregion Unit Preview Pane
 
         // region Selection Panel
@@ -258,15 +257,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
 
-        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        selectionPanel.add(scrollTableUnits, gridBagConstraints);
-
         panelFilterButtons = new JPanel(new GridBagLayout());
 
         JLabel labelType = new JLabel(Messages.getString("MekSelectorDialog.m_labelType"));
@@ -277,10 +267,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
         listTechLevel.setToolTipText(Messages.getString("MekSelectorDialog.m_labelType.ToolTip"));
-        techLevelScroll = new JScrollPane(listTechLevel);
+        listTechLevel.setLayoutOrientation(JList.VERTICAL_WRAP);
+        listTechLevel.setVisibleRowCount(3);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
-        panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
+        panelFilterButtons.add(listTechLevel, gridBagConstraintsWest);
 
         JLabel labelWeight = new JLabel(Messages.getString("MekSelectorDialog.m_labelWeightClass"));
         labelWeight.setName("labelWeight");
@@ -437,15 +428,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weighty = 1.0;
         panelFilterButtons.add(labelImage, gridBagConstraints);
 
-        gridBagConstraints = new GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.0;
-        gridBagConstraints.insets = new Insets(10, 10, 5, 0);
-        selectionPanel.add(panelFilterButtons, gridBagConstraints);
-
         JPanel panelSearchButtons = new JPanel(new GridBagLayout());
 
         buttonAdvancedSearch = new JButton(Messages.getString("MekSelectorDialog.AdvSearch"));
@@ -476,22 +458,24 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.insets = new Insets(10, 10, 5, 0);
+        selectionPanel.add(panelFilterButtons, gridBagConstraints);
+
         gridBagConstraints.insets = new Insets(10, 10, 10, 0);
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
-        // endregion Selection Panel
 
-        JScrollPane selectionScrollPane = new JScrollPane(selectionPanel);
-        JScrollPane previewScrollPane = new JScrollPane(panePreview);
+        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1;
+        gridBagConstraints.weighty = 1;
+        selectionPanel.add(scrollTableUnits, gridBagConstraints);
 
         JPanel panelButtons = createButtonsPanel();
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                selectionScrollPane, previewScrollPane);
-        splitPane.setResizeWeight(0);
+            selectionPanel, panePreview);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -690,9 +674,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     protected boolean matchesTextFilter(MekSummary unit) {
         if (!textFilter.getText().isBlank()) {
-            String text = textFilter.getText().toLowerCase();
+            String text = stripAccents(textFilter.getText().toLowerCase());
             String[] tokens = text.split(" ");
-            String searchText = unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase();
+            String searchText = stripAccents(unit.getName().toLowerCase() + "###" + unit.getModel().toLowerCase());
             for (String token : tokens) {
                 if (!searchText.contains(token)) {
                     return false;
@@ -700,6 +684,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             }
         }
         return true;
+    }
+
+    public static String stripAccents(String input) {
+        if (input == null) {
+            return null;
+        }
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "");
     }
 
     /**

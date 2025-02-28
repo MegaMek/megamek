@@ -84,17 +84,23 @@ public class BehaviorSettingsFactory {
     }
 
     private void addDefaultBehaviors() {
-        if (!behaviorMap.keySet().contains(DEFAULT_BEHAVIOR_DESCRIPTION)) {
+        if (!behaviorMap.containsKey(DEFAULT_BEHAVIOR_DESCRIPTION)) {
             addBehavior(DEFAULT_BEHAVIOR);
         }
-        if (!behaviorMap.keySet().contains(BERSERK_BEHAVIOR.getDescription())) {
+        if (!behaviorMap.containsKey(BERSERK_BEHAVIOR.getDescription())) {
             addBehavior(BERSERK_BEHAVIOR);
         }
-        if (!behaviorMap.keySet().contains(COWARDLY_BEHAVIOR.getDescription())) {
+        if (!behaviorMap.containsKey(COWARDLY_BEHAVIOR.getDescription())) {
             addBehavior(COWARDLY_BEHAVIOR);
         }
-        if (!behaviorMap.keySet().contains(ESCAPE_BEHAVIOR.getDescription())) {
+        if (!behaviorMap.containsKey(ESCAPE_BEHAVIOR.getDescription())) {
             addBehavior(ESCAPE_BEHAVIOR);
+        }
+        if (!behaviorMap.containsKey(RUTHLESS_BEHAVIOR.getDescription())) {
+            addBehavior(RUTHLESS_BEHAVIOR);
+        }
+        if (!behaviorMap.containsKey(PIRATE_BEHAVIOR.getDescription())) {
+            addBehavior(PIRATE_BEHAVIOR);
         }
     }
 
@@ -285,6 +291,8 @@ public class BehaviorSettingsFactory {
      * Self Preservation: 2 <br>
      * Herd Mentality: 5 <br>
      * Bravery: 9 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -304,6 +312,8 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setSelfPreservationIndex(2);
             berserkBehavior.setHerdMentalityIndex(5);
             berserkBehavior.setBraveryIndex(9);
+            berserkBehavior.setAntiCrowding(0);
+            berserkBehavior.setFavorHigherTMM(0);
             return berserkBehavior;
         } catch (Exception e) {
             logger.error(e, "Berserker Behavior Exception");
@@ -322,6 +332,8 @@ public class BehaviorSettingsFactory {
      * Self Preservation: 10 <br>
      * Herd Mentality: 8 <br>
      * Bravery: 2 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     public final BehaviorSettings COWARDLY_BEHAVIOR = buildCowardlyBehavior();
@@ -340,6 +352,8 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setSelfPreservationIndex(10);
             cowardlyBehavior.setHerdMentalityIndex(8);
             cowardlyBehavior.setBraveryIndex(2);
+            cowardlyBehavior.setAntiCrowding(0);
+            cowardlyBehavior.setFavorHigherTMM(0);
             return cowardlyBehavior;
         } catch (Exception e) {
             logger.error(e, "Cowardly Behavior Exception");
@@ -358,6 +372,8 @@ public class BehaviorSettingsFactory {
      * Self Preservation: 10 <br>
      * Herd Mentality: 5 <br>
      * Bravery: 2 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -377,9 +393,95 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setSelfPreservationIndex(10);
             escapeBehavior.setHerdMentalityIndex(5);
             escapeBehavior.setBraveryIndex(2);
+            escapeBehavior.setAntiCrowding(0);
+            escapeBehavior.setFavorHigherTMM(0);
             return escapeBehavior;
         } catch (Exception e) {
             logger.error(e, "Escape Behavior Exception");
+            return null;
+        }
+    }
+
+    /**
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: True <br>
+     * Auto Flee: True <br>
+     * Fall Shame: 7 <br>
+     * Hyper Aggression: 3 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 2 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
+     * Strategic Targets: None
+     */
+    // Used by MekHQ
+    public final BehaviorSettings RUTHLESS_BEHAVIOR = buildRuthlessBehavior();
+    public static final String RUTHLESS_BEHAVIOR_DESCRIPTION = "RUTHLESS";
+
+    private BehaviorSettings buildRuthlessBehavior() {
+        try {
+            BehaviorSettings ruthlessBehavior = new BehaviorSettings();
+            ruthlessBehavior.setDescription(RUTHLESS_BEHAVIOR_DESCRIPTION);
+            ruthlessBehavior.setDestinationEdge(CardinalEdge.NONE);
+            ruthlessBehavior.setRetreatEdge(CardinalEdge.NEAREST);
+            ruthlessBehavior.setForcedWithdrawal(true);
+            ruthlessBehavior.setAutoFlee(false);
+            ruthlessBehavior.setFallShameIndex(6);
+            ruthlessBehavior.setHyperAggressionIndex(9);
+            ruthlessBehavior.setSelfPreservationIndex(10);
+            ruthlessBehavior.setHerdMentalityIndex(1);
+            ruthlessBehavior.setBraveryIndex(7);
+            ruthlessBehavior.setAntiCrowding(10);
+            ruthlessBehavior.setFavorHigherTMM(8);
+            return ruthlessBehavior;
+        } catch (Exception e) {
+            logger.error(e, "Ruthless Behavior Exception");
+            return null;
+        }
+    }
+
+
+    /**
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
+     * Forced Withdrawal: True <br>
+     * Go Home: True <br>
+     * Auto Flee: True <br>
+     * Fall Shame: 7 <br>
+     * Hyper Aggression: 3 <br>
+     * Self Preservation: 10 <br>
+     * Herd Mentality: 5 <br>
+     * Bravery: 2 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
+     * Strategic Targets: None
+     */
+    // Used by MekHQ
+    public final BehaviorSettings PIRATE_BEHAVIOR = buildPirateBehavior();
+    public static final String PIRATE_BEHAVIOR_DESCRIPTION = "PIRATE";
+
+    private BehaviorSettings buildPirateBehavior() {
+        try {
+            BehaviorSettings pirateBehavior = new BehaviorSettings();
+            pirateBehavior.setDescription(PIRATE_BEHAVIOR_DESCRIPTION);
+            pirateBehavior.setDestinationEdge(CardinalEdge.NONE);
+            pirateBehavior.setRetreatEdge(CardinalEdge.NEAREST);
+            pirateBehavior.setForcedWithdrawal(true);
+            pirateBehavior.setAutoFlee(false);
+            pirateBehavior.setFallShameIndex(3);
+            pirateBehavior.setHyperAggressionIndex(10);
+            pirateBehavior.setSelfPreservationIndex(6);
+            pirateBehavior.setHerdMentalityIndex(9);
+            pirateBehavior.setBraveryIndex(10);
+            pirateBehavior.setAntiCrowding(5);
+            pirateBehavior.setFavorHigherTMM(5);
+            pirateBehavior.setIAmAPirate(true);
+            return pirateBehavior;
+        } catch (Exception e) {
+            logger.error(e, "Pirate Behavior Exception");
             return null;
         }
     }
@@ -399,6 +501,8 @@ public class BehaviorSettingsFactory {
      * Self Preservation: 5 <br>
      * Herd Mentality: 5 <br>
      * Bravery: 5 <br>
+     * Anti-Crowding: 0 <br>
+     * Favor Higher TMM: 0 <br>
      * Strategic Targets: None <br>
      */
     public final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();
@@ -417,6 +521,8 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setSelfPreservationIndex(5);
             defaultBehavior.setHerdMentalityIndex(5);
             defaultBehavior.setBraveryIndex(5);
+            defaultBehavior.setAntiCrowding(0);
+            defaultBehavior.setFavorHigherTMM(0);
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");

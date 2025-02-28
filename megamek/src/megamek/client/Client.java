@@ -476,6 +476,13 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.ENTITY_LOAD, id, loaderId, bayNumber));
     }
 
+    /**
+     * Sends a "tow entity" packet
+     */
+    public void sendTowEntity(int id, int tractorId) {
+        send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
+    }
+
     public void sendExplodeBuilding(Building.DemolitionCharge charge) {
         send(new Packet(PacketCommand.BLDG_EXPLODE, charge));
     }

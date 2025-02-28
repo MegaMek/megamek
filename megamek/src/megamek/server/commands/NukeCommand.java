@@ -55,6 +55,30 @@ public class NukeCommand extends ClientServerCommand {
         );
     }
 
+    public List<Argument<?>> customArguments() {
+        return List.of(
+            new CoordXArgument("x", "The x-coordinate of the hex to nuke."),
+            new CoordYArgument("y", "The y-coordinate of the hex to nuke."),
+            new IntegerArgument("dmg", "The damage of the nuke.", 0, 1_000_000),
+            new IntegerArgument("deg", "The degredation of the nuke.", 0, 1_000_000),
+            new IntegerArgument("radius", "The secondary radius of the nuke.", 1, 1000),
+            new IntegerArgument("depth", "The crater depth of the nuke.", 0, 100)
+        );
+    }
+
+    @Override
+    protected void safeParseArgumentsAndRun(int connId, String[] args) {
+        try {
+            var parsedArguments = new Arguments(parseArguments(args, args.length == 4 ? defineArguments() : customArguments()));
+            runCommand(connId, parsedArguments);
+        } catch (IllegalArgumentException e) {
+            server.sendServerChat(connId, "Invalid arguments: " + e.getMessage() + "\nUsage: " + this.getHelp());
+        } catch (Exception e) {
+            server.sendServerChat(connId, "An error occurred while executing the command. Check the log for more information");
+            logger.error(errorMsg, e);
+        }
+    }
+
     @Override
     protected void runCommand(int connId, Arguments args) {
         // Check to make sure nuking is allowed by game options!
@@ -64,11 +88,10 @@ public class NukeCommand extends ClientServerCommand {
             return;
         }
 
-        var typeOpt = ((OptionalIntegerArgument) args.get("type")).getValue();
-
-        if (typeOpt.isPresent()) {
+        if (args.hasArg("type")) {
             //
             try {
+                var typeOpt = ((OptionalIntegerArgument) args.get("type")).getValue();
                 int[] nuke = new int[]{
                     (int) args.get("x").getValue() - 1,
                     (int) args.get("y").getValue() - 1,
@@ -86,13 +109,14 @@ public class NukeCommand extends ClientServerCommand {
             }
         } else {
             try {
-                int[] nuke = new int[6];
-                nuke[0] = ((IntegerArgument) args.get("x")).getValue() - 1;
-                nuke[1] = ((IntegerArgument) args.get("y")).getValue() - 1;
-                nuke[2] = ((OptionalIntegerArgument) args.get("dmg")).getValue().orElseThrow();
-                nuke[3] = ((OptionalIntegerArgument) args.get("deg")).getValue().orElseThrow();
-                nuke[4] = ((OptionalIntegerArgument) args.get("radius")).getValue().orElseThrow();
-                nuke[5] = ((OptionalIntegerArgument) args.get("depth")).getValue().orElseThrow();
+                int[] nuke = new int[]{
+                    (int) args.get("x").getValue() - 1,
+                    (int) args.get("y").getValue() - 1,
+                    (int) args.get("dmg").getValue(),
+                    (int) args.get("deg").getValue(),
+                    (int) args.get("radius").getValue(),
+                    (int) args.get("depth").getValue()
+                };
 
                 // is the hex on the board?
                 if (!gameManager.getGame().getBoard().contains(nuke[0], nuke[1])) {

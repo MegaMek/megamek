@@ -75,6 +75,12 @@ public abstract class AbstractWreckSprite extends Sprite {
      */
     @Override
     public void prepare() {
+        if (entity.getPosition() != null && entity.getGame() != null && entity.getGame().getBoard() != null
+            && entity.getGame().getBoard().getHex(entity.getPosition()) != null &&
+            entity.getGame().getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ULTRA_SUBLEVEL)) {
+           return; //Don't show wrecks for "Ultra Sublevels" - The unit fell through the map!
+        }
+
         // create image for buffer
         image = ImageUtil.createAcceleratedImage(HexTileset.HEX_W, HexTileset.HEX_H);
         Graphics2D graph = (Graphics2D) image.getGraphics();

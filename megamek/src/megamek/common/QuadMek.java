@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org), Cord Awtry (kipsta@bs-interactive.com)
- * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2024, 2025 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -20,6 +20,7 @@
 package megamek.common;
 
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -30,9 +31,9 @@ import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
 
 public class QuadMek extends Mek {
-    private static final MMLogger logger = MMLogger.create(QuadMek.class);
-
+    @Serial
     private static final long serialVersionUID = 7183093787457804717L;
+    private static final MMLogger logger = MMLogger.create(QuadMek.class);
 
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso",
             "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
@@ -66,9 +67,6 @@ public class QuadMek extends Mek {
         setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
 
-    /**
-     * Returns true if the Mek cannot stand up any longer.
-     */
     @Override
     public boolean cannotStandUpFromHullDown() {
         int i = 0;
@@ -152,6 +150,10 @@ public class QuadMek extends Mek {
             mp--;
         }
 
+        if (!mpCalculationSetting.ignoreChainDrape && hasChainDrape()) {
+            mp--;
+        }
+
         if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
@@ -230,17 +232,11 @@ public class QuadMek extends Mek {
         }
     }
 
-    /**
-     * Returns true is the location is a leg
-     */
     @Override
     public boolean locationIsLeg(int loc) {
         return ((loc == Mek.LOC_RLEG) || (loc == Mek.LOC_LLEG) || (loc == Mek.LOC_RARM) || (loc == Mek.LOC_LARM));
     }
 
-    /**
-     * Returns the Compute.ARC that the weapon fires into.
-     */
     @Override
     public int getWeaponArc(int wn) {
         final Mounted<?> mounted = getEquipment(wn);
@@ -259,19 +255,10 @@ public class QuadMek extends Mek {
             return Compute.ARC_REAR;
         }
         // front mounted
-        switch (mounted.getLocation()) {
-            case LOC_HEAD:
-            case LOC_CT:
-            case LOC_RT:
-            case LOC_LT:
-            case LOC_RLEG:
-            case LOC_LLEG:
-            case LOC_LARM:
-            case LOC_RARM:
-                return Compute.ARC_FORWARD;
-            default:
-                return Compute.ARC_360;
-        }
+        return switch (mounted.getLocation()) {
+            case LOC_HEAD, LOC_CT, LOC_RT, LOC_LT, LOC_RLEG, LOC_LLEG, LOC_LARM, LOC_RARM -> Compute.ARC_FORWARD;
+            default -> Compute.ARC_360;
+        };
     }
 
     @Override
@@ -279,20 +266,6 @@ public class QuadMek extends Mek {
         return true;
     }
 
-    /**
-     * Sets the internal structure for the Mek.
-     *
-     * @param head
-     *             head
-     * @param ct
-     *             center torso
-     * @param t
-     *             right/left torso
-     * @param arm
-     *             right/left arm
-     * @param leg
-     *             right/left leg
-     */
     @Override
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         initializeInternal(head, LOC_HEAD);
@@ -305,21 +278,15 @@ public class QuadMek extends Mek {
         initializeInternal(leg, LOC_LLEG);
     }
 
-    /**
-     * Returns true is the entity needs a roll to stand up
-     */
     @Override
     public boolean needsRollToStand() {
         return countBadLegs() != 0;
     }
 
-    /**
-     * Add in any piloting skill mods
-     */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        int[] locsToCheck = new int[4];
-        int destroyedLegs = 0;
+        int[] locsToCheck;
+        int destroyedLegs;
 
         locsToCheck = new int[4];
         locsToCheck[0] = Mek.LOC_RLEG;
@@ -379,40 +346,19 @@ public class QuadMek extends Mek {
         return super.addEntityBonuses(roll);
     }
 
-    /**
-     * Returns a vector of slot counts for all locations
-     */
     @Override
     protected int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
 
-    /**
-     * Returns a vector of names for all locations
-     */
     @Override
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
 
-    /**
-     * Returns a vector of abbreviations for all locations
-     */
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
-    }
-
-    public static int restrictScore(int location) {
-        switch (location) {
-            case Mek.LOC_RT:
-            case Mek.LOC_LT:
-                return 1;
-            case Mek.LOC_CT:
-                return 2;
-            default:
-                return 3;
-        }
     }
 
     @Override
@@ -817,12 +763,8 @@ public class QuadMek extends Mek {
         // Handle upper cover specially, as treating it as a bitmask will lead
         // to every location being covered
         if (cover == LosEffects.COVER_UPPER) {
-            if ((location == LOC_LLEG) || (location == LOC_RLEG)
-                    || (location == LOC_LARM) || (location == LOC_RARM)) {
-                return false;
-            } else {
-                return true;
-            }
+            return (location != LOC_LLEG) && (location != LOC_RLEG)
+                && (location != LOC_LARM) && (location != LOC_RARM);
         }
 
         // left and right cover are from attacker's POV.
@@ -877,40 +819,6 @@ public class QuadMek extends Mek {
         return false;
     }
 
-    /**
-     * Checks for functional AES in all legs
-     */
-    @Override
-    public boolean hasFunctionalLegAES() {
-        boolean frontRightLeg = false;
-        boolean frontLeftLeg = false;
-        boolean rearRightLeg = false;
-        boolean rearLeftLeg = false;
-
-        for (Mounted<?> mounted : getMisc()) {
-            if (IntStream.of(Mek.LOC_LLEG, Mek.LOC_RLEG, Mek.LOC_LARM, Mek.LOC_RARM)
-                    .anyMatch(i -> (mounted.getLocation() == i))) {
-                if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
-                        && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
-                    if (mounted.getLocation() == Mek.LOC_LLEG) {
-                        rearLeftLeg = true;
-                    } else if (mounted.getLocation() == Mek.LOC_RLEG) {
-                        rearRightLeg = true;
-                    } else if (mounted.getLocation() == Mek.LOC_RARM) {
-                        frontRightLeg = true;
-                    } else {
-                        frontLeftLeg = true;
-                    }
-                } else if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
-                    // AES is destroyed, so it cannot be used.
-                    return false;
-                }
-            }
-        }
-
-        return frontLeftLeg && frontRightLeg && rearRightLeg && rearLeftLeg;
-    }
-
     @Override
     public boolean canGoHullDown() {
         // check the option
@@ -930,15 +838,8 @@ public class QuadMek extends Mek {
         return (badLocs < 2) && !isGyroDestroyed();
     }
 
-    /**
-     * Is the passed in location an arm?
-     *
-     * @param loc
-     * @return
-     */
     @Override
     public boolean isArm(int loc) {
-        // quads don't have arms
         return false;
     }
 
@@ -953,11 +854,13 @@ public class QuadMek extends Mek {
         return Entity.ETYPE_MEK | Entity.ETYPE_QUAD_MEK;
     }
 
-    /**
-     * quad Meks can't have claws
-     */
     @Override
     public boolean hasClaw(int location) {
         return false;
+    }
+
+    @Override
+    protected int legCount() {
+        return 4;
     }
 }

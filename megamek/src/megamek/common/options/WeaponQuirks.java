@@ -91,7 +91,7 @@ public class WeaponQuirks extends AbstractOptions {
         // There may be some non-WeaponType quirks, specifically melee weapons
         if (!(equipmentType instanceof WeaponType) && !equipmentType.hasFlag(MiscType.F_CLUB)) {
             return true;
-        } else if (equipmentType.hasFlag(MiscType.F_CLUB)) {
+        } else if ((equipmentType instanceof MiscType) && equipmentType.hasFlag(MiscType.F_CLUB)) {
             return qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)

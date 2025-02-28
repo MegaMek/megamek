@@ -1,0 +1,62 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-03
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun demi-I (ComGuards)
+</Name>
+
+<Model>
+(Motorized AC2)
+</Model>
+
+<year>
+2933
+</year>
+
+<originalBuildYear>
+2933
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+Autocannon/2
+IS Ammo AC/2
+Autocannon/2
+IS Ammo AC/2
+Autocannon/2
+IS Ammo AC/2
+</Field Guns Equipment>
+
+<notes>
+Squad/platoon size from TechManual. Armor kit from Tactical Operations. Intro date from official creation of ComStar Guards and Militia (ComGuards).
+</notes>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

@@ -284,39 +284,28 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     private void refreshSearchPanel() {
         panSearchOptions.removeAll();
-        // We need to first remove all of the DialogOptionComponents
-        // that were on the search panel
-        for (DialogOptionComponent comp : searchComps) {
-            List<DialogOptionComponent> compList = optionComps.get(comp.option.getName());
-            if (compList != null) { // Shouldn't be null...
-                compList.remove(comp);
-            }
-        }
+        searchComps.clear();
 
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
         if (!searchText.isBlank()) {
             ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
             for (List<DialogOptionComponent> comps : optionComps.values()) {
-                ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
                 for (DialogOptionComponent comp : comps) {
                     String optName = comp.option.getDisplayableName().toLowerCase();
                     String optDesc = comp.option.getDescription().toLowerCase();
                     if ((optName.contains(searchText) || optDesc.contains(searchText)) && shouldShow(comp)) {
-                        DialogOptionComponent newComp = new DialogOptionComponent(this, comp.option);
-                        newComp.setEditable(comp.getEditable());
-                        searchComps.add(newComp);
-                        newComps.add(newComp);
+                        allNewComps.add(comp);
                     }
                 }
-                comps.addAll(newComps);
-                allNewComps.addAll(newComps);
             }
             Collections.sort(allNewComps);
             for (DialogOptionComponent comp : allNewComps) {
+                searchComps.add(comp);
                 panSearchOptions.add(comp);
             }
         }
+        panSearchOptions.revalidate();
         panOptions.repaint();
     }
 

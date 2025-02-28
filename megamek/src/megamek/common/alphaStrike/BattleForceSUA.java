@@ -128,8 +128,8 @@ public enum BattleForceSUA {
 
     /** @return True when this SUA uses an Integer as its value. */
     public boolean usesIntegerObject() {
-        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO,
-                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI)
+        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO, MFB,
+                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI, ATAC)
                 || isArtillery();
     }
 

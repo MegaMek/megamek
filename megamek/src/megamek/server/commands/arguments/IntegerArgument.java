@@ -83,6 +83,7 @@ public class IntegerArgument extends Argument<Integer> {
     @Override
     public String getHelp() {
         return getDescription() + (minValue == Integer.MIN_VALUE ? "": " Min: " + minValue) +
+            (maxValue == Integer.MAX_VALUE ? "": " Max: " + maxValue) +
             (defaultValue != null ?
                 " [default: " + defaultValue + "]. " + Messages.getString("Gamemaster.cmd.params.optional") :
                 " " + Messages.getString("Gamemaster.cmd.params.required"));

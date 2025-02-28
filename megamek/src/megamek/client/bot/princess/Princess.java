@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import megamek.client.ui.swing.TowLinkWarning;
 import org.apache.logging.log4j.Level;
 
 import megamek.client.bot.BotClient;
@@ -123,6 +124,11 @@ public class Princess extends BotClient {
      */
     private static final int CALLED_SHOT_MIN_JUMP = 5;
 
+    /**
+     * Distance to the waypoint to consider for considering the waypoint reached
+     */
+    public static final int DISTANCE_TO_WAYPOINT = 3;
+
 
     private final IHonorUtil honorUtil = new HonorUtil();
 
@@ -169,13 +175,15 @@ public class Princess extends BotClient {
     // Limits types of units Princess will target and attack with enhanced targeting
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
-
+    private SwarmContext swarmContext;
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
     // Controls whether Princess will use enhanced targeting on targets that have partial cover
     private boolean allowCoverEnhancedTargeting;
-
+    private EnemyTracker enemyTracker;
+    private CoverageValidator coverageValidator;
+    private SwarmCenterManager swarmCenterManager;
     /**
      * Returns a new Princess Bot with the given behavior and name, configured for the given
      * host and port. The new Princess Bot outputs its settings to its own logger.
@@ -234,6 +242,8 @@ public class Princess extends BotClient {
             return pathRankers.get(PathRankerType.Infantry);
         } else if (entity.isAero() && game.useVectorMove()) {
             return pathRankers.get(PathRankerType.NewtonianAerospace);
+        } else if (behaviorSettings.isExperimental()) {
+            return pathRankers.get(PathRankerType.Utility);
         }
 
         return pathRankers.get(PathRankerType.Basic);
@@ -360,6 +370,9 @@ public class Princess extends BotClient {
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
         setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
+        if (behaviorSettings.iAmAPirate() && honorUtil instanceof HonorUtil honorUtilCast) {
+            honorUtilCast.setIAmAPirate(behaviorSettings.iAmAPirate());
+        }
         if (getFallBack()) {
             return;
         }
@@ -717,6 +730,17 @@ public class Princess extends BotClient {
             sb = new StringBuilder();
             sb.append("Ranking deployment hexes...");
         }
+
+        if ((deployedUnit.getTowing() != Entity.NONE && game.getEntity(deployedUnit.getTowing()) != null)
+                || (deployedUnit.getTowedBy() != Entity.NONE) && game.getEntity(deployedUnit.getTowedBy()) != null) {
+            List<Coords> filteredCoords = TowLinkWarning.findValidDeployCoordsForTractorTrailer(game, deployedUnit, getBoard());
+            if (filteredCoords != null && !filteredCoords.isEmpty()) {
+                possibleDeployCoords = possibleDeployCoords.stream().filter(filteredCoords::contains).toList();
+            } else {
+                logger.error("No valid locations to tractor/trailer deploy " + deployedUnit.getDisplayName());
+            }
+        }
+
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
@@ -2088,6 +2112,7 @@ public class Princess extends BotClient {
             }
             return path;
         } catch (Exception ignored) {
+            logger.error(ignored, "Error while calculating movement");
             return null;
         }
     }
@@ -2310,7 +2335,7 @@ public class Princess extends BotClient {
             // fall tolerance range between 0.50 and 1.0
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
 
-            final List<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(paths,
+            final TreeSet<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(paths,
                     getGame(), getMaxWeaponRange(entity), fallTolerance, getEnemyEntities(),
                     getFriendEntities());
 
@@ -2490,6 +2515,8 @@ public class Princess extends BotClient {
                     // also return some paths that go a little slower than max speed
                     // in case the faster path would force an unwanted PSR or MASC check
                     prunedPaths.addAll(PathDecorator.decoratePath(prunedPath));
+                    // Return some of the already-computed unit paths as well.
+                    prunedPaths.addAll(getPrecognition().getPathEnumerator().getSimilarUnitPaths(mover.getId(), prunedPath));
                 }
                 return prunedPaths;
             }
@@ -2586,7 +2613,8 @@ public class Princess extends BotClient {
             initialize();
             checkMorale();
             unitBehaviorTracker.clear();
-
+            this.swarmContext.assignClusters(getFriendEntities());
+            this.enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
@@ -2654,12 +2682,17 @@ public class Princess extends BotClient {
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
-
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
             unitBehaviorTracker = new UnitBehavior();
             boardClusterTracker = new BoardClusterTracker();
+
+            // Set up heat mapping
+            initFriendlyHeatMap();
+            initEnemyHeatMaps();
+            initExperimentalFeatures();
+
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             final Enumeration<Building> buildings = getGame().getBoard().getBuildings();
@@ -2671,6 +2704,7 @@ public class Princess extends BotClient {
                     for (final Entity entity : game.getEntitiesVector(coords, true)) {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
+
                             sendChat("Building in Hex " + coords.toFriendlyString()
                                     + " designated target due to Gun Emplacement.", Level.INFO);
                         }
@@ -2678,15 +2712,23 @@ public class Princess extends BotClient {
                 }
             }
 
-            // Set up heat mapping
-            initEnemyHeatMaps();
-            initFriendlyHeatMap();
-
             initialized = true;
             BotGeometry.debugSelfTest(this);
         } catch (Exception ignored) {
 
         }
+    }
+
+    /**
+     * Initialize the experimental features.
+     */
+    private void initExperimentalFeatures() {
+        this.enemyTracker = new EnemyTracker(this);
+        this.coverageValidator = new CoverageValidator(this);
+        this.swarmContext = new SwarmContext();
+        this.swarmCenterManager = new SwarmCenterManager(this);
+        int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
+        this.swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
     }
 
     /**
@@ -2725,6 +2767,10 @@ public class Princess extends BotClient {
         NewtonianAerospacePathRanker newtonianAerospacePathRanker = new NewtonianAerospacePathRanker(this);
         newtonianAerospacePathRanker.setPathEnumerator(precognition.getPathEnumerator());
         pathRankers.put(PathRankerType.NewtonianAerospace, newtonianAerospacePathRanker);
+
+        UtilityPathRanker utilityPathRanker = new UtilityPathRanker(this);
+        utilityPathRanker.setPathEnumerator(precognition.getPathEnumerator());
+        pathRankers.put(PathRankerType.Utility, utilityPathRanker);
     }
 
     /**
@@ -2889,18 +2935,22 @@ public class Princess extends BotClient {
         }
     }
 
-    public int calculateAdjustment(final String ticks) {
+    public static int calculateAdjustment(final String ticks) {
         int adjustment = 0;
         if (StringUtility.isNullOrBlank(ticks)) {
             return 0;
         }
+        if (StringUtil.isNumeric(ticks)) {
+            return Integer.parseInt(ticks);
+        }
+
         for (final char tick : ticks.toCharArray()) {
             if (PLUS == tick) {
                 adjustment++;
             } else if (MINUS == tick) {
                 adjustment--;
             } else {
-                logger.warn("Invalid tick: '" + tick + "'.");
+                logger.warn("Invalid tick: {}", tick);
             }
         }
         return adjustment;
@@ -2947,6 +2997,30 @@ public class Princess extends BotClient {
         setAMSModes();
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
+        updateExperimentalFeatures();
+    }
+
+    private void updateExperimentalFeatures() {
+        if (getBehaviorSettings().isExperimental()) {
+            updateSwarmContext();
+        }
+    }
+
+    private void updateSwarmContext() {
+        if (swarmContext == null || enemyTracker == null || coverageValidator == null || swarmCenterManager == null) {
+            return;
+        }
+
+        swarmContext.setCurrentCenter(swarmCenterManager.calculateCenter());
+        enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
+        swarmContext.assignClusters(getFriendEntities());
+        swarmContext.resetEnemyTargets();
+
+        for (var entity : getEntitiesOwned()) {
+            if (entity.isDeployed()) {
+                swarmContext.removeAllStrategicGoalsOnCoordsQuadrant(entity.getPosition());
+            }
+        }
     }
 
     @Override
@@ -3024,6 +3098,14 @@ public class Princess extends BotClient {
         // aircraft flight paths when a player does it, so we apply it here.
         if (path.getEntity().isAero() || (path.getEntity() instanceof EjectedCrew && path.getEntity().isSpaceborne())) {
             retVal = SharedUtility.moveAero(retVal, null);
+        }
+
+        // allow fleeing at end of movement if is falling back and can flee from position
+        if ((isFallingBack(path.getEntity()))
+            && (path.getLastStep() != null)
+            && (getGame().canFleeFrom(path.getEntity(), path.getLastStep().getPosition()))
+            && (path.getMpUsed() < path.getMaxMP())) {
+            path.addStep(MoveStepType.FLEE);
         }
 
         return retVal;
@@ -3396,7 +3478,7 @@ public class Princess extends BotClient {
      * @return
      */
     public Coords getFriendlyHotSpot (Coords testPosition) {
-        return friendlyHeatMap.getHotSpot(testPosition, true);
+        return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
     }
 
     /**
@@ -3483,4 +3565,38 @@ public class Princess extends BotClient {
         super.receiveEntityUpdate(packet);
         updateEntityState((Entity) packet.getObject(1));
     }
+
+    public SwarmContext getSwarmContext() {
+        return swarmContext;
+    }
+
+    public EnemyTracker getEnemyTracker() {
+        return enemyTracker;
+    }
+
+    public CoverageValidator getCoverageValidator() {
+        return coverageValidator;
+    }
+
+    public SwarmCenterManager getSwarmCenterManager() {
+        return swarmCenterManager;
+    }
+
+    @Override
+    protected void postMovementProcessing(){
+        for (var entity : getEntitiesOwned()) {
+            if (entity.getPosition() == null) {
+                continue;
+            }
+            var waypoint = getUnitBehaviorTracker().getWaypointForEntity(entity);
+            if (waypoint.isPresent()) {
+                var wp = waypoint.get();
+                if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
+                    logger.debug(entity.getDisplayName() + " arrived at waypoint " + wp);
+                    getUnitBehaviorTracker().removeHeadWaypoint(entity);
+                }
+            }
+        }
+    }
+
 }

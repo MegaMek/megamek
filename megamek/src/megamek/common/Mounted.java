@@ -442,7 +442,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
             desc.append(" (PT)");
         }
         // Append the facing for VGLs
-        if (getType().hasFlag(WeaponType.F_VGL)) {
+        if ((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_VGL)) {
             switch (facing) {
                 case 0:
                     desc.append(" (F)");
@@ -503,6 +503,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
         if (isInternalBomb()) {
             desc.append(" (Int. Bay)");
+        }
+
+        if (is(EquipmentTypeLookup.PINTLE_TURRET) && entity instanceof Tank tank && tank.getBaseChassisSponsonPintleWeight() >= 0) {
+            desc.append(" (%d kg)".formatted((int) (getTonnage() * 1000)));
         }
         return desc.toString();
     }
@@ -601,10 +605,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
-        if (destroyed && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-            if (entity != null) {
-                entity.setHasDamagedRHS(true);
-            }
+        if ((entity != null) && destroyed && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            entity.setHasDamagedRHS(true);
         }
     }
 
@@ -663,10 +665,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     public void setHit(boolean hit) {
         this.hit = hit;
-        if (hit && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-            if (entity != null) {
-                entity.setHasDamagedRHS(true);
-            }
+        if ((entity != null) && hit && (this instanceof MiscMounted) && getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+            entity.setHasDamagedRHS(true);
         }
     }
 
@@ -1289,14 +1289,10 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     /**
-     * Convenience "property" to reduce typing, which returns true if the current
-     * piece of equipment is a bomb capable of striking ground targets.
-     *
-     * @return True if
+     * @return True if this Mounted is a bomb capable of striking ground targets.
      */
     public boolean isGroundBomb() {
-        return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
-                getType().hasFlag(AmmoType.F_GROUND_BOMB);
+        return false;
     }
 
     public void setInternalBomb(boolean internal) {
@@ -1378,22 +1374,19 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
         linked = null;
     }
 
+    /**
+     * Sets the Mounted to be an armored component, TO:AUE p.95. This method checks if the EquipmentType allows armoring at all and sets
+     * the armored status to false if it doesn't.
+     *
+     * @param armored The armored status to be set
+     */
     public void setArmored(boolean armored) {
-        // Ammobins cannot be armored.
-        if ((getType() instanceof AmmoType)
-                && (((AmmoType) getType()).getAmmoType() != AmmoType.T_COOLANT_POD)) {
-            armoredComponent = false;
-        } else if ((getType() instanceof MiscType)
-                && (getType().hasFlag(MiscType.F_SPIKES)
-                        || getType().hasFlag(MiscType.F_REACTIVE)
-                        || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType())
-                                .isShield())) {
-            armoredComponent = false;
-        } else {
-            armoredComponent = armored;
-        }
+        armoredComponent = getType().isArmorable() && armored;
     }
 
+    /**
+     * @return True if this Mounted is an armored component, TO:AUE p.95
+     */
     public boolean isArmored() {
         return armoredComponent;
     }
@@ -1689,6 +1682,13 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     protected List<String> bayComponentsToString() {
         return Collections.emptyList();
+    }
+
+    /**
+     * @return True when this Mounted is a head, quad, shoulder, pintle or sponson turret.
+     */
+    public boolean isTurret() {
+        return false;
     }
 
     @Override

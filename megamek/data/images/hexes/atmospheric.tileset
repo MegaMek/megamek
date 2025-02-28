@@ -49,6 +49,9 @@ include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardSpace.tileinc"
 
+include "StandardIncludes/StandardUltraSublevel.tileinc"
+include "StandardIncludes/StandardHazardousLiquid.tileinc"
+
 super * "water:0" "" "transparent/blue_water_1.png"
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"

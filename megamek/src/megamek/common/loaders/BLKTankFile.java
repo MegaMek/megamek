@@ -21,6 +21,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FuelType;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.BuildingBlock;
 import megamek.logging.MMLogger;
 
@@ -192,25 +193,7 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
             t.initializeArmor(fullArmor[x], x);
         }
 
-        boolean patchworkArmor = false;
-        if (dataFile.exists("armor_type")) {
-            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
-                patchworkArmor = true;
-            } else {
-                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-            }
-        } else {
-            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
-        if (patchworkArmor) {
-            for (int i = 1; i < t.locations(); i++) {
-                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-            }
-        }
+        setupArmorTypeAndTechLevel(t);
 
         t.autoSetInternal();
 
@@ -285,5 +268,39 @@ public class BLKTankFile extends BLKFile implements IMekLoader {
         t.recalculateTechAdvancement();
         loadQuirks(t);
         return t;
+    }
+
+    private void setupArmorTypeAndTechLevel(Tank t) {
+        boolean patchworkArmor = false;
+        if (dataFile.exists("armor_type")) {
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                var armorTypeId = dataFile.getDataAsInt("armor_type")[0];
+                t.setArmorType(armorTypeId);
+                var armorType = ArmorType.of(armorTypeId, t.isClan());
+                var techLevel = -1;
+                if (dataFile.exists("armor_tech_level")) {
+                    techLevel = dataFile.getDataAsInt("armor_tech_level")[0];
+                } else {
+                    techLevel = armorType.getStaticTechLevel().getCompoundTechLevel(t.isClan());
+                }
+                t.setArmorTechLevel(techLevel);
+            }
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (patchworkArmor) {
+            for (int i = 1; i < t.locations(); i++) {
+                var armorTypeId = dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0];
+                var armorType = ArmorType.of(armorTypeId, t.isClan());
+                t.setArmorType(armorTypeId, i);
+                var techLevel = armorType.getStaticTechLevel().getCompoundTechLevel(t.isClan());
+                t.setArmorTechLevel(techLevel, i);
+            }
+        }
     }
 }

@@ -36,13 +36,13 @@ public class Minefield implements Serializable, Cloneable {
     public static final int CLEAR_NUMBER_INF_ENG_ACCIDENT = 3;
     public static final int CLEAR_NUMBER_BA_SWEEPER = 6;
     public static final int CLEAR_NUMBER_BA_SWEEPER_ACCIDENT = 2;
-    
+
     public static final int BAP_DETECT_TARGET_PREPLACED = 10;
     public static final int BAP_DETECT_TARGET_WEAPON_DELIVERED = 7;
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
-    
+
     public static final int HOVER_WIGE_DETONATION_TARGET = 12;
 
     public static final int MAX_DAMAGE = 30;
@@ -53,7 +53,7 @@ public class Minefield implements Serializable, Cloneable {
             "Vibrabomb", "Active", "EMP", "Inferno"};
             //"Thunder", "Thunder-Inferno", "Thunder-Active",
             //"Thunder-Vibrabomb" };
-    
+
     public static int TYPE_SIZE = names.length;
 
     private Coords coords = null;
@@ -72,22 +72,22 @@ public class Minefield implements Serializable, Cloneable {
     private Minefield() {
         //Creates a minefield
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density) {
         return createMinefield(coords, playerId, type, density, 0);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, boolean sea, int depth) {
         return createMinefield(coords, playerId, type, density, 0, sea, depth);
     }
-    
+
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting) {
         return createMinefield(coords, playerId, type, density, setting, false, 0);
     }
 
     public static Minefield createMinefield(Coords coords, int playerId, int type, int density, int setting, boolean sea, int depth) {
         Minefield mf = new Minefield();
-        
+
         mf.type = type;
         mf.density = density;
         mf.coords = coords;
@@ -97,8 +97,24 @@ public class Minefield implements Serializable, Cloneable {
         mf.depth = depth;
         return mf;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Minefield{'" +
+            getDisplayableName(type) +
+            "', coords=" + coords +
+            ", playerId=" + playerId +
+            ", density=" + density +
+            ", type=" + type +
+            ", setting=" + setting +
+            ", oneUse=" + oneUse +
+            ", sea=" + sea +
+            ", depth=" + depth +
+            ", detonated=" + detonated +
+            ", weaponDelivered=" + weaponDelivered +
+            '}';
+    }
+
     public static String getDisplayableName(int type) {
         if (type >= 0 && type < TYPE_SIZE) {
             return names[type];
@@ -131,10 +147,10 @@ public class Minefield implements Serializable, Cloneable {
             return false;
         }
         final Minefield other = (Minefield) obj;
-        return (playerId == other.playerId) && Objects.equals(coords, other.coords) && 
+        return (playerId == other.playerId) && Objects.equals(coords, other.coords) &&
                 (type == other.type);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(playerId, coords, type);
@@ -156,7 +172,7 @@ public class Minefield implements Serializable, Cloneable {
      * what do we need to roll to trigger this mine
      * @return
      */
-    public int getTrigger() {    
+    public int getTrigger() {
         if (density < 15) {
             return 9;
         } else if (density < 25) {
@@ -181,7 +197,7 @@ public class Minefield implements Serializable, Cloneable {
     public int getType() {
         return type;
     }
-    
+
     public int getDepth() {
         return depth;
     }
@@ -193,23 +209,23 @@ public class Minefield implements Serializable, Cloneable {
     public int getPlayerId() {
         return playerId;
     }
-    
+
     public void setDetonated(boolean b) {
         this.detonated = b;
     }
-    
+
     public boolean hasDetonated() {
         return detonated;
     }
-    
+
     public void setWeaponDelivered(boolean b) {
         this.weaponDelivered = b;
     }
-    
+
     public boolean isWeaponDelivered() {
         return weaponDelivered;
     }
-    
+
     /**
      * check for a reduction in density
      * @param bonus - an <code>int</code> indicating the modifier to the target roll for reduction
@@ -223,16 +239,16 @@ public class Minefield implements Serializable, Cloneable {
             setDensity(getDensity() - 5);
             return;
         }
-        
+
         boolean isReduced = ((Compute.d6(2) + bonus) >= getTrigger()) || (direct && getType() != Minefield.TYPE_CONVENTIONAL && getType() != Minefield.TYPE_INFERNO);
         if (getType() == Minefield.TYPE_CONVENTIONAL && getDensity() < 10) {
             isReduced = false;
         }
         if (isReduced) {
             setDensity(getDensity() - 5);
-        }    
+        }
     }
-    
+
     /**
      * Gets the BAP detection target #
      */

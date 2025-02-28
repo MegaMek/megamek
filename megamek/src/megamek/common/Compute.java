@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
@@ -29,6 +30,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryconditions.Atmosphere;
 import megamek.common.planetaryconditions.IlluminationLevel;
 import megamek.common.planetaryconditions.PlanetaryConditions;
+import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -1037,7 +1039,7 @@ public class Compute {
                 // If the target isn't spotted, can't target
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         && !Compute.inVisualRange(game, los, other, target)
-                        && !Compute.inSensorRange(game, los, other, target, null)) {
+                            && !Compute.inSensorRange(game, los, other, target, null)) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE,
                             "outside of visual and sensor range");
                 }
@@ -2674,8 +2676,13 @@ public class Compute {
         }
     }
 
+
     /**
      * Modifier to attacks due to target movement
+     * @param game current game
+     * @param entityId targetId
+     * @return toHitData for the target's movement modifiers
+     * @see ToHitData
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
@@ -2694,7 +2701,7 @@ public class Compute {
                 && !entity.isImmobile()
                 && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
             ToHitData toHit = new ToHitData();
-            toHit.addModifier(-1, "target didn't move");
+            toHit.addModifier(-1, "target did not move");
             return toHit;
         }
 
@@ -2716,16 +2723,17 @@ public class Compute {
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT));
 
-        boolean validFlying = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+        boolean airborneNonAerospace = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                 || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                || ((entity.getMovementMode() == EntityMovementMode.VTOL)
+                    && ( (entity.moved != EntityMovementType.MOVE_NONE)  ||  entity.isAirborneVTOLorWIGE()))
                 || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT);
 
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
                         jumped,
-                        validFlying,
+                        airborneNonAerospace,
                         game);
 
         if (entity.moved != EntityMovementType.MOVE_JUMP
@@ -2743,10 +2751,6 @@ public class Compute {
         if (entity.moved == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "target skidded");
         }
-        if ((entity.getElevation() > 0)
-                && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-            toHit.addModifier(1, "target is airborne");
-        }
 
         // did the target sprint?
         if (entity.moved == EntityMovementType.MOVE_SPRINT
@@ -2757,13 +2761,20 @@ public class Compute {
         return toHit;
     }
 
+
     /**
-     * Target movement modifer for the specified delta_distance
+     * Target movement modifier for the specified distance
+     * @param distance how many hexes did the target unit move?
+     * @param jumped did the target unit jump?
+     * @param airborneNonAerospace was the target an airborne, non-aerospace unit?
+     * @param game current game
+     * @return toHitData for the target's movement modifiers
+     * @see ToHitData
      */
     public static ToHitData getTargetMovementModifier(int distance,
-            boolean jumped, boolean isVTOL, Game game) {
+            boolean jumped, boolean airborneNonAerospace, Game game) {
         ToHitData toHit = new ToHitData();
-        if (distance == 0 && !jumped) {
+        if (distance == 0 && !jumped && !airborneNonAerospace) {
             return toHit;
         }
 
@@ -2800,8 +2811,10 @@ public class Compute {
             }
         }
 
-        if (isVTOL && (distance > 0)) {
-            toHit.addModifier(1, "target VTOL used MPs");
+        // TW p. 117 Jumped/Airborne (non-aerospace units) get +1 to hit modifier,
+        // calculate that info outside of this method
+        if (airborneNonAerospace) {
+            toHit.addModifier(1, "target was airborne");
         } else if (jumped) {
             toHit.addModifier(1, "target jumped");
         }
@@ -4393,11 +4406,11 @@ public class Compute {
      *
      * @param game   The current {@link Game}
      * @param los
-     * @param ae
+     * @param attackingEntity
      * @param target
      * @return
      */
-    public static boolean inVisualRange(Game game, LosEffects los, Entity ae,
+    public static boolean inVisualRange(Game game, LosEffects los, Entity attackingEntity,
             Targetable target) {
         // Use firing solution if Advanced Sensors is on
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)
@@ -4421,56 +4434,63 @@ public class Compute {
         }
 
         // if either does not have a position then return false
-        if ((ae.getPosition() == null) || (target.getPosition() == null)) {
+        if ((attackingEntity.getPosition() == null) || (target.getPosition() == null)) {
             return false;
         }
 
         // check visual range based on planetary conditions
         if (los == null) {
-            los = LosEffects.calculateLOS(game, ae, target);
+            los = LosEffects.calculateLOS(game, attackingEntity, target);
         }
-        int visualRange = getVisualRange(game, ae, los, teIlluminated);
+        int visualRange = getVisualRange(game, attackingEntity, los, teIlluminated);
 
         // Check for factors that only apply to an entity target
         Coords targetPos = target.getPosition();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            Entity te = (Entity) target;
+            Entity targetedEntity = (Entity) target;
 
             // check for camo and null sig on the target
-            if (te.isVoidSigActive()) {
+            if (targetedEntity.isVoidSigActive()) {
                 visualRange = visualRange / 4;
-            } else if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
+            } else if (targetedEntity.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                 visualRange = visualRange / 2;
-            } else if (te.isChameleonShieldActive()) {
+            } else if (targetedEntity.isChameleonShieldActive()) {
                 visualRange = visualRange / 2;
-            } else if (te.isConventionalInfantry() && ((Infantry) te).hasSneakCamo()) {
+            } else if (targetedEntity.isConventionalInfantry() && ((Infantry) targetedEntity).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
 
             // Ground targets pick the closest path to Aeros (TW pg 107)
-            if ((te.isAero()) && isGroundToAir(ae, target)) {
-                targetPos = Compute.getClosestFlightPath(ae.getId(),
-                        ae.getPosition(), te);
+            if ((targetedEntity.isAero()) && isGroundToAir(attackingEntity, target)) {
+                targetPos = Compute.getClosestFlightPath(attackingEntity.getId(),
+                        attackingEntity.getPosition(), targetedEntity);
             }
-            // Airborne aeros can only see ground targets they overfly, and only at Alt <=8
-            if (isAirToGround(ae, target)) {
-                if (ae.getAltitude() > 8) {
-                    return false;
-                }
-                if (ae.passedOver(target)) {
-                    return true;
-                } else {
-                    return false;
+
+            // Airborne units targeting ground have special rules
+            if (isAirToGround(attackingEntity, target)) {
+                // In Low Altitude, Airborne aeros can only see ground targets
+                // they overfly, and only at Alt <=8. It should also spot units
+                // next to this; Low-atmo board with ground units isn't implemented
+                if (game.getBoard().getType() == Board.T_ATMOSPHERE) {
+                    if (attackingEntity.getAltitude() > 8) {
+                        return false;
+                    }
+                    if (attackingEntity.passedOver(target)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
 
+        // Undoes any negative visual ranges
         visualRange = Math.max(visualRange, 1);
         int distance;
         // Ground distance
-        distance = ae.getPosition().distance(targetPos);
+        distance = attackingEntity.getPosition().distance(targetPos);
         // Need to track difference in altitude, not just add altitude to the range
-        distance += Math.abs(2 * target.getAltitude() - 2 * ae.getAltitude());
+        distance += Math.abs(2 * target.getAltitude() - 2 * attackingEntity.getAltitude());
         return distance <= visualRange;
 
     }
@@ -4709,6 +4729,7 @@ public class Compute {
             Targetable target) {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             Entity te = (Entity) target;
+
             if (te.isOffBoard()) {
                 return false;
             }
@@ -4801,6 +4822,109 @@ public class Compute {
         // don't let the BAP check do that
         if (ae.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
                 || ae.hasBAP(false)) {
+            tn -= 2;
+        }
+
+        // Now, determine if we've detected the target this round
+        return roll >= tn;
+    }
+
+    public static boolean calcFutureTargetFiringSolution(Game game, Entity attacker,
+                                             Targetable target, Coords futureTargetPosiion) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            Entity te = (Entity) target;
+
+            if (te.isOffBoard()) {
+                return false;
+            }
+        }
+
+        // NPE check. Fighter squadrons don't start with sensors, but pick them up from
+        // the component fighters each round
+        if (attacker.getActiveSensor() == null) {
+            return false;
+        }
+
+        // ESM sensor can't produce a firing solution
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_ESM) {
+            return false;
+        }
+        Coords targetPos = futureTargetPosiion;
+        int distance = attacker.getPosition().distance(targetPos);
+        int roll = Compute.d6(2);
+        int tn = attacker.getCrew().getPiloting();
+        int autoVisualRange = 1;
+        int outOfVisualRange = (attacker.getActiveSensor().getRangeByBracket());
+        int rangeIncrement = (int) Math.ceil(outOfVisualRange / 10.0);
+
+        // A bit of a hack here. "Aero Sensors" return the ground range, because Sensor
+        // doesn't know about Game or Entity
+        // to do otherwise. We need to use the space range instead.
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            outOfVisualRange = Sensor.ASF_RADAR_MAX_RANGE;
+            rangeIncrement = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        }
+
+        if (distance > outOfVisualRange) {
+            return false;
+        }
+
+        if (attacker instanceof Aero aero) {
+            // Account for sensor damage
+            if (aero.isAeroSensorDestroyed()) {
+                return false;
+            } else {
+                tn += aero.getSensorHits();
+            }
+        }
+
+        // Targets at 1/10 max range are automatically detected
+        if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+            autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
+            autoVisualRange = Sensor.LC_RADAR_AUTOSPOT_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_AERO_THERMAL) {
+            autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+        } else if (attacker.getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_THERMAL) {
+            autoVisualRange = Sensor.LC_OPTICAL_FIRING_SOLUTION_RANGE;
+        }
+
+        if (distance <= autoVisualRange) {
+            return true;
+        }
+
+        // Apply Sensor Geek SPA, if present
+        if (attacker.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+            tn -= 2;
+        }
+
+        // Otherwise, we add +1 to the tn for detection for each increment of the
+        // autovisualrange between attacker and target
+        tn += (distance / rangeIncrement);
+
+        // Apply ECM/ECCM effects
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
+            tn += calcSpaceECM(game, attacker, target);
+        }
+
+        // Apply large craft sensor shadows
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)) {
+            tn += calcSensorShadow(game, attacker, target);
+        }
+
+        // Apply modifiers for attacker's equipment
+        // -2 for a working Large NCSS
+        if (attacker.hasWorkingMisc(MiscType.F_LARGE_COMM_SCANNER_SUITE)) {
+            tn -= 2;
+        }
+        // -1 for a working Small NCSS
+        if (attacker.hasWorkingMisc(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
+            tn -= 1;
+        }
+        // -2 for any type of BAP or EW Equipment. ECM is already accounted for, so
+        // don't let the BAP check do that
+        if (attacker.hasWorkingMisc(MiscType.F_EW_EQUIPMENT)
+            || attacker.hasBAP(false)) {
             tn -= 2;
         }
 
@@ -5190,8 +5314,9 @@ public class Compute {
 
         // If we're an airborne aero, sensor range is limited to within a few hexes of
         // the flightline against ground targets
-        // TO Dec 2017 Errata p17
-        if (te != null && ae.isAirborne() && !te.isAirborne()) {
+        // TO:AR Errata forum post clarifies that ground
+        // mapsheet aero use ground sensor table
+        if (!game.getBoard().onGround() && (te != null && ae.isAirborne() && !te.isAirborne()) ) {
             // Can't see anything if above Alt 8.
             if (ae.getAltitude() > 8) {
                 range = 0;
@@ -6228,9 +6353,7 @@ public class Compute {
 
         // We may be moving in the same hex.
         if (src.equals(dest)
-                && (srcHex.containsTerrain(Terrains.PAVEMENT)
-                        || srcHex.containsTerrain(Terrains.ROAD) || srcHex
-                                .containsTerrain(Terrains.BRIDGE))) {
+                && (srcHex.hasPavement())) {
             result = true;
         }
         // If the source is a pavement hex, then see if the destination
@@ -6238,8 +6361,9 @@ public class Compute {
         // into the source hex and the entity is climbing onto the bridge.
         else if (srcHex.containsTerrain(Terrains.PAVEMENT)
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
-                        || destHex.containsTerrainExit(Terrains.ROAD,
+                        || (destHex.containsTerrainExit(Terrains.ROAD,
                                 dest2srcDir)
+                            && destHex.hasPavedRoad())
                         || (destHex.containsTerrainExit(
                                 Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
             result = true;
@@ -6247,11 +6371,11 @@ public class Compute {
         // See if the source hex has a road or bridge (and the entity is on the
         // bridge) that exits into the destination hex, and the dest hex has
         // pavement or a corresponding exit to the src hex
-        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || (srcHex
-                .containsTerrainExit(Terrains.BRIDGE, src2destDir)
+        else if (((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) && srcHex.hasPavedRoad())
+            || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
                 && (moveStep.getElevation() == srcHex
                         .terrainLevel(Terrains.BRIDGE_ELEV))))
-                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                && ((destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) && destHex.hasPavedRoad())
                         || (destHex.containsTerrainExit(Terrains.BRIDGE,
                                 dest2srcDir) && moveStep.climbMode())
                         || destHex
@@ -7636,7 +7760,7 @@ public class Compute {
 
     public static int turnsTilHit(int distance) {
         final int turnsTilHit;
-        // See indirect flight times table, TO p181
+        // See indirect flight times table, TO:AR p149
         if (distance <= Board.DEFAULT_BOARD_HEIGHT) {
             turnsTilHit = 0;
         } else if (distance <= (8 * Board.DEFAULT_BOARD_HEIGHT)) {
@@ -7727,5 +7851,190 @@ public class Compute {
 
         logger.debug(msg);
         return newPoint;
+    }
+
+    /**
+     * Lightweight helper to determine if a given unit can take a Pointblank shot on another
+     *
+     * @param attacker  Prospective Pointblank Shot shooter
+     * @param target    Prospective Pointblank Shot target
+     * @return          boolean true if shot can be taken legally; false otherwise
+     */
+    public static boolean canPointBlankShot(Entity attacker, Entity target) {
+        if (!attacker.isHidden() || !attacker.isEnemyOf(target)) {
+            // PBS attacker has to be hidden and an enemy of the PBS target
+            return false;
+        }
+
+        if (!target.isAerospace()){
+            // The simpler path: mainly worried about distance
+            if (attacker.getPosition().distance(target.getPosition()) != 1) {
+                // PBS attacker has to be exactly 1 hex away from target
+                return false;
+            }
+        } else {
+            // More complex; may need to worry about a flight path, and Infantry ranges
+            if (attacker.isInfantry()){
+                if (attacker.getMaxWeaponRange(true) <= 1) {
+                    // Infantry attacker needs long-range weapons that can hit an aircraft
+                    return false;
+                } else {
+                    boolean hasFieldGuns = ((Infantry) attacker).hasActiveFieldWeapon();
+                    boolean hasInfantrayAA = attacker.getEquipment().stream().anyMatch(
+                        eq -> eq instanceof WeaponMounted
+                            && ((WeaponMounted) eq).getType().hasFlag(WeaponType.F_INF_AA)
+                    );
+                    // Either allows infantry PBS on Aerospace.
+                    return (hasFieldGuns || hasInfantrayAA);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Lightweight helper for some step evaluation.  No side effects.
+     *
+     * @param detector  Entity that will detect a hidden unit
+     * @param distance  int Distance from detector to hidden entity
+     * @param endStep   boolean whether this detection is occuring at the last step of a move path
+     * @return true if detector can detect a unit in this situation
+     */
+    public static boolean canDetectHidden(Entity detector, int distance, boolean endStep) {
+        if (detector.isAerospace()) {
+            // Errata says Aerospace flying over hidden units detect them
+            // (https://bg.battletech.com/forums/index.php?topic=84054.0)
+            if (distance == 0) {
+                return true;
+            }
+        } else if ((distance == 1) && endStep) {
+            // Ending movement adjacent to a hidden unit also reveals it.
+            return true;
+        }
+        // Active Probe detection happens is handled in detectHiddenUnits
+        // Anything not explicitly detected is not detected.
+        return false;
+    }
+
+    public static boolean allEnemiesOutsideBlast(
+        Targetable target, Entity attacker, AmmoType ammoType, final boolean artillery, final boolean flak, final boolean asfFlak, Game game
+    ) {
+       return enemiesInsideBlast(target, attacker, ammoType, artillery, flak, asfFlak, game).isEmpty();
+    }
+
+    public static Set<Entity> enemiesInsideBlast(
+        Targetable target, Entity attacker, AmmoType ammoType, final boolean artillery, final boolean flak, final boolean asfFlak, Game game
+    ) {
+        Set<Entity> entities = new HashSet<>();
+        Coords position = target.getPosition();
+        if (position == null) {
+            return entities;
+        }
+
+        // We don't need exact positional details to show entities are outside of the blast zone of a given
+        // AE munition:
+        // 1. The highest* an entity can be is: hex.ceiling() + 2 for R1+ bombs, OR
+        //                                      hex.ceiling() + 1 for R0 bombs, OR
+        //                                      hex.getLevel() + base damage / 25 for Cruise Missiles, OR
+        //                                      hex.getLevel() + base damage / 10 for non-homing Artillery
+        // *(For bombs: only over water or building hex; for artillery, any hex**)
+        // **(Artillery uses base AE rules for building/water hexes, based on radius rather than damage)
+        //
+        // 2. The lowest* an entity can be is:  hex.getLevel() - 2 for R1+ bombs/artillery, OR
+        //                                      hex.getLevel() - 1 for R0 bombs/artillery
+        // *(for all AE: only in building or water hexes)
+        //
+        // 3. Farthest out from the center a unit can be is Radius, set per munition.
+        // 4. Blast deals damage in "sphere" where horizontal + vertical displacement <= Radius, but
+        //    only for building / water hexes.
+        // 5. Artillery Flak creates a blast up and down in the target hex only
+        // 6. Anti-ASF Artillery Flak creates a blast in the target hex at the target altitude only
+        //
+        // To prove an AE attack will catch _zero_ enemies, we just need to prove any enemies in the zone
+        // are too deep or too high for _any_ blast damage to reach.
+
+        Hex hex = game.getBoard().getHex(position);
+        final boolean causeAEBlast = hex != null && hex.containsAnyTerrainOf(Terrains.BLDG_ELEV, Terrains.WATER);
+        final int baseHeight;
+        final int ceiling;
+        if (flak) {
+            if (asfFlak) {
+                ceiling = baseHeight = target.getAltitude();
+            } else {
+                ceiling = baseHeight = target.getElevation();
+            }
+        } else {
+            baseHeight = (hex != null) ? hex.getLevel() : 0;
+            ceiling = (hex != null) ? hex.ceiling() : baseHeight;
+        }
+
+        // Get radius, base damage
+        AreaEffectHelper.DamageFalloff falloff = AreaEffectHelper.calculateDamageFallOff(
+            ammoType,
+            attacker.isBattleArmor() ? ((BattleArmor) attacker).getTroopers() : 0,
+            false
+        );
+
+        int radius = falloff.radius;
+        if (asfFlak) {
+            // Anti-ASF Flak shots only affect the target hex
+            radius = 0;
+        }
+
+        double damage = falloff.damage;
+
+        boolean cruiseMissile = ammoType.hasFlag(AmmoType.F_CRUISE_MISSILE);
+        final int verticalLevels;
+        if (cruiseMissile || artillery) {
+            // Levels above (and possibly below) level/center hex
+            // e.g. LT has damage 25, falloff 10, radius 2 -> round up (25/10) -> 3, -1 = 2.
+            verticalLevels = (int) Math.ceil(damage / ((cruiseMissile) ? 25.0 : 10.0)) - 1;
+        } else {
+            verticalLevels = (radius >= 0) ? ((radius > 1) ? 2 : 1) : 0;
+        }
+
+        if (causeAEBlast || flak || asfFlak) {
+            // Both artillery and bombs cause AE blast spheres when hitting water or buildings.
+            // For
+            for (int r=0; r <= radius; r++) {
+                final int rad = r;
+                List<Coords> ringCoords = position.allAtDistance(r);
+                // Get all enemy entities that protrude into the blast sphere, or, for Anti-ASF Flak,
+                // are in the target's hex at the same altitude
+                for (Coords coords : ringCoords) {
+                    List<Entity> cEntities = game.getEntitiesVector(coords);
+                    entities.addAll(cEntities.stream().filter(
+                        e -> e.isEnemyOf(attacker) &&
+                            ((e.getElevation() + e.getHeight() >= rad + baseHeight - verticalLevels)
+                                && (e.getElevation() <= ceiling + verticalLevels - rad))
+                            || (e.isAero() && e.getAltitude() == baseHeight)
+                    ).toList());
+                }
+            }
+        } else if (artillery) {
+            // Central vertical blast column
+            entities.addAll(game.getEntitiesVector(position).stream().filter(
+                e -> e.isEnemyOf(attacker) &&
+                    (e.getElevation() + e.getHeight() >= baseHeight)
+                        && (e.getElevation() <= ceiling + verticalLevels)
+            ).toList());
+            for (int r=1; r <= radius; r++) {
+                // Get all the entities that cross the blast ring
+                List<Coords> ringCoords = position.allAtDistance(r);
+                for (Coords coords : ringCoords) {
+                    List<Entity> cEntities = game.getEntitiesVector(coords);
+                    entities.addAll(cEntities.stream().filter(
+                        e -> e.isEnemyOf(attacker) &&
+                            ((e.getElevation() + e.getHeight() >= baseHeight)
+                                && (e.getElevation() <= ceiling))
+                    ).toList());
+                }
+            }
+
+
+        }
+        // No enemies in the volume == all outside
+        return entities;
     }
 } // End public class Compute

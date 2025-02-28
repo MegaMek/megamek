@@ -250,4 +250,8 @@ public class MiscMounted extends Mounted<MiscType> {
         }
     }
 
+    @Override
+    public boolean isTurret() {
+        return getType().hasFlag(MiscTypeFlag.F_TURRET);
+    }
 }

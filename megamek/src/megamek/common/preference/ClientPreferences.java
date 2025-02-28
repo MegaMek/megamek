@@ -13,15 +13,17 @@
  */
 package megamek.common.preference;
 
+import megamek.MMConstants;
+import megamek.common.Configuration;
+import megamek.common.MovePath;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.logging.MMLogger;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
-
-import megamek.MMConstants;
-import megamek.common.MovePath;
-import megamek.logging.MMLogger;
 
 public class ClientPreferences extends PreferenceStoreProxy {
     private static final MMLogger logger = MMLogger.create(ClientPreferences.class);
@@ -34,6 +36,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String LAST_SERVER_PORT = "LastServerPort";
     public static final String LOCALE = "Locale";
     public static final String MAP_TILESET = "MapTileset";
+    public static final String MINIMAP_THEME = "MinimapTheme";
+    public static final String STRATEGIC_VIEW_THEME = "StrategicViewTheme";
     public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
     public static final String DATA_DIRECTORY = "DataDirectory";
     public static final String LOG_DIRECTORY = "LogDirectory";
@@ -45,6 +49,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String GAMELOG_FILENAME = "GameLogFilename";
     public static final String AUTO_RESOLVE_GAMELOG_FILENAME = "AutoResolveGameLogFilename";
     public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String DATA_LOGGING = "DataLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
     public static final String UNIT_START_CHAR = "UnitStartChar";
@@ -64,6 +69,9 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+    public static final String ENABLE_EXPERIMENTAL_BOT_FEATURES = "EnableExperimentalBotFeatures";
+    public static final String NAG_ASK_FOR_VICTORY_LIST = "AskForVictoryList";
+    public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content
@@ -82,6 +90,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(LAST_CONNECT_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(LAST_SERVER_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(MAP_TILESET, "saxarba.tileset");
+        store.setDefault(MINIMAP_THEME, "default.theme");
+        store.setDefault(STRATEGIC_VIEW_THEME, "gbc green.theme");
         store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
@@ -106,8 +116,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(ENABLE_EXPERIMENTAL_BOT_FEATURES, false);
         store.setDefault(USER_DIR, "");
         store.setDefault(MML_PATH, "");
+        store.setDefault(NAG_ASK_FOR_VICTORY_LIST, true);
+        store.setDefault(DATA_LOGGING, false);
+        store.setDefault(SHOW_AUTO_RESOLVE_PANEL, true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -208,6 +222,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return store.getString(AUTO_RESOLVE_GAMELOG_FILENAME);
     }
 
+    public boolean dataLoggingEnabled() {
+        return store.getBoolean(DATA_LOGGING);
+    }
+
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -300,6 +318,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(STAMP_FILENAMES, state);
     }
 
+    public void setDataLogging(boolean state) {
+        store.setValue(DATA_LOGGING, state);
+    }
+
     public void setStampFormat(String format) {
         store.setValue(STAMP_FORMAT, format);
     }
@@ -342,6 +364,33 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setStartSearchlightsOn(boolean value) {
         store.setValue(START_SEARCHLIGHTS_ON, value);
+    }
+
+    public void setEnableExperimentalBotFeatures(boolean value) {
+        store.setValue(ENABLE_EXPERIMENTAL_BOT_FEATURES, value);
+    }
+
+    public boolean getEnableExperimentalBotFeatures() {
+        return store.getBoolean(ENABLE_EXPERIMENTAL_BOT_FEATURES);
+    }
+
+    public void setStrategicViewTheme(String theme) {
+        store.setValue(STRATEGIC_VIEW_THEME, theme);
+    }
+
+    public File getStrategicViewTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(STRATEGIC_VIEW_THEME)).getFile();
+    }
+
+    public void setMinimapTheme(String theme) {
+        if (theme == null) {
+            return;
+        }
+        store.setValue(MINIMAP_THEME, theme);
+    }
+
+    public File getMinimapTheme() {
+        return new MegaMekFile(Configuration.minimapThemesDir(), store.getString(MINIMAP_THEME)).getFile();
     }
 
     protected Locale locale = null;
@@ -428,4 +477,19 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(MML_PATH, mmlPath.isBlank() ? "" : new File(mmlPath).getAbsolutePath());
     }
 
+    public boolean askForVictoryList() {
+        return store.getBoolean(NAG_ASK_FOR_VICTORY_LIST);
+    }
+
+    public void setAskForVictoryList(boolean value) {
+        store.setValue(NAG_ASK_FOR_VICTORY_LIST, value);
+    }
+
+    public void setShowAutoResolvePanel(boolean value) {
+        store.setValue(SHOW_AUTO_RESOLVE_PANEL, value);
+    }
+
+    public boolean getShowAutoResolvePanel() {
+        return store.getBoolean(SHOW_AUTO_RESOLVE_PANEL);
+    }
 }

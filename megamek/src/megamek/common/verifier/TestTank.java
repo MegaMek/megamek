@@ -320,6 +320,9 @@ public class TestTank extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
+
+        correct &= correctArmorOverAllocation(tank, buff);
+
         if (tank instanceof VTOL) {
             long mastMountCount = tank.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
             if (mastMountCount > 1) {
@@ -391,7 +394,7 @@ public class TestTank extends TestEntity {
         if (!correctCriticals(buff)) {
             correct = false;
         }
-        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)) {
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
             correct = true;
         }
         return correct;

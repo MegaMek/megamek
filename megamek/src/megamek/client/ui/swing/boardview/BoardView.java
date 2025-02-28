@@ -957,12 +957,6 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             drawSprites(g, movementSprites);
         }
 
-        // draw movement, if valid
-        drawSprites(g, pathSprites);
-
-        // draw flight path indicators
-        drawSprites(g, fpiSprites);
-
         if (game.getPhase().isFiring()) {
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
@@ -978,6 +972,12 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
             // terrain; draw only the others here
             drawSprites(g, overTerrainSprites);
         }
+
+        // draw movement, if valid
+        drawSprites(g, pathSprites);
+
+        // draw flight path indicators
+        drawSprites(g, fpiSprites);
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -1285,11 +1285,39 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         Board board = game.getBoard();
+        boolean isAirDeployGround = en_Deployer.getMovementMode().isHover() || en_Deployer.getMovementMode().isVTOL();
+        boolean isWiGE = en_Deployer.getMovementMode().isWiGE();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
+                if (en_Deployer.isAero()) {
+                    if (en_Deployer.getAltitude() > 0) {
+                        // Flying Aeros are always above it all
+                        if (board.isLegalDeployment(c, en_Deployer) &&
+                            !en_Deployer.isLocationProhibited(c, board.getMaxElevation())) {
+                            drawHexBorder(g, getHexLocation(c), Color.yellow);
+                        }
+                    } else if (en_Deployer.getAltitude() == 0){
+                        // Show prospective Altitude 1+ hexes
+                        if (board.isLegalDeployment(c, en_Deployer) &&
+                            !en_Deployer.isLocationProhibited(c, 1)) {
+                            drawHexBorder(g, getHexLocation(c), Color.cyan);
+                        }
+                    }
+                } else if (isAirDeployGround || isWiGE ) {
+                    // Draw hexes that are legal at a higher deployment elevation
+                    Hex hex = board.getHex(c);
+                    // Default to Elevation 1 if ceiling + 1 <= 0.
+                    int maxHeight = (isWiGE) ? 1 : (hex != null) ? Math.max(hex.ceiling() + 1, 1) : 1;
+                    if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c, maxHeight)) {
+                        drawHexBorder(g, getHexLocation(c), Color.cyan);
+                    }
+                }
+
                 if (board.isLegalDeployment(c, en_Deployer) &&
+                    // Draw hexes that are legal at lowest deployment elevation
                         !en_Deployer.isLocationProhibited(c)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }
@@ -1900,7 +1928,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
                     largestLevelDiff = levelDiff;
                 }
             }
-            imgHeight += HEX_ELEV * scale * largestLevelDiff;
+            imgHeight += (int) (HEX_ELEV * scale * largestLevelDiff);
         }
         // If the base image isn't ready, we should signal a repaint and stop
         if ((imgWidth < 0) || (imgHeight < 0)) {
@@ -3583,11 +3611,13 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         }
         // no re-use possible, add a new one
         // don't add a sprite for an artillery attack made by the other player
-        if (aa instanceof WeaponAttackAction) {
-            WeaponAttackAction waa = (WeaponAttackAction) aa;
+        if (aa instanceof WeaponAttackAction waa) {
+            int ownerId = waa.getEntity(game).getOwner().getId();
+            int teamId = waa.getEntity(game).getOwner().getTeam();
+
             if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(this, aa));
-            } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
+            } else if (ownerId == localPlayer.getId() || teamId == localPlayer.getTeam()) {
                 attackSprites.add(new AttackSprite(this, aa));
             }
         } else {
@@ -5201,7 +5231,7 @@ public final class BoardView extends AbstractBoardView implements BoardListener,
         return clientgui != null ? clientgui.getDisplayedUnit() : null;
     }
 
-    FovHighlightingAndDarkening getFovHighlighting() {
+    public FovHighlightingAndDarkening getFovHighlighting() {
         return fovHighlightingAndDarkening;
     }
 

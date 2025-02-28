@@ -18,17 +18,15 @@
 */
 package megamek.client.bot.princess;
 
+import megamek.client.bot.princess.FireControl.FireControlType;
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
+import megamek.logging.MMLogger;
+
 import java.util.List;
 
-import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.MekWarrior;
-import megamek.common.MovePath;
-import megamek.common.options.OptionsConstants;
-
 public class InfantryPathRanker extends BasicPathRanker {
+    private final static MMLogger logger = MMLogger.create(InfantryPathRanker.class);
 
     public InfantryPathRanker(Princess princess) {
         super(princess);
@@ -40,7 +38,7 @@ public class InfantryPathRanker extends BasicPathRanker {
     protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
             List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
-        StringBuilder formula = new StringBuilder("Calculation: {");
+        StringBuilder formula = new StringBuilder();
 
         // Copy the path to avoid inadvertent changes.
         MovePath pathCopy = path.clone();
@@ -48,13 +46,10 @@ public class InfantryPathRanker extends BasicPathRanker {
         // look at all of my enemies
         FiringPhysicalDamage damageEstimate = new FiringPhysicalDamage();
 
-        double expectedDamageTaken = checkPathForHazards(pathCopy,
-                                                  movingUnit,
-                                                  game);
+        double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
         boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         for (Entity enemy : enemies) {
-
             // Skip ejected pilots.
             if (enemy instanceof MekWarrior) {
                 continue;
@@ -95,31 +90,49 @@ public class InfantryPathRanker extends BasicPathRanker {
         // My bravery modifier is based on my chance of getting to the
         // firing position (successProbability), how much damage I can do
         // (weighted by bravery), less the damage I might take.
-        double braveryValue =
-         getOwner().getBehaviorSettings().getBraveryValue();
+        double braveryValue = getOwner().getBehaviorSettings().getBraveryValue();
         double braveryMod = (maximumDamageDone * braveryValue) - expectedDamageTaken;
-        formula.append(" + braveryMod [")
-        .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
-        .append("((")
-        .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
-        .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
-        .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]");
-        double utility = braveryMod;
 
         // If an infantry unit is not in range to do damage,
         // then we want it to move closer. Otherwise, let's avoid charging up to unmoved units,
         // that's not going to end well.
-        if (maximumDamageDone <= 0) {
-            utility -= calculateAggressionMod(movingUnit, pathCopy, game, formula);
-        }
+        var aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
 
         // The further I am from my teammates, the lower this path
         // ranks (weighted by Herd Mentality).
-        utility -= calculateHerdingMod(friendsCoords, pathCopy, formula);
+        var herdingMod = calculateHerdingMod(friendsCoords, pathCopy);
 
         // If I need to flee the board, I want to get closer to my home edge.
-        utility -= calculateSelfPreservationMod(movingUnit, pathCopy, game,
-                                         formula);
+        var selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
+
+        double utility = braveryMod;
+        utility -= aggressionMod;
+        utility -= herdingMod;
+        utility -= selfPreservationMod;
+
+        formula.append("Calculation: {braveryMod [")
+            .append(LOG_DECIMAL.format(braveryMod)).append(" = ")
+            .append("((")
+            .append(LOG_DECIMAL.format(maximumDamageDone)).append(" * ")
+            .append(LOG_DECIMAL.format(braveryValue)).append(") - ")
+            .append(LOG_DECIMAL.format(expectedDamageTaken)).append("]")
+            .append(")] - aggressionMod [").append(aggressionMod).append(" = ")
+            .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game)).append(" * ")
+            .append(getOwner().getBehaviorSettings().getHyperAggressionValue()).append("] - herdingMod [")
+            .append(herdingMod).append(" = ").append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
+            .append(" * ").append(getOwner().getBehaviorSettings().getHerdMentalityValue()).append("] + selfPreservationMod [")
+            .append(selfPreservationMod).append("]}");
+
+        logger.trace("Calculation: {braveryMod [{}] = (({} * {}) - {})] - aggressionMod [{}] = {} * {}] - herdingMod [{}] = {} * {}] + selfPreservationMod [{}]}",
+            LOG_DECIMAL.format(braveryMod),
+            LOG_DECIMAL.format(maximumDamageDone),
+            LOG_DECIMAL.format(braveryValue),
+            LOG_DECIMAL.format(expectedDamageTaken),
+            aggressionMod,
+            distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game), getOwner().getBehaviorSettings().getHyperAggressionValue(),
+            herdingMod,
+            distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game), getOwner().getBehaviorSettings().getHerdMentalityValue(),
+            selfPreservationMod);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());
         rankedPath.setExpectedDamage(maximumDamageDone);
@@ -127,9 +140,7 @@ public class InfantryPathRanker extends BasicPathRanker {
     }
 
     @Override
-    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path,
-                                                  boolean useExtremeRange, boolean useLOSRange) {
-
+    EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange, boolean useLOSRange) {
         //some preliminary calculations
         final double damageDiscount = 0.25;
         EntityEvaluationResponse returnResponse =

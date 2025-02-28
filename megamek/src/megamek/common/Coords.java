@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlElement;
@@ -41,8 +43,12 @@ public class Coords implements Serializable {
 
     private static final long serialVersionUID = -4451256806040563030L;
 
+    // region Constants
+    static final double EPSILON = 1e-7;
+    static final int MAX_ITERATIONS = 1000; // for median logic
     public static final double HEXSIDE = Math.PI / 3.0;
     public static final int[] ALL_DIRECTIONS = {0, 1, 2, 3, 4, 5};
+    // endregion Constants
 
     @XmlElement(name="x")
     private final int x;
@@ -58,6 +64,174 @@ public class Coords implements Serializable {
         this.x = x;
         this.y = y;
     }
+
+    /** Constructs a new coordinate pair at Coords(x, y). Note: Coords are immutable. */
+    public Coords(Coords other) {
+        this.x = other.x;
+        this.y = other.y;
+    }
+
+    /**
+     * Parses a string into a Coords object. The string can be in the format
+     * x,y or HexNumber. HexNumbers are offset by 1, so we have to reduce it here.
+     * <pre>{@code String hexNUmber = "0423";
+     * Coords coords = Coords.parse(hexNumber);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     *<p>Using X and Y is also easy</p>
+     * <pre>{@code String xy = "4,23";
+     * Coords coords = Coords.parse(xy);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     * @param input the string to parse
+     * @return the Coords object
+     */
+    public static Coords parseHexNumber(String input) {
+        return parse(input, -1);
+    }
+
+    /**
+     * Parses a string into a Coords object. The string can be in the format
+     * x,y or HexNumber. You can also apply any offset you want to compensate
+     * different starting points or uses.
+     * <pre>{@code String hexNUmber = "0423";
+     * Coords coords = Coords.parse(hexNumber, -1);
+     * assert coords.getX() == 3;
+     * assert coords.getY() == 22;}</pre>
+     *<p>Using X and Y is also easy</p>
+     * <pre>{@code String xy = "4,23";
+     * Coords coords = Coords.parse(xy, 0);
+     * assert coords.getX() == 4;
+     * assert coords.getY() == 23;}</pre>
+     * @param input the string to parse
+     * @return the Coords object
+     * @throws IllegalArgumentException if the input is not in the correct format or is null
+     */
+    public static Coords parse(String input, int offset) {
+        if (input == null) {
+            throw new IllegalArgumentException("Coords require a value.");
+        }
+        String[] parts;
+        if (input.contains(",")) {
+             parts = input.split(",");
+        } else {
+            // split in half
+            if (input.length() % 2 == 1) {
+                throw new IllegalArgumentException(
+                    "Coords must be in the format x,y or hexnumber. Hexnumber always has an even number of digits.");
+            }
+            int half = input.length() / 2;
+            parts = new String[] {input.substring(0, half), input.substring(half)};
+        }
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Coords must be in the format x,y or hexnumber.");
+        }
+        try {
+            // hexNumbers are offset by 1, so we have to reduce it here
+            int x = Integer.parseInt(parts[0]) + offset;
+            int y = Integer.parseInt(parts[1]) + offset;
+            return new Coords(x, y);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Coords must be in the format x,y.");
+        }
+    }
+
+    public @Nullable Coords closestCoords(List<Coords> coords) {
+        if (coords.isEmpty()) {
+            return null;
+        }
+        Coords closest = null;
+        int closestDistance = Integer.MAX_VALUE;
+        for (Coords c : coords) {
+            int distance = distance(c);
+            if (distance < closestDistance) {
+                closest = c;
+                closestDistance = distance;
+            }
+        }
+        return closest;
+    }
+
+    public static @Nullable Coords average(List<Coords> positions) {
+        if (positions.isEmpty()) {
+            return null;
+        }
+        int x = 0;
+        int y = 0;
+        for (Coords pos : positions) {
+            x += pos.x;
+            y += pos.y;
+        }
+        return new Coords(x / positions.size(), y / positions.size());
+    }
+
+
+    /**
+     * Returns the median of the given list of positions. The median is the point that minimizes the sum of the
+     * distances to all other points in the list. The algorithm is based on the Weiszfeld algorithm.
+     * @param positions list of positions
+     * @return the median of the given list of positions
+     */
+    public static @Nullable Coords median(List<Coords> positions) {
+        if (positions.isEmpty()) {
+            return null;
+        }
+
+        int n = positions.size();
+
+        if (n == 1) {
+            return positions.get(0);
+        }
+
+        double x0 = 0.0;
+        double y0 = 0.0;
+        for (Coords p : positions) {
+            x0 += p.x;
+            y0 += p.y;
+        }
+        x0 /= n;
+        y0 /= n;
+
+        double currentX = x0;
+        double currentY = y0;
+
+        for (int iter = 0; iter < MAX_ITERATIONS; iter++) {
+            double numeratorX = 0.0;
+            double numeratorY = 0.0;
+            double denominator = 0.0;
+
+            for (Coords p : positions) {
+                double dx = p.x - currentX;
+                double dy = p.y - currentY;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 1e-15) {
+                    return p;
+                }
+
+                double w = 1.0 / dist;
+                numeratorX += p.x * w;
+                numeratorY += p.y * w;
+                denominator += w;
+            }
+
+            double newX = numeratorX / denominator;
+            double newY = numeratorY / denominator;
+
+            // Check for convergence
+            double shift = Math.sqrt((currentX - newX) * (currentX - newX)
+                + (currentY - newY) * (currentY - newY));
+            currentX = newX;
+            currentY = newY;
+
+            if (shift < EPSILON) {
+                break;
+            }
+        }
+
+        return new Coords((int) currentX, (int) currentY);
+    }
+
 
     /**
      * Returns the coordinate 1 unit in the specified direction dir.
@@ -79,9 +253,9 @@ public class Coords implements Serializable {
     public Coords translated(String dir) {
         int intDir = 0;
 
-        try {
+        if (Character.isDigit(dir.charAt(0))) {
             intDir = Integer.parseInt(dir);
-        } catch (NumberFormatException nfe) {
+        } else {
             if (dir.equalsIgnoreCase("N")) {
                 intDir = 0;
             } else if (dir.equalsIgnoreCase("NE")) {
@@ -549,6 +723,14 @@ public class Coords implements Serializable {
         return "(" + (x + 1) + ", " + (y + 1) + ")";
     }
 
+    /**
+     * Returns the coordinates in TSV format for logging purposes
+     * @return the coordinates in TSV format `x`\t`y`
+     */
+    public String toTSV() {
+        return x + "\t" + y;
+    }
+
     public int getX() {
         return x;
     }
@@ -563,5 +745,72 @@ public class Coords implements Serializable {
      */
     public boolean between(Coords s, Coords e) {
         return (s.distance(e) == s.distance(this) + this.distance(e));
+    }
+
+    /**
+     * @return CubeCoords representation of this Coords
+     */
+    public CubeCoords toCube() {
+        int offset = -1;
+        int q = x;
+        int r = y - (int) ((x + offset * (x & 1)) / 2.0);
+        int s = -q - r;
+        return new CubeCoords(q, r, s);
+    }
+
+    public Coords subtract(Coords centroid) {
+        return new Coords(x - centroid.x, y - centroid.y);
+    }
+
+    public Coords add(Coords centroid) {
+        return new Coords(x + centroid.x, y + centroid.y);
+    }
+
+    public double magnitude() {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public double cosineSimilarity(Coords other) {
+        double dot = getX() * other.getX() + getY() * other.getY();
+        double magA = magnitude();
+        double magB = other.magnitude();
+        if (magA == 0 || magB == 0) {
+            return 0;
+        }
+        return dot / (magA * magB);
+    }
+
+    /**
+     * Returns the hex code for this coordinate on the given board.
+     * @param board the board
+     * @return the hex code for this coordinate
+     */
+    public String hexCode(Board board) {
+        return hexCode(this, board);
+    }
+
+    /**
+     * Returns the hex code for the given coordinates on the given board.
+     * @param coords the coordinates
+     * @param board the board
+     * @return the hex code for the given coordinates
+     */
+    public static String hexCode(Coords coords, Board board) {
+        return hexCode(coords.getX() + 1, coords.getY() + 1, board);
+    }
+
+    /**
+     * Returns the hex code for the given coordinates.
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param board the board
+     * @return the hex code for the given coordinates
+     */
+    public static  String hexCode(int x, int y, Board board) {
+        int maxSize = Math.max(board.getWidth(), board.getHeight());
+        if (maxSize+1 > 99) {
+            return String.format("%03d%03d", x, y);
+        }
+        return String.format("%02d%02d", x, y);
     }
 }

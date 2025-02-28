@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
@@ -356,99 +357,7 @@ public class MoveStep implements Serializable {
 
     @Override
     public String toString() {
-        switch (type) {
-            case BACKWARDS:
-                return "B";
-            case CHARGE:
-                return "Ch";
-            case DFA:
-                return "DFA";
-            case FORWARDS:
-                return "F";
-            case CAREFUL_STAND:
-            case GET_UP:
-                return "Up";
-            case GO_PRONE:
-                return "Prone";
-            case START_JUMP:
-                return "StrJump";
-            case TURN_LEFT:
-                return "L";
-            case TURN_RIGHT:
-                return "R";
-            case LATERAL_LEFT:
-                return "ShL";
-            case LATERAL_RIGHT:
-                return "ShR";
-            case LATERAL_LEFT_BACKWARDS:
-                return "ShLB";
-            case LATERAL_RIGHT_BACKWARDS:
-                return "ShRB";
-            case UNJAM_RAC:
-                return "Unjam";
-            case SEARCHLIGHT:
-                return "SLight";
-            case LOAD:
-                return "Load";
-            case UNLOAD:
-                return "Unload";
-            case EJECT:
-                return "Eject";
-            case UP:
-                return "U";
-            case DOWN:
-                return "D";
-            case HULL_DOWN:
-                return "HullDown";
-            case CLIMB_MODE_ON:
-                return "CM+";
-            case CLIMB_MODE_OFF:
-                return "CM-";
-            case TAKEOFF:
-                return "Takeoff";
-            case VTAKEOFF:
-                return "Vertical Takeoff";
-            case LAND:
-                return "Landing";
-            case VLAND:
-                return "Vertical Landing";
-            case ACC:
-                return "Acc";
-            case DEC:
-                return "Dec";
-            case MANEUVER:
-                return "Maneuver";
-            case RETURN:
-                return "Fly Off (Return)";
-            case OFF:
-                return "Fly Off";
-            case FLEE:
-                return "Flee";
-            case EVADE:
-                return "Evade";
-            case CONVERT_MODE:
-                return "ConvMode";
-            case TOW:
-                return "Tow";
-            case DISCONNECT:
-                return "Disconnect";
-            case THRUST:
-                return "Thrust";
-            case YAW:
-                return "Yaw";
-            case HOVER:
-                return "Hover";
-            case BRACE:
-                return "Brace";
-            case CHAFF:
-                return "Chaff";
-            case PICKUP_CARGO:
-                return "Pickup Cargo";
-            case DROP_CARGO:
-                return "Drop Cargo";
-            default:
-                return "???";
-        }
+        return type.getHumanReadableLabel();
     }
 
     public MoveStepType getType() {
@@ -671,7 +580,7 @@ public class MoveStep implements Serializable {
                     maxElevation++;
                 }
 
-                if (bld.getType() == Building.WALL) {
+                if (bld.getType() == BuildingType.WALL) {
                     if (maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV)) {
                         setElevation(Math.max(getElevation(),
                                 hex.terrainLevel(Terrains.BLDG_ELEV)));
@@ -3291,7 +3200,7 @@ public class MoveStep implements Serializable {
             } else if (!isInfantry && !isSuperHeavyMek) {
                 if (!isProto) {
                     // non-protos pay extra according to the building type
-                    mp += bldg.getType();
+                    mp += bldg.getType().getTypeValue();
                     if (bldg.getBldgClass() == Building.HANGAR) {
                         mp--;
                     }
@@ -3427,7 +3336,7 @@ public class MoveStep implements Serializable {
             int maxElevation = (2 + entity.getElevation() + game.getBoard()
                     .getHex(entity.getPosition()).getLevel()) - hex.getLevel();
 
-            if ((bld.getType() == Building.WALL)
+            if ((bld.getType() == BuildingType.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
                 return false;
             }

@@ -34,7 +34,7 @@ public abstract class NLWeapon extends EnergyWeapon {
         super();
         atClass = CLASS_CAPITAL_LASER;
         capital = true;
-        flags = flags.andNot(F_PROTO_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);;
+        flags = flags.andNot(F_PROTO_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
     }
 
     @Override

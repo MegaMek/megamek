@@ -1,0 +1,60 @@
+#Saved from version 0.50.04-SNAPSHOT on 2025-02-09
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Gun Platoon (ComStar)
+</Name>
+
+<Model>
+(Wheeled LBX10)
+</Model>
+
+<year>
+2825
+</year>
+
+<originalBuildYear>
+2825
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Sniper
+</role>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<Troopers Equipment>
+ComStar Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISLBXAC10
+IS LB 10-X Cluster Ammo
+ISLBXAC10
+IS LB 10-X Cluster Ammo
+</Field Guns Equipment>
+
+<history>
+Intro date is based on when the weapon becomes an Advanced weapon. Since MM can't make certain units unavailable when a weapon becomes extinct these units may become invalid.
+</history>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+InfantryAssaultRifle
+</Primary>
+

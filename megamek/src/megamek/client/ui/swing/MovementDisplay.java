@@ -2585,6 +2585,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // *(excluding Infantry, see StratOps pg. 20)
         int doorsEligibleForDrop = bay.getCurrentDoors();
         List <Entity> droppableUnits = bay.getDroppableUnits();
+        boolean infantryTransporter = (bay instanceof InfantryTransporter);
 
         // No units == no drops
         if (droppableUnits.isEmpty()) {
@@ -2601,7 +2602,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         boolean hasDroppableUnit = false;
         for (Entity droppableUnit : droppableUnits) {
-            if (doorsEligibleForDrop > 0) {
+            if (infantryTransporter || doorsEligibleForDrop > 0) {
                 if (droppedUnits.contains(droppableUnit.getId())) {
                     // Infantry don't count against door usage
                     if (!droppableUnit.isInfantry()) {
@@ -2615,7 +2616,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             }
         }
-        if (doorsEligibleForDrop > 0 && hasDroppableUnit) {
+        if (hasDroppableUnit && (infantryTransporter || (doorsEligibleForDrop > 0))) {
             return true;
         }
         return false;
@@ -4052,8 +4053,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 isInfantryT = true;
 
                 // Can't drop infantry from above 8 Altitude
-                if (isInfantryT && cmd.getLastStep().getAltitude() > 8) {
-                    continue;
+                if (isInfantryT) {
+                    int currAlt = (cmd.getLastStep() != null) ? cmd.getLastStep().getAltitude() : ce.getAltitude();
+                    if (currAlt > 8) {
+                        continue;
+                    }
                 }
 
                 for (Entity entity : iTransporter.getDroppableUnits()) {

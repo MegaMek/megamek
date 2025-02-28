@@ -3762,7 +3762,34 @@ public class TWGameManager extends AbstractGameManager {
         drop.setFacing(entity.getFacing());
         drop.setSecondaryFacing(entity.getFacing());
 
-        drop.setAltitude(altitude);
+        // Units dropped at NOE / Altitude 1 are instantly placed on the ground,
+        // or at elevation 8 for VTOL (TW pg. 225)
+        if (altitude == 1) {
+            Hex hex = getGame().getBoard().getHex(curPos);
+            int elevation = 0;
+            if (hex != null) {
+                elevation = hex.ceiling();
+            }
+            EntityMovementMode moveMode = drop.getMovementMode();
+            if (moveMode == EntityMovementMode.VTOL) {
+                elevation = 8;
+                // Set "jumping now" for +1 to-hit mod (TW pg. 225)
+                drop.setIsJumpingNow(true);
+            } else if (moveMode == EntityMovementMode.INF_JUMP) {
+                // Set "jumping now" for +1 to-hit mod (TW pg. 225)
+                drop.setIsJumpingNow(true);
+            } else if (moveMode == EntityMovementMode.WIGE) {
+                elevation = 1;
+            }
+
+            // Remove Airborne by setting Altitude to 0
+            drop.setAltitude(0);
+            drop.setElevation(elevation);
+        } else {
+            drop.setAltitude(altitude);
+            // For non-aeros, we need to temporarily set elevation to 999 until they land
+            drop.setElevation(Aero.AERO_EFFECTIVE_ELEVATION);
+        }
         entityUpdate(drop.getId());
     }
 

@@ -174,6 +174,7 @@ public class TestHandheldWeapon extends TestEntity {
             if (ammoKinds.contains(kind)) {
                 illegal = true;
                 buff.append("Handheld weapon can only mount a single ammo bin for a given kind of ammo.\n");
+                buff.append("        Hint: If you're designing this weapon, instead of adding more ammo bins,\n        you can edit the value in the Shots column of the equipment list.\n");
                 break;
             }
             ammoKinds.add(kind);

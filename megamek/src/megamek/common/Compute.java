@@ -16,7 +16,6 @@
 package megamek.common;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;

@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2017 The MegaMek Team
+* Copyright (C) 2017-2025 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -36,7 +36,8 @@ public enum CrewType {
     QUADVEE (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 3),
     DUAL (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 2),
     COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, 1, -1, 1),
-    INFANTRY_CREW (new String[] {"Commander"}, 0, 0, -1, -1, 1);
+    INFANTRY_CREW (new String[] {"Commander"}, 0, 0, -1, -1, 1),
+    NONE(new String[] {}, -1, -1, -1, -1, -1);
 
     private final String[] roleNames;
     private final int pilotPos;

@@ -2063,7 +2063,7 @@ public class Princess extends BotClient {
                 break;
             }
 
-            if (entity instanceof MekWarrior) {
+            if (entity instanceof EjectedCrew) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
@@ -2139,7 +2139,7 @@ public class Princess extends BotClient {
             }
 
             // the original bot's physical options seem superior
-            return PhysicalCalculator.getBestPhysical(attacker, game);
+            return PhysicalCalculator.getBestPhysical(attacker, game, getBehaviorSettings(), getHonorUtil());
         } catch (Exception ignored) {
             return null;
         }

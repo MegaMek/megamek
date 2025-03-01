@@ -393,7 +393,7 @@ public class FireControl {
         if (!isShooterInfantry) {
             if (target instanceof BattleArmor) {
                 toHitData.addModifier(TH_TAR_BA);
-            } else if (target instanceof MekWarrior) {
+            } else if (target instanceof EjectedCrew) {
                 toHitData.addModifier(TH_TAR_MW);
             } else if (target instanceof Infantry) {
                 toHitData.addModifier(TH_TAR_INF);
@@ -1391,7 +1391,7 @@ public class FireControl {
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
-        utility -= (firingPlan.getTarget() instanceof MekWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
+        utility -= (firingPlan.getTarget() instanceof EjectedCrew) ? EJECTED_PILOT_DISUTILITY : 0;
         firingPlan.setUtility(utility);
     }
 

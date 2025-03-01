@@ -129,17 +129,21 @@ class ToHitDataTest {
         int gunnery = 4;
         int amm = 2;
         int rangeMod = 2;
+        int targetMove = 3;
+        target1.delta_distance = targetMove;
 
         toHitData.addModifier(gunnery, "Gunnery Skill");
         toHitData.addModifier(amm, "Attacker ran");
         toHitData.append(Compute.getTargetMovementModifier(game, target1.getId()));
         toHitData.addModifier(rangeMod, "Range Mod");
 
+        assertEquals(4, toHitData.getModifiers().size());
+        assertEquals(gunnery + amm + rangeMod + 1, toHitData.getValue());
+
         // Run adjustment
         toHitData.adjustSwarmToHit();
 
         assertEquals(3, toHitData.getModifiers().size());
         assertEquals(gunnery + amm + rangeMod, toHitData.getValue());
-
     }
 }

@@ -131,4 +131,13 @@ public class AmmoMounted extends Mounted<AmmoType> {
     public boolean isGroundBomb() {
         return getType().hasFlag(AmmoType.F_GROUND_BOMB);
     }
+
+    @Override
+    public double getTonnage() {
+        if (getEntity() instanceof HandheldWeapon) {
+            return getType().getKgPerShot() * getSize() / 1000.0;
+        } else {
+            return super.getTonnage();
+        }
+    }
 }

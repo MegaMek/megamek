@@ -47,7 +47,7 @@ class ImageAtlasMapTest {
         imageAtlasMap.put(originalFilePath, atlasFilePath);
 
         String result = imageAtlasMap.get(originalFilePath);
-        assertEquals(atlasFilePath.toString(), result);
+        assertEquals("data/images/foo.png", result);
     }
 
     @Test
@@ -95,6 +95,6 @@ class ImageAtlasMapTest {
 
         ImageAtlasMap readImageAtlasMap = ImageAtlasMap.readFromFile(testFilePath);
         String result = readImageAtlasMap.get(originalFilePath);
-        assertEquals(atlasFilePath.toString(), result);
+        assertEquals("data/images/atlas/foo.png", result);
     }
 }

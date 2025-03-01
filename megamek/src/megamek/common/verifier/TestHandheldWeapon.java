@@ -18,7 +18,11 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.HandheldWeapon;
 import megamek.common.MiscType;
-import megamek.common.equipment.AmmoMounted;
+import megamek.common.options.OptionsConstants;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestHandheldWeapon extends TestEntity {
     private final HandheldWeapon hhw;
@@ -124,6 +128,21 @@ public class TestHandheldWeapon extends TestEntity {
             }
         }
 
+        if (showFailedEquip() && hasFailedEquipment(buff)) {
+            correct = false;
+        }
+        if (hasIllegalTechLevels(buff, ammoTechLvl)) {
+            correct = false;
+        }
+        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+            correct = false;
+        }
+        if (hasIllegalEquipmentCombinations(buff)) {
+            correct = false;
+        }
+        if (getEntity().hasQuirk(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN) || getEntity().canonUnitWithInvalidBuild()) {
+            correct = true;
+        }
         return correct;
     }
 
@@ -143,6 +162,24 @@ public class TestHandheldWeapon extends TestEntity {
         buff.append(printWeightCalculation()).append("\n");
         printFailedEquipment(buff);
         return buff;
+    }
+
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+
+        Set<Pair<Integer, Integer>> ammoKinds = new HashSet<>();
+        for (var at : hhw.getAmmo()) {
+            var kind = Pair.of(at.getType().getAmmoType(), at.getType().getRackSize());
+            if (ammoKinds.contains(kind)) {
+                illegal = true;
+                buff.append("Handheld weapon can only mount a single ammo bin for a given kind of ammo.\n");
+                break;
+            }
+            ammoKinds.add(kind);
+        }
+
+        return illegal;
     }
 
     @Override

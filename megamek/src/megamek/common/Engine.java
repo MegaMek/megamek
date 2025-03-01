@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
- * 
+ *
  * @author Reinhard Vicinus
  */
 public class Engine implements Serializable, ITechnology {
@@ -645,7 +645,7 @@ public class Engine implements Serializable, ITechnology {
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return hasSCM ? 3 : 4;
+                return hasSCM ? 2 : 4;
             default:
                 return hasSCM ? 0 : 1;
         }
@@ -661,7 +661,7 @@ public class Engine implements Serializable, ITechnology {
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return hasSCM ? 4 : 6;
+                return hasSCM ? 2 : 6;
             default:
                 return hasSCM ? 0 : 2;
         }
@@ -677,7 +677,7 @@ public class Engine implements Serializable, ITechnology {
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return hasSCM ? 6 : 9;
+                return hasSCM ? 2 : 9;
             default:
                 return hasSCM ? 0 : 3;
         }

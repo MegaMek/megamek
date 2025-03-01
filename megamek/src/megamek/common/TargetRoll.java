@@ -223,16 +223,32 @@ public class TargetRoll implements Serializable {
      * @return
      */
     public TargetRollModifier removeModifier(String fragment) {
-        Pattern pattern = Pattern.compile(fragment);
-        int index = IntStream.range(0, modifiers.size())
-            .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
-            .findFirst().orElse(-1);
-        if (index == -1) {
-            return null;
+        List<TargetRollModifier> mods = removeModifiers(List.of(fragment));
+        return (mods.isEmpty()) ? null : mods.get(0);
+    }
+
+    /**
+     * Attempts to remove and return (if needed) the first mod that matches
+     * each provided string
+     * @param fragments List of strings / regexes to match
+     * @return List of mods that are matched and removed
+     */
+    public List<TargetRollModifier> removeModifiers(List<String> fragments) {
+        List<TargetRollModifier> matches = new ArrayList<>();
+        TargetRollModifier mod;
+        for (String fragment : fragments) {
+            Pattern pattern = Pattern.compile(fragment);
+            int index = IntStream.range(0, modifiers.size())
+                .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
+                .findFirst().orElse(-1);
+            if (index != -1) {
+                mod = modifiers.get(index);
+                matches.add(mod);
+                modifiers.remove(mod);
+            }
         }
-        TargetRollModifier mod = modifiers.get(index);
-        removeModifier(mod);
-        return mod;
+        recalculate();
+        return matches;
     }
 
     /**

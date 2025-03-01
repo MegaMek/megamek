@@ -337,37 +337,29 @@ public class ToHitData extends TargetRoll {
      * mods.
      */
     public void adjustSwarmToHit() {
-        // Remove first movement modifier (this does not need localization yet; see Compute.getTargetMovementModifier())
-        removeModifier("target (did not |)move(d \\S* hex)?");
-
-        // Remove jumped/airborne
-        removeModifier("target jumped");
-        removeModifier("target was airborne");
-
-        // Remove assault dropped
-        removeModifier("target is assault dropping");
-
-        // Remove skidded
-        removeModifier("target skidded");
-
-        // Remove possible Aerospace Side Mod (this needs to be localized)
-        String sideModRegex = megamek.client.ui.Messages.getString("WeaponAttackAction.AeroNoseAttack") + "|" + megamek.client.ui.Messages.getString("WeaponAttackAction.AeroSideAttack");
-        removeModifier(sideModRegex);
-
-        // Remove possible called shot mods
-        List<String> calls = List.of(
-            megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"),
-            megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLow"),
-            megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLeft"),
-            megamek.client.ui.Messages.getString("WeaponAttackAction.CalledRight")
+        removeModifiers(
+            List.of(
+                // Remove first movement modifier (this does not need localization yet; see Compute.getTargetMovementModifier())
+                "target (did not |)move(d \\S* hex)?",
+                // Remove jumped/airborne
+                "target jumped",
+                "target was airborne",
+                // Remove assault dropped
+                "target is assault dropping",
+                // Remove skidded
+                "target skidded",
+                // Remove possible Aerospace Side Mod (this needs to be localized)
+                megamek.client.ui.Messages.getString("WeaponAttackAction.AeroNoseAttack") + "|" + megamek.client.ui.Messages.getString("WeaponAttackAction.AeroSideAttack"),
+                // Remove possible called shot mods
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLow"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLeft"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledRight"),
+                // Remove target prone mods:
+                megamek.client.ui.Messages.getString("WeaponAttackAction.ProneAdj"),
+                Messages.getString("WeaponAttackAction.ProneRange")
+            )
         );
-        for (String call: calls) {
-            removeModifier(call);
-        }
-
-        // Remove target prone mods:
-        removeModifier(megamek.client.ui.Messages.getString("WeaponAttackAction.ProneAdj"));
-        removeModifier(Messages.getString("WeaponAttackAction.ProneRange"));
     }
 
 }

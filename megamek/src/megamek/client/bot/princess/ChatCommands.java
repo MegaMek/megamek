@@ -44,6 +44,9 @@ public enum ChatCommands {
     AVOID("av", "avoid",
         Messages.getString("Princess.command.avoid.description"),
         new AvoidCommand()),
+    ARTILLERY("ar", "artillery",
+        Messages.getString("Princess.command.artillery.description"),
+        new ArtilleryCommand()),
     AGGRESSION("ag", "aggression",
         Messages.getString("Princess.command.aggression.description"),
         new AggressionCommand()),
@@ -68,6 +71,12 @@ public enum ChatCommands {
     IGNORE_TARGET("ig", "ignore-target",
         Messages.getString("Princess.command.ignoreTarget.description"),
         new IgnoreTargetCommand()),
+    IGNORE_PLAYER("ip", "ignore-player",
+        Messages.getString("Princess.command.ignorePlayer.description"),
+        new IgnorePlayerCommand()),
+    IGNORE_TURRETS("it", "ignore-turrets",
+        Messages.getString("Princess.command.ignoreTurrets.description"),
+        new IgnoreTurretsCommand()),
     SHOW_DISHONORED("di", "show-dishonored",
         Messages.getString("Princess.command.showDishonored.description"),
         new ShowDishonoredCommand()),
@@ -116,7 +125,7 @@ public enum ChatCommands {
 
     public String getDescription() {
         return (chatCommand.defineArguments().isEmpty() ?
-            "" : chatCommand.getArgumentsRepr() + " : " + chatCommand.getArgumentsDescription() + " ") + description;
+            "" : chatCommand.getArgumentsDescription() + " ") + description;
     }
 
     public String getCommand() {

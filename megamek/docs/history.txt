@@ -65,6 +65,10 @@ MEGAMEK VERSION HISTORY:
 + PR #6606: Improve Deployment-Phase Towing Logic
 + PR #6611: Add VTOL/WiGE exemption for AAA and LAA missiles
 + PR #6505: Remove XStream from Image Atlas Generation
++ PR #6617: Preliminary handheld weapon support
++ Fix #6604: Fuel Air Explosives do no damage to off-board units
++ PR #6615: Feat: More princess commands - ignore player/turret, order offboard artillery
++ Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid. 
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

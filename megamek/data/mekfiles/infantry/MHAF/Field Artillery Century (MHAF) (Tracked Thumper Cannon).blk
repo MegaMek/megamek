@@ -1,0 +1,54 @@
+#Saved from version 0.50.03-SNAPSHOT on 2025-02-06
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Field Artillery Century (MHAF)
+</Name>
+
+<Model>
+(Tracked Thumper Cannon)
+</Model>
+
+<year>
+3082
+</year>
+
+<originalBuildYear>
+3082
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<role>
+Missile Boat
+</role>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<Troopers Equipment>
+Marian Hegemony Infantry Kit
+</Troopers Equipment>
+
+<Field Guns Equipment>
+ISThumperCannon
+ISThumperCannonAmmo
+</Field Guns Equipment>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+

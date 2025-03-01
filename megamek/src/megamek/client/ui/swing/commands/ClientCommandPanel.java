@@ -110,49 +110,49 @@ public class ClientCommandPanel extends JDialog {
         }
         return argumentComponents;
     }
-
     private JComponent getArgumentComponent(Argument<?> argument) {
+        JComponent component = null;
         if (argument instanceof CoordXArgument intArg) {
             return getJSpinner(argument, createSpinner(intArg), 0);
 
         } else if (argument instanceof CoordYArgument intArg) {
-            return getJSpinner(argument, createSpinner(intArg), 2);
+            component = getJSpinner(argument, createSpinner(intArg), 2);
 
         } else if (argument instanceof PlayerArgument playerArg) {
-            return getStringJComboBox(argument.getName(), createPlayerComboBox(playerArg), argument.getHelp());
+            component = getStringJComboBox(argument.getName(), createPlayerComboBox(playerArg), argument.getHelp());
 
         } else if (argument instanceof UnitArgument unitArg) {
-            return getStringJComboBox(argument.getName(), createUnitComboBox(unitArg), argument.getHelp());
+            component = getStringJComboBox(argument.getName(), createUnitComboBox(unitArg), argument.getHelp());
 
         } else if (argument instanceof TeamArgument teamArg) {
-            return getStringJComboBox(argument.getName(), createTeamsComboBox(teamArg), argument.getHelp());
+            component = getStringJComboBox(argument.getName(), createTeamsComboBox(teamArg), argument.getHelp());
 
         } else if (argument instanceof IntegerArgument intArg) {
-            return getJSpinner(argument, createSpinner(intArg));
+            component = getJSpinner(argument, createSpinner(intArg));
 
         } else if (argument instanceof OptionalIntegerArgument intArg) {
-            return getJSpinner(argument, createSpinner(intArg));
+            component = getJSpinner(argument, createSpinner(intArg));
 
         } else if (argument instanceof OptionalEnumArgument<?> enumArg) {
-            return getStringJComboBox(argument.getName(), createOptionalEnumComboBox(enumArg), argument.getHelp());
+            component = getStringJComboBox(argument.getName(), createOptionalEnumComboBox(enumArg), argument.getHelp());
 
         } else if (argument instanceof EnumArgument<?> enumArg) {
-            return getStringJComboBox(argument.getName(), createEnumComboBox(enumArg), argument.getHelp());
+            component = getStringJComboBox(argument.getName(), createEnumComboBox(enumArg), argument.getHelp());
 
         } else if (argument instanceof OptionalPasswordArgument) {
-            return getJPasswordField(argument);
+            component = getJPasswordField(argument);
 
         } else if (argument instanceof StringArgument stringArg) {
-            return getJTextField(argument.getName(), argument.getHelp(), stringArg.hasDefaultValue(), stringArg.getValue());
+            component = getJTextField(argument.getName(), argument.getHelp(), stringArg.hasDefaultValue(), stringArg.getValue());
 
         } else if (argument instanceof OptionalStringArgument stringArg) {
-            return getJTextField(argument.getName(), argument.getHelp(), stringArg.getValue().isPresent(), stringArg.getValue().get());
+            component = getJTextField(argument.getName(), argument.getHelp(), stringArg.getValue().isPresent(), stringArg.getValue().get());
 
         } else if (argument instanceof BooleanArgument boolArg) {
-            return getJCheckBox(argument, boolArg);
+            component = getJCheckBox(argument, boolArg);
         }
-
-        return null;
+        yPosition++;
+        return component;
     }
 
     private JCheckBox getJCheckBox(Argument<?> argument, BooleanArgument boolArg) {

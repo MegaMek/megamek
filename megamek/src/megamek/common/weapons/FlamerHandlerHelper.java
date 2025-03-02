@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2019 The Megamek Team. All rights reserved.
  *
- * This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
  * MekHQ is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import megamek.common.equipment.ArmorType;
  * @author NickAragua
  *
  */
-public class FlamerHandlerHelper {   
+public class FlamerHandlerHelper {
     /**
      * Handles flamer heat damage.
      */
@@ -42,15 +42,15 @@ public class FlamerHandlerHelper {
         r.subject = subjectId;
         r.indent(2);
         int heatDamage = wtype.getDamage();
-        
+
         // ER flamers don't do as much heat damage
         if (wtype.hasFlag(WeaponType.F_ER_FLAMER)) {
             heatDamage = Math.max(1, heatDamage / 2);
         }
-        
+
         boolean heatDamageReducedByArmor = false;
         int actualDamage = heatDamage;
-        
+
         // armor can't reduce damage if there isn't any
         if (entityTarget.getArmor(hit) > 0) {
             // heat dissipating armor divides heat damage by 2
@@ -63,8 +63,8 @@ public class FlamerHandlerHelper {
                 heatDamageReducedByArmor = true;
             }
 
-        } 
-        
+        }
+
         if (heatDamageReducedByArmor) {
             entityTarget.heatFromExternal += actualDamage;
             r.add(actualDamage);
@@ -77,7 +77,7 @@ public class FlamerHandlerHelper {
             r.add(heatDamage);
             r.choose(true);
         }
-        
+
         vPhaseReport.addElement(r);
     }
 }

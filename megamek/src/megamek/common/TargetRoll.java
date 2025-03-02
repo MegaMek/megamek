@@ -23,6 +23,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 /**
  * Keeps track of a target for a roll. Allows adding modifiers with
@@ -202,6 +205,50 @@ public class TargetRoll implements Serializable {
      */
     public void addModifier(TargetRollModifier modifier) {
         addModifierImpl(modifier);
+    }
+
+    /**
+     * Base removal method
+     * @param modifier
+     */
+    public void removeModifier(TargetRollModifier modifier) {
+        modifiers.remove(modifier);
+        recalculate();
+    }
+
+    /**
+     * Attempts to remove and return (if needed) the first mod that matches
+     * the provided string
+     * @param fragment of mod description to match
+     * @return
+     */
+    public TargetRollModifier removeModifier(String fragment) {
+        List<TargetRollModifier> mods = removeModifiers(List.of(fragment));
+        return (mods.isEmpty()) ? null : mods.get(0);
+    }
+
+    /**
+     * Attempts to remove and return (if needed) the first mod that matches
+     * each provided string
+     * @param fragments List of strings / regexes to match
+     * @return List of mods that are matched and removed
+     */
+    public List<TargetRollModifier> removeModifiers(List<String> fragments) {
+        List<TargetRollModifier> matches = new ArrayList<>();
+        TargetRollModifier mod;
+        for (String fragment : fragments) {
+            Pattern pattern = Pattern.compile(fragment);
+            int index = IntStream.range(0, modifiers.size())
+                .filter(i -> pattern.matcher(modifiers.get(i).getDesc()).find())
+                .findFirst().orElse(-1);
+            if (index != -1) {
+                mod = modifiers.get(index);
+                matches.add(mod);
+                modifiers.remove(mod);
+            }
+        }
+        recalculate();
+        return matches;
     }
 
     /**

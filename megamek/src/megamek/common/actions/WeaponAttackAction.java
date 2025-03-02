@@ -574,7 +574,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 isINarcGuided = true;
             }
         }
-        int toSubtract = 0;
 
         // Convenience variable to test the targetable type value
         final int ttype = target.getTargetType();
@@ -803,7 +802,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         usesAmmo);
                 // Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, aimingAt, aimingMode, wtype,
+                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, aimingAt, aimingMode, wtype,
                         weapon, weaponId, atype, munition, isFlakAttack, isHaywireINarced, isNemesisConfused,
                         isWeaponFieldGuns, usesAmmo);
             }
@@ -827,14 +826,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
 
         // Collect the modifiers for the target's condition/actions
-        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, aimingAt, aimingMode, distance,
+        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, aimingAt, aimingMode, distance,
                 wtype, weapon, atype, munition, isArtilleryDirect, isArtilleryIndirect, isAttackerInfantry,
                 exchangeSwarmTarget, isIndirect, isPointblankShot, usesAmmo);
 
         // Collect the modifiers for terrain and line-of-sight. This includes any
         // related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                losMods, toSubtract, eistatus, wtype, weapon, weaponId, atype, ammo, munition, isAttackerInfantry,
+                losMods, eistatus, wtype, weapon, weaponId, atype, ammo, munition, isAttackerInfantry,
                 inSameBuilding, isIndirect, isPointblankShot, underWater);
 
         // If this is a swarm LRM secondary attack, remove old target movement and
@@ -842,7 +841,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // add those for new target.
         if (exchangeSwarmTarget) {
             toHit = handleSwarmSecondaryAttacks(game, ae, target, swarmPrimaryTarget, swarmSecondaryTarget, toHit,
-                    toSubtract, eistatus, aimingAt, aimingMode, weapon, atype, munition, isECMAffected,
+                eistatus, aimingAt, aimingMode, weapon, atype, munition, isECMAffected,
                     inSameBuilding, underWater);
         }
 
@@ -886,7 +885,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             targEl = te.relHeight();
         }
 
-        int toSubtract = 0;
         int distance = Compute.effectiveDistance(game, ae, target);
 
         // EI system
@@ -932,14 +930,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         false, false, false, false, false);
                 // Everyone else
             } else {
-                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, toSubtract, Entity.LOC_NONE,
+                toHit = compileAttackerToHitMods(game, ae, target, los, toHit, Entity.LOC_NONE,
                         AimingMode.NONE, null, null, weaponId, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
                         false, false, false, false, false);
             }
         }
 
         // Collect the modifiers for the target's condition/actions
-        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, toSubtract, Entity.LOC_NONE,
+        toHit = compileTargetToHitMods(game, ae, target, ttype, los, toHit, Entity.LOC_NONE,
                 AimingMode.NONE, distance, null, null, null, EnumSet.of(AmmoType.Munitions.M_STANDARD),
                 false, false, isAttackerInfantry, false,
                 false, false, false);
@@ -947,7 +945,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Collect the modifiers for terrain and line-of-sight. This includes any
         // related to-hit table changes
         toHit = compileTerrainAndLosToHitMods(game, ae, target, ttype, aElev, tElev, targEl, distance, los, toHit,
-                losMods, toSubtract, eistatus, null, null, weaponId, null, null,
+                losMods, eistatus, null, null, weaponId, null, null,
                 EnumSet.of(AmmoType.Munitions.M_STANDARD), isAttackerInfantry,
                 inSameBuilding, false, false, false);
 
@@ -3461,9 +3459,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param los               The calculated LOS between attacker and target
      * @param toHit             The running total ToHitData for this
      *                          WeaponAttackAction
-     * @param toSubtract        An int value representing a running total of mods to
-     *                          disregard - used for some special attacks
-     *
      * @param aimingAt          An int value representing the location being aimed
      *                          at
      * @param aimingMode        An int value that determines the reason aiming is
@@ -3490,7 +3485,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      */
     private static ToHitData compileAttackerToHitMods(Game game, Entity ae, Targetable target,
             LosEffects los, ToHitData toHit,
-            int toSubtract, int aimingAt,
+            int aimingAt,
             AimingMode aimingMode, WeaponType wtype,
             Mounted<?> weapon, int weaponId, AmmoType atype,
             EnumSet<AmmoType.Munitions> munition, boolean isFlakAttack,
@@ -3551,11 +3546,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     // handled by Compute#targetSideTable
                     toHit.addModifier(+3, Messages.getString("WeaponAttackAction.CalledRight"));
                     break;
-            }
-            // If we're making a called shot with swarm LRMs, then the penalty
-            // only applies to the original attack.
-            if (call != CalledShot.CALLED_NONE) {
-                toSubtract += 3;
             }
         }
 
@@ -4208,9 +4198,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param los                 The calculated LOS between attacker and target
      * @param toHit               The running total ToHitData for this
      *                            WeaponAttackAction
-     * @param toSubtract          An int value representing a running total of mods
-     *                            to disregard - used for some special attacks
-     *
      * @param aimingAt            An int value representing the location being aimed
      *                            at - used by immobile target calculations
      * @param aimingMode          An int value that determines the reason aiming is
@@ -4240,7 +4227,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      */
     private static ToHitData compileTargetToHitMods(Game game, Entity ae, Targetable target,
             int ttype, LosEffects los, ToHitData toHit,
-            int toSubtract, int aimingAt,
+            int aimingAt,
             AimingMode aimingMode, int distance,
             WeaponType wtype, WeaponMounted weapon, AmmoType atype,
             EnumSet<AmmoType.Munitions> munition, boolean isArtilleryDirect,
@@ -4292,10 +4279,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 // Harder at range.
                 proneMod = new ToHitData(1, Messages.getString("WeaponAttackAction.ProneRange"));
             }
-        }
-        if (proneMod != null) {
-            toHit.append(proneMod);
-            toSubtract += proneMod.getValue();
         }
 
         // Special effects affecting the target
@@ -4363,7 +4346,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if ((te != null) && !isPointBlankShot) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
-            toSubtract += thTemp.getValue();
 
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM)
@@ -4427,11 +4409,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 } else {
                     immobileMod = Compute.getImmobileMod(target, aimingAt, AimingMode.NONE);
                 }
-            }
-
-            if (immobileMod != null) {
-                toHit.append(immobileMod);
-                toSubtract += immobileMod.getValue();
             }
         }
 
@@ -4556,9 +4533,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param toHit            The running total ToHitData for this
      *                         WeaponAttackAction
      * @param losMods          A cached set of LOS-related modifiers
-     * @param toSubtract       An int value representing a running total of mods to
-     *                         disregard - used for some special attacks
-     *
      * @param eistatus         An int value representing the ei cockpit/pilot
      *                         upgrade status
      *
@@ -4581,7 +4555,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
      */
     private static ToHitData compileTerrainAndLosToHitMods(Game game, Entity ae, Targetable target, int ttype,
             int aElev, int tElev,
-            int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int toSubtract, int eistatus,
+            int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods, int eistatus,
             WeaponType wtype, WeaponMounted weapon, int weaponId, AmmoType atype, AmmoMounted ammo,
             EnumSet<AmmoType.Munitions> munition, boolean isAttackerInfantry,
             boolean inSameBuilding, boolean isIndirect, boolean isPointBlankShot, boolean underWater) {
@@ -5050,21 +5024,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
      * @param swarmSecondaryTarget The current Targetable object being attacked
      * @param toHit                The running total ToHitData for this
      *                             WeaponAttackAction
-     * @param toSubtract           An int value representing a running total of mods
-     *                             to disregard
-     *
      * @param eistatus             An int value representing the ei cockpit/pilot
      *                             upgrade status - used for terrain calculation
      * @param aimingAt             An int value representing the location being
      *                             aimed at - used for immobile target
      * @param aimingMode           An int value that determines the reason aiming is
      *                             allowed - used for immobile target
-     *
      * @param weapon               The Mounted weapon being used
      * @param atype                The AmmoType being used for this attack
      * @param munition             Long indicating the munition type flag being
      *                             used, if applicable
-     *
      * @param isECMAffected        flag that indicates whether the target is inside
      *                             an ECM bubble
      * @param inSameBuilding       flag that indicates whether this attack
@@ -5075,7 +5044,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private static ToHitData handleSwarmSecondaryAttacks(Game game, Entity ae, Targetable target,
             Targetable swarmPrimaryTarget,
             Targetable swarmSecondaryTarget,
-            ToHitData toHit, int toSubtract,
+            ToHitData toHit,
             int eistatus, int aimingAt,
             AimingMode aimingMode, Mounted<?> weapon,
             AmmoType atype, EnumSet<AmmoType.Munitions> munition,
@@ -5091,7 +5060,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = new ToHitData();
         }
 
-        toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
+        // Remove extraneous mods
+        toHit.adjustSwarmToHit();
+
         toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
         toHit.append(Compute.getTargetTerrainModifier(game,
                 game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getId()), eistatus,

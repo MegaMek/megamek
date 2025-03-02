@@ -18,17 +18,6 @@
  */
 package megamek.client.ui.swing.dialog;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.util.Arrays;
-import java.util.Map;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
@@ -46,6 +35,11 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.Map;
+
 public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     private static final long serialVersionUID = -5717009055093904636L;
@@ -55,7 +49,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     //endregion Variable Declarations
 
     public MegaMekUnitSelectorDialog(ClientGUI clientGUI, UnitLoadingDialog unitLoadingDialog) {
-        super(clientGUI.getFrame(), unitLoadingDialog);
+        super(clientGUI.getFrame(), unitLoadingDialog, true);
         this.clientGUI = clientGUI;
 
         updateOptionValues();
@@ -107,8 +101,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     protected void select(boolean close) {
-        Entity e = getSelectedEntity();
-        if (e != null) {
+        java.util.List<Entity> entities = getSelectedEntities();
+        if (!entities.isEmpty()) {
             Client client = null;
             String name = (String) comboPlayer.getSelectedItem();
 
@@ -119,11 +113,15 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             if (client == null) {
                 client = clientGUI.getClient();
             }
-            autoSetSkillsAndName(e, client.getLocalPlayer());
-            e.setOwner(client.getLocalPlayer());
-            client.sendAddEntity(e);
 
-            String msg = clientGUI.getClient().getLocalPlayer() + " selected a unit for player: " + name;
+
+            for (var e : entities) {
+                autoSetSkillsAndName(e, client.getLocalPlayer());
+                e.setOwner(client.getLocalPlayer());
+            }
+            client.sendAddEntity(entities);
+
+            String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ? "a unit" : entities.size() + " units") + " for player: " + name;
             clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
         }
 

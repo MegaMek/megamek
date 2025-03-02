@@ -15,7 +15,7 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
-import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.InfantryTransporter.PlatoonType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.WeaponMounted;
@@ -1419,7 +1419,7 @@ public class BLKFile {
         private double size;
         private int doors;
         private int bayNumber = -1;
-        private PlatoonType platoonType = InfantryBay.PlatoonType.FOOT;
+        private PlatoonType platoonType = InfantryTransporter.PlatoonType.FOOT;
         private boolean isComstarBay;
         private boolean isClanBay;
         private int facing = Entity.LOC_NONE;

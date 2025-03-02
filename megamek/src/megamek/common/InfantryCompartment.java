@@ -13,17 +13,15 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Represents a volume of space set aside for carrying troops and their equipment under battle
  * conditions. Typically, a component of an APC.
  */
-public final class InfantryCompartment implements Transporter {
+public final class InfantryCompartment implements Transporter, InfantryTransporter {
     private static final long serialVersionUID = 7837499891552862932L;
 
     /**
@@ -221,6 +219,28 @@ public final class InfantryCompartment implements Transporter {
         return null;
     }
 
+    /**
+     * @return The amount of unused space in the bay expressed in slots. For most bays this is the
+     *         same as the unused space, but bays for units that can take up a variable amount
+     *         of space (such as infantry bays) this calculates the number of the default unit size
+     *         that can fit into the remaining space.
+     */
+    @Override
+    public double getUnusedSlots() {
+        return currentSpace;
+    }
+
+    /** @return A (possibly empty) list of units from this bay that can be assault-dropped. */
+    @Override
+    public List<Entity> getDroppableUnits() {
+        return troops.keySet().stream().map(game::getEntity).filter(Objects::nonNull).filter(Entity::canAssaultDrop).collect(toList());
+    }
+    // Use the calculated original weight for infantry in cargo bays
+    @Override
+    public double spaceForUnit(Entity unit) {
+        return Math.round(unit.getWeight() / unit.getInternalRemainingPercent());
+    }
+
     @Override
     public List<Entity> getExternalUnits() {
         return new ArrayList<>(1);
@@ -234,6 +254,11 @@ public final class InfantryCompartment implements Transporter {
     @Override
     public String toString() {
         return "troopspace:" + totalSpace;
+    }
+
+    @Override
+    public String getType() {
+        return "Infantry Compartment";
     }
 
     @Override

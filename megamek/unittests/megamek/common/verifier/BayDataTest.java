@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 
 import megamek.common.*;
-import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.InfantryTransporter.PlatoonType;
 
 class BayDataTest {
 

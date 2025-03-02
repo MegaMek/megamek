@@ -86,7 +86,7 @@ public class TransportCalculator {
             } else if (en.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 // Here we need to count the transport weight of the platoon rather than just
                 // the number
-                unitCounts.merge(UnitType.INFANTRY, InfantryBay.PlatoonType.getPlatoonType(en).getWeight(),
+                unitCounts.merge(UnitType.INFANTRY, InfantryTransporter.PlatoonType.getPlatoonType(en).getWeight(),
                         Integer::sum);
             } else if (en.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 unitCounts.merge(UnitType.DROPSHIP, 1, Integer::sum);

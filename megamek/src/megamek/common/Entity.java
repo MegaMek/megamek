@@ -8750,15 +8750,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
             if (next instanceof InfantryCompartment nextCompartment) {
-                for (Entity e : nextCompartment.getDroppableUnits()) {
-                    result.addElement(e);
-                }
+                result.addAll(nextCompartment.getDroppableUnits());
             } else if (next instanceof Bay nextBay) {
                 // Infantry (Conventional and BA) do not need doors to deploy (TM 209)
                 if (nextBay instanceof InfantryTransporter || nextBay.getCurrentDoors() > 0) {
-                    for (Entity e : nextBay.getDroppableUnits()) {
-                        result.addElement(e);
-                    }
+                    result.addAll(nextBay.getDroppableUnits());
                 }
             }
         }

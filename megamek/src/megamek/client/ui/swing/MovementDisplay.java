@@ -2600,6 +2600,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return true;
         }
 
+        // If current entity has any viable bays with droppable units that aren't already dropping,
+        // activate the button.
         boolean hasDroppableUnit = false;
         for (Entity droppableUnit : droppableUnits) {
             if (infantryTransporter || doorsEligibleForDrop > 0) {
@@ -2616,7 +2618,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             }
         }
-        if (hasDroppableUnit && (infantryTransporter || (doorsEligibleForDrop > 0))) {
+        if (hasDroppableUnit) {
             return true;
         }
         return false;
@@ -2629,23 +2631,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return true if there are available droppable units in this compartment
      */
     private boolean checkCompartmentDropEnable(InfantryCompartment compartment, Set<Integer> droppedUnits) {
-        // A compartment can drop any number of infantry and is "assumed to have one door".
         List <Entity> droppableUnits = compartment.getDroppableUnits();
-        boolean hasDroppableUnits = !droppableUnits.isEmpty();
-
-        // No units == no drops
-        if (!hasDroppableUnits) {
-            return false;
-        }
-
-        for (Entity droppableUnit : droppableUnits) {
-            if (!droppedUnits.contains(droppableUnit.getId())) {
-                // If we have even one boarded, droppable unit that didn't already drop, activate the button.
-                return true;
-            }
-        }
-        // No droppers means no enable
-        return false;
+        return droppableUnits.stream().map(Entity::getId).anyMatch(u -> !droppedUnits.contains(u));
     }
 
     private void updateDropButton() {
@@ -4042,31 +4029,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         List<Entity> currentUnits;
 
         for (int i = 0; i < transporters.size(); i++) {
-            Transporter currentT = transporters.elementAt(i);
-            boolean isInfantryT = false;
+            Transporter currentTransporter = transporters.elementAt(i);
+            boolean isInfantryTransporter = false;
             currentUnits = new ArrayList<>();
             Vector<Integer> bayChoices = new Vector<>();
             int doorsEligibleForDrop = 0;
 
             // Handle infantry first
-            if (currentT instanceof InfantryTransporter iTransporter) {
-                isInfantryT = true;
+            if (currentTransporter instanceof InfantryTransporter infantryTransporter) {
+                isInfantryTransporter = true;
 
                 // Can't drop infantry from above 8 Altitude
-                if (isInfantryT) {
-                    int currAlt = (cmd.getLastStep() != null) ? cmd.getLastStep().getAltitude() : ce.getAltitude();
-                    if (currAlt > 8) {
-                        continue;
-                    }
+                if (cmd.getFinalAltitude() > 8) {
+                    continue;
                 }
 
-                for (Entity entity : iTransporter.getDroppableUnits()) {
+                for (Entity entity : infantryTransporter.getDroppableUnits()) {
                     if (!alreadyDropped.contains(entity.getId())) {
                         currentUnits.add(entity);
                     }
                 }
             // Handle other stuff
-            } else if (currentT instanceof Bay currentBay) {
+            } else if (currentTransporter instanceof Bay currentBay) {
                 doorsEligibleForDrop = currentBay.getCurrentDoors();
 
                 for (Entity entity : currentBay.getDroppableUnits()) {
@@ -4082,7 +4066,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 }
             }
 
-            if (!currentUnits.isEmpty() && (isInfantryT || (doorsEligibleForDrop > 0))) {
+            if (!currentUnits.isEmpty() && (isInfantryTransporter || (doorsEligibleForDrop > 0))) {
                 String[] names = new String[currentUnits.size()];
                 String question = Messages.getString("MovementDisplay.DropUnitDialog.message",
                         doorsEligibleForDrop, bayNum);
@@ -4090,10 +4074,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     names[loop] = currentUnits.get(loop).getShortName();
                 }
                 // If this is an infantry-transporting bay (cargo, Infantry Bay, etc.) no limit on drops
-                int max = (isInfantryT) ? -1 : doorsEligibleForDrop;
+                int max = (isInfantryTransporter) ? -1 : doorsEligibleForDrop;
                 ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.DropUnitDialog.title",
-                                currentT.getType(), bayNum),
+                                currentTransporter.getType(), bayNum),
                         question, names, false, max);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {

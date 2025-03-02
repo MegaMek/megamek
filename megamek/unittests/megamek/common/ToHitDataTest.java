@@ -135,7 +135,7 @@ class ToHitDataTest {
     void adjustSwarmToHitRemoveTargetMovementMod() throws ValidationException {
         // Verify that removal of just movement mod works
         List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
-        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
+        Mek target1 = meks.get(1);
         ToHitData toHitData = new ToHitData();
         int gunnery = 4;
         int amm = 2;
@@ -162,7 +162,7 @@ class ToHitDataTest {
     void adjustSwarmToHitRemoveTargetMovedJumpedMod() throws ValidationException {
         // Verify removal of movement and jumped mods
         List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
-        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
+        Mek target1 = meks.get(1);
         ToHitData toHitData = new ToHitData();
         int gunnery = 4;
         int amm = 2;
@@ -191,7 +191,7 @@ class ToHitDataTest {
     void adjustSwarmToHitRemoveTargetSkiddedProneRangeCalledShotMods() throws ValidationException {
         // Verify removal of movement and jumped mods
         List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
-        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
+        Mek target1 = meks.get(1);
         ToHitData toHitData = new ToHitData();
         int gunnery = 4;
         int amm = 2;

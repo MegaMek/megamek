@@ -2799,7 +2799,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         if (ms != null) {
                             Entity newEntity = ms.loadEntity();
                             if (newEntity != null) {
-                                newEntity.setOwner(localPlayer());
+                                // Change this to use the player selected in the UI if localPlayer() can do so
+                                Client c = getSelectedClient();
+                                newEntity.setOwner((c != null) ? c.getLocalPlayer() : localPlayer());
                                 newEntities.add(newEntity);
                             }
                         }

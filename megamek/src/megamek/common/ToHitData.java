@@ -348,7 +348,7 @@ public class ToHitData extends TargetRoll {
                 "target is assault dropping",
                 // Remove skidded
                 "target skidded",
-                // Remove possible Aerospace Side Mod (this needs to be localized)
+                // Remove possible Aerospace Side Mod (these all need to be localized)
                 megamek.client.ui.Messages.getString("WeaponAttackAction.AeroNoseAttack") + "|" + megamek.client.ui.Messages.getString("WeaponAttackAction.AeroSideAttack"),
                 // Remove possible called shot mods
                 megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"),
@@ -357,7 +357,7 @@ public class ToHitData extends TargetRoll {
                 megamek.client.ui.Messages.getString("WeaponAttackAction.CalledRight"),
                 // Remove target prone mods:
                 megamek.client.ui.Messages.getString("WeaponAttackAction.ProneAdj"),
-                Messages.getString("WeaponAttackAction.ProneRange")
+                megamek.client.ui.Messages.getString("WeaponAttackAction.ProneRange")
             )
         );
     }

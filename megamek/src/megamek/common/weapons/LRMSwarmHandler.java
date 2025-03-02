@@ -224,6 +224,10 @@ public class LRMSwarmHandler extends LRMHandler {
             vPhaseReport.addElement(r);
         }
 
+        // Handle full-salvo hit on initial attack so we don't accidentally spawn another full shot
+        if (hits == wtype.getRackSize()) {
+            swarmMissilesNowLeft = 0;
+        }
         // for each cluster of hits, do a chunk of damage
         while (hits > 0) {
             int nDamage;
@@ -255,6 +259,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 firstHit = false;
             }
         } // Handle the next cluster.
+
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
             Entity swarmTarget = Compute.getSwarmMissileTarget(game,
@@ -263,7 +268,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     target.getPosition(), target.getPosition())
                     && !(this instanceof LRMSwarmIHandler);
             if (swarmTarget != null && !stoppedByECM) {
-                r = new Report(3420);
+                r = new Report(3420, Report.HIDDEN);
                 r.subject = subjectId;
                 r.indent(2);
                 r.add(swarmMissilesNowLeft);
@@ -355,7 +360,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 target.getPosition(), target.getPosition())
                 && !(this instanceof LRMSwarmIHandler);
         if (swarmTarget != null && !stoppedByECM) {
-            Report r = new Report(3420);
+            Report r = new Report(3420, Report.HIDDEN);
             r.subject = subjectId;
             r.indent(2);
             r.add(swarmMissilesNowLeft);
@@ -445,14 +450,14 @@ public class LRMSwarmHandler extends LRMHandler {
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;
-        Report r = new Report(3325);
+        Report r = new Report(3325, Report.HIDDEN);
         r.subject = subjectId;
         r.add(missilesHit);
         r.add(sSalvoType);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        r = new Report(3345);
+        r = new Report(3345, Report.HIDDEN);
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;

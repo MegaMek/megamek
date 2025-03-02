@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import jakarta.xml.bind.ValidationException;
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.common.options.GameOptions;
@@ -43,9 +44,9 @@ class ToHitDataTest {
     static Team team2 = new Team(1);
     static Player player1 = new Player(0, "Test1");
     static Player player2 = new Player(1, "Test2");
-    static WeaponType mockAC5 = (WeaponType) EquipmentType.get("ISAC5");
-    static AmmoType mockAC5AmmoType = (AmmoType) EquipmentType.get("ISAC5 Ammo");
-    static AmmoType mockLTAmmoType = (AmmoType) EquipmentType.get("ISLongTom Ammo");
+    static WeaponType mockLRM20 = (WeaponType) EquipmentType.get("ISLRM20");
+    static AmmoType mockLRM20mmoType = (AmmoType) EquipmentType.get("ISLRM20 Ammo");
+    static AmmoType mockLRM20SwarmType = (AmmoType) EquipmentType.get("ISLRM20 Swarm Ammo");
 
 
     @BeforeAll
@@ -99,32 +100,42 @@ class ToHitDataTest {
         return mockMek;
     }
 
-    @Test
-    void adjustSwarmToHitRemoveTargetMovementMod() {
+    List<Mek> basicConfig(List<Coords> coords) throws ValidationException {
+        if (coords.size() != 3) {
+            throw new ValidationException("Invalid number of coordinates");
+        };
         Mek attacker = createMek("Attacker", "ATK-1", "Alice");
         Mek target1 = createMek("Target", "TGT-2", "Bob");
         Mek target2 = createMek("Target", "TGT-2", "Charlie");
 
         attacker.setOwnerId(player1.getId());
-        Coords attackerCoords = new Coords(0,0);
+        Coords attackerCoords = coords.get(0);
         attacker.setPosition(attackerCoords);
         attacker.setId(1);
         attacker.setDeployed(true);
 
         target1.setOwnerId(player2.getId());
         target1.setId(2);
-        Coords targetCoords1 = new Coords(5, 5);
+        Coords targetCoords1 = coords.get(1);
         target1.setPosition(targetCoords1);
         target1.setDeployed(true);
 
         target2.setOwnerId(player2.getId());
         target2.setId(3);
-        Coords targetCoords2 = new Coords(5, 6);
+        Coords targetCoords2 = coords.get(2);
         target1.setPosition(targetCoords2);
         target1.setDeployed(true);
 
         game.addEntities(List.of(attacker, target1, target2));
 
+        return List.of(attacker, target1, target2);
+    }
+
+    @Test
+    void adjustSwarmToHitRemoveTargetMovementMod() throws ValidationException {
+        // Verify that removal of just movement mod works
+        List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
+        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
         ToHitData toHitData = new ToHitData();
         int gunnery = 4;
         int amm = 2;
@@ -139,6 +150,68 @@ class ToHitDataTest {
 
         assertEquals(4, toHitData.getModifiers().size());
         assertEquals(gunnery + amm + rangeMod + 1, toHitData.getValue());
+
+        // Run adjustment
+        toHitData.adjustSwarmToHit();
+
+        assertEquals(3, toHitData.getModifiers().size());
+        assertEquals(gunnery + amm + rangeMod, toHitData.getValue());
+    }
+
+    @Test
+    void adjustSwarmToHitRemoveTargetMovedJumpedMod() throws ValidationException {
+        // Verify removal of movement and jumped mods
+        List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
+        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
+        ToHitData toHitData = new ToHitData();
+        int gunnery = 4;
+        int amm = 2;
+        int rangeMod = 2;
+        int targetMove = 3;
+        int jumpedMod = 1;
+        target1.delta_distance = targetMove;
+
+        toHitData.addModifier(gunnery, "Gunnery Skill");
+        toHitData.addModifier(amm, "Attacker ran");
+        toHitData.append(Compute.getTargetMovementModifier(game, target1.getId()));
+        toHitData.addModifier(jumpedMod, "target jumped");
+        toHitData.addModifier(rangeMod, "Range Mod");
+
+        assertEquals(5, toHitData.getModifiers().size());
+        assertEquals(gunnery + amm + rangeMod + jumpedMod + 1, toHitData.getValue());
+
+        // Run adjustment
+        toHitData.adjustSwarmToHit();
+
+        assertEquals(3, toHitData.getModifiers().size());
+        assertEquals(gunnery + amm + rangeMod, toHitData.getValue());
+    }
+
+    @Test
+    void adjustSwarmToHitRemoveTargetSkiddedProneRangeCalledShotMods() throws ValidationException {
+        // Verify removal of movement and jumped mods
+        List<Mek> meks = basicConfig(List.of(new Coords(0,0), new Coords(5, 5), new Coords(5, 6)));
+        Mek attacker = meks.get(0), target1 = meks.get(1), target2 = meks.get(2);
+        ToHitData toHitData = new ToHitData();
+        int gunnery = 4;
+        int amm = 2;
+        int rangeMod = 2;
+        int targetMove = 3;
+        int skiddedMod = 2;
+        int proneRangeMod = 1;
+        int calledHighMod = 3;
+        target1.delta_distance = targetMove;
+
+        toHitData.addModifier(gunnery, "Gunnery Skill");
+        toHitData.addModifier(amm, "Attacker ran");
+        toHitData.append(Compute.getTargetMovementModifier(game, target1.getId()));
+        toHitData.addModifier(skiddedMod, "target skidded");
+        toHitData.addModifier(proneRangeMod, megamek.client.ui.Messages.getString("WeaponAttackAction.ProneRange"));
+        toHitData.addModifier(calledHighMod, megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"));
+        toHitData.addModifier(rangeMod, "Range Mod");
+
+        assertEquals(7, toHitData.getModifiers().size());
+        assertEquals(gunnery + amm + rangeMod + skiddedMod +proneRangeMod + calledHighMod + 1, toHitData.getValue());
 
         // Run adjustment
         toHitData.adjustSwarmToHit();

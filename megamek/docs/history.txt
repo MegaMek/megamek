@@ -69,6 +69,8 @@ MEGAMEK VERSION HISTORY:
 + Fix #6604: Fuel Air Explosives do no damage to off-board units
 + PR #6615: Feat: More princess commands - ignore player/turret, order offboard artillery
 + Fix #6622: Putting multiple shields on a mek's arm is not flagged as invalid. 
++ Fix #6641: Validate that HHWs can't have multiple different ammo bins for a single weapon kind.
++ Fix #6048: All short range artillery fire now happens in the weapon attack phase and uses attacker movement modifiers
 
 0.50.03 (2025-02-02 2030 UTC)
 + PR #6335: default the directory filter to Select All in Advanced Board Search 

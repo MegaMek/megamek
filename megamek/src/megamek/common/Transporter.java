@@ -36,11 +36,13 @@ public interface Transporter extends Serializable {
      *         otherwise.
      */
     boolean canLoad(Entity unit);
-    
+
     /**
      * Determines if this transporter can tow the given unit. By default, no.
      */
-    default boolean canTow(Entity unit) { return false; }
+    default boolean canTow(Entity unit) {
+        return false;
+    }
 
     /**
      * Load the given unit.
@@ -90,7 +92,9 @@ public interface Transporter extends Serializable {
      * @param isRear true if the weapon is rear-facing
      * @return True if a transported unit is in the way, false if the weapon can fire.
      */
-    boolean isWeaponBlockedAt(int loc, boolean isRear);
+    default boolean isWeaponBlockedAt(int loc, boolean isRear) {
+        return false;
+    }
 
     /**
      * If a unit is being transported on the outside of the transporter, it can
@@ -116,15 +120,17 @@ public interface Transporter extends Serializable {
     /**
      * @return the MP reduction due to cargo carried by this transporter
      */
-    int getCargoMpReduction(Entity carrier);
+    default int getCargoMpReduction(Entity carrier) {
+        return 0;
+    }
 
     void setGame(Game game);
-    
+
     /**
      * clear out all troops listed in the transporter. Used by MHQ to reset units after game
      */
     void resetTransporter();
-    
+
     /**
      * Returns the number of Docking Collars (hardpoints) this transporter counts as toward
      * the maximum that a JumpShip (or WS, SS) may carry. TO:AUE p.146

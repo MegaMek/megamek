@@ -1,7 +1,7 @@
 /*
 * MegaMek -
 * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (C) 2018-2025 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -7626,7 +7626,9 @@ public class Compute {
         if (entity.hasDroneOs()) {
             return 0;
         }
-
+        if (entity.defaultCrewType().equals(CrewType.NONE)) {
+            return 0;
+        }
         if (entity.isSupportVehicle()) {
             int crew = getSVBaseCrewNeeds(entity) + getSupportVehicleGunnerNeeds(entity)
                     + getAdditionalNonGunner(entity);
@@ -7672,6 +7674,9 @@ public class Compute {
     // Taken from MekHQ, assumptions are whatever Taharqa made for there - Dylan
     public static int getTotalDriverNeeds(Entity entity) {
         if (entity.hasDroneOs()) {
+            return 0;
+        }
+        if (entity.defaultCrewType().equals(CrewType.NONE)) {
             return 0;
         }
         // Fix for MHQ Bug #3. Space stations have as much need for pilots as jumpships

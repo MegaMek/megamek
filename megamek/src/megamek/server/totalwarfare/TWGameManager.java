@@ -30,6 +30,7 @@ import megamek.MMConstants;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.MultiHexScorchDecalPosition;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
@@ -20689,6 +20690,7 @@ public class TWGameManager extends AbstractGameManager {
      * @param orbitalBombardment  The orbital bombardment to be drawn.
      */
     private void drawOrbitalBombardmentOnBoard(OrbitalBombardment orbitalBombardment) {
+
         var allCoords = orbitalBombardment.getAllAffectedCoords();
         var hexes = getGame().getBoard().getSpecialHexDisplayTable();
         var message = Messages.getString("OrbitalBombardment.hitOnRound", getGame().getRoundCount());
@@ -20696,7 +20698,7 @@ public class TWGameManager extends AbstractGameManager {
             if (!getGame().getBoard().contains(coord)) {
                 continue;
             }
-
+            hexUpdateSet.add(coord);
             var removeIncoming = hexes.get(coord).stream()
                 .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT_INCOMING)
                 .toList();
@@ -20712,7 +20714,8 @@ public class TWGameManager extends AbstractGameManager {
                     new SpecialHexDisplay(
                         SpecialHexDisplay.Type.ORBITAL_BOMBARDMENT,
                         getGame().getRoundCount(),
-                        getGame().getPlayersList().get(0), // The player should not matter, I just dont want to cause a nullpointererror
+                        // The player should not matter, I just dont want to cause a nullpointererror
+                        getGame().getPlayersList().get(0),
                         message,
                         SpecialHexDisplay.SHD_OBSCURED_ALL,
                         imageSignature));
@@ -20726,8 +20729,11 @@ public class TWGameManager extends AbstractGameManager {
                         message,
                         SpecialHexDisplay.SHD_OBSCURED_ALL));
             }
-            sendChangedHex(coord);
+            game.addScorchedGround(new MultiHexScorchDecalPosition(
+                orbitalBombardment.getCoords(), coord.subtract(orbitalBombardment.getCoords()), orbitalBombardment.getRadius()
+            ));
         }
+        sendChangedHexes();
     }
 
 
@@ -20814,11 +20820,12 @@ public class TWGameManager extends AbstractGameManager {
                 continue;
             }
 
+            hexUpdateSet.add(coord);
+
             if ((hexes != null) && (hexes.get(coord) != null)) {
                 var removeIncoming = hexes.get(coord).stream()
                     .filter(sdh -> sdh.getType() == SpecialHexDisplay.Type.NUKE_INCOMING)
                     .toList();
-
 
                 for (var shd : removeIncoming) {
                     getGame().getBoard().removeSpecialHexDisplay(coord, shd);
@@ -20835,8 +20842,12 @@ public class TWGameManager extends AbstractGameManager {
                     Messages.getString("Nuke.exploded"),
                     SpecialHexDisplay.SHD_OBSCURED_ALL,
                     imageSignature));
-            sendChangedHex(coord);
+            Hex hex = getGame().getBoard().getHex(coord);
+            if (hex != null)  {
+                hex.setTheme("volcano");
+            }
         }
+        sendChangedHexes();
     }
 
     private void drawNukeIncomingOnBoard(int[] nukeArgs) {

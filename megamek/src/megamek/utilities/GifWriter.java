@@ -55,6 +55,10 @@ public class GifWriter {
         new GifWriter(gameSummary).run();
     }
 
+    /**
+     * Creates a new GifWriter.
+     * @param gameSummary the game summary to create the gif from
+     */
     public GifWriter(String gameSummary) {
         folder = new File(gameSummaryImagesMMDir(), gameSummary);
         outputFile = new File(gameSummaryImagesMMDir(), gameSummary + ".gif");
@@ -62,6 +66,12 @@ public class GifWriter {
 
     private OutputStream outputStream = null;
 
+    /**
+     * Appends a frame to the gif.
+     * @param image the frame image
+     * @param duration the frame duration in milliseconds
+     * @throws IOException if an I/O error occurs
+     */
     public void appendFrame(BufferedImage image, long duration) throws IOException {
         if (outputStream == null) {
             outputStream = new FileOutputStream(outputFile);
@@ -84,6 +94,9 @@ public class GifWriter {
         encoder.addImage(rgbData, width, options);
     }
 
+    /**
+     * Closes the gif writer.
+     */
     public void close() {
         if (encoder != null && isEncoding) {
             try {
@@ -156,6 +169,10 @@ public class GifWriter {
         outputStream.close();
     }
 
+    /**
+     * Returns whether the gif writer is live.
+     * @return true if the gif writer is live
+     */
     public boolean isLive() {
         return isLive;
     }

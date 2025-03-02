@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing.commands;
 
+import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.FlatLafStyleBuilder;
 import megamek.common.Coords;
@@ -33,7 +34,7 @@ import java.util.Objects;
  */
 public class ClientCommandPanel extends JDialog {
     private final ClientServerCommand command;
-    private final ClientGUI client;
+    private final Client client;
     private final Coords coords;
     private int yPosition = 0;
 
@@ -44,7 +45,7 @@ public class ClientCommandPanel extends JDialog {
      * @param client    The client GUI.
      * @param command   The command to render.
      */
-    public ClientCommandPanel(JFrame parent, ClientGUI client, ClientServerCommand command, @Nullable Coords coords) {
+    public ClientCommandPanel(JFrame parent, Client client, ClientServerCommand command, @Nullable Coords coords) {
         super(parent, command.getLongName() + " /" + command.getName(), true);
         this.command = command;
         this.client = client;
@@ -265,7 +266,7 @@ public class ClientCommandPanel extends JDialog {
 
     private JComboBox<String> createPlayerComboBox(PlayerArgument playerArgument) {
         JComboBox<String> comboBox = new JComboBox<>();
-        var players = client.getClient().getGame().getPlayersList();
+        var players = client.getGame().getPlayersList();
         for (var player : players) {
             comboBox.addItem(player.getId() + ":" + player.getName());
         }
@@ -275,12 +276,12 @@ public class ClientCommandPanel extends JDialog {
 
     private JComboBox<String> createUnitComboBox(UnitArgument unitArgument) {
         JComboBox<String> comboBox = new JComboBox<>();
-        var entities = client.getClient().getGame().getEntitiesVector();
+        var entities = client.getGame().getEntitiesVector();
         for (var entity : entities) {
             comboBox.addItem(entity.getId() + ":" + entity.getDisplayName());
         }
 
-        var entitiesAtSpot = client.getClient().getGame().getEntities(coords);
+        var entitiesAtSpot = client.getGame().getEntities(coords);
         if (entitiesAtSpot.hasNext()) {
             var selectedEntity = entitiesAtSpot.next();
             comboBox.setSelectedItem(selectedEntity.getId() + ":" + selectedEntity.getDisplayName());
@@ -291,7 +292,7 @@ public class ClientCommandPanel extends JDialog {
 
     private JComboBox<String> createTeamsComboBox(TeamArgument teamArgument) {
         JComboBox<String> comboBox = new JComboBox<>();
-        var teams = client.getClient().getGame().getTeams();
+        var teams = client.getGame().getTeams();
         for (var team : teams) {
             comboBox.addItem(team.getId() + "");
         }
@@ -402,6 +403,6 @@ public class ClientCommandPanel extends JDialog {
             }
         }
 
-        client.getClient().sendChat("/" + command.getName() + " " + String.join(" ", args));
+        client.sendChat("/" + command.getName() + " " + String.join(" ", args));
     }
 }

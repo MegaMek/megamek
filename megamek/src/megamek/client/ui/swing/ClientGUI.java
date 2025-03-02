@@ -102,7 +102,8 @@ import org.apache.commons.lang3.SystemUtils;
 import static megamek.common.Configuration.gameSummaryImagesMMDir;
 
 public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
-        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView, IHasMenuBar, IHasCurrentPanel {
+        ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots, IDisconnectSilently, IHasUnitDisplay, IHasBoardView,
+    IHasMenuBar, IHasCurrentPanel, IDisplayedUnit {
     private final static MMLogger logger = MMLogger.create(ClientGUI.class);
 
     // region Variable Declarations
@@ -3264,9 +3265,15 @@ public class ClientGUI extends AbstractClientGUI implements BoardViewListener,
      *         another unit than the one that
      *         is selected to move or fire.
      */
+    @Override
     @Nullable
     public Entity getDisplayedUnit() {
         return unitDisplay.getCurrentEntity();
+    }
+
+    @Override
+    public void setDisplayedUnit(Entity unit) {
+        unitDisplay.displayEntity(unit);
     }
 
     /**

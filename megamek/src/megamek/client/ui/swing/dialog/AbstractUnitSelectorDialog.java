@@ -14,23 +14,25 @@
  */
 package megamek.client.ui.swing.dialog;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.PatternSyntaxException;
+import megamek.MegaMek;
+import megamek.client.ui.Messages;
+import megamek.client.ui.advancedsearch.AdvancedSearchDialog2;
+import megamek.client.ui.advancedsearch.MekSearchFilter;
+import megamek.client.ui.dialogs.BVDisplayDialog;
+import megamek.client.ui.models.XTableColumnModel;
+import megamek.client.ui.panes.EntityViewPane;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.UnitLoadingDialog;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.battlevalue.BVCalculator;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.sorter.NaturalOrderComparator;
+import megamek.logging.MMLogger;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -42,31 +44,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-
-import megamek.MegaMek;
-import megamek.client.ui.Messages;
-import megamek.client.ui.advancedsearch.AdvancedSearchDialog2;
-import megamek.client.ui.dialogs.BVDisplayDialog;
-import megamek.client.ui.models.XTableColumnModel;
-import megamek.client.ui.panes.EntityViewPane;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.UnitLoadingDialog;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.MekFileParser;
-import megamek.client.ui.advancedsearch.MekSearchFilter;
-import megamek.common.MekSummary;
-import megamek.common.MekSummaryCache;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
-import megamek.common.annotations.Nullable;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.options.GameOptions;
-import megamek.common.options.OptionsConstants;
-import megamek.common.preference.ClientPreferences;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.sorter.NaturalOrderComparator;
-import megamek.logging.MMLogger;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.Normalizer;
+import java.util.List;
+import java.util.*;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * This is a heavily reworked version of the original MekSelectorDialog which
@@ -122,6 +106,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     // how long after a key is typed does a new search begin
     private static final int KEY_TIMEOUT = 1000;
 
+    protected final boolean multiSelect;
+
     protected static MekSummaryCache mscInstance = MekSummaryCache.getInstance();
     protected MekSummary[] meks;
 
@@ -152,10 +138,15 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     // endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
+        this(frame, unitLoadingDialog, false);
+    }
+
+    protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog, boolean multiSelect) {
         super(frame, Messages.getString("MekSelectorDialog.title"), true);
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
+        this.multiSelect = multiSelect;
         super.setVisible(false);
     }
 
@@ -233,7 +224,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         tableUnits.setDefaultRenderer(Integer.class, centeredRenderer);
         tableUnits.getColumnModel().getColumn(MekTableModel.COL_LEVEL).setCellRenderer(centeredRenderer);
 
-        tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableUnits.setSelectionMode(multiSelect ? ListSelectionModel.MULTIPLE_INTERVAL_SELECTION : ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<>(unitModel);
         sorter.setComparator(MekTableModel.COL_CHASSIS, new NaturalOrderComparator());
         sorter.setComparator(MekTableModel.COL_MODEL, new NaturalOrderComparator());
@@ -727,15 +718,31 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
     }
 
+    public ArrayList<Entity> getSelectedEntities() {
+        return getSelectedMekSummaries().stream().map(
+            ms -> {
+                try {
+                    return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                } catch (EntityLoadingException e) {
+                    logger.error(e, "Unable to load mek: " + ms.getSourceFile() + ": " + ms.getEntryName());
+                    return null;
+                }
+            }
+        ).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
+    }
+
     /** @return The MekSummary for the selected unit. */
     public @Nullable MekSummary getSelectedMekSummary() {
-        int view = tableUnits.getSelectedRow();
-        if (view < 0) {
-            // selection got filtered away
+        var summaries = getSelectedMekSummaries();
+        if (summaries.size() != 1) {
             return null;
         }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        return meks[selected];
+        return summaries.get(0);
+    }
+
+    public List<MekSummary> getSelectedMekSummaries() {
+        var rows = tableUnits.getSelectedRows();
+        return Arrays.stream(rows).map(tableUnits::convertRowIndexToModel).mapToObj(i -> meks[i]).toList();
     }
 
     @Override

@@ -354,12 +354,13 @@ public class Client extends AbstractClient {
      * Sends an "add entity" packet that contains a collection of Entity
      * objects.
      *
-     * @param entities
-     *                 The collection of Entity objects to add.
+     * @see megamek.server.totalwarfare.TWGameManager#receiveEntityAdd(Packet, int)
+     *
+     * @param entities The collection of Entity objects to add.
+     *                 This should ideally be an {@link ArrayList<Entity>}, but other kinds of {@link List} will be converted to an {@link ArrayList}.
      */
     public void sendAddEntity(List<Entity> entities) {
         // Trying to pass a non-ArrayList jams the receiving client and prevents it from ever receiving more packets.
-        // I have no idea why this happens.
         if (!(entities instanceof ArrayList<Entity>)) {
             entities = new ArrayList<>(entities);
         }

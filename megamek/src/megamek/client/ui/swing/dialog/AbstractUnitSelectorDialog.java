@@ -50,6 +50,7 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * This is a heavily reworked version of the original MekSelectorDialog which
@@ -717,7 +718,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
     }
 
-    public List<Entity> getSelectedEntities() {
+    public ArrayList<Entity> getSelectedEntities() {
         return getSelectedMekSummaries().stream().map(
             ms -> {
                 try {
@@ -727,7 +728,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     return null;
                 }
             }
-        ).filter(Objects::nonNull).toList();
+        ).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /** @return The MekSummary for the selected unit. */

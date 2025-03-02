@@ -37,6 +37,7 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -101,7 +102,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     protected void select(boolean close) {
-        java.util.List<Entity> entities = getSelectedEntities();
+        ArrayList<Entity> entities = getSelectedEntities();
         if (!entities.isEmpty()) {
             Client client = null;
             String name = (String) comboPlayer.getSelectedItem();

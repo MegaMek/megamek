@@ -26556,7 +26556,7 @@ public class TWGameManager extends AbstractGameManager {
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
 
-        // Need to use a new ArrayLiut to prevent a concurrent modification exception
+        // Need to use a new ArrayList to prevent a concurrent modification exception
         // when removing
         // illegal entities
         for (final Entity entity : new ArrayList<>(entities)) {

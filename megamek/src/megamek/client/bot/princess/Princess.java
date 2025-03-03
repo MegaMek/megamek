@@ -135,7 +135,7 @@ public class Princess extends BotClient {
     private boolean initialized = false;
 
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
-    private HashMap<PathRankerType, IPathRanker> pathRankers;
+    protected HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
     private UnitBehavior unitBehaviorTracker;
     private FireControlState fireControlState;
@@ -149,7 +149,7 @@ public class Princess extends BotClient {
 
     private BehaviorSettings behaviorSettings;
     private double moveEvaluationTimeEstimate = 0;
-    private final Precognition precognition;
+    protected final Precognition precognition;
     private final Thread precognitionThread;
     /**
      * Mapping to hold the damage allocated to each targetable, stored by ID.

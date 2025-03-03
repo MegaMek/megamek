@@ -419,6 +419,9 @@ public class Princess extends BotClient {
     }
 
     public UnitBehavior getUnitBehaviorTracker() {
+        if (unitBehaviorTracker == null) {
+            unitBehaviorTracker = new UnitBehavior();
+        }
         return unitBehaviorTracker;
     }
 

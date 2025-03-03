@@ -1898,7 +1898,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
-        if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
+        if ((checkCrew || defaultCrewType().equals(CrewType.NONE)) && ((getCrew() == null) || getCrew().isDead())) {
             return true;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                 // Need to make sure here that we're ignoring heat because

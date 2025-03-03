@@ -15,6 +15,10 @@
 package megamek.common;
 
 
+import megamek.client.ui.Messages;
+
+import java.util.List;
+
 /**
  * Contains the to-hit number and a short description of how it was reached
  */
@@ -326,6 +330,36 @@ public class ToHitData extends TargetRoll {
 
     public void setThruBldg(Building b) {
         thruBldg = b;
+    }
+
+    /**
+     * Remove extraneous mods from a ToHitData instance in preparation for recalculating
+     * mods.
+     */
+    public void adjustSwarmToHit() {
+        removeModifiers(
+            List.of(
+                // Remove first movement modifier (this does not need localization yet; see Compute.getTargetMovementModifier())
+                "target (did not |)move(d \\S* hex)?",
+                // Remove jumped/airborne
+                "target jumped",
+                "target was airborne",
+                // Remove assault dropped
+                "target is assault dropping",
+                // Remove skidded
+                "target skidded",
+                // Remove possible Aerospace Side Mod (these all need to be localized)
+                megamek.client.ui.Messages.getString("WeaponAttackAction.AeroNoseAttack") + "|" + megamek.client.ui.Messages.getString("WeaponAttackAction.AeroSideAttack"),
+                // Remove possible called shot mods
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledHigh"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLow"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledLeft"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.CalledRight"),
+                // Remove target prone mods:
+                megamek.client.ui.Messages.getString("WeaponAttackAction.ProneAdj"),
+                megamek.client.ui.Messages.getString("WeaponAttackAction.ProneRange")
+            )
+        );
     }
 
 }

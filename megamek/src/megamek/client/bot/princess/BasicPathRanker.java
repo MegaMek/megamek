@@ -77,7 +77,7 @@ public class BasicPathRanker extends PathRanker {
         return getOwner().getFireControl(entity);
     }
 
-    void setPathEnumerator(PathEnumerator pathEnumerator) {
+    public void setPathEnumerator(PathEnumerator pathEnumerator) {
         this.pathEnumerator = pathEnumerator;
     }
 

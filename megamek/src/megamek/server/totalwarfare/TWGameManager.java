@@ -19116,7 +19116,7 @@ public class TWGameManager extends AbstractGameManager {
         return vDesc;
     }
 
-    public Vector<Report> damageMech(Vector<Report> vDesc, Mech te, HitData hit, int damage,
+    public Vector<Report> damageMek(Vector<Report> vDesc, Mek te, HitData hit, int damage,
                                      boolean ammoExplosion, DamageType damageType, boolean damageIS,
                                      boolean areaSatArty, boolean throughFront, boolean underWater,
                                      boolean nukeS2S, Map<String, Object> modsMap) {
@@ -19125,8 +19125,8 @@ public class TWGameManager extends AbstractGameManager {
         // TC SRM's that hit the head do external and internal damage but its
         // one hit and shouldn't cause
         // 2 hits to the pilot.
-        modsMap.put("isHeadHit", ((te.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
-                && (hit.getLocation() == Mech.LOC_HEAD)
+        modsMap.put("isHeadHit", ((te.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
+                && (hit.getLocation() == Mek.LOC_HEAD)
                 && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)));
         int te_n = te.getId();
         Report r;
@@ -19200,9 +19200,9 @@ public class TWGameManager extends AbstractGameManager {
             vDesc.addElement(r);
 
             if (ammoExplosion) {
-                if (te instanceof LandAirMech) {
+                if (te instanceof LandAirMek) {
                     // LAMs eject if the CT destroyed switch is on
-                    LandAirMech lam = (LandAirMech) te;
+                    LandAirMek lam = (LandAirMek) te;
                     if (lam.isAutoEject()
                             && (!game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
                             || (game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
@@ -19263,7 +19263,7 @@ public class TWGameManager extends AbstractGameManager {
             if (te.hasSearchlight()) {
                 boolean spotlightHittable = true;
                 int loc = hit.getLocation();
-                if ((loc != Mech.LOC_CT) && (loc != Mech.LOC_LT) && (loc != Mech.LOC_RT)) {
+                if ((loc != Mek.LOC_CT) && (loc != Mek.LOC_LT) && (loc != Mek.LOC_RT)) {
                     spotlightHittable = false;
                 }
 
@@ -19296,7 +19296,7 @@ public class TWGameManager extends AbstractGameManager {
                     return vDesc;
                 }
                 // is this a mech dumping ammo being hit in the rear torso?
-                if (List.of(Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT).contains(hit.getLocation())) {
+                if (List.of(Mek.LOC_CT, Mek.LOC_RT, Mek.LOC_LT).contains(hit.getLocation())) {
                     for (Mounted<?> mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed()
                                 && !mAmmo.isHit()) {
@@ -19953,13 +19953,13 @@ public class TWGameManager extends AbstractGameManager {
         int critBonus = 0;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL)
                 && (damageOriginal > 0)
-                && ((te instanceof Mech) || (te instanceof Protomech))) {
+                && ((te instanceof Mek) || (te instanceof Protomech))) {
             critBonus = Math.min((damageOriginal - 1) / 5, 4);
         }
 
         // Find out if Human TRO plays a part it crit bonus
         if ((ae != null) && !areaSatArty) {
-            if ((te instanceof Mech) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MECH)) {
+            if ((te instanceof Mek) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_MECH)) {
                 critBonus += 1;
             } else if ((te instanceof Aero) && ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO, Crew.HUMANTRO_AERO)) {
                 critBonus += 1;
@@ -20052,7 +20052,7 @@ public class TWGameManager extends AbstractGameManager {
             r.indent(3);
             vDesc.addElement(r);
             int loc = hit.getLocation();
-            if ((te instanceof Mech) && ((loc == Mech.LOC_HEAD) || ((Mech) te).isArm(loc)
+            if ((te instanceof Mek) && ((loc == Mek.LOC_HEAD) || ((Mek) te).isArm(loc)
                     || te.locationIsLeg(loc))) {
                 int half = (int) Math.ceil(te.getOArmor(loc, false) / 2.0);
                 if (damage > half) {
@@ -20106,18 +20106,18 @@ public class TWGameManager extends AbstractGameManager {
         map.put("isHeadHit", false);
         map.put("isFerroFibrousTarget", (checkFerroFibrous(te, hit)));
         map.put("bar5", (te.getBARRating(hit.getLocation()) <= 5));
-        map.put("ballisticArmor", ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+        map.put("ballisticArmor", ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED));
-        map.put("ferroLamellorArmor", ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+        map.put("ferroLamellorArmor", ((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR));
-        map.put("hardenedArmor", ((te instanceof Mech) || (te instanceof Tank))
+        map.put("hardenedArmor", ((te instanceof Mek) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED));
-        map.put("impactArmor", (te instanceof Mech)
+        map.put("impactArmor", (te instanceof Mek)
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT));
-        map.put("reactiveArmor", (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+        map.put("reactiveArmor", (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
                 || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE)));
-        map.put("reflectiveArmor", (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+        map.put("reflectiveArmor", (((te instanceof Mek) || (te instanceof Tank) || (te instanceof Aero))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
                 || isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
 
@@ -20239,11 +20239,11 @@ public class TWGameManager extends AbstractGameManager {
             extantDamage = damageExternalPassenger(te, hit, damage, vDesc, passenger);
         }
 
-        boolean bTorso = (nLoc == Mech.LOC_CT) || (nLoc == Mech.LOC_RT) || (nLoc == Mech.LOC_LT);
+        boolean bTorso = (nLoc == Mek.LOC_CT) || (nLoc == Mek.LOC_RT) || (nLoc == Mek.LOC_LT);
 
         // Does a swarming unit absorb damage?
         int swarmer = te.getSwarmAttackerId();
-        if ((!(te instanceof Mech) || bTorso) && (swarmer != Entity.NONE)
+        if ((!(te instanceof Mek) || bTorso) && (swarmer != Entity.NONE)
                 && ((hit.getEffect() & HitData.EFFECT_CRITICAL) == 0) && (Compute.d6() >= 5)
                 && (damageType != DamageType.IGNORE_PASSENGER) && !ammoExplosion) {
             Entity swarm = game.getEntity(swarmer);

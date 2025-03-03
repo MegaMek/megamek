@@ -1,10 +1,7 @@
 size 16 17
-tag "Cliffs (Auto)"
-tag "MarsTheme (Auto)"
 tag "Water (Auto)"
-tag "MultipleTheme (Auto)"
 tag "Flat (Auto)"
-tag "HighHills (Auto)"
+tag "MultipleTheme (Auto)"
 tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "desert"

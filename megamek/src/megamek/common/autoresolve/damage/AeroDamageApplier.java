@@ -76,13 +76,22 @@ public record AeroDamageApplier(Aero entity, EntityFinalState entityFinalState) 
     public HitDetails damageInternals(HitDetails hitDetails) {
         HitData hit = hitDetails.hit();
         var entity = entity();
-        int currentInternalValue = entity.getSI();
-        int newInternalValue = Math.max(currentInternalValue - hitDetails.setArmorValueTo(), 0);
+        int newInternalValue = entity.getSI();
+        if (hitDetails.setArmorValueTo() < 0) {
+            int halfDamage = (int) Math.floor(hitDetails.setArmorValueTo() / 2.0);
+            newInternalValue = Math.max(newInternalValue - halfDamage, 0);
+            if (newInternalValue == 0 && entityFinalState().entityMustSurvive) {
+                newInternalValue = 1;
+            }
+        } else {
+            return hitDetails;
+        }
         entity.setArmor(0, hit);
         entity.setSI(newInternalValue);
         applyDamageToEquipments(hitDetails);
         if (newInternalValue == 0) {
-            hitDetails = destroyLocation(hitDetails);
+            entity.setDestroyed(true);
+            entity.setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
         }
         return hitDetails;
     }

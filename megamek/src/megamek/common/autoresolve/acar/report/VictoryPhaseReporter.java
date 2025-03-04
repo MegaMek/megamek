@@ -14,6 +14,7 @@
 package megamek.common.autoresolve.acar.report;
 
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.autoresolve.acar.SimulationContext;
@@ -91,14 +92,13 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
 
         for (var entity : playerEntities) {
-            var armor = entity.getArmorRemainingPercent();
-            if (armor < 0d) {
-                armor = 0d;
-            }
+            double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+                : entity.getInternalRemainingPercent();
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
-                .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
+                .add(String.format("%.2f%%", internal * 100))
                 .add(entity.getCrew().getName())
                 .add(entity.getCrew().getHits())
                 .indent(2));
@@ -117,15 +117,14 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
             .indent(1));
 
         for (var entity : deadEntities) {
-            var armor = entity.getArmorRemainingPercent();
-            if (armor < 0d) {
-                armor = 0d;
-            }
+            double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+                : entity.getInternalRemainingPercent();
 
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
-                .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
+                .add(String.format("%.2f%%", internal * 100))
                 .add(entity.getCrew().getName())
                 .add(entity.getCrew().getHits())
                 .indent(2));
@@ -143,14 +142,13 @@ public class VictoryPhaseReporter implements IVictoryPhaseReporter {
 
 
         for (var entity : retreatingEntities) {
-            var armor = entity.getArmorRemainingPercent();
-            if (armor < 0d) {
-                armor = 0d;
-            }
+            double armor = Math.max(entity.getArmorRemainingPercent(), 0d);
+            double internal = entity instanceof IAero ? ((IAero) entity).getSI() / (double) ((IAero) entity).get0SI()
+                : entity.getInternalRemainingPercent();
             reportConsumer.accept(new PublicReportEntry("acar.endOfCombat.teamUnitStats")
                 .add(new EntityNameReportEntry(entity).reportText())
                 .add(String.format("%.2f%%", armor * 100))
-                .add(String.format("%.2f%%", entity.getInternalRemainingPercent() * 100))
+                .add(String.format("%.2f%%", internal * 100))
                 .add(entity.getCrew().getName())
                 .add(entity.getCrew().getHits())
                 .indent(2)

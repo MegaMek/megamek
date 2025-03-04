@@ -23,11 +23,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import megamek.client.bot.Agent;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -40,6 +42,8 @@ import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMin
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 
+import static megamek.client.bot.princess.UnitBehavior.BehaviorType.ForcedWithdrawal;
+
 /**
  * This class contains logic that calculates and stores
  * a) possible paths that units in play can take, and
@@ -48,8 +52,9 @@ import megamek.logging.MMLogger;
 public class PathEnumerator {
     private final static MMLogger logger = MMLogger.create(PathEnumerator.class);
 
-    private final Princess owner;
+    private final Agent owner;
     private final Game game;
+    private final Board board;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
     private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
@@ -59,12 +64,13 @@ public class PathEnumerator {
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
 
-    public PathEnumerator(Princess owningPrincess, Game game) {
-        owner = owningPrincess;
+    public PathEnumerator(Agent agent, Game game, Board board) {
+        this.owner = agent;
         this.game = game;
+        this.board = board;
     }
 
-    private Princess getOwner() {
+    private Agent getOwner() {
         return owner;
     }
 
@@ -184,7 +190,7 @@ public class PathEnumerator {
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
-            Coords wayPoint = owner.getUnitBehaviorTracker().getWaypointForEntity(mover).orElse(null);
+            Coords wayPoint = owner.getWaypointForEntity(mover);
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams
             // in air mode
@@ -323,7 +329,7 @@ public class PathEnumerator {
             // calculate bounding area for move
             ConvexBoardArea myArea = new ConvexBoardArea();
             myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
-                    mover.getId()).iterator(), owner.getBoard());
+                    mover.getId()).iterator(), board);
             getUnitMovableAreas().put(mover.getId(), myArea);
 
             return true;
@@ -357,15 +363,14 @@ public class PathEnumerator {
         Set<Coords> destinations = new HashSet<>();
         // if we're going to an edge or can't see anyone, generate long-range paths to
         // the opposite edge
-        switch (getOwner().getUnitBehaviorTracker().getBehaviorType(mover, getOwner())) {
+        switch (getOwner().getBehaviorType(mover, getOwner())) {
             case ForcedWithdrawal:
-                destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover),
-                    true);
+                destinations = getOwner().getDestinationCoordsWithTerrainReduction(mover);
                 break;
             case MoveToDestination:
-                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                Optional.ofNullable(getOwner().getWaypointForEntity(mover)).map(destinations::add);
                 if (destinations.isEmpty()) {
-                    destinations = getOwner().getClusterTracker().getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);
+                    destinations = getOwner().getDestinationCoordsWithTerrainReduction(mover);
                 }
                 break;
             case MoveToContact:
@@ -373,16 +378,16 @@ public class PathEnumerator {
                 // If there are no active or sensor contacts, check the heat maps for best
                 // location
                 // we've seen for finding targets
-                List<Coords> enemyHotSpots = owner.getEnemyHotSpots();
-                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                List<Coords> enemyHotSpots = getOwner().getEnemyHotSpots();
+                Optional.ofNullable(getOwner().getWaypointForEntity(mover)).ifPresent(destinations::add);
                 if (enemyHotSpots != null && !enemyHotSpots.isEmpty()) {
                     destinations.addAll(enemyHotSpots);
                 } else {
 
                     // If the heat map doesn't have any useful targets, just go to the other side of
                     // map and hope to stumble across something on the way
-                    CardinalEdge oppositeEdge = BoardUtilities.determineOppositeEdge(mover);
-                    destinations = getOwner().getClusterTracker().getDestinationCoords(mover, oppositeEdge, true);
+
+                    destinations = getOwner().getOppositeSideDestinationCoordsWithTerrainReduction(mover);
                 }
 
                 break;
@@ -393,7 +398,7 @@ public class PathEnumerator {
                     if ((target.getTargetType() == Targetable.TYPE_ENTITY) && ((Entity) target).isCrippled()) {
                         continue;
                     }
-                    getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                    Optional.ofNullable(getOwner().getWaypointForEntity(mover)).ifPresent(destinations::add);
                     destinations.add(target.getPosition());
                     // we can easily shoot at an entity from right next to it as well
                     destinations.addAll(target.getPosition().allAdjacent());

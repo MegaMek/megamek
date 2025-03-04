@@ -196,9 +196,11 @@ public class SkinXMLHandler {
             // relative path
             file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
             if (!file.exists() || !file.isFile()) {
-                logger
-                        .error("Cannot initialize skin based on a non-existent file with filename " + filename);
-                return false;
+                file = new MegaMekFile(Configuration.skinsDir(), GUIPreferences.getInstance().getDefaultSkinFile()).getFile();
+                if (!file.exists() || !file.isFile()) {
+                    logger.error("Cannot initialize skin based on a non-existent file with filename " + filename);
+                    return false;
+                }
             }
         }
 

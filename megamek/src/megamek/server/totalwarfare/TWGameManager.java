@@ -105,6 +105,18 @@ import megamek.server.commands.*;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
 
+import static megamek.common.weapons.AreaEffectHelper.calculateDamageFallOff;
+
+class UnknownEntityTypeException extends Exception
+{
+    public UnknownEntityTypeException() {}
+
+    public UnknownEntityTypeException(String message)
+    {
+        super(message);
+    }
+}
+
 /**
  * Manages the Game and processes player actions.
  */
@@ -18518,10 +18530,7 @@ public class TWGameManager extends AbstractGameManager {
             r.addDesc(te);
             r.add(te.getCrew().getOptions().intOption(OptionsConstants.EDGE));
             vDesc.addElement(r);
-        } // if
-
-        boolean isBattleArmor = te instanceof BattleArmor;
-        boolean tookInternalDamage = damageIS;
+        }
 
         // TACs from the hit location table
         int crits;
@@ -18534,8 +18543,6 @@ public class TWGameManager extends AbstractGameManager {
         // Store information to pass around
         Map<String, Object> modsMap = createDamageModifierMap(te, hit, damageIS, damage_orig, crits);
         modsMap.put("critBonus", calcCritBonus(game.getEntity(hit.getAttackerId()), te, damage_orig, areaSatArty));
-
-        HitData nextHit = null;
 
         // Some "hits" on a ProtoMek are actually misses.
         if ((te instanceof ProtoMek proto) && (hit.getLocation() == ProtoMek.LOC_NMISS)) {
@@ -18571,9 +18578,13 @@ public class TWGameManager extends AbstractGameManager {
         } else if (te instanceof Infantry teCast && teCast.isConventionalInfantry()) {
             vDesc = damageInfantry(vDesc, teCast, hit, damage, ammoExplosion, damageType,
                 areaSatArty, throughFront, underWater, nukeS2S, modsMap);
-        } else
+        } else {
+            logger.error(new UnknownEntityTypeException(te.toString()));
+        }
 
-            // Meks using EI implants take pilot damage each time a hit
+        boolean tookInternalDamage = (boolean) modsMap.get("tookInternalDamage");
+
+        // Meks using EI implants take pilot damage each time a hit
         // inflicts IS damage
         if (tookInternalDamage && ((te instanceof Mek) || (te instanceof ProtoMek)) && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
@@ -20167,6 +20178,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Allocate the damage
         while (damage > 0) {
+            int tmpDamageHold = -1;
 
             // Report this either way
             r = new Report(6065);
@@ -20182,7 +20194,6 @@ public class TWGameManager extends AbstractGameManager {
 
             if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
 
-                int tmpDamageHold = -1;
                 int origDamage = damage;
 
                 // infantry armour works differently
@@ -20224,128 +20235,128 @@ public class TWGameManager extends AbstractGameManager {
                 if ((tmpDamageHold > 0)) {
                     damage = tmpDamageHold;
                 }
+            }
 
-                // is there damage remaining?
-                if (damage > 0) {
+            // is there damage remaining?
+            if (damage > 0) {
 
-                    // is there internal structure in the location hit?
-                    if (te.getInternal(hit) > 0) {
+                // is there internal structure in the location hit?
+                if (te.getInternal(hit) > 0) {
 
-                        // Now we need to consider alternate structure types!
-                        if ((te.getInternal(hit) > damage) && (damage > 0)) {
-                            // internal structure absorbs all damage
-                            te.setInternal(te.getInternal(hit) - damage, hit);
-                            modsMap.put("tookInternalDamage", true);
-                            // Alternate structures don't affect our damage total
-                            // for later PSR purposes, so use the previously stored
-                            // value here as necessary.
-                            te.damageThisPhase += (tmpDamageHold > -1) ? tmpDamageHold : damage;
-                            damage = 0;
-                            r = new Report(6095);
-                            r.subject = te_n;
-                            r.indent(3);
-                            r.add(te.getInternal(hit));
-                            vDesc.addElement(r);
-                        } else if (damage > 0) {
-                            // damage transfers, maybe
-                            int absorbed = Math.max(te.getInternal(hit), 0);
+                    // Now we need to consider alternate structure types!
+                    if ((te.getInternal(hit) > damage) && (damage > 0)) {
+                        // internal structure absorbs all damage
+                        te.setInternal(te.getInternal(hit) - damage, hit);
+                        modsMap.put("tookInternalDamage", true);
+                        // Alternate structures don't affect our damage total
+                        // for later PSR purposes, so use the previously stored
+                        // value here as necessary.
+                        te.damageThisPhase += (tmpDamageHold > -1) ? tmpDamageHold : damage;
+                        damage = 0;
+                        r = new Report(6095);
+                        r.subject = te_n;
+                        r.indent(3);
+                        r.add(te.getInternal(hit));
+                        vDesc.addElement(r);
+                    } else if (damage > 0) {
+                        // damage transfers, maybe
+                        int absorbed = Math.max(te.getInternal(hit), 0);
 
-                            // Platoon, Trooper, or Section destroyed message
-                            r = new Report(1210);
-                            r.subject = te_n;
-                            if (isPlatoon) {
-                                // Infantry have only one section, and
-                                // are therefore destroyed.
-                                if (((Infantry) te).isSquad()) {
-                                    r.messageId = 6106; // Squad Killed
-                                } else {
-                                    r.messageId = 6105; // Platoon Killed
+                        // Platoon, Trooper, or Section destroyed message
+                        r = new Report(1210);
+                        r.subject = te_n;
+                        if (isPlatoon) {
+                            // Infantry have only one section, and
+                            // are therefore destroyed.
+                            if (((Infantry) te).isSquad()) {
+                                r.messageId = 6106; // Squad Killed
+                            } else {
+                                r.messageId = 6105; // Platoon Killed
+                            }
+                        }
+                        r.indent(3);
+                        vDesc.addElement(r);
+
+                        // Mark off the internal structure here, but *don't*
+                        // destroy the location just yet -- there are checks
+                        // still to run!
+                        te.setInternal(0, hit);
+                        te.damageThisPhase += absorbed;
+                        damage -= absorbed;
+                    }
+                }
+
+                if (te.getInternal(hit) <= 0) {
+                    // internal structure is gone, what are the transfer
+                    // potentials?
+                    nextHit = te.getTransferLocation(hit);
+                    if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
+                        // No engine explosions for infantry
+                        // Entity destroyed. Ammo explosions are
+                        // neither survivable nor salvageable.
+                        // Only ammo explosions in the CT are devastating.
+                        vDesc.addAll(destroyEntity(te, "damage", !ammoExplosion,
+                            !((ammoExplosion || areaSatArty))));
+                        // If the head is destroyed, kill the crew.
+
+                        if ((hit.getLocation() == Mek.LOC_HEAD)
+                            || ((hit.getLocation() == Mek.LOC_CT)
+                            && (ammoExplosion || areaSatArty))) {
+                            te.getCrew().setDoomed(true);
+                        }
+                        if (game.getOptions().booleanOption(
+                            OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                            vDesc.addAll(abandonEntity(te));
+                        }
+
+                        // nowhere for further damage to go
+                        damage = 0;
+                    } else if (nextHit.getLocation() == Entity.LOC_NONE) {
+                        // Rest of the damage is wasted.
+                        damage = 0;
+                    } else if (damage > 0) {
+                        // remaining damage transfers
+                        r = new Report(6130);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        r.add(te.getLocationAbbr(nextHit));
+                        vDesc.addElement(r);
+
+                        // If there are split weapons in this location, mark it
+                        // as hit, even if it took no criticals.
+                        for (WeaponMounted m : te.getWeaponList()) {
+                            if (m.isSplit()) {
+                                if ((m.getLocation() == hit.getLocation())
+                                    || (m.getLocation() == nextHit
+                                    .getLocation())) {
+                                    te.setWeaponHit(m);
                                 }
                             }
-                            r.indent(3);
-                            vDesc.addElement(r);
-
-                            // Mark off the internal structure here, but *don't*
-                            // destroy the location just yet -- there are checks
-                            // still to run!
-                            te.setInternal(0, hit);
-                            te.damageThisPhase += absorbed;
-                            damage -= absorbed;
                         }
-                    }
-
-                    if (te.getInternal(hit) <= 0) {
-                        // internal structure is gone, what are the transfer
-                        // potentials?
-                        nextHit = te.getTransferLocation(hit);
-                        if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
-                            // No engine explosions for infantry
-                            // Entity destroyed. Ammo explosions are
-                            // neither survivable nor salvageable.
-                            // Only ammo explosions in the CT are devastating.
-                            vDesc.addAll(destroyEntity(te, "damage", !ammoExplosion,
-                                !((ammoExplosion || areaSatArty))));
-                            // If the head is destroyed, kill the crew.
-
-                            if ((hit.getLocation() == Mek.LOC_HEAD)
-                                || ((hit.getLocation() == Mek.LOC_CT)
-                                && (ammoExplosion || areaSatArty))) {
-                                te.getCrew().setDoomed(true);
-                            }
-                            if (game.getOptions().booleanOption(
-                                OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
-                                vDesc.addAll(abandonEntity(te));
-                            }
-
-                            // nowhere for further damage to go
+                        // if this is damage from a nail/rivet gun, and we
+                        // transfer
+                        // to a location that has armor, and BAR >=5, no damage
+                        if ((damageType == DamageType.NAIL_RIVET)
+                            && (te.getArmor(nextHit.getLocation()) > 0)
+                            && (te.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
-                        } else if (nextHit.getLocation() == Entity.LOC_NONE) {
-                            // Rest of the damage is wasted.
-                            damage = 0;
-                        } else if (damage > 0) {
-                            // remaining damage transfers
-                            r = new Report(6130);
+                            r = new Report(6065);
                             r.subject = te_n;
                             r.indent(2);
-                            r.add(damage);
-                            r.add(te.getLocationAbbr(nextHit));
-                            vDesc.addElement(r);
-
-                            // If there are split weapons in this location, mark it
-                            // as hit, even if it took no criticals.
-                            for (WeaponMounted m : te.getWeaponList()) {
-                                if (m.isSplit()) {
-                                    if ((m.getLocation() == hit.getLocation())
-                                        || (m.getLocation() == nextHit
-                                        .getLocation())) {
-                                        te.setWeaponHit(m);
-                                    }
-                                }
-                            }
-                            // if this is damage from a nail/rivet gun, and we
-                            // transfer
-                            // to a location that has armor, and BAR >=5, no damage
-                            if ((damageType == DamageType.NAIL_RIVET)
-                                && (te.getArmor(nextHit.getLocation()) > 0)
-                                && (te.getBARRating(nextHit.getLocation()) >= 5)) {
-                                damage = 0;
-                                r = new Report(6065);
-                                r.subject = te_n;
-                                r.indent(2);
-                                vDesc.add(r);
-                            }
+                            vDesc.add(r);
                         }
                     }
-                } else if (hit.getSpecCrit()) {
-                    // ok, we dealt damage but didn't go on to internal
-                    // we get a chance of a crit, using Armor Piercing.
-                    // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
-                    if (!((boolean) modsMap.get("hardenedArmor")
-                        || (boolean) modsMap.get("ferroLamellorArmor")
-                        || (boolean) modsMap.get("reactiveArmor"))
-                    ) {
-                        modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
-                    }
+                }
+            } else if (hit.getSpecCrit()) {
+                // ok, we dealt damage but didn't go on to internal
+                // we get a chance of a crit, using Armor Piercing.
+                // but only if we don't have hardened, Ferro-Lamellor, or reactive armor
+                if (!((boolean) modsMap.get("hardenedArmor")
+                    || (boolean) modsMap.get("ferroLamellorArmor")
+                    || (boolean) modsMap.get("reactiveArmor"))
+                ) {
+                    modsMap.put("specCrits", (int) modsMap.get("specCrits") + 1);
                 }
             }
         }
@@ -20558,7 +20569,7 @@ public class TWGameManager extends AbstractGameManager {
         map.put("damageOriginal", damageOriginal);
         map.put("isHeadHit", false);
         map.put("damageIS", damageIS);
-        map.put("WasDamageIS", false);
+        map.put("wasDamageIS", false);
         map.put("tookInternalDamage", damageIS);
         updateArmorTypeMap(map, te, hit);
         return map;
@@ -20691,7 +20702,7 @@ public class TWGameManager extends AbstractGameManager {
                                              DamageType damageType, Vector<Report> vDesc) {
         int te_n = te.getId();
         Report r;
-        int extantDamage = 0;
+        int extantDamage = damage;
         int nLoc = hit.getLocation();
         Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
         // Does an exterior passenger absorb some of the damage?

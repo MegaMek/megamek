@@ -1,8 +1,12 @@
 package megamek.client.bot.caspar;
 
 
+import megamek.client.ratgenerator.MissionRole;
+import megamek.client.ratgenerator.ModelRecord;
+import megamek.client.ratgenerator.RATGenerator;
 import megamek.common.Entity;
 import megamek.common.UnitRole;
+import megamek.common.util.Counter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,13 +30,11 @@ public class FormationManager {
         unitFormationMap.clear();
 
         // Group units by role
-        Map<UnitRole, List<Entity>> unitsByRole = friendlyUnits.stream()
-            .collect(Collectors.groupingBy(this::determineUnitRole));
 
         // Create special-purpose formations first
-        createTransportEscortFormations(unitsByRole);
-        createSniperFormations(unitsByRole);
-        createScoutFormations(unitsByRole);
+        createTransportEscortFormations(friendlyUnits);
+        createSniperFormations(friendlyUnits);
+        createScoutFormations(friendlyUnits);
 
         // Group remaining combat units into balanced formations
         createCombatFormations(getUnassignedUnits(friendlyUnits));
@@ -44,19 +46,30 @@ public class FormationManager {
      * @param unit The unit to analyze
      * @return The determined role
      */
-    private UnitRole determineUnitRole(Entity unit) {
-        return unit.getRole();
+    private Set<MissionRole> determineUnitRole(Entity unit) {
+        // if the unit is a "transport" and UnitRole.NONE even tough it is
+        // not correct and it should instead return its actual role, I need something to make sure it is a transport.
+        return RATGenerator.getInstance().getModelList().stream()
+                .filter(e -> e.getModel().equals(unit.getModel()))
+                .map(ModelRecord::getRoles).findFirst().orElse(EnumSet.of(MissionRole.CIVILIAN));
+    }
+
+    private boolean containsAnyRole(Entity unit, Set<MissionRole> roles) {
+        return determineUnitRole(unit).stream().anyMatch(roles::contains);
     }
 
     /**
      * Creates formations of transports and their escorts.
      *
-     * @param unitsByRole Units grouped by role
+     * @param units Units grouped by role
      */
-    private void createTransportEscortFormations(Map<UnitRole, List<Entity>> unitsByRole) {
-        List<Entity> transports = unitsByRole.getOrDefault(UnitRole.NONE, List.of());
-        List<Entity> escorts = unitsByRole.getOrDefault(UnitRole.SKIRMISHER, List.of());
-        escorts.addAll(unitsByRole.getOrDefault(UnitRole.BRAWLER, List.of()));
+    private void createTransportEscortFormations(List<Entity> units) {
+        List<Entity> transports = units.stream()
+                .filter(e ->
+                        containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO))).toList();
+        List<Entity> escorts = units.stream()
+                .filter(e -> containsAnyRole(e,
+                        Set.of(MissionRole.CAVALRY, MissionRole.INF_SUPPORT, MissionRole.RAIDER))).toList();
 
         if (transports.isEmpty()) {
             return;
@@ -83,10 +96,8 @@ public class FormationManager {
 
             // Create the formation
             if (!formationUnits.isEmpty()) {
-                Entity leader = formationUnits.stream()
-                    .filter(u -> determineUnitRole(u) != UnitRole.NONE)
-                    .findFirst()
-                    .orElse(formationUnits.iterator().next());
+
+                Entity leader = findFormationLeader(formationUnits);
 
                 Formation formation = new Formation(
                     "transport_" + i,
@@ -104,16 +115,16 @@ public class FormationManager {
     /**
      * Creates formations of sniper and missile boat units.
      *
-     * @param unitsByRole Units grouped by role
+     * @param units Units grouped by role
      */
-    private void createSniperFormations(Map<UnitRole, List<Entity>> unitsByRole) {
-        List<Entity> snipers = unitsByRole.getOrDefault(UnitRole.SNIPER, List.of());
-        List<Entity> missileBoats = unitsByRole.getOrDefault(UnitRole.MISSILE_BOAT, List.of());
-        List<Entity> spotters = unitsByRole.getOrDefault(UnitRole.SCOUT, List.of());
-
-        List<Entity> rangedUnits = new ArrayList<>();
-        rangedUnits.addAll(snipers);
-        rangedUnits.addAll(missileBoats);
+    private void createSniperFormations(List<Entity> units) {
+        List<Entity> rangedUnits = units.stream()
+                .filter(e ->
+                        containsAnyRole(e, Set.of(MissionRole.MIXED_ARTILLERY, MissionRole.ARTILLERY,
+                                MissionRole.MISSILE_ARTILLERY, MissionRole.FIRE_SUPPORT))).toList();
+        List<Entity> spotters = units.stream()
+                .filter(e -> containsAnyRole(e,
+                        Set.of(MissionRole.SPOTTER))).toList();
 
         if (rangedUnits.isEmpty()) {
             return;
@@ -138,10 +149,7 @@ public class FormationManager {
 
             // Create the formation
             if (!formationUnits.isEmpty()) {
-                Entity leader = formationUnits.stream()
-                    .filter(u -> determineUnitRole(u) == UnitRole.SNIPER)
-                    .findFirst()
-                    .orElse(formationUnits.iterator().next());
+                Entity leader = findFormationLeader(formationUnits);
 
                 Formation formation = new Formation(
                     "ranged_" + i,
@@ -159,10 +167,10 @@ public class FormationManager {
     /**
      * Creates scout formations for reconnaissance.
      *
-     * @param unitsByRole Units grouped by role
+     * @param units Units grouped by role
      */
-    private void createScoutFormations(Map<UnitRole, List<Entity>> unitsByRole) {
-        List<Entity> scouts = unitsByRole.getOrDefault(UnitRole.SCOUT, List.of());
+    private void createScoutFormations(List<Entity> units) {
+        List<Entity> scouts = units.stream().filter(e -> containsAnyRole(e, Set.of(MissionRole.RECON))).toList();
 
         if (scouts.isEmpty()) {
             return;
@@ -182,7 +190,7 @@ public class FormationManager {
 
             // Create the formation
             if (!formationUnits.isEmpty()) {
-                Entity leader = formationUnits.iterator().next();
+                Entity leader = findFormationLeader(formationUnits);
 
                 Formation formation = new Formation(
                     "scout_" + i,
@@ -209,7 +217,7 @@ public class FormationManager {
 
         // Group by weight class
         Map<WeightClass, List<Entity>> unitsByWeight = unassignedUnits.stream()
-            .collect(Collectors.groupingBy(this::determineWeightClass));
+                .collect(Collectors.groupingBy(this::determineWeightClass));
 
         List<Entity> assault = unitsByWeight.getOrDefault(WeightClass.ASSAULT, List.of());
         List<Entity> heavy = unitsByWeight.getOrDefault(WeightClass.HEAVY, List.of());
@@ -296,26 +304,24 @@ public class FormationManager {
      */
     private UnitRole determineFormationRole(List<Entity> units) {
         // Count unit roles
-        Map<UnitRole, Long> roleCounts = units.stream()
-            .collect(Collectors.groupingBy(this::determineUnitRole, Collectors.counting()));
-
+        Counter<UnitRole> roleCounter = new Counter<>(units.stream().map(Entity::getRole).toList());
         // Find the most common role
-        return roleCounts.entrySet().stream()
-            .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey)
-            .orElse(UnitRole.BRAWLER);
+        return roleCounter.top();
     }
 
     /**
      * Finds the best unit to lead a formation.
-     *
-     * @param units The units in the formation
+     * @param units Units in the formation
      * @return The selected leader
      */
-    private Entity findFormationLeader(List<Entity> units) {
-        // Implementation would pick the most suitable leader
-        // For now, just pick the first unit
-        return units.get(0);
+    private Entity findFormationLeader(Collection<Entity> units) {
+        return units.stream()
+                .filter(e -> e.isCommander() || e.isC3CompanyCommander())
+                .findFirst()
+                .orElseGet(() -> units.stream()
+                        .filter(e -> !containsAnyRole(e, Set.of(MissionRole.CIVILIAN, MissionRole.CARGO)))
+                        .findFirst()
+                        .orElse(units.iterator().next()));
     }
 
     /**

@@ -1,9 +1,7 @@
-name: MegaMek Nightly CI
+name: Build and Sign MegaMek Distribution
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 3 * * *"
+  push:
 
 env:
   GRADLE_OPTS: "-Dscan.link.VCS=https://github.com/MegaMek/megamek/commit/${{ github.sha }}"
@@ -51,7 +49,7 @@ jobs:
           mkdir -p keystore
           echo "${{ secrets.FILE_SIGNING_PRIVATE_KEY }}" > keystore/private.key
           chmod 600 keystore/private.key
-          
+
 
       - name: Sign canonical files
         working-directory: megamek

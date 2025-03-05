@@ -14,6 +14,11 @@ Thumbs.db
 /megamek/classes/
 /megamek/bin/
 
+# Sigining keys
+/megamek/keystore/private.key
+/megamek/keystore
+private.key
+
 # IDE directories
 out/
 .idea/

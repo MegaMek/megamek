@@ -526,57 +526,142 @@ task signCanonicalFiles {
             throw new GradleException("Private key not found at ${privateKeyPath}")
         }
 
+        // Verify OpenSSL is available
+        try {
+            def process = "openssl version".execute()
+            process.waitFor()
+            println "Using OpenSSL: ${process.text.trim()}"
+        } catch (Exception e) {
+            throw new GradleException("OpenSSL not found. Please install OpenSSL.", e)
+        }
+
         def fileCounter = 0
+        def errorCounter = 0
         def startTime = System.currentTimeMillis()
 
         // Define directories to process
         def canonicalDirs = [
-                file("${projectDir}/${data}/mekfiles"),
-                // Add all other canonical directories here
+                file("${projectDir}/data/mekfiles")
+                // Add other directories as needed
         ]
+
+        // Create a log file for errors
+        def logFile = file("${buildDir}/sign-errors.log")
+        logFile.parentFile.mkdirs()
+        logFile.text = "Signing errors log - ${new Date()}\n\n"
 
         canonicalDirs.each { dir ->
             if (dir.exists()) {
+                println "Processing directory: ${dir.path}"
+
                 dir.eachFileRecurse { file ->
                     if (file.isFile() && (file.name.endsWith('.mtf') || file.name.endsWith('.blk'))) {
-                        signFile(file, privateKeyFile)
-                        fileCounter++
+                        try {
+                            signFile(file, privateKeyFile)
+                            fileCounter++
 
-                        if (fileCounter % 500 == 0) {
-                            println "Signed ${fileCounter} files..."
+                            if (fileCounter % 500 == 0) {
+                                println "Signed ${fileCounter} files..."
+                            }
+                        } catch (Exception e) {
+                            errorCounter++
+                            def message = "Failed to sign ${file.path}: ${e.message}"
+                            println message
+                            logFile << message + "\n"
                         }
                     }
                 }
+            } else {
+                println "WARNING: Directory not found: ${dir.path}"
             }
         }
 
         def endTime = System.currentTimeMillis()
-        println "Signed ${fileCounter} files in ${(endTime - startTime) / 1000} seconds."
+        def duration = (endTime - startTime) / 1000
+
+        println "\nSigning summary:"
+        println "- Total files processed: ${fileCounter}"
+        println "- Signing errors: ${errorCounter}"
+        println "- Time taken: ${duration} seconds"
+
+        if (errorCounter > 0) {
+            println "See error log at: ${logFile.path}"
+        }
+
+        // Verify a sample of files
+        verifyRandomFiles(canonicalDirs, 5)
+    }
+}
+
+def verifyRandomFiles(List<File> dirs, int sampleSize) {
+    println "\nVerifying a sample of signed files..."
+    def allFiles = []
+
+    dirs.each { dir ->
+        if (dir.exists()) {
+            dir.eachFileRecurse { file ->
+                if (file.isFile() && (file.name.endsWith('.mtf') || file.name.endsWith('.blk'))) {
+                    allFiles << file
+                }
+            }
+        }
+    }
+
+    if (allFiles.empty) {
+        println "No files found for verification"
+        return
+    }
+
+    // Select random files
+    def sampleFiles = []
+    def random = new Random()
+    for (int i = 0; i < Math.min(sampleSize, allFiles.size()); i++) {
+        def index = random.nextInt(allFiles.size())
+        sampleFiles << allFiles[index]
+        allFiles.remove(index)
+    }
+
+    // Verify each sample file
+    sampleFiles.each { file ->
+        println "Verifying: ${file.path}"
+
+        def process = "openssl dgst -sha256 -verify keystore/public.key -signature signature.tmp ${file.path}".execute()
+        process.waitFor()
+
+        println "Result: ${process.text.trim()}"
     }
 }
 
 def signFile(File file, File privateKeyFile) {
-    // Read the file content
-    def content = file.text
+    // Read the file content with normalized line endings
+    def content = file.getText("UTF-8").replaceAll("\r\n", "\n")
 
     // Remove existing signature if present
-    content = content.replaceAll(/(?s)<signature>.*?<\/signature>\s*$/, '')
+    content = content.replaceAll(/(?s)<signature>.*?<\/signature>(\s*)$/, '')
+
+    // Ensure content ends with a single newline
+    content = content.trim() + "\n"
 
     // Create a temp file for the content without signature
     def tempFile = File.createTempFile("content", ".tmp")
-    tempFile.text = content
+    tempFile.setText(content, "UTF-8")
 
     // Sign the content
     def signatureFile = File.createTempFile("signature", ".tmp")
-    ant.exec(executable: 'openssl', failonerror: true) {
-        arg(line: "dgst -sha256 -sign ${privateKeyFile.absolutePath} -out ${signatureFile.absolutePath} ${tempFile.absolutePath}")
+    def process = ["openssl", "dgst", "-sha256", "-sign",
+                   privateKeyFile.absolutePath, "-out",
+                   signatureFile.absolutePath, tempFile.absolutePath].execute()
+
+    def exitCode = process.waitFor()
+    if (exitCode != 0) {
+        throw new GradleException("OpenSSL signing failed with exit code ${exitCode}: ${process.err.text}")
     }
 
     // Base64 encode the signature
     def signature = signatureFile.bytes.encodeBase64().toString()
 
-    // Add the signature to the file
-    file.text = content + "\n<signature>\n${signature}\n</signature>\n"
+    // Add the signature to the file - NO trailing newline after closing tag
+    file.setText(content + "<signature>\n${signature}\n</signature>", "UTF-8")
 
     // Clean up temp files
     tempFile.delete()

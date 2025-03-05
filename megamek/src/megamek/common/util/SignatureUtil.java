@@ -12,6 +12,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class SignatureUtil {
     private static final Logger logger = LogManager.getLogger(SignatureUtil.class);
-    private static final Pattern SIGNATURE_PATTERN = Pattern.compile("<signature>\\s*(.*?)\\s*</signature>\\s*$", Pattern.DOTALL);
+    private static final Pattern SIGNATURE_PATTERN = Pattern.compile("<signature>\\s*(.*?)\\s*</signature>$", Pattern.DOTALL);
     private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
     private static PublicKey publicKey;
@@ -91,14 +92,31 @@ public class SignatureUtil {
     private static void loadPublicKey() throws GeneralSecurityException, IOException {
         // Load the public key from resources
         byte[] keyBytes;
-        try (var is = SignatureUtil.class.getResourceAsStream("/resources/public.key")) {
-            assert is != null;
+
+        try (var is = SignatureUtil.class.getResourceAsStream("/public.key")) {
+            if (is == null) {
+                throw new IOException("Public key file not found in resources");
+            }
             keyBytes = is.readAllBytes();
         }
 
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        publicKey = kf.generatePublic(spec);
+        String publicKeyPEM = new String(keyBytes, StandardCharsets.UTF_8);
+
+        // Remove the PEM headers and footers, and any whitespace
+        publicKeyPEM = publicKeyPEM.replace("-----BEGIN PUBLIC KEY-----", "");
+        publicKeyPEM = publicKeyPEM.replace("-----END PUBLIC KEY-----", "");
+        publicKeyPEM = publicKeyPEM.replaceAll("\\s+", "");
+
+        // Decode the Base64 encoded key
+        byte[] decodedKey = Base64.getDecoder().decode(publicKeyPEM);
+
+        try {
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            publicKey = kf.generatePublic(spec);
+        } catch (InvalidKeySpecException e) {
+            throw new GeneralSecurityException("Invalid public key specification", e);
+        }
     }
 
 

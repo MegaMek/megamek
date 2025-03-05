@@ -169,7 +169,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean omni = false;
     protected String chassis;
     protected String model;
-    private String signature;
 
     /**
      * The special chassis name for Clan Meks such as Timber Wolf for the Mad Cat.
@@ -1108,14 +1107,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setModel(String model) {
         this.model = model;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public String getSignature() {
-        return signature;
     }
 
     /**
@@ -10983,7 +10974,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The source file for this unit, null if it does not exists.
      */
     public @Nullable File getSourceFile() {
-        return MekSummary.getSourceFile(this);
+        return MekSummary.getSourceFile(getChassis() + " " + getModel());
     }
 
     /**
@@ -10995,23 +10986,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Set the unit as canon or not. To set a unit as canon or not it needs to run
-     * its own signature against the public key.
-     */
-    public void setCanon() {
-        // to set a unit as canon or not it needs to run its own signature against the public key
-        this.canon = megamek.common.util.SignatureUtil.isCanonicalFile(getSourceFile());
-    }
-
-    /**
-     * Set the unit as canon or not. This method is deprecated and will be removed
-     * as we do not care anymore in passing the state of the flag.
+     * Set the unit as canon or not.
      * @param canon The state of the flag
      */
-    @Deprecated(since = "0.50.04", forRemoval = true)
     public void setCanon(boolean canon) {
         // to set a unit as canon or not it needs to run its own signature against the public key
-        setCanon();
+        this.canon = canon;
     }
 
     /**

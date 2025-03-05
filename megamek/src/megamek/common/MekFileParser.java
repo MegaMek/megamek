@@ -93,6 +93,7 @@ public class MekFileParser {
 
     public MekFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
+
             parse(is, fileName);
         } catch (EntityLoadingException ex) {
             logger.error("", ex);
@@ -151,7 +152,18 @@ public class MekFileParser {
         return m_entity;
     }
 
-    public void parse(InputStream is, String fileName) throws Exception {
+    public void parse(InputStream ns, String fileName) throws Exception {
+        File tempFile = File.createTempFile("temp", ".tmp");
+        tempFile.deleteOnExit();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ns));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+        InputStream is = new FileInputStream(tempFile);
         String lowerName = fileName.toLowerCase();
         IMekLoader loader;
 
@@ -209,12 +221,15 @@ public class MekFileParser {
                 loader = new BLKMekFile(bb);
             }
         } else {
+            tempFile.delete();
             throw new EntityLoadingException("Unsupported file suffix");
         }
 
         m_entity = loader.getEntity();
-
+        boolean canon = megamek.common.util.SignatureUtil.isCanonicalFile(tempFile);
+        m_entity.setCanon(canon);
         MekFileParser.postLoadInit(m_entity);
+        tempFile.delete();
     }
 
     /**
@@ -785,16 +800,17 @@ public class MekFileParser {
             TestInfantry.adaptAntiMekAttacks((Infantry) ent);
         }
 
+        // canonicity of the unit was set during the basic data setup with the new method
         // Check if it's canon; if it is, mark it as such.
-        ent.setCanon(false);// Guilty until proven innocent
-        if (canonUnitNames == null) {
-            initCanonUnitNames();
-        }
+//        ent.setCanon(false);// Guilty until proven innocent
+//        if (canonUnitNames == null) {
+//            initCanonUnitNames();
+//        }
 
-        int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
-        if (index >= 0) {
-            ent.setCanon(true);
-        }
+//        int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
+//        if (index >= 0) {
+//            ent.setCanon(true);
+//        }
         ent.initMilitary();
         linkDumpers(ent);
     }

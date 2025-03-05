@@ -1394,10 +1394,6 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         return null;
     }
 
-    public static @Nullable File getSourceFile(Entity entity) {
-        return getSourceFile(entity.getChassis() + " " + entity.getModel());
-    }
-
     @Override
     public String toString() {
         return getName();

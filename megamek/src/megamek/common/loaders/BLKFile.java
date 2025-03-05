@@ -121,7 +121,7 @@ public class BLKFile {
         if (dataFile.exists("invalidSourceBuildReasons")) {
             loadInvalidSourceBuildReasons(entity);
         }
-        entity.setCanon();
+
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);

@@ -10976,7 +10976,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return true if this unit is canon
      */
     public boolean isCanon() {
-        return hasMulId() && getMulId() != -1;
+        return hasMulId() && getMulId() > -1;
     }
 
     /**

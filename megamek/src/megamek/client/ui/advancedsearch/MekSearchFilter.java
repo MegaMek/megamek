@@ -18,15 +18,15 @@
  */
 package megamek.client.ui.advancedsearch;
 
-import java.util.*;
-import java.util.stream.IntStream;
-
 import megamek.common.Entity;
 import megamek.common.MekSummary;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
+
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * Class to perform filtering on units. This class stores a list of
@@ -464,7 +464,7 @@ public class MekSearchFilter {
             return false;
         }
 
-        if (!isMatch(f.iOfficial, (mek.getMulId() != -1))) {
+        if (!isMatch(f.iOfficial, (mek.getMulId() > -1))) {
             return false;
         }
 

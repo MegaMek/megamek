@@ -840,4 +840,17 @@ public interface IAero {
     default void updateSensorOptions() {
 
     }
+
+    /**
+     * Check which turn engines were destroyed in.
+     */
+    default int getEnginesLostRound() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Set round that engines were completely destroyed; needed for crash-landing check
+     * @param round
+     */
+    void setEnginesLostRound(int round);
 }

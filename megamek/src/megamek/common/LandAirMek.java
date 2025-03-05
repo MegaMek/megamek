@@ -134,6 +134,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
+    private int enginesLostRound = Integer.MAX_VALUE;
+
 
     // Autoejection
     private boolean critThresh = false;
@@ -374,6 +376,10 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                     && conditions.getWind().isTornadoF1ToF3()) {
                 j += 1;
             }
+        }
+        // Hackish; set this round as the "engines destroyed" round if all "thrust" is lost
+        if (j == 0 && getEnginesLostRound() == Integer.MAX_VALUE ) {
+            setEnginesLostRound(game.getCurrentRound());
         }
         return j;
     }
@@ -1508,7 +1514,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 }
         return rollHitLocation(table, side);
     }
-    
+
     @Override
     public HitData rollHitLocation(int table, int side) {
         if (getConversionMode() != CONV_MODE_FIGHTER) {
@@ -2176,5 +2182,15 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
                 setNextSensor(getSensors().firstElement());
             }
         }
+    }
+
+    @Override
+    public int getEnginesLostRound() {
+        return this.enginesLostRound;
+    }
+
+    @Override
+    public void setEnginesLostRound(int enginesLostRound) {
+        this.enginesLostRound = enginesLostRound;
     }
 }
